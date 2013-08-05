@@ -739,12 +739,23 @@ public class BLKFile {
                     try {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
-                        // if no bay number is specified, we default to 1
+                    	// Find an unused bay number and use it.
+                    	int i = 1;
+                    	while (e.getBayById(i) != null) {
+                    		i++;
+                    	}
+                    	bayNumber = i;
                     } catch (NumberFormatException ex) {
                         // if not a number, check for c* bay
                         if (temp[2].equalsIgnoreCase("c*")) {
                             comstar = true;
                         }
+                        // Find an unused bay number and use it.
+                    	int i = 1;
+                    	while (e.getBayById(i) != null) {
+                    		i++;
+                    	}
+                    	bayNumber = i;
                     }
                     if (temp.length == 4) {
                         if (temp[3].equalsIgnoreCase("c*")) {

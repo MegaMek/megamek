@@ -68,7 +68,7 @@ public final class ProtomechBay extends Bay {
         boolean result = false;
 
         // Only smallcraft
-        if (unit instanceof Mech) {
+        if (unit instanceof Protomech) {
             result = true;
         }
 

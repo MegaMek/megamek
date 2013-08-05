@@ -32,6 +32,9 @@ v0.35.41-dev (SVN)
 + Bug [#3809] ASFs launched from a DS aren't able to expend MP in the turn they are launched 
 + Bug [#3810]: When loading Aeros into a Dropships, the short name can get changed 
 + Bug: Trying to load more units into a bay than the bay has capacity causes an exception.
++ Bug: Protomech Bay checking for instanceof Mech instead of instanceof Protomech, so can never load protos
++ Bug: Non-bay transporters such as troop space cause NPEs
++ Refactored loading menus to be a lot smarter and account for all transporter types
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

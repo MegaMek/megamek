@@ -38,6 +38,8 @@ v0.35.41-dev (SVN)
 + Added Unload All From Bay # to complement loading into specific bays
 + Bug: Battle Armor Bays still not correctly setting bayNumber
 + Bug: Infantry bays show tons/ton instead of platoons/platoon
++ Refactored arlith's fix for loading too many units so that it doesn't NPE on non-bay units.
+    He is going to continue to refactor it so that it'll actually be smarter, but for now it just needs to work.
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

@@ -6294,8 +6294,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Transporter next = iter.nextElement();
             if (next.canLoad(unit)
                     && (!checkElev || (unit.getElevation() == getElevation()))
-                    && (((unit instanceof BattleArmor) && hasBattleArmorHandles())
-                            || (bayNumber == -1) || (((Bay) next).getBayNumber() == bayNumber))) {
+                    && ((bayNumber == -1) || (((Bay) next).getBayNumber() == bayNumber))) {
                 next.load(unit);
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;

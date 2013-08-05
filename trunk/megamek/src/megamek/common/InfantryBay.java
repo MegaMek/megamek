@@ -69,7 +69,7 @@ public final class InfantryBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only infantry
         if (unit instanceof Infantry) {
             result = true;
         }

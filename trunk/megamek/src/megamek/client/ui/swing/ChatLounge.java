@@ -85,6 +85,8 @@ import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
+import megamek.common.ClampMountMech;
+import megamek.common.ClampMountTank;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Dropship;
@@ -102,6 +104,7 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.Transporter;
 import megamek.common.UnitType;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -3101,19 +3104,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         ":");
                 int id = Integer.parseInt(stLoad.nextToken());
                 int bayNumber = Integer.parseInt(stLoad.nextToken());
-                Entity loadingEntity = clientgui.getClient().getEntity(id);
+                /*Entity loadingEntity = clientgui.getClient().getEntity(id);
                 double capacity = loadingEntity.getBayById(bayNumber).getUnused();
-                if (entities.size() <= capacity){                
+                if (entities.size() <= capacity){   */             
                     for (Entity e : entities) {
                         loader(e, id, bayNumber);
-                    }
+                    }/*
                 } else{
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("LoadingBay.toomany") + //$NON-NLS-2$
                               " " + (int)capacity + ".",//$NON-NLS-2$
                             Messages.getString("LoadingBay.error"),//$NON-NLS-2$
                             JOptionPane.ERROR_MESSAGE);
-                }
+                }*/
             } else if (command.equalsIgnoreCase("UNLOAD")) {
                 for (Entity e : entities) {
                     unloader(e);
@@ -3200,8 +3203,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean allUnloaded = true;
             boolean allCapFighter = true;
             boolean allDropships = true;
+            boolean allInfantry = true;
             boolean allBattleArmor = true;
+            boolean allSameEntityType = true;
             boolean sameSide = true;
+            Entity prevEntity = null;
             int prevOwnerId = -1;
             for (Entity en : entities) {
                 if (en.getTransportId() == Entity.NONE) {
@@ -3220,9 +3226,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (!(en instanceof Dropship)) {
                 	allDropships = false;
                 }
+                if (!(en instanceof Infantry)) {
+                	allInfantry = false;
+                }
                 if (!(en instanceof BattleArmor)) {
                 	allBattleArmor = false;
                 }
+                if (prevEntity != null && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
+                	allSameEntityType = false;
+                }
+                prevEntity = en;
             }
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
@@ -3284,8 +3297,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 popup.add(menu);
 
                 if (allUnloaded) {
-                    menu = new JMenu("Load into");
+                    menu = new JMenu("Load...");
+                    JMenu menuDocking = new JMenu("Dock With...");
+                    JMenu menuSquadrons = new JMenu("Join...");
+                    JMenu menuMounting = new JMenu("Mount...");
+                    JMenu menuClamp = new JMenu("Mag Clamp...");
+                    JMenu menuLoadAll = new JMenu("Load All Into");
                     boolean canLoad = false;
+                	boolean allHaveMagClamp = true;
+                	for (Entity b : entities) {
+                		if (!(b instanceof BattleArmor)) {
+                			continue;
+                		}
+                		BattleArmor ba = (BattleArmor) b;
+                		if (!ba.canDoMechanizedBA()) {
+                			allHaveMagClamp = false;
+                		}
+                	}
                     for (Entity loader : clientgui.getClient().game
                             .getEntitiesVector()) {
                         // TODO don't allow capital fighters to load one another
@@ -3303,50 +3331,96 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             }
                         }
                         if (loadable) {
-                            canLoad = true;
+                        	canLoad = true;
+                        	menuItem = new JMenuItem(loader.getShortName());
+                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                            menuItem.addActionListener(this);
+                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                        	menuLoadAll.add(menuItem);
                             JMenu subMenu = new JMenu(loader.getShortName());
-                            Entity en = entities.firstElement();
-                            for (Bay bay : loader.getTransportBays()) {
-                            	if (bay.canLoad(en)) {
-		                            menuItem = new JMenuItem("Bay #"+bay.getBayNumber()+" (Free Slots: "+(int)loader.getBayById(bay.getBayNumber()).getUnused()+")");
-		                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":" + bay.getBayNumber());
-		                            menuItem.addActionListener(this);
-		                            menuItem.setEnabled((isOwner || isBot)
-		                                    && allUnloaded);
-		                            subMenu.add(menuItem);
-                            	}
-                            }
-                            if (allBattleArmor && loader.hasBattleArmorHandles()) {
-                            	menuItem = new JMenuItem("Battle Armor Handles");
-	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-	                            menuItem.addActionListener(this);
-	                            menuItem.setEnabled((isOwner || isBot)
-	                                    && allUnloaded);
-	                            subMenu.add(menuItem);
-                            }
                             if (loader instanceof FighterSquadron && allCapFighter) {
                             	menuItem = new JMenuItem("Join "+loader.getShortName());
 	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
 	                            menuItem.addActionListener(this);
-	                            menuItem.setEnabled((isOwner || isBot)
-	                                    && allUnloaded);
-	                            subMenu.add(menuItem);
-                            }
-                         // This doesn't currently work since Docking Collars are disabled.
-                            if (loader instanceof Jumpship && allDropships) {
-                            	menuItem = new JMenuItem("Dock With "+loader.getShortName());
+	                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+	                            menuSquadrons.add(menuItem);
+                            } else if (loader instanceof Jumpship && allDropships) {
+                            	menuItem = new JMenuItem(loader.getShortName()+" (Free Collars: "+loader.getDocks()+")");
 	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
 	                            menuItem.addActionListener(this);
-	                            menuItem.setEnabled((isOwner || isBot)
-	                                    && allUnloaded);
-	                            subMenu.add(menuItem);
+	                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+	                            menuDocking.add(menuItem);
+                            } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()) {
+                            	for (Transporter t : loader.getTransports()) {
+                            		if ((t instanceof ClampMountMech || t instanceof ClampMountTank) && allHaveMagClamp) {
+                                    	menuItem = new JMenuItem("Onto "+loader.getShortName());
+        	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+        	                            menuItem.addActionListener(this);
+        	                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+        	                            menuClamp.add(menuItem);
+                            		}
+                            	}
+                            } else if (allInfantry) {
+                            	menuItem = new JMenuItem(loader.getShortName());
+	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+	                            menuItem.addActionListener(this);
+	                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+	                            menuMounting.add(menuItem);
                             }
-                            menu.add(subMenu);
+                            Entity en = entities.firstElement();
+                            if (allSameEntityType && !allDropships) {
+	                            for (Transporter t : loader.getTransports()) {
+	                            	if (t.canLoad(en)) {
+	                            		if (t instanceof Bay) {
+	                            			Bay bay = (Bay)t;
+	                            			menuItem = new JMenuItem("Into Bay #"+bay.getBayNumber()+" (Free Slots: "+(int)loader.getBayById(bay.getBayNumber()).getUnused()+")");
+	                            			menuItem.setActionCommand("LOAD|" + loader.getId() + ":" + bay.getBayNumber());
+	                            		/*} else {
+	                            			menuItem = new JMenuItem(t.getClass().getName()+"Transporter");
+	        	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+	                            		}*/
+			                            menuItem.addActionListener(this);
+			                            menuItem.setEnabled((isOwner || isBot)
+			                                    && allUnloaded);
+			                            subMenu.add(menuItem);
+	                            		}
+	                            	}
+	                            }
+	                            if (subMenu.getMenuComponentCount() > 0) {
+	                            	menu.add(subMenu);
+	                            }
+                            }
                         }
                     }
                     if (canLoad) {
-                        menu.setEnabled((isOwner || isBot) && allUnloaded);
-                        popup.add(menu);
+                    	if (menu.getMenuComponentCount() > 0) {
+                            menu.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menu);
+                        }
+                    	if (menuDocking.getMenuComponentCount() > 0) {
+                            menuDocking.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menuDocking);
+                        }
+                    	if (menuSquadrons.getMenuComponentCount() > 0) {
+                            menuSquadrons.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menuSquadrons);
+                        }
+                    	if (menuMounting.getMenuComponentCount() > 0) {
+                            menuMounting.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menuMounting);
+                        }
+                    	if (menuClamp.getMenuComponentCount() > 0) {
+                            menuClamp.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menuClamp);
+                        }
+                    	if (menuLoadAll.getMenuComponentCount() > 0
+                    			&& !(menuMounting.getMenuComponentCount() > 0
+                    					|| menuSquadrons.getMenuComponentCount() > 0
+                    					|| menuDocking.getMenuComponentCount() > 0
+                    					|| menu.getMenuComponentCount() > 0)) {
+                            menuLoadAll.setEnabled((isOwner || isBot) && allUnloaded);
+                        	popup.add(menuLoadAll);
+                        }
                     }
                 } else if (allLoaded) {
                     menuItem = new JMenuItem("Unload");

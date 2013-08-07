@@ -735,13 +735,11 @@ public class Game implements Serializable, IGame {
                 continue;
             }
 
-            Vector<Entity> roundVec = deploymentTable.get(new Integer(ent
-                    .getDeployRound()));
+            Vector<Entity> roundVec = deploymentTable.get(new Integer(ent.getDeployRound()));
 
             if (null == roundVec) {
                 roundVec = new Vector<Entity>();
-                deploymentTable
-                        .put(new Integer(ent.getDeployRound()), roundVec);
+                deploymentTable.put(new Integer(ent.getDeployRound()), roundVec);
             }
 
             roundVec.addElement(ent);

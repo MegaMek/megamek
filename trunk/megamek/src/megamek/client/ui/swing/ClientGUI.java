@@ -591,6 +591,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             doSaveUnit();
         }
+        if ("fileUnitsOpen".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            loadListFile();
+        }
+        if ("fileUnitsClear".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            deleteAllUnits(client);
+        }
+        if ("fileUnitsReinforce".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            loadListFile(client.getLocalPlayer(), true);
+        }
         if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
         }
@@ -1179,6 +1188,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * @param Player
      */
     protected void loadListFile(Player player) {
+    	loadListFile(player, false);
+    }
+    
+    /**
+     * Allow the player to select a MegaMek Unit List file to load. The
+     * <code>Entity</code>s in the file will replace any that the player has
+     * already selected. As such, this method should only be called in the chat
+     * lounge. The file can record damage sustained, non- standard munitions
+     * selected, and ammunition expended in a prior engagement.
+     *
+     * @param Player
+     */
+    protected void loadListFile(Player player, boolean reinforce) {
+    	boolean addedUnits = false;
+    	
         // Build the "load unit" dialog, if necessary.
         if (dlgLoadList == null) {
             dlgLoadList = new JFileChooser(".");
@@ -1216,12 +1240,37 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
+                    if (reinforce) {
+                    	if (client.game.getPhase().isBefore(IGame.Phase.PHASE_TARGETING)) {
+                    		entity.setDeployRound(client.game.getRoundCount());
+                    	} else {
+                    		entity.setDeployRound(client.game.getRoundCount()+1);
+                    	}
+                    }
                     client.sendAddEntity(entity);
                 }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
             }
+        }
+        
+        // If we've added reinforcements, then we need to set the round deployment up again.
+        if (addedUnits && reinforce) {
+        	client.game.setupRoundDeployment();
+        	client.sendResetRoundDeployment();
+        }
+    }
+    
+    public void deleteAllUnits(Client c) {
+    	ArrayList<Entity> currentUnits = c.game.getPlayerEntities(
+                c.getLocalPlayer(), false);
+
+        // Walk through the vector, deleting the entities.
+        Iterator<Entity> entities = currentUnits.iterator();
+        while (entities.hasNext()) {
+            final Entity entity = entities.next();
+            c.sendDeleteEntity(entity.getId());
         }
     }
 

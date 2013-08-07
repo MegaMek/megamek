@@ -713,6 +713,13 @@ public class Client implements IClientCommandHandler {
                 player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
+    
+    /**
+     * Reset round deployment packet
+     */
+    public void sendResetRoundDeployment() {
+    	send(new Packet(Packet.COMMAND_RESET_ROUND_DEPLOYMENT));
+    }
 
     /**
      * Sends an "add entity" packet

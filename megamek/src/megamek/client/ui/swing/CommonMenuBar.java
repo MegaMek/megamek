@@ -63,6 +63,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      * When we have a unit list, set this to <code>true</code>.
      */
     private boolean hasUnitList;
+    private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
@@ -269,6 +270,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // Create the Unit List sub-menu.
         submenu = new JMenu(Messages.getString("CommonMenuBar.UnitListMenu")); //$NON-NLS-1$
         menu.add(submenu);
+        fileUnitsReinforce = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsReinforce")); //$NON-NLS-1$
+        fileUnitsReinforce.addActionListener(this);
+        fileUnitsReinforce.setActionCommand("fileUnitsReinforce"); //$NON-NLS-1$
+        submenu.add(fileUnitsReinforce);
         fileUnitsOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
         fileUnitsOpen.addActionListener(this);
@@ -797,6 +803,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fileUnitsClear.setEnabled(false);
           //  fileUnitsSave.setEnabled(false);
         }
+        // Reinforcements cannot be added in the lounge!
+        fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
 
         // If an entity has been selected, we can view it.
         if (entity != null) {
@@ -818,7 +826,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // We're in-game.
         else if ((phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
                 || (phase == IGame.Phase.PHASE_DEPLOY_MINEFIELDS)
-                || (phase == IGame.Phase.PHASE_MOVEMENT) || (phase == IGame.Phase.PHASE_FIRING)
+                || (phase == IGame.Phase.PHASE_MOVEMENT)
+                || (phase == IGame.Phase.PHASE_FIRING)
                 || (phase == IGame.Phase.PHASE_PHYSICAL)
                 || (phase == IGame.Phase.PHASE_OFFBOARD)
                 || (phase == IGame.Phase.PHASE_TARGETING)
@@ -841,10 +850,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         }
 
         // We can only view the round report in certain phases.
-        if ((phase == IGame.Phase.PHASE_INITIATIVE) || (phase == IGame.Phase.PHASE_MOVEMENT)
-                || (phase == IGame.Phase.PHASE_FIRING) || (phase == IGame.Phase.PHASE_PHYSICAL)
+        if ((phase == IGame.Phase.PHASE_INITIATIVE)
+        		|| (phase == IGame.Phase.PHASE_MOVEMENT)
+                || (phase == IGame.Phase.PHASE_FIRING)
+                || (phase == IGame.Phase.PHASE_PHYSICAL)
                 || (phase == IGame.Phase.PHASE_OFFBOARD)
-                || (phase == IGame.Phase.PHASE_TARGETING) || (phase == IGame.Phase.PHASE_END)
+                || (phase == IGame.Phase.PHASE_TARGETING)
+                || (phase == IGame.Phase.PHASE_END)
                 || (phase == IGame.Phase.PHASE_DEPLOYMENT)) {
             viewRoundReport.setEnabled(true);
         } else {

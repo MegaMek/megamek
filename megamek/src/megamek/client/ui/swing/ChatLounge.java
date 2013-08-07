@@ -1298,6 +1298,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         // buttons if the local player has units.
         butSaveList.setEnabled(localUnits);
         butDeleteAll.setEnabled(localUnits);
+        clientgui.getMenuBar().setUnitList(localUnits);
     }
 
     public static String formatPilotCompact(Crew pilot, boolean blindDrop) {
@@ -2267,15 +2268,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-            ArrayList<Entity> currentUnits = c.game.getPlayerEntities(
-                    c.getLocalPlayer(), false);
-
-            // Walk through the vector, deleting the entities.
-            Iterator<Entity> entities = currentUnits.iterator();
-            while (entities.hasNext()) {
-                final Entity entity = entities.next();
-                c.sendDeleteEntity(entity.getId());
-            }
+            clientgui.deleteAllUnits(c);
         } else if (ev.getSource().equals(butOptions)) {
             // Make sure the game options dialog is editable.
             if (!clientgui.getGameOptionsDialog().isEditable()) {

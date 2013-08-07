@@ -26611,6 +26611,9 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
+            case Packet.COMMAND_RESET_ROUND_DEPLOYMENT:
+            	game.setupRoundDeployment();
+            	break;
         }
     }
 

@@ -101,6 +101,8 @@ public class Packet {
     public static final int COMMAND_SENDING_AVAILABLE_MAP_SIZES = 570;
 
     public static final int COMMAND_ENTITY_LOAD = 580;
+    
+    public static final int COMMAND_RESET_ROUND_DEPLOYMENT = 600;
 
 
     private int command;

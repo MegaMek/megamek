@@ -61,6 +61,7 @@ v0.35.41-dev (SVN)
 + Added entity short names to the exceptions in MechFileParser.java so that we
     know WHICH entity has the issue
 + Bug: verifier does not check for ECM for stealth armor/void sig armor
++ Bug: [3812]: Active Probe Incorrect Intro Date.
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

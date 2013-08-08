@@ -648,6 +648,10 @@ public class FighterSquadron extends Aero {
     public String getUnusedString() {
         return " - " + (MAX_SIZE - fighters.size()) + " units";
     }
+    
+    public double getUnused(){
+        return MAX_SIZE - fighters.size();
+    }
 
     /**
      * Determine if transported units prevent a weapon in the given location
@@ -691,5 +695,9 @@ public class FighterSquadron extends Aero {
     @Override
     public int getCargoMpReduction() {
         return 0;
+    }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_FIGHTER_SQUADRON;
     }
 }

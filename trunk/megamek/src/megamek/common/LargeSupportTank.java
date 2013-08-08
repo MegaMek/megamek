@@ -367,4 +367,9 @@ public class LargeSupportTank extends SupportTank {
         }
         return false;
     }
+    
+    
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_LARGE_SUPPORT_TANK;
+    }
 }

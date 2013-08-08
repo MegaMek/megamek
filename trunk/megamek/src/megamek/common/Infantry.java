@@ -1452,4 +1452,8 @@ public class Infantry extends Entity {
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
 
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_INFANTRY;
+    }
 } // End class Infantry

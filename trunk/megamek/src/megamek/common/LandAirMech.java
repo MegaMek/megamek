@@ -96,4 +96,8 @@ public class LandAirMech extends BipedMech {
     public int getFighterModeRunMP() {
         return getFighterModeRunMP(true, false);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_MECH | Entity.ETYPE_LAND_AIR_MECH;
+    }
 }

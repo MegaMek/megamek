@@ -183,6 +183,10 @@ public final class TroopSpace implements Transporter {
     public String getUnusedString() {
         return "Troops - " + currentSpace + " tons";
     }
+    
+    public double getUnused(){
+        return currentSpace;
+    }
 
     /**
      * Determine if transported units prevent a weapon in the given location

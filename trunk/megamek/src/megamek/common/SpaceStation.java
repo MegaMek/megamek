@@ -147,5 +147,9 @@ public class SpaceStation extends Jumpship {
     public double getBVTypeModifier() {
         return 0.7;
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
+    }
 
 }

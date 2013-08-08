@@ -307,6 +307,8 @@ public class SupportTank extends Tank {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
 
-
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
+    }
 
 }

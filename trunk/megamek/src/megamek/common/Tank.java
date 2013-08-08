@@ -3388,4 +3388,9 @@ public class Tank extends Entity {
     public boolean isBackedIntoHullDown() {
         return m_bBackedIntoHullDown;
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_TANK;
+    }
+    
 }

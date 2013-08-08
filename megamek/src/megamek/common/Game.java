@@ -1645,13 +1645,21 @@ public class Game implements Serializable, IGame {
      *            the entity id to start at
      */
     public int getNextEntityNum(GameTurn turn, int start) {
-        for (int i = start; i < entities.size(); i++) {
+    	boolean hasLooped = false;
+    	int i = start;
+        while (!(hasLooped == true && i == start)) {
             final Entity entity = entities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
+            i++;
+            if (i == entities.size()) {
+            	i = 0;
+                hasLooped = true;
+            }
         }
-        return getFirstEntityNum(turn);
+        // return getFirstEntityNum(turn);
+        return -1;
     }
 
     /**

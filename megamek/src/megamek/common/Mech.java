@@ -7775,4 +7775,8 @@ public abstract class Mech extends Entity {
         }
         return super.getInternal(loc);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_MECH;
+    }
 }

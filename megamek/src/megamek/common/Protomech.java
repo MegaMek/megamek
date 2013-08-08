@@ -1779,4 +1779,8 @@ public class Protomech extends Entity {
     public void setEngineHit(boolean b) {
         engineHit = b;
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_PROTOMECH;
+    }
 }

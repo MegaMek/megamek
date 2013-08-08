@@ -1803,4 +1803,9 @@ public class BattleArmor extends Infantry {
         }
         return damage;
     }
+    
+    
+    public long getEntityType(){
+        return Entity.ETYPE_INFANTRY | Entity.ETYPE_BATTLEARMOR;
+    }
 } // End public class BattleArmor extends Infantry implements Serializable

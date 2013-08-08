@@ -135,5 +135,9 @@ public class ConvFighter extends Aero {
         }
         return (getEngine().getRating() / (int) weight);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
+    }
 
 }

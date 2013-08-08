@@ -880,4 +880,8 @@ public class QuadMech extends Mech {
             || (armorType[LOC_LARM] == EquipmentType.T_ARMOR_HARDENED)
             || (armorType[LOC_RARM] == EquipmentType.T_ARMOR_HARDENED);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_MECH | Entity.ETYPE_QUAD_MECH;
+    }
 }

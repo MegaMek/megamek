@@ -3963,4 +3963,7 @@ public class Aero extends Entity {
         return 0;
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_AERO;
+    }
 }

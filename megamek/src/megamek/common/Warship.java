@@ -348,4 +348,7 @@ public class Warship extends Jumpship {
         return (int)Math.ceil(this.getSI() *0.66);
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
+    }
 }

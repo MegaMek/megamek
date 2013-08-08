@@ -1151,5 +1151,9 @@ public class Jumpship extends Aero {
     public int getBattleForceStructurePoints() {
         return 1;
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
+    }
 
 }

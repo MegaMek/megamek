@@ -203,4 +203,8 @@ public class TeleMissile extends Aero {
         return false;
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
+    }
+    
 }

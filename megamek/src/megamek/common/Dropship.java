@@ -1529,4 +1529,8 @@ public class Dropship extends SmallCraft {
         }
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT | Entity.ETYPE_DROPSHIP;
+    }
+    
 }

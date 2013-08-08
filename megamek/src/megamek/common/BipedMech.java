@@ -850,4 +850,8 @@ public class BipedMech extends Mech {
             || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
+    }
+    
 }

@@ -172,4 +172,8 @@ public class FixedWingSupport extends ConvFighter {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
+    }
 }

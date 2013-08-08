@@ -212,6 +212,14 @@ import java.util.Vector;
     public final String getUnusedString() {
         return getVacancyString(null != troopers);
     }
+    
+    public double getUnused(){
+        if (troopers == null){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * Determine if transported units prevent a weapon in the given location

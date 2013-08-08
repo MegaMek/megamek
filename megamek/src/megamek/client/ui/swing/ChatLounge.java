@@ -39,9 +39,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -81,6 +83,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
@@ -101,6 +104,7 @@ import megamek.common.Infantry;
 import megamek.common.InfantryBay;
 import megamek.common.Jumpship;
 import megamek.common.MapSettings;
+import megamek.common.Mech;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
@@ -3100,25 +3104,89 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             	int id = Integer.parseInt(stLoad.nextToken());
             	int bayNumber = Integer.parseInt(stLoad.nextToken());
                 Entity loadingEntity = clientgui.getClient().getEntity(id);
-                if (bayNumber != -1) {
-	                double capacity = loadingEntity.getBayById(bayNumber).getUnused();
-	                if (entities.size() <= capacity){            
-	                    for (Entity e : entities) {
-	                        loader(e, id, bayNumber);
-	                    }
-	                } else{
-	                    JOptionPane.showMessageDialog(clientgui.frame,
-	                            Messages.getString("LoadingBay.toomany") + //$NON-NLS-2$
-	                              " " + (int)capacity + ".",//$NON-NLS-2$
-	                            Messages.getString("LoadingBay.error"),//$NON-NLS-2$
-	                            JOptionPane.ERROR_MESSAGE);
-	                }
-                } else {
-                	for (Entity e : entities) {
-                		if (loadingEntity.canLoad(e)) {
-                			loader(e, id, bayNumber);
-                		}
-                	}
+                
+                double capacity;
+                boolean hasEnoughCargoCapacity = false;
+                String errorMessage = "";
+                if (bayNumber != -1){
+                    Bay bay = loadingEntity.getBayById(bayNumber);
+                    capacity = bay.getUnused();   
+                    hasEnoughCargoCapacity = entities.size() <= capacity;
+                    errorMessage = Messages.getString("LoadingBay.baytoomany") + //$NON-NLS-2$
+                             " " + (int)capacity + ".";
+                }else {
+                    HashMap<Long,Double> capacities, counts;
+                    capacities = new HashMap<Long,Double>();
+                    counts = new HashMap<Long,Double>();
+                    //Get the counts and capacities for all present types
+                    for (Entity e : entities) {
+                        long entityType = e.getEntityType();
+                        double unitSize = 0;
+                        if ((entityType & Entity.ETYPE_MECH) != 0){
+                            entityType = Entity.ETYPE_MECH;
+                            unitSize = 1;
+                        } else if ((entityType & Entity.ETYPE_INFANTRY) != 0){
+                            entityType = Entity.ETYPE_INFANTRY;
+                            // TroopSpace uses tonnage, bays use a count
+                            if ((loadingEntity.getEntityType() & Entity.ETYPE_TANK) != 0){
+                                unitSize = e.getWeight();
+                            } else{
+                                unitSize = 1;                            
+                            }                            
+                        } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0){
+                            entityType = Entity.ETYPE_PROTOMECH;                            
+                            unitSize = 1;
+                        } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0){
+                            entityType = Entity.ETYPE_DROPSHIP;
+                            unitSize = 1;
+                        } else if ((entityType & Entity.ETYPE_JUMPSHIP) != 0){
+                            entityType = Entity.ETYPE_JUMPSHIP;
+                            unitSize = 1;
+                        } else if ((entityType & Entity.ETYPE_AERO) != 0){
+                            entityType = Entity.ETYPE_AERO;
+                            unitSize = 1;
+                        } else if ((entityType & Entity.ETYPE_TANK) != 0){
+                            entityType = Entity.ETYPE_TANK;
+                            unitSize = 1;
+                        } else {
+                            unitSize = 1;
+                        }
+                            
+                        Double count = counts.get(entityType);
+                        if (count == null){
+                            count = new Double(0);
+                        }
+                        count = count + unitSize;
+                        counts.put(entityType, count);
+                        
+                        Double cap = capacities.get(entityType);
+                        if (cap == null){
+                            cap = loadingEntity.getUnused(e);
+                            capacities.put(entityType, cap);
+                        }                        
+                    }                    
+                    hasEnoughCargoCapacity = true;                       
+                    capacity = 0;
+                    for (Long typeId : counts.keySet()){
+                        double currCount = counts.get(typeId);
+                        double currCapacity = capacities.get(typeId);
+                        if (currCount > currCapacity){
+                            hasEnoughCargoCapacity = false;
+                            capacity = currCapacity;
+                            errorMessage = Messages.getString("LoadingBay.nonbaytoomany", //$NON-NLS-2$
+                                    new Object[]{currCount,Entity.getEntityTypeName(typeId),currCapacity});
+                        }
+                    }                
+                }
+                if (hasEnoughCargoCapacity){                
+                    for (Entity e : entities) {
+                        loader(e, id, bayNumber);
+                    }
+                } else{
+                    JOptionPane.showMessageDialog(clientgui.frame,
+                            errorMessage,
+                            Messages.getString("LoadingBay.error"),//$NON-NLS-2$
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } else if (command.equalsIgnoreCase("UNLOAD")) {
                 for (Entity e : entities) {

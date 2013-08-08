@@ -546,4 +546,8 @@ public class VTOL extends Tank {
         }
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
+    }
+    
 }

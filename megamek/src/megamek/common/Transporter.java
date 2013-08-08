@@ -69,6 +69,13 @@ public interface Transporter extends Serializable {
     public boolean unload(Entity unit);
 
     /**
+     * Returns the number of unused spaces in this transporter.
+     * 
+     * @return
+     */
+    public double getUnused();
+    
+    /**
      * Return a string that identifies the unused capacity of this transporter.
      * 
      * @return A <code>String</code> meant for a human.

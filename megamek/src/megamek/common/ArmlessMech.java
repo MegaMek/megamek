@@ -95,4 +95,8 @@ public class ArmlessMech extends BipedMech {
         }
         return super.getTransferLocation(hit);
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_MECH | Entity.ETYPE_ARMLESS_MECH;
+    }
 }

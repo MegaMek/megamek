@@ -178,4 +178,8 @@ public class MechWarrior extends Infantry {
     public boolean isCrippled() {
         return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
+    }
 }

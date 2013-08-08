@@ -685,4 +685,8 @@ public class SmallCraft extends Aero {
         }
         return 3;
     }
+    
+    public long getEntityType(){
+        return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
+    }
 }

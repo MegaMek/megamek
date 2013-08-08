@@ -380,4 +380,8 @@ public class SuperHeavyTank extends Tank {
         return false;
     }
 
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
+    }
+    
 }

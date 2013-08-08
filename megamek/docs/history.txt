@@ -65,6 +65,7 @@ v0.35.41-dev (SVN)
 + Bug: Clear and Load Unit List menu items non-functional in lounge
 + RFE: Reinforcements menu option to load reinforcements mid-game
 + Bug: Next button doesn't always cycle correctly
++ Bug: Capacities aren't checked when loading multiple units in the ChatLounge.  This can lead to exceptions in Server. 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

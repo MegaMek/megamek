@@ -493,4 +493,9 @@ public class GunEmplacement extends Tank {
 
         return ((double)totalInoperable / totalWeapons) >= 0.5;
     }
+    
+    
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
+    }
 }

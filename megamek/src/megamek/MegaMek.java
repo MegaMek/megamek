@@ -318,6 +318,7 @@ public class MegaMek {
         private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb"; //$NON-NLS-1$
         private static final String OPTION_UNIT_VALIDATOR = "validate"; //$NON-NLS-1$
         private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
+        private static final String OPTION_OFFICAL_UNIT_LIST = "oul"; //$NON-NLS-1$
         private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
@@ -388,6 +389,11 @@ public class MegaMek {
             if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
                 processUnitExporter();
+            }
+
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_OFFICAL_UNIT_LIST)) {
+                nextToken();
+                processUnitExporter(true);
             }
 
             if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
@@ -570,9 +576,18 @@ public class MegaMek {
 
         @SuppressWarnings("nls")
         private void processUnitExporter() {
+        	processUnitExporter(false);
+        }
+
+        @SuppressWarnings("nls")
+        private void processUnitExporter(boolean officialUnitList) {
             String filename;
-            if (getToken() == TOK_LITERAL) {
-                filename = getTokenValue();
+            if (getToken() == TOK_LITERAL || officialUnitList) {
+            	if (officialUnitList) {
+            		filename = MechFileParser.FILENAME_OFFICIAL_UNITS;
+            	} else {
+            		filename = getTokenValue();
+            	}
                 nextToken();
 
                 if (!new File("./docs").exists()) {
@@ -582,56 +597,68 @@ public class MegaMek {
                 try {
                     File file = new File("./docs/" + filename);
                     BufferedWriter w = new BufferedWriter(new FileWriter(file));
-                    w.write("Megamek Unit Database");
-                    w.newLine();
-                    w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
-                    w.newLine();
-                    w.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump");
-                    w.newLine();
+                    if (officialUnitList) {
+	                    w.write("Megamek Official Unit List");
+	                    w.newLine();
+	                    w.write("This file can be regenerated with java -jar MegaMek.jar -oul");
+	                    w.newLine();
+	                    w.write("Format is: Chassis Model|");
+	                    w.newLine();
+                    } else {
+	                    w.write("Megamek Unit Database");
+	                    w.newLine();
+	                    w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
+	                    w.newLine();
+	                    w.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump");
+	                    w.newLine();
+                    }
 
-                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    MechSummary[] units = MechSummaryCache.getInstance(officialUnitList).getAllMechs();
                     for (MechSummary unit : units) {
                         String unitType = unit.getUnitType();
                         if (unitType.equalsIgnoreCase("mek")) {
                             unitType = "'Mech";
                         }
 
-                        w.write(unitType);
-                        w.write(",");
-                        w.write(unit.getUnitSubType());
-                        w.write(",");
-                        w.write(unit.getChassis());
-                        w.write(",");
-                        w.write(unit.getModel());
-                        w.write(",");
-                        w.write(Integer.toString(unit.getBV()));
-                        w.write(",");
-                        w.write(Long.toString(unit.getCost()));
-                        w.write(",");
-                        w.write(Long.toString(unit.getUnloadedCost()));
-                        w.write(",");
-                        w.write(Integer.toString(unit.getYear()));
-                        w.write(",");
-                        w.write(TechConstants.getLevelDisplayableName(unit.getType()));
-                        w.write(",");
-                        w.write(Float.toString(unit.getTons()));
-                        w.write(",");
-                        if (unit.isClan()) {
-                            w.write("Clan,");
+                        if (!officialUnitList) {
+	                        w.write(unitType);
+	                        w.write(",");
+	                        w.write(unit.getUnitSubType());
+	                        w.write(",");
+	                        w.write(unit.getChassis());
+	                        w.write(",");
+	                        w.write(unit.getModel());
+	                        w.write(",");
+	                        w.write(Integer.toString(unit.getBV()));
+	                        w.write(",");
+	                        w.write(Long.toString(unit.getCost()));
+	                        w.write(",");
+	                        w.write(Long.toString(unit.getUnloadedCost()));
+	                        w.write(",");
+	                        w.write(Integer.toString(unit.getYear()));
+	                        w.write(",");
+	                        w.write(TechConstants.getLevelDisplayableName(unit.getType()));
+	                        w.write(",");
+	                        w.write(Float.toString(unit.getTons()));
+	                        w.write(",");
+	                        if (unit.isClan()) {
+	                            w.write("Clan,");
+	                        } else {
+	                            w.write("IS,");
+	                        }
+	                        if (unit.isCanon()) {
+	                            w.write("Canon,");
+	                        } else {
+	                            w.write("Non-Canon,");
+	                        }
+	                        w.write(Integer.toString(unit.getWalkMp()));
+	                        w.write(",");
+	                        w.write(Integer.toString(unit.getRunMp()));
+	                        w.write(",");
+	                        w.write(Integer.toString(unit.getJumpMp()));
                         } else {
-                            w.write("IS,");
+                        	w.write(unit.getChassis()+(unit.getModel().equals("")?"|":" "+unit.getModel()+"|"));
                         }
-                        if (unit.isCanon()) {
-                            w.write("Canon,");
-                        } else {
-                            w.write("Non-Canon,");
-                        }
-                        w.write(Integer.toString(unit.getWalkMp()));
-                        w.write(",");
-                        w.write(Integer.toString(unit.getRunMp()));
-                        w.write(",");
-                        w.write(Integer.toString(unit.getJumpMp()));
-                        //w.write(unit.getChassis()+(unit.getModel().equals("")?"|":" "+unit.getModel()+"|"));
                         w.newLine();
                     }
                     w.close();

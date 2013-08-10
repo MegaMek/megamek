@@ -69,7 +69,7 @@ import megamek.common.weapons.ISSnubNosePPC;
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    private static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; //$NON-NLS-1$
+    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; //$NON-NLS-1$
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);

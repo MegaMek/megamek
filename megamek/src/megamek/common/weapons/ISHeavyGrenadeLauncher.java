@@ -48,7 +48,7 @@ public class ISHeavyGrenadeLauncher extends Weapon {
         extremeRange = 4;
         tonnage = 0.0f;
         criticals = 0;
-        bv = 1;
+        bv = 2;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
         introDate = 2100;
         techLevel.put(2100, techLevel.get(3071));

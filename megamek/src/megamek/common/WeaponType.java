@@ -392,7 +392,7 @@ public class WeaponType extends EquipmentType {
                     return RANGE_SHORT;
                 }
             }
-        }      
+        }
         return maxRange;
     }
 
@@ -1224,6 +1224,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBATaser());
         EquipmentType.addType(new CLBAHeavyFlamer());
         EquipmentType.addType(new ISBAHeavyFlamer());
+        EquipmentType.addType(new CLBALBX());
 
         // Unofficial BA Weapons
         EquipmentType.addType(new CLBearhunterSuperheavyACi());

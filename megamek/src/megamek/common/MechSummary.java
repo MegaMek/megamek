@@ -48,6 +48,7 @@ public class MechSummary implements Serializable {
     private String m_sLevel;
     private boolean canon;
     private boolean clan;
+    private boolean support;
     private int walkMp;
     private int runMp;
     private int jumpMp;
@@ -101,6 +102,10 @@ public class MechSummary implements Serializable {
 
     public boolean isClan() {
         return clan;
+    }
+
+    public boolean isSupport() {
+        return support;
     }
 
     public String getUnitSubType() {
@@ -259,11 +264,18 @@ public class MechSummary implements Serializable {
         this.clan = clan;
     }
 
+    public void setSupport(boolean support) {
+        this.support = support;
+    }
+
     public void setUnitSubType(String subType) {
         m_sUnitSubType = subType;
     }
 
     public int getWeightClass() {
+    	if (isSupport()) {
+    		return EntityWeightClass.getSupportWeightClass(m_nTons, m_sUnitType);
+    	}
         return EntityWeightClass.getWeightClass(m_nTons, m_sUnitType);
     }
 

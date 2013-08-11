@@ -33,6 +33,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -697,10 +698,10 @@ public class Server implements Runnable {
                     + MegaMek.VERSION + ", Client reports: " + version);
             needs = true;
         }
-        String ts1 = new Date(MegaMek.TIMESTAMP).toString();
-        String ts2 = new Date(timestamp).toString();
+        String ts1 = DateFormat.getInstance().format(new Date(MegaMek.TIMESTAMP));
+        String ts2 = DateFormat.getInstance().format(new Date(timestamp));
         if ((MegaMek.TIMESTAMP > 0L) && (timestamp > 0L)
-                && (timestamp != MegaMek.TIMESTAMP)) {
+                && (Math.abs(timestamp - MegaMek.TIMESTAMP) < 91)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append("\nClient/Server timestamp mismatch. Server reports: "
                         + ts1 + ", Client reports: " + ts2);

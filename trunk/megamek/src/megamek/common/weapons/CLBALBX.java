@@ -13,14 +13,13 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
-public class CLBALBX extends AmmoWeapon {
+public class CLBALBX extends Weapon {
 
     /**
      *
@@ -47,7 +46,6 @@ public class CLBALBX extends AmmoWeapon {
         introDate = 3075;
         techLevel.put(3075, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        ammoType = AmmoType.T_BA_LBX;
         flags = flags.or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_BA_WEAPON);
         techRating = RATING_F;
     }

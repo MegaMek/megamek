@@ -123,7 +123,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_AC_PRIMITIVE = 95;
     public static final int T_LRM_PRIMITIVE = 96;
     public static final int T_SRM_PRIMITIVE = 97;
-    public static final int NUM_TYPES = 98;
+    public static final int T_BA_LBX = 98;
+    public static final int NUM_TYPES = 99;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -1109,6 +1110,7 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLVGLAmmo();
         clanVGLAmmos.add(base);
         EquipmentType.addType(base);
+        EquipmentType.addType(createBALBXAmmo());
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
@@ -1287,7 +1289,7 @@ public class AmmoType extends EquipmentType {
         // mutators, and create munition types.
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanBaLrmAmmos, munitions);
-        
+
         // Create the munition types for AC rounds.
         munitions.clear();
         munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
@@ -6965,6 +6967,28 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createBALBXAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
+        ammo.name = "BA LBX Ammo";
+        ammo.shortName = "BA BLX";
+        ammo.setInternalName(ammo.name);
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_BA_LBX;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.kgPerShot = 4;
+        ammo.introDate = 3075;
+        ammo.techLevel.put(3075, ammo.techLevel.get(3067));
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        ammo.techRating = RATING_F;
 
         return ammo;
     }

@@ -361,6 +361,9 @@ public class MechSummaryCache {
         ms.setRunMp(e.getRunMP(false, false, false));
         ms.setJumpMp(e.getJumpMP(false));
         ms.setClan(e.isClan());
+        if (e instanceof SupportTank || e instanceof SupportVTOL) {
+        	ms.setSupport(true);
+        }
         if (e instanceof Mech) {
             if (((Mech) e).isIndustrial()) {
                 ms.setUnitSubType("Industrial");

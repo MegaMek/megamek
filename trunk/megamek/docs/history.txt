@@ -69,6 +69,7 @@ v0.35.41-dev (SVN)
     This can lead to exceptions in Server. 
 + Better way of creating OfficialUnitList.txt using -oul from command line
 + Bug: Heavy Grenade Launcher has wrong BV
++ Bug: BA myomber booster not being accounted for in BV calculation
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

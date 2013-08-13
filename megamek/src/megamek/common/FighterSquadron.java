@@ -652,6 +652,21 @@ public class FighterSquadron extends Aero {
     public double getUnused(){
         return MAX_SIZE - fighters.size();
     }
+    
+    /**
+     * Returns the current amount of cargo space for an entity of the given 
+     * type.
+     * @param e An entity that defines the unit class
+     * @return  The number of units of the given type that can be loaded in this
+     *   Entity
+     */
+    public double getUnused(Entity e){
+        if (e instanceof Aero){
+            return getUnused();
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * Determine if transported units prevent a weapon in the given location

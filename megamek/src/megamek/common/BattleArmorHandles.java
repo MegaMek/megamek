@@ -38,7 +38,8 @@ import java.util.Vector;
     /**
      * The troopers being carried.
      */
-    protected Entity troopers;
+    protected int troopers = -1;
+    transient IGame game;
 
     /**
      * The set of front locations that load troopers externally.
@@ -108,7 +109,6 @@ import java.util.Vector;
      * Create a set of handles.
      */
     public BattleArmorHandles() {
-        troopers = null;
     }
 
     /**
@@ -131,7 +131,7 @@ import java.util.Vector;
         }
 
         // We must have enough space for the new troopers.
-        else if (null != troopers) {
+        else if (-1 != troopers) {
             result = false;
         }
 
@@ -161,7 +161,7 @@ import java.util.Vector;
         }
 
         // Assign the unit as our carried troopers.
-        troopers = unit;
+        troopers = unit.getId();
     }
 
     /**
@@ -175,8 +175,8 @@ import java.util.Vector;
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
-        if (null != troopers) {
-            units.addElement(troopers);
+        if (-1 != troopers) {
+            units.addElement(game.getEntity(troopers));
         }
         return units;
     }
@@ -191,13 +191,14 @@ import java.util.Vector;
      */
     public final boolean unload(Entity unit) {
         // Are we carrying the unit?
-        if ((troopers == null) || !troopers.equals(unit)) {
+        Entity trooper = game.getEntity(troopers);
+        if ((trooper == null) || !trooper.equals(unit)) {
             // Nope.
             return false;
         }
 
         // Remove the troopers.
-        troopers = null;
+        troopers = -1;
         return true;
     }
 
@@ -210,11 +211,11 @@ import java.util.Vector;
      * @see megamek.common.BattleArmorHandles#getUnusedString()
      */
     public final String getUnusedString() {
-        return getVacancyString(null != troopers);
+        return getVacancyString(-1 != troopers);
     }
-    
+
     public double getUnused(){
-        if (troopers == null){
+        if (troopers == -1){
             return 1;
         } else {
             return 0;
@@ -240,7 +241,8 @@ import java.util.Vector;
         boolean result = false;
 
         // The weapon can only be blocked if we are carrying troopers.
-        if (null != troopers) {
+        Entity trooper = game.getEntity(troopers);
+        if (null != trooper) {
 
             // Is the relevant trooper alive?
             int tloc = BattleArmor.LOC_SQUAD;
@@ -255,7 +257,7 @@ import java.util.Vector;
                     tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                     break;
             }
-            if ((troopers.locations() > tloc) && (troopers.getInternal(tloc) > 0)) {
+            if ((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0)) {
                 result = true;
             }
         } // End carrying-troopers
@@ -286,14 +288,14 @@ import java.util.Vector;
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
 
         // Only check if we are carrying troopers.
-        if (null != troopers) {
+        if (null != game.getEntity(troopers)) {
 
             // See if troopers cover that location.
             // Stop after the first match.
             int[] locs = getExteriorLocs(isRear);
             for (int loop = 0; loop < locs.length; loop++) {
                 if (loc == locs[loop]) {
-                    return troopers;
+                    return game.getEntity(troopers);
                 }
             }
 
@@ -305,7 +307,7 @@ import java.util.Vector;
 
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
-        rv.add(troopers);
+        rv.add(game.getEntity(troopers));
         return rv;
     }
 
@@ -316,5 +318,9 @@ import java.util.Vector;
     @Override
     public String toString() {
         return "";
+    }
+
+    public void setGame(IGame game) {
+        this.game = game;
     }
 } // End package class BattleArmorHandles implements Transporter

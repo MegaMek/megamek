@@ -119,7 +119,7 @@ package megamek.common;
         }
 
         // We must have enough space for the new troopers.
-        else if (null != troopers) {
+        else if (-1 != troopers) {
             result = false;
         }
 

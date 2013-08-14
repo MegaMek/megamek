@@ -71,8 +71,12 @@ v0.35.41-dev (SVN)
 + Bug: Heavy Grenade Launcher has wrong BV
 + Bug: BA myomber booster not being accounted for in BV calculation
 + Bug: Support vehicle weights not considered in EntityWeightClass.java
-+ Bug: Timestamp comparison shows local times instead of GMT, and builds for different OSes can be off by a few seconds.
-+ Bug: FighterSquadron wasn't overriding getUnused(entity), and hence loading into squadrons in the chat lounge was broken after recent changes
++ Bug: Timestamp comparison shows local times instead of GMT, and builds for
+    different OSes can be off by a few seconds.
++ Bug: FighterSquadron wasn't overriding getUnused(entity), and hence loading
+    into squadrons in the chat lounge was broken after recent changes
++ keep track of loaded entity by their ID instead of by a reference to the
+    Entity object
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

@@ -78,7 +78,6 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
-import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -2266,9 +2265,9 @@ public class Server implements Runnable {
             // it here
             // because they can get dumped in the deployment phase
             if (entity.getLoadedUnits().size() > 0) {
-                Vector<Entity> v = new Vector<Entity>();
+                Vector<Integer> v = new Vector<Integer>();
                 for (Entity en : entity.getLoadedUnits()) {
-                    v.add(en);
+                    v.add(en.getId());
                 }
                 entity.setLoadedKeepers(v);
             }
@@ -3973,7 +3972,7 @@ public class Server implements Runnable {
         // pg. 86 of TW: launched fighters can move in fire in the turn they are
         // unloaded
         unit.setUnloaded(false);
-        
+
         // Place the unloaded unit onto the screen.
         unit.setPosition(pos);
 
@@ -4010,7 +4009,7 @@ public class Server implements Runnable {
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
             r.add(psr.getValue());
-            r.add(ctrlroll);            
+            r.add(ctrlroll);
             r.indent(1);
             if (ctrlroll < psr.getValue()) {
                 r.choose(false);
@@ -4039,8 +4038,8 @@ public class Server implements Runnable {
         }else{
             r = new Report(9374);
             r.subject = unit.getId();
-            r.add(unit.getDisplayName());           
-            r.indent(1); 
+            r.add(unit.getDisplayName());
+            r.indent(1);
             r.newlines++;
             addReport(r);
         }
@@ -4071,15 +4070,15 @@ public class Server implements Runnable {
 
         // Update the unloaded unit.
         entityUpdate(unit.getId());
-        
+
         // ok add another turn for the unloaded entity so that it can move
         GameTurn newTurn = new GameTurn.EntityClassTurn(
-                unit.getOwner().getId(), GameTurn.CLASS_AERO | 
+                unit.getOwner().getId(), GameTurn.CLASS_AERO |
                 GameTurn.CLASS_DROPSHIP | GameTurn.CLASS_SMALL_CRAFT);
         game.insertNextTurn(newTurn);
         // brief everybody on the turn update
         send(createTurnVectorPacket());
-             
+
         return true;
     }
 
@@ -6284,7 +6283,7 @@ public class Server implements Runnable {
                         r.add(entity.getDisplayName());
                         r.subject = entity.getId();
                         r.add(nLaunched);
-                        r.add("bay " + currentBay.getBayNumber() +" (" + 
+                        r.add("bay " + currentBay.getBayNumber() +" (" +
                                 doors + " doors)");
                         addReport(r);
                         int currentDoor = 0;
@@ -6293,27 +6292,27 @@ public class Server implements Runnable {
                         for (int fighterId : launches) {
                             // check to see if we are in the same door
                             fighterCount++;
-                            
+
                             // check for door damage
                             Report doorReport = null;
-                            if (!doorDamage && (distribution[currentDoor] > 2) && 
-                                    fighterCount > 2){
+                            if (!doorDamage && (distribution[currentDoor] > 2) &&
+                                    (fighterCount > 2)){
                                 doorReport = new Report(9378);
                                 doorReport.subject = entity.getId();
-                                doorReport.indent(2);        
+                                doorReport.indent(2);
                                 int roll = Compute.d6(2) ;
                                 doorReport.add(roll);
                                 if (roll == 2)
                                 {
-                                    doorDamage = true;                                    
-                                    doorReport.choose(true);                                    
+                                    doorDamage = true;
+                                    doorReport.choose(true);
                                     currentBay.destroyDoorNext();
                                 }else{
                                     doorReport.choose(false);
                                 }
                                 doorReport.newlines++;
                             }
-                            
+
                             if (fighterCount > distribution[currentDoor]) {
                                 // move to a new door
                                 currentDoor++;
@@ -6322,7 +6321,7 @@ public class Server implements Runnable {
                             }
                             int bonus = Math.max(0,
                                     distribution[currentDoor] - 2);
-                            
+
                             Entity fighter = game.getEntity(fighterId);
                             if (!launchUnit(entity, fighter, curPos, curFacing,
                                     step.getVelocity(), step.getAltitude(),
@@ -15817,7 +15816,7 @@ public class Server implements Runnable {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
-                // If this aero is part of a squadron, we will deal with its 
+                // If this aero is part of a squadron, we will deal with its
                 //  heat with the fighter squadron
                 if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)){
                     continue;
@@ -15922,21 +15921,21 @@ public class Server implements Runnable {
                         entity.heat = 0;
                     }
                     continue;
-                }   
-                
+                }
+
                 // Capital fighters can overheat and require control rolls
-                if (entity.isCapitalFighter() && entity.heat > 0) {                    
+                if (entity.isCapitalFighter() && (entity.heat > 0)) {
                     int penalty = (int) Math.ceil(entity.heat / 15.0);
                     game.addControlRoll(new PilotingRollData(
                             entity.getId(), penalty, "used too much heat"));
-                }   
-                
+                }
+
                 // Like other large craft, the rest of these rules don't apply
                 //  to capital fighters
                 if (entity.isCapitalFighter()){
                     continue;
                 }
-                
+
 
                 int autoShutDownHeat = 30;
                 boolean mtHeat = game.getOptions().booleanOption("tacops_heat");

@@ -42,7 +42,6 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -546,9 +545,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     other.newRound(clientgui.getClient().game.getRoundCount());
                 }
                 //if any of these were loaded in the chat lounge I need to reload them however
-                for(Entity other : ce().getLoadedKeepers()) {
-                    ce().load(other);
-                    other.setTransportId(ce().getId());
+                for(int otherId : ce().getLoadedKeepers()) {
+                    ce().load(ce().getGame().getEntity(otherId));
+                    ce().getGame().getEntity(otherId).setTransportId(ce().getId());
                 }
             }
             selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
@@ -580,7 +579,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 JOptionPane.QUESTION_MESSAGE, null,
                                 SharedUtility.getDisplayArray(choices), null);
                 other = (Entity) SharedUtility.getTargetPicked(choices, input);
-                if (!(other instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+                if (!((other instanceof BattleArmor) && ce().hasBattleArmorHandles())) {
                 	Vector<Integer> bayChoices = new Vector<Integer>();
                     for (Transporter t : ce().getTransports()) {
 	                	if (t.canLoad(other)) {
@@ -592,7 +591,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 	                for (Integer bn : bayChoices) {
 	                	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
 	                }
-	                if (bayChoices.size() > 1 && !(other instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+	                if ((bayChoices.size() > 1) && !((other instanceof BattleArmor) && ce().hasBattleArmorHandles())) {
 	                	String bayString = (String) JOptionPane.showInputDialog(
 	                				clientgui,
 	                				Messages
@@ -604,7 +603,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 	                	int bayNum = Integer.parseInt(bayString.substring(0, bayString.indexOf(" ")));
 	                	other.setTargetBay(bayNum);
 	                	// We need to update the entity here so that the server knows about our target bay
-	                	clientgui.getClient().sendUpdateEntity(other); 
+	                	clientgui.getClient().sendUpdateEntity(other);
 	                } else if (other != null) {
 	                	other.setTargetBay(-1); // Safety set!
 	                }

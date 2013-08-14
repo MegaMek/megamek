@@ -37,11 +37,12 @@ public class Bay implements Transporter {
     protected int loadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
     int bayNumber = 0;
+    transient IGame game = null;
 
     /**
      * The troops being carried.
      */
-    /* package */Vector<Entity> troops = new Vector<Entity>();
+    /* package */Vector<Integer> troops = new Vector<Integer>();
 
     /**
      * The total amount of space available for troops.
@@ -162,12 +163,12 @@ public class Bay implements Transporter {
         }
 
         currentSpace -= 1;
-        if(unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT && unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+        if((unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE)) {
                 loadedThisTurn += 1;
         }
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
     /**
@@ -178,10 +179,13 @@ public class Bay implements Transporter {
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
-    @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        return (Vector<Entity>) troops.clone();
+        Vector<Entity> loaded = new Vector<Entity>();
+        for (int unit : troops) {
+            loaded.add(game.getEntity(unit));
+        }
+        return loaded;
     }
 
     /**
@@ -193,7 +197,7 @@ public class Bay implements Transporter {
         Vector<Entity> launchable = new Vector<Entity>();
 
         for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = troops.elementAt(i);
+            Entity nextUnit = game.getEntity(troops.elementAt(i));
             if (nextUnit.getRecoveryTurn() == 0) {
                 launchable.add(nextUnit);
             }
@@ -210,7 +214,7 @@ public class Bay implements Transporter {
         Vector<Entity> droppable = new Vector<Entity>();
 
         for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = troops.elementAt(i);
+            Entity nextUnit = game.getEntity(troops.elementAt(i));
             if (nextUnit.canAssaultDrop()) {
                 droppable.add(nextUnit);
             }
@@ -228,7 +232,7 @@ public class Bay implements Transporter {
 
         // TODO: we need to handle aeros and VTOLs differently
         for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = troops.elementAt(i);
+            Entity nextUnit = game.getEntity(troops.elementAt(i));
             unloadable.add(nextUnit);
         }
 
@@ -270,7 +274,7 @@ public class Bay implements Transporter {
     public String getUnusedString() {
         return getUnusedString(true);
     }
-    
+
     public double getUnused() {
     	return currentSpace;
     }
@@ -364,6 +368,10 @@ public class Bay implements Transporter {
 
     public int getBayNumber() {
         return bayNumber;
+    }
+
+    public void setGame(IGame game) {
+        this.game = game;
     }
 
 } // End package class TroopSpace implements Transporter

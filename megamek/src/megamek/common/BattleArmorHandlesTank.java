@@ -64,7 +64,8 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
         boolean result = false;
 
         // The weapon can only be blocked if we are carrying troopers.
-        if (null != troopers) {
+        Entity trooper = game.getEntity(troopers);
+        if (null != trooper) {
 
             // Is the relevant trooper alive?
             int tloc = BattleArmor.LOC_SQUAD;
@@ -83,8 +84,8 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                     tloc2 = BattleArmor.LOC_TROOPER_2;
                     break;
             }
-            if (((troopers.locations() > tloc) && (troopers.getInternal(tloc) > 0))
-                    || ((troopers.locations() > tloc2) && (troopers
+            if (((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0))
+                    || ((trooper.locations() > tloc2) && (trooper
                             .getInternal(tloc2) > 0))) {
                 result = true;
             }

@@ -109,7 +109,7 @@ public final class SmallCraftBay extends Bay {
         currentSpace -= 1;
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
     // Recovery is different from loading in that it uses up a recovery slot
@@ -126,9 +126,10 @@ public final class SmallCraftBay extends Bay {
         closeSlot();
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
+    @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
             return "Small Craft - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " units (" : " unit (") + getRecoverySlots() + " recovery open)";

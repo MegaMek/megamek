@@ -111,7 +111,7 @@ public final class ASFBay extends Bay {
         currentSpace -= 1;
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
     // Recovery is different from loading in that it uses up a recovery slot
@@ -129,7 +129,7 @@ public final class ASFBay extends Bay {
         closeSlot();
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
     @Override

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -30,7 +30,7 @@ public interface Transporter extends Serializable {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
@@ -39,7 +39,7 @@ public interface Transporter extends Serializable {
 
     /**
      * Load the given unit.
-     * 
+     *
      * @param unit - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
      *                <code>IllegalArgumentException</code> exception will be
@@ -50,7 +50,7 @@ public interface Transporter extends Serializable {
     /**
      * Get a <code>Vector</code> of the units currently loaded into this
      * payload.
-     * 
+     *
      * @return A <code>List</code> of loaded <code>Entity</code> units.
      *         This list will never be <code>null</code>, but it may be
      *         empty. The returned <code>List</code> is independant from the
@@ -61,7 +61,7 @@ public interface Transporter extends Serializable {
 
     /**
      * Unload the given unit.
-     * 
+     *
      * @param unit - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
@@ -70,14 +70,14 @@ public interface Transporter extends Serializable {
 
     /**
      * Returns the number of unused spaces in this transporter.
-     * 
+     *
      * @return
      */
     public double getUnused();
-    
+
     /**
      * Return a string that identifies the unused capacity of this transporter.
-     * 
+     *
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString();
@@ -85,7 +85,7 @@ public interface Transporter extends Serializable {
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     * 
+     *
      * @param loc - the <code>int</code> location attempting to fire.
      * @param isRear - a <code>boolean</code> value stating if the given
      *            location is rear facing; if <code>false</code>, the
@@ -100,7 +100,7 @@ public interface Transporter extends Serializable {
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
-     * 
+     *
      * @param loc - the <code>int</code> location hit by attack.
      * @param isRear - a <code>boolean</code> value stating if the given
      *            location is rear facing; if <code>false</code>, the
@@ -120,6 +120,8 @@ public interface Transporter extends Serializable {
      * @return the MP reduction due to cargo carried by this transporter
      */
     public int getCargoMpReduction();
+
+    public void setGame(IGame game);
 
 } // End public interface Transporter
 

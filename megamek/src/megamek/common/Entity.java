@@ -70,58 +70,58 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private static final long serialVersionUID = 1430806396279853295L;
 
-    /** Entity Type Id Definitions 
+    /** Entity Type Id Definitions
      *   These are used to identify the type of Entity, such as 'mech or aero.
-     *   
+     *
      */
     public static final long ETYPE_MECH = 1L;
     public static final long ETYPE_BIPED_MECH = 1L << 1;
     public static final long ETYPE_LAND_AIR_MECH = 1L << 2;
     public static final long ETYPE_QUAD_MECH = 1L << 3;
     public static final long ETYPE_ARMLESS_MECH = 1L << 4;
-    
-    
+
+
     public static final long ETYPE_AERO = 1L << 5;
-    
+
     public static final long ETYPE_JUMPSHIP = 1L << 6;
     public static final long ETYPE_WARSHIP = 1L << 7;
     public static final long ETYPE_SPACE_STATION = 1L << 8;
-    
+
     public static final long ETYPE_CONV_FIGHTER = 1L << 9;
     public static final long ETYPE_FIXED_WING_SUPPORT = 1L << 10;
-    
-    public static final long ETYPE_FIGHTER_SQUADRON = 1L << 11;     
-    
+
+    public static final long ETYPE_FIGHTER_SQUADRON = 1L << 11;
+
     public static final long ETYPE_SMALL_CRAFT = 1L << 12;
     public static final long ETYPE_DROPSHIP = 1L << 13;
-    
+
     public static final long ETYPE_TELEMISSILE = 1L << 14;
-    
-    
+
+
     public static final long ETYPE_INFANTRY = 1L << 15;
     public static final long ETYPE_BATTLEARMOR = 1L << 16;
     public static final long ETYPE_MECHWARRIOR = 1L << 17;
-    
-    
+
+
     public static final long ETYPE_PROTOMECH = 1L << 18;
-    
-    
+
+
     public static final long ETYPE_TANK = 1L << 19;
-    
+
     public static final long ETYPE_GUN_EMPLACEMENT = 1L << 20;
-    
+
     public static final long ETYPE_SUPER_HEAVY_TANK = 1L << 21;
-    
+
     public static final long ETYPE_SUPPORT_TANK = 1L << 22;
     public static final long ETYPE_LARGE_SUPPORT_TANK = 1L << 23;
-    
+
     public static final long ETYPE_VTOL = 1L << 24;
     public static final long ETYPE_SUPPORT_VTOL = 1L << 25;
-            
-    
-    
-    
-    
+
+
+
+
+
     public static final int NONE = -1;
 
     public static final int LOC_NONE = -1;
@@ -397,9 +397,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean loadedThisTurn = false;
 
     /**
-     * Need to keep a vector of entities loaded in the chat lounge
+     * Need to keep a vector of entity IDs loaded in the chat lounge
      */
-    private Vector<Entity> loadedKeepers = new Vector<Entity>();
+    private Vector<Integer> loadedKeepers = new Vector<Integer>();
 
     /**
      * The id of the <code>Entity</code> that is the current target of a swarm
@@ -6954,9 +6954,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return capacity;
     }
-    
+
     /**
-     * Returns the current amount of cargo space for an entity of the given 
+     * Returns the current amount of cargo space for an entity of the given
      * type.
      * @param e An entity that defines the unit class
      * @return  The number of units of the given type that can be loaded in this
@@ -6971,8 +6971,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return capacity;
     }
-    
-    
+
+
     /**
      * Return a string that identifies the unused capacity of this transporter.
      *
@@ -11450,11 +11450,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
-    public Vector<Entity> getLoadedKeepers() {
+    public Vector<Integer> getLoadedKeepers() {
         return loadedKeepers;
     }
 
-    public void setLoadedKeepers(Vector<Entity> v) {
+    public void setLoadedKeepers(Vector<Integer> v) {
         loadedKeepers = v;
     }
 
@@ -12301,9 +12301,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setTargetBay(int tb) {
         targetBay = tb;
     }
-    
+
     public abstract long getEntityType();
-    
+
     public static String getEntityTypeName(long typeId){
         if(typeId == ETYPE_MECH){
             return "Mech";
@@ -12314,7 +12314,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (typeId == ETYPE_QUAD_MECH){
             return "Quad Mech";
         } else if (typeId == ETYPE_ARMLESS_MECH){
-            return "Armless Mech";            
+            return "Armless Mech";
         } else if (typeId == ETYPE_AERO){
             return "Aerospace fighter";
         } else if (typeId == ETYPE_JUMPSHIP){
@@ -12327,24 +12327,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Convetional Fighter";
         } else if (typeId == ETYPE_FIXED_WING_SUPPORT){
             return "Fixed Wing Support";
-        } else if (typeId == ETYPE_FIGHTER_SQUADRON){     
+        } else if (typeId == ETYPE_FIGHTER_SQUADRON){
             return "Fighter squadron";
         } else if (typeId == ETYPE_SMALL_CRAFT){
             return "Small craft";
         } else if (typeId == ETYPE_DROPSHIP){
             return "Dropship";
         } else if (typeId == ETYPE_TELEMISSILE){
-            return "Telemissile";            
+            return "Telemissile";
         } else if (typeId == ETYPE_INFANTRY){
             return "Infantry";
         } else if (typeId == ETYPE_BATTLEARMOR){
             return "Battlearmor";
         } else if (typeId == ETYPE_MECHWARRIOR){
-            return "Mechwarrior";            
+            return "Mechwarrior";
         } else if (typeId == ETYPE_PROTOMECH){
-            return "Protomech";            
+            return "Protomech";
         } else if (typeId == ETYPE_TANK){
-            return "Tank";            
+            return "Tank";
         } else if (typeId == ETYPE_GUN_EMPLACEMENT){
             return "Gun Emplacement";
         } else if (typeId == ETYPE_SUPER_HEAVY_TANK){
@@ -12359,8 +12359,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Support VTOL";
         } else{
             return "Unknown";
-        }       
+        }
     }
-    
+
 }
-  

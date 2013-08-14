@@ -77,6 +77,10 @@ v0.35.41-dev (SVN)
     into squadrons in the chat lounge was broken after recent changes
 + keep track of loaded entity by their ID instead of by a reference to the
     Entity object
++ Bug: NPE if a pilot has too many skills and abilities
++ Remove binary saves, all save files will be gzipped xml from here forward.
+    Leaving .sav support in the file filters so that people can unzip and edit their
+    xml save, and then reload it without having to gzip it back up
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

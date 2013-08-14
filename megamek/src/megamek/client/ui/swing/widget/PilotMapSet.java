@@ -43,7 +43,7 @@ import megamek.common.util.DirectoryItems;
 public class PilotMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***"; //$NON-NLS-1$
-    private static int N_ADV = 24;
+    private static int N_ADV = 35;
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;

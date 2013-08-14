@@ -1149,12 +1149,6 @@ public class Server implements Runnable {
             getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
 
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    new FileOutputStream(sFinalFile));
-
-            oos.writeObject(game);
-            oos.flush();
-            oos.close();
             String xml = xstream.toXML(game);
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(sFinalFile+".gz"));
             gzo.write(xml.getBytes("UTF-8"));
@@ -1193,8 +1187,11 @@ public class Server implements Runnable {
      */
     public void sendLoadGame(int connId, String sFile) {
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav")) {
+        if (!sFinalFile.endsWith(".sav") && !sFinalFile.endsWith(".sav.gz")) {
             sFinalFile = sFile + ".sav";
+        }
+        if (!sFinalFile.endsWith(".gz")) {
+        	sFinalFile = sFinalFile + ".sav";
         }
         send(connId, new Packet(Packet.COMMAND_LOAD_SAVEGAME,
                 new Object[] { sFinalFile }));
@@ -1211,16 +1208,8 @@ public class Server implements Runnable {
     public boolean loadGame(File f) {
         System.out.println("s: loading saved game file '" + f + '\'');
         try {
-            if (f.getName().endsWith(".sav")) {
-                ObjectInputStream ois = new ObjectInputStream(
-                        new FileInputStream(f));
-                game = (IGame) ois.readObject();
-                ois.close();
-            } else if (f.getName().endsWith(".gz")) {
-                XStream xstream = new XStream();
-                game = (IGame) xstream.fromXML(new GZIPInputStream(new FileInputStream(f)));
-            }
-
+            XStream xstream = new XStream();
+            game = (IGame) xstream.fromXML(new GZIPInputStream(new FileInputStream(f)));
         } catch (Exception e) {
             System.err.println("Unable to load file: " + f);
             e.printStackTrace();

@@ -1625,12 +1625,20 @@ public class Game implements Serializable, IGame {
      * none can.
      * 
      * @param start
-     *            the index number to start at
+     *            the index number to start at (not an Entity Id)
      */
     public Entity getNextEntity(int start) {
-        return getEntity(getNextEntityNum(getTurn(), start));
+        int entityId = entities.get(start).getId();
+        return getEntity(getNextEntityNum(getTurn(), entityId));
     }
 
+    /**
+     * Returns the Entity id of the next entity that can move during the current
+     * turn.
+     * 
+     * @param start
+     *              the Entity Id to start at
+     */
     public int getNextEntityNum(int start) {
         return getNextEntityNum(getTurn(), start);
     }
@@ -1645,9 +1653,14 @@ public class Game implements Serializable, IGame {
      *            the entity id to start at
      */
     public int getNextEntityNum(GameTurn turn, int start) {
-    	boolean hasLooped = false;
-    	int i = start;
-        while (!(hasLooped == true && i == start)) {
+    	boolean hasLooped = false;    	
+    	int i = (entities.indexOf(entityIds.get(start)) + 1) % entities.size();    	
+    	if (i == -1){
+    	    //This means we were given an invalid entity ID, punt
+            return -1;
+        }
+    	int startingIndex = i;    	
+        while (!(hasLooped == true && i == startingIndex)) {
             final Entity entity = entities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();

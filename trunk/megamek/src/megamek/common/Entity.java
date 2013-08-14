@@ -751,7 +751,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 setOwner(player);
             }
         }
-
+        // also set game for our transports
+        // they need it to return correct entites, because they store just the
+        // IDs
+        for (Transporter transport : getTransports()) {
+            transport.setGame(game);
+        }
         // Also set game for each entity "loaded" in this entity.
         for (Targetable target : getLoadedUnits()) {
             ((Entity) target).setGame(game);
@@ -6182,90 +6187,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getMaxElevationDown() {
         return getMaxElevationChange();
-    }
-
-    /**
-     * Get a list of the class names of the <code>Transporter</code>s for the
-     * given <code>Entity</code>.
-     * <p/>
-     * This method should <strong>only</strong> be used when serializing the
-     * <code>Entity</code>.
-     *
-     * @param entity
-     *            - the <code>Entity</code> being serialized.
-     * @return a <code>String</code> listing the <code>Transporter</code> class
-     *         names of the <code>Entity</code>. This value will be empty ("")
-     *         if the entity has no <code>Transporter</code>s.
-     */
-    public static String encodeTransporters(Entity entity) {
-        StringBuffer buffer = new StringBuffer();
-        Enumeration<Transporter> iter = entity.transports.elements();
-        boolean isFirst = true;
-        while (iter.hasMoreElements()) {
-
-            // Every entry after the first gets a leading comma.
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                buffer.append(',');
-            }
-
-            // Add the next Transporter's class name.
-            Transporter transporter = iter.nextElement();
-            buffer.append(transporter.getClass().getName());
-
-            // If this is a TroopSpace transporter, get it's capacity.
-            if (transporter instanceof TroopSpace) {
-                buffer.append("=")
-                        .append(((TroopSpace) transporter).totalSpace);
-            }
-        }
-        return buffer.toString();
-    }
-
-    /**
-     * Set the <code>Transporter</code>s for the given <code>Entity</code>.
-     * <p/>
-     * This method should <strong>only</strong> be used when deserializing the
-     * <code>Entity</code>.
-     *
-     * @param entity
-     *            - the <code>Entity</code> being deserialized.
-     * @param transporters
-     *            - the <code>String</code> listing the class names of the
-     *            <code>Transporter</code>s to be set for the
-     *            <code>Entity</code>, separated by commas. This value can be
-     *            <code>null</code> or empty ("").
-     * @throws IllegalStateException
-     *             if any error occurs.
-     */
-    public static void decodeTransporters(Entity entity, String transporters)
-            throws IllegalStateException {
-
-        // Split the string on the commas, and add transporters to the Entity.
-        Enumeration<String> iter = StringUtil.splitString(transporters, ",")
-                .elements();
-        while (iter.hasMoreElements()) {
-            try {
-                String name = iter.nextElement();
-                Class<?> transporter = Class.forName(name);
-                Object object = null;
-                if (TroopSpace.class.getName().equals(name)) {
-                    // Get the tonnage of space.
-                    int tonnage = Integer.parseInt(name.substring(name
-                            .lastIndexOf("=")));
-                    object = new TroopSpace(tonnage);
-                } else {
-                    object = transporter.newInstance();
-                }
-                entity.addTransporter((Transporter) object);
-            } catch (Exception err) {
-                err.printStackTrace();
-                throw new IllegalStateException(err.getMessage());
-            }
-
-        } // Handle the next transporter
-
     }
 
     /**

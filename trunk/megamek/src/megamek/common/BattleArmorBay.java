@@ -47,6 +47,7 @@ public final class BattleArmorBay extends Bay {
      * @param space
      *            - The weight of troops (in tons) this space can carry.
      * @param bayNumber
+     * @param carrier
      */
     public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan, boolean isComStar) {
         totalSpace = space;

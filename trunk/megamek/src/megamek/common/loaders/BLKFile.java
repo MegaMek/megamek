@@ -320,11 +320,15 @@ public class BLKFile {
             } else {
                 type = "Mixed (Clan Chassis)";
             }
-            if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED) || (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+            if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED)
+                    || (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
                 type += " Advanced";
-            } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+            } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL)
+                    || (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
                 type += " Experimental";
-            } if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) || (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+            }
+            if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL)
+                    || (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                 type += " Unofficial";
             }
         } else {
@@ -424,8 +428,6 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         }
-
-
 
         Vector<Vector<String>> eq = new Vector<Vector<String>>(t.locations());
         for (int i = 0; i < t.locations(); i++) {
@@ -560,11 +562,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new CargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("liquidcargobay:", 0)) {
@@ -576,11 +578,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new LiquidCargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("insulatedcargobay:", 0)) {
@@ -592,11 +594,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new InsulatedCargoBay(size, doors,
                             bayNumber));
@@ -609,11 +611,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new RefrigeratedCargoBay(size, doors,
                             bayNumber));
@@ -626,11 +628,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new LivestockCargoBay(size, doors,
                             bayNumber));
@@ -643,11 +645,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new ASFBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("smallcraftbay:", 0)) {
@@ -659,11 +661,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new SmallCraftBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("mechbay:", 0)) {
@@ -675,11 +677,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new MechBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("lightvehiclebay:", 0)) {
@@ -691,11 +693,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new LightVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
@@ -707,11 +709,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new HeavyVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("infantrybay:", 0)) {
@@ -723,11 +725,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new InfantryBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
@@ -739,23 +741,23 @@ public class BLKFile {
                     try {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
-                    	// Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        // Find an unused bay number and use it.
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     } catch (NumberFormatException ex) {
                         // if not a number, check for c* bay
                         if (temp[2].equalsIgnoreCase("c*")) {
                             comstar = true;
                         }
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     if (temp.length == 4) {
                         if (temp[3].equalsIgnoreCase("c*")) {
@@ -773,11 +775,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new Bay(size, doors, bayNumber));
                 } else if (transporter.startsWith("protomechbay:", 0)) {
@@ -789,11 +791,11 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // Find an unused bay number and use it.
-                    	int i = 1;
-                    	while (e.getBayById(i) != null) {
-                    		i++;
-                    	}
-                    	bayNumber = i;
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
                     e.addTransporter(new ProtomechBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("crewquarters:", 0)) {

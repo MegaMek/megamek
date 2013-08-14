@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -28,14 +28,14 @@ public final class TroopSpace implements Transporter {
     // Private attributes and helper functions.
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7837499891552862932L;
 
     /**
      * The troops being carried.
      */
-    /* package */Vector<Entity> troops = new Vector<Entity>();
+    /* package */Vector<Integer> troops = new Vector<Integer>();
 
     /**
      * The total amount of space available for troops.
@@ -47,24 +47,8 @@ public final class TroopSpace implements Transporter {
      */
     /* package */double currentSpace;
 
-    /*
-     * ### I don't think that I need this code ### *#/ /** Write our current
-     * state into the output stream. @param out - the <code>ObjectOutputStream</code>
-     * we write to. @exception - This method does not catch <code>IOException</code>s
-     * thrown during the write. #/ private void
-     * writeObject(java.io.ObjectOutputStream out) throws IOException { // Write
-     * our total and current space, followed by our troops. out.writeInt(
-     * this.totalSpace ); out.writeInt( this.currentSpace ); out.writeObject(
-     * this.troops ); } /** Read our state from the input stream. @param out -
-     * the <code>ObjectInputStream</code> we read from. @exception - This
-     * method does not catch <code>IOException</code>s or <code>ClassNotFoundException</code>s
-     * thrown during the read. #/ private void
-     * readObject(java.io.ObjectInputStream in) throws IOException,
-     * ClassNotFoundException { // Read our total and current space, followed by
-     * our troops. this.totalSpace = in.readInt(); this.currentSpace =
-     * in.readInt(); this.troops = (List)in.readObject(); } /* ### I don't think
-     * that I need this code ###
-     */
+    transient IGame game;
+
 
     // Protected constructors and methods.
     /**
@@ -81,7 +65,7 @@ public final class TroopSpace implements Transporter {
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
-     * 
+     *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
      */
@@ -93,7 +77,7 @@ public final class TroopSpace implements Transporter {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -120,7 +104,7 @@ public final class TroopSpace implements Transporter {
 
     /**
      * Load the given unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
@@ -138,25 +122,28 @@ public final class TroopSpace implements Transporter {
         currentSpace -= unit.getWeight();
 
         // Add the unit to our list of troops.
-        troops.addElement(unit);
+        troops.addElement(unit.getId());
     }
 
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
-     * 
+     *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
     public Vector<Entity> getLoadedUnits() {
-        // Return a copy of our list of troops.
-        return new Vector<Entity>(troops);
+        Vector<Entity> loaded = new Vector<Entity>();
+        for (int id : troops) {
+            loaded.add(game.getEntity(id));
+        }
+        return loaded;
     }
 
     /**
      * Unload the given unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
@@ -177,13 +164,13 @@ public final class TroopSpace implements Transporter {
 
     /**
      * Return a string that identifies the unused capacity of this transporter.
-     * 
+     *
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
         return "Troops - " + currentSpace + " tons";
     }
-    
+
     public double getUnused(){
         return currentSpace;
     }
@@ -191,7 +178,7 @@ public final class TroopSpace implements Transporter {
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     * 
+     *
      * @param loc
      *            - the <code>int</code> location attempting to fire.
      * @param isRear
@@ -210,7 +197,7 @@ public final class TroopSpace implements Transporter {
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
-     * 
+     *
      * @param loc
      *            - the <code>int</code> location hit by attack.
      * @param isRear
@@ -237,5 +224,9 @@ public final class TroopSpace implements Transporter {
     @Override
     public String toString() {
         return "troopspace:" + totalSpace;
+    }
+
+    public void setGame(IGame game) {
+        this.game = game;
     }
 } // End package class TroopSpace implements Transporter

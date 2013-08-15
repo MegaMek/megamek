@@ -184,6 +184,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "unjam_uac", false);
         addOption(advancedCombat, "uac_tworolls", false);
         addOption(advancedCombat, "clubs_punch", false);
+        addOption(advancedCombat, "on_map_predesignate", false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$

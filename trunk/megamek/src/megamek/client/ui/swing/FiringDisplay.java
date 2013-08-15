@@ -59,6 +59,7 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
+import megamek.common.IGame.Phase;
 import megamek.common.INarcPod;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
@@ -1726,7 +1727,12 @@ KeyListener, ItemListener, ListSelectionListener {
     }
 
     public void valueChanged(ListSelectionEvent event) {
-        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
+        
+        if (event.getSource().equals(clientgui.mechD.wPan.weaponList) &&
+                clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING) {
+            // If we aren't in the firing phase, there's no guarantee that cen
+            //  is set properly, hence we can't update
+            
             // update target data in weapon display
             updateTarget();
         }

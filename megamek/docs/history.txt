@@ -82,9 +82,8 @@ v0.35.41-dev (SVN)
     Leaving .sav support in the file filters so that people can unzip and edit their
     xml save, and then reload it without having to gzip it back up
 + Bug [#3813]: The Next button doesn't work after some Entities are deleted, since [r9688] 
-+ Bug: Ground bombing was allowed in space
-+ Bug: FighterSquadron had a collection of Entity objects.  When server/client communication happens, these objects can get de-synched with the global collection of Entities in the client/server.  To prevent this, the collection was changed to Entity IDs
 + Feature: Added an unofficial optional rule to allow on-map artillery pieces to pre-designate autohit hexes
++ Bug [#3815]: Changing weapon selection in the MechDisplay outside of the firing phase can lead to NPEs.
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

@@ -7912,7 +7912,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public boolean isEligibleForArtyAutoHitHexes() {
-        return isEligibleForTargetingPhase() && isOffBoard();
+        return isEligibleForTargetingPhase() && 
+                (isOffBoard() || 
+                        game.getOptions().booleanOption("on_map_predesignate"));
     }
 
     public boolean isEligibleForTargetingPhase() {

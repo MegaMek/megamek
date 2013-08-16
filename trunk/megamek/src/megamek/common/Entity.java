@@ -6197,7 +6197,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *            - One of this new entity's <code>Transporter</code>s.
      */
     public void addTransporter(Transporter component) {
-        transports.add(component);
+        component.setGame(game);
+        transports.add(component);        
     }
 
     public void removeTransporter(Transporter t) {

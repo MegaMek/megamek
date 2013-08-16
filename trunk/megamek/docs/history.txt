@@ -89,6 +89,7 @@ v0.35.41-dev (SVN)
 + Bug [#3816]: Bombs cannot be used with fighter squadrons
 + Bug: Timestamp comparision backwards
 + Bug: Server.sendLoadGame() modification for XML saves only incorrect
++ Bug: transports added to an Entity don't have their game state variable set, which can lead to NPEs
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

@@ -55,6 +55,7 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAimingModes;
@@ -910,10 +911,11 @@ KeyListener, ItemListener, ListSelectionListener {
                 }
             }
         }
+        
         BombPayloadDialog bombsDialog = new BombPayloadDialog(
                 clientgui.frame, Messages
                 .getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
-                loadout, isSpace, false, limit);
+                loadout, isSpace, false, limit, ce() instanceof FighterSquadron);
         bombsDialog.setVisible(true);
         if (bombsDialog.getAnswer()) {
             payload = bombsDialog.getChoices();

@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.IGame.Phase;
+
 /**
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
  *         of fighters.
@@ -31,7 +33,7 @@ public class FighterSquadron extends Aero {
 
     public static int MAX_SIZE = 6;
 
-    public Vector<Aero> fighters = new Vector<Aero>();
+    private Vector<Integer> fighters = new Vector<Integer>();
 
     // fighter squadrons need to keep track of heat capacity apart from their
     // fighters
@@ -59,7 +61,8 @@ public class FighterSquadron extends Aero {
     @Override
     public double getCost(boolean ignoreAmmo) {
         double cost = 0.0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             cost += fighter.getCost(ignoreAmmo);
         }
         return cost;
@@ -79,7 +82,8 @@ public class FighterSquadron extends Aero {
 
     public int getNFighters() {
         int n = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 n++;
             }
@@ -93,7 +97,8 @@ public class FighterSquadron extends Aero {
             return 0;
         }
         int si = Integer.MAX_VALUE;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 if (fighter.getSI() < si) {
                     si = fighter.getSI();
@@ -109,7 +114,8 @@ public class FighterSquadron extends Aero {
             return 0;
         }
         int si = Integer.MAX_VALUE;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 if (fighter.getSI() < si) {
                     si = fighter.getSI();
@@ -121,19 +127,28 @@ public class FighterSquadron extends Aero {
 
     public Aero getFighter(int loc) {
         if (loc > fighters.size()) {
-            return fighters.firstElement();
+            return (Aero)game.getEntity(fighters.firstElement());
         }
-        return fighters.get(loc);
+        return (Aero)game.getEntity(fighters.get(loc));
     }
 
     public Vector<Aero> getFighters() {
+        Vector<Aero> aeroFighters = new Vector<Aero>(fighters.size());
+        for (Integer fId : fighters){
+            aeroFighters.add((Aero)game.getEntity(fId));
+        }           
+        return aeroFighters;
+    }
+    
+    public Vector<Integer> getFighterIds() {
         return fighters;
     }
 
     @Override
     public int getTotalArmor() {
         int armor = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             armor += fighter.getCapArmor();
         }
         return armor;
@@ -142,7 +157,8 @@ public class FighterSquadron extends Aero {
     @Override
     public int getTotalOArmor() {
         int armor = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             armor += fighter.getCap0Armor();
         }
         return armor;
@@ -165,7 +181,8 @@ public class FighterSquadron extends Aero {
             return 0;
         }
         int mp = Integer.MAX_VALUE;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 if (fighter.getWalkMP(gravity, ignoreheat) < mp) {
                     mp = fighter.getWalkMP(gravity, ignoreheat);
@@ -181,7 +198,8 @@ public class FighterSquadron extends Aero {
             return 0;
         }
         int fuel = Integer.MAX_VALUE;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 if (fighter.getFuel() < fuel) {
                     fuel = fighter.getFuel();
@@ -204,7 +222,8 @@ public class FighterSquadron extends Aero {
     public boolean hasTargComp() {
 
         int nTC = 0;
-        for (Entity fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             // if any fighter doesn't have it, then return false
             if (fighter.hasTargComp() && !fighter.isDestroyed() && !fighter.isDoomed()) {
                 nTC++;
@@ -257,7 +276,8 @@ public class FighterSquadron extends Aero {
         // according to personal communication with Welshman, the normal crit
         // penalties are added up
         // across the fighter squadron
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (fighter.isDestroyed() || fighter.isDoomed()) {
                 continue;
             }
@@ -289,7 +309,8 @@ public class FighterSquadron extends Aero {
     @Override
     public int getClusterMods() {
         int penalty = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (fighter.isDestroyed() || fighter.isDoomed() || (fighter.getFCSHits() > 2)) {
                 continue;
             }
@@ -328,7 +349,8 @@ public class FighterSquadron extends Aero {
     @Override
     public int getHeatSinks() {
         int sinks = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 sinks += fighter.getHeatSinks();
             }
@@ -343,7 +365,8 @@ public class FighterSquadron extends Aero {
 
     public void resetHeatCapacity() {
         int capacity = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 capacity += fighter.getHeatCapacity();
             }
@@ -354,7 +377,8 @@ public class FighterSquadron extends Aero {
     @Override
     public float getWeight() {
         float totWeight = 0.0f;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 totWeight += fighter.getWeight();
             }
@@ -430,7 +454,8 @@ public class FighterSquadron extends Aero {
         }
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<String, Integer>();
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (fighter.getFCSHits() > 2) {
                 // can't fire with no more FCS
                 continue;
@@ -508,7 +533,8 @@ public class FighterSquadron extends Aero {
         int gunneryLTotal = 0;
         int gunneryMTotal = 0;
         int gunneryBTotal = 0;
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
                 pilotingTotal += fighter.getCrew().getPiloting();
                 gunneryTotal += fighter.getCrew().getGunnery();
@@ -527,7 +553,8 @@ public class FighterSquadron extends Aero {
     @Override
     public ArrayList<Mounted> getAmmo() {
         ArrayList<Mounted> allAmmo = new ArrayList<Mounted>();
-        for (Entity fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             allAmmo.addAll(fighter.getAmmo());
         }
         return allAmmo;
@@ -535,18 +562,176 @@ public class FighterSquadron extends Aero {
 
     @Override
     public void useFuel(int fuel) {
-        for (Aero fighter : fighters) {
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
             fighter.useFuel(fuel);
         }
     }
-
-    @Override
-    public ArrayList<Mounted> getBombs() {
-        ArrayList<Mounted> allBombs = new ArrayList<Mounted>();
-        for (Entity fighter : fighters) {
-            allBombs.addAll(fighter.getBombs());
+     
+    public void autoSetMaxBombPoints() {
+        maxBombPoints = Integer.MAX_VALUE;
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
+            int currBombPoints = Math.round(fighter.getWeight() / 5);
+            maxBombPoints = Math.min(maxBombPoints,currBombPoints);
         }
-        return allBombs;
+    }
+    
+    public void setBombChoices(int[] bc) {
+        // Set the bombs for the squadron
+        if (bc.length == bombChoices.length) {
+            bombChoices = bc;
+        }
+        // Update each fighter in the squadron
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
+            fighter.setBombChoices(bc);
+        }
+    }
+    
+    /**
+     * Produce an int array of the number of bombs of each type based on the
+     * current bomblist.  Since this is a FighterSquadron, these numbers 
+     * represent the number of bombs in a salvo.  That is, it is a count  of
+     * the number of fighters in the squadron that have a bomb of the particular
+     * type mounted.
+     *
+     * @return
+     */
+    public int[] getBombLoadout() {
+        int[] loadout = new int[BombType.B_NUM];
+        for (int btype = 0; btype < BombType.B_NUM; btype++){
+            int salvoSize = 0;
+            for (Integer fId : fighters){
+                Aero fighter = (Aero)game.getEntity(fId);
+                for (Mounted m : fighter.getBombs()){
+                    if (((BombType)m.getType()).getBombType() == btype){
+                        salvoSize++;
+                        break;
+                    }
+                }
+            }
+            loadout[btype] = salvoSize;
+        }        
+        return loadout;
+    }
+    
+    public void applyBombs() {
+        // Make sure all of the aeros have their bombs applied, otherwise problems
+        //  once the bombs are applied, the choices are cleared, so it's not an
+        //  issue if the bombs are applied twice for an Aero
+        for (Integer fId : fighters){
+            Aero fighter = (Aero)game.getEntity(fId);
+            fighter.applyBombs();
+        }
+        computeSquadronBombLoadout();        
+    }
+    
+    /**
+     * This method looks at the bombs equipped on all the fighters in the 
+     * squadron and determines what possible bombing attacks the squadrons
+     * can make.
+     */
+    public void computeSquadronBombLoadout(){
+        // Remove any currently equipped bombs
+        for (Mounted bomb : bombList){
+            equipmentList.remove(bomb);
+        }
+        bombList.clear();
+        
+        
+        // Find out what bombs everyone has
+        for (int btype = 0; btype < BombType.B_NUM; btype++){
+            // This is smallest number of such a bomb
+            int minBombCount = Integer.MAX_VALUE;
+            for (Integer fId : fighters){
+                int bombCount = 0;
+                Aero fighter = (Aero)game.getEntity(fId);
+                ArrayList<Mounted> bombs = fighter.getBombs();                
+                for (Mounted m : bombs){
+                    if (((BombType)m.getType()).getBombType() == btype){
+                        bombCount++;
+                    }
+                }
+                if (bombCount != 0){
+                    minBombCount = Math.min(bombCount, minBombCount);
+                }                            
+            }
+            if (minBombCount == Integer.MAX_VALUE){
+                minBombCount = 0;
+            }
+            bombChoices[btype] = minBombCount;
+        }
+        
+        // Now that we know our bomb choices, load 'em
+        for (int type = 0; type < BombType.B_NUM; type++) {
+            for (int i = 0; i < bombChoices[type]; i++) {
+                if ((type == BombType.B_ALAMO)
+                        && !game.getOptions().booleanOption("at2_nukes")) {
+                    continue;
+                }
+                if ((type > BombType.B_TAG)
+                        && !game.getOptions().booleanOption(
+                                "allow_advanced_ammo")) {
+                    continue;
+                }
+
+                // some bombs need an associated weapon and if so
+                // they need a weapon for each bomb
+                if ((null != BombType.getBombWeaponName(type))
+                        && (type != BombType.B_ARROW)
+                        && (type != BombType.B_HOMING)) {
+                    try {
+                        addBomb(EquipmentType.get(BombType
+                                .getBombWeaponName(type)), LOC_NOSE);
+                    } catch (LocationFullException ex) {
+                        // throw new LocationFullException(ex.getMessage());
+                    }
+                }
+                if (type != BombType.B_TAG) {
+                    try {
+                        addEquipment(EquipmentType.get(BombType
+                                .getBombInternalName(type)), LOC_NOSE, false);
+                    } catch (LocationFullException ex) {
+                        // throw new LocationFullException(ex.getMessage());
+                    }
+                }
+            }
+            // Clear out the bomb choice once the bombs are loaded
+            bombChoices[type] = 0;
+        }
+        // add the space bomb attack
+        if (game.getOptions().booleanOption("stratops_space_bomb")
+                && game.getBoard().inSpace()
+                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+            try {
+                addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE,
+                        false);
+            } catch (LocationFullException ex) {
+                // throw new LocationFullException(ex.getMessage());
+            }
+        }
+        if (!game.getBoard().inSpace()
+                && getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+            try {
+                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE,
+                        false);
+            } catch (LocationFullException ex) {
+                // throw new LocationFullException(ex.getMessage());
+            }
+            for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB)
+                    .size()); i++) {
+                try {
+                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE,
+                            false);
+                } catch (LocationFullException ex) {
+                    // throw new LocationFullException(ex.getMessage());
+                }
+            }
+        }
+        
+        updateWeaponGroups();
+        loadAllWeapons();
     }
 
     /*
@@ -571,7 +756,11 @@ public class FighterSquadron extends Aero {
         // fighter squadrons can also load other fighter squadrons provided
         // there is enough space
         // and the loadee is not empty
-        if ((unit instanceof FighterSquadron) && !unit.isEnemyOf(this) && (getId() != unit.getId()) && (((FighterSquadron) unit).getN0Fighters() > 0) && ((fighters.size() + ((FighterSquadron) unit).getN0Fighters()) <= MAX_SIZE)) {
+        if ((unit instanceof FighterSquadron)
+                && !unit.isEnemyOf(this)
+                && (getId() != unit.getId())
+                && (((FighterSquadron) unit).getN0Fighters() > 0)
+                && ((fighters.size() + ((FighterSquadron) unit).getN0Fighters()) <= MAX_SIZE)) {
             return true;
         }
 
@@ -596,13 +785,20 @@ public class FighterSquadron extends Aero {
         // if this is a fighter squadron then we actually need to load the
         // individual units
         if (unit instanceof FighterSquadron) {
-            fighters.addAll(((FighterSquadron) unit).getFighters());
+            Vector<Integer> newFighters = ((FighterSquadron) unit).getFighterIds();
+            fighters.addAll(newFighters);
         } else {
             // Add the unit to our squadron.
-            fighters.addElement((Aero) unit);
+            fighters.addElement(unit.getId());
         }
-        updateWeaponGroups();
-        loadAllWeapons();
+        if (game.getPhase() != Phase.PHASE_LOUNGE){
+            computeSquadronBombLoadout();
+            // updateWeaponGroups() and loadAllWeapons() are called in 
+            //  computeSquadronBombLoadout()
+        }else{        
+            updateWeaponGroups();
+            loadAllWeapons();
+        }
         updateSkills();
     }
 
@@ -618,8 +814,14 @@ public class FighterSquadron extends Aero {
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
         boolean success = fighters.removeElement(unit);
-        updateWeaponGroups();
-        reloadAllWeapons();
+        if (game.getPhase() != Phase.PHASE_LOUNGE){
+            computeSquadronBombLoadout();
+            // updateWeaponGroups() and loadAllWeapons() are called in 
+            //  computeSquadronBombLoadout()
+        }else{        
+            updateWeaponGroups();
+            loadAllWeapons();
+        }
         updateSkills();
         return success;
     }
@@ -636,7 +838,11 @@ public class FighterSquadron extends Aero {
     @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        return (Vector<Entity>) fighters.clone();
+        Vector<Entity> entityFighters = new Vector<Entity>(fighters.size());
+        for (Integer fId : fighters){
+            entityFighters.add(game.getEntity(fId));
+        }
+        return entityFighters;
     }
 
     /**

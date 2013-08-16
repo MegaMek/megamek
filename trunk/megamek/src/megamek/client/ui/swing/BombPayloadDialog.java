@@ -36,7 +36,7 @@ import megamek.client.ui.Messages;
 import megamek.common.BombType;
 
 /**
- * A dialog to determine bomb payload Right now it is just for space bombing
+ * A dialog to determine bomb payload.
  *
  * @author suvarov454@sourceforge.net
  * @version $version: $
@@ -57,6 +57,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     private JComboBox[] b_choices;
     private JLabel[] b_labels;
+    
+    private boolean isSquadron;
 
     /**
      * Create and initialize the dialog.
@@ -65,20 +67,22 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      *            - the <code>Frame</code> that is locked by this dialog.
      * @param title
      *            - the title <code>String</code> for this dialog.
-     * @param question
-     *            - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
-     * @param choices
-     *            - an array of <code>String</code>s to be displayed.
-     * @param isSingle
-     *            - a <code>boolean</code> that identifies whether the dialog is
-     *            supposed to be a single choice dialog or support multiple
-     *            choices.
+     * @param b
+     *            The bomb choice list
+     * @param spaceBomb
+     *            Flag for whether or not this is space bombing
+     * @param bombDump
+     *            
+     * @param lim
+     * 
+     * @param isSquadron
+     *            Flag to determine whether 
      */
     private void initialize(JFrame parent, String title, int[] b,
-            boolean spaceBomb, boolean bombDump, int lim) {
+            boolean spaceBomb, boolean bombDump, int lim, boolean isSquadron) {
         super.setResizable(false);
 
+        this.isSquadron = isSquadron;
         bombs = b;
         limit = lim;
 
@@ -100,8 +104,15 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             if((limit > -1) && (max > limit)) {
                 max = limit;
             }
-            for (int x = 0; x <= max; x++) {
-                b_choices[i].addItem(Integer.toString(x));
+            if (isSquadron){
+                // Squadrons give the salvo size, and the whole salvo must be 
+                //  fired
+                b_choices[i].addItem(Integer.toString(0));
+                b_choices[i].addItem(Integer.toString(max));
+            }else{
+                for (int x = 0; x <= max; x++) {
+                    b_choices[i].addItem(Integer.toString(x));
+                }
             }
             b_choices[i].setSelectedIndex(0);
             b_choices[i].addItemListener(this);
@@ -203,10 +214,10 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * @param isSingle
      *            - a <code>boolean</code> that identifies that
      */
-    /* package */BombPayloadDialog(JFrame parent, String title, int[] bombs,
-            boolean spaceBomb, boolean bombDump, int limit) {
+    public BombPayloadDialog(JFrame parent, String title, int[] bombs,
+            boolean spaceBomb, boolean bombDump, int limit, boolean isSquadron) {
         super(parent, title, true);
-        initialize(parent, title, bombs, spaceBomb, bombDump, limit);
+        initialize(parent, title, bombs, spaceBomb, bombDump, limit, isSquadron);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -221,9 +232,18 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     public void itemStateChanged(ItemEvent ie) {
 
+        if (isSquadron){
+            for(int i = 0; i < b_choices.length; i++) {
+               if (!b_choices[i].equals(ie.getSource())){
+                   b_choices[i].setSelectedIndex(0);
+               }
+            }
+        }
+        
         if(limit < 0) {
             return;
-        }
+        }        
+        
 
         int[] current = new int[b_choices.length];
         for(int i = 0; i < b_choices.length; i++) {
@@ -282,7 +302,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         if (confirm) {
             choices = new int[b_choices.length];
             for(int i = 0; i < b_choices.length; i++) {
-                choices[i] = b_choices[i].getSelectedIndex();
+                choices[i] = Integer.parseInt((String)b_choices[i].getSelectedItem());
             }
         }
 

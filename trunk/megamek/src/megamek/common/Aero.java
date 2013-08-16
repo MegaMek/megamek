@@ -150,7 +150,7 @@ public class Aero extends Entity {
     public static final String ALT_BOMB_ATTACK = "AltBombAttack";
 
     protected int maxBombPoints = 0;
-    private int[] bombChoices = new int[BombType.B_NUM];
+    protected int[] bombChoices = new int[BombType.B_NUM];
 
     // fuel
     private int fuel = 0;
@@ -3064,6 +3064,7 @@ public class Aero extends Entity {
     // produce bombs
     public void applyBombs() {
         int loc = LOC_NOSE;
+        boolean loadedABomb = false;
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO) && !game.getOptions().booleanOption("at2_nukes")) {
@@ -3085,23 +3086,29 @@ public class Aero extends Entity {
                 if (type != BombType.B_TAG) {
                     try {
                         addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), loc, false);
+                        loadedABomb = true;
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());
                     }
                 }
             }
+            // Clear out the bomb choice once the bombs are loaded
+            bombChoices[type] = 0;
         }
         // add the space bomb attack
         // TODO: I don't know where else to put this (where do infantry attacks
         // get added)
-        if (game.getOptions().booleanOption("stratops_space_bomb") && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+        if (game.getOptions().booleanOption("stratops_space_bomb") && 
+                loadedABomb && game.getBoard().inSpace() && 
+                (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
                 // throw new LocationFullException(ex.getMessage());
             }
         }
-        if (getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+        if (loadedABomb && !game.getBoard().inSpace() &&
+                getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {

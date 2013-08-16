@@ -116,6 +116,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_SPRINT = "NagForSprint";
     public static final String NAG_FOR_OVERHEAT = "NagForOverHeat";
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
+    public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";    
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
     public static final String RULER_POS_X = "RulerPosX";
@@ -217,7 +218,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_README, true);
         store.setDefault(NAG_FOR_SPRINT, true);
         store.setDefault(NAG_FOR_OVERHEAT, true);  
-        store.setDefault(NAG_FOR_LAUNCH_DOORS, true);        
+        store.setDefault(NAG_FOR_LAUNCH_DOORS, true);      
+        store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
@@ -421,7 +423,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForLaunchDoors() {
         return store.getBoolean(NAG_FOR_LAUNCH_DOORS);
     }
-
+    
+    
+    public boolean getNagForMechanicalJumpFallDamage() {
+        return store.getBoolean(NAG_FOR_MECHANICAL_FALL_DAMAGE);
+    }
+    
     public Color getRulerColor1() {
         return getColor(RULER_COLOR_1);
     }
@@ -658,6 +665,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setNagForLaunchDoors(boolean b) {
         store.setValue(NAG_FOR_LAUNCH_DOORS, b);
+    }
+    
+    public void setNagForMechanicalJumpFallDamage(boolean b){
+        store.setValue(NAG_FOR_MECHANICAL_FALL_DAMAGE,b);
     }
 
     public void setRulerPosX(int i) {

@@ -17,8 +17,12 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import megamek.common.Aero;
 import megamek.common.BombType;
+import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -89,19 +93,67 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         if (!(ae instanceof Aero) || null == payload) {
             return;
         }
-        for (int type = 0; type < payload.length; type++) {
-            for (int i = 0; i < payload[type]; i++) {
-                // find the first mounted bomb of this type and drop it
-                for (Mounted bomb : ae.getBombs()) {
-                    if (!bomb.isDestroyed()
-                            && bomb.getUsableShotsLeft() > 0
-                            && ((BombType) bomb.getType()).getBombType() == type) {
-                        bomb.setShotsLeft(0);
-                        break;
+        
+        // Need to remove ammo from fighters within a squadron
+        if (ae instanceof FighterSquadron){
+            // In a fighter squadron, we will haved dropped a salvo of bombs.
+            //  The salvo consists of one bomb from each fighter equipped with
+            //  a bomb of the proper type.  
+            for (int type = 0; type < payload.length; type++) {
+                Vector<Aero> fighters = ((FighterSquadron)ae).getFighters();
+                int fighterIndex = 0;                                
+                for (int i = 0; i < payload[type]; i++) {
+                    boolean bombRemoved = false;
+                    int iterations = 0;
+                    while (!bombRemoved && iterations <= fighters.size())
+                    {
+                        Aero fighter = fighters.get(fighterIndex);
+                        // find the first mounted bomb of this type and drop it
+                        for (Mounted bomb : fighter.getBombs()) {
+                            if (((BombType) bomb.getType()).getBombType() == type && 
+                                    !bomb.isDestroyed()
+                                    && bomb.getUsableShotsLeft() > 0) {
+                                bomb.setShotsLeft(0);                                
+                                bombRemoved = true;
+                                break;
+                            }
+                        }
+                        iterations++;
+                        fighterIndex = (fighterIndex + 1) % fighters.size();
+                    }
+                    if (iterations > fighters.size()){
+                        System.err.println("Error: couldn't find ammo for a " +
+                        		"dropped bomb in SpaceBombAttackHandler.useAmmo()");
+                    }                    
+                }
+                // Now remove a bomb from the squadron
+                if (payload[type] > 0){
+                    for (Mounted bomb : ae.getBombs()) {
+                        if (((BombType) bomb.getType()).getBombType() == type && 
+                                !bomb.isDestroyed()
+                                && bomb.getUsableShotsLeft() > 0) {
+                            bomb.setShotsLeft(0);                                
+                            break;
+                        }
+                    }  
+                }
+            }
+        }else{ // Ammo expenditure for a single fighter        
+            for (int type = 0; type < payload.length; type++) {
+                for (int i = 0; i < payload[type]; i++) {
+                    // find the first mounted bomb of this type and drop it
+                    for (Mounted bomb : ae.getBombs()) {
+                        if (((BombType) bomb.getType()).getBombType() == type && 
+                                !bomb.isDestroyed()
+                                && bomb.getUsableShotsLeft() > 0) {
+                            bomb.setShotsLeft(0);
+                            break;
+                        }
                     }
                 }
             }
         }
+        
         super.useAmmo();
     }
 }

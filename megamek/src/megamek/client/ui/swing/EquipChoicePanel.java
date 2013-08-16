@@ -193,8 +193,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         if ((entity instanceof Aero)
-                && !((entity instanceof FighterSquadron)
-                        || (entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
+                && !((entity instanceof SmallCraft) || 
+                        (entity instanceof Jumpship))) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }

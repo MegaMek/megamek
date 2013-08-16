@@ -1856,6 +1856,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (loader == null) {
             return;
         }
+        
+        // We need to make sure our current bomb choices fit onto the new fighter
+        if (loader instanceof FighterSquadron){
+            FighterSquadron fSquad = (FighterSquadron)loader;
+            Aero fighter = (Aero)loadee;
+            // We can't use Aero.getBombPoints() because the bombs haven't been
+            // loaded yet, only selected, so we have to count the choices
+            int[] bombChoice = fSquad.getBombChoices();
+            int numLoadedBombs = 0;
+            for (int i = 0; i < bombChoice.length; i++){
+                numLoadedBombs += bombChoice[i];
+            }
+            // We can't load all of the squadrons bombs
+            if (numLoadedBombs > fighter.getMaxBombPoints()){
+                JOptionPane.showMessageDialog(clientgui.frame,
+                        Messages.getString("FighterSquadron.bomberror"),
+                        Messages.getString("FighterSquadron.error"),
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
         c.sendLoadEntity(loadee.getId(), loaderId, bayNumber);
         // TODO: it would probably be a good idea to reset deployment
         // info to equal that of the loader, and disable it in customMechDialog
@@ -1994,7 +2015,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable && cmd.isOkay()) {
             // send changes
             c.sendUpdateEntity(entity);
-
+            
+            // Customizations to a Squadron can effect the fighters
+            if (entity instanceof FighterSquadron){
+                for (Aero fighter : ((FighterSquadron)entity).getFighters()){
+                    c.sendUpdateEntity(fighter);
+                }
+            }
+            
             // Do we need to update the members of our C3 network?
             if (((c3master != null) && !c3master.equals(entity.getC3Master()))
                     || ((c3master == null) && (entity.getC3Master() != null))) {

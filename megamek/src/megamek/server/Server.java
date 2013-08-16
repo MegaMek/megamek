@@ -3720,14 +3720,27 @@ public class Server implements Runnable {
             send(createTurnVectorPacket());
         }
 
-        // Load the unit. Do not check for elevation during deployment
-        if (bayNumber == -1) {
-        	loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                    && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
-        } else {
-        	loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                && (game.getPhase() != IGame.Phase.PHASE_LOUNGE), bayNumber);
+        // When loading an Aero into a squadron in the lounge, make sure the 
+        // loaded aero has the same bomb loadout as the squadron
+        //  We want to do this before the fighter is loaded: when the fighter 
+        //  is loaded into the squadron, the squadrons bombing attacks are 
+        //  adjusted based on the bomb-loadout on the fighter.
+        if (game.getPhase() == Phase.PHASE_LOUNGE && 
+                loader instanceof FighterSquadron ){
+            ((Aero) unit).setBombChoices(
+                    ((FighterSquadron)loader).getBombChoices());
         }
+        
+        // Load the unit. Do not check for elevation during deployment
+        boolean checkElevation = (game.getPhase() != Phase.PHASE_DEPLOYMENT)
+                && (game.getPhase() != Phase.PHASE_LOUNGE);
+        if (bayNumber == -1) {
+        	loader.load(unit, checkElevation);
+        } else {
+        	loader.load(unit, checkElevation, bayNumber);
+        }
+        
+
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -21393,6 +21406,14 @@ public class Server implements Runnable {
                         r.subject = a.getId();
                         r.add(hitbomb.getDesc());
                         vDesc.add(r);
+                        // If we are part of a squadron, we should recalculate
+                        // the bomb salvo for the squadron
+                        if (a.getTransportId() != Entity.NONE){
+                            Entity e = game.getEntity(a.getTransportId());
+                            if (e instanceof FighterSquadron){
+                                ((FighterSquadron)e).computeSquadronBombLoadout();
+                            }
+                        }
                     } else {
                         r = new Report(9131);
                         r.subject = a.getId();
@@ -25335,11 +25356,16 @@ public class Server implements Runnable {
         }
         game.addEntity(fs.getId(), fs);
         for (int id : fighters) {
-            Entity fighter = game.getEntity(id);
+            Aero fighter = (Aero)game.getEntity(id);
             if (null != fighter) {
                 fs.load(fighter, false);
+                fs.autoSetMaxBombPoints();
                 fighter.setTransportId(fs.getId());
                 entityUpdate(fighter.getId());
+                // If this is the lounge, we want to configure bombs
+                if (game.getPhase() == Phase.PHASE_LOUNGE){
+                    fighter.setBombChoices(fs.getBombChoices());
+                }
             }
         }
         send(createAddEntityPacket(fs.getId()));

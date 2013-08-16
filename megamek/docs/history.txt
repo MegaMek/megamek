@@ -84,6 +84,9 @@ v0.35.41-dev (SVN)
 + Bug [#3813]: The Next button doesn't work after some Entities are deleted, since [r9688] 
 + Feature: Added an unofficial optional rule to allow on-map artillery pieces to pre-designate autohit hexes
 + Bug [#3815]: Changing weapon selection in the MechDisplay outside of the firing phase can lead to NPEs.
++ Bug: Ground bombing was allowed in space, space bombing was allowed in ground/atmosphere
++ Bug: FighterSquadron had a collection of Entity objects.  When server/client communication happens, these objects can get de-synched with the global collection of Entities in the client/server.  To prevent this, the collection was changed to Entity IDs
++ Bug [#3816]: Bombs cannot be used with fighter squadrons 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

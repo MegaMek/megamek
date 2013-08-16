@@ -3458,7 +3458,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                a.getBombChoices(), false, true, -1);
+                a.getBombLoadout(), false, true, -1,false);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             int[] bombsDumped = dumpBombsDialog.getChoices();
@@ -3481,7 +3481,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         .getString("MovementDisplay.DumpFailure.message"); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
                 // failed the roll, so dump all bombs
-                bombsDumped = a.getBombChoices();
+                bombsDumped = a.getBombLoadout();
             } else {
                 // avoided damage
                 r.choose(true);

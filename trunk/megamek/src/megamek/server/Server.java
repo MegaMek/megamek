@@ -700,7 +700,7 @@ public class Server implements Runnable {
         String ts1 = DateFormat.getInstance().format(new Date(MegaMek.TIMESTAMP));
         String ts2 = DateFormat.getInstance().format(new Date(timestamp));
         if ((MegaMek.TIMESTAMP > 0L) && (timestamp > 0L)
-                && (Math.abs(timestamp - MegaMek.TIMESTAMP) < 91)) {
+                && (Math.abs(timestamp - MegaMek.TIMESTAMP) > 91)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append("\nClient/Server timestamp mismatch. Server reports: "
                         + ts1 + ", Client reports: " + ts2);
@@ -1191,7 +1191,7 @@ public class Server implements Runnable {
             sFinalFile = sFile + ".sav";
         }
         if (!sFinalFile.endsWith(".gz")) {
-        	sFinalFile = sFinalFile + ".sav";
+        	sFinalFile = sFinalFile + ".gz";
         }
         send(connId, new Packet(Packet.COMMAND_LOAD_SAVEGAME,
                 new Object[] { sFinalFile }));

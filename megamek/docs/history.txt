@@ -90,6 +90,8 @@ v0.35.41-dev (SVN)
 + Bug: Timestamp comparision backwards
 + Bug: Server.sendLoadGame() modification for XML saves only incorrect
 + Bug: transports added to an Entity don't have their game state variable set, which can lead to NPEs
++ Bug: Jumping backwards across elevation changes with mechanical jump boosters could cause PSR nags, although no PSRs would be rolled
++ Bug [#3795]:  Mechanical jump boosters shouldn't allow drops from any height 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

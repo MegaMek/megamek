@@ -1344,6 +1344,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
+        
+        // Should we nag about taking fall damage with mechanical jump boosters?
+        if (cmd.shouldMechanicalJumpCauseFallDamage() && 
+                GUIPreferences.getInstance().getNagForMechanicalJumpFallDamage()) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString(
+                            "MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                            new Object[] {
+                                    cmd.getJumpMaxElevationChange(),
+                                    ce().getJumpMP(),
+                                    cmd.getJumpMaxElevationChange()
+                                            - ce().getJumpMP() }), true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForMechanicalJumpFallDamage(false);
+                }
+            } else {
+                return;
+            }
+        }
 
         // check for G-forces
         check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());

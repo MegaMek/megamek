@@ -193,15 +193,21 @@ public class MovePath implements Cloneable, Serializable {
         // check for illegal jumps
         final Coords start = entity.getPosition();
         final Coords land = step.getPosition();
-        if (start == null || land == null) { // If we have null for either coordinate then we know the step isn't legal.
+        if (start == null || land == null) { 
+            // If we have null for either coordinate then we know the step
+            // isn't legal.
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         } else {
-        final int distance = start.distance(land);
-        if (isJumping() && entity.getJumpType() != Mech.JUMP_BOOSTER) {
-            if (step.isThisStepBackwards() || step.getMpUsed() > distance) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            final int distance = start.distance(land);
+            if (isJumping() && entity.getJumpType() != Mech.JUMP_BOOSTER) {
+                if (step.isThisStepBackwards() || step.getMpUsed() > distance) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                }
             }
         }
+        
+        if (shouldMechanicalJumpCauseFallDamage()){
+            step.setDanger(true);
         }
 
         // If the new step is legal and is a different position than
@@ -383,6 +389,19 @@ public class MovePath implements Cloneable, Serializable {
             return getLastStep().getElevation();
         }
         return entity.getElevation();
+    }
+    
+    /**
+     * Returns the highest elevation in the current path
+     * @return
+     */
+    public int getMaxElevation(){
+        int maxElev = 0;
+        for (MoveStep step : steps){
+            maxElev = Math.max(maxElev, 
+                    game.getBoard().getHex(step.getPosition()).getElevation());
+        }
+        return maxElev;
     }
 
     /**
@@ -993,6 +1012,47 @@ public class MovePath implements Cloneable, Serializable {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
             addStep(stepType, isManeuver, isManeuver);
         }
+    }
+    
+    /**
+     * Returns true if a jump using mechanical jump boosters would cause falling
+     * damage.  Mechanical jump boosters are only designed to handle the stress
+     * of falls from a height equal to their jumpMP; if a jump has a fall that
+     * is further than the jumpMP of the unit, fall damage applies.
+     * @return
+     */
+    public boolean shouldMechanicalJumpCauseFallDamage(){
+        if (isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER && 
+                getJumpMaxElevationChange() > entity.getJumpMP()){
+          return true;  
+        }
+        return false;
+    }
+    
+    /**
+     * Returns the highest elevation along a jump path.
+     * @return
+     */
+    public Coords getJumpPathHighestPoint(){
+        Coords highestCoords = null;
+        int highestElevation = 0;
+        for (MoveStep step : steps){
+            if (game.getBoard().getHex(step.getPosition()).getElevation() > highestElevation) {
+                highestElevation = step.getElevation();
+                highestCoords = step.getPosition();
+            }
+        }
+        return highestCoords;
+    }
+    /**
+     * Returns the distance between the highest elevation in the jump path and
+     * the elevation at the landing point.  This gives the largest distance the
+     * unit has fallen during the jump.
+     * 
+     */
+    public int getJumpMaxElevationChange(){
+        return getMaxElevation() - 
+                game.getBoard().getHex(getFinalCoords()).getElevation(); 
     }
 
     protected static class MovePathComparator implements Comparator<MovePath> {

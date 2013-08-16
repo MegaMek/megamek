@@ -7832,6 +7832,13 @@ public class Server implements Runnable {
                     doSkillCheckInPlace(entity, rollTarget);
                 }
             }
+            // Mechanical jump boosters fall damage
+            if (md.shouldMechanicalJumpCauseFallDamage()){
+                vPhaseReport.addAll(doEntityFallsInto(entity,
+                        md.getJumpPathHighestPoint(), curPos,
+                        entity.getBasePilotingRoll(overallMoveType), false,
+                        entity.getJumpMP()));
+            }
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
             if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
@@ -10319,7 +10326,32 @@ public class Server implements Runnable {
      *            to cause an accidental fall from above
      */
     private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
-            Coords dest, PilotingRollData roll, boolean causeAffa) {
+            Coords dest, PilotingRollData roll, boolean causeAffa){
+        return doEntityFallsInto(entity, src, dest, roll, causeAffa, 0);
+    }
+            
+    /**
+     * The entity falls into the hex specified. Check for any conflicts and
+     * resolve them. Deal damage to faller.
+     *
+     * @param entity
+     *            The <code>Entity</code> that is falling.
+     * @param src
+     *            The <code>Coords</code> of the source hex.
+     * @param dest
+     *            The <code>Coords</code> of the destination hex.
+     * @param roll
+     *            The <code>PilotingRollData</code> to be used for PSRs induced
+     *            by the falling.
+     * @param causeAffa
+     *            The <code>boolean</code> value wether this fall should be able
+     *            to cause an accidental fall from above
+     * @param fallReduction
+     *            An integer value to reduce the fall distance by
+     */
+    private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
+            Coords dest, PilotingRollData roll, boolean causeAffa, 
+            int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
@@ -10327,7 +10359,7 @@ public class Server implements Runnable {
                 + srcHex.depth(true);
         int fallElevation = Math.max(0, (srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()
-                        : destHex.floor()));
+                        : destHex.floor()) - fallReduction);
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
         }

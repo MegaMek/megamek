@@ -1,0 +1,130 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mule
+</Name>
+
+<model>
+(Standard)
+</model>
+
+<Tonnage>
+11200
+</Tonnage>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<Armor>
+70
+80
+80
+60
+</Armor>
+
+<Nose Equipment>
+ISAC5
+ISAC5 Ammo:40
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISSRM6
+ISSRM6 Ammo
+ISMediumLaser
+ISMediumLaser 
+(R) ISLargeLaser
+(R) ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISSRM6
+ISSRM6 Ammo
+ISMediumLaser
+ISMediumLaser 
+(R) ISLargeLaser
+(R) ISMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISLargeLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<heatsinks>
+59
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9570
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2737
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+CargoBay:2715:2
+CargoBay:2715:2
+CargoBay:2714:2
+</transporters>
+
+<escape_pod>
+2
+</escape_pod>
+<life_boat>
+2
+</life_boat>
+
+<crew>
+20
+</crew>
+
+<passengers>
+0
+</passengers>

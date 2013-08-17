@@ -1,0 +1,12 @@
+SL Light Vehicles 3067 (FMU)
+Hawk Moth Gunship,1
+Karnov UR Transport (3055 Upgrade),2
+Plainsman Medium Hovertank,3
+Saracen Medium Hover Tank,4
+Pegasus Scout Hover Tank (C3),5
+Saladin Assault Hover Tank (Ultra),6
+Yellow Jacket Gunship,5
+Striker Light Tank (3053 Upgrade),4
+Galleon Light Tank GAL-102,3
+Minion Advanced Tactical Vehicle,2
+Mantis Light Attack VTOL,1

@@ -1,0 +1,12 @@
+3015 Mercenary Mech -  Assault
+Striker STC-2C,1
+Goliath GOL-1H,2
+Victor VTR-9B,3
+Atlas AS7-D,4
+Awesome AWS-8Q,5
+BattleMaster BLR-1G,6
+Stalker STK-3F,5
+Longbow LGB-7Q,4
+Banshee BNC-3E,3
+Awesome AWS-8V,2
+Cyclops CP-10-Z,1

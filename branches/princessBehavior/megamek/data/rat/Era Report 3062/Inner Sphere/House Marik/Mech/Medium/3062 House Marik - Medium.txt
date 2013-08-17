@@ -1,0 +1,12 @@
+3062 House Marik - Medium
+Firestarter FS9-O,1
+Apollo APL-1M,2
+Cicada CDA-3M,3
+Shadow Hawk SHD-5M,4
+Trebuchet TBT-7M,5
+Wolverine WVR-7M,6
+Hermes II HER-5S,5
+Hunchback HBK-5M,4
+Buccaneer BCN-3R,3
+Wraith TR2,2
+Blackjack BJ2-O,1

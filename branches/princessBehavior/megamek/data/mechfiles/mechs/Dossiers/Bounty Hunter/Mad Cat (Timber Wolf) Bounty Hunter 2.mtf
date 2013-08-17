@@ -1,0 +1,159 @@
+Version:1.0
+Mad Cat (Timber Wolf)
+Bounty Hunter 2
+
+Config:Biped
+TechBase:Clan
+Era:3068
+Source:BattleTech Dossiers: The Bounty Hunter
+Rules Level:4
+
+Mass:75
+Engine:375 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:5
+Jump MP:3
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:12
+ER Small Laser, Right Torso
+AP Gauss Rifle, Left Torso
+AP Gauss Rifle, Right Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Large Pulse Laser, Left Arm
+SRM 4, Left Torso
+Streak SRM 4, Right Torso
+SRM 4, Left Torso
+SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Streak SRM 4, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+Clan Ammo SRM-4
+CLTargeting Computer
+CLTargeting Computer
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLSRM4
+CLSRM4
+CLSRM4
+CLAPGaussRifle
+CLAPGaussRifle Ammo
+Clan Coolant Pod
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLStreakSRM4
+CLStreakSRM4
+CLStreakSRM4
+CLERSmallLaser
+CLAPGaussRifle
+Clan Streak SRM 4 Ammo
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

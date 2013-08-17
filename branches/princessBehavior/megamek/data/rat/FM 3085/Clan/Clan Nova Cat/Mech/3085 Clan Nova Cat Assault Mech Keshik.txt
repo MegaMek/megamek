@@ -1,0 +1,12 @@
+3085 Clan Nova Cat Assault Mech Keshik
+Supernova,1
+Deimos Prime,2
+Mad Cat Mk II (Standard),3
+Supernova 3,4
+Supernova 2,5
+Supernova 4,6
+Warhammer IIC 8,5
+Masakari (Warhawk) Prime,4
+Kingfisher Prime,3
+Gladiator (Executioner) Prime,2
+Turkina Prime,1

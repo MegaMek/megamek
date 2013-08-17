@@ -1,0 +1,12 @@
+Clan Jade Falcon ProtoMech 3067 (FMU)
+Gorgon,1
+Gorgon,2
+Gorgon,3
+Gorgon,4
+Gorgon,5
+Gorgon,6
+Centaur,5
+Centaur,4
+Centaur,3
+Centaur,2
+Centaur,1

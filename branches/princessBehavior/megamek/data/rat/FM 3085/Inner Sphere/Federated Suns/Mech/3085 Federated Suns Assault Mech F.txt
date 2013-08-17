@@ -1,0 +1,12 @@
+3085 Federated Suns Assault Mech F
+Goliath GOL-5D,1
+Stalker STK-5S,2
+Victor VTR-9B,3
+Victor VTR-10D,4
+Stalker STK-7D,5
+Nightstar NSR-9J,6
+Longbow LGB-12C,5
+Sagittaire SGT-8R,4
+Emperor EMP-6D,3
+Nightstar NSR-9FC,2
+Warlord BLR-2D,1

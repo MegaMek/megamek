@@ -1,0 +1,12 @@
+3085 Lyran Commonwealth Heavy Mech C
+Barghest BGS-1T,1
+Crusader CRD-5S,2
+Warhammer WHM-9S,3
+Flashman FLS-8K,4
+Crossbow CRS-9A,5
+Caesar CES-3S,6
+Archer ARC-7S,5
+Thanatos THS-4S,4
+Maelstrom MTR-5K,3
+Black Hawk-KU BHKU-O,2
+Gallant GLT-7-0,1

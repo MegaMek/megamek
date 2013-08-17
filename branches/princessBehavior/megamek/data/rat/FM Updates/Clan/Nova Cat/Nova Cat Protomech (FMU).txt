@@ -1,0 +1,12 @@
+Clan Nova Cat ProtoMech 3067 (FMU)
+Satyr,1
+Satyr,2
+Roc,3
+Roc,4
+Roc,5
+Roc,6
+Centaur,5
+Centaur,4
+Gorgon,3
+Gorgon,2
+Satyr,1

@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Medium Mechs (Blood Spirit),
+Hellhound (Conjurer),1
+Hellhound (Conjurer),2
+Battle Cobra A,3
+Ryoken (Stormcrow) Prime,4
+Black Hawk (Nova) Prime,5
+Battle Cobra A,6
+Black Hawk (Nova) Prime,5
+Ryoken (Stormcrow) A,4
+Griffin IIC,3
+Battle Cobra B,2
+Hunchback IIC,1

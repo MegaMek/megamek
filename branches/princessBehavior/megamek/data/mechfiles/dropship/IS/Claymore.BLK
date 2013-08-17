@@ -1,0 +1,242 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Claymore
+
+</Name>
+
+<model>
+Standard
+</Model>
+
+<Tonnage>
+
+1400
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+250
+
+200
+
+200
+
+150
+
+</Armor>
+
+<Nose Equipment>
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM20
+
+ISLRM20 Ammo:12
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISStreakSRM2
+
+ISStreakSRM2 Ammo:50
+
+ISLBXAC10
+
+ISLBXAC10 CL Ammo:10
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISLargeLaser
+
+ISLRM10
+
+ISLRM10 Ammo:12
+
+ISLBXAC10
+
+ISLBXAC10 CL Ammo:10
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISStreakSRM2
+
+(R) ISStreakSRM2 Ammo:50
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISLargeLaser
+
+ISLRM10
+
+ISLRM10 Ammo:12
+
+ISLBXAC10
+
+ISLBXAC10 CL Ammo:10
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISStreakSRM2
+
+(R) ISStreakSRM2 Ammo:50
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLRM20
+
+ISLRM20 Ammo:12
+
+ISSmallPulseLaser
+
+ISSmallPulseLaser
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISLBXAC10
+
+ISLBXAC10 CL Ammo:10
+
+</Aft Equipment>
+
+<structural_integrity>
+
+12
+
+</structural_integrity>
+
+<heatsinks>
+
+47
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+4000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3054
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+CargoBay:327:1
+
+</transporters>
+
+<escape_pod>
+
+0
+
+</escape_pod>
+
+<life_boat>
+
+2
+
+</life_boat>
+
+<crew>
+
+15
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

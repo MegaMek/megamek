@@ -1,0 +1,8 @@
+3085 Clan Nova Cat Battlearmor Front Line
+Void Medium Battle Armor (Nova Cat),1
+Clan Medium Battle Armor "Rabid",20
+Elemental Battle Armor [MG],5
+Elemental Battle Armor [Laser],4
+Elemental Battle Armor [Flamer],3
+Thunderbird Battle Armor [AP Gauss],2
+Thunderbird Battle Armor [AP Gauss],1

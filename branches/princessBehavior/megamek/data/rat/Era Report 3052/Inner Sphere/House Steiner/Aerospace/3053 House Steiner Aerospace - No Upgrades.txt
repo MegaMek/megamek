@@ -1,0 +1,12 @@
+3053 House Steiner Aerospace - No Upgraded
+Thunderbird TRB-D36,1
+Chippewa CHP-W5,2
+Stuka STU-K5,3
+Lucifer LCF-R15,4
+Hellcat HCT-213,5
+Sparrowhawk SPR-H5,6
+Seydlitz SYD-21,5
+Corsair CSR-V12,4
+Corsair CSR-V12,3
+Stuka STU-K5,2
+Chippewa CHP-W7,1

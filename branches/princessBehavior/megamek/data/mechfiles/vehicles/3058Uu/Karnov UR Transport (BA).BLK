@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Karnov UR Transport
+</Name>
+<Model>
+(BA)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+10
+</cruiseMP>
+<Armor>
+10
+8
+8
+7
+2
+</Armor>
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISGuardianECM
+</Front Equipment>
+<transporters>
+TroopSpace:8
+</transporters>
+<type>
+IS Level 2
+</type>
+<year>
+3063
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Civil War
+</source>

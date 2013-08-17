@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Enyo Strike Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3063
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+30
+29
+29
+29
+27
+</armor>
+
+<Body Equipment>
+CLMG
+CLMG
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+Clan Machine Gun Ammo - Half
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLStreakSRM6
+CLStreakSRM6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLStreakSRM6
+CLLargePulseLaser
+</Turret Equipment>
+
+<tonnage>
+55.0
+</tonnage>
+

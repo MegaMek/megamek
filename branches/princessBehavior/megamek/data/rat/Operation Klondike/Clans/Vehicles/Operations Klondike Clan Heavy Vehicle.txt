@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Heavy Vehicle
+Burke Defense Tank,1
+Magi Infantry Support Vehicle,2
+Demon Tank (Royal),3
+Von Luckner Heavy Tank (Royal),4
+Burke Defense Tank (Royal),5
+Demon Tank (Royal),6
+Von Luckner Heavy Tank (Star League),5
+Merkava Heavy Tank Mk VIII,4
+Padilla Heavy Artillery Tank,3
+Marksman Artillery Vehicle,2
+Burke Defense Tank (Royal),1

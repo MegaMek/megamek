@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Light Mech C
+Locust LCT-1V,1
+Stinger STG-3R,2
+Wasp WSP-1A,3
+Wasp WSP-1A,4
+Wasp WSP-3L,5
+Firestarter FS9-H,6
+Javelin JVN-10N,5
+Stinger STG-6L,4
+Wasp WSP-8T,3
+Wasp WSP-7MAF,2
+Anubis ABS-3L,1

@@ -1,0 +1,12 @@
+3053 House Davion Mech - Medium- Upgraded
+Vulcan VT-5S,1
+Griffin GRF-1DS,2
+Wolverine WVR-7D,3
+Blackjack BJ-2,4
+Whitworth WTH-1,5
+Enforcer ENF-5D,6
+Hatchetman HCT-5S,5
+Centurion CN9-D,4
+Griffin GRF-3M,3
+Dervish DV-7D,2
+Phoenix Hawk PXH-3D,1

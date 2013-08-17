@@ -1,0 +1,150 @@
+Version:1.0
+Raven
+RVN-SR "Shattered Raven"
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3068
+Rules Level:2
+
+Mass:35
+Engine:210 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:11 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:8
+RA Armor:8
+LT Armor:11
+RT Armor:11
+CT Armor:11
+HD Armor:6
+LL Armor:8
+RL Armor:8
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:6
+4 ISMachine Gun, Right Arm, Ammo:100
+1 ISMGA, Right Arm
+1 ISNarcBeacon, Left Arm, Ammo:12
+1 ISSRM6, Right Torso, Ammo:15
+1 ISGuardianECM, Left Torso
+1 ISBeagleActiveProbe, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISNarcBeacon
+ISNarcBeacon
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMGA
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+ISSRM6 Ammo Narc-capable
+ISNarc Pods
+ISNarc Pods
+ISMG Ammo (100)
+ISCASE
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSRM6
+ISSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

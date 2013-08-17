@@ -1,0 +1,12 @@
+3085 Lyran Commonwealth Light Mech C
+Dart DRT-3S,1
+Commando COM-5S,2
+Hollander BZK-F3,3
+Wolfhound WLF-2,4
+Firestarter FS9-S,5
+Razorback RZK-9S,6
+Hussar HSR-400-D,5
+Commando COM-7S,4
+Scarabus SCB-9T,3
+Talon TLN-5W,2
+Night Hawk NTK-2S,1

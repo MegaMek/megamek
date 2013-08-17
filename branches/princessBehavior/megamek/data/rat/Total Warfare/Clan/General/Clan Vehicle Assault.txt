@@ -1,0 +1,14 @@
+Clan Vehicle Assault
+Heimdall Ground Monitor Tank A,1
+Fury Command Tank,2
+Rhino Fire Support Tank (MG),3
+Mars Assault Vehicle,4
+Morrigu Fire Support Vehicle,5
+Mars Assault Vehicle,6
+Morrigu Fire Support Vehicle,5
+Alacorn Heavy Tank Mk IV,4
+Morrigu Fire Support Vehicle,3
+Heimdall Ground Monitor Tank Prime,2
+Puma Assault Tank PAT-005,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

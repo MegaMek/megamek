@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Kamayari
+</Name>
+<Model>
+Prime-UK
+</Model>
+<Tonnage>
+90
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+50
+45
+45
+25
+50
+</Armor>
+<Turret Equipment>
+ISArrowIVSystem
+ISArrowIVSystem
+</Turret Equipment>
+<Front Equipment>
+ISMediumLaser
+ISMediumLaser
+</Front Equipment>
+<Body Equipment>
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISC3MasterComputer
+ISC3MasterComputer
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<omni>
+</omni>

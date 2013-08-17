@@ -1,0 +1,12 @@
+3034 Free Rasalhague Republic Aerospace - Light
+Centurion CNT-1D,1
+Centurion CNT-1D,2
+Sabre SB-27,3
+Sholagar SL-21,4
+Sholagar SL-21L,5
+Sholagar SL-21,6
+Centurion CNT-1D,5
+Sabre SB-27,4
+Sparrowhawk SPR-H5K,3
+Sparrowhawk SPR-H5K,2
+Sabre SB-27,1

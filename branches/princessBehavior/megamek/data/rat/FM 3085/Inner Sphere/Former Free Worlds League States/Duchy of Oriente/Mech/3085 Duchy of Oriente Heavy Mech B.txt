@@ -1,0 +1,12 @@
+3085 Duchy of Oriente Heavy Mech B
+Thunderbolt TDR-7M,1
+Crusader CRD-5M,2
+Yeoman YMN-6Y,3
+Archer ARC-4M,4
+Quickdraw QKD-5Mr,5
+Orion ON2-M,6
+Rifleman RFL-7M,5
+Koschei KSC-5MC,4
+Perseus P1,3
+Warhammer WHM-8M,2
+Rifleman IIC 8,1

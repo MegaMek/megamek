@@ -1,0 +1,12 @@
+WoB Assault Mechs A 3067 (FMU)
+BattleMaster BLR-5M,1
+Vanquisher VQR-2B,2
+Legacy LGC-01,3
+Grand Titan T-IT-N10M,4
+Highlander HGN-736,5
+Crockett CRK-5003-1,6
+Vanquisher VQR-2A,5
+Thug THG-12E,4
+Grand Crusader GRN-D-01,3
+King Crab KGC-005,2
+Legacy LGC-02,1

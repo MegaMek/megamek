@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Athena
+</Name>
+
+<Model>
+XR
+</Model>
+
+<year>
+3068
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+46
+40
+40
+39
+30
+35
+</armor>
+
+<Body Equipment>
+CLTargeting Computer
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+CLMediumChemLaserAmmo
+Clan Machine Gun Ammo - Full
+</Body Equipment>
+
+<Front Equipment>
+CLMediumChemLaserAmmo
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rear Turret Equipment>
+CLLargeChemLaser
+CLLargeChemLaser
+CLLargeChemLaser
+CLLargeChemLaser
+</Rear Turret Equipment>
+
+<Front Turret Equipment>
+CLMediumChemLaser
+CLMediumChemLaser
+CLMG
+CLMG
+CLMG
+CLMG
+</Front Turret Equipment>
+
+<source>
+XTR Clans
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

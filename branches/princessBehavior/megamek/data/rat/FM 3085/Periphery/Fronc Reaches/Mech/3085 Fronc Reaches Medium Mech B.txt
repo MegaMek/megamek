@@ -1,0 +1,12 @@
+3085 Fronc Reaches Medium Mech B
+Assassin ASN-23,1
+Whitworth WTH-2,2
+Vindicator VND-1R,3
+Griffin GRF-1N,4
+Enforcer ENF-4R,5
+Vindicator VND-3L,6
+Marshal MHL-X1,5
+Griffin GRF-1N,4
+Centurion CN9-A,3
+Marshal MHL-6MC,2
+Marshal MHL-2L,1

@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Rhino Fire Support Tank
+</Name>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+64
+54
+54
+40
+60
+</Armor>
+<Turret Equipment>
+ISLRM20
+ISLRM20
+ISMediumLaser
+ISMediumLaser
+</Turret Equipment>
+<Front Equipment>
+ISLRM10
+</Front Equipment>
+<Body Equipment>
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM10 Ammo
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+2669
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

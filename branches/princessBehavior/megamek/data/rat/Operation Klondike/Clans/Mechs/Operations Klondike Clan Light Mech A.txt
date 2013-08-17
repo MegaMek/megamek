@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Light Mech A
+Mongoose MON-66b,1
+Hermes HER-1S,2
+Locust LCT-1Vb,3
+Night Hawk NTK-2Q,4
+Ostscout OTT-7Jb,5
+Hermes HER-1Sb,6
+Mercury MCY-99,5
+Panther PNT-9R,4
+Firefly FFL-3SLE,3
+Mongoose MON-66,2
+Hussar HSR-200-Db,1

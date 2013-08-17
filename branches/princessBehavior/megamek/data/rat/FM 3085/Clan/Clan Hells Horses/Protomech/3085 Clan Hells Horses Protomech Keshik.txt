@@ -1,0 +1,12 @@
+3085 Clan Hells Horses Protomech Keshik
+Minotaur 2,1
+Procyon,2
+Orc,3
+Hydra,4
+Minotaur,5
+Hydra 2,6
+Minotaur P2,5
+Procyon (Quad),4
+Svartalfa Ultra,3
+#Hobgoblin,2
+#Svartalfa 2,1

@@ -1,0 +1,12 @@
+3085 Clan Jade Falcon Assault Tank Keshik
+Sturmfeur Heavy Tank,1
+Demolisher Heavy Tank (Clan),2
+Huitzilopochtli Assault Tank 'Huey',3
+Carnivore Assault Tank (HAG),4
+Huitzilopochtli Assault Tank 'Huey',5
+Demolisher Heavy Tank (Clan),6
+Huitzilopochtli Assault Tank 'Huey',5
+Demolisher Heavy Tank (Clan),4
+Carnivore Assault Tank,3
+Mars Assault Vehicle,2
+Sturmfeur Heavy Tank,1

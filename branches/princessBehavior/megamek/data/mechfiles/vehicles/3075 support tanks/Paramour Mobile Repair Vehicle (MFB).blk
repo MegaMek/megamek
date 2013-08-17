@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Paramour Mobile Repair Vehicle
+</Name>
+
+<Model>
+(MFB)
+</Model>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+27
+20
+20
+25
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<armor_type>
+14
+</armor_type>
+
+<Body Equipment>
+Armored Chassis
+ISMobileFieldBase
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+Lift Hoist
+</Rear Equipment>
+
+<source>
+TRO 3074
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Zhukov Heavy Tank
+</Name>
+<Model>
+(WoB)
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+50
+35
+35
+24
+44
+</Armor>
+<Turret Equipment>
+ISLVSPL
+ISLVSPL
+</Turret Equipment>
+<Front Equipment>
+ISMML7
+</Front Equipment>
+<Body Equipment>
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ISImprovedC3CPU
+ISCASE
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3071
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+6
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Jihad
+</source>

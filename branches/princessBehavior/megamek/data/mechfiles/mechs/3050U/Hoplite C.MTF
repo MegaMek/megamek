@@ -1,0 +1,149 @@
+Version:1.0
+Hoplite
+C
+
+Config:Biped
+TechBase:Clan
+Era:3052
+Rules Level:2
+
+Mass:55
+Engine:220 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:26
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+1 CLUltraAC10, Right Arm, Ammo:30
+1 CLLRM15, Left Arm, Ammo:16
+2 CLMediumPulseLaser, Left Torso
+1 CLERMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLMediumPulseLaser
+CLMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

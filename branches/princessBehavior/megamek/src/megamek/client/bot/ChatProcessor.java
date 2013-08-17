@@ -17,20 +17,22 @@ package megamek.client.bot;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.util.StringUtil;
 
 public class ChatProcessor {
 
-    private boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
+    protected boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
-        if (message
-                .contains("declares individual victory at the end of the turn.")
-                || message
-                        .contains("declares team victory at the end of the turn.")) {
+        if (!StringUtil.isNullOrEmpty(message) &&
+                (message.contains("declares individual victory at the end of the turn.")
+                        || message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
@@ -38,7 +40,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.game.getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
@@ -68,8 +70,8 @@ public class ChatProcessor {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
                         result = true;
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -114,11 +116,11 @@ public class ChatProcessor {
     }
 
     private void additionalTestBotCommands(StringTokenizer st, TestBot tb,
-            Player p) {
+                                           Player p) {
         try {
             if (st.hasMoreTokens()
                     && st.nextToken().trim()
-                            .equalsIgnoreCase(tb.getLocalPlayer().getName())) {
+                    .equalsIgnoreCase(tb.getLocalPlayer().getName())) {
                 if (!p.isEnemyOf(tb.getLocalPlayer())) {
                     if (st.hasMoreTokens()) {
                         String command = st.nextToken().trim();

@@ -50,6 +50,7 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
+import megamek.common.PlayerImpl;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
@@ -138,7 +139,7 @@ public class ScenarioLoader {
                                 System.out
                                         .println("\tSet Armor Value for (Rear "
                                                 + dp.entity
-                                                        .getLocationName(sd.loc)
+                                                .getLocationName(sd.loc)
                                                 + ") To " + sd.setArmorTo);
                                 dp.entity.setArmor(sd.setArmorTo, sd.loc, true);
                             }
@@ -208,7 +209,7 @@ public class ScenarioLoader {
                         // Is this a valid slot number?
                         else if ((ch.slot < 0)
                                 || (ch.slot > chp.entity
-                                        .getNumberOfCriticals(ch.loc))) {
+                                .getNumberOfCriticals(ch.loc))) {
                             System.out.println("\n\tInvalid Slot Specified "
                                     + ch.loc + ":" + (ch.slot + 1));
                         }
@@ -301,7 +302,7 @@ public class ScenarioLoader {
         g.board = createBoard(p);
 
         // build the faction players
-        Player[] players = createPlayers(p);
+        PlayerImpl[] players = createPlayers(p);
         for (int x = 0; x < players.length; x++) {
             g.addPlayer(x, players[x]);
         }
@@ -735,17 +736,17 @@ public class ScenarioLoader {
         return -1;
     }
 
-    private Player[] createPlayers(Properties p) throws Exception {
+    private PlayerImpl[] createPlayers(Properties p) throws Exception {
         String sFactions = p.getProperty("Factions");
         if (sFactions == null) {
             throw new Exception("Not a valid MMS file.  No Factions");
         }
 
         StringTokenizer st = new StringTokenizer(sFactions, ",");
-        Player[] out = new Player[st.countTokens()];
+        PlayerImpl[] out = new PlayerImpl[st.countTokens()];
         int team = Player.TEAM_NONE;
         for (int x = 0; x < out.length; x++) {
-            out[x] = new Player(x, st.nextToken());
+            out[x] = new PlayerImpl(x, st.nextToken());
 
             // scenario players start out as ghosts to be logged into
             out[x].setGhost(true);
@@ -851,7 +852,7 @@ public class ScenarioLoader {
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
         Vector<String> vBoards = new Vector<String>();
-        
+
         String[] fileList = Configuration.boardsDir().list();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
@@ -1039,7 +1040,7 @@ public class ScenarioLoader {
         public boolean internal;
 
         public SpecDam(int Location, int SetArmorTo, boolean RearHit,
-                boolean Internal) {
+                       boolean Internal) {
             loc = Location;
             setArmorTo = SetArmorTo;
             rear = RearHit;

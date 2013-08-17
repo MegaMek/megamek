@@ -22,7 +22,7 @@ import java.util.Vector;
  * initative for the team, and contains a list of players on that team. It also
  * implements functions that gather the number of units each team has.
  */
-public final class Team extends TurnOrdered {
+public final class Team extends TurnOrderedImpl {
     /**
      *
      */
@@ -49,37 +49,39 @@ public final class Team extends TurnOrdered {
     public void addPlayer(Player p) {
         players.addElement(p);
     }
+
     //get the next player on this team.
-    public Player getNextValidPlayer(Player p,IGame game){
-        Player next = null; 
+    public Player getNextValidPlayer(Player p, IGame game) {
+        Player next = null;
         //start from the next player
-        for (int i = players.indexOf(p)+1; i < players.size(); ++i){
-            if(game.getTurnForPlayer(players.get(i).getId()) != null ){
+        for (int i = players.indexOf(p) + 1; i < players.size(); ++i) {
+            if (game.getTurnForPlayer(players.get(i).getId()) != null) {
                 return players.get(i);
             }
         }
         //if we haven't found one yet, start again from the beginning
         //worst case we reach exactly our current player again.
-        for (int i = 0; i < players.indexOf(p)+1; ++i){
-            if(game.getTurnForPlayer(players.get(i).getId()) != null ){
+        for (int i = 0; i < players.indexOf(p) + 1; ++i) {
+            if (game.getTurnForPlayer(players.get(i).getId()) != null) {
                 return players.get(i);
             }
         }
         //this should not happen, but if we don't find anything return ourselves again.
         return p;
-        
+
     }
+
     /**
      * Clear the initiative of this object.
      */
     @Override
     public void clearInitiative(boolean bUseInitComp) {
         getInitiative().clear();
-        TurnOrdered.rollInitiative(players, bUseInitComp);
+        TurnOrderedImpl.rollInitiative(players, bUseInitComp);
     }
 
     public TurnVectors determineTeamOrder(IGame game) {
-        return TurnOrdered.generateTurnOrder(players, game);
+        return TurnOrderedImpl.generateTurnOrder(players, game);
     }
 
     public int getId() {
@@ -109,7 +111,7 @@ public final class Team extends TurnOrdered {
         // Sum the even turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getEvenTurns();
         }
         return sum;
@@ -120,7 +122,7 @@ public final class Team extends TurnOrdered {
         // Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getOtherTurns();
         }
         return sum;
@@ -131,7 +133,7 @@ public final class Team extends TurnOrdered {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getMultiTurns(game);
         }
         return sum;
@@ -142,7 +144,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getSpaceStationTurns();
         }
         return sum;
@@ -153,7 +155,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getJumpshipTurns();
         }
         return sum;
@@ -164,7 +166,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getWarshipTurns();
         }
         return sum;
@@ -175,7 +177,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getDropshipTurns();
         }
         return sum;
@@ -186,7 +188,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getSmallCraftTurns();
         }
         return sum;
@@ -197,7 +199,7 @@ public final class Team extends TurnOrdered {
 //      Sum the other turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<Player> loop = players.elements(); loop
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             sum += loop.nextElement().getAeroTurns();
         }
         return sum;
@@ -230,7 +232,7 @@ public final class Team extends TurnOrdered {
     }
 
     public boolean hasTAG(IGame game) {
-        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
+        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements(); ) {
             Player m = e.nextElement();
             if (getId() == m.getTeam()) {
                 if (m.hasTAG()) {
@@ -242,8 +244,8 @@ public final class Team extends TurnOrdered {
     }
 
     /**
-     *  cycle through players team and select the best initiative
-     *  take negatives only if the current bonus is zero
+     * cycle through players team and select the best initiative
+     * take negatives only if the current bonus is zero
      */
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
         int constantb = 0;
@@ -251,7 +253,7 @@ public final class Team extends TurnOrdered {
         int commandb = 0;
         int compensationBonus = 0;
 
-        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
             Player player = p.nextElement();
             if ((player.getConstantInitBonus() > constantb)
                     && (player.getConstantInitBonus() != 0)) {
@@ -263,7 +265,7 @@ public final class Team extends TurnOrdered {
             }
         }
 
-        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
             Player player = p.nextElement();
             turnb += player.getTurnInitBonus();
             if (player.getCompensationInitBonus() > compensationBonus) {
@@ -281,7 +283,7 @@ public final class Team extends TurnOrdered {
         int nInitCompensationBonus = 0;
 
         if (bUseInitCompensation) {
-            for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+            for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
                 Player player = p.nextElement();
                 if (player.getCompensationInitBonus() > nInitCompensationBonus) {
                     nInitCompensationBonus = player.getCompensationInitBonus();
@@ -293,7 +295,7 @@ public final class Team extends TurnOrdered {
     }
 
     public void setInitCompensationBonus(int nNewValue) {
-        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
             Player player = p.nextElement();
             player.setCompensationInitBonus(nNewValue);
         }
@@ -301,13 +303,14 @@ public final class Team extends TurnOrdered {
 
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
+     *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
 
         //a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();
-        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements();) {
+        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
             Player player = loop.nextElement();
             units.addAll(player.getAirborneVTOL());
         }

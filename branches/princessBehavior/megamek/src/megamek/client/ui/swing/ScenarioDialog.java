@@ -31,6 +31,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.common.Player;
+import megamek.common.PlayerImpl;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -41,7 +42,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     private static final int T_ME = 0;
     public static final int T_BOT = 2;
     public static final int T_OBOT = 3;
-    private Player[] m_players;
+    private PlayerImpl[] m_players;
     private JLabel[] m_labels;
     private JComboBox[] m_typeChoices;
     private JButton[] m_camoButtons;
@@ -51,7 +52,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
 
-    public ScenarioDialog(final JFrame frame, Player[] pa) {
+    public ScenarioDialog(final JFrame frame, PlayerImpl[] pa) {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
         m_players = pa;

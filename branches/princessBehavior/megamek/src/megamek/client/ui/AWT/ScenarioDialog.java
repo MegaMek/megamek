@@ -19,6 +19,7 @@ import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Player;
+import megamek.common.PlayerImpl;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -32,7 +33,7 @@ public class ScenarioDialog extends Dialog implements ActionListener {
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;
 
-    private Player[] m_players;
+    private PlayerImpl[] m_players;
     private Label[] m_labels;
     private Choice[] m_typeChoices;
     private ImageButton[] m_camoButtons;
@@ -48,7 +49,7 @@ public class ScenarioDialog extends Dialog implements ActionListener {
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
 
-    public ScenarioDialog(Frame frame, Player[] pa) {
+    public ScenarioDialog(Frame frame, PlayerImpl[] pa) {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
         camoDialog = new CamoChoiceDialog(frame);

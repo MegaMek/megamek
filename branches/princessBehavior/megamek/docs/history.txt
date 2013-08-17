@@ -1,5 +1,15 @@
 VERSION HISTORY:
 ----------------
+vPrincessBehavior
++ Built unit test for ChatProcessor class in anticipation of adding additional chat commands for Princess.
++ Built test method for shouldBotAcknowledgeDefeat.
++ Refactoring for testability:
++   shouldBotAcknowledgeDefeat made protected.
++   Interface extracted from Player class.  Player implementation named PlayerImpl
++   Refactored old uses of Player class to now use Player interface.
++   Interface extracted from TurnOrdered class.  TurnOrdered implementation named TurnOrderedImpl
++   Refactored old uses of TurnOrdered class to now use TurnOrdered interface.
+
 v0.35.41-dev (SVN)
 + Bug: Fix to my Double Blind message fix.
 + Bug: Double Blind message being filtered if a unit falls during combat.

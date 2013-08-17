@@ -52,6 +52,7 @@ import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
+import megamek.common.PlayerImpl;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -302,7 +303,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         megamek.common.Compute.d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port, hd.register, hd.register?hd.metaserver:"");
+            server = new Server(hd.serverPass, hd.port, hd.register, hd.register ? hd.metaserver : "");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
                     + hd.port);
@@ -441,7 +442,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         };
         fd.setFilenameFilter(ff);
         fd.setFile("*.mms"); // see comment above for load game dialog
-                                // //$NON-NLS-1$
+        // //$NON-NLS-1$
         fd.setVisible(true);
         if (fd.getFile() == null) {
             return;
@@ -470,7 +471,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         god = null;
 
         // get player types and colors set
-        Player[] pa = new Player[g.getPlayersVector().size()];
+        PlayerImpl[] pa = new PlayerImpl[g.getPlayersVector().size()];
         g.getPlayersVector().copyInto(pa);
 
         ScenarioDialog sd = new ScenarioDialog(frame, pa);
@@ -673,7 +674,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
+                        GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.add(comp);
     }

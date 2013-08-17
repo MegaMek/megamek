@@ -460,7 +460,8 @@ public final class Player extends TurnOrdered {
                         && entity.isDeployed()
                         && !entity.isOffBoard()
                         && entity.getCrew().isActive()
-                        && !entity.isCaptured()) {
+                        && !entity.isCaptured()
+                        && !(entity instanceof MechWarrior)) {
                     if (entity.getCrew().getCommandBonus() > commandb) {
                         commandb = entity.getCrew().getCommandBonus();
                     }

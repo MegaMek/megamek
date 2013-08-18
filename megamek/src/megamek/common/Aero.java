@@ -3973,4 +3973,8 @@ public class Aero extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_AERO;
     }
+    
+    public boolean isInASquadron(){
+        return game.getEntity(getTransportId()) instanceof FighterSquadron;
+    }
 }

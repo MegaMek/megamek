@@ -1631,6 +1631,7 @@ public class Game implements Serializable, IGame {
      *            the index number to start at (not an Entity Id)
      */
     public Entity getNextEntity(int start) {
+        start = start % entities.size();
         int entityId = entities.get(start).getId();
         return getEntity(getNextEntityNum(getTurn(), entityId));
     }

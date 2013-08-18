@@ -1102,12 +1102,14 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_HEX_ARTILLERY:
                 case Targetable.TYPE_HEX_SCREEN:
                 case Targetable.TYPE_HEX_AERO_BOMB:
+                case Targetable.TYPE_HEX_TAG:
                     return new HexTarget(HexTarget.idToCoords(nID), board,
                             nType);
                 case Targetable.TYPE_FUEL_TANK:
                 case Targetable.TYPE_FUEL_TANK_IGNITE:
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
+                case Targetable.TYPE_BLDG_TAG:
                     return new BuildingTarget(BuildingTarget.idToCoords(nID),
                             board, nType);
                 case Targetable.TYPE_MINEFIELD_CLEAR:
@@ -2804,12 +2806,28 @@ public class Game implements Serializable, IGame {
         for (int i = 0; i < tagInfoForTurn.size(); i++) {
             TagInfo info = tagInfoForTurn.elementAt(i);
             Entity attacker = getEntity(info.attackerId);
-            Entity target = getEntity(info.targetId);
-            if (!ae.isEnemyOf(attacker) && target.isOnSameSheet(tc)) {
+            Targetable target = info.target;
+            if (!ae.isEnemyOf(attacker) && isOnSameSheet(target.getPosition(),tc)) {
                 info.shots = info.priority;
                 tagInfoForTurn.setElementAt(info, i);
             }
         }
+    }
+    
+    public boolean isOnSameSheet(Coords c1, Coords c2){
+        if (getOptions().booleanOption("a4homing_target_area")) {
+            // unofficial rule which may be better with odd sized boards
+            if (c2.distance(c1) <= 8) {
+                return true;
+            }
+            return false;
+        }
+        // using FASA map sheets
+        if (((c2.x / 16) == (c1.x / 16))
+                && ((c2.y / 17) == (c1.y / 17))) {
+            return true;
+        }
+        return false;
     }
 
     /**

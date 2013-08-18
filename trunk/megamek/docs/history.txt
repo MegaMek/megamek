@@ -96,6 +96,7 @@ v0.35.41-dev (SVN)
 + Bug [#3113]: TAG against hexes (and buildings)
 + Bug [#3820]: ArrayIndexOutOfBounds in Game.getNextEntity(int)
 + Bug [#3596]: Assorted Aero Bugs (BAP mode switching in Squadrons)
++ Bug: Exception when recovering a Fighter into a squadron: FighterSquadron needed to overloader load(Entity,boolean,int)
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

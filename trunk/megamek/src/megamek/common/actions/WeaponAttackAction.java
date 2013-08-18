@@ -53,6 +53,7 @@ import megamek.common.QuadMech;
 import megamek.common.RangeType;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
+import megamek.common.TagInfo;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -405,6 +406,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 narcSpotter = true;
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
+            }
+            if (spotter == null && atype != null
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                            .getAmmoType() == AmmoType.T_NLRM))
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED))
+            {
+                for (TagInfo ti : game.getTagInfo()){
+                    if (target.getTargetId() == ti.target.getTargetId()){
+                        spotter = game.getEntity(ti.attackerId);
+                    }
+                }
             }
         }
 
@@ -1467,9 +1480,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             || (atype.getAmmoType() == AmmoType.T_MML) || (atype
                             .getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    && (te.getTaggedBy() != -1)) {
-                toHit.addModifier(-1,
-                        "semiguided ignores spotter movement & indirect fire penalties");
+                    ) {
+                boolean targetTagged = false;
+                // If this is an entity, we can see if it's tagged
+                if (te != null){
+                    targetTagged = te.getTaggedBy() != -1; 
+                } else{ // Non entities will require us to look harder
+                    for (TagInfo ti : game.getTagInfo()){
+                        if (target.getTargetId() == ti.target.getTargetId()){
+                            targetTagged = true;
+                        }
+                    }
+                }
+                
+                if (targetTagged){
+                    toHit.addModifier(-1,"semiguided ignores spotter " +
+                    		"movement & indirect fire penalties");
+                }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game,
                         spotter.getId()));
@@ -2758,7 +2785,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
-        Entity spotter = null;
+        Entity spotter = null;     
         if (isIndirect) {
             if ((target instanceof Entity)
                     && !isTargetECMAffected
@@ -2770,8 +2797,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
+                       
+            if (spotter == null && atype != null
+                && ((atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                        .getAmmoType() == AmmoType.T_NLRM))
+                && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED))
+            {
+                for (TagInfo ti : game.getTagInfo()){
+                    if (target.getTargetId() == ti.target.getTargetId()){
+                        spotter = game.getEntity(ti.attackerId);
+                    }
+                }
+            }
 
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon)
+            if ((spotter == null) && 
+                    !(wtype instanceof MekMortarWeapon)
                     && !(wtype instanceof ArtilleryCannonWeapon)) {
                 return "No available spotter";
             }

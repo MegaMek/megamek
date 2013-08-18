@@ -1887,6 +1887,7 @@ public class Server implements Runnable {
                 // remove the last traces of last round
                 game.resetActions();
                 game.resetTagInfo();
+                sendTagInfoReset();
                 clearReports();
                 resetEntityRound();
                 resetEntityPhase(phase);
@@ -2461,6 +2462,7 @@ public class Server implements Runnable {
                 checkForFlawedCooling();
 
                 sendSpecialHexDisplayPackets();
+                sendTagInfoUpdates();
 
                 // check reports
                 if (vPhaseReport.size() > 1) {
@@ -2530,6 +2532,28 @@ public class Server implements Runnable {
         for (int i = 0; i < connections.size(); i++) {
             if (connections.get(i) != null) {
                 connections.get(i).send(createSpecialHexDisplayPacket(i));
+            }
+        }
+    }
+    
+    private void sendTagInfoUpdates(){
+        if (connections == null) {
+            return;
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i) != null) {
+                connections.get(i).send(createTagInfoUpdatesPacket());
+            }
+        }
+    }
+    
+    public void sendTagInfoReset(){
+        if (connections == null) {
+            return;
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i) != null) {
+                connections.get(i).send(new Packet(Packet.COMMAND_RESET_TAGINFO));
             }
         }
     }
@@ -26302,6 +26326,10 @@ public class Server implements Runnable {
             }
         }
         return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
+    }
+    
+    private Packet createTagInfoUpdatesPacket(){
+        return new Packet(Packet.COMMAND_SENDING_TAGINFO,game.getTagInfo());
     }
 
     /**

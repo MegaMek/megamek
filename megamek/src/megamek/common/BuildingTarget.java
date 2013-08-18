@@ -34,11 +34,6 @@ public class BuildingTarget implements Targetable {
     private Coords position = null;
 
     /**
-     * Flag that indicates an attempt to ignite the building.
-     */
-    private boolean isIgnite = false;
-
-    /**
      * The ID of the building being targeted.
      */
     private int id = Building.UNKNOWN;
@@ -76,7 +71,6 @@ public class BuildingTarget implements Targetable {
     protected void init(Coords coords, IBoard board, int nType) {
         position = coords;
         type = nType;
-        isIgnite = nType == Targetable.TYPE_BLDG_IGNITE ? true : false;
 
         // Get the building at the given coordinates.
         Building bldg = board.getBuildingAt(position);
@@ -187,21 +181,22 @@ public class BuildingTarget implements Targetable {
     }
 
     /**
+     * Creates an id for this building based on its location as well as a 
+     * building code.
      * The transformation encodes the y value in the top 5 decimal digits and
      * the x value in the bottom 5. Could more efficiently encode this by
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
-
-    // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
-        return c.y * 100000 + c.x;
+        return Targetable.TYPE_BUILDING * 1000000 + c.y * 1000 + c.x;
     }
 
     // decode 1 number into 2
     public static Coords idToCoords(int id) {
-        int y = id / 100000;
-        return new Coords(id - (y * 100000), y);
+        int idNoType =  id - Targetable.TYPE_BUILDING * 1000000;
+        int y = (idNoType) / 1000;
+        return new Coords(idNoType - (y * 1000), y);
     }
 
     public int sideTable(Coords src) {

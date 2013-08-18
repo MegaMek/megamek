@@ -801,6 +801,15 @@ public class FighterSquadron extends Aero {
         }
         updateSkills();
     }
+    
+    /**
+     * We need to override this function to make sure the proper load method
+     * gets called in some cases, but Squadrons can't have bays, so we can just
+     * ignore the bay number.
+     */
+    public void load(Entity unit, boolean checkFalse, int bayNumber){
+        load(unit, checkFalse);
+    }
 
     /**
      * Unload the given unit. TODO: need to strip out ammo

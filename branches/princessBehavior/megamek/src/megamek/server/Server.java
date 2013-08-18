@@ -25880,27 +25880,33 @@ public class Server implements Runnable {
         return new Packet(Packet.COMMAND_END_OF_GAME, array);
     }
 
+    public static String ORIGIN = "***Server";
+
+    public static String formatChatMessage(String origin, String message) {
+        return origin + ": " + message;
+    }
+
     /**
      * Transmits a chat message to all players
      */
     public void sendChat(int connId, String origin, String message) {
-        send(connId, new Packet(Packet.COMMAND_CHAT, origin + ": " + message));
+        send(connId, new Packet(Packet.COMMAND_CHAT, formatChatMessage(origin, message)));
     }
 
     /**
      * Transmits a chat message to all players
      */
     private void sendChat(String origin, String message) {
-        String chat = origin + ": " + message;
+        String chat = formatChatMessage(origin, message);
         send(new Packet(Packet.COMMAND_CHAT, chat));
     }
 
     public void sendServerChat(int connId, String message) {
-        sendChat(connId, "***Server", message);
+        sendChat(connId, ORIGIN, message);
     }
 
     public void sendServerChat(String message) {
-        sendChat("***Server", message);
+        sendChat(ORIGIN, message);
     }
 
     /**

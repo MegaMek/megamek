@@ -25,18 +25,26 @@ import megamek.server.Server;
 
 /**
  * Causes automatic victory at the end of the current turn.
- * 
+ *
  * @author Ben
- * @version
  */
 public class VictoryCommand extends ServerCommand {
 
-    /** Creates new VictoryCommand */
+    public static final String commandName = "victory";
+    public static final String helpText = "Causes automatic victory for the issuing player or his/her team at the end " +
+            "of this turn. Must be acknowledged by all opponents using the /defeat command. Usage: /victory <password>";
+    public static final String restrictedUse = "Observers are restricted from declaring victory.";
+    public static final String badPassword = "The password is incorrect.  Usage: /victory <password>";
+    private static final String declareIndividual = " declares individual victory at the end of the turn. This must be " +
+            "acknowledged by all opponents using the /defeat command or no victory will occur.";
+    private static final String declareTeam = " declares team victory at the end of the turn. This must be " +
+            "acknowledged by all opponents using the /defeat command or no victory will occur.";
+
+    /**
+     * Creates new VictoryCommand
+     */
     public VictoryCommand(Server server) {
-        super(
-                server,
-                "victory",
-                "Causes automatic victory for the issuing player or his/her team at the end of this turn. Must be acknowledged by all opponents using the /defeat command. Usage: /victory <password>");
+        super(server, commandName, helpText);
     }
 
     /**
@@ -45,18 +53,24 @@ public class VictoryCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId,
-                    "Observers are restricted from declaring victory.");
+            server.sendServerChat(connId, restrictedUse);
             return;
         }
 
-        if (!server.isPassworded()
-                || (args.length > 1 && server.isPassword(args[1]))) {
+        if (!server.isPassworded() ||
+                (args.length > 1 && server.isPassword(args[1]))) {
             reset(connId);
         } else {
-            server.sendServerChat(connId,
-                    "The password is incorrect.  Usage: /victory <password>");
+            server.sendServerChat(connId, badPassword);
         }
+    }
+
+    public static final String getDeclareIndividual(String playerName) {
+        return playerName + declareIndividual;
+    }
+
+    public static final String getDeclareTeam(String playerName) {
+        return playerName + declareTeam;
     }
 
     private void reset(int connId) {
@@ -67,13 +81,9 @@ public class VictoryCommand extends ServerCommand {
          * victory."); server.cancelVictory(); return; }
          */// okay, declare force victory
         if (player.getTeam() == Player.TEAM_NONE) {
-            server
-                    .sendServerChat(player.getName()
-                            + " declares individual victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
+            server.sendServerChat(getDeclareIndividual(player.getName()));
         } else {
-            server
-                    .sendServerChat(player.getName()
-                            + " declares team victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
+            server.sendServerChat(getDeclareTeam(player.getName()));
         }
         server.forceVictory(player);
     }

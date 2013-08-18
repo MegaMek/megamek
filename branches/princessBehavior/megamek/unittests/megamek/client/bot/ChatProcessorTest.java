@@ -3,6 +3,9 @@ package megamek.client.bot;
 import junit.framework.TestCase;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.server.Server;
+import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.VictoryCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +19,9 @@ import java.util.Vector;
  * User: Deric
  * Date: 8/17/13
  * Time: 9:32 AM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(JUnit4.class)
-public class ChatProcessorTest extends TestCase {
+public class ChatProcessorTest {
 
     private static final BotClient mockBotHal = Mockito.mock(BotClient.class);
     private static final BotClient mockBotVGer = Mockito.mock(BotClient.class);
@@ -31,7 +33,6 @@ public class ChatProcessorTest extends TestCase {
     private static final Player mockHumanPlayerKirk = Mockito.mock(Player.class);
     private static final Vector<Player> playerVector = new Vector<Player>(4);
 
-    @Override
     @Before
     public void setUp() throws Exception {
         Mockito.when(mockBotHal.getLocalPlayer()).thenReturn(mockBotPlayerHal);
@@ -75,37 +76,78 @@ public class ChatProcessorTest extends TestCase {
     public void testShouldBotAcknowledgeDefeat() {
         ChatProcessor chatProcessor = new ChatProcessor();
 
-
         // Test individual human victory.
-        String msg = "Player Dave declares individual victory at the end of the turn.";
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        String cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerDave.getName());
+        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test team human victory.
-        msg = "Player Dave declares team victory at the end of the turn.";
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        cmd = VictoryCommand.getDeclareTeam(mockHumanPlayerDave.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test a different message.
         msg = "This is general chat message with no bot commands.";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test a null message.
         msg = null;
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test an empty message.
         msg = "";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test victory by human partner.
-        msg = "Player Kirk declares team victory at the end of the turn.";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerKirk.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test victory by self.
-        msg = "Player Hal declares team victory at the end of the turn.";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerHal.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test victory by opposing bot.
-        msg = "Player V'Ger declares team victory at the end of the turn.";
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerVGer.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+    }
+
+    @Test
+    public void testShouldBotAcknowledgeVictory() {
+        ChatProcessor chatProcessor = new ChatProcessor();
+
+        // Test enemy wants defeat.
+        String cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerDave.getName());
+        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertTrue(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test enemy admits defeat.
+        cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerDave.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertTrue(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test ally wants defeat.
+        cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerKirk.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test ally admits defeat.
+        cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerKirk.getName());
+        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test a different message.
+        msg = "This is general chat message with no bot commands.";
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test null message.
+        msg = null;
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+
+        // Test empty message.
+        msg = "";
+        TestCase.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
     }
 }

@@ -25,6 +25,7 @@ import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
+import megamek.server.commands.DefeatCommand;
 
 public class ChatProcessor {
 
@@ -53,10 +54,11 @@ public class ChatProcessor {
         return result;
     }
 
-    private boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
+    protected boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
         boolean result = false;
 
-        if (message.contains("type /victory to accept the surrender")) {
+        if (!StringUtil.isNullOrEmpty(message) &&
+                (message.contains(DefeatCommand.wantsDefeat) || message.contains(DefeatCommand.admitsDefeat))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
@@ -65,13 +67,13 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.game.getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
                         result = true;
-                        break;
                     }
+                    break;
                 }
             }
         }

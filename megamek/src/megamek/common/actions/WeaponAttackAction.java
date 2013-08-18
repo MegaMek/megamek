@@ -2439,7 +2439,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         
         // The TAG system cannot target Airborne Aeros.
-        if (isTAG && (te.isAirborne() || te.isSpaceborne())) {
+        if (isTAG && te != null && (te.isAirborne() || te.isSpaceborne())) {
             return "Can not target airborne units with TAG.";
         }
         

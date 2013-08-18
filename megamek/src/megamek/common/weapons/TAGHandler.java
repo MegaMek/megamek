@@ -21,6 +21,7 @@ import megamek.common.EquipmentMode;
 import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.TagInfo;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -83,8 +84,8 @@ public class TAGHandler extends WeaponHandler {
                 priority = 1;
             }
             // it is possible for 2 or more tags to hit the same entity
-            TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(),
-                    priority, false);
+            TagInfo info = new TagInfo(ae.getId(), Targetable.TYPE_ENTITY,
+                    entityTarget, priority, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
             Report r = new Report(3188);
@@ -117,8 +118,8 @@ public class TAGHandler extends WeaponHandler {
             }
         }
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority,
-                true);
+        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), 
+                target, priority, true);
         game.addTagInfo(info);
         return false;
     }

@@ -24,21 +24,27 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
+import megamek.common.Building;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Dropship;
@@ -912,9 +918,77 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 target(clientgui.getClient().game.getFirstEntity(b.getCoords()));
             } else if (clientgui.getClient().game.getFirstEnemyEntity(b.getCoords(), ce()) != null) {
                 target(clientgui.getClient().game.getFirstEnemyEntity(b.getCoords(), ce()));
+            } else if (ce().hasTAG() && phase == IGame.Phase.PHASE_OFFBOARD){
+                target(chooseTarget(b.getCoords()));
             }
         }
     }
+    
+    /**
+     * Have the player select a target from the entities at the given coords.
+     *
+     * @param pos
+     *            - the <code>Coords</code> containing targets.
+     */
+    private Targetable chooseTarget(Coords pos) {
+
+        boolean friendlyFire = clientgui.getClient().game.getOptions()
+                .booleanOption("friendly_fire"); //$NON-NLS-1$
+        // Assume that we have *no* choice.
+        Targetable choice = null;
+        Enumeration<Entity> choices;
+
+        // Get the available choices, depending on friendly fire
+        if (friendlyFire) {
+            choices = clientgui.getClient().game.getEntities(pos);
+        } else {
+            choices = clientgui.getClient().game.getEnemyEntities(pos, ce());
+        }
+
+        // Convert the choices into a List of targets.
+        List<Targetable> targets = new ArrayList<Targetable>();
+        while (choices.hasMoreElements()) {
+            choice = choices.nextElement();
+            if (!ce().equals(choice)) {
+                targets.add(choice);
+            }
+        }
+
+        // Is there a building in the hex?
+        Building bldg = clientgui.getClient().game.getBoard()
+                .getBuildingAt(pos);
+        if (bldg != null) {
+            targets.add(new BuildingTarget(pos, clientgui.getClient().game
+                    .getBoard(), Targetable.TYPE_BLDG_TAG));
+        }
+        
+        targets.add(new HexTarget(pos, clientgui.getClient().game.getBoard(),
+                Targetable.TYPE_HEX_TAG));
+
+        // Do we have a single choice?
+        if (targets.size() == 1) {
+            // Return that choice.
+            choice = targets.get(0);
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if (targets.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages.getString(
+                                    "FiringDisplay.ChooseTargetDialog.message", //$NON-NLS-1$ 
+                                    new Object[] { pos.getBoardNum() }),
+                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(targets), null);
+            choice = SharedUtility.getTargetPicked(targets, input);
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+
+    } // End private Targetable chooseTarget( Coords )    
 
     //
     // GameListener

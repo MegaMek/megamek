@@ -259,7 +259,19 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
+        } else if (!bMissed && // The attack is targeting a specific building
+                (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
+            r = new Report(3390);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+            vPhaseReport.addAll(server.damageBuilding(bldg,
+                    nDamPerHit, target.getPosition()));
+        } else if (!bMissed){ // Hex is targeted, need to report a hit
+            r = new Report(3390);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
         }
+        
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
         bldg = null;
@@ -318,15 +330,23 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
-        Entity entityTarget = null;
+        Targetable newTarget = null;
 
         Vector<TagInfo> v = game.getTagInfo();
         Vector<TagInfo> allowed = new Vector<TagInfo>();
         // get only TagInfo on the same side
         for (TagInfo ti : v) {
-            if (ae.isEnemyOf(game.getEntity(ti.targetId))
-                    || game.getOptions().booleanOption("friendly_fire")) {
+            switch (ti.targetType){
+            case Targetable.TYPE_BLDG_TAG:
+            case Targetable.TYPE_HEX_TAG:
                 allowed.add(ti);
+                break;
+            case Targetable.TYPE_ENTITY:
+                if (ae.isEnemyOf((Entity) ti.target)
+                        || game.getOptions().booleanOption("friendly_fire")) {
+                    allowed.add(ti);
+                }
+                break;
             }
         }
         if (allowed.size() == 0) {
@@ -338,16 +358,16 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         // get TAGs that hit
         v = new Vector<TagInfo>();
         for (TagInfo ti : allowed) {
-            entityTarget = game.getEntity(ti.targetId);
-            if (!ti.missed && (entityTarget != null)) {
+            newTarget = ti.target;
+            if (!ti.missed && (newTarget != null)) {
                 v.add(ti);
             }
         }
-        assert (entityTarget != null);
+        assert (newTarget != null);
         if (v.size() == 0) {
-            aaa.setTargetId(entityTarget.getId());
-            aaa.setTargetType(Targetable.TYPE_ENTITY);
-            target = entityTarget;
+            aaa.setTargetId(newTarget.getTargetId());
+            aaa.setTargetType(newTarget.getTargetType());
+            target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "tag missed the target");
             return;
@@ -355,20 +375,20 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         // get TAGs that are on the same map
         allowed = new Vector<TagInfo>();
         for (TagInfo ti : v) {
-            entityTarget = game.getEntity(ti.targetId);
+            newTarget = ti.target;
             // homing target area is 8 hexes
             if (game.getOptions().booleanOption("a4homing_target_area")) {
-                if (tc.distance(entityTarget.getPosition()) <= 8) {
+                if (tc.distance(newTarget.getPosition()) <= 8) {
                     allowed.add(ti);
                 }
-            } else if (entityTarget.isOnSameSheet(tc)) {
+            } else if (game.isOnSameSheet(newTarget.getPosition(),tc)) {
                 allowed.add(ti);
             }
         }
         if (allowed.size() == 0) {
-            aaa.setTargetId(entityTarget.getId());
-            aaa.setTargetType(entityTarget.getTargetType());
-            target = entityTarget;
+            aaa.setTargetId(newTarget.getTargetId());
+            aaa.setTargetType(newTarget.getTargetType());
+            target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no tag on the same mapsheet");
         } else {
@@ -376,7 +396,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             int bestDistance = Integer.MAX_VALUE;
             TagInfo targetTag = allowed.firstElement();
             for (TagInfo ti : allowed) {
-                int distance = tc.distance(entityTarget.getPosition());
+                int distance = tc.distance(newTarget.getPosition());
 
                 // higher # of shots left
                 if (ti.shots > targetTag.shots) {
@@ -407,8 +427,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             }
 
             targetTag.shots--;
-            target = game.getEntity(targetTag.targetId);
-            aaa.setTargetId(targetTag.targetId);
+            target = targetTag.target;
+            aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
         }
     }

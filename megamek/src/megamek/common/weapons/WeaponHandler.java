@@ -27,6 +27,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IAimingModes;
@@ -38,6 +39,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -421,6 +423,29 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // for each cluster of hits, do a chunk of damage
                 while (hits > 0) {
                     int nDamage;
+                    if ((target.getTargetType() == Targetable.TYPE_HEX_TAG)
+                            || (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
+                        int priority = 1;
+                        EquipmentMode mode = (weapon.curMode());
+                        if (mode != null) {
+                            if (mode.getName() == "1-shot") {
+                                priority = 1;
+                            } else if (mode.getName() == "2-shot") {
+                                priority = 2;
+                            } else if (mode.getName() == "3-shot") {
+                                priority = 3;
+                            } else if (mode.getName() == "4-shot") {
+                                priority = 4;
+                            }
+                        }
+                        TagInfo info = new TagInfo(ae.getId(),
+                                target.getTargetType(), target, priority, false);
+                        game.addTagInfo(info);
+                        r = new Report(3390);
+                        r.subject = subjectId;
+                        vPhaseReport.addElement(r);
+                        hits = 0;
+                    }
                     // targeting a hex for igniting
                     if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                             || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {

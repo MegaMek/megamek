@@ -103,6 +103,10 @@ public class Packet {
     public static final int COMMAND_ENTITY_LOAD = 580;
     
     public static final int COMMAND_RESET_ROUND_DEPLOYMENT = 600;
+    
+    public static final int COMMAND_SENDING_TAGINFO = 610;
+    
+    public static final int COMMAND_RESET_TAGINFO = 620;
 
 
     private int command;

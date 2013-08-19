@@ -35,7 +35,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
-import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IBoard;
 import megamek.common.IGame;

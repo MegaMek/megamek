@@ -22,7 +22,6 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Protomech;

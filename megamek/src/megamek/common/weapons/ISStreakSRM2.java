@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**

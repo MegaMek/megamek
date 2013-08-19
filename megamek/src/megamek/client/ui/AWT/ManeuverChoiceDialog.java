@@ -32,8 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;

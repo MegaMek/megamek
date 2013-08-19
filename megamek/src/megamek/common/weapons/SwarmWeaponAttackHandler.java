@@ -20,16 +20,11 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
 
 /**

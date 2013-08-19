@@ -22,7 +22,6 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.common.EquipmentType;
 
 /**
  * @author Sebastian Brocks

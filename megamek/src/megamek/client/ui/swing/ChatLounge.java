@@ -39,7 +39,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -104,7 +103,6 @@ import megamek.common.Infantry;
 import megamek.common.InfantryBay;
 import megamek.common.Jumpship;
 import megamek.common.MapSettings;
-import megamek.common.Mech;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
@@ -3235,7 +3233,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     fighters.add(e.getId());
                 }
-                if (fighters.size() > 6) {
+                if (fighters.size() > FighterSquadron.MAX_SIZE) {
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("FighterSquadron.toomany"),
                             Messages.getString("FighterSquadron.error"),

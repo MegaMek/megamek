@@ -31,7 +31,7 @@ public class FighterSquadron extends Aero {
 
     private static final long serialVersionUID = 3491212296982370726L;
 
-    public static int MAX_SIZE = 6;
+    public static int MAX_SIZE = 10; // Value is arbitrary, but StratOps shows up to 10 so we'll use that
 
     private Vector<Integer> fighters = new Vector<Integer>();
 

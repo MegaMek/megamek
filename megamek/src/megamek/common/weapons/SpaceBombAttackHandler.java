@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.Aero;

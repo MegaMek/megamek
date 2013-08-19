@@ -17,21 +17,21 @@ import java.io.Serializable;
 import java.util.Enumeration;
 
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * abstract baseclass for bv-checking victory implementations
  */
 public abstract class AbstractBVVictory implements Victory, Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -689891568905531049L;
 
-    public int getFriendlyBV(IGame game, Player player) {
+    public int getFriendlyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {
-            Player other = f.nextElement();
+        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements(); ) {
+            IPlayer other = f.nextElement();
             if (other.isObserver())
                 continue;
             if (!other.isEnemyOf(player)) {
@@ -41,10 +41,10 @@ public abstract class AbstractBVVictory implements Victory, Serializable {
         return ret;
     }
 
-    public int getEnemyBV(IGame game, Player player) {
+    public int getEnemyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {
-            Player other = f.nextElement();
+        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements(); ) {
+            IPlayer other = f.nextElement();
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {
@@ -54,10 +54,10 @@ public abstract class AbstractBVVictory implements Victory, Serializable {
         return ret;
     }
 
-    public int getEnemyInitialBV(IGame game, Player player) {
+    public int getEnemyInitialBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {
-            Player other = f.nextElement();
+        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements(); ) {
+            IPlayer other = f.nextElement();
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {

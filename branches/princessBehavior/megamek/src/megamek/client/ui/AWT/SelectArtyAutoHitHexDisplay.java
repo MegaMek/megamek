@@ -30,7 +30,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -52,7 +52,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     private Button butA;
     private Button butDone;
 
-    private Player p;
+    private IPlayer p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
 
     /**
@@ -67,20 +67,20 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages
-                .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
+                               .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
         p = client.getLocalPlayer();
 
         artyAutoHitHexes.setPlayerID(p.getId());
 
         butA = new Button(Messages
-                .getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
+                                  .getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
         butA.setActionCommand(SET_HIT_HEX);
         butA.setEnabled(false);
 
         butDone = new Button(Messages
-                .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
+                                     .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
@@ -111,7 +111,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
+                        GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -123,7 +123,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         // we should get 5 hexes per 4 mapsheets
         // 4 mapsheets is 16*17*4 hexes, so 1088
         IBoard board = clientgui.getClient().game.getBoard();
-        int hexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        int hexes = (int) Math.ceil(((double) (board.getHeight() * board.getWidth())) / 1088) * 5;
         setArtyEnabled(hexes);
         //FIXME: had to comment this out now that boardview draws deployment based on entities and not players
         //clientgui.bv.markDeploymentHexesFor(p);
@@ -156,22 +156,22 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
             return;
         }
         if (!artyAutoHitHexes.contains(coords)
-                && (artyAutoHitHexes.size() < 5)
-                && clientgui
-                        .doYesNoDialog(
-                                Messages
-                                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
-                                Messages
-                                        .getString(
-                                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
+            && (artyAutoHitHexes.size() < 5)
+            && clientgui
+                .doYesNoDialog(
+                        Messages
+                                .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[]{coords.getBoardNum()}))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
             client.game.getBoard().addSpecialHexDisplay(coords,
-                    new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND,
-                            client.getLocalPlayer().getName(),
-                            "Artilery autohit, for player " + clientgui.getClient().getLocalPlayer().getName()));
+                                                        new SpecialHexDisplay(
+                                                                SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                                                                SpecialHexDisplay.NO_ROUND,
+                                                                client.getLocalPlayer().getName(),
+                                                                "Artilery autohit, for player " + clientgui.getClient().getLocalPlayer().getName()));
         }
 
     }
@@ -193,7 +193,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
 
         // ignore buttons other than 1
         if (!client.isMyTurn()
-                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
 
@@ -218,11 +218,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         if (client.isMyTurn()) {
             beginMyTurn();
             setStatusBarText(Messages
-                    .getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
+                                     .getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
             setStatusBarText(Messages
-                    .getString(
-                            "SelectArtyAutoHitHexDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+                                     .getString(
+                                             "SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
         }
     }
 
@@ -240,12 +240,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         }
 
         if (client.isMyTurn()
-                && (client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
+            && (client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             setStatusBarText(Messages
-                    .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
+                                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }
     }
 
@@ -278,8 +278,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     private void setArtyEnabled(int nbr) {
         butA
                 .setLabel(Messages
-                        .getString(
-                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                                  .getString(
+                                          "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

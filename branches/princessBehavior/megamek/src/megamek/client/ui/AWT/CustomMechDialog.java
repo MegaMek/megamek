@@ -57,6 +57,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
@@ -64,7 +65,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
@@ -82,10 +82,9 @@ import megamek.common.preference.PreferenceManager;
  * supported.
  *
  * @author Ben
- * @version
  */
 public class CustomMechDialog extends ClientDialog implements ActionListener,
-        DialogOptionListener {
+                                                              DialogOptionListener {
 
     /**
      *
@@ -208,11 +207,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private OffBoardDirection direction = OffBoardDirection.NONE;
     private int distance = 17;
 
-    /** Creates new CustomMechDialog */
+    /**
+     * Creates new CustomMechDialog
+     */
     public CustomMechDialog(ClientGUI clientgui, Client client, Entity entity,
-            boolean editable) {
+                            boolean editable) {
         super(clientgui.frame,
-                Messages.getString("CustomMechDialog.title"), true); //$NON-NLS-1$
+              Messages.getString("CustomMechDialog.title"), true); //$NON-NLS-1$
 
         Panel tempPanel = new Panel();
         this.entity = entity;
@@ -225,13 +226,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (entity instanceof Tank) {
             labPiloting.setText(Messages
-                    .getString("CustomMechDialog.labDriving"));
+                                        .getString("CustomMechDialog.labDriving"));
         } else if (entity instanceof Infantry) {
             labPiloting.setText(Messages
-                    .getString("CustomMechDialog.labAntiMech"));
+                                        .getString("CustomMechDialog.labAntiMech"));
         } else {
             labPiloting.setText(Messages
-                    .getString("CustomMechDialog.labPiloting"));
+                                        .getString("CustomMechDialog.labPiloting"));
         }
 
         // layout
@@ -303,7 +304,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Conditional Ejections
             if (clientgui.getClient().game.getOptions().booleanOption(
                     "conditional_ejection")
-                    && hasEjectSeat) { //$NON-NLS-1$
+                && hasEjectSeat) { //$NON-NLS-1$
                 tempPanel.add(labCondEjectAmmo, GBC.std());
                 tempPanel.add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setState(mech.isCondEjectAmmo());
@@ -325,8 +326,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "pilot_advantages") //$NON-NLS-1$
-                || clientgui.getClient().game.getOptions().booleanOption(
-                        "manei_domini")) { //$NON-NLS-1$
+            || clientgui.getClient().game.getOptions().booleanOption(
+                "manei_domini")) { //$NON-NLS-1$
             scrOptions.add(panOptions);
             tempPanel.add(scrOptions, GBC.std());
             tempPanel.add(texDesc, GBC.eol());
@@ -352,13 +353,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             tempPanel.add(labOffBoardDirection, GBC.std());
             choOffBoardDirection.add(Messages
-                    .getString("CustomMechDialog.North")); //$NON-NLS-1$
+                                             .getString("CustomMechDialog.North")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages
-                    .getString("CustomMechDialog.South")); //$NON-NLS-1$
+                                             .getString("CustomMechDialog.South")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages
-                    .getString("CustomMechDialog.East")); //$NON-NLS-1$
+                                             .getString("CustomMechDialog.East")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages
-                    .getString("CustomMechDialog.West")); //$NON-NLS-1$
+                                             .getString("CustomMechDialog.West")); //$NON-NLS-1$
             direction = entity.getOffBoardDirection();
             if (OffBoardDirection.NONE == direction) {
                 direction = OffBoardDirection.NORTH;
@@ -386,32 +387,32 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
             Enumeration<Entity> otherUnitEntities = client.game
-                    .getSelectedEntities(new EntitySelector() {
-                        private final int ownerId = CustomMechDialog.this.entity
-                                .getOwnerId();
-                        private final char unitNumber = CustomMechDialog.this.entity
-                                .getUnitNumber();
+                                                          .getSelectedEntities(new EntitySelector() {
+                                                              private final int ownerId = CustomMechDialog.this.entity
+                                                                      .getOwnerId();
+                                                              private final char unitNumber = CustomMechDialog.this.entity
+                                                                      .getUnitNumber();
 
-                        public boolean accept(Entity entity) {
-                            if ((entity instanceof Protomech)
-                                    && (ownerId == entity.getOwnerId())
-                                    && (unitNumber != entity.getUnitNumber())) {
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
+                                                              public boolean accept(Entity entity) {
+                                                                  if ((entity instanceof Protomech)
+                                                                      && (ownerId == entity.getOwnerId())
+                                                                      && (unitNumber != entity.getUnitNumber())) {
+                                                                      return true;
+                                                                  }
+                                                                  return false;
+                                                              }
+                                                          });
 
             // If we got any other entites, show the unit number controls.
             if (otherUnitEntities.hasMoreElements()) {
                 tempPanel.add(labCallsign,
-                        GBC.std().anchor(GridBagConstraints.CENTER));
+                              GBC.std().anchor(GridBagConstraints.CENTER));
                 tempPanel.add(labUnitNum, GBC.std());
                 tempPanel.add(choUnitNum, GBC.eol());
                 refreshUnitNum(otherUnitEntities);
             } else {
                 tempPanel.add(labCallsign,
-                        GBC.eol().anchor(GridBagConstraints.CENTER));
+                              GBC.eol().anchor(GridBagConstraints.CENTER));
             }
         }
 
@@ -419,22 +420,22 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
             setupMunitions();
             tempPanel.add(panMunitions,
-                    GBC.eol().anchor(GridBagConstraints.CENTER));
+                          GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
         // set up Santa Annas if using nukes
         if (((entity instanceof Dropship) || (entity instanceof Jumpship))
-                && clientgui.getClient().game.getOptions().booleanOption(
-                        "at2_nukes")) {
+            && clientgui.getClient().game.getOptions().booleanOption(
+                "at2_nukes")) {
             setupSantaAnna();
             tempPanel.add(panSantaAnna,
-                    GBC.eol().anchor(GridBagConstraints.CENTER));
+                          GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
         // set up bombs
         if ((entity instanceof Aero)
-                && !((entity instanceof FighterSquadron)
-                        || (entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
+            && !((entity instanceof FighterSquadron)
+                 || (entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
             setupBombs();
             tempPanel
                     .add(panBombs, GBC.eol().anchor(GridBagConstraints.CENTER));
@@ -445,7 +446,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 "tacops_burst")) { //$NON-NLS-1$
             setupRapidfireMGs();
             tempPanel.add(panRapidfireMGs,
-                    GBC.eol().anchor(GridBagConstraints.CENTER));
+                          GBC.eol().anchor(GridBagConstraints.CENTER));
         }
 
         // Set up searchlight
@@ -471,34 +472,34 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         setupButtons();
         tempPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER)
-                .insets(5, 0, 5, 5));
+                                     .insets(5, 0, 5, 5));
 
         fldName.setText(entity.getCrew().getName());
         fldName.addActionListener(this);
         fldGunnery.setText(new Integer(entity.getCrew().getGunnery())
-                .toString());
+                                   .toString());
         fldGunnery.addActionListener(this);
         fldGunneryL.setText(new Integer(entity.getCrew().getGunneryL())
-                .toString());
+                                    .toString());
         fldGunneryL.addActionListener(this);
         fldGunneryM.setText(new Integer(entity.getCrew().getGunneryM())
-                .toString());
+                                    .toString());
         fldGunneryM.addActionListener(this);
         fldGunneryB.setText(new Integer(entity.getCrew().getGunneryB())
-                .toString());
+                                    .toString());
         fldGunneryB.addActionListener(this);
         fldPiloting.setText(new Integer(entity.getCrew().getPiloting())
-                .toString());
+                                    .toString());
         fldPiloting.addActionListener(this);
         fldInit.setText(new Integer(entity.getCrew().getInitBonus()).toString());
         fldInit.addActionListener(this);
         fldCommandInit.setText(new Integer(entity.getCrew().getCommandBonus())
-                .toString());
+                                       .toString());
         fldCommandInit.addActionListener(this);
         if (entity instanceof Aero) {
             Aero a = (Aero) entity;
             fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
-                    .toString());
+                                             .toString());
             fldStartVelocity.addActionListener(this);
 
             fldStartAltitude.setText(new Integer(a.getElevation()).toString());
@@ -630,9 +631,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Santa Annas?
             if (clientgui.getClient().game.getOptions().booleanOption(
                     "at2_nukes")
-                    && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
-                            .getAmmoType() == AmmoType.T_AR10) && at
-                            .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
+                && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
+                                                                               .getAmmoType() == AmmoType.T_AR10) && at
+                                                                              .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
                 gbc.gridy = row++;
                 SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
                 gbl.setConstraints(sacp, gbc);
@@ -666,10 +667,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // also would be better to not have to add Santa Anna's in such
             // an idiosyncratic fashion
             if ((entity instanceof Aero)
-                    && !((at.getAmmoType() == AmmoType.T_MML)
-                            || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC) || (at
-                            .getAmmoType() == AmmoType.T_AC_LBX))) {
+                && !((at.getAmmoType() == AmmoType.T_MML)
+                     || (at.getAmmoType() == AmmoType.T_ATM)
+                     || (at.getAmmoType() == AmmoType.T_NARC) || (at
+                                                                          .getAmmoType() == AmmoType.T_AC_LBX))) {
                 continue;
             }
 
@@ -684,16 +685,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // because there is no special lvl1 ammo, therefore it doesn't
                 // need to show up in this display.
                 if (!bTechMatch
-                        && (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)
-                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_INTRO_BOXSET)) {
+                    && (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)
+                    && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_INTRO_BOXSET)) {
                     bTechMatch = true;
                 }
 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "is_eq_limits") //$NON-NLS-1$
-                        && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
+                    && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
+                    && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
                     bTechMatch = true;
                 }
 
@@ -703,23 +704,23 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
                         if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity
-                                .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
-                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)
-                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
+                                                                                            .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
+                            && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)
+                                || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
+                                                                                                                                      .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || ((entity
-                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity
-                                .getTechLevel() == TechConstants.T_IS_ADVANCED)))
-                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
-                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
+                                                                                                  .getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity
+                                                                                                                                                                .getTechLevel() == TechConstants.T_IS_ADVANCED)))
+                            && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
+                                || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
+                                                                                                                                    .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                     }
                 } else if ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
-                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)) {
+                           || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)) {
                     bTechMatch = false;
                 }
 
@@ -737,59 +738,59 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "clan_ignore_eq_limits") //$NON-NLS-1$
-                        && entity.isClan()
-                        && ((muniType == AmmoType.M_SEMIGUIDED)
-                                || (muniType == AmmoType.M_SWARM_I)
-                                || (muniType == AmmoType.M_FLARE)
-                                || (muniType == AmmoType.M_FRAGMENTATION)
-                                || (muniType == AmmoType.M_THUNDER_AUGMENTED)
-                                || (muniType == AmmoType.M_THUNDER_INFERNO)
-                                || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
-                                || (muniType == AmmoType.M_THUNDER_ACTIVE)
-                                || (muniType == AmmoType.M_INFERNO_IV)
-                                || (muniType == AmmoType.M_VIBRABOMB_IV)
-                                || (muniType == AmmoType.M_LISTEN_KILL)
-                                || (muniType == AmmoType.M_ANTI_TSM) || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
+                    && entity.isClan()
+                    && ((muniType == AmmoType.M_SEMIGUIDED)
+                        || (muniType == AmmoType.M_SWARM_I)
+                        || (muniType == AmmoType.M_FLARE)
+                        || (muniType == AmmoType.M_FRAGMENTATION)
+                        || (muniType == AmmoType.M_THUNDER_AUGMENTED)
+                        || (muniType == AmmoType.M_THUNDER_INFERNO)
+                        || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
+                        || (muniType == AmmoType.M_THUNDER_ACTIVE)
+                        || (muniType == AmmoType.M_INFERNO_IV)
+                        || (muniType == AmmoType.M_VIBRABOMB_IV)
+                        || (muniType == AmmoType.M_LISTEN_KILL)
+                        || (muniType == AmmoType.M_ANTI_TSM) || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
                     bTechMatch = false;
                 }
 
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "minefields") && //$NON-NLS-1$
-                        AmmoType.canDeliverMinefield(atCheck)) {
+                    AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
 
                 // Only Protos can use Proto-specific ammo
                 if (atCheck.hasFlag(AmmoType.F_PROTOMECH)
-                        && !(entity instanceof Protomech)) {
+                    && !(entity instanceof Protomech)) {
                     continue;
                 }
 
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
                 if ((entity instanceof Protomech)
-                        && atCheck.hasFlag(AmmoType.F_MG)
-                        && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
+                    && atCheck.hasFlag(AmmoType.F_MG)
+                    && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
                     continue;
                 }
 
                 // Battle Armor ammo can't be selected at all.
                 // All other ammo types need to match on rack size and tech.
                 if (bTechMatch
-                        && (atCheck.getRackSize() == at.getRackSize())
-                        && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
-                                .hasFlag(AmmoType.F_BATTLEARMOR))
-                        && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
-                                .hasFlag(AmmoType.F_ENCUMBERING))
-                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                    && (atCheck.getRackSize() == at.getRackSize())
+                    && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
+                        .hasFlag(AmmoType.F_BATTLEARMOR))
+                    && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
+                        .hasFlag(AmmoType.F_ENCUMBERING))
+                    && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
                     vTypes.addElement(atCheck);
                 }
             }
             if ((vTypes.size() < 2)
-                    && !client.game.getOptions().booleanOption(
-                            "lobby_ammo_dump")
-                    && !client.game.getOptions()
-                            .booleanOption("tacops_hotload")) { //$NON-NLS-1$
+                && !client.game.getOptions().booleanOption(
+                    "lobby_ammo_dump")
+                && !client.game.getOptions()
+                          .booleanOption("tacops_hotload")) { //$NON-NLS-1$
                 continue;
             }
 
@@ -921,7 +922,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 add(chDump);
                 if (clientgui.getClient().game.getOptions().booleanOption(
                         "tacops_hotload")
-                        && curType.hasFlag(AmmoType.F_HOTLOAD)) {
+                    && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                     c.gridx = 0;
                     c.gridy = 2;
                     c.anchor = GridBagConstraints.EAST;
@@ -935,7 +936,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             } else if (clientgui.getClient().game.getOptions().booleanOption(
                     "tacops_hotload")
-                    && curType.hasFlag(AmmoType.F_HOTLOAD)) {
+                       && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                 c.gridx = 0;
                 c.gridy = 1;
                 c.anchor = GridBagConstraints.EAST;
@@ -982,8 +983,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         /**
          * Set the number of shots in the mount.
          *
-         * @param shots
-         *            the <code>int</code> number of shots for the mount.
+         * @param shots the <code>int</code> number of shots for the mount.
          */
         /* package */void setShotsLeft(int shots) {
             m_mounted.setShotsLeft(shots);
@@ -1079,7 +1079,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 b_choices[type] = new Choice();
 
                 for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                        / BombType.getBombCost(type)), bombChoices[type]); x++) {
+                                                         / BombType.getBombCost(type)), bombChoices[type]); x++) {
                     b_choices[type].add(Integer.toString(x));
                 }
 
@@ -1088,16 +1088,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 b_choices[type].addItemListener(this);
 
                 if ((type == BombType.B_ALAMO)
-                        && !client.game.getOptions().booleanOption("at2_nukes")) {
+                    && !client.game.getOptions().booleanOption("at2_nukes")) {
                     b_choices[type].setEnabled(false);
                 }
                 if ((type > BombType.B_TAG)
-                        && !client.game.getOptions().booleanOption(
-                                "allow_advanced_ammo")) {
+                    && !client.game.getOptions().booleanOption(
+                        "allow_advanced_ammo")) {
                     b_choices[type].setEnabled(false);
                 }
                 if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)
-                        || (type == BombType.B_TAG)) {
+                    || (type == BombType.B_TAG)) {
                     b_choices[type].setEnabled(false);
                 }
 
@@ -1136,7 +1136,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 b_choices[type].removeItemListener(this);
                 b_choices[type].removeAll();
                 for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                        / BombType.getBombCost(type)), current[type]); x++) {
+                                                         / BombType.getBombCost(type)), current[type]); x++) {
                     b_choices[type].add(Integer.toString(x));
                 }
                 b_choices[type].select(current[type]);
@@ -1157,15 +1157,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         public void setEnabled(boolean enabled) {
             for (int type = 0; type < BombType.B_NUM; type++) {
                 if ((type == BombType.B_ALAMO)
-                        && !client.game.getOptions().booleanOption("at2_nukes")) {
+                    && !client.game.getOptions().booleanOption("at2_nukes")) {
                     b_choices[type].setEnabled(false);
                 } else if ((type > BombType.B_TAG)
-                        && !client.game.getOptions().booleanOption(
-                                "allow_advanced_ammo")) {
+                           && !client.game.getOptions().booleanOption(
+                        "allow_advanced_ammo")) {
                     b_choices[type].setEnabled(false);
                 } else if ((type == BombType.B_ASEW)
-                        || (type == BombType.B_ALAMO)
-                        || (type == BombType.B_TAG)) {
+                           || (type == BombType.B_ALAMO)
+                           || (type == BombType.B_TAG)) {
                     b_choices[type].setEnabled(false);
                 } else {
                     b_choices[type].setEnabled(false);
@@ -1204,7 +1204,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // N.B. Some special ammos are twice as heavy as normal
             // so they have half the number of shots (rounded down).
             setShotsLeft(Math.round((getShotsLeft() * m_origShotsLeft)
-                    / m_origAmmo.getShots()));
+                                    / m_origAmmo.getShots()));
             if (chDump.getState()) {
                 setShotsLeft(0);
             }
@@ -1226,7 +1226,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int loc = m.getLocation();
             String sDesc = Messages
                     .getString(
-                            "CustomMechDialog.switchToRapidFire", new Object[] { entity.getLocationAbbr(loc) }); //$NON-NLS-1$
+                            "CustomMechDialog.switchToRapidFire", new Object[]{entity.getLocationAbbr(loc)}); //$NON-NLS-1$
             Label labRapid = new Label(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -1283,10 +1283,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // -
                 // $1
                 entity.getCrew().getOptions().getOption(option.getName())
-                        .setValue("None"); // NON-NLS-$1
+                      .setValue("None"); // NON-NLS-$1
             } else {
                 entity.getCrew().getOptions().getOption(option.getName())
-                        .setValue(comp.getValue());
+                      .setValue(comp.getValue());
             }
         }
     }
@@ -1297,7 +1297,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             option = comp.getOption();
             option.setValue(false);
             entity.getCrew().getOptions().getOption(option.getName())
-                    .setValue(comp.getValue());
+                  .setValue(comp.getValue());
         }
     }
 
@@ -1316,25 +1316,25 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         c.ipady = 0;
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
-                    && !clientgui.getClient().game.getOptions().booleanOption(
-                            "pilot_advantages")) {
+                && !clientgui.getClient().game.getOptions().booleanOption(
+                    "pilot_advantages")) {
                 continue;
             }
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)
-                    && !clientgui.getClient().game.getOptions().booleanOption(
-                            "manei_domini")) {
+                && !clientgui.getClient().game.getOptions().booleanOption(
+                    "manei_domini")) {
                 continue;
             }
 
             addGroup(group, gridbag, c);
 
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+                    .hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (entity instanceof GunEmplacement) {
@@ -1343,18 +1343,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
                 // a bunch of stuf should get disabled for conv infantry
                 if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") || option.getName()
-                                .equals("bvdni"))) {
+                    && (option.getName().equals("vdni") || option.getName()
+                                                                 .equals("bvdni"))) {
                     continue;
                 }
 
                 // a bunch of stuff should get disabled for all but conventional
                 // infantry
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
-                        && (option.getName().equals("grappler")
-                                || option.getName().equals("pl_masc")
-                                || option.getName().equals("cyber_eye_im") || option
-                                .getName().equals("cyber_eye_tele"))) {
+                    && (option.getName().equals("grappler")
+                        || option.getName().equals("pl_masc")
+                        || option.getName().equals("cyber_eye_im") || option
+                        .getName().equals("cyber_eye_tele"))) {
                     continue;
                 }
 
@@ -1366,7 +1366,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void addGroup(IOptionGroup group, GridBagLayout gridbag,
-            GridBagConstraints c) {
+                          GridBagConstraints c) {
         Label groupLabel = new Label(group.getDisplayableName());
 
         gridbag.setConstraints(groupLabel, c);
@@ -1374,9 +1374,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void addOption(IOption option, GridBagLayout gridbag,
-            GridBagConstraints c, boolean editable) {
+                           GridBagConstraints c, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
+                                                                     option, editable);
 
         if (option.getName().equals("weapon_specialist")) { //$NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
@@ -1403,7 +1403,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     public void optionClicked(DialogOptionComponent comp, IOption option,
-            boolean state) {
+                              boolean state) {
         // TODO : implement me!!!
     }
 
@@ -1445,8 +1445,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int sNodes = entity.calculateFreeC3Nodes();
 
             choC3.add(Messages
-                    .getString(
-                            "CustomMechDialog.setCompanyMaster", new Object[] { new Integer(mNodes), new Integer(sNodes) })); //$NON-NLS-1$
+                              .getString(
+                                      "CustomMechDialog.setCompanyMaster", new Object[]{new Integer(mNodes), new Integer(sNodes)})); //$NON-NLS-1$
 
             if (entity.C3MasterIs(entity)) {
                 choC3.select(listIndex);
@@ -1454,36 +1454,34 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entityCorrespondance[listIndex++] = entity.getId();
 
             choC3.add(Messages
-                    .getString(
-                            "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(sNodes) })); //$NON-NLS-1$
+                              .getString(
+                                      "CustomMechDialog.setIndependentMaster", new Object[]{new Integer(sNodes)})); //$NON-NLS-1$
             if (entity.getC3Master() == null) {
                 choC3.select(listIndex);
             }
             entityCorrespondance[listIndex++] = -1;
 
-        }
-
-        else if (entity.hasC3M()) {
+        } else if (entity.hasC3M()) {
             int nodes = entity.calculateFreeC3Nodes();
 
             choC3.add(Messages
-                    .getString(
-                            "CustomMechDialog.setCompanyMaster1", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                              .getString(
+                                      "CustomMechDialog.setCompanyMaster1", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
             if (entity.C3MasterIs(entity)) {
                 choC3.select(listIndex);
             }
             entityCorrespondance[listIndex++] = entity.getId();
 
             choC3.add(Messages
-                    .getString(
-                            "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                              .getString(
+                                      "CustomMechDialog.setIndependentMaster", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
             if (entity.getC3Master() == null) {
                 choC3.select(listIndex);
             }
             entityCorrespondance[listIndex++] = -1;
 
         }
-        for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements(); ) {
             final Entity e = i.nextElement();
             // ignore enemies or self
             if (entity.isEnemyOf(e) || entity.equals(e)) {
@@ -1496,7 +1494,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // maximum depth of a c3 network is 2 levels.
             Entity eCompanyMaster = e.getC3Master();
             if ((eCompanyMaster != null)
-                    && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+                && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
@@ -1507,7 +1505,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 nodes++;
             }
             if (entity.hasC3i()
-                    && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
+                && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
                 nodes++;
             }
             if (nodes == 0) {
@@ -1516,21 +1514,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (e.hasC3i()) {
                 if (entity.onSameC3NetworkAs(e)) {
                     choC3.add(Messages
-                            .getString(
-                                    "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                      .getString(
+                                              "CustomMechDialog.join1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
                     choC3.select(listIndex);
                 } else {
                     choC3.add(Messages
-                            .getString(
-                                    "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                      .getString(
+                                              "CustomMechDialog.join2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 }
                 entityCorrespondance[listIndex++] = e.getId();
             } else if (e.C3MasterIs(e) && e.hasC3MM()) {
                 // Company masters with 2 computers can have
                 // *both* sub-masters AND slave units.
                 choC3.add(Messages
-                        .getString(
-                                "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                  .getString(
+                                          "CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 entityCorrespondance[listIndex] = e.getId();
                 if (entity.C3MasterIs(e)) {
                     choC3.select(listIndex);
@@ -1542,14 +1540,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // only connect to main master units, not sub-masters.
             } else if (entity.C3MasterIs(e)) {
                 choC3.add(Messages
-                        .getString(
-                                "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                  .getString(
+                                          "CustomMechDialog.connect1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
                 choC3.select(listIndex);
                 entityCorrespondance[listIndex++] = e.getId();
             } else {
                 choC3.add(Messages
-                        .getString(
-                                "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                  .getString(
+                                          "CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 entityCorrespondance[listIndex++] = e.getId();
             }
         }
@@ -1558,9 +1556,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     /**
      * Populate the list of entities in other units from the given enumeration.
      *
-     * @param others
-     *            the <code>Enumeration</code> containing entities in other
-     *            units.
+     * @param others the <code>Enumeration</code> containing entities in other
+     *               units.
      */
     private void refreshUnitNum(Enumeration<Entity> others) {
         // Clear the list of old values
@@ -1606,7 +1603,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     Messages.getString("CustomMechDialog.offboardDistanceTitle"),
                     Messages.getString("CustomMechDialog.offboardDistanceQuestion"),
                     Math.min(Math.max(entity.getOffBoardDistance(), 17),
-                            maxDistance), 17, maxDistance);
+                             maxDistance), 17, maxDistance);
             if (!sl.showDialog()) {
                 return;
             }
@@ -1653,9 +1650,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // keep these reasonable, please
             if ((gunnery < 0) || (gunnery > 8) || (piloting < 0)
-                    || (piloting > 8) || (gunneryL < 0) || (gunneryL > 8)
-                    || (gunneryM < 0) || (gunneryM > 8) || (gunneryB < 0)
-                    || (gunneryB > 8)) {
+                || (piloting > 8) || (gunneryL < 0) || (gunneryL > 8)
+                || (gunneryM < 0) || (gunneryM > 8) || (gunneryB < 0)
+                || (gunneryB > 8)) {
                 new AlertDialog(
                         clientgui.frame,
                         Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_8")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1700,7 +1697,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // change entity
             if (client.game.getOptions().booleanOption("rpg_gunnery")) {
                 entity.setCrew(new Crew(name, 1, gunneryL, gunneryM, gunneryB,
-                        piloting));
+                                        piloting));
             } else {
                 entity.setCrew(new Crew(name, 1, gunnery, piloting));
             }
@@ -1737,7 +1734,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // entities and send an update packet for the other entity.
             if (!entityUnitNum.isEmpty() && (choUnitNum.getSelectedIndex() > 0)) {
                 Entity other = entityUnitNum.elementAt(choUnitNum
-                        .getSelectedIndex());
+                                                               .getSelectedIndex());
                 char temp = entity.getUnitNumber();
                 entity.setUnitNumber(other.getUnitNumber());
                 other.setUnitNumber(temp);
@@ -1782,23 +1779,23 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 Entity chosen = client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]);
                 int entC3nodeCount = client.game.getC3SubNetworkMembers(entity)
-                        .size();
+                                           .size();
                 int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
-                        .size();
+                                           .size();
                 if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
                     entity.setC3Master(chosen, true);
                 } else {
                     String message = Messages
                             .getString(
-                                    "CustomMechDialog.NetworkTooBig.message", new Object[] { //$NON-NLS-1$
-                                    entity.getShortName(),
-                                            chosen.getShortName(),
-                                            new Integer(entC3nodeCount),
-                                            new Integer(choC3nodeCount),
-                                            new Integer(Entity.MAX_C3_NODES) });
+                                    "CustomMechDialog.NetworkTooBig.message", new Object[]{ //$NON-NLS-1$
+                                                                                            entity.getShortName(),
+                                                                                            chosen.getShortName(),
+                                                                                            new Integer(entC3nodeCount),
+                                                                                            new Integer(choC3nodeCount),
+                                                                                            new Integer(Entity.MAX_C3_NODES)});
                     clientgui.doAlertDialog(Messages
-                            .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
-                            message);
+                                                    .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
+                                            message);
                     refreshC3();
                 }
             } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
@@ -1843,7 +1840,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         IGame game = client.game;
         boolean bd = game.getOptions().booleanOption("blind_drop"); //$NON-NLS-1$
         boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$
-        Player p = client.getLocalPlayer();
+        IPlayer p = client.getLocalPlayer();
 
         Entity nextOne = null;
         if (forward) {

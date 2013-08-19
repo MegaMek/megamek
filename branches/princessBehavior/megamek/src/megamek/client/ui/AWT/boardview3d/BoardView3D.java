@@ -53,8 +53,8 @@ import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.MovePath;
-import megamek.common.Player;
 import megamek.common.UnitLocation;
 import megamek.common.actions.AttackAction;
 import megamek.common.event.BoardEvent;
@@ -94,8 +94,8 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardView,
-        BoardListener, MouseListener, MouseMotionListener, MechDisplayListener,
-        IPreferenceChangeListener, GameListener {
+                                                     BoardListener, MouseListener, MouseMotionListener, MechDisplayListener,
+                                                     IPreferenceChangeListener, GameListener {
     // FIXME: this isn't actually serializable, I guess.
     static final long serialVersionUID = 475073852535962574L;
 
@@ -143,7 +143,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     private TileTextureManager tileManager;
 
-    private Player localPlayer;
+    private IPlayer localPlayer;
 
     private Vector<BoardViewListener> boardListeners = new Vector<BoardViewListener>();
 
@@ -249,8 +249,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     /**
      * Adds the specified board listener to receive board events from this board.
      *
-     * @param listener
-     *            the board listener.
+     * @param listener the board listener.
      */
     public void addBoardViewListener(BoardViewListener listener) {
         if (!boardListeners.contains(listener)) {
@@ -261,8 +260,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     /**
      * Removes the specified board listener.
      *
-     * @param listener
-     *            the board listener.
+     * @param listener the board listener.
      */
     public void removeBoardViewListener(BoardViewListener listener) {
         boardListeners.removeElement(listener);
@@ -271,8 +269,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     /**
      * Notifies attached board listeners of the event.
      *
-     * @param event
-     *            the board event.
+     * @param event the board event.
      */
     public void processBoardViewEvent(BoardViewEvent event) {
         if (boardListeners == null) {
@@ -282,33 +279,33 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         for (Object name2 : boardListeners) {
             BoardViewListener l = (BoardViewListener) name2;
             switch (event.getType()) {
-            case BoardViewEvent.BOARD_HEX_CLICKED:
-            case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
-            case BoardViewEvent.BOARD_HEX_DRAGGED:
-            case BoardViewEvent.BOARD_HEX_POPUP:
-                l.hexMoused(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_CURSOR:
-                l.hexCursor(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
-                l.boardHexHighlighted(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_SELECTED:
-                l.hexSelected(event);
-                break;
-            case BoardViewEvent.BOARD_FIRST_LOS_HEX:
-                l.firstLOSHex(event);
-                break;
-            case BoardViewEvent.BOARD_SECOND_LOS_HEX:
-                l.secondLOSHex(event, firstLOS);
-                break;
-            case BoardViewEvent.FINISHED_MOVING_UNITS:
-                l.finishedMovingUnits(event);
-                break;
-            case BoardViewEvent.SELECT_UNIT:
-                l.unitSelected(event);
-                break;
+                case BoardViewEvent.BOARD_HEX_CLICKED:
+                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
+                case BoardViewEvent.BOARD_HEX_DRAGGED:
+                case BoardViewEvent.BOARD_HEX_POPUP:
+                    l.hexMoused(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_CURSOR:
+                    l.hexCursor(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
+                    l.boardHexHighlighted(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_SELECTED:
+                    l.hexSelected(event);
+                    break;
+                case BoardViewEvent.BOARD_FIRST_LOS_HEX:
+                    l.firstLOSHex(event);
+                    break;
+                case BoardViewEvent.BOARD_SECOND_LOS_HEX:
+                    l.secondLOSHex(event, firstLOS);
+                    break;
+                case BoardViewEvent.FINISHED_MOVING_UNITS:
+                    l.finishedMovingUnits(event);
+                    break;
+                case BoardViewEvent.SELECT_UNIT:
+                    l.unitSelected(event);
+                    break;
             }
         }
     }
@@ -328,8 +325,8 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     }
 
     public void showPopup(Object popup, Coords c) {
-        if (((PopupMenu)popup).getParent() == null) {
-            add((PopupMenu)popup);
+        if (((PopupMenu) popup).getParent() == null) {
+            add((PopupMenu) popup);
         }
 
         IHex hex = game.getBoard().getHex(c);
@@ -347,7 +344,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         v2i.transform(p);
         Point2d pixel = new Point2d();
         getPixelLocationFromImagePlate(p, pixel);
-        ((PopupMenu)popup).show(this, (int) pixel.x, (int) pixel.y);
+        ((PopupMenu) popup).show(this, (int) pixel.x, (int) pixel.y);
     }
 
     private Object pickSomething(MouseEvent me) {
@@ -424,13 +421,13 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         moves.clear();
     }
 
-    public void setLocalPlayer(Player p) {
+    public void setLocalPlayer(IPlayer p) {
         localPlayer = p;
         hoverInfo.setSelected(null, null, p);
         refreshDisplayables();
     }
 
-    public Player getLocalPlayer() {
+    public IPlayer getLocalPlayer() {
         return localPlayer;
     }
 
@@ -465,7 +462,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
         if (me.isPopupTrigger() && !me.isControlDown()) {
             processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP,
-                    me.getModifiers()));
+                                                     me.getModifiers()));
         }
     }
 
@@ -477,7 +474,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
         if (me.isPopupTrigger() && !me.isControlDown() && !dragged) {
             processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP,
-                    me.getModifiers()));
+                                                     me.getModifiers()));
         }
     }
 
@@ -504,7 +501,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
         if (me.isPopupTrigger() && !me.isControlDown()) {
             processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP,
-                    me.getModifiers()));
+                                                     me.getModifiers()));
         } else if ((me.getClickCount() == 1) && me.isControlDown()) {
             if (c.equals(hoverInfo.getLOS())) {
                 firstLOSCursor.hide();
@@ -519,12 +516,12 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
             refreshDisplayables();
         } else if (me.getClickCount() == 1) {
             processBoardViewEvent(new BoardViewEvent(this, c, null,
-                    BoardViewEvent.BOARD_HEX_DRAGGED, me.getModifiers()));
+                                                     BoardViewEvent.BOARD_HEX_DRAGGED, me.getModifiers()));
             processBoardViewEvent(new BoardViewEvent(this, c, null,
-                    BoardViewEvent.BOARD_HEX_CLICKED, me.getModifiers()));
+                                                     BoardViewEvent.BOARD_HEX_CLICKED, me.getModifiers()));
         } else {
             processBoardViewEvent(new BoardViewEvent(this, c, null,
-                    BoardViewEvent.BOARD_HEX_DOUBLECLICKED, me.getModifiers()));
+                                                     BoardViewEvent.BOARD_HEX_DOUBLECLICKED, me.getModifiers()));
         }
     }
 
@@ -552,7 +549,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         IHex eh = gboard.getHex(e);
 
         ruler = new ConnectionModel(s, e, sh.surface() + 1, eh.surface() + 1, null,
-                new Color3f(ec), 0.5f);
+                                    new Color3f(ec), 0.5f);
         secondLOSCursor.move(e, eh);
         secondLOSCursor.setColor(new Color3f(ec));
         cursors.addChild(ruler);
@@ -579,8 +576,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     /**
      * Determines if this Board contains the Coords, and if so, "selects" that Coords.
      *
-     * @param coords
-     *            the Coords.
+     * @param coords the Coords.
      */
     public void select(Coords coords) {
         if ((coords != null) && !game.getBoard().contains(coords)) {
@@ -592,14 +588,13 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         firstLOSCursor.hide();
         secondLOSCursor.hide();
         processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                BoardViewEvent.BOARD_HEX_SELECTED, 0));
+                                                 BoardViewEvent.BOARD_HEX_SELECTED, 0));
     }
 
     /**
      * Determines if this Board contains the Coords, and if so, highlights that Coords.
      *
-     * @param coords
-     *            the Coords.
+     * @param coords the Coords.
      */
     public void highlight(Coords coords) {
         if ((coords != null) && !game.getBoard().contains(coords)) {
@@ -610,14 +605,13 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         firstLOSCursor.hide();
         secondLOSCursor.hide();
         processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
+                                                 BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
     }
 
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that Coords.
      *
-     * @param coords
-     *            the Coords.
+     * @param coords the Coords.
      */
     public void cursor(Coords coords) {
         if ((coords != null) && !game.getBoard().contains(coords)) {
@@ -630,7 +624,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
             firstLOSCursor.hide();
             secondLOSCursor.hide();
             processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                    BoardViewEvent.BOARD_HEX_CURSOR, 0));
+                                                     BoardViewEvent.BOARD_HEX_CURSOR, 0));
         } else {
             lastCursor = coords;
         }
@@ -731,21 +725,21 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         refreshAttacks();
         switch (e.getNewPhase()) {
-        case PHASE_MOVEMENT:
-        case PHASE_FIRING:
-        case PHASE_PHYSICAL:
-            refreshAttacks();
-            break;
-        case PHASE_INITIATIVE:
-            attacks.clear();
-            hoverInfo.clear();
-            break;
-        case PHASE_END:
-        case PHASE_VICTORY:
-            attacks.clear();
-            hoverInfo.clear();
-            clearMovementData();
-        default:
+            case PHASE_MOVEMENT:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+                refreshAttacks();
+                break;
+            case PHASE_INITIATIVE:
+                attacks.clear();
+                hoverInfo.clear();
+                break;
+            case PHASE_END:
+            case PHASE_VICTORY:
+                attacks.clear();
+                hoverInfo.clear();
+                clearMovementData();
+            default:
         }
         refreshDisplayables();
     }
@@ -802,10 +796,10 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
             displayables.elementAt(i).draw(gr, new Rectangle(size));
         }
         BufferedImage b1 = new BufferedImage(size.width / 2, size.height,
-                BufferedImage.TYPE_4BYTE_ABGR);
+                                             BufferedImage.TYPE_4BYTE_ABGR);
         b1.getGraphics().drawImage(b, 0, 0, null);
         BufferedImage b2 = new BufferedImage(size.width / 2, size.height,
-                BufferedImage.TYPE_4BYTE_ABGR);
+                                             BufferedImage.TYPE_4BYTE_ABGR);
         b2.getGraphics().drawImage(b, -size.width / 2, 0, null);
         bi1 = b1;
         bi2 = b2;

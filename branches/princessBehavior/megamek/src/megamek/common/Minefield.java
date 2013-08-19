@@ -1,12 +1,12 @@
 /**
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
  *  Software Foundation; either version 2 of the License, or (at your option) 
  *  any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful, but 
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class Minefield implements Serializable, Cloneable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1556863068173491352L;
     public static final int TYPE_CONVENTIONAL = 0;
@@ -35,8 +35,8 @@ public class Minefield implements Serializable, Cloneable {
     public static final int CLEAR_NUMBER_WEAPON = 5;
     public static final int CLEAR_NUMBER_INFANTRY = 10;
     public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT = 5;
-    public static final int CLEAR_NUMBER_SWEEPER[] = { 6, 9 };
-    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT[] = { 2, 3 };
+    public static final int CLEAR_NUMBER_SWEEPER[] = {6, 9};
+    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT[] = {2, 3};
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
@@ -45,15 +45,15 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
-    private static String[] names = { "Conventional", "Command-detonated",
-            "Vibrabomb", "Active", "EMP", "Inferno"};
-            //"Thunder", "Thunder-Inferno", "Thunder-Active",
-            //"Thunder-Vibrabomb" };
-    
+    private static String[] names = {"Conventional", "Command-detonated",
+                                     "Vibrabomb", "Active", "EMP", "Inferno"};
+    //"Thunder", "Thunder-Inferno", "Thunder-Active",
+    //"Thunder-Vibrabomb" };
+
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
-    private int playerId = Player.PLAYER_NONE;
+    private int playerId = IPlayer.PLAYER_NONE;
     //private int damage = 0;
     //private int secondaryDamage = 0;
     private int density = 5;
@@ -67,22 +67,22 @@ public class Minefield implements Serializable, Cloneable {
     private Minefield() {
         //Creates a minefield
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density) {
         return createMinefield(coords, playerId, type, density, 0);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea, int depth) {
         return createMinefield(coords, playerId, type, density, 0, sea, depth);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting) {
         return createMinefield(coords, playerId, type, density, setting, false, 0);
     }
 
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting, boolean sea, int depth) {
         Minefield mf = new Minefield();
-        
+
         mf.type = type;
         mf.density = density;
         mf.coords = coords;
@@ -92,8 +92,8 @@ public class Minefield implements Serializable, Cloneable {
         mf.depth = depth;
         return mf;
     }
-    
-    
+
+
     public static String getDisplayableName(int type) {
         if (type >= 0 && type < TYPE_SIZE) {
             return names[type];
@@ -126,7 +126,7 @@ public class Minefield implements Serializable, Cloneable {
         }
 
         if (mf.playerId == this.playerId && mf.coords.equals(coords)
-                && mf.type == this.type) {
+            && mf.type == this.type) {
             return true;
         }
         return false;
@@ -146,10 +146,11 @@ public class Minefield implements Serializable, Cloneable {
 
     /**
      * what do we need to roll to trigger this mine
+     *
      * @return
      */
-    public int getTrigger() {    
-        if(density < 15) {
+    public int getTrigger() {
+        if (density < 15) {
             return 9;
         } else if (density < 25) {
             return 8;
@@ -173,7 +174,7 @@ public class Minefield implements Serializable, Cloneable {
     public int getType() {
         return type;
     }
-    
+
     public int getDepth() {
         return depth;
     }
@@ -185,29 +186,30 @@ public class Minefield implements Serializable, Cloneable {
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setDetonated(boolean b) {
         this.detonated = b;
     }
-    
+
     public boolean hasDetonated() {
         return detonated;
     }
-    
+
     /**
      * check for a reduction in density
-     * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
+     *
+     * @param bonus  - an <code>int</code> indicating the modifier to the target roll for reduction
      * @param direct - a <code>boolean</code> indicating whether this reduction was due to a direct explosion or
-     *                    a result of another minefield in the same hex explodin
+     *               a result of another minefield in the same hex explodin
      */
     public void checkReduction(int bonus, boolean direct) {
         boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
-        if(getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
+        if (getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;
         }
-        if(isReduced) {
+        if (isReduced) {
             setDensity(getDensity() - 5);
-        }    
+        }
     }
-    
+
 }

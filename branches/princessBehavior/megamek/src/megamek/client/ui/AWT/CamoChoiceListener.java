@@ -22,7 +22,7 @@ import java.awt.event.ItemListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.ImageButton;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Helper class to handle camo selection. This class will update an
@@ -30,7 +30,7 @@ import megamek.common.Player;
  * <code>Player</code> to use the selection, and (optionally) communicate the
  * selection to the server through a <code>Client</code>. Created on January
  * 24, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
@@ -54,7 +54,7 @@ public class CamoChoiceListener implements ItemListener {
     /**
      * The <code>Player</code> whose camo selection is being updated.
      */
-    private final Player localPlayer;
+    private final IPlayer localPlayer;
 
     /**
      * holds the chat lounge. This needs cleanup
@@ -63,18 +63,18 @@ public class CamoChoiceListener implements ItemListener {
 
     /**
      * Create a new camo selection listener that alerts a server.
-     * 
+     *
      * @param camoDialog - the <code>CamoChoiceDialog</code> that is being
-     *            listened to.
-     * @param button - the <code>ImageButton</code> that gets updated.
+     *                   listened to.
+     * @param button     - the <code>ImageButton</code> that gets updated.
      * @param background - the default background <code>Color</code> for the
-     *            button when a camo image is selected.
-     * @param player - the <code>int</code> ID of the player whose camo is
-     *            updated.
-     * @param sender - the <code>Client</code> that sends the update.
+     *                   button when a camo image is selected.
+     * @param player     - the <code>int</code> ID of the player whose camo is
+     *                   updated.
+     * @param sender     - the <code>Client</code> that sends the update.
      */
     public CamoChoiceListener(CamoChoiceDialog camoDialog, ImageButton button,
-            Color background, ChatLounge chat) {
+                              Color background, ChatLounge chat) {
         dialog = camoDialog;
         butCamo = button;
         defaultBG = background;
@@ -84,16 +84,16 @@ public class CamoChoiceListener implements ItemListener {
 
     /**
      * Create a new camo selection listener that does not alert a server.
-     * 
+     *
      * @param camoDialog - the <code>CamoChoiceDialog</code> that is being
-     *            listened to.
-     * @param button - the <code>ImageButton</code> that gets updated.
+     *                   listened to.
+     * @param button     - the <code>ImageButton</code> that gets updated.
      * @param background - the default background <code>Color</code> for the
-     *            button when a camo image is selected.
-     * @param player - the <code>Player</code> whose camo is updated.
+     *                   button when a camo image is selected.
+     * @param player     - the <code>Player</code> whose camo is updated.
      */
     public CamoChoiceListener(CamoChoiceDialog camoDialog, ImageButton button,
-            Color background, Player player) {
+                              Color background, IPlayer player) {
         dialog = camoDialog;
         butCamo = button;
         defaultBG = background;
@@ -104,13 +104,13 @@ public class CamoChoiceListener implements ItemListener {
     /**
      * Update the camo button when the selection dialog tells us to. <p/>
      * Implements <code>ItemListener</code>.
-     * 
+     *
      * @param event - the <code>ItemEvent</code> of the camo selection.
      */
     public void itemStateChanged(ItemEvent event) {
 
         // Get the player that needs to be updated.
-        Player player;
+        IPlayer player;
         if (chatLounge != null) {
             player = chatLounge.getPlayerListSelectedClient().getLocalPlayer();
         } else {
@@ -124,10 +124,10 @@ public class CamoChoiceListener implements ItemListener {
 
         // If the image is null, a color was selected instead.
         if (null == image) {
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(itemName)) {
+            for (int color = 0; color < IPlayer.colorNames.length; color++) {
+                if (IPlayer.colorNames[color].equals(itemName)) {
                     butCamo.setLabel(Messages
-                            .getString("CamoChoiceListener.NoCammo")); //$NON-NLS-1$
+                                             .getString("CamoChoiceListener.NoCammo")); //$NON-NLS-1$
                     butCamo.setBackground(PlayerColors.getColor(color));
                     player.setColorIndex(color);
                     break;

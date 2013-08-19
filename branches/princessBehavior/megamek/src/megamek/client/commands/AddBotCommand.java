@@ -21,7 +21,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.AWT.BotGUI;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * @author dirk
@@ -56,14 +56,14 @@ public class AddBotCommand extends ClientCommand {
         }
 
         String playerName = args[playerListStart];
-        for(int i = (playerListStart + 1); i < args.length; i++) {
+        for (int i = (playerListStart + 1); i < args.length; i++) {
             playerName = playerName + " " + args[i];
         }
 
-        Player target = null;
-        for (Enumeration<Player> i = client.game.getPlayers(); i
-                .hasMoreElements();) {
-            Player player = i.nextElement();
+        IPlayer target = null;
+        for (Enumeration<IPlayer> i = client.game.getPlayers(); i
+                .hasMoreElements(); ) {
+            IPlayer player = i.nextElement();
             if (player.getName().equals(playerName)) {
                 target = player;
             }

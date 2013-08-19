@@ -1,11 +1,11 @@
 /**
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
  *  Software Foundation; either version 2 of the License, or (at your option) 
  *  any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful, but 
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
@@ -21,7 +21,7 @@ import java.util.Vector;
  * A handy utility class for collecting <code>Vectors</code> of
  * <code>TurnOrdered</code> markers and then walking through them.
  */
-public class TurnVectors implements Enumeration<TurnOrdered> {
+public class TurnVectors implements Enumeration<ITurnOrdered> {
     private final int numEven;
     private final int numNormal;
     //need to keep an enumeration of all non-even turns
@@ -32,114 +32,114 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
     private final int numDS;
     private final int numSC;
     private final int numAero;
-    private final Vector<TurnOrdered> even_turns;
-    private final Vector<TurnOrdered> normal_turns;
-    private final Vector<TurnOrdered> total_turns;
-    private final Vector<TurnOrdered> space_station_turns;
-    private final Vector<TurnOrdered> jumpship_turns;
-    private final Vector<TurnOrdered> warship_turns;
-    private final Vector<TurnOrdered> dropship_turns;
-    private final Vector<TurnOrdered> small_craft_turns;
-    private final Vector<TurnOrdered> aero_turns;
+    private final Vector<ITurnOrdered> even_turns;
+    private final Vector<ITurnOrdered> normal_turns;
+    private final Vector<ITurnOrdered> total_turns;
+    private final Vector<ITurnOrdered> space_station_turns;
+    private final Vector<ITurnOrdered> jumpship_turns;
+    private final Vector<ITurnOrdered> warship_turns;
+    private final Vector<ITurnOrdered> dropship_turns;
+    private final Vector<ITurnOrdered> small_craft_turns;
+    private final Vector<ITurnOrdered> aero_turns;
 
-    private Enumeration<TurnOrdered> turnNormalEnum = null;
-    private Enumeration<TurnOrdered> evenEnum = null;
-    private Enumeration<TurnOrdered> turnTotalEnum = null;
-    private Enumeration<TurnOrdered> turnSSEnum = null;
-    private Enumeration<TurnOrdered> turnJSEnum = null;
-    private Enumeration<TurnOrdered> turnWSEnum = null;
-    private Enumeration<TurnOrdered> turnDSEnum = null;
-    private Enumeration<TurnOrdered> turnSCEnum = null;
-    private Enumeration<TurnOrdered> turnAeroEnum = null;
+    private Enumeration<ITurnOrdered> turnNormalEnum = null;
+    private Enumeration<ITurnOrdered> evenEnum = null;
+    private Enumeration<ITurnOrdered> turnTotalEnum = null;
+    private Enumeration<ITurnOrdered> turnSSEnum = null;
+    private Enumeration<ITurnOrdered> turnJSEnum = null;
+    private Enumeration<ITurnOrdered> turnWSEnum = null;
+    private Enumeration<ITurnOrdered> turnDSEnum = null;
+    private Enumeration<ITurnOrdered> turnSCEnum = null;
+    private Enumeration<ITurnOrdered> turnAeroEnum = null;
     private final int min;
 
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnNormalEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnNormalEnum() {
         if (null == turnNormalEnum) {
             // Only walk through "normal" turns.
             turnNormalEnum = normal_turns.elements();
         }
         return turnNormalEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnTotalEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnTotalEnum() {
         if (null == turnTotalEnum) {
             turnTotalEnum = total_turns.elements();
         }
         return turnTotalEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnSSEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnSSEnum() {
         if (null == turnSSEnum) {
             // Only walk through "normal" turns.
             turnSSEnum = space_station_turns.elements();
         }
         return turnSSEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnJSEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnJSEnum() {
         if (null == turnJSEnum) {
             // Only walk through "normal" turns.
             turnJSEnum = jumpship_turns.elements();
         }
         return turnJSEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnWSEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnWSEnum() {
         if (null == turnWSEnum) {
             // Only walk through "normal" turns.
             turnWSEnum = warship_turns.elements();
         }
         return turnWSEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnDSEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnDSEnum() {
         if (null == turnDSEnum) {
             turnDSEnum = dropship_turns.elements();
         }
         return turnDSEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnSCEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnSCEnum() {
         if (null == turnSCEnum) {
             // Only walk through "normal" turns.
             turnSCEnum = small_craft_turns.elements();
         }
         return turnSCEnum;
     }
-    
+
     /**
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers.
      */
-    private synchronized Enumeration<TurnOrdered> getTurnAeroEnum() {
+    private synchronized Enumeration<ITurnOrdered> getTurnAeroEnum() {
         if (null == turnAeroEnum) {
             // Only walk through "normal" turns.
             turnAeroEnum = aero_turns.elements();
@@ -151,7 +151,7 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our
      * recorded markers for "even" turns.
      */
-    private synchronized Enumeration<TurnOrdered> getEvenEnum() {
+    private synchronized Enumeration<ITurnOrdered> getEvenEnum() {
         if (null == evenEnum) {
             evenEnum = even_turns.elements();
         }
@@ -160,15 +160,15 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
 
     /**
      * Construct empty <code>Vectors</code> with the given capacities.
-     * 
+     *
      * @param normalCount the <code>int</code> count of
-     *            <code>TurnOrdered</code> object markers for normal turns
-     * @param evenCount the <code>int</code> count of markers for turns that
-     *            occur after all normal turns.
-     * @param min the smallest <code>int</code> number of times one of the
-     *            <code>TurnOrdered</code> objects appears in the normal list.
+     *                    <code>TurnOrdered</code> object markers for normal turns
+     * @param evenCount   the <code>int</code> count of markers for turns that
+     *                    occur after all normal turns.
+     * @param min         the smallest <code>int</code> number of times one of the
+     *                    <code>TurnOrdered</code> objects appears in the normal list.
      */
-    public TurnVectors(int normalCount, int totalCount, int  ssCount, int jsCount,
+    public TurnVectors(int normalCount, int totalCount, int ssCount, int jsCount,
                        int wsCount, int dsCount, int scCount, int aeroCount, int evenCount, int min) {
         this.numEven = evenCount;
         this.numNormal = normalCount;
@@ -179,21 +179,21 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
         this.numDS = dsCount;
         this.numSC = scCount;
         this.numAero = aeroCount;
-        this.normal_turns = new Vector<TurnOrdered>(normalCount);
-        this.total_turns = new Vector<TurnOrdered>(this.numTotal);
-        this.even_turns = new Vector<TurnOrdered>(evenCount);
-        this.space_station_turns = new Vector<TurnOrdered>(ssCount);
-        this.jumpship_turns = new Vector<TurnOrdered>(jsCount);
-        this.warship_turns = new Vector<TurnOrdered>(wsCount);
-        this.dropship_turns = new Vector<TurnOrdered>(dsCount);
-        this.small_craft_turns = new Vector<TurnOrdered>(scCount);
-        this.aero_turns = new Vector<TurnOrdered>(aeroCount);
+        this.normal_turns = new Vector<ITurnOrdered>(normalCount);
+        this.total_turns = new Vector<ITurnOrdered>(this.numTotal);
+        this.even_turns = new Vector<ITurnOrdered>(evenCount);
+        this.space_station_turns = new Vector<ITurnOrdered>(ssCount);
+        this.jumpship_turns = new Vector<ITurnOrdered>(jsCount);
+        this.warship_turns = new Vector<ITurnOrdered>(wsCount);
+        this.dropship_turns = new Vector<ITurnOrdered>(dsCount);
+        this.small_craft_turns = new Vector<ITurnOrdered>(scCount);
+        this.aero_turns = new Vector<ITurnOrdered>(aeroCount);
         this.min = min;
     }
 
     /**
      * Get the number of turns that must occur after all normal turns.
-     * 
+     *
      * @return the <code>int</code> count of even turns.
      */
     public int getEvenTurns() {
@@ -202,37 +202,37 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
 
     /**
      * Get the number of normal turns.
-     * 
+     *
      * @return the <code>int</code> count of normal turns.
      */
     public int getTotalTurns() {
         return total_turns.size();
     }
-    
+
     public int getNormalTurns() {
         return normal_turns.size();
     }
-    
+
     public int getSpaceStationTurns() {
         return space_station_turns.size();
     }
-    
+
     public int getJumpshipTurns() {
         return jumpship_turns.size();
     }
-    
+
     public int getWarshipTurns() {
         return warship_turns.size();
     }
-    
+
     public int getDropshipTurns() {
         return dropship_turns.size();
     }
-    
+
     public int getSmallCraftTurns() {
         return small_craft_turns.size();
     }
-    
+
     public int getAeroTurns() {
         return aero_turns.size();
     }
@@ -240,92 +240,92 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
     /**
      * Add a <code>TurnOrdered</code> marker for a turn that must occur after
      * all normal turns.
-     * 
+     *
      * @param marker the <code>TurnOrdered</code> marker for a even turn.
-     * @exception IllegalStateException if as many markers have been added for
-     *                even turns as indicated at construction.
+     * @throws IllegalStateException if as many markers have been added for
+     *                               even turns as indicated at construction.
      */
-    public void addEven(TurnOrdered marker) {
+    public void addEven(ITurnOrdered marker) {
         if (this.numEven == even_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numEven + " even turns.");
+                                            + this.numEven + " even turns.");
         }
         even_turns.addElement(marker);
     }
 
     /**
      * Add a <code>TurnOrdered</code> marker for a "normal" turn.
-     * 
+     *
      * @param marker the <code>TurnOrdered</code> marker for a "normal" turn.
-     * @exception IllegalStateException if as many markers have been added for
-     *                normal turns as indicated at construction.
+     * @throws IllegalStateException if as many markers have been added for
+     *                               normal turns as indicated at construction.
      */
-    public void addNormal(TurnOrdered marker) {
+    public void addNormal(ITurnOrdered marker) {
         if (this.numNormal == normal_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numNormal + " normal turns.");
+                                            + this.numNormal + " normal turns.");
         }
         normal_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
-    public void addSpaceStation(TurnOrdered marker) {
+
+    public void addSpaceStation(ITurnOrdered marker) {
         if (this.numSS == space_station_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numSS + " space station turns.");
+                                            + this.numSS + " space station turns.");
         }
         space_station_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
-    public void addWarship(TurnOrdered marker) {
+
+    public void addWarship(ITurnOrdered marker) {
         if (this.numWS == warship_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numWS + " warship turns.");
+                                            + this.numWS + " warship turns.");
         }
         warship_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
-    public void addJumpship(TurnOrdered marker) {
+
+    public void addJumpship(ITurnOrdered marker) {
         if (this.numJS == jumpship_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numJS + " jumpship turns.");
+                                            + this.numJS + " jumpship turns.");
         }
         jumpship_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
-    public void addDropship(TurnOrdered marker) {
+
+    public void addDropship(ITurnOrdered marker) {
         if (this.numDS == dropship_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numDS + " dropship turns.");
+                                            + this.numDS + " dropship turns.");
         }
         dropship_turns.addElement(marker);
         total_turns.addElement(marker);
     }
 
-    public void addSmallCraft(TurnOrdered marker) {
+    public void addSmallCraft(ITurnOrdered marker) {
         if (this.numSC == small_craft_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numSC + " small craft turns.");
+                                            + this.numSC + " small craft turns.");
         }
         small_craft_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
-    public void addAero(TurnOrdered marker) {
+
+    public void addAero(ITurnOrdered marker) {
         if (this.numAero == aero_turns.size()) {
             throw new IllegalStateException("Have already added "
-                    + this.numAero + " aero turns.");
+                                            + this.numAero + " aero turns.");
         }
         aero_turns.addElement(marker);
         total_turns.addElement(marker);
     }
-    
+
     /**
      * Determine if we've iterated to the end of our turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreNormalElements() {
@@ -334,35 +334,35 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
 
     /**
      * Get the next <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the <code>TurnOrdered</code> marker; all "even" markers will be
      *         returned after all "normal" markers.
      */
-    public TurnOrdered nextNormalElement() {
+    public ITurnOrdered nextNormalElement() {
         return this.getTurnNormalEnum().nextElement();
     }
 
     /**
      * Determine if we've iterated to the end of our even turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreEvenElements() {
         return this.getEvenEnum().hasMoreElements();
     }
-    
+
     /**
      * Get the next "total" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "total" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextElement() {
+    public ITurnOrdered nextElement() {
         return this.getTurnTotalEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our total turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreElements() {
@@ -371,34 +371,34 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
 
     /**
      * Get the next "space station" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "space staion" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextSpaceStationElement() {
+    public ITurnOrdered nextSpaceStationElement() {
         return this.getTurnSSEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our space station turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreSpaceStationElements() {
         return this.getTurnSSEnum().hasMoreElements();
     }
-    
+
     /**
      * Get the next "jumpship" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "jumpship" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextJumpshipElement() {
+    public ITurnOrdered nextJumpshipElement() {
         return this.getTurnJSEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our jumpship turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreJumpshipElements() {
@@ -407,94 +407,94 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
 
     /**
      * Get the next "warship" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "warship" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextWarshipElement() {
+    public ITurnOrdered nextWarshipElement() {
         return this.getTurnWSEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our warship turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreWarshipElements() {
         return this.getTurnWSEnum().hasMoreElements();
     }
-    
+
     /**
      * Get the next "dropship" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "dropship" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextDropshipElement() {
+    public ITurnOrdered nextDropshipElement() {
         return this.getTurnDSEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our dropship turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreDropshipElements() {
         return this.getTurnDSEnum().hasMoreElements();
     }
-    
+
     /**
      * Get the next "small craft" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "small craft" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextSmallCraftElement() {
+    public ITurnOrdered nextSmallCraftElement() {
         return this.getTurnSCEnum().nextElement();
     }
-    
+
     /**
      * Get the next "aero" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "small craft" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextAeroElement() {
+    public ITurnOrdered nextAeroElement() {
         return this.getTurnAeroEnum().nextElement();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our small craft turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreSmallCraftElements() {
         return this.getTurnSCEnum().hasMoreElements();
     }
-    
+
     /**
      * Determine if we've iterated to the end of our aero turn markers.
-     * 
+     *
      * @return <code>true</code> if we've read all turn markers.
      */
     public boolean hasMoreAeroElements() {
         return this.getTurnAeroEnum().hasMoreElements();
     }
-    
+
     /**
      * Get the next "even" <code>TurnOrdered</code> marker.
-     * 
+     *
      * @return the "even" <code>TurnOrdered</code> marker.
      */
-    public TurnOrdered nextEvenElement() {
+    public ITurnOrdered nextEvenElement() {
         return this.getEvenEnum().nextElement();
     }
 
     /**
      * Return the smallest number of times one of the <code>TurnOrdered</code>
      * objects is present in the list of "normal" turns.
-     * 
+     *
      * @return the <code>int</code> number of times.
      */
     public int getMin() {
         return this.min;
     }
-    
+
 
 }

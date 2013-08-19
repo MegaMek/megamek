@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when some Player disconnected
@@ -22,7 +22,7 @@ import megamek.common.Player;
 public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8555075206331285489L;
 
@@ -30,17 +30,17 @@ public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GamePlayerDisconnectedEvent(Object source, Player player) {
+    public GamePlayerDisconnectedEvent(Object source, IPlayer player) {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerDisconnected(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerDisconnected(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Player Disconnected";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Player Disconnected";
+    }
 }

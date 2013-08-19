@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when some Player connected
@@ -22,7 +22,7 @@ import megamek.common.Player;
 public class GamePlayerConnectedEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4745294587017447893L;
 
@@ -30,17 +30,17 @@ public class GamePlayerConnectedEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GamePlayerConnectedEvent(Object source, Player player) {
+    public GamePlayerConnectedEvent(Object source, IPlayer player) {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerConnected(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerConnected(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Player Connected";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Player Connected";
+    }
 }

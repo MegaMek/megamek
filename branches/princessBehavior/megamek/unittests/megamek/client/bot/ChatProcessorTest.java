@@ -2,7 +2,7 @@ package megamek.client.bot;
 
 import junit.framework.TestCase;
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.VictoryCommand;
@@ -27,11 +27,11 @@ public class ChatProcessorTest {
     private static final BotClient mockBotVGer = Mockito.mock(BotClient.class);
     private static final IGame mockGame = Mockito.mock(IGame.class);
 
-    private static final Player mockBotPlayerHal = Mockito.mock(Player.class);
-    private static final Player mockBotPlayerVGer = Mockito.mock(Player.class);
-    private static final Player mockHumanPlayerDave = Mockito.mock(Player.class);
-    private static final Player mockHumanPlayerKirk = Mockito.mock(Player.class);
-    private static final Vector<Player> playerVector = new Vector<Player>(4);
+    private static final IPlayer mockBotPlayerHal = Mockito.mock(IPlayer.class);
+    private static final IPlayer mockBotPlayerVGer = Mockito.mock(IPlayer.class);
+    private static final IPlayer mockHumanPlayerDave = Mockito.mock(IPlayer.class);
+    private static final IPlayer mockHumanPlayerKirk = Mockito.mock(IPlayer.class);
+    private static final Vector<IPlayer> playerVector = new Vector<IPlayer>(4);
 
     @Before
     public void setUp() throws Exception {

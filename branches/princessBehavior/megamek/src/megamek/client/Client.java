@@ -65,6 +65,7 @@ import megamek.common.GameTurn;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.MapSettings;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
@@ -72,8 +73,6 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
-import megamek.common.PlayerImpl;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.UnitLocation;
@@ -280,7 +279,7 @@ public class Client implements IClientCommandHandler {
             }
             if (!host.equals("localhost")) { //$NON-NLS-1$
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this,
-                        getLocalPlayer()));
+                                                                      getLocalPlayer()));
             }
         }
     }
@@ -300,19 +299,19 @@ public class Client implements IClientCommandHandler {
         // Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue()
         // * 1024 * 1024) );
         log = new GameLog(PreferenceManager.getClientPreferences()
-                .getGameLogFilename());
+                                           .getGameLogFilename());
         log.append("<html><body>");
     }
 
     private boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog()
-                && !(this instanceof BotClient);
+               && !(this instanceof BotClient);
     }
 
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration<Player> getPlayers() {
+    public Enumeration<IPlayer> getPlayers() {
         return game.getPlayers();
     }
 
@@ -323,14 +322,14 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    public Player getPlayer(int idx) {
+    public IPlayer getPlayer(int idx) {
         return game.getPlayer(idx);
     }
 
     /**
      * Return the local player
      */
-    public Player getLocalPlayer() {
+    public IPlayer getLocalPlayer() {
         return getPlayer(local_pn);
     }
 
@@ -492,7 +491,7 @@ public class Client implements IClientCommandHandler {
             return game.getTurnForPlayer(local_pn) != null;
         }
         return (game.getTurn() != null)
-                && game.getTurn().isValid(local_pn, game);
+               && game.getTurn().isValid(local_pn, game);
     }
 
     public GameTurn getMyTurn() {
@@ -507,7 +506,7 @@ public class Client implements IClientCommandHandler {
      */
     public boolean canUnloadStranded() {
         return (game.getTurn() instanceof GameTurn.UnloadStrandedTurn)
-                && game.getTurn().isValid(local_pn, game);
+               && game.getTurn().isValid(local_pn, game);
     }
 
     /**
@@ -531,7 +530,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
         Object[] data = {new Integer(nEntity), new Integer(nEquip),
-                new Integer(nMode)};
+                         new Integer(nMode)};
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
@@ -540,7 +539,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
         Object[] data = {new Integer(nEntity), new Integer(nEquip),
-                new Integer(nFacing)};
+                         new Integer(nFacing)};
         send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
     }
 
@@ -557,7 +556,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
         Object[] data = {new Integer(nEntity), new Integer(nSystem),
-                new Integer(nMode)};
+                         new Integer(nMode)};
         send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
     }
 
@@ -566,7 +565,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
         Object[] data = {new Integer(nEntity), new Integer(nWeapon),
-                new Integer(nAmmo)};
+                         new Integer(nAmmo)};
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -695,7 +694,7 @@ public class Client implements IClientCommandHandler {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        Player player = game.getPlayer(local_pn);
+        IPlayer player = game.getPlayer(local_pn);
         PreferenceManager.getClientPreferences().setLastPlayerColor(
                 player.getColorIndex());
         PreferenceManager.getClientPreferences().setLastPlayerCategory(
@@ -753,7 +752,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "update custom initiative" packet
      */
-    public void sendCustomInit(Player player) {
+    public void sendCustomInit(IPlayer player) {
         send(new Packet(Packet.COMMAND_CUSTOM_INITIATIVE, player));
     }
 
@@ -780,7 +779,7 @@ public class Client implements IClientCommandHandler {
         try {
             ois = new ObjectInputStream(new FileInputStream(f));
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[]{f,
-                    ois.readObject()}));
+                                                                   ois.readObject()}));
         } catch (Exception e) {
             System.out.println("Can't find local savegame " + f);
         }
@@ -791,7 +790,7 @@ public class Client implements IClientCommandHandler {
      */
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        Player newPlayer = (Player) c.getObject(1);
+        IPlayer newPlayer = (IPlayer) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
         } else {
@@ -910,7 +909,7 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveBuildingUpdate(Packet packet) {
         game.getBoard()
-                .updateBuildings((Vector<Building>) packet.getObject(0));
+            .updateBuildings((Vector<Building>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -933,7 +932,7 @@ public class Client implements IClientCommandHandler {
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
             } else if ((ea instanceof FlipArmsAction)
-                    && game.hasEntity(entityId)) {
+                       && game.hasEntity(entityId)) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
@@ -982,7 +981,7 @@ public class Client implements IClientCommandHandler {
          */
         while (game.getOptions().booleanOption(
                 "supress_all_double_blind_messages")
-                && (report.indexOf(Report.OBSCURED_STRING) != -1)) {
+               && (report.indexOf(Report.OBSCURED_STRING) != -1)) {
             doubleBlind = true;
             int startPos = report.indexOf(Report.OBSCURED_STRING);
             int endPos = report.indexOf("\n", startPos);
@@ -1021,7 +1020,7 @@ public class Client implements IClientCommandHandler {
     private void saveEntityStatus(String sStatus) {
         try {
             String sLogDir = PreferenceManager.getClientPreferences()
-                    .getLogDirectory();
+                                              .getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
@@ -1110,7 +1109,7 @@ public class Client implements IClientCommandHandler {
                     log.append((String) c.getObject(0));
                 }
                 game.processGameEvent(new GamePlayerChatEvent(this, null,
-                        (String) c.getObject(0)));
+                                                              (String) c.getObject(0)));
                 break;
             case Packet.COMMAND_ENTITY_ADD:
                 receiveEntityAdd(c);
@@ -1141,7 +1140,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_CHANGE_HEX:
                 game.getBoard().setHex((Coords) c.getObject(0),
-                        (IHex) c.getObject(1));
+                                       (IHex) c.getObject(1));
                 break;
             case Packet.COMMAND_CHANGE_HEXES:
                 List<Coords> coords =
@@ -1193,7 +1192,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
                 game.processGameEvent(new GameReportEvent(this,
-                        receiveReport((Vector<Report>) c.getObject(0))));
+                                                          receiveReport((Vector<Report>) c.getObject(0))));
                 break;
             case Packet.COMMAND_SENDING_REPORTS_ALL:
                 Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
@@ -1376,7 +1375,7 @@ public class Client implements IClientCommandHandler {
                 for (int i = 0; i < myEntities.size(); i++) {
                     Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())
-                            && (e.duplicateMarker > entity.duplicateMarker)) {
+                        && (e.duplicateMarker > entity.duplicateMarker)) {
                         e.duplicateMarker--;
                         e.generateShortName();
                         e.generateDisplayName();
@@ -1408,7 +1407,7 @@ public class Client implements IClientCommandHandler {
      */
     public String runCommand(String[] args) {
         if ((args != null) && (args.length > 0)
-                && commandsHash.containsKey(args[0])) {
+            && commandsHash.containsKey(args[0])) {
             return commandsHash.get(args[0]).run(args);
         }
         return "Unknown Client Command.";

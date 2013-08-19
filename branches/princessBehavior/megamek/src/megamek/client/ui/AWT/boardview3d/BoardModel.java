@@ -43,8 +43,8 @@ import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
@@ -54,16 +54,16 @@ class BoardModel extends BranchGroup {
     // 3D projection uses metric coordinates according to rulebook
     static final double HEX_DIAMETER = 30.0;
     static final double HEX_HEIGHT = 6.0;
-    static final double HEX_SIDE_LENGTH = Math.tan(Math.PI/6)*HEX_DIAMETER;
+    static final double HEX_SIDE_LENGTH = Math.tan(Math.PI / 6) * HEX_DIAMETER;
     static final double UNIT_SIZE = 12.0;
     static final double WRECK_HEIGHT = 1.0;
     static final double INFANTRY_HEIGHT = 2.0;
     static final double BATTLEARMOR_HEIGHT = 3.0;
-    static final BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), Double.POSITIVE_INFINITY);
+    static final BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY);
     static final Color3f SKY = new Color3f(.33f, .5f, 1.0f);
     static final Color3f LAND = new Color3f(.66f, .66f, .5f);
-    
-    static final String FILENAME_CLOUDS_TEXTURE =  "clouds.jpg";
+
+    static final String FILENAME_CLOUDS_TEXTURE = "clouds.jpg";
 
     TileTextureManager tileManager;
     SimpleUniverse universe;
@@ -76,6 +76,7 @@ class BoardModel extends BranchGroup {
     SharedGroup shared[];
 
     static final int KEEP = 2;
+
     public BoardModel(TileTextureManager t, SimpleUniverse u, IGame g) {
         tileManager = t;
         universe = u;
@@ -91,7 +92,7 @@ class BoardModel extends BranchGroup {
         sapp.setColoringAttributes(new ColoringAttributes(SKY, ColoringAttributes.SHADE_FLAT));
         sapp.setPolygonAttributes(C.noCull);
         sapp.setTexture(tileManager.getTexture(new File(Configuration.miscImagesDir(), FILENAME_CLOUDS_TEXTURE).toString()));
-        TransformGroup tg = new TransformGroup(new Transform3D(C.mkquat(1, 0, 0, Math.PI/2), new Vector3d(), 1.0));
+        TransformGroup tg = new TransformGroup(new Transform3D(C.mkquat(1, 0, 0, Math.PI / 2), new Vector3d(), 1.0));
         tg.addChild(new Sphere(1f, Primitive.GENERATE_TEXTURE_COORDS, 100, sapp));
         back.addChild(tg);
         Background bg = new Background(back);
@@ -100,22 +101,22 @@ class BoardModel extends BranchGroup {
     }
 
     static final Point3d getHexLocation(Coords c, int level) {
-        return new Point3d((c.x*BoardModel.HEX_SIDE_LENGTH*1.5), -(c.y*(BoardModel.HEX_DIAMETER) + ((c.x & 1) != 0? BoardModel.HEX_DIAMETER/2 : 0)), level*BoardModel.HEX_HEIGHT);
+        return new Point3d((c.x * BoardModel.HEX_SIDE_LENGTH * 1.5), -(c.y * (BoardModel.HEX_DIAMETER) + ((c.x & 1) != 0 ? BoardModel.HEX_DIAMETER / 2 : 0)), level * BoardModel.HEX_HEIGHT);
     }
 
     // TODO: optimization, changing single hexes, connecting hexes
 
     private final BoardHexModel hexAt(int x, int y) {
-        return ((BoardHexModel)getChild(y*w+x+KEEP));
+        return ((BoardHexModel) getChild(y * w + x + KEEP));
     }
 
-    void update(Player player) {
+    void update(IPlayer player) {
         IBoard gboard = game.getBoard();
         detach();
 
         if ((gboard.getWidth() != w) || (gboard.getHeight() != h)) {
             System.out.println("BoardModel: full rebuild");
-            for (int i = numChildren()-1; i >= KEEP; i--) {
+            for (int i = numChildren() - 1; i >= KEEP; i--) {
                 removeChild(i);
             }
 
@@ -131,16 +132,16 @@ class BoardModel extends BranchGroup {
             }
 
             DirectionalLight pl = new DirectionalLight(
-                true,
-                new Color3f(0.5f, 0.45f, 0.4f),
-                new Vector3f(-1, 1, -1)
+                    true,
+                    new Color3f(0.5f, 0.45f, 0.4f),
+                    new Vector3f(-1, 1, -1)
             );
             pl.setInfluencingBounds(bounds);
             addChild(pl);
             pl = new DirectionalLight(
-                true,
-                new Color3f(0.5f, 0.45f, 0.4f),
-                new Vector3f(-1, -0.5f, -2)
+                    true,
+                    new Color3f(0.5f, 0.45f, 0.4f),
+                    new Vector3f(-1, -0.5f, -2)
             );
             pl.setInfluencingBounds(bounds);
             addChild(pl);
@@ -164,13 +165,13 @@ class BoardModel extends BranchGroup {
         universe.addBranchGraph(this);
     }
 
-    void update(Coords c, IHex hex, Player player) {
+    void update(Coords c, IHex hex, IPlayer player) {
         detach();
         hexAt(c.x, c.y).update(hex, tileManager, player);
         universe.addBranchGraph(this);
     }
 
-    public void showDeployment(Player deployer) {
+    public void showDeployment(IPlayer deployer) {
         if (deployer == null) {
             isDeploying = false;
             resetBoard();
@@ -184,13 +185,13 @@ class BoardModel extends BranchGroup {
 
     public void resetBoard() {
         boolean night = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) &&
-            (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY);
+                        (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 BoardHexModel bhm = hexAt(x, y);
 
-                if (night && !game.isPositionIlluminated((Coords)bhm.getUserData())) {
-                   bhm.night();
+                if (night && !game.isPositionIlluminated((Coords) bhm.getUserData())) {
+                    bhm.night();
                 } else {
                     bhm.reset();
                 }

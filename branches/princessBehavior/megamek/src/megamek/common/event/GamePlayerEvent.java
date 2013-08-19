@@ -14,12 +14,12 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of descendant classes are sent as a result of Game changes related
  * to Players
- * 
+ *
  * @see GamePlayerChangeEvent
  * @see GamePlayerChatEvent
  * @see GameListener
@@ -27,17 +27,17 @@ import megamek.common.Player;
 public abstract class GamePlayerEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3259778708415623296L;
-    protected Player player;
+    protected IPlayer player;
 
     /**
      * @param source
      * @param player
      * @param type
      */
-    public GamePlayerEvent(Object source, Player player) {
+    public GamePlayerEvent(Object source, IPlayer player) {
         super(source);
         this.player = player;
     }
@@ -45,7 +45,7 @@ public abstract class GamePlayerEvent extends GameEvent {
     /**
      * @return the player.
      */
-    public Player getPlayer() {
+    public IPlayer getPlayer() {
         return player;
     }
 }

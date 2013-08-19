@@ -87,6 +87,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -98,7 +99,6 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
@@ -142,8 +142,8 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends Canvas implements IBoardView, BoardListener,
-        MouseListener, MouseMotionListener, KeyListener, AdjustmentListener,
-        MechDisplayListener, IPreferenceChangeListener {
+                                                  MouseListener, MouseMotionListener, KeyListener, AdjustmentListener,
+                                                  MechDisplayListener, IPreferenceChangeListener {
     private static final long serialVersionUID = -7518808415074725538L;
 
     private static final int TRANSPARENT = 0xFFFF00FF;
@@ -160,9 +160,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     // The list of valid zoom factors. Other values cause map aliasing,
     // I can't be bothered figuring out why. - Ben
-    private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
-        0.68f, 0.79f, 0.90f, 1.00f
-        // 1.09f, 1.17f
+    private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
+                                                 0.68f, 0.79f, 0.90f, 1.00f
+                                                 // 1.09f, 1.17f
     };
 
     // the index of zoom factor 1.00f
@@ -178,7 +178,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     Dimension hex_size = null;
-    private Font       font_note   = FONT_10;
+    private Font font_note = FONT_10;
 
     private Font font_hexnum = FONT_10;
     private Font font_elev = FONT_9;
@@ -248,7 +248,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     Polygon[] movementPolys;
 
     // the player who owns this BoardView's client
-    private Player localPlayer = null;
+    private IPlayer localPlayer = null;
 
     // should we mark deployment hexes for an entity?
     private Entity en_Deployer = null;
@@ -420,33 +420,33 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
         for (BoardViewListener l : boardListeners) {
             switch (event.getType()) {
-            case BoardViewEvent.BOARD_HEX_CLICKED:
-            case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
-            case BoardViewEvent.BOARD_HEX_DRAGGED:
-            case BoardViewEvent.BOARD_HEX_POPUP:
-                l.hexMoused(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_CURSOR:
-                l.hexCursor(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
-                l.boardHexHighlighted(event);
-                break;
-            case BoardViewEvent.BOARD_HEX_SELECTED:
-                l.hexSelected(event);
-                break;
-            case BoardViewEvent.BOARD_FIRST_LOS_HEX:
-                l.firstLOSHex(event);
-                break;
-            case BoardViewEvent.BOARD_SECOND_LOS_HEX:
-                l.secondLOSHex(event, getFirstLOS());
-                break;
-            case BoardViewEvent.FINISHED_MOVING_UNITS:
-                l.finishedMovingUnits(event);
-                break;
-            case BoardViewEvent.SELECT_UNIT:
-                l.unitSelected(event);
-                break;
+                case BoardViewEvent.BOARD_HEX_CLICKED:
+                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
+                case BoardViewEvent.BOARD_HEX_DRAGGED:
+                case BoardViewEvent.BOARD_HEX_POPUP:
+                    l.hexMoused(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_CURSOR:
+                    l.hexCursor(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
+                    l.boardHexHighlighted(event);
+                    break;
+                case BoardViewEvent.BOARD_HEX_SELECTED:
+                    l.hexSelected(event);
+                    break;
+                case BoardViewEvent.BOARD_FIRST_LOS_HEX:
+                    l.firstLOSHex(event);
+                    break;
+                case BoardViewEvent.BOARD_SECOND_LOS_HEX:
+                    l.secondLOSHex(event, getFirstLOS());
+                    break;
+                case BoardViewEvent.FINISHED_MOVING_UNITS:
+                    l.finishedMovingUnits(event);
+                    break;
+                case BoardViewEvent.SELECT_UNIT:
+                    l.unitSelected(event);
+                    break;
             }
         }
     }
@@ -545,14 +545,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // make sure board rectangle contains our current view rectangle
         if ((boardImage == null) || !boardRect.union(view).equals(boardRect)
-                || dirtyBoard) {
+            || dirtyBoard) {
             updateBoardImage();
         }
 
         // draw onto the back buffer:
 
         // redraw all the specials. This is an inneficient hack :/
-        for(Coords c : game.getBoard().getSpecialHexDisplayTable().keySet()) {
+        for (Coords c : game.getBoard().getSpecialHexDisplayTable().keySet()) {
             drawHex(c);
         }
 
@@ -597,7 +597,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         drawSprites(attackSprites);
 
         //draw movement vectors.
-        if(game.useVectorMove() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+        if (game.useVectorMove() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             drawSprites(movementSprites);
         }
 
@@ -611,17 +611,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 Point end = getCentreHexLocation(rulerEnd);
                 backGraph.setColor(Color.yellow);
                 backGraph.drawLine(start.x - boardRect.x,
-                        start.y - boardRect.y, end.x - boardRect.x, end.y
-                        - boardRect.y);
+                                   start.y - boardRect.y, end.x - boardRect.x, end.y
+                                                                               - boardRect.y);
 
                 backGraph.setColor(rulerEndColor);
                 backGraph.fillRect(end.x - boardRect.x - 1, end.y - boardRect.y
-                        - 1, 2, 2);
+                                                            - 1, 2, 2);
             }
 
             backGraph.setColor(rulerStartColor);
             backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y
-                    - 1, 2, 2);
+                                                          - 1, 2, 2);
         }
 
         // draw all the "displayables"
@@ -648,9 +648,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private void updateBoardSize() {
         int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale))
-                + (int) ((HEX_W / 4) * scale);
+                    + (int) ((HEX_W / 4) * scale);
         int height = (game.getBoard().getHeight() * (int) (HEX_H * scale))
-                + (int) ((HEX_H / 2) * scale);
+                     + (int) ((HEX_H / 2) * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -788,14 +788,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 p.translate(-(view.x), -(view.y));
                 if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
                     backGraph.setColor(Color.yellow);
-                    int[] xcoords = { p.x + (int) (21 * scale),
-                            p.x + (int) (62 * scale), p.x + (int) (83 * scale),
-                            p.x + (int) (83 * scale), p.x + (int) (62 * scale),
-                            p.x + (int) (21 * scale), p.x, p.x };
-                    int[] ycoords = { p.y, p.y, p.y + (int) (35 * scale),
-                            p.y + (int) (36 * scale), p.y + (int) (71 * scale),
-                            p.y + (int) (71 * scale), p.y + (int) (36 * scale),
-                            p.y + (int) (35 * scale) };
+                    int[] xcoords = {p.x + (int) (21 * scale),
+                                     p.x + (int) (62 * scale), p.x + (int) (83 * scale),
+                                     p.x + (int) (83 * scale), p.x + (int) (62 * scale),
+                                     p.x + (int) (21 * scale), p.x, p.x};
+                    int[] ycoords = {p.y, p.y, p.y + (int) (35 * scale),
+                                     p.y + (int) (36 * scale), p.y + (int) (71 * scale),
+                                     p.y + (int) (71 * scale), p.y + (int) (36 * scale),
+                                     p.y + (int) (35 * scale)};
                     backGraph.drawPolygon(xcoords, ycoords, 8);
                 }
             }
@@ -832,7 +832,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
         for (Enumeration<ArtilleryAttackAction> attacks = game
-                .getArtilleryAttacks(); attacks.hasMoreElements();) {
+                .getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTarget(game).getPosition().equals(c)) {
                 v.add(a);
@@ -871,7 +871,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
                 Image tmpImage = getScaledImage(tileManager.getMinefieldSign());
                 backGraph.drawImage(tmpImage, p.x + (int) (13 * scale), p.y
-                        + (int) (13 * scale), this);
+                                                                        + (int) (13 * scale), this);
 
                 backGraph.setColor(Color.black);
                 int nbrMfs = game.getNbrMinefields(c);
@@ -882,51 +882,51 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                             backGraph);
                 } else if (nbrMfs == 1) {
                     switch (mf.getType()) {
-                    case (Minefield.TYPE_CONVENTIONAL):
-                        drawCenteredString(
-                                Messages
-                                .getString("BoardView1.Conventional") + mf.getDensity() + ")", //$NON-NLS-1$
-                                p.x, p.y + (int) (51 * scale),
-                                font_minefield, backGraph);
-                    if(mf.isSeaBased()) {
-                        drawCenteredString(
-                                "Depth: " + mf.getDepth() + "", //$NON-NLS-1$ //$NON-NLS-2$
-                                p.x, p.y + (int) (60 * scale),
-                                font_minefield, backGraph);
-                    }
-                    break;
-                    case (Minefield.TYPE_INFERNO):
-                        drawCenteredString(
-                                Messages
-                                .getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                p.x, p.y + (int) (51 * scale),
-                                font_minefield, backGraph);
-                    break;
-                    case (Minefield.TYPE_ACTIVE):
-                        drawCenteredString(
-                                Messages
-                                .getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                p.x, p.y + (int) (51 * scale),
-                                font_minefield, backGraph);
-                    break;
-                    case (Minefield.TYPE_COMMAND_DETONATED):
-                        drawCenteredString(
-                                Messages.getString("BoardView1.Command") + mf.getDensity() + ")", //$NON-NLS-1$
-                                p.x, p.y + (int) (51 * scale),
-                                font_minefield, backGraph);
-                    break;
-                    case (Minefield.TYPE_VIBRABOMB):
-                        drawCenteredString(
-                                Messages.getString("BoardView1.Vibrabomb") + mf.getDensity() + ")", //$NON-NLS-1$
-                                p.x, p.y + (int) (51 * scale),
-                                font_minefield, backGraph);
-                    if (mf.getPlayerId() == localPlayer.getId()) {
-                        drawCenteredString(
-                                "(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                p.x, p.y + (int) (60 * scale),
-                                font_minefield, backGraph);
-                    }
-                    break;
+                        case (Minefield.TYPE_CONVENTIONAL):
+                            drawCenteredString(
+                                    Messages
+                                            .getString("BoardView1.Conventional") + mf.getDensity() + ")", //$NON-NLS-1$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            if (mf.isSeaBased()) {
+                                drawCenteredString(
+                                        "Depth: " + mf.getDepth() + "", //$NON-NLS-1$ //$NON-NLS-2$
+                                        p.x, p.y + (int) (60 * scale),
+                                        font_minefield, backGraph);
+                            }
+                            break;
+                        case (Minefield.TYPE_INFERNO):
+                            drawCenteredString(
+                                    Messages
+                                            .getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            break;
+                        case (Minefield.TYPE_ACTIVE):
+                            drawCenteredString(
+                                    Messages
+                                            .getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            break;
+                        case (Minefield.TYPE_COMMAND_DETONATED):
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Command") + mf.getDensity() + ")", //$NON-NLS-1$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            break;
+                        case (Minefield.TYPE_VIBRABOMB):
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Vibrabomb") + mf.getDensity() + ")", //$NON-NLS-1$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            if (mf.getPlayerId() == localPlayer.getId()) {
+                                drawCenteredString(
+                                        "(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                        p.x, p.y + (int) (60 * scale),
+                                        font_minefield, backGraph);
+                            }
+                            break;
                     }
                 }
             }
@@ -934,7 +934,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     private void drawCenteredString(String string, int x, int y, Font font,
-            Graphics graph) {
+                                    Graphics graph) {
         FontMetrics currentMetrics = getFontMetrics(font);
         int stringWidth = currentMetrics.stringWidth(string);
 
@@ -950,7 +950,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private void updateBoardImage() {
         // check to make sure image is big enough
         if ((boardGraph == null) || (view.width > boardRect.width)
-                || (view.height > boardRect.height)) {
+            || (view.height > boardRect.height)) {
             /*
              * Ok, some history here. Before the zoom patch, the boardImage was
              * created with the same size as the view. After the zoom patch, the
@@ -974,7 +974,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             checkScrollBounds();
             boardRect = new Rectangle(view);
             System.out
-                    .println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
+                  .println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
             dirtyBoard = false;
         }
@@ -1006,19 +1006,19 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
 
         boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
-                boardRect.x - view.x, boardRect.y - view.y);
+                            boardRect.x - view.x, boardRect.y - view.y);
 
         // what's left to paint?
         int midX = Math.max(view.x, boardRect.x);
         int midWidth = view.width - Math.abs(view.x - boardRect.x);
         Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x,
-                view.height);
+                                         view.height);
         Rectangle unRight = new Rectangle(boardRect.x + boardRect.width,
-                view.y, view.x - boardRect.x, view.height);
+                                          view.y, view.x - boardRect.x, view.height);
         Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y
-                - view.y);
+                                                                - view.y);
         Rectangle unBottom = new Rectangle(midX,
-                boardRect.y + boardRect.height, midWidth, view.y - boardRect.y);
+                                           boardRect.y + boardRect.height, midWidth, view.y - boardRect.y);
 
         // update boardRect
         boardRect = new Rectangle(view);
@@ -1055,24 +1055,24 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // only draw what we came to draw
         boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
-                rect.width, rect.height);
+                           rect.width, rect.height);
 
         // clear, if we need to
         if (rect.x < (21 * scale)) {
             boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y,
-                    (int) (21 * scale) - rect.x, rect.height);
+                                 (int) (21 * scale) - rect.x, rect.height);
         }
         if (rect.y < (36 * scale)) {
             boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y,
-                    rect.width, (int) (36 * scale) - rect.y);
+                                 rect.width, (int) (36 * scale) - rect.y);
         }
         if (rect.x > (boardSize.width - view.width - (21 * scale))) {
             boardGraph.clearRect(boardRect.width - (int) (21 * scale), rect.y
-                    - boardRect.y, (int) (21 * scale), rect.height);
+                                                                       - boardRect.y, (int) (21 * scale), rect.height);
         }
         if (rect.y > (boardSize.height - view.height - (int) (36 * scale))) {
             boardGraph.clearRect(rect.x - boardRect.x, boardRect.height
-                    - (int) (36 * scale), rect.width, (int) (36 * scale));
+                                                       - (int) (36 * scale), rect.width, (int) (36 * scale));
         }
 
         // draw some hexes
@@ -1089,7 +1089,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * it resets the clipping rectangle before drawing.
      */
     private void redrawAround(Coords c) {
-        if(c != null) {
+        if (c != null) {
             boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
             drawHex(c);
             drawHex(c.translated(0));
@@ -1149,32 +1149,31 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Integer tint = ecmHexes.get(c);
             if (tint != null) {
                 scaledImage = getScaledImage(tileManager.getEcmShade(tint
-                        .intValue()));
+                                                                             .intValue()));
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
 
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
-                && !game.isPositionIlluminated(c)) {
+            && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
+            && !game.isPositionIlluminated(c)) {
             scaledImage = getScaledImage(tileManager.getNightFog());
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
-        if(game.getBoard().inSpace()) {
+        if (game.getBoard().inSpace()) {
             boardGraph.setColor(Color.LIGHT_GRAY);
         }
 
         //draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
         try {
-            if(shdList != null) {
-                for(SpecialHexDisplay shd : shdList)
-                {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(),localPlayer.getName())) {
+            if (shdList != null) {
+                for (SpecialHexDisplay shd : shdList) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer.getName())) {
                         scaledImage = getScaledImage(shd.getType().getDefaultImage());
-                        if(scaledImage != null) {
+                        if (scaledImage != null) {
                             boardGraph.drawImage(scaledImage, drawX, drawY, this);
                         }
                     }
@@ -1186,7 +1185,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             drawCenteredString(
                     "Loading Error",
                     drawX,
-                    drawY + (int)(50*scale),
+                    drawY + (int) (50 * scale),
                     font_note,
                     boardGraph);
             return;
@@ -1195,21 +1194,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
-                    + (int) (12 * scale), font_hexnum, boardGraph);
+                                                       + (int) (12 * scale), font_hexnum, boardGraph);
         }
         // draw terrain level / water depth / building height
         if (zoomIndex > 3) {
             int ypos = 70;
-            if(null != shdList) {
+            if (null != shdList) {
                 Color oldColor = boardGraph.getColor();
                 boardGraph.setColor(Color.RED);
-                for(SpecialHexDisplay shd : shdList)
-                {
-                    if(SpecialHexDisplay.Type.PLAYER_NOTE == shd.getType()) {
+                for (SpecialHexDisplay shd : shdList) {
+                    if (SpecialHexDisplay.Type.PLAYER_NOTE == shd.getType()) {
                         drawCenteredString(
                                 shd.getInfo(),
                                 drawX,
-                                drawY + (int)(ypos*scale),
+                                drawY + (int) (ypos * scale),
                                 font_note,
                                 boardGraph);
                         ypos -= 10;
@@ -1234,7 +1232,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             if (height > 0) {
                 boardGraph.setColor(GUIPreferences.getInstance().getColor(
-                "AdvancedBuildingTextColor"));
+                        "AdvancedBuildingTextColor"));
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
                         drawX, drawY + (int) (ypos * scale), font_elev,
@@ -1247,29 +1245,29 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         boardGraph.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
             boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                    + (int) (62 * scale), drawY);
+                                                                   + (int) (62 * scale), drawY);
         }
         if (drawElevationLine(c, 1)) {
             boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                    + (int) (83 * scale), drawY + (int) (35 * scale));
+                                                                   + (int) (83 * scale), drawY + (int) (35 * scale));
         }
         if (drawElevationLine(c, 2)) {
             boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                    + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                    + (int) (71 * scale));
+                                                            + (int) (36 * scale), drawX + (int) (62 * scale), drawY
+                                                                                                              + (int) (71 * scale));
         }
         if (drawElevationLine(c, 3)) {
             boardGraph.drawLine(drawX + (int) (62 * scale), drawY
-                    + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                    + (int) (71 * scale));
+                                                            + (int) (71 * scale), drawX + (int) (21 * scale), drawY
+                                                                                                              + (int) (71 * scale));
         }
         if (drawElevationLine(c, 4)) {
             boardGraph.drawLine(drawX + (int) (21 * scale), drawY
-                    + (int) (71 * scale), drawX, drawY + (int) (36 * scale));
+                                                            + (int) (71 * scale), drawX, drawY + (int) (36 * scale));
         }
         if (drawElevationLine(c, 5)) {
             boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                    + (int) (21 * scale), drawY);
+                                                                   + (int) (21 * scale), drawY);
         }
 
         // draw mapsheet borders
@@ -1279,42 +1277,42 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if ((c.x % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
                 boardGraph
-                .drawLine(drawX + (int) (21 * scale), drawY
-                        + (int) (71 * scale), drawX, drawY
-                        + (int) (36 * scale));
+                        .drawLine(drawX + (int) (21 * scale), drawY
+                                                              + (int) (71 * scale), drawX, drawY
+                                                                                           + (int) (36 * scale));
                 boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                        + (int) (21 * scale), drawY);
+                                                                       + (int) (21 * scale), drawY);
             } else if ((c.x % 16) == 15) {
                 // right edge of sheet (edge 1 & 2)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                        + (int) (83 * scale), drawY + (int) (35 * scale));
+                                                                       + (int) (83 * scale), drawY + (int) (35 * scale));
                 boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                        + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale));
+                                                                + (int) (36 * scale), drawX + (int) (62 * scale), drawY
+                                                                                                                  + (int) (71 * scale));
             }
             if ((c.y % 17) == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
                 boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                        + (int) (62 * scale), drawY);
+                                                                       + (int) (62 * scale), drawY);
                 if ((c.x % 2) == 0) {
                     boardGraph.drawLine(drawX + (int) (62 * scale), drawY,
-                            drawX + (int) (83 * scale), drawY
-                            + (int) (35 * scale));
+                                        drawX + (int) (83 * scale), drawY
+                                                                    + (int) (35 * scale));
                     boardGraph.drawLine(drawX, drawY + (int) (35 * scale),
-                            drawX + (int) (21 * scale), drawY);
+                                        drawX + (int) (21 * scale), drawY);
                 }
             } else if ((c.y % 17) == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                        + (int) (71 * scale));
+                                                                + (int) (71 * scale), drawX + (int) (21 * scale), drawY
+                                                                                                                  + (int) (71 * scale));
                 if ((c.x % 2) == 1) {
                     boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                            + (int) (36 * scale), drawX + (int) (62 * scale),
-                            drawY + (int) (71 * scale));
+                                                                    + (int) (36 * scale), drawX + (int) (62 * scale),
+                                        drawY + (int) (71 * scale));
                     boardGraph.drawLine(drawX + (int) (21 * scale), drawY
-                            + (int) (71 * scale), drawX, drawY
-                            + (int) (36 * scale));
+                                                                    + (int) (71 * scale), drawX, drawY
+                                                                                                 + (int) (36 * scale));
                 }
             }
             boardGraph.setColor(Color.black);
@@ -1339,7 +1337,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private Point getHexLocation(int x, int y) {
         return new Point(x * (int) (HEX_WC * scale), (y * (int) (HEX_H * scale))
-                + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0));
+                                                     + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0));
     }
 
     Point getHexLocation(Coords c) {
@@ -1366,8 +1364,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     Coords getCoordsAt(Point p) {
         final int x = ((p.x + scroll.x) - offset.x) / (int) (HEX_WC * scale);
         final int y = (((p.y + scroll.y) - offset.y) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale)
-                : 0))
-                / (int) (HEX_H * scale);
+                                                                     : 0))
+                      / (int) (HEX_H * scale);
         return new Coords(x, y);
     }
 
@@ -1393,11 +1391,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // adjust horizontal location for the tipWindow if it goes off the
             // frame
             if ((getLocationOnScreen().x + this.getSize().width) < (tipLoc.x
-                    + tipWindow.getSize().width + 10)) {
+                                                                    + tipWindow.getSize().width + 10)) {
                 if (this.getSize().width > tipWindow.getSize().width) {
                     // bound it by the right edge of the frame
                     tipLoc.x -= (tipLoc.x + tipWindow.getSize().width + 10)
-                    - this.getSize().width - this.getLocation().x;
+                                - this.getSize().width - this.getLocation().x;
                 } else {
                     // too big to fit, left justify to the frame (roughly).
                     // how do I extract the first term of HEX_SIZE to use
@@ -1428,7 +1426,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
         if (GUIPreferences.getInstance().getShowMapHexPopup()
-                && game.getBoard().contains(mcoords)) {
+            && game.getBoard().contains(mcoords)) {
             mhex = game.getBoard().getHex(mcoords);
             stringsSize += 1;
         }
@@ -1493,20 +1491,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // are we on a hex?
         if (mhex != null) {
             strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
-            + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
+                                    + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
             stringsIndex += 1;
 
             //cycle through the terrains and report types found
             //this will skip buildings and other constructed units
-            for(int i=0;i < Terrains.SIZE; i++) {
-                if(mhex.containsTerrain(i)) {
+            for (int i = 0; i < Terrains.SIZE; i++) {
+                if (mhex.containsTerrain(i)) {
                     int tf = mhex.getTerrain(i).getTerrainFactor();
                     int ttl = mhex.getTerrain(i).getLevel();
                     String name = Terrains.getDisplayName(i, ttl);
-                    if(tf > 0) {
+                    if (tf > 0) {
                         name = name + " (" + tf + ")";
                     }
-                    if(null != name) {
+                    if (null != name) {
                         strings[stringsIndex] = name;
                         stringsIndex += 1;
                     }
@@ -1518,7 +1516,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                                                            .getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.FUEL_TANK_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -1532,7 +1530,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                                                            .getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.BLDG_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -1550,7 +1548,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                                                            .getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.BRIDGE_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -1568,37 +1566,37 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
                     switch (mf.getType()) {
-                    case (Minefield.TYPE_CONVENTIONAL):
-                        strings[stringsIndex] = mf.getName()
-                        + Messages
-                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                    case (Minefield.TYPE_COMMAND_DETONATED):
-                        strings[stringsIndex] = mf.getName()
-                        + Messages
-                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")"+ " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                    case (Minefield.TYPE_VIBRABOMB):
-                        if (mf.getPlayerId() == localPlayer.getId()) {
+                        case (Minefield.TYPE_CONVENTIONAL):
                             strings[stringsIndex] = mf.getName()
-                            + Messages
-                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        } else {
+                                                    + Messages
+                                    .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                            break;
+                        case (Minefield.TYPE_COMMAND_DETONATED):
                             strings[stringsIndex] = mf.getName()
-                            + Messages
-                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                        }
-                    break;
-                    case (Minefield.TYPE_ACTIVE):
-                        strings[stringsIndex] = mf.getName()
-                        + Messages
-                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
-                    case (Minefield.TYPE_INFERNO):
-                        strings[stringsIndex] = mf.getName()
-                        + Messages
-                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                                                    + Messages
+                                    .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                            break;
+                        case (Minefield.TYPE_VIBRABOMB):
+                            if (mf.getPlayerId() == localPlayer.getId()) {
+                                strings[stringsIndex] = mf.getName()
+                                                        + Messages
+                                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            } else {
+                                strings[stringsIndex] = mf.getName()
+                                                        + Messages
+                                        .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                            break;
+                        case (Minefield.TYPE_ACTIVE):
+                            strings[stringsIndex] = mf.getName()
+                                                    + Messages
+                                    .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            break;
+                        case (Minefield.TYPE_INFERNO):
+                            strings[stringsIndex] = mf.getName()
+                                                    + Messages
+                                    .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            break;
                     }
                     stringsIndex++;
                 }
@@ -1609,7 +1607,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
                 System.arraycopy(entityStrings, 0, strings, stringsIndex,
-                        entityStrings.length);
+                                 entityStrings.length);
                 stringsIndex += entityStrings.length;
             }
         }
@@ -1619,7 +1617,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
                 System.arraycopy(attackStrings, 0, strings, stringsIndex,
-                        attackStrings.length);
+                                 attackStrings.length);
                 stringsIndex += 1 + aSprite.weaponDescs.size();
             }
         }
@@ -1642,9 +1640,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 s = Messages.getString("BoardView1.Artillery");
             }
             strings[stringsIndex++] = Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[] { s,
-                            new Integer(aaa.turnsTilHit),
-                            aaa.toHit(game).getValueAsString() });
+                    "BoardView1.ArtilleryAttack", new Object[]{s,
+                                                               new Integer(aaa.turnsTilHit),
+                                                               aaa.toHit(game).getValueAsString()});
         }
 
         // check artillery fire adjustment
@@ -1661,11 +1659,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
                 strings[stringsIndex++] = Messages
-                .getString("BoardView1.ArtilleryAutohit");
+                        .getString("BoardView1.ArtilleryAutohit");
             } else {
                 strings[stringsIndex++] = Messages.getString(
                         "BoardView1.ArtilleryAdjustment",
-                        new Object[] { new Integer(amod) });
+                        new Object[]{new Integer(amod)});
             }
         }
         return strings;
@@ -1695,7 +1693,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 hideTooltip();
             }
         } else if (isTipPossible
-                && ((System.currentTimeMillis() - lastIdle) > GUIPreferences
+                   && ((System.currentTimeMillis() - lastIdle) > GUIPreferences
                 .getInstance().getTooltipDelay())) {
             showTooltip();
         }
@@ -1766,10 +1764,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
-        for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
+        for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext(); ) {
             final C3Sprite c3sprite = i.next();
             if ((c3sprite.entityId == entity.getId())
-                    || (c3sprite.masterId == entity.getId())) {
+                || (c3sprite.masterId == entity.getId())) {
                 i.remove();
             }
         }
@@ -1786,7 +1784,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     void redrawAllEntities() {
         ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game
-                .getNoOfEntities());
+                                                                                 .getNoOfEntities());
         HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(
                 game.getNoOfEntities());
         ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
@@ -1801,7 +1799,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         clearC3Networks();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
             final Entity entity = i.nextElement();
             if (entity.getPosition() == null) {
                 continue;
@@ -1845,7 +1843,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
         scroll.setLocation(getHexLocation(c));
         scroll.translate((int) (42 * scale) - (view.width / 2),
-                (int) (36 * scale) - (view.height / 2));
+                         (int) (36 * scale) - (view.height / 2));
 
         isScrolling = false;
         checkScrollBounds();
@@ -1868,31 +1866,31 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         //first get the color for the vector
         Color col = Color.blue;
-        if(md.getLastStep() != null) {
+        if (md.getLastStep() != null) {
             switch (md.getLastStep().getMovementType()) {
-            case MOVE_RUN:
-            case MOVE_VTOL_RUN:
-            case MOVE_OVER_THRUST:
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
-                break;
-            case MOVE_JUMP :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
-                break;
-            case MOVE_SPRINT :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveSprintColor");
-                break;
-            case MOVE_ILLEGAL :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
-                break;
-            default :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
-            break;
+                case MOVE_RUN:
+                case MOVE_VTOL_RUN:
+                case MOVE_OVER_THRUST:
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
+                    break;
+                case MOVE_JUMP:
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
+                    break;
+                case MOVE_SPRINT:
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveSprintColor");
+                    break;
+                case MOVE_ILLEGAL:
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
+                    break;
+                default:
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+                    break;
             }
         }
 
         refreshMoveVectors(entity, md, col);
 
-        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
@@ -1904,22 +1902,22 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             if (!found) {
                 if ((null != previousStep) &&
-                        ((step.getType() == MoveStepType.UP) ||
-                                (step.getType() == MoveStepType.DOWN) ||
-                                (step.getType() == MoveStepType.ACC) ||
-                                (step.getType() == MoveStepType.DEC) ||
-                                (step.getType() == MoveStepType.ACCN) ||
-                                (step.getType() == MoveStepType.DECN))) {
+                    ((step.getType() == MoveStepType.UP) ||
+                     (step.getType() == MoveStepType.DOWN) ||
+                     (step.getType() == MoveStepType.ACC) ||
+                     (step.getType() == MoveStepType.DEC) ||
+                     (step.getType() == MoveStepType.ACCN) ||
+                     (step.getType() == MoveStepType.DECN))) {
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    pathSprites.get(pathSprites.size() -1 ).hidden = true;
+                    pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
 
                 //for advanced movement, we always need to hide prior
                 //because costs will overlap and we only want the current facing
-                if((previousStep != null) && game.useVectorMove()) {
-                    pathSprites.get(pathSprites.size() -1 ).hidden = true;
+                if ((previousStep != null) && game.useVectorMove()) {
+                    pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
 
                 pathSprites.add(new StepSprite(step));
@@ -1941,11 +1939,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         refreshMoveVectors();
     }
 
-    public void setLocalPlayer(Player p) {
+    public void setLocalPlayer(IPlayer p) {
         localPlayer = p;
     }
 
-    public Player getLocalPlayer() {
+    public IPlayer getLocalPlayer() {
         return localPlayer;
     }
 
@@ -1967,13 +1965,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         if (e.hasC3i()) {
             for (java.util.Enumeration<Entity> i = game.getEntities(); i
-            .hasMoreElements();) {
+                    .hasMoreElements(); ) {
                 final Entity fe = i.nextElement();
                 if (fe.getPosition() == null) {
                     return;
                 }
                 if (e.onSameC3NetworkAs(fe) && !fe.equals(e) &&
-                        !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
+                    !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
                     C3Sprites.add(new C3Sprite(e, fe));
                 }
             }
@@ -1986,8 +1984,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // ECM cuts off the network
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster
                     .getPosition())
-                    && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(),
-                            eMaster.getPosition())) {
+                && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(),
+                                            eMaster.getPosition())) {
                 C3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }
@@ -2002,15 +2000,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
         if ((ae == null) || (t == null)
-                || (t.getTargetType() == Targetable.TYPE_INARC_POD)
-                || (t.getPosition() == null) || (ae.getPosition() == null)) {
+            || (t.getTargetType() == Targetable.TYPE_INARC_POD)
+            || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
 
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
             if ((sprite.getEntityId() == aa.getEntityId())
-                    && (sprite.getTargetId() == aa.getTargetId())) {
+                && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction) aa;
@@ -2063,13 +2061,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
     }
 
-    /** Removes all attack sprites from a certain entity */
+    /**
+     * Removes all attack sprites from a certain entity
+     */
     public synchronized void removeAttacksFor(Entity e) {
         if (e == null) {
             return;
         }
         int entityId = e.getId();
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext(); ) {
             AttackSprite sprite = i.next();
             if (sprite.getEntityId() == entityId) {
                 i.remove();
@@ -2084,14 +2084,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void refreshAttacks() {
         clearAllAttacks();
         for (Enumeration<EntityAction> i = game.getActions(); i
-        .hasMoreElements();) {
+                .hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (ea instanceof AttackAction) {
                 addAttack((AttackAction) ea);
             }
         }
         for (Enumeration<AttackAction> i = game.getCharges(); i
-        .hasMoreElements();) {
+                .hasMoreElements(); ) {
             AttackAction ea = i.nextElement();
             if (ea instanceof PhysicalAttackAction) {
                 addAttack(ea);
@@ -2101,9 +2101,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) {
+            if (e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
             }
         }
@@ -2113,10 +2113,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         clearAllMoveVectors();
         //same as normal but when I find the active entity I used the MovePath
         //to get vector
-        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) {
-                if(e.getId() == en.getId()) {
+            if (e.getPosition() != null) {
+                if (e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));
                 } else {
                     movementSprites.add(new MovementSprite(e, e.getVectors(), col, false));
@@ -2161,70 +2161,70 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             LosEffects le;
             if ((ae == null) || (te == null)) {
                 boolean mechInFirst = GUIPreferences.getInstance()
-                .getMechInFirst();
+                                                    .getMechInFirst();
                 boolean mechInSecond = GUIPreferences.getInstance()
-                .getMechInSecond();
+                                                     .getMechInSecond();
                 LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
                 ai.attackPos = c1;
                 ai.targetPos = c2;
                 ai.attackHeight = mechInFirst ? 1 : 0;
                 ai.targetHeight = mechInSecond ? 1 : 0;
                 ai.attackAbsHeight = game.getBoard().getHex(c1).floor()
-                + ai.attackHeight;
+                                     + ai.attackHeight;
                 ai.targetAbsHeight = game.getBoard().getHex(c2).floor()
-                + ai.targetHeight;
+                                     + ai.targetHeight;
                 le = LosEffects.calculateLos(game, ai);
                 message
-                .append(Messages
-                        .getString(
-                                "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
-                                        mechInFirst ? Messages
-                                                .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                c1.getBoardNum() }));
+                        .append(Messages
+                                        .getString(
+                                                "BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                                                                                     mechInFirst ? Messages
+                                                                                             .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                                                                     c1.getBoardNum()}));
                 message
-                .append(Messages
-                        .getString(
-                                "BoardView1.Target", new Object[] { //$NON-NLS-1$
-                                        mechInSecond ? Messages
-                                                .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                c2.getBoardNum() }));
+                        .append(Messages
+                                        .getString(
+                                                "BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                                                                                   mechInSecond ? Messages
+                                                                                           .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                                                                   c2.getBoardNum()}));
             } else {
                 le = LosEffects.calculateLos(game, ae.getId(), te);
                 message.append(Messages.getString(
-                        "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
-                                ae.getDisplayName(), c1.getBoardNum() }));
+                        "BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                                                             ae.getDisplayName(), c1.getBoardNum()}));
                 message.append(Messages.getString(
-                        "BoardView1.Target", new Object[] { //$NON-NLS-1$
-                                te.getDisplayName(), c2.getBoardNum() }));
+                        "BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                                                           te.getDisplayName(), c2.getBoardNum()}));
             }
             //Check to see if LoS is blocked
             if (!le.canSee()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked",
-                        new Object[] { //$NON-NLS-1$
-                            new Integer(c1.distance(c2))
-                        }));
+                                                  new Object[]{ //$NON-NLS-1$
+                                                                new Integer(c1.distance(c2))
+                                                  }));
                 ToHitData thd = le.losModifiers(game);
-                message.append("\t"+thd.getDesc()+"\n");
+                message.append("\t" + thd.getDesc() + "\n");
             } else {
                 message.append(Messages.getString("BoardView1.LOSNotBlocked",
-                        new Object[] { //$NON-NLS-1$
-                            new Integer(c1.distance(c2))
-                            }));
+                                                  new Object[]{ //$NON-NLS-1$
+                                                                new Integer(c1.distance(c2))
+                                                  }));
                 if (le.getHeavyWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
-                            new Integer(le.getHeavyWoods()) }));
+                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
+                                                                                             new Integer(le.getHeavyWoods())}));
                 }
                 if (le.getLightWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.LightWoods", new Object[] { //$NON-NLS-1$
-                            new Integer(le.getLightWoods()) }));
+                    message.append(Messages.getString("BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
+                                                                                             new Integer(le.getLightWoods())}));
                 }
                 if (le.getLightSmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[] { //$NON-NLS-1$
-                            new Integer(le.getLightSmoke()) }));
+                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
+                                                                                             new Integer(le.getLightSmoke())}));
                 }
                 if (le.getHeavySmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
-                            new Integer(le.getHeavySmoke()) }));
+                    message.append(Messages.getString("BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
+                                                                                             new Integer(le.getHeavySmoke())}));
                 }
                 if (le.isTargetCover() && le.canSee()) {
                     message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
@@ -2233,9 +2233,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
-            AlertDialog alert = new AlertDialog((Frame)SwingUtilities.getAncestorOfClass(Frame.class, this), Messages
+            AlertDialog alert = new AlertDialog((Frame) SwingUtilities.getAncestorOfClass(Frame.class, this), Messages
                     .getString("BoardView1.LOSTitle"), //$NON-NLS-1$
-                    message.toString(), false);
+                                                message.toString(), false);
             alert.setVisible(true);
         }
     }
@@ -2251,9 +2251,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if (isScrolling && GUIPreferences.getInstance().getRightDragScroll()) {
             if (!((oldMousePosition == null) || mousePos.equals(oldMousePosition))) {
                 scroll.x -= GUIPreferences.getInstance().getScrollSensitivity()
-                * (mousePos.x - oldMousePosition.x);
+                            * (mousePos.x - oldMousePosition.x);
                 scroll.y -= GUIPreferences.getInstance().getScrollSensitivity()
-                * (mousePos.y - oldMousePosition.y);
+                            * (mousePos.y - oldMousePosition.y);
                 checkScrollBounds();
                 oldMousePosition.setLocation(mousePos);
                 s = !oldScroll.equals(scroll);
@@ -2262,8 +2262,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         if (isScrolling
-                && (GUIPreferences.getInstance().getClickEdgeScroll() || GUIPreferences
-                        .getInstance().getAutoEdgeScroll())) {
+            && (GUIPreferences.getInstance().getClickEdgeScroll() || GUIPreferences
+                .getInstance().getAutoEdgeScroll())) {
             final int sf = GUIPreferences.getInstance().getScrollSensitivity(); // scroll
             // factor
             // adjust x scroll
@@ -2428,7 +2428,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             moveWait += idleTime;
 
             if (moveWait > GUIPreferences.getInstance().getInt(
-            "AdvancedMoveStepDelay")) {
+                    "AdvancedMoveStepDelay")) {
 
                 ArrayList<MovingUnit> spent = new ArrayList<MovingUnit>();
 
@@ -2439,7 +2439,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         UnitLocation loc = move.path.get(0);
                         if (ge != null) {
                             redrawMovingEntity(move.entity, loc.getCoords(),
-                                    loc.getFacing());
+                                               loc.getFacing());
                         }
                         move.path.remove(0);
                     } else {
@@ -2461,7 +2461,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     movingEntitySprites.clear();
                     ghostEntitySprites.clear();
                     processBoardViewEvent(new BoardViewEvent(this,
-                            BoardViewEvent.FINISHED_MOVING_UNITS));
+                                                             BoardViewEvent.FINISHED_MOVING_UNITS));
                 }
             }
         }
@@ -2473,54 +2473,54 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     //
     public void keyPressed(KeyEvent ke) {
         switch (ke.getKeyCode()) {
-        case KeyEvent.VK_NUMPAD7:
-            scroll.y -= HEX_H * scale;
-            scroll.x -= HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD8:
-        case KeyEvent.VK_UP:
-            scroll.y -= HEX_H * scale;
-            break;
-        case KeyEvent.VK_NUMPAD9:
-            scroll.y -= HEX_H * scale;
-            scroll.x += HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD1:
-            scroll.y += HEX_H * scale;
-            scroll.x -= HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD2:
-        case KeyEvent.VK_DOWN:
-            scroll.y += HEX_H * scale;
-            break;
-        case KeyEvent.VK_NUMPAD3:
-            scroll.y += HEX_H * scale;
-            scroll.x += HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD4:
-        case KeyEvent.VK_LEFT:
-            scroll.x -= HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD6:
-        case KeyEvent.VK_RIGHT:
-            scroll.x += HEX_W * scale;
-            break;
-        case KeyEvent.VK_NUMPAD5:
-            // center on the selected entity
-            if (selectedEntity != null) {
-                centerOnHex(selectedEntity.getPosition());
-            }
-            break;
-        case KeyEvent.VK_CONTROL:
-            ctlKeyHeld = true;
-            initCtlScroll = true;
-            break;
-        case KeyEvent.VK_PAGE_DOWN:
-            zoomIn();
-            break;
-        case KeyEvent.VK_PAGE_UP:
-            zoomOut();
-            break;
+            case KeyEvent.VK_NUMPAD7:
+                scroll.y -= HEX_H * scale;
+                scroll.x -= HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD8:
+            case KeyEvent.VK_UP:
+                scroll.y -= HEX_H * scale;
+                break;
+            case KeyEvent.VK_NUMPAD9:
+                scroll.y -= HEX_H * scale;
+                scroll.x += HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD1:
+                scroll.y += HEX_H * scale;
+                scroll.x -= HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD2:
+            case KeyEvent.VK_DOWN:
+                scroll.y += HEX_H * scale;
+                break;
+            case KeyEvent.VK_NUMPAD3:
+                scroll.y += HEX_H * scale;
+                scroll.x += HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD4:
+            case KeyEvent.VK_LEFT:
+                scroll.x -= HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD6:
+            case KeyEvent.VK_RIGHT:
+                scroll.x += HEX_W * scale;
+                break;
+            case KeyEvent.VK_NUMPAD5:
+                // center on the selected entity
+                if (selectedEntity != null) {
+                    centerOnHex(selectedEntity.getPosition());
+                }
+                break;
+            case KeyEvent.VK_CONTROL:
+                ctlKeyHeld = true;
+                initCtlScroll = true;
+                break;
+            case KeyEvent.VK_PAGE_DOWN:
+                zoomIn();
+                break;
+            case KeyEvent.VK_PAGE_UP:
+                zoomOut();
+                break;
         }
 
         if (isTipShowing()) {
@@ -2572,8 +2572,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if (!GUIPreferences.getInstance().getRightDragScroll()
-                && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
+            && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
+            && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2623,8 +2623,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // mouse button, no click action should be triggered if the map
         // is being scrolled.
         if (scrolled
-                && (((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0) || !GUIPreferences
-                        .getInstance().getAutoEdgeScroll())) {
+            && (((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0) || !GUIPreferences
+                .getInstance().getAutoEdgeScroll())) {
             return;
         }
 
@@ -2684,8 +2684,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
 
         if (!GUIPreferences.getInstance().getRightDragScroll()
-                && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
+            && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
+            && ((game.getPhase() == IGame.Phase.PHASE_FIRING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2704,7 +2704,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // disable edge-scrolling if no option set
         if (!GUIPreferences.getInstance().getClickEdgeScroll()
-                && !GUIPreferences.getInstance().getRightDragScroll()) {
+            && !GUIPreferences.getInstance().getRightDragScroll()) {
             mask |= InputEvent.BUTTON3_MASK;
         }
 
@@ -2744,9 +2744,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 initCtlScroll = false;
             }
             scroll.x += GUIPreferences.getInstance().getScrollSensitivity()
-            * (me.getX() - previousMouseX);
+                        * (me.getX() - previousMouseX);
             scroll.y += GUIPreferences.getInstance().getScrollSensitivity()
-            * (me.getY() - previousMouseY);
+                        * (me.getY() - previousMouseY);
             previousMouseX = me.getX();
             previousMouseY = me.getY();
             checkScrollBounds();
@@ -2890,7 +2890,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 }
             }
             size = new Dimension(width + 5, (fm.getAscent() * tipStrings.length)
-                    + 4);
+                                            + 4);
             setSize(size);
         }
 
@@ -2931,7 +2931,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          * ImageObserver interface. This provides the necesasry functionality.
          */
         public boolean imageUpdate(Image image, int infoflags, int x, int y,
-                int width, int height) {
+                                   int width, int height) {
             if (infoflags == ImageObserver.ALLBITS) {
                 prepare();
                 repaint();
@@ -2965,7 +2965,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-                boolean makeTranslucent) {
+                             boolean makeTranslucent) {
             if (isReady()) {
                 if (makeTranslucent) {
                     Graphics2D g2 = (Graphics2D) g;
@@ -3012,7 +3012,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public CursorSprite(Color color) {
             this.color = color;
             bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
-                    .getBounds().height + 1);
+                                                                          .getBounds().height + 1);
             image = null;
 
             // start offscreen
@@ -3035,7 +3035,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -3057,7 +3057,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public Rectangle getBounds() {
             bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
-                    .getBounds().height + 1);
+                                                                          .getBounds().height + 1);
             bounds.setLocation(getHexLocation(hexLoc));
 
             return bounds;
@@ -3109,7 +3109,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -3181,7 +3181,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -3233,8 +3233,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             Rectangle tempRect = new Rectangle(47, 55, getFontMetrics(font)
-                    .stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+                                                               .stringWidth(shortName) + 1, getFontMetrics(font)
+                                                       .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -3265,19 +3265,19 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             graph.setFont(font);
             graph.setColor(bord);
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+                           tempRect.height);
             tempRect.translate(-1, -1);
             graph.setColor(bkgd);
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+                           tempRect.height);
             graph.setColor(text);
             graph.drawString(shortName, tempRect.x + 1, (tempRect.y
-                    + tempRect.height) - 1);
+                                                         + tempRect.height) - 1);
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -3328,8 +3328,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             bounds = tempBounds;
             entityRect = new Rectangle(bounds.x + (int) (20 * scale),
-                    bounds.y + (int) (14 * scale), (int) (44 * scale),
-                    (int) (44 * scale));
+                                       bounds.y + (int) (14 * scale), (int) (44 * scale),
+                                       (int) (44 * scale));
             image = null;
         }
 
@@ -3340,8 +3340,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             bounds = tempBounds;
 
             entityRect = new Rectangle(bounds.x + (int) (20 * scale),
-                    bounds.y + (int) (14 * scale), (int) (44 * scale),
-                    (int) (44 * scale));
+                                       bounds.y + (int) (14 * scale), (int) (44 * scale),
+                                       (int) (44 * scale));
 
             return bounds;
         }
@@ -3349,9 +3349,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             if (trackThisEntitiesVisibilityInfo(entity)
-                    && !entity.isVisibleToEnemy()
-                    && GUIPreferences.getInstance().getBoolean(
-                            GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
+                && !entity.isVisibleToEnemy()
+                && GUIPreferences.getInstance().getBoolean(
+                    GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                 // create final image with translucency
                 drawOnto(g, x, y, observer, true);
             } else {
@@ -3377,8 +3377,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             Rectangle tempRect = new Rectangle(47, 55, getFontMetrics(font)
-                    .stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+                                                               .stringWidth(shortName) + 1, getFontMetrics(font)
+                                                       .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -3414,22 +3414,22 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             graph.setFont(font);
             graph.setColor(bord);
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+                           tempRect.height);
             tempRect.translate(-1, -1);
             graph.setColor(bkgd);
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+                           tempRect.height);
             graph.setColor(text);
             graph.drawString(shortName, tempRect.x + 1, (tempRect.y
-                    + tempRect.height) - 1);
+                                                         + tempRect.height) - 1);
 
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
-                    && !((entity instanceof Infantry) && (((Infantry) entity)
-                            .getDugIn() == Infantry.DUG_IN_NONE))
-                            && !((entity instanceof Aero) && ((Aero)entity).isSpheroid()
-                                    && (game.getBoard().inAtmosphere() || game.getBoard().onGround()))) {
+                && !((entity instanceof Infantry) && (((Infantry) entity)
+                                                              .getDugIn() == Infantry.DUG_IN_NONE))
+                && !((entity instanceof Aero) && ((Aero) entity).isSpheroid()
+                     && (game.getBoard().inAtmosphere() || game.getBoard().onGround()))) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -3445,8 +3445,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.red);
                 graph.drawPolygon(facingPolys[secFacing]);
             }
-            if((entity instanceof Aero) && game.useVectorMove()) {
-                for(int head : entity.getHeading()) {
+            if ((entity instanceof Aero) && game.useVectorMove()) {
+                for (int head : entity.getHeading()) {
                     graph.setColor(Color.red);
                     graph.drawPolygon(facingPolys[head]);
                 }
@@ -3459,21 +3459,21 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             boolean ge = false;
             if (entity instanceof Tank) {
                 turretLocked = !((Tank) entity).hasNoTurret()
-                && !entity.canChangeSecondaryFacing();
+                               && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
                 turretLocked = ((GunEmplacement) entity).isTurret()
-                && !entity.canChangeSecondaryFacing();
+                               && !entity.canChangeSecondaryFacing();
                 ge = true;
             }
-            if(entity.isAirborne()) {
-                if(!game.getBoard().inSpace()) {
+            if (entity.isAirborne()) {
+                if (!game.getBoard().inSpace()) {
                     graph.setColor(Color.darkGray);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 26, 15);
                     graph.setColor(Color.PINK);
                     graph.drawString(Integer.toString(entity.getAltitude()) + "A", 25, 14);
                 }
-            } else if(entity.getElevation() > 0) {
+            } else if (entity.getElevation() > 0) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Integer.toString(entity.getElevation()), 26, 15);
                 graph.setColor(Color.PINK);
@@ -3481,10 +3481,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             // draw condition strings
-            if(entity instanceof Aero) {
-                Aero a = (Aero)entity;
+            if (entity instanceof Aero) {
+                Aero a = (Aero) entity;
 
-                if(a.isRolled()) {
+                if (a.isRolled()) {
                     // draw "rolled"
                     graph.setColor(Color.darkGray);
                     graph.drawString(Messages.getString("BoardView1.ROLLED"), 18, 15); //$NON-NLS-1$
@@ -3492,7 +3492,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
                 }
 
-                if(a.isOutControlTotal() & a.isRandomMove()) {
+                if (a.isOutControlTotal() & a.isRandomMove()) {
                     // draw "RANDOM"
                     graph.setColor(Color.darkGray);
                     graph.drawString(Messages.getString("BoardView1.RANDOM"), 18, 35); //$NON-NLS-1$
@@ -3506,7 +3506,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
                 }
 
-                if(a.isEvading()) {
+                if (a.isEvading()) {
                     //draw "EVADE" - can't overlap with out of control
                     graph.setColor(Color.darkGray);
                     graph.drawString(Messages.getString("BoardView1.EVADE"), 18, 39); //$NON-NLS-1$
@@ -3543,19 +3543,19 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawString(
                             Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
                     graph
-                    .drawString(
-                            Messages
-                            .getString(
-                                    "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
+                            .drawString(
+                                    Messages
+                                            .getString(
+                                                    "BoardView1.STUNNED", new Object[]{crewStunned}), 22, 48); //$NON-NLS-1$
                     graph.setColor(Color.red);
                     graph.drawString(
                             Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
                     graph
-                    .drawString(
-                            Messages
-                            .getString(
-                                    "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
+                            .drawString(
+                                    Messages
+                                            .getString(
+                                                    "BoardView1.STUNNED", new Object[]{crewStunned}), 21, 47); //$NON-NLS-1$
                 } else if (turretLocked) {
                     // draw "IMMOBILE" and "LOCKED"
                     graph.setColor(Color.darkGray);
@@ -3591,13 +3591,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.darkGray);
                 graph.drawString(
                         Messages
-                        .getString(
-                                "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
+                                .getString(
+                                        "BoardView1.STUNNED", new Object[]{crewStunned}), 22, 48); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
                 graph.drawString(
                         Messages
-                        .getString(
-                                "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
+                                .getString(
+                                        "BoardView1.STUNNED", new Object[]{crewStunned}), 21, 47); //$NON-NLS-1$
             } else if (turretLocked) {
                 // draw "LOCKED"
                 graph.setColor(Color.darkGray);
@@ -3647,12 +3647,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if ((entity.isStuck())) {
                 graph.setColor(Color.darkGray);
                 graph
-                .drawString(
-                        Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
+                        .drawString(
+                                Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
                 graph.setColor(Color.orange);
                 graph
-                .drawString(
-                        Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
+                        .drawString(
+                                Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
 
             }
 
@@ -3665,7 +3665,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(Color.black);
                     graph.drawString("U", 29, 70); //$NON-NLS-1$
                 } else if (!entity.isVisibleToEnemy()
-                        && !GUIPreferences
+                           && !GUIPreferences
                         .getInstance()
                         .getBoolean(
                                 GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
@@ -3732,13 +3732,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             if (game.getOptions().booleanOption("show_dmg_level")) {
                 graph.setColor(getDamageColor());
-                graph.fillOval(20,15,12,12);
+                graph.fillOval(20, 15, 12, 12);
             }
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -3771,9 +3771,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                    && ((e.getOwner().getId() == getLocalPlayer().getId()) || (game
-                            .getOptions().booleanOption("team_vision") //$NON-NLS-1$
-                            && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
+                && ((e.getOwner().getId() == getLocalPlayer().getId()) || (game
+                                                                                   .getOptions().booleanOption("team_vision") //$NON-NLS-1$
+                                                                           && (e.getOwner().getTeam() == getLocalPlayer().getTeam())))) {
                 return true;
             }
             return false;
@@ -3795,7 +3795,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public boolean isInside(Point point) {
             return entityRect.contains((point.x + view.x) - offset.x, (point.y
-                    + view.y) - offset.y);
+                                                                       + view.y) - offset.y);
         }
 
         @Override
@@ -3805,15 +3805,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             buffer = new StringBuffer();
             buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
-            .append(entity.getOwner().getName()).append("); ") //$NON-NLS-1$
-            .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
-            .append(entity.getCrew().getPiloting()).append(
+                    .append(entity.getOwner().getName()).append("); ") //$NON-NLS-1$
+                    .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
+                    .append(entity.getCrew().getPiloting()).append(
                     Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
             int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
             boolean isMD = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
             if (numAdv > 0) {
                 buffer.append(" <") //$NON-NLS-1$
-                .append(numAdv).append(
+                        .append(numAdv).append(
                         Messages.getString("BoardView1.advs")); //$NON-NLS-1$
             }
             if (isMD) {
@@ -3827,54 +3827,54 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             Aero a = null;
-            if(entity instanceof Aero) {
+            if (entity instanceof Aero) {
                 a = (Aero) entity;
             }
 
             buffer = new StringBuffer();
             if ((ge == null) && (a == null)) {
                 buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
-                .append(entity.getMovementAbbr(entity.moved)).append(
-                ":") //$NON-NLS-1$
-                .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
-                .append(
-                        Compute.getTargetMovementModifier(game,
-                                entity.getId()).getValue())
-                                .append(");") //$NON-NLS-1$
-                                .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                                .append(entity.heat);
+                        .append(entity.getMovementAbbr(entity.moved)).append(
+                        ":") //$NON-NLS-1$
+                        .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
+                        .append(
+                                Compute.getTargetMovementModifier(game,
+                                                                  entity.getId()).getValue())
+                        .append(");") //$NON-NLS-1$
+                        .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
+                        .append(entity.heat);
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
                 if (entity.isMakingDfa()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
                 }
             } else if (ge == null) {
-                buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$
-                .append( entity.getMovementAbbr(entity.moved) )
-                .append( ":" ) //$NON-NLS-1$
-                .append( entity.delta_distance )
-                .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
-                .append( entity.heat );
+                buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
+                        .append(entity.getMovementAbbr(entity.moved))
+                        .append(":") //$NON-NLS-1$
+                        .append(entity.delta_distance)
+                        .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
+                        .append(entity.heat);
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
             } else {
                 if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
                     buffer
-                    .append(Messages
-                            .getString("BoardView1.TurretLocked"));
+                            .append(Messages
+                                            .getString("BoardView1.TurretLocked"));
                     if (ge.getFirstWeapon() == -1) {
                         buffer.append(",");
                         buffer.append(Messages
-                                .getString("BoardView1.WeaponsDestroyed"));
+                                              .getString("BoardView1.WeaponsDestroyed"));
                     }
                 } else if (ge.getFirstWeapon() == -1) {
                     buffer.append(Messages
-                            .getString("BoardView1.WeaponsDestroyed"));
+                                          .getString("BoardView1.WeaponsDestroyed"));
                 } else {
                     buffer.append(Messages.getString("BoardView1.Operational"));
                 }
@@ -3888,7 +3888,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             buffer = new StringBuffer();
             if (ge == null) {
                 buffer.append(Messages.getString("BoardView1.Armor")) //$NON-NLS-1$
-                .append(entity.getTotalArmor()).append(
+                        .append(entity.getTotalArmor()).append(
                         Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                         .append(entity.getTotalInternal());
             }
@@ -3934,41 +3934,41 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             Color col;
             // set color
             switch (step.getMovementType()) {
-            case MOVE_RUN:
-            case MOVE_VTOL_RUN:
-            case MOVE_OVER_THRUST:
-                if (step.isUsingMASC()) {
+                case MOVE_RUN:
+                case MOVE_VTOL_RUN:
+                case MOVE_OVER_THRUST:
+                    if (step.isUsingMASC()) {
+                        col = GUIPreferences.getInstance().getColor(
+                                "AdvancedMoveMASCColor");
+                    } else {
+                        col = GUIPreferences.getInstance().getColor(
+                                "AdvancedMoveRunColor");
+                    }
+                    break;
+                case MOVE_JUMP:
                     col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveMASCColor");
-                } else {
+                            "AdvancedMoveJumpColor");
+                    break;
+                case MOVE_SPRINT:
                     col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveRunColor");
-                }
-                break;
-            case MOVE_JUMP:
-                col = GUIPreferences.getInstance().getColor(
-                        "AdvancedMoveJumpColor");
-                break;
-            case MOVE_SPRINT:
-                col = GUIPreferences.getInstance().getColor(
-                        "AdvancedMoveSprintColor");
-                break;
-            case MOVE_ILLEGAL:
-                col = GUIPreferences.getInstance().getColor(
-                        "AdvancedMoveIllegalColor");
-                break;
-            default:
-                if (step.getType() == MoveStepType.BACKWARDS) {
+                            "AdvancedMoveSprintColor");
+                    break;
+                case MOVE_ILLEGAL:
                     col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveBackColor");
-                } else {
-                    col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveDefaultColor");
-                }
-            break;
+                            "AdvancedMoveIllegalColor");
+                    break;
+                default:
+                    if (step.getType() == MoveStepType.BACKWARDS) {
+                        col = GUIPreferences.getInstance().getColor(
+                                "AdvancedMoveBackColor");
+                    } else {
+                        col = GUIPreferences.getInstance().getColor(
+                                "AdvancedMoveDefaultColor");
+                    }
+                    break;
             }
 
-            if(game.useVectorMove()) {
+            if (game.useVectorMove()) {
                 drawActiveVectors(step, stepPos, graph);
             }
 
@@ -3976,232 +3976,232 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // draw arrows and cost for the step
             switch (step.getType()) {
-            case FORWARDS:
-            case SWIM:
-            case BACKWARDS:
-            case CHARGE:
-            case DFA:
-            case LATERAL_LEFT:
-            case LATERAL_RIGHT:
-            case LATERAL_LEFT_BACKWARDS:
-            case LATERAL_RIGHT_BACKWARDS:
-            case DEC:
-            case DECN:
-            case ACC:
-            case ACCN:
-            case LOOP:
-                // draw arrows showing them entering the next
-                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
-                        movePoly.npoints);
-                graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                graph.drawPolygon(myPoly);
-                graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
-                // draw movement cost
-                drawMovementCost(step, stepPos, graph, col, true);
-                drawRemainingVelocity(step, stepPos, graph, true);
-                break;
-            case GO_PRONE:
-            case HULL_DOWN:
-            case DOWN:
-            case DIG_IN:
-            case FORTIFY:
-                //draw arrow indicating dropping prone
-                // also doubles as the descent indication
-                Polygon downPoly = movementPolys[7];
-                myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
-                        downPoly.npoints);
-                graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x, stepPos.y);
-                graph.drawPolygon(myPoly);
-                graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
-                offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col, false);
-                drawRemainingVelocity(step, stepPos, graph, true);
-                break;
-            case GET_UP:
-            case UP:
-            case CAREFUL_STAND:
-                // draw arrow indicating standing up
-                // also doubles as the climb indication
-                // and triples as deceleration
-                Polygon upPoly = movementPolys[6];
-                myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
-                        upPoly.npoints);
-                graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x, stepPos.y);
-                graph.drawPolygon(myPoly);
-                graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
-                offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col, false);
-                drawRemainingVelocity(step, stepPos, graph, true);
-                break;
-            case CLIMB_MODE_ON:
-                // draw climb mode indicator
-                String climb;
-                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
-                    climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
-                } else {
-                    climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
-                }
-                if (step.isPastDanger()) {
-                    climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climbX = (stepPos.x
-                + 42)
-                - (graph.getFontMetrics(graph.getFont())
-                        .stringWidth(climb) / 2);
-                graph.setColor(Color.darkGray);
-                graph.drawString(climb, climbX, stepPos.y + 39);
-                graph.setColor(col);
-                graph.drawString(climb, climbX - 1, stepPos.y + 38);
-                break;
-            case CLIMB_MODE_OFF:
-                // cancel climb mode indicator
-                String climboff;
-                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
-                    climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
-                } else {
-                    climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
-                }
-                if (step.isPastDanger()) {
-                    climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climboffX = (stepPos.x
-                + 42)
-                - (graph.getFontMetrics(graph.getFont())
-                        .stringWidth(climboff) / 2);
-                graph.setColor(Color.darkGray);
-                graph.drawString(climboff, climboffX, stepPos.y + 39);
-                graph.setColor(col);
-                graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
-                break;
-            case TURN_LEFT:
-            case TURN_RIGHT:
-            case THRUST:
-            case YAW:
-            case EVADE:
-            case ROLL:
-                // draw arrows showing the facing
-                myPoly = new Polygon(facingPoly.xpoints,
-                        facingPoly.ypoints, facingPoly.npoints);
-                graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                graph.drawPolygon(myPoly);
-                graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
-                if(game.useVectorMove()) {
+                case FORWARDS:
+                case SWIM:
+                case BACKWARDS:
+                case CHARGE:
+                case DFA:
+                case LATERAL_LEFT:
+                case LATERAL_RIGHT:
+                case LATERAL_LEFT_BACKWARDS:
+                case LATERAL_RIGHT_BACKWARDS:
+                case DEC:
+                case DECN:
+                case ACC:
+                case ACCN:
+                case LOOP:
+                    // draw arrows showing them entering the next
+                    myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
+                                         movePoly.npoints);
+                    graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                    graph.drawPolygon(myPoly);
+                    graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+                    // draw movement cost
+                    drawMovementCost(step, stepPos, graph, col, true);
+                    drawRemainingVelocity(step, stepPos, graph, true);
+                    break;
+                case GO_PRONE:
+                case HULL_DOWN:
+                case DOWN:
+                case DIG_IN:
+                case FORTIFY:
+                    //draw arrow indicating dropping prone
+                    // also doubles as the descent indication
+                    Polygon downPoly = movementPolys[7];
+                    myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
+                                         downPoly.npoints);
+                    graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x, stepPos.y);
+                    graph.drawPolygon(myPoly);
+                    graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+                    offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
+                    drawMovementCost(step, offsetCostPos, graph, col, false);
+                    drawRemainingVelocity(step, stepPos, graph, true);
+                    break;
+                case GET_UP:
+                case UP:
+                case CAREFUL_STAND:
+                    // draw arrow indicating standing up
+                    // also doubles as the climb indication
+                    // and triples as deceleration
+                    Polygon upPoly = movementPolys[6];
+                    myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
+                                         upPoly.npoints);
+                    graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x, stepPos.y);
+                    graph.drawPolygon(myPoly);
+                    graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+                    offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
+                    drawMovementCost(step, offsetCostPos, graph, col, false);
+                    drawRemainingVelocity(step, stepPos, graph, true);
+                    break;
+                case CLIMB_MODE_ON:
+                    // draw climb mode indicator
+                    String climb;
+                    if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
+                        climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
+                    } else {
+                        climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
+                    }
+                    if (step.isPastDanger()) {
+                        climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int climbX = (stepPos.x
+                                  + 42)
+                                 - (graph.getFontMetrics(graph.getFont())
+                                         .stringWidth(climb) / 2);
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(climb, climbX, stepPos.y + 39);
+                    graph.setColor(col);
+                    graph.drawString(climb, climbX - 1, stepPos.y + 38);
+                    break;
+                case CLIMB_MODE_OFF:
+                    // cancel climb mode indicator
+                    String climboff;
+                    if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
+                        climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
+                    } else {
+                        climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                    }
+                    if (step.isPastDanger()) {
+                        climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int climboffX = (stepPos.x
+                                     + 42)
+                                    - (graph.getFontMetrics(graph.getFont())
+                                            .stringWidth(climboff) / 2);
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(climboff, climboffX, stepPos.y + 39);
+                    graph.setColor(col);
+                    graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
+                    break;
+                case TURN_LEFT:
+                case TURN_RIGHT:
+                case THRUST:
+                case YAW:
+                case EVADE:
+                case ROLL:
+                    // draw arrows showing the facing
+                    myPoly = new Polygon(facingPoly.xpoints,
+                                         facingPoly.ypoints, facingPoly.npoints);
+                    graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                    graph.drawPolygon(myPoly);
+                    graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+                    if (game.useVectorMove()) {
+                        drawMovementCost(step, stepPos, graph, col, false);
+                    }
+                    break;
+                case LOAD:
+                    // Announce load.
+                    String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int loadX = (stepPos.x
+                                 + 42)
+                                - (graph.getFontMetrics(graph.getFont())
+                                        .stringWidth(load) / 2);
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(load, loadX, stepPos.y + 39);
+                    graph.setColor(col);
+                    graph.drawString(load, loadX - 1, stepPos.y + 38);
+                    break;
+                case LAUNCH:
+                    //announce launch
+                    String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int launchX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
+                    int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(launch, launchX, launchY + 1);
+                    graph.setColor(col);
+                    graph.drawString(launch, launchX - 1, launchY);
+                    break;
+                case RECOVER:
+                    //announce launch
+                    String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int recoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
+                    int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(recover, recoverX, recoverY + 1);
+                    graph.setColor(col);
+                    graph.drawString(recover, recoverX - 1, recoverY);
+                    break;
+                case JOIN:
+                    //announce launch
+                    String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int joinX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
+                    int joinY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(join, joinX, joinY + 1);
+                    graph.setColor(col);
+                    graph.drawString(join, joinX - 1, joinY);
+                    break;
+                case UNLOAD:
+                    // Announce unload.
+                    String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int unloadX = (stepPos.x
+                                   + 42)
+                                  - (graph.getFontMetrics(graph.getFont())
+                                          .stringWidth(unload) / 2);
+                    int unloadY = stepPos.y + 38
+                                  + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(unload, unloadX, unloadY + 1);
+                    graph.setColor(col);
+                    graph.drawString(unload, unloadX - 1, unloadY);
+                    break;
+                case HOVER:
+                    //announce launch
+                    String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int hoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
+                    int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(hover, hoverX, hoverY + 1);
+                    graph.setColor(col);
+                    graph.drawString(hover, hoverX - 1, hoverY);
                     drawMovementCost(step, stepPos, graph, col, false);
-                }
-                break;
-            case LOAD:
-                // Announce load.
-                String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int loadX = (stepPos.x
-                + 42)
-                - (graph.getFontMetrics(graph.getFont())
-                        .stringWidth(load) / 2);
-                graph.setColor(Color.darkGray);
-                graph.drawString(load, loadX, stepPos.y + 39);
-                graph.setColor(col);
-                graph.drawString(load, loadX - 1, stepPos.y + 38);
-                break;
-            case LAUNCH:
-                //announce launch
-                String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int launchX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
-                int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                graph.setColor(Color.darkGray);
-                graph.drawString(launch, launchX, launchY + 1);
-                graph.setColor(col);
-                graph.drawString(launch, launchX - 1, launchY);
-                break;
-            case RECOVER:
-                //announce launch
-                String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int recoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
-                int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                graph.setColor(Color.darkGray);
-                graph.drawString(recover, recoverX, recoverY + 1);
-                graph.setColor(col);
-                graph.drawString(recover, recoverX - 1, recoverY);
-                break;
-            case JOIN:
-                //announce launch
-                String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int joinX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
-                int joinY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                graph.setColor(Color.darkGray);
-                graph.drawString(join, joinX, joinY + 1);
-                graph.setColor(col);
-                graph.drawString(join, joinX - 1, joinY);
-                break;
-            case UNLOAD:
-                // Announce unload.
-                String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int unloadX = (stepPos.x
-                + 42)
-                - (graph.getFontMetrics(graph.getFont())
-                        .stringWidth(unload) / 2);
-                int unloadY = stepPos.y + 38
-                + graph.getFontMetrics(graph.getFont()).getHeight();
-                graph.setColor(Color.darkGray);
-                graph.drawString(unload, unloadX, unloadY + 1);
-                graph.setColor(col);
-                graph.drawString(unload, unloadX - 1, unloadY);
-                break;
-            case HOVER:
-                //announce launch
-                String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
-                if (step.isPastDanger()) {
-                    hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int hoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
-                int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                graph.setColor(Color.darkGray);
-                graph.drawString(hover, hoverX, hoverY + 1);
-                graph.setColor(col);
-                graph.drawString(hover, hoverX - 1, hoverY);
-                drawMovementCost(step, stepPos, graph, col, false);
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
             }
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
-                        .getSource(), new KeyAlphaFilter(TRANSPARENT)));
+                                                                    .getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
@@ -4217,7 +4217,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          * loading and unloading as well
          */
         private void drawConditions(MoveStep step, Point stepPos, Graphics graph, Color col) {
-            if(step.isEvading()) {
+            if (step.isEvading()) {
                 String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int evadeX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
@@ -4227,7 +4227,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.drawString(evade, evadeX - 1, stepPos.y + 63);
             }
 
-            if(step.isRolled()) {
+            if (step.isRolled()) {
                 //Announce roll
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -4252,7 +4252,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             int[] activeYpos = {20, 28, 52, 59, 52, 28};
 
             int[] v = step.getVectors();
-            for(int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++) {
 
                 String active = Integer.toString(v[i]);
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -4275,40 +4275,40 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             return step;
         }
 
-        public Font getMovementFont(){
+        public Font getMovementFont() {
 
-            String fontName= GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
-            int fontStyle =  GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
-            int fontSize =  GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_SIZE);
+            String fontName = GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
+            int fontStyle = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
+            int fontSize = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_SIZE);
 
-            return new Font(fontName,fontStyle,fontSize);
+            return new Font(fontName, fontStyle, fontSize);
         }
 
         private void drawRemainingVelocity(MoveStep step, Point stepPos,
-                Graphics graph, boolean shiftFlag) {
+                                           Graphics graph, boolean shiftFlag) {
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
 
-            if(game.useVectorMove()) {
+            if (game.useVectorMove()) {
                 return;
             }
 
-            if(!step.getParent().getEntity().isAirborne()) {
+            if (!step.getParent().getEntity().isAirborne()) {
                 return;
             }
 
-            if(((Aero)step.getParent().getEntity()).isSpheroid()) {
+            if (((Aero) step.getParent().getEntity()).isSpheroid()) {
                 return;
             }
 
             velStringBuf.append("(")
-            .append(step.getVelocityLeft())
-            .append("/")
-            .append(step.getVelocity())
-            .append(")");
+                        .append(step.getVelocityLeft())
+                        .append("/")
+                        .append(step.getVelocity())
+                        .append(")");
 
             Color col = Color.GREEN;
-            if(step.getVelocityLeft() > 0) {
+            if (step.getVelocityLeft() > 0) {
                 col = Color.RED;
             }
 
@@ -4328,14 +4328,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         private void drawMovementCost(MoveStep step, Point stepPos,
-                Graphics graph, Color col, boolean shiftFlag) {
+                                      Graphics graph, Color col, boolean shiftFlag) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append(step.getMpUsed());
 
             // If the step is using a road bonus, mark it.
             if (step.isOnlyPavement()
-                    && (step.getParent().getEntity() instanceof Tank)) {
+                && (step.getParent().getEntity() instanceof Tank)) {
                 costStringBuf.append("+"); //$NON-NLS-1$
             }
 
@@ -4357,14 +4357,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             if ((step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                    || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)
-                    || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_WALK)
-                    || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_RUN)) {
+                || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)
+                || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_WALK)
+                || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_RUN)) {
                 costStringBuf.append("{").append(step.getElevation()).append(
-                "}");
+                        "}");
             }
 
-            if(step.getParent().getEntity().isAirborne()) {
+            if (step.getParent().getEntity().isAirborne()) {
                 costStringBuf.append("{").append(step.getAltitude()).append("}");
             }
 
@@ -4414,7 +4414,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 C3Poly.addPoint(0, 1);
                 bounds = new Rectangle(C3Poly.getBounds());
                 bounds.setSize(bounds.getSize().width + 1,
-                        bounds.getSize().height + 1);
+                               bounds.getSize().height + 1);
                 image = null;
                 return;
             }
@@ -4424,7 +4424,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // set bounds
             bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+                           bounds.getSize().height + 1);
 
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
@@ -4446,38 +4446,38 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             final double an = (entityE.getPosition().radian(
                     entityM.getPosition()) + (Math.PI * 1.5))
-                    % (Math.PI * 2); // angle
+                              % (Math.PI * 2); // angle
             final double lw = scale * C3_LINE_WIDTH; // line width
 
             C3Poly = new Polygon();
             C3Poly.addPoint(a.x
-                    + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
-                            .sin(an)
-                            * lw)), a.y
-                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
-                                    .cos(an)
-                                    * lw)));
+                            + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
+                                                                                      .sin(an)
+                                                                              * lw)), a.y
+                                                                                      + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
+                                                                                                                                                .cos(an)
+                                                                                                                                        * lw)));
             C3Poly.addPoint(a.x
-                    + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
-                            .sin(an)
-                            * lw)), a.y
-                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
-                                    .cos(an)
-                                    * lw)));
+                            + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
+                                                                                      .sin(an)
+                                                                              * lw)), a.y
+                                                                                      + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
+                                                                                                                                                .cos(an)
+                                                                                                                                        * lw)));
             C3Poly.addPoint(t.x
-                    + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
-                            .sin(an)
-                            * lw)), t.y
-                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
-                                    .cos(an)
-                                    * lw)));
+                            + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
+                                                                                      .sin(an)
+                                                                              * lw)), t.y
+                                                                                      + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
+                                                                                                                                                .cos(an)
+                                                                                                                                        * lw)));
             C3Poly.addPoint(t.x
-                    + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
-                            .sin(an)
-                            * lw)), t.y
-                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
-                                    .cos(an)
-                                    * lw)));
+                            + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
+                                                                                      .sin(an)
+                                                                              * lw)), t.y
+                                                                                      + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
+                                                                                                                                                .cos(an)
+                                                                                                                                        * lw)));
         }
 
         @Override
@@ -4486,7 +4486,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // set bounds
             bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+                           bounds.getSize().height + 1);
 
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
@@ -4505,7 +4505,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // makePoly();
 
             Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints,
-                    C3Poly.npoints);
+                                           C3Poly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(spriteColor);
@@ -4520,7 +4520,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public boolean isInside(Point point) {
             return C3Poly.contains((point.x + view.x) - bounds.x - offset.x,
-                    (point.y + view.y) - bounds.y - offset.y);
+                                   (point.y + view.y) - bounds.y - offset.y);
         }
 
     }
@@ -4558,16 +4558,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
             // angle of line connecting two hexes
             an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5))
-            % (Math.PI * 2); // angle
+                 % (Math.PI * 2); // angle
             makePoly();
 
             // set bounds
             bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+                           bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+                                 -bounds.getLocation().y);
 
             // set names & stuff
             attackerDesc = ae.getDisplayName();
@@ -4618,22 +4618,22 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // in the centes of hex and hiding mek under.
 
             a.x = a.x + (int) ((HEX_W / 2) * scale)
-            + (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                  + (int) Math.round(Math.cos(an) * (int) (18 * scale));
             t.x = (t.x + (int) ((HEX_W / 2) * scale))
-            - (int) Math.round(Math.cos(an) * (int) (18 * scale));
+                  - (int) Math.round(Math.cos(an) * (int) (18 * scale));
             a.y = a.y + (int) ((HEX_H / 2) * scale)
-            + (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                  + (int) Math.round(Math.sin(an) * (int) (18 * scale));
             t.y = (t.y + (int) ((HEX_H / 2) * scale))
-            - (int) Math.round(Math.sin(an) * (int) (18 * scale));
+                  - (int) Math.round(Math.sin(an) * (int) (18 * scale));
 
             // Checking if given attack is mutual. In this case we building
             // halved arrow
             if (isMutualAttack()) {
                 attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale),
-                        (int) (12 * scale), true);
+                                                      (int) (12 * scale), true);
             } else {
                 attackPoly = new StraightArrowPolygon(a, t, (int) (4 * scale),
-                        (int) (8 * scale), false);
+                                                      (int) (8 * scale), false);
             }
         }
 
@@ -4643,10 +4643,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // set bounds
             bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+                           bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+                                 -bounds.getLocation().y);
 
             return bounds;
         }
@@ -4657,14 +4657,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         public void rebuildToHalvedPolygon() {
             attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale),
-                    (int) (12 * scale), true);
+                                                  (int) (12 * scale), true);
             // set bounds
             bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+                           bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+                                 -bounds.getLocation().y);
         }
 
         /**
@@ -4673,7 +4673,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         private boolean isMutualAttack() {
             for (AttackSprite sprite : attackSprites) {
                 if ((sprite.getEntityId() == targetId)
-                        && (sprite.getTargetId() == entityId)) {
+                    && (sprite.getTargetId() == entityId)) {
                     sprite.rebuildToHalvedPolygon();
                     return true;
                 }
@@ -4693,7 +4693,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             Polygon drawPoly = new Polygon(attackPoly.xpoints,
-                    attackPoly.ypoints, attackPoly.npoints);
+                                           attackPoly.ypoints, attackPoly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(attackColor);
@@ -4708,7 +4708,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public boolean isInside(Point point) {
             return attackPoly.contains((point.x + view.x) - bounds.x - offset.x,
-                    (point.y + view.y) - bounds.y - offset.y);
+                                       (point.y + view.y) - bounds.y - offset.y);
         }
 
         public int getEntityId() {
@@ -4729,8 +4729,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             final String roll = attack.toHit(game).getValueAsString();
             final String table = attack.toHit(game).getTableDesc();
             weaponDescs
-            .add(wtype.getName()
-                    + Messages.getString("BoardView1.needs") + roll + " " + table); //$NON-NLS-1$
+                    .add(wtype.getName()
+                         + Messages.getString("BoardView1.needs") + roll + " " + table); //$NON-NLS-1$
         }
 
         public void addWeapon(KickAttackAction attack) {
@@ -4739,43 +4739,43 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             String rollRight = ""; //$NON-NLS-1$
             final int leg = attack.getLeg();
             switch (leg) {
-            case KickAttackAction.BOTH:
-                rollLeft = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.LEFT)
-                                .getValueAsString();
-                rollRight = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.RIGHT)
-                                .getValueAsString();
-                bufer = Messages
-                .getString(
-                        "BoardView1.kickBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                break;
-            case KickAttackAction.LEFT:
-                rollLeft = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.LEFT)
-                                .getValueAsString();
-                bufer = Messages.getString(
-                        "BoardView1.kickLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                break;
-            case KickAttackAction.RIGHT:
-                rollRight = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.RIGHT)
-                                .getValueAsString();
-                bufer = Messages.getString(
-                        "BoardView1.kickRight", new Object[] { rollRight }); //$NON-NLS-1$
-                break;
+                case KickAttackAction.BOTH:
+                    rollLeft = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.LEFT)
+                                               .getValueAsString();
+                    rollRight = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.RIGHT)
+                                                .getValueAsString();
+                    bufer = Messages
+                            .getString(
+                                    "BoardView1.kickBoth", new Object[]{rollLeft, rollRight}); //$NON-NLS-1$
+                    break;
+                case KickAttackAction.LEFT:
+                    rollLeft = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.LEFT)
+                                               .getValueAsString();
+                    bufer = Messages.getString(
+                            "BoardView1.kickLeft", new Object[]{rollLeft}); //$NON-NLS-1$
+                    break;
+                case KickAttackAction.RIGHT:
+                    rollRight = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.RIGHT)
+                                                .getValueAsString();
+                    bufer = Messages.getString(
+                            "BoardView1.kickRight", new Object[]{rollRight}); //$NON-NLS-1$
+                    break;
             }
             weaponDescs.add(bufer);
         }
@@ -4786,44 +4786,44 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             String rollRight = ""; //$NON-NLS-1$
             final int arm = attack.getArm();
             switch (arm) {
-            case PunchAttackAction.BOTH:
-                rollLeft = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.LEFT)
-                                .getValueAsString();
-                rollRight = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.RIGHT)
-                                .getValueAsString();
-                bufer = Messages
-                .getString(
-                        "BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                break;
-            case PunchAttackAction.LEFT:
-                rollLeft = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.LEFT)
-                                .getValueAsString();
-                bufer = Messages.getString(
-                        "BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                break;
-            case PunchAttackAction.RIGHT:
-                rollRight = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.RIGHT)
-                                .getValueAsString();
-                bufer = Messages
-                .getString(
-                        "BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$
-                break;
+                case PunchAttackAction.BOTH:
+                    rollLeft = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.LEFT)
+                                                .getValueAsString();
+                    rollRight = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.RIGHT)
+                                                 .getValueAsString();
+                    bufer = Messages
+                            .getString(
+                                    "BoardView1.punchBoth", new Object[]{rollLeft, rollRight}); //$NON-NLS-1$
+                    break;
+                case PunchAttackAction.LEFT:
+                    rollLeft = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.LEFT)
+                                                .getValueAsString();
+                    bufer = Messages.getString(
+                            "BoardView1.punchLeft", new Object[]{rollLeft}); //$NON-NLS-1$
+                    break;
+                case PunchAttackAction.RIGHT:
+                    rollRight = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.RIGHT)
+                                                 .getValueAsString();
+                    bufer = Messages
+                            .getString(
+                                    "BoardView1.punchRight", new Object[]{rollRight}); //$NON-NLS-1$
+                    break;
             }
             weaponDescs.add(bufer);
         }
@@ -4831,32 +4831,32 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void addWeapon(PushAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.add(Messages.getString(
-                    "BoardView1.push", new Object[] { roll })); //$NON-NLS-1$
+                    "BoardView1.push", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ClubAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
             weaponDescs.add(Messages.getString(
-                    "BoardView1.hit", new Object[] { club, roll })); //$NON-NLS-1$
+                    "BoardView1.hit", new Object[]{club, roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ChargeAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.add(Messages.getString(
-                    "BoardView1.charge", new Object[] { roll })); //$NON-NLS-1$
+                    "BoardView1.charge", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(DfaAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.add(Messages.getString(
-                    "BoardView1.DFA", new Object[] { roll })); //$NON-NLS-1$
+                    "BoardView1.DFA", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.add(Messages.getString(
-                    "BoardView1.proto", new Object[] { roll })); //$NON-NLS-1$
+                    "BoardView1.proto", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(SearchlightAttackAction attack) {
@@ -4868,8 +4868,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc
-            + " " + Messages.getString("BoardView1.on") + " " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
+                            + " " + Messages.getString("BoardView1.on") + " " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            for (Iterator<String> i = weaponDescs.iterator(); i.hasNext(); ) {
                 tipStrings[tip++] = i.next();
             }
             return tipStrings;
@@ -4878,17 +4878,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     /**
      * Sprite and info for movement vector (AT2 advanced movement).
-     *  Does not actually use the image buffer
+     * Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.
-     *
+     * <p/>
      * Appears as an arrow pointing to the hex this entity will move to
      * based on current movement vectors.
      * TODO: Different color depending upon whether entity has already moved
      * this turn
-     *
      */
-    private class MovementSprite extends Sprite
-    {
+    private class MovementSprite extends Sprite {
         private Point a;
         private Point t;
         private double an;
@@ -4928,13 +4926,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
              */
             //red if offboard
-            if(!game.getBoard().contains(end)) {
+            if (!game.getBoard().contains(end)) {
                 int colour = 0xff0000; //red
                 int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
                 moveColor = new Color(colour | (transparency << 24), true);
             }
             //dark gray if done
-            if(en.isDone()) {
+            if (en.isDone()) {
                 int colour = 0x696969; //gray
                 int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
                 moveColor = new Color(colour | (transparency << 24), true);
@@ -4955,7 +4953,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             image = null;
         }
 
-        private void makePoly(){
+        private void makePoly() {
             // make a polygon
             a = getHexLocation(start);
             t = getHexLocation(end);
@@ -4965,15 +4963,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // 18 - is actually 36/2 - we do not want arrows to start and end directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int)((HEX_W/2)*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
-            t.x = (t.x + (int)((HEX_W/2)*scale)) - (int)Math.round(Math.cos(an) * (int)(18*scale));
-            a.y = a.y + (int)((HEX_H/2)*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
-            t.y = (t.y + (int)((HEX_H/2)*scale)) - (int)Math.round(Math.sin(an) * (int)(18*scale));
-            movePoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
+            a.x = a.x + (int) ((HEX_W / 2) * scale) + (int) Math.round(Math.cos(an) * (int) (18 * scale));
+            t.x = (t.x + (int) ((HEX_W / 2) * scale)) - (int) Math.round(Math.cos(an) * (int) (18 * scale));
+            a.y = a.y + (int) ((HEX_H / 2) * scale) + (int) Math.round(Math.sin(an) * (int) (18 * scale));
+            t.y = (t.y + (int) ((HEX_H / 2) * scale)) - (int) Math.round(Math.sin(an) * (int) (18 * scale));
+            movePoly = new StraightArrowPolygon(a, t, (int) (4 * scale), (int) (8 * scale), false);
         }
 
         @Override
-        public Rectangle getBounds(){
+        public Rectangle getBounds() {
             makePoly();
             // set bounds
             bounds = new Rectangle(movePoly.getBounds());
@@ -4998,7 +4996,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             //don't draw anything if the unit has no velocity
 
-            if(vel == 0) {
+            if (vel == 0) {
                 return;
             }
 
@@ -5019,7 +5017,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         @Override
         public boolean isInside(Point point) {
             return movePoly.contains((point.x + view.x) - bounds.x - offset.x,
-                    (point.y + view.y) - bounds.y - offset.y);
+                                     (point.y + view.y) - bounds.y - offset.y);
         }
 
         /*
@@ -5131,7 +5129,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                    BoardViewEvent.BOARD_HEX_SELECTED, 0));
+                                                     BoardViewEvent.BOARD_HEX_SELECTED, 0));
         }
     }
 
@@ -5158,7 +5156,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             moveCursor(firstLOSSprite, null);
             moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                    BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
+                                                     BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
 
@@ -5181,13 +5179,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void cursor(Coords coords) {
         if ((coords == null) || game.getBoard().contains(coords)) {
             if ((getLastCursor() == null) || (coords == null)
-                    || !coords.equals(getLastCursor())) {
+                || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
                 moveCursor(secondLOSSprite, null);
                 processBoardViewEvent(new BoardViewEvent(this, coords, null,
-                        BoardViewEvent.BOARD_HEX_CURSOR, 0));
+                                                         BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
                 setLastCursor(coords);
             }
@@ -5210,11 +5208,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 setFirstLOS(c);
                 firstLOSHex(c);
                 processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
+                                                         BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
                 secondLOSHex(c, getFirstLOS());
                 processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
+                                                         BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
                 setFirstLOS(null);
             }
         }
@@ -5228,25 +5226,25 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if (game.getBoard().contains(x, y)) {
             Coords c = new Coords(x, y);
             switch (mtype) {
-            case BOARD_HEX_CLICK:
-                if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
-                    checkLOS(c);
-                } else {
+                case BOARD_HEX_CLICK:
+                    if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+                        checkLOS(c);
+                    } else {
+                        processBoardViewEvent(new BoardViewEvent(this, c, null,
+                                                                 BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
+                    }
+                    break;
+                case BOARD_HEX_DOUBLECLICK:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
-                }
-                break;
-            case BOARD_HEX_DOUBLECLICK:
-                processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
-                break;
-            case BOARD_HEX_DRAG:
-                processBoardViewEvent(new BoardViewEvent(this, c, null,
-                        BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
-                break;
-            case BOARD_HEX_POPUP :
-                processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP, modifiers));
-                break;
+                                                             BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                    break;
+                case BOARD_HEX_DRAG:
+                    processBoardViewEvent(new BoardViewEvent(this, c, null,
+                                                             BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
+                    break;
+                case BOARD_HEX_POPUP:
+                    processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_POPUP, modifiers));
+                    break;
             }
         }
     }
@@ -5306,7 +5304,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void gameEntityNew(GameEntityNewEvent e) {
             updateEcmList();
             redrawAllEntities();
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
         }
@@ -5315,7 +5313,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void gameEntityRemove(GameEntityRemoveEvent e) {
             updateEcmList();
             redrawAllEntities();
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
         }
@@ -5327,11 +5325,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (e.getEntity().hasActiveECM()) {
                 redrawAllEntities();
             }
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0)
-                    && GUIPreferences.getInstance().getShowMoveStep()) {
+                && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
                 redrawEntity(e.getEntity());
@@ -5484,39 +5482,39 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     // This is expensive, so precalculate when entity changes
     public void updateEcmList() {
         ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
-        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             int range = ent.getECMRange();
             boolean deployed = ent.isDeployed();
             boolean offboard = ent.isOffBoard();
-            if((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
+            if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = game.getEntity(ent.getTransportId());
-                if((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
+                if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                     deployed = carrier.isDeployed();
                     offboard = carrier.isOffBoard();
                 }
             }
             if ((entPos == null) || !deployed
-                    || offboard) {
+                || offboard) {
                 continue;
             }
             if (range != Entity.NONE) {
                 int tint = PlayerColors.getColorRGB(ent.getOwner()
-                        .getColorIndex());
+                                                       .getColorIndex());
                 list.add(new EcmBubble(entPos, range, tint));
             }
-            if(game.getBoard().inSpace()) {
+            if (game.getBoard().inSpace()) {
                 //then BAP is also ECCM so it needs a bubble
                 range = ent.getBAPRange();
                 int direction = -1;
                 if (range != Entity.NONE) {
-                    if(range > 6) {
+                    if (range > 6) {
                         direction = ent.getFacing();
                     }
                     int tint = PlayerColors.getColorRGB(ent.getOwner()
-                            .getColorIndex());
+                                                           .getColorIndex());
                     list.add(new EcmBubble(entPos, range, tint, direction));
                 }
             }
@@ -5543,7 +5541,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                             green1 = (green1 + green2) / 2;
                             blue1 = (blue1 + blue2) / 2;
                             table.put(c, new Integer((red1 << 16)
-                                    | (green1 << 8) | blue1));
+                                                     | (green1 << 8) | blue1));
                         }
                     }
                 }
@@ -5588,12 +5586,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 names[loop] = entities.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                    (Frame)SwingUtilities.getAncestorOfClass(Frame.class, this),
+                    (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this),
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
                     Messages
-                    .getString(
-                            "BoardView1.ChooseEntityDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                            names);
+                            .getString(
+                                    "BoardView1.ChooseEntityDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
+                    names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
                 choice = entities.elementAt(choiceDialog.getChoice());
@@ -5627,8 +5625,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         scroller.add(hScrollbar, BorderLayout.SOUTH);
 
         // When the scroll bars are adjusted, update our offset.
-        vScrollbar.addAdjustmentListener (this);
-        hScrollbar.addAdjustmentListener (this);
+        vScrollbar.addAdjustmentListener(this);
+        hScrollbar.addAdjustmentListener(this);
 
         return scroller;
     }
@@ -5639,12 +5637,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
-        p.x += (int)(HEX_WC*scale)-view.x;
-        p.y += (int)((HEX_H*scale)/2)-view.y;
-        if (((PopupMenu)popup).getParent() == null) {
-            add((PopupMenu)popup);
+        p.x += (int) (HEX_WC * scale) - view.x;
+        p.y += (int) ((HEX_H * scale) / 2) - view.y;
+        if (((PopupMenu) popup).getParent() == null) {
+            add((PopupMenu) popup);
         }
-        ((PopupMenu)popup).show(this, p.x, p.y);
+        ((PopupMenu) popup).show(this, p.x, p.y);
     }
 
     public void refreshMinefields() {

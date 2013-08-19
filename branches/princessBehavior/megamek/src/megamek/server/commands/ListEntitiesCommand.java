@@ -1,12 +1,12 @@
 /**
- * 
+ *
  */
 package megamek.server.commands;
 
 import java.util.Enumeration;
 
 import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -24,25 +24,25 @@ public class ListEntitiesCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
     public void run(int connId, String[] args) {
-    	Player p = server.getGame().getPlayer(connId);
-    	if(null == p) {
-    		return;
-    	}
-    	for (Enumeration<Entity> i = server.getGame().getEntities(); i.hasMoreElements();) {
-	        try {
-	            Entity ent = i.nextElement();
-	            if(ent.getOwnerId() == connId) {
-	                server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());
-	            }
-	        } catch (NumberFormatException nfe) {
-	        } catch (NullPointerException npe) {
-	        } catch (IndexOutOfBoundsException ioobe) {
-	        }
-	    }
+        IPlayer p = server.getGame().getPlayer(connId);
+        if (null == p) {
+            return;
+        }
+        for (Enumeration<Entity> i = server.getGame().getEntities(); i.hasMoreElements(); ) {
+            try {
+                Entity ent = i.nextElement();
+                if (ent.getOwnerId() == connId) {
+                    server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());
+                }
+            } catch (NumberFormatException nfe) {
+            } catch (NullPointerException npe) {
+            } catch (IndexOutOfBoundsException ioobe) {
+            }
+        }
     }
 }

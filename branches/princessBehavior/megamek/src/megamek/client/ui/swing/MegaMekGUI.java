@@ -62,8 +62,8 @@ import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
+import megamek.common.IPlayer;
 import megamek.common.Player;
-import megamek.common.PlayerImpl;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -99,7 +99,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                "MegaMek");
+                           "MegaMek");
 
         // this should also help to make MegaMek look more system-specific
         try {
@@ -132,16 +132,16 @@ public class MegaMekGUI implements IMegaMekGUI {
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
-        ));
+                                                ));
         frame.setIconImages(iconList);
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
@@ -160,9 +160,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame, Messages
-                    .getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
-                    Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
-                    true);
+                                                                     .getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
+                                                      Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
+                                                      true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForReadme(false);
@@ -212,7 +212,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize splash image
         Image imgSplash = frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_MEGAMEK_SPLASH).toString()
-        );
+                                                     );
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
@@ -308,7 +308,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd.setVisible(true);
         // verify dialog data
         if ((hd.playerName == null) || (hd.serverPass == null)
-                || (hd.port == 0)) {
+            || (hd.port == 0)) {
             return;
         }
 
@@ -336,11 +336,11 @@ public class MegaMekGUI implements IMegaMekGUI {
             server = new Server(hd.serverPass, hd.port, hd.register, hd.register ? hd.metaserver : "");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
-                    + hd.port);
+                               + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
                     ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+                 .append(").");
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -357,7 +357,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
-                    .append(":").append(hd.port).append(".");
+                 .append(":").append(hd.port).append(".");
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -389,14 +389,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         });
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+            || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
         if ((hd.playerName == null) || (hd.serverPass == null)
-                || (hd.port == 0)) {
+            || (hd.port == 0)) {
             return;
         }
 
@@ -424,11 +424,11 @@ public class MegaMekGUI implements IMegaMekGUI {
             server = new Server(hd.serverPass, hd.port);
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
-                    + hd.port);
+                               + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
                     ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+                 .append(").");
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -453,7 +453,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
-                    .append(":").append(hd.port).append(".");
+                 .append(":").append(hd.port).append(".");
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -482,12 +482,12 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     void scenario() {
         JFileChooser fc = new JFileChooser("data" + File.separatorChar
-                + "scenarios");
+                                           + "scenarios");
         fc
                 .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+                             frame.getLocation().y + 100);
         fc.setDialogTitle(Messages
-                .getString("MegaMek.SelectScenarioDialog.title"));
+                                  .getString("MegaMek.SelectScenarioDialog.title"));
 
         FileFilter filter = new FileFilter() {
 
@@ -526,7 +526,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+            || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -564,7 +564,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         pcd = null;
 
         // get player types and colors set
-        PlayerImpl[] pa = new PlayerImpl[g.getPlayersVector().size()];
+        Player[] pa = new Player[g.getPlayersVector().size()];
         g.getPlayersVector().copyInto(pa);
         ScenarioDialog sd = new ScenarioDialog(frame, pa);
         sd.setVisible(true);
@@ -582,7 +582,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd.setVisible(true);
         // verify dialog data
         if ((hd.playerName == null) || (hd.serverPass == null)
-                || (hd.port == 0)) {
+            || (hd.port == 0)) {
             return;
         }
         sd.localName = hd.playerName;
@@ -612,11 +612,11 @@ public class MegaMekGUI implements IMegaMekGUI {
             server = new Server(hd.serverPass, hd.port);
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
-                    + hd.port);
+                               + hd.port);
             StringBuffer error = new StringBuffer();
             error.append("Error: could not start server at localhost").append(
                     ":").append(hd.port).append(" (").append(ex.getMessage())
-                    .append(").");
+                 .append(").");
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -637,7 +637,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not connect to server at localhost")
-                        .append(":").append(hd.port).append(".");
+                     .append(":").append(hd.port).append(".");
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -679,9 +679,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<Player> pE = server.getGame().getPlayers();
+            Enumeration<IPlayer> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                Player tmpP = pE.nextElement();
+                IPlayer tmpP = pE.nextElement();
                 if (tmpP.getName().equals(sd.localName)) {
                     tmpP.setObserver(true);
                 }
@@ -702,7 +702,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // verify dialog data
         if ((cd.playerName == null) || (cd.serverAddr == null)
-                || (cd.port == 0)) {
+            || (cd.port == 0)) {
             return;
         }
 
@@ -749,7 +749,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd.setVisible(true);
         // verify dialog data
         if ((cd.playerName == null) || (cd.serverAddr == null)
-                || (cd.port == 0)) {
+            || (cd.port == 0)) {
             return;
         }
 
@@ -832,7 +832,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private static CommonHelpDialog showHelp(JFrame frame, String filename) {
         Locale l = Locale.getDefault();
         File helpfile = new File(filename + '-'
-                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
+                                 + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
         if (!helpfile.exists()) {
             helpfile = new File(filename + ".txt"); //$NON-NLS-1$
         }

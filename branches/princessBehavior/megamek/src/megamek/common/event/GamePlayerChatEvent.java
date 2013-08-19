@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when chat message received
@@ -22,7 +22,7 @@ import megamek.common.Player;
 public class GamePlayerChatEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 9077796386452985153L;
     protected String message;
@@ -32,7 +32,7 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
      * @param player
      * @param message
      */
-    public GamePlayerChatEvent(Object source, Player player, String message) {
+    public GamePlayerChatEvent(Object source, IPlayer player, String message) {
         super(source, player);
         this.message = message;
     }
@@ -44,13 +44,13 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
         return message;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerChat(this);
-	}
-	
-	@Override
-	public String getEventName() {
-		return "Chat";
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerChat(this);
+    }
+
+    @Override
+    public String getEventName() {
+        return "Chat";
+    }
 }

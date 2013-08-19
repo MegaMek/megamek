@@ -42,7 +42,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Minefield;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Terrains;
 
 class BoardHexModel extends HexModel {
@@ -84,7 +84,6 @@ class BoardHexModel extends HexModel {
     }
 
 
-
     public BoardHexModel(IGame g, Coords c, IHex h, TileTextureManager tileManager, SharedGroup shafts[]) {
         game = g;
         hex = h;
@@ -96,11 +95,11 @@ class BoardHexModel extends HexModel {
         floor.setPickable(true);
         addChild(floor);
 
-        addChild(new Link(hex.depth() > 0?shafts[1]:shafts[0]));
+        addChild(new Link(hex.depth() > 0 ? shafts[1] : shafts[0]));
 
         setUserData(new Coords(c));
         ypos = 0;
-        addText(""+c.getBoardNum(), new Color3f(GUIPreferences.getInstance().getMapTextColor()));
+        addText("" + c.getBoardNum(), new Color3f(GUIPreferences.getInstance().getMapTextColor()));
         final Point3d hexLoc = BoardModel.getHexLocation(c, h.floor());
         setTransform(new Transform3D(C.nullRot, new Vector3d(hexLoc), 1.0));
 
@@ -108,18 +107,18 @@ class BoardHexModel extends HexModel {
 
         // Water surface
         if ((surface == null) && (hex.depth() > 0) && (basement == null)) {
-            TransformGroup sTrans = new TransformGroup(new Transform3D(C.nullRot, new Vector3d(0.0, 0.0, hex.depth()*BoardModel.HEX_HEIGHT), 1.0));
+            TransformGroup sTrans = new TransformGroup(new Transform3D(C.nullRot, new Vector3d(0.0, 0.0, hex.depth() * BoardModel.HEX_HEIGHT), 1.0));
             surface = new Shape3D(polygon);
             surface.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
             surface.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
             surface.setPickable(true);
-            setSurfaceEffect(current, tileManager.getTexture(h, 2/3f));
+            setSurfaceEffect(current, tileManager.getTexture(h, 2 / 3f));
             sTrans.addChild(surface);
             addChild(sTrans);
         }
     }
 
-    public void update(IHex h, TileTextureManager tileManager, Player localPlayer) {
+    public void update(IHex h, TileTextureManager tileManager, IPlayer localPlayer) {
         hex = h;
 
         Color3f col = new Color3f(GUIPreferences.getInstance().getMapTextColor());
@@ -132,15 +131,15 @@ class BoardHexModel extends HexModel {
             setEffect(current, tex);
         }
 
-        int keep = (surface == null?KEEP:KEEP+1);
-        for (int i = numChildren()-1; i >= keep; i--) {
+        int keep = (surface == null ? KEEP : KEEP + 1);
+        for (int i = numChildren() - 1; i >= keep; i--) {
             removeChild(i);
         }
 
 
         // mine fields
-        if (game.containsMinefield((Coords)getUserData())){
-            Coords c = (Coords)getUserData();
+        if (game.containsMinefield((Coords) getUserData())) {
+            Coords c = (Coords) getUserData();
             Minefield mf = game.getMinefields(c).elementAt(0);
 
             addChild(tileManager.getMinefieldSign());
@@ -150,27 +149,26 @@ class BoardHexModel extends HexModel {
                 addText(Messages.getString("BoardView1.Multiple"), col); //$NON-NLS-1$
             } else if (nbrMfs == 1) {
                 switch (mf.getType()) {
-                case Minefield.TYPE_CONVENTIONAL:
-                    addText(Messages.getString("BoardView1.Conventional"), col); //$NON-NLS-1$
-                    break;
-                case Minefield.TYPE_INFERNO:
-                    addText(Messages.getString("BoardView1.Thunder-Inf") + mf.getDensity() + ")",  col); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case Minefield.TYPE_ACTIVE:
-                    addText(Messages.getString("BoardView1.Thunder-Actv") + mf.getDensity() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case Minefield.TYPE_COMMAND_DETONATED:
-                    addText(Messages.getString("BoardView1.detonated"), col); //$NON-NLS-1$
-                    addText(Messages.getString("BoardView1.Command-"), col); //$NON-NLS-1$
-                    break;
-                case Minefield.TYPE_VIBRABOMB:
-                    if ((localPlayer != null) && (mf.getPlayerId() == localPlayer.getId())) {
-                        addText(Messages.getString("BoardView1.Vibrabomb")+" (" + mf.getSetting() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    else {
-                        addText(Messages.getString("BoardView1.Vibrabomb"), col); //$NON-NLS-1$
-                    }
-                    break;
+                    case Minefield.TYPE_CONVENTIONAL:
+                        addText(Messages.getString("BoardView1.Conventional"), col); //$NON-NLS-1$
+                        break;
+                    case Minefield.TYPE_INFERNO:
+                        addText(Messages.getString("BoardView1.Thunder-Inf") + mf.getDensity() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case Minefield.TYPE_ACTIVE:
+                        addText(Messages.getString("BoardView1.Thunder-Actv") + mf.getDensity() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case Minefield.TYPE_COMMAND_DETONATED:
+                        addText(Messages.getString("BoardView1.detonated"), col); //$NON-NLS-1$
+                        addText(Messages.getString("BoardView1.Command-"), col); //$NON-NLS-1$
+                        break;
+                    case Minefield.TYPE_VIBRABOMB:
+                        if ((localPlayer != null) && (mf.getPlayerId() == localPlayer.getId())) {
+                            addText(Messages.getString("BoardView1.Vibrabomb") + " (" + mf.getSetting() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
+                        } else {
+                            addText(Messages.getString("BoardView1.Vibrabomb"), col); //$NON-NLS-1$
+                        }
+                        break;
                 }
             }
         }
@@ -178,14 +176,14 @@ class BoardHexModel extends HexModel {
         // smoke, fire, buildings
         // FIXME: this needs much more detailed processing... but it is good enough for now
         int ih = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
-        double height = Math.max(ih, Math.max(hex.terrainLevel(Terrains.SMOKE), hex.terrainLevel(Terrains.FIRE)))*BoardModel.HEX_HEIGHT;
+        double height = Math.max(ih, Math.max(hex.terrainLevel(Terrains.SMOKE), hex.terrainLevel(Terrains.FIRE))) * BoardModel.HEX_HEIGHT;
         if (height < 1.0) {
             height = 1.0;
         }
         height += (hex.surface() - hex.floor()) * BoardModel.HEX_HEIGHT;
         Transform3D supert = new Transform3D();
-        supert.setScale(new Vector3d(2*BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER, height));
-        supert.setTranslation(new Vector3d(0.0, 0.0, height/2));
+        supert.setScale(new Vector3d(2 * BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER, height));
+        supert.setTranslation(new Vector3d(0.0, 0.0, height / 2));
         TransformGroup superTrans = new TransformGroup(supert);
         List<Shape3D> supers = tileManager.getModels(hex);
         for (Shape3D sup : supers) {
@@ -198,7 +196,7 @@ class BoardHexModel extends HexModel {
         // wood
         if (Math.max(hex.terrainLevel(Terrains.WOODS), hex.terrainLevel(Terrains.JUNGLE)) > 0) {
             supert = new Transform3D();
-            supert.setScale(new Vector3d(2*BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER, 2*BoardModel.HEX_HEIGHT));
+            supert.setScale(new Vector3d(2 * BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER, 2 * BoardModel.HEX_HEIGHT));
             supert.setTranslation(new Vector3d(0.0, 0.0, BoardModel.HEX_HEIGHT));
             superTrans = new TransformGroup(supert);
             superTrans.addChild(tileManager.getModel(hex));
@@ -208,8 +206,8 @@ class BoardHexModel extends HexModel {
         }
 
         setBounds(new BoundingBox(
-            new Point3d(-BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_DIAMETER/2, BoardModel.HEX_HEIGHT*hex.floor()),
-            new Point3d(BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER/2, height)
+                new Point3d(-BoardModel.HEX_SIDE_LENGTH, -BoardModel.HEX_DIAMETER / 2, BoardModel.HEX_HEIGHT * hex.floor()),
+                new Point3d(BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER / 2, height)
         ));
 
         if (hex.getElevation() != 0) {
@@ -228,7 +226,7 @@ class BoardHexModel extends HexModel {
     private void setSurfaceEffect(Material mat, Texture tex) {
         Appearance app = new Appearance();
         app.setTexture(tex);
-        app.setMaterial((mat == normal?normalWater:mat));
+        app.setMaterial((mat == normal ? normalWater : mat));
         app.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.BLENDED, 0.0f));
         app.setPolygonAttributes(C.noCull);
         app.setTextureAttributes(C.materialModulate);
@@ -265,9 +263,10 @@ class BoardHexModel extends HexModel {
     }
 
     private int ypos = 0;
+
     private final void addText(String s, Color3f col) {
         Transform3D t = new Transform3D();
-        t.setTranslation(new Vector3d(0.0, ((-BoardModel.HEX_DIAMETER/3)-3.5)+(ypos*2.75), hex.depth()*BoardModel.HEX_HEIGHT));
+        t.setTranslation(new Vector3d(0.0, ((-BoardModel.HEX_DIAMETER / 3) - 3.5) + (ypos * 2.75), hex.depth() * BoardModel.HEX_HEIGHT));
         TransformGroup tg = new TransformGroup(t);
         tg.addChild(new LabelModel(s, col, null, LabelModel.BIG));
         addChild(tg);

@@ -64,8 +64,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
-import megamek.common.Player;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -86,7 +86,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
-    
+
     /**
      *
      */
@@ -234,8 +234,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     /**
      * Display a system message in the chat box.
      *
-     * @param message
-     *            the <code>String</code> message to be shown.
+     * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
@@ -459,10 +458,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * <p/>
      * This method should only be called by the constructor of subclasses.
      *
-     * @param fileName
-     *            the <code>String</code> name of the help file for this
-     *            <code>Client</code> subclass. This value should not be
-     *            <code>null</code>.
+     * @param fileName the <code>String</code> name of the help file for this
+     *                 <code>Client</code> subclass. This value should not be
+     *                 <code>null</code>.
      */
     protected void setHelpFileName(String fileName) {
         if (null != fileName) {
@@ -585,11 +583,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     public void doSaveUnit() {
-        for (Enumeration<Player> iter = getClient().game.getPlayers(); iter.hasMoreElements();) {
-            Player p = iter.nextElement();
+        for (Enumeration<IPlayer> iter = getClient().game.getPlayers(); iter.hasMoreElements(); ) {
+            IPlayer p = iter.nextElement();
             ArrayList<Entity> l = getClient().game.getPlayerEntities(p, false);
             // Be sure to include all units that have retreated.
-            for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements();) {
+            for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements(); ) {
                 Entity e = iter2.nextElement();
                 if (e.getOwnerId() == p.getId()) {
                     l.add(e);
@@ -962,6 +960,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * || curPanel instanceof MovementDisplay || curPanel instanceof
      * TargetingPhaseDisplay); }
      */
+
     /**
      * Toggles the entity display window
      */
@@ -1020,15 +1019,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
      *
-     * @param title
-     *            the <code>String</code> title of the dialog box.
-     * @param question
-     *            the <code>String</code> question that has a "Yes" or "No"
-     *            answer. The question will be split across multiple line on the
-     *            '\n' characters.
-     * @param choices
-     *            the array of <code>String</code> choices that the player can
-     *            select from.
+     * @param title    the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or "No"
+     *                 answer. The question will be split across multiple line on the
+     *                 '\n' characters.
+     * @param choices  the array of <code>String</code> choices that the player can
+     *                 select from.
      * @return The array of the <code>int</code> indexes of the from the input
      *         array that match the selected choices. If no choices were
      *         available, if the player did not select a choice, or if the
@@ -1052,12 +1048,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     /**
      * Pops up a dialog box asking a yes/no question
      *
-     * @param title
-     *            the <code>String</code> title of the dialog box.
-     * @param question
-     *            the <code>String</code> question that has a "Yes" or "No"
-     *            answer. The question will be split across multiple line on the
-     *            '\n' characters.
+     * @param title    the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or "No"
+     *                 answer. The question will be split across multiple line on the
+     *                 '\n' characters.
      * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
@@ -1071,12 +1065,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * <p/>
      * The player will be given a chance to not show the dialog again.
      *
-     * @param title
-     *            the <code>String</code> title of the dialog box.
-     * @param question
-     *            the <code>String</code> question that has a "Yes" or "No"
-     *            answer. The question will be split across multiple line on the
-     *            '\n' characters.
+     * @param title    the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or "No"
+     *                 answer. The question will be split across multiple line on the
+     *                 '\n' characters.
      * @return the <code>ConfirmDialog</code> containing the player's responses.
      *         The dialog will already have been shown to the player, and is
      *         only being returned so the calling function can see the answer to
@@ -1130,7 +1122,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                 Vector<Entity> loadedUnits = EntityListFile.loadFrom(new File(unitPath, unitFile));
 
                 // Add the units from the file.
-                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements();) {
+                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements(); ) {
                     final Entity entity = iter.nextElement();
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
@@ -1149,19 +1141,18 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * select the units for a new game. The file will record damage sustained,
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
-     *
+     * <p/>
      * File name default will be that of current player
      *
-     * @param unitList
-     *            - the <code>Vector</code> of <code>Entity</code>s to be saved
-     *            to a file. If this value is <code>null</code> or empty, the
-     *            "Save As" dialog will not be displayed.
+     * @param unitList - the <code>Vector</code> of <code>Entity</code>s to be saved
+     *                 to a file. If this value is <code>null</code> or empty, the
+     *                 "Save As" dialog will not be displayed.
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
-         saveListFile(unitList,client.getLocalPlayer().getName());
+        saveListFile(unitList, client.getLocalPlayer().getName());
     }
 
-     /**
+    /**
      * Allow the player to save a list of entities to a MegaMek Unit List file.
      * A "Save As" dialog will be displayed that allows the user to select the
      * file's name and directory. The player can later load this file to quickly
@@ -1169,14 +1160,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
      *
-     * @param unitList
-     *            - the <code>Vector</code> of <code>Entity</code>s to be saved
-     *            to a file. If this value is <code>null</code> or empty, the
-     *            "Save As" dialog will not be displayed.
-     * @param filename
-     *          Filename that list will be saved under
+     * @param unitList - the <code>Vector</code> of <code>Entity</code>s to be saved
+     *                 to a file. If this value is <code>null</code> or empty, the
+     *                 "Save As" dialog will not be displayed.
+     * @param filename Filename that list will be saved under
      */
-    protected void saveListFile(ArrayList<Entity> unitList,String filename) {
+    protected void saveListFile(ArrayList<Entity> unitList, String filename) {
 
         // Handle empty lists.
         if ((null == unitList) || unitList.isEmpty()) {
@@ -1209,7 +1198,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         String unitFile = dlgSaveList.getFile();
         if (null != unitFile) {
             if (!(unitFile.toLowerCase().endsWith(".mul") //$NON-NLS-1$
-            || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                  || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 unitFile += ".mul"; //$NON-NLS-1$
             }
             try {
@@ -1316,6 +1305,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * instanceof TargetingPhaseDisplay) { ((TargetingPhaseDisplay)
      * curPanel).target(target); } } }
      */
+
     /**
      * @return the frame this client is displayed in
      */
@@ -1336,11 +1326,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
     // Loads a preview image of the unit into the BufferedPanel.
     public void loadPreviewImage(BufferedPanel bp, Entity entity) {
-        Player player = client.game.getPlayer(entity.getOwnerId());
+        IPlayer player = client.game.getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
     }
 
-    public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
+    public void loadPreviewImage(BufferedPanel bp, Entity entity, IPlayer player) {
         Image camo = bv.getTilesetManager().getPlayerCamo(player);
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         BackGroundDrawer bgdPreview = new BackGroundDrawer(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp));
@@ -1472,7 +1462,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
 
-            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext();) {
+            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext(); ) {
                 i.next().die();
             }
             getBots().clear();
@@ -1481,7 +1471,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             ArrayList<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer(), false);
 
             // Be sure to include all units that have retreated.
-            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
+            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements(); ) {
                 Entity ent = iter.nextElement();
                 if (ent.getOwnerId() == getClient().getLocalPlayer().getId()) {
                     living.add(ent);
@@ -1491,7 +1481,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             // Allow players to save their living units to a file.
             // Don't bother asking if none survived.
             if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
+                                                   Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
 
                 // Allow the player to save the units to a file.
                 saveListFile(living);
@@ -1582,8 +1572,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     /**
-     * @param selectedEntityNum
-     *            The selectedEntityNum to set.
+     * @param selectedEntityNum The selectedEntityNum to set.
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;

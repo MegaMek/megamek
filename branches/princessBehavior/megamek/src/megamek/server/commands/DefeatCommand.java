@@ -20,7 +20,7 @@
 
 package megamek.server.commands;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -35,7 +35,7 @@ public class DefeatCommand extends ServerCommand {
     public static final String restrictedResponse = "Observers are restricted from declaring defeat.";
     public static final String admitsDefeat = " admits defeat.";
     public static final String wantsDefeat = " wants to admit defeat - type /victory to accept the surrender at the " +
-            "end of the turn.";
+                                             "end of the turn.";
     public static final String note = "note you need to type /defeat again after your opponent declares victory";
 
     /**
@@ -63,7 +63,7 @@ public class DefeatCommand extends ServerCommand {
             return;
         }
 
-        Player player = server.getPlayer(connId);
+        IPlayer player = server.getPlayer(connId);
         if (server.getGame().isForceVictory()) {
             server.sendServerChat(getAdmitsDefeat(player.getName()));
             player.setAdmitsDefeat(true);

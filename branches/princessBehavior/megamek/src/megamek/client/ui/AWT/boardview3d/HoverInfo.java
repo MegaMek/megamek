@@ -40,7 +40,7 @@ import megamek.common.IHex;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -74,7 +74,7 @@ class HoverInfo implements IDisplayable {
     IGame game;
     Entity entity;
     Mounted equipment;
-    Player localPlayer;
+    IPlayer localPlayer;
     Coords coords, los;
 
     HashMap<Integer, Vector<String>> sources = new HashMap<Integer, Vector<String>>();
@@ -82,7 +82,7 @@ class HoverInfo implements IDisplayable {
 
     public HoverInfo(IGame g, BoardView3D bv) {
         game = g;
-        coords = new Coords(0,0);
+        coords = new Coords(0, 0);
         fm = bv.getFontMetrics(FONT);
     }
 
@@ -91,7 +91,7 @@ class HoverInfo implements IDisplayable {
             System.err.println("Warning: HoverInfo is meant to be used with Graphics2D");
             return;
         }
-        Graphics2D gr = (Graphics2D)g;
+        Graphics2D gr = (Graphics2D) g;
 
         Vector<String> info = getTipText();
         if (info == null) {
@@ -101,7 +101,7 @@ class HoverInfo implements IDisplayable {
         for (int i = 0; i < info.size(); i++) {
             String s = info.elementAt(i);
             int len = s.length();
-            while (fm.stringWidth(s.substring(0, len)) > WIDTH-2*PADDING) {
+            while (fm.stringWidth(s.substring(0, len)) > WIDTH - 2 * PADDING) {
                 len--;
             }
             if (len != s.length()) {
@@ -117,28 +117,28 @@ class HoverInfo implements IDisplayable {
                 while ((len > 0) && (" \t\r\n".indexOf(s.charAt(len)) >= 0)) {
                     len--;
                 }
-                info.insertElementAt(s.substring(0, len+1), i);
+                info.insertElementAt(s.substring(0, len + 1), i);
                 len = s.length();
                 while ((len2 < len) && (" \t\r\n".indexOf(s.charAt(len2)) >= 0)) {
                     len2++;
                 }
                 if (len2 < len) {
-                    info.insertElementAt("    "+s.substring(len2, len), i+1);
+                    info.insertElementAt("    " + s.substring(len2, len), i + 1);
                 }
             }
         }
 
         gr.setFont(FONT);
-        int height = info.size()*fm.getHeight()+PADDING*2;
+        int height = info.size() * fm.getHeight() + PADDING * 2;
 
         gr.setColor(new Color(Color.DARK_GRAY.getRed(), Color.DARK_GRAY.getGreen(), Color.DARK_GRAY.getBlue(), 128));
-        gr.fillRect(TOP, LEFT, WIDTH+2, height);
+        gr.fillRect(TOP, LEFT, WIDTH + 2, height);
         gr.setColor(Color.LIGHT_GRAY);
-        gr.draw3DRect(TOP, LEFT, WIDTH+2, height, false);
-        gr.draw3DRect(TOP+1, LEFT+1, WIDTH, height-2, true);
-        int ypos = TOP+PADDING+fm.getAscent();
+        gr.draw3DRect(TOP, LEFT, WIDTH + 2, height, false);
+        gr.draw3DRect(TOP + 1, LEFT + 1, WIDTH, height - 2, true);
+        int ypos = TOP + PADDING + fm.getAscent();
         for (String line : info) {
-            gr.drawString(line, LEFT+PADDING, ypos);
+            gr.drawString(line, LEFT + PADDING, ypos);
             ypos += fm.getHeight();
         }
     }
@@ -188,7 +188,7 @@ class HoverInfo implements IDisplayable {
             int sdepth = game.getBoard().getHex(ocoords).depth();
             int ddepth = game.getBoard().getHex(src).depth();
             if (ddepth > 0) {
-                s.setElevation(oelevation == -sdepth? -ddepth : oelevation > 0 ? oelevation : oelevation <= -ddepth? oelevation : -ddepth);
+                s.setElevation(oelevation == -sdepth ? -ddepth : oelevation > 0 ? oelevation : oelevation <= -ddepth ? oelevation : -ddepth);
             } else if (oelevation < 0) {
                 s.setElevation(0);
             }
@@ -198,29 +198,29 @@ class HoverInfo implements IDisplayable {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = src;
         ai.targetPos = coords;
-        boolean mechInFirst  = (s != null? s.height() == 1 : GUIPreferences.getInstance().getMechInFirst());
-        boolean mechInSecond = (t != null? t.height() == 1 : GUIPreferences.getInstance().getMechInSecond());
-        ai.attackHeight = s != null? s.height() : mechInFirst?  1 : 0;
-        ai.targetHeight = t != null? t.height() : mechInSecond? 1 : 0;
+        boolean mechInFirst = (s != null ? s.height() == 1 : GUIPreferences.getInstance().getMechInFirst());
+        boolean mechInSecond = (t != null ? t.height() == 1 : GUIPreferences.getInstance().getMechInSecond());
+        ai.attackHeight = s != null ? s.height() : mechInFirst ? 1 : 0;
+        ai.targetHeight = t != null ? t.height() : mechInSecond ? 1 : 0;
         if ((los == null) && (s != null)) {
             // no need to mention the attacker: it's the unit showing in the MechDisplay
             ai.attackAbsHeight = game.getBoard().getHex(src).floor() + s.absHeight();
-            ai.targetAbsHeight = game.getBoard().getHex(coords).floor() + (t == null? 0 : t.absHeight());
+            ai.targetAbsHeight = game.getBoard().getHex(coords).floor() + (t == null ? 0 : t.absHeight());
         } else {
             // show source unit
             ai.attackAbsHeight = game.getBoard().getHex(src).floor() + ai.attackHeight;
             ai.targetAbsHeight = game.getBoard().getHex(coords).floor() + ai.targetHeight;
             out.add(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                (s != null ? s.getDisplayName() : mechInFirst  ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech")), //$NON-NLS-1$ //$NON-NLS-2$
-                src.getBoardNum()
+                                                                            (s != null ? s.getDisplayName() : mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech")), //$NON-NLS-1$ //$NON-NLS-2$
+                                                                            src.getBoardNum()
             }));
         }
 
         if (t == null) {
             // show out hypothetical target
             out.add(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
-                    ai.targetHeight == 1 ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                    coords.getBoardNum()
+                                                                          ai.targetHeight == 1 ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                                                          coords.getBoardNum()
             }));
         }
 
@@ -232,9 +232,9 @@ class HoverInfo implements IDisplayable {
             while ((eq = s.getEquipment(i++)) != null) {
                 if ((eq.getType() instanceof WeaponType) && !done.containsKey(eq.getName())) {
                     ToHitData toHit = WeaponAttackAction.toHit(game, s.getId(), t, s.getEquipmentNum(eq),
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                                                               Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                     out.add(eq.getType().getName() + Messages.getString("BoardView1.needs") + toHit.getValueAsString() + " " + toHit.getTableDesc() //$NON-NLS-1$
-                        + " ["+toHit.getDesc()+"]");
+                            + " [" + toHit.getDesc() + "]");
                     done.put(eq.getName(), null);
                 }
             }
@@ -243,30 +243,29 @@ class HoverInfo implements IDisplayable {
             LosEffects le = LosEffects.calculateLos(game, ai);
             if (!le.canSee()) {
                 out.add(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
-                    new Integer(src.distance(coords))}));
+                                                                                  new Integer(src.distance(coords))}));
             } else {
                 out.add(Messages.getString("BoardView1.LOSNotBlocked", new Object[]{ //$NON-NLS-1$
-                        new Integer(src.distance(coords))}));
+                                                                                     new Integer(src.distance(coords))}));
                 if (le.getHeavyWoods() > 0) {
                     out.add(Messages.getString("BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getHeavyWoods())}));
+                                                                                      new Integer(le.getHeavyWoods())}));
                 }
                 if (le.getLightWoods() > 0) {
                     out.add(Messages.getString("BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getLightWoods())}));
+                                                                                      new Integer(le.getLightWoods())}));
                 }
                 if (le.getLightSmoke() > 0) {
                     out.add(Messages.getString("BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getLightSmoke())}));
+                                                                                      new Integer(le.getLightSmoke())}));
                 }
                 if (le.getHeavySmoke() > 0) {
                     if (game.getOptions().booleanOption("maxtech_fire")) { //$NON-NLS-1$
                         out.add(Messages.getString("BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke())}));
-                    }
-                    else {
+                                                                                          new Integer(le.getHeavySmoke())}));
+                    } else {
                         out.add(Messages.getString("BoardView1.Smoke", new Object[]{ //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke())}));
+                                                                                     new Integer(le.getHeavySmoke())}));
                     }
                 }
                 if (le.isTargetCover()) {
@@ -289,7 +288,7 @@ class HoverInfo implements IDisplayable {
         }
     }
 
-    void setSelected(Entity en, Mounted eq, Player pl) {
+    void setSelected(Entity en, Mounted eq, IPlayer pl) {
         if ((en != null) && !game.getBoard().contains(en.getPosition())) {
             en = null;
         }
@@ -311,37 +310,37 @@ class HoverInfo implements IDisplayable {
         Vector<String> out = new Vector<String>();
 
         out.add(Messages.getString("BoardView1.Hex") + coords.getBoardNum() //$NON-NLS-1$
-                    + Messages.getString("BoardView1.level") + mhex.getElevation()); //$NON-NLS-1$
+                + Messages.getString("BoardView1.level") + mhex.getElevation()); //$NON-NLS-1$
 
         if (mhex.containsTerrain(Terrains.JUNGLE)) {
             int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
             int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
             if (ttl == 1) {
-                out.add(Messages.getString("BoardView1.TipLightJungle", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipLightJungle", new Object[]{tf}));
             } else if (ttl == 2) {
-                out.add(Messages.getString("BoardView1.TipHeavyJungle", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipHeavyJungle", new Object[]{tf}));
             } else if (ttl == 3) {
-                out.add(Messages.getString("BoardView1.TipUltraJungle", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipUltraJungle", new Object[]{tf}));
             } else {
-                out.add(Messages.getString("BoardView1.TipJungle", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipJungle", new Object[]{tf}));
             }
         } else if (mhex.containsTerrain(Terrains.WOODS)) {
             int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
             int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
             if (ttl == 1) {
-                out.add(Messages.getString("BoardView1.TipLightWoods", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipLightWoods", new Object[]{tf}));
             } else if (ttl == 2) {
-                out.add(Messages.getString("BoardView1.TipHeavyWoods", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipHeavyWoods", new Object[]{tf}));
             } else if (ttl == 3) {
-                out.add(Messages.getString("BoardView1.TipUltraWoods", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipUltraWoods", new Object[]{tf}));
             } else {
-                out.add(Messages.getString("BoardView1.TipWoods", new Object[] { tf }));
+                out.add(Messages.getString("BoardView1.TipWoods", new Object[]{tf}));
             }
         }
 
         if (mhex.containsTerrain(Terrains.ICE)) {
             int tf = mhex.getTerrain(Terrains.ICE).getTerrainFactor();
-            out.add(Messages.getString("BoardView1.TipIce", new Object[] { tf }));
+            out.add(Messages.getString("BoardView1.TipIce", new Object[]{tf}));
         }
 
         if (mhex.containsTerrain(Terrains.RUBBLE)) {
@@ -387,30 +386,30 @@ class HoverInfo implements IDisplayable {
 
         if (game.containsMinefield(coords)) {
             Vector<Minefield> minefields = game.getMinefields(coords);
-            for (int i = 0; i < minefields.size(); i++){
-                Minefield mf =  minefields.elementAt(i);
-                String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            for (int i = 0; i < minefields.size(); i++) {
+                Minefield mf = minefields.elementAt(i);
+                String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
                 switch (mf.getType()) {
-                case (Minefield.TYPE_CONVENTIONAL) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case (Minefield.TYPE_COMMAND_DETONATED) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case (Minefield.TYPE_VIBRABOMB) :
-                    if (mf.getPlayerId() == localPlayer.getId()) {
-                        out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getSetting() + ") " + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    } else {
-                        out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    break;
-                case (Minefield.TYPE_ACTIVE) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
-                case (Minefield.TYPE_INFERNO) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
+                    case (Minefield.TYPE_CONVENTIONAL):
+                        out.add(mf.getName() + Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_COMMAND_DETONATED):
+                        out.add(mf.getName() + Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_VIBRABOMB):
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            out.add(mf.getName() + Messages.getString("BoardView1.minefield") + "(" + mf.getSetting() + ") " + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        } else {
+                            out.add(mf.getName() + Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
+                        break;
+                    case (Minefield.TYPE_ACTIVE):
+                        out.add(mf.getName() + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
+                    case (Minefield.TYPE_INFERNO):
+                        out.add(mf.getName() + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
                 }
             }
         }
@@ -437,10 +436,10 @@ class HoverInfo implements IDisplayable {
             if (s == null) {
                 s = Messages.getString("BoardView1.Artillery");
             }
-            out.add(Messages.getString("BoardView1.ArtilleryAttack", new Object[] {
-                s,
-                new Integer(aaa.turnsTilHit),
-                aaa.toHit(game).getValueAsString()
+            out.add(Messages.getString("BoardView1.ArtilleryAttack", new Object[]{
+                    s,
+                    new Integer(aaa.turnsTilHit),
+                    aaa.toHit(game).getValueAsString()
             }));
 
         }
@@ -456,7 +455,7 @@ class HoverInfo implements IDisplayable {
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
                 out.add(Messages.getString("BoardView1.ArtilleryAutohit"));
             } else {
-                out.add(Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) }));
+                out.add(Messages.getString("BoardView1.ArtilleryAdjustment", new Object[]{new Integer(amod)}));
             }
         }
         checkLOS(out);
@@ -469,13 +468,13 @@ class HoverInfo implements IDisplayable {
                 .append(e.getOwner().getName()).append("); ") //$NON-NLS-1$
                 .append(e.getCrew().getGunnery()).append("/") //$NON-NLS-1$
                 .append(e.getCrew().getPiloting()).append(
-                        Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
+                Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
         int numAdv = e.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
         boolean isMD = e.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
         if (numAdv > 0) {
             buffer.append(" <") //$NON-NLS-1$
                     .append(numAdv).append(
-                            Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+                    Messages.getString("BoardView1.advs")); //$NON-NLS-1$
         }
         if (isMD) {
             buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
@@ -491,11 +490,11 @@ class HoverInfo implements IDisplayable {
         if (ge == null) {
             buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
                     .append(e.getMovementAbbr(e.moved)).append(
-                            ":") //$NON-NLS-1$
+                    ":") //$NON-NLS-1$
                     .append(e.delta_distance).append(" (+") //$NON-NLS-1$
                     .append(
                             Compute.getTargetMovementModifier(game,
-                                    e.getId()).getValue())
+                                                              e.getId()).getValue())
                     .append(");") //$NON-NLS-1$
                     .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
                     .append(e.heat);
@@ -511,15 +510,15 @@ class HoverInfo implements IDisplayable {
             if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
                 buffer
                         .append(Messages
-                                .getString("BoardView1.TurretLocked"));
+                                        .getString("BoardView1.TurretLocked"));
                 if (ge.getFirstWeapon() == -1) {
                     buffer.append(",");
                     buffer.append(Messages
-                            .getString("BoardView1.WeaponsDestroyed"));
+                                          .getString("BoardView1.WeaponsDestroyed"));
                 }
             } else if (ge.getFirstWeapon() == -1) {
                 buffer.append(Messages
-                        .getString("BoardView1.WeaponsDestroyed"));
+                                      .getString("BoardView1.WeaponsDestroyed"));
             } else {
                 buffer.append(Messages.getString("BoardView1.Operational"));
             }
@@ -534,7 +533,7 @@ class HoverInfo implements IDisplayable {
         if (ge == null) {
             buffer.append(Messages.getString("BoardView1.Armor")) //$NON-NLS-1$
                     .append(e.getTotalArmor()).append(
-                            Messages.getString("BoardView1.internal")) //$NON-NLS-1$
+                    Messages.getString("BoardView1.internal")) //$NON-NLS-1$
                     .append(e.getTotalInternal());
         }
         out.add(buffer.toString());
@@ -559,126 +558,126 @@ class HoverInfo implements IDisplayable {
         String out = null;
 
         if (aa instanceof WeaponAttackAction) {
-            WeaponAttackAction attack = (WeaponAttackAction)aa;
-            final WeaponType wtype = (WeaponType)ae.getEquipment(attack.getWeaponId()).getType();
+            WeaponAttackAction attack = (WeaponAttackAction) aa;
+            final WeaponType wtype = (WeaponType) ae.getEquipment(attack.getWeaponId()).getType();
             final String roll = attack.toHit(game).getValueAsString();
             final String table = attack.toHit(game).getTableDesc();
             out = wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table; //$NON-NLS-1$
         }
 
         if (aa instanceof KickAttackAction) {
-            KickAttackAction attack = (KickAttackAction)aa;
+            KickAttackAction attack = (KickAttackAction) aa;
             String rollLeft = ""; //$NON-NLS-1$
             String rollRight = ""; //$NON-NLS-1$
             final int leg = attack.getLeg();
             switch (leg) {
-            case KickAttackAction.BOTH:
-                rollLeft = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
-                rollRight = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.kickBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                break;
-            case KickAttackAction.LEFT:
-                rollLeft = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.LEFT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.kickLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                break;
-            case KickAttackAction.RIGHT:
-                rollRight = KickAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), KickAttackAction.RIGHT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.kickRight", new Object[] { rollRight }); //$NON-NLS-1$
-                break;
+                case KickAttackAction.BOTH:
+                    rollLeft = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.LEFT)
+                                               .getValueAsString();
+                    rollRight = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.RIGHT)
+                                                .getValueAsString();
+                    out = Messages.getString("BoardView1.kickBoth", new Object[]{rollLeft, rollRight}); //$NON-NLS-1$
+                    break;
+                case KickAttackAction.LEFT:
+                    rollLeft = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.LEFT)
+                                               .getValueAsString();
+                    out = Messages.getString("BoardView1.kickLeft", new Object[]{rollLeft}); //$NON-NLS-1$
+                    break;
+                case KickAttackAction.RIGHT:
+                    rollRight = KickAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), KickAttackAction.RIGHT)
+                                                .getValueAsString();
+                    out = Messages.getString("BoardView1.kickRight", new Object[]{rollRight}); //$NON-NLS-1$
+                    break;
             }
         }
 
         if (aa instanceof PunchAttackAction) {
-            PunchAttackAction attack = (PunchAttackAction)aa;
+            PunchAttackAction attack = (PunchAttackAction) aa;
             String rollLeft = ""; //$NON-NLS-1$
             String rollRight = ""; //$NON-NLS-1$
             final int arm = attack.getArm();
             switch (arm) {
-            case PunchAttackAction.BOTH:
-                rollLeft = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.LEFT)
-                        .getValueAsString();
-                rollRight = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.RIGHT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                break;
-            case PunchAttackAction.LEFT:
-                rollLeft = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.LEFT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                break;
-            case PunchAttackAction.RIGHT:
-                rollRight = PunchAttackAction.toHit(
-                        game,
-                        attack.getEntityId(),
-                        game.getTarget(attack.getTargetType(), attack
-                                .getTargetId()), PunchAttackAction.RIGHT)
-                        .getValueAsString();
-                out = Messages.getString("BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$
-                break;
+                case PunchAttackAction.BOTH:
+                    rollLeft = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.LEFT)
+                                                .getValueAsString();
+                    rollRight = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.RIGHT)
+                                                 .getValueAsString();
+                    out = Messages.getString("BoardView1.punchBoth", new Object[]{rollLeft, rollRight}); //$NON-NLS-1$
+                    break;
+                case PunchAttackAction.LEFT:
+                    rollLeft = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.LEFT)
+                                                .getValueAsString();
+                    out = Messages.getString("BoardView1.punchLeft", new Object[]{rollLeft}); //$NON-NLS-1$
+                    break;
+                case PunchAttackAction.RIGHT:
+                    rollRight = PunchAttackAction.toHit(
+                            game,
+                            attack.getEntityId(),
+                            game.getTarget(attack.getTargetType(), attack
+                                    .getTargetId()), PunchAttackAction.RIGHT)
+                                                 .getValueAsString();
+                    out = Messages.getString("BoardView1.punchRight", new Object[]{rollRight}); //$NON-NLS-1$
+                    break;
             }
         }
 
         if (aa instanceof PushAttackAction) {
-            PushAttackAction attack = (PushAttackAction)aa;
+            PushAttackAction attack = (PushAttackAction) aa;
             final String roll = attack.toHit(game).getValueAsString();
-            out = Messages.getString("BoardView1.push", new Object[] { roll }); //$NON-NLS-1$
+            out = Messages.getString("BoardView1.push", new Object[]{roll}); //$NON-NLS-1$
         }
 
         if (aa instanceof ClubAttackAction) {
-            ClubAttackAction attack = (ClubAttackAction)aa;
+            ClubAttackAction attack = (ClubAttackAction) aa;
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
-            out = Messages.getString("BoardView1.hit", new Object[] { club, roll }); //$NON-NLS-1$
+            out = Messages.getString("BoardView1.hit", new Object[]{club, roll}); //$NON-NLS-1$
         }
 
         if (aa instanceof ChargeAttackAction) {
-            ChargeAttackAction attack = (ChargeAttackAction)aa;
+            ChargeAttackAction attack = (ChargeAttackAction) aa;
             final String roll = attack.toHit(game).getValueAsString();
-            out = Messages.getString("BoardView1.charge", new Object[] { roll }); //$NON-NLS-1$
+            out = Messages.getString("BoardView1.charge", new Object[]{roll}); //$NON-NLS-1$
         }
 
         if (aa instanceof DfaAttackAction) {
-            DfaAttackAction attack = (DfaAttackAction)aa;
+            DfaAttackAction attack = (DfaAttackAction) aa;
             final String roll = attack.toHit(game).getValueAsString();
-            out = Messages.getString("BoardView1.DFA", new Object[] { roll }); //$NON-NLS-1$
+            out = Messages.getString("BoardView1.DFA", new Object[]{roll}); //$NON-NLS-1$
         }
 
         if (aa instanceof ProtomechPhysicalAttackAction) {
-            ProtomechPhysicalAttackAction attack = (ProtomechPhysicalAttackAction)aa;
+            ProtomechPhysicalAttackAction attack = (ProtomechPhysicalAttackAction) aa;
             final String roll = attack.toHit(game).getValueAsString();
-            out = Messages.getString("BoardView1.proto", new Object[] { roll }); //$NON-NLS-1$
+            out = Messages.getString("BoardView1.proto", new Object[]{roll}); //$NON-NLS-1$
         }
 
         if (aa instanceof SearchlightAttackAction) {
@@ -699,7 +698,7 @@ class HoverInfo implements IDisplayable {
             if (strs == null) {
                 strs = new Vector<String>();
             }
-            strs.add(out + " [" + ae.getDisplayName()+"]");
+            strs.add(out + " [" + ae.getDisplayName() + "]");
             destinations.put(id, strs);
         }
     }
@@ -719,12 +718,12 @@ class HoverInfo implements IDisplayable {
         clear();
         for (EntityAction ea : game.getActionsVector()) {
             if (ea instanceof AttackAction) {
-                add((AttackAction)ea);
+                add((AttackAction) ea);
             }
         }
         for (EntityAction ea : game.getChargesVector()) {
             if (ea instanceof AttackAction) {
-                add((AttackAction)ea);
+                add((AttackAction) ea);
             }
         }
     }

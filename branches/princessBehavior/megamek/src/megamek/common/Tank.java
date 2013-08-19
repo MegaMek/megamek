@@ -59,9 +59,13 @@ public class Tank extends Entity {
     public static final int LOC_RIGHT = 2;
     public static final int LOC_LEFT = 3;
     public static final int LOC_REAR = 4;
-    /** for dual turret tanks, this is the rear turret **/
+    /**
+     * for dual turret tanks, this is the rear turret *
+     */
     public static final int LOC_TURRET = 5;
-    /** for dual turret tanks, this is the front turret **/
+    /**
+     * for dual turret tanks, this is the front turret *
+     */
     public static final int LOC_TURRET_2 = 6;
 
     // critical hits
@@ -83,15 +87,15 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_DESTROYED = 14;
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
+    private static final int[] NUM_OF_SLOTS = {25, 25, 25, 25, 25, 25, 25};
 
-    private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "TU", "TU2" };
-    private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
-            "Left", "Rear", "Turret" };
+    private static String[] LOCATION_ABBRS = {"BD", "FR", "RS", "LS", "RR",
+                                              "TU", "TU2"};
+    private static String[] LOCATION_NAMES = {"Body", "Front", "Right",
+                                              "Left", "Rear", "Turret"};
 
-    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
-            "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
+    private static String[] LOCATION_NAMES_DUAL_TURRET = {"Body", "Front",
+                                                          "Right", "Left", "Rear", "Rear Turret", "Front Turret"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -177,8 +181,7 @@ public class Tank extends Entity {
      * values; in particular, it will return 0 if handed
      * {@link ToHitData#SIDE_RANDOM}.
      *
-     * @param side
-     *            The attack direction as specified above.
+     * @param side The attack direction as specified above.
      * @return The appropriate directional roll modifier.
      */
     public int getMotiveSideMod(int side) {
@@ -211,7 +214,7 @@ public class Tank extends Entity {
 
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+                         boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         if (engineHit) {
             return 0;
@@ -220,7 +223,7 @@ public class Tank extends Entity {
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
+                                 .getMovementMods(this);
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
@@ -407,7 +410,7 @@ public class Tank extends Entity {
     @Override
     public boolean isImmobile() {
         if ((game != null)
-                && game.getOptions().booleanOption("no_immobile_vehicles")) {
+            && game.getOptions().booleanOption("no_immobile_vehicles")) {
             return super.isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
@@ -430,59 +433,59 @@ public class Tank extends Entity {
             case TRACKED:
                 if (!isSuperHeavy()) {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
-                            || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                    && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                           || ((hex.terrainLevel(Terrains.WATER) > 0)
+                               && !hex.containsTerrain(Terrains.ICE)
+                               && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                           || (hex.terrainLevel(Terrains.ROUGH) > 1);
                 } else {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
-                            || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                    && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                           || ((hex.terrainLevel(Terrains.WATER) > 0)
+                               && !hex.containsTerrain(Terrains.ICE)
+                               && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
             case WHEELED:
                 if (!isSuperHeavy()) {
                     return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.ROUGH)
-                            || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                    && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                            || hex.containsTerrain(Terrains.RUBBLE)
-                            || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.SNOW) > 1)
-                            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                           || hex.containsTerrain(Terrains.ROUGH)
+                           || ((hex.terrainLevel(Terrains.WATER) > 0)
+                               && !hex.containsTerrain(Terrains.ICE)
+                               && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                           || hex.containsTerrain(Terrains.RUBBLE)
+                           || hex.containsTerrain(Terrains.MAGMA)
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.SNOW) > 1)
+                           || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 } else {
                     return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.ROUGH)
-                            || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                    && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                            || hex.containsTerrain(Terrains.RUBBLE)
-                            || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                           || hex.containsTerrain(Terrains.ROUGH)
+                           || ((hex.terrainLevel(Terrains.WATER) > 0)
+                               && !hex.containsTerrain(Terrains.ICE)
+                               && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                           || hex.containsTerrain(Terrains.RUBBLE)
+                           || hex.containsTerrain(Terrains.MAGMA)
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
                 if (!isSuperHeavy()) {
                     return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                           || (hex.terrainLevel(Terrains.ROUGH) > 1);
                 } else {
                     return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                           || hex.containsTerrain(Terrains.JUNGLE)
+                           || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 
             case NAVAL:
             case HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
-                        || hex.containsTerrain(Terrains.ICE);
+                       || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
@@ -639,7 +642,7 @@ public class Tank extends Entity {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+            && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
         switch (mounted.getLocation()) {
@@ -713,12 +716,12 @@ public class Tank extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+                                   int aimingMode, int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
         boolean ignoreTurret = m_bHasNoTurret
-                || (table == ToHitData.HIT_UNDERWATER);
+                               || (table == ToHitData.HIT_UNDERWATER);
         int motiveMod = getMotiveSideMod(side);
         setPotCrit(HitData.EFFECT_NONE);
         if (isHullDown()) {
@@ -731,7 +734,7 @@ public class Tank extends Entity {
                 moveInDirection = ToHitData.SIDE_REAR;
             }
             if ((side == moveInDirection) || (side == ToHitData.SIDE_LEFT)
-                    || (side == ToHitData.SIDE_RIGHT)) {
+                || (side == ToHitData.SIDE_RIGHT)) {
                 if (!ignoreTurret) {
                     // on a hull down vee, all hits expect for those that come
                     // from the opposite direction to which it entered the hex
@@ -771,13 +774,13 @@ public class Tank extends Entity {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+            && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
 
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                                 true);
                 bHitAimed = true;
             }
         }
@@ -814,7 +817,7 @@ public class Tank extends Entity {
                             rv = new HitData(LOC_FRONT);
                         } else {
                             rv = new HitData(LOC_FRONT, false,
-                                    HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     } else if (bRear) {
                         if (game.getOptions().booleanOption(
@@ -823,7 +826,7 @@ public class Tank extends Entity {
                             rv = new HitData(LOC_LEFT);
                         } else {
                             rv = new HitData(LOC_LEFT, false,
-                                    HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     } else {
                         if (game.getOptions().booleanOption(
@@ -832,7 +835,7 @@ public class Tank extends Entity {
                             rv = new HitData(LOC_LEFT);
                         } else {
                             rv = new HitData(LOC_LEFT, false,
-                                    HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
                     }
                     rv.setMotiveMod(motiveMod);
@@ -842,8 +845,8 @@ public class Tank extends Entity {
                     break;
                 case 8:
                     if (bSide
-                            && !game.getOptions().booleanOption(
-                                    "tacops_vehicle_effective")) {
+                        && !game.getOptions().booleanOption(
+                            "tacops_vehicle_effective")) {
                         if (game.getOptions().booleanOption(
                                 "vehicles_threshold")) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
@@ -870,7 +873,7 @@ public class Tank extends Entity {
                                 rv = new HitData(LOC_REAR);
                             } else {
                                 rv = new HitData(LOC_REAR, false,
-                                        HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                                 HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             }
                         } else if (bRear) {
                             if (game.getOptions().booleanOption(
@@ -879,7 +882,7 @@ public class Tank extends Entity {
                                 rv = new HitData(LOC_RIGHT);
                             } else {
                                 rv = new HitData(LOC_RIGHT, false,
-                                        HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                                 HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             }
                         } else {
                             if (game.getOptions().booleanOption(
@@ -888,7 +891,7 @@ public class Tank extends Entity {
                                 rv = new HitData(LOC_LEFT);
                             } else {
                                 rv = new HitData(LOC_LEFT, false,
-                                        HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                                 HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             }
                         }
                         rv.setMotiveMod(motiveMod);
@@ -950,7 +953,7 @@ public class Tank extends Entity {
                                     rv = new HitData(LOC_TURRET_2);
                                 } else {
                                     rv = new HitData(LOC_TURRET_2, false,
-                                            HitData.EFFECT_CRITICAL);
+                                                     HitData.EFFECT_CRITICAL);
                                 }
                             } else {
                                 if (game.getOptions().booleanOption(
@@ -959,7 +962,7 @@ public class Tank extends Entity {
                                     rv = new HitData(LOC_TURRET);
                                 } else {
                                     rv = new HitData(LOC_TURRET, false,
-                                            HitData.EFFECT_CRITICAL);
+                                                     HitData.EFFECT_CRITICAL);
                                 }
                             }
                         } else {
@@ -969,7 +972,7 @@ public class Tank extends Entity {
                                 rv = new HitData(LOC_TURRET);
                             } else {
                                 rv = new HitData(LOC_TURRET, false,
-                                        HitData.EFFECT_CRITICAL);
+                                                 HitData.EFFECT_CRITICAL);
                             }
                         }
                     }
@@ -984,7 +987,7 @@ public class Tank extends Entity {
     @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+                               IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
     }
 
     /**
@@ -1020,7 +1023,7 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-    	/*
+        /*
          * TODO: Evaluate, does this need to be here? This function in the other
     	 * Entity subclasses does not check for crew being alive. I've commented
     	 * this out for now. If it does need to be here, then it needs a check
@@ -1061,10 +1064,10 @@ public class Tank extends Entity {
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
                 if ((mounted.getType() instanceof MiscType)
-                        && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                        && (mounted.getLocation() == loc)) {
+                    && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
+                    && (mounted.getLocation() == loc)) {
                     modularArmor += mounted.getBaseDamageCapacity()
-                            - mounted.getDamageTaken();
+                                    - mounted.getDamageTaken();
                 }
             }
             // total armor points
@@ -1097,7 +1100,7 @@ public class Tank extends Entity {
 
             int armor = getArmor(loc) + modularArmor;
             bvText.append("Total Armor " + this.getLocationAbbr(loc) + " ("
-                    + armor + ") x ");
+                          + armor + ") x ");
             bvText.append(armorMultiplier);
             bvText.append(" x ");
             bvText.append(getBARRating(loc));
@@ -1107,7 +1110,7 @@ public class Tank extends Entity {
             bvText.append(endColumn);
             bvText.append(startColumn);
             double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier
-                    * ((float) (getBARRating(loc)) / 10);
+                             * ((float) (getBARRating(loc)) / 10);
             bvText.append(armorBV);
             dbv += armorBV;
             bvText.append(endColumn);
@@ -1178,8 +1181,8 @@ public class Tank extends Entity {
             }
 
             if (((etype instanceof WeaponType) && (etype
-                    .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD)))) {
+                                                           .hasFlag(WeaponType.F_AMS) || etype
+                                                           .hasFlag(WeaponType.F_B_POD)))) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
@@ -1191,19 +1194,19 @@ public class Tank extends Entity {
                 dEquipmentBV += etype.getBV(this);
                 WeaponType wtype = (WeaponType) etype;
                 if (wtype.hasFlag(WeaponType.F_AMS)
-                        && (wtype.getAmmoType() == AmmoType.T_AMS)) {
+                    && (wtype.getAmmoType() == AmmoType.T_AMS)) {
                     amsBV += etype.getBV(this);
                 }
             } else if (((etype instanceof MiscType) && (etype
-                    .hasFlag(MiscType.F_ECM)
-                    || etype.hasFlag(MiscType.F_AP_POD)
-                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_BULLDOZER)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype
-                        .hasFlag(MiscType.F_BAP)))
-                    || etype.hasFlag(MiscType.F_MINESWEEPER)) {
+                                                                .hasFlag(MiscType.F_ECM)
+                                                        || etype.hasFlag(MiscType.F_AP_POD)
+                                                        || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                                                        || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                                                        || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                                                        || etype.hasFlag(MiscType.F_BULLDOZER)
+                                                        || etype.hasFlag(MiscType.F_CHAFF_POD) || etype
+                    .hasFlag(MiscType.F_BAP)))
+                       || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 bvText.append(startColumn);
@@ -1278,11 +1281,11 @@ public class Tank extends Entity {
         }
 
         if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
-                || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
-                || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
-                || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+            || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
+            || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
+            || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+            || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
+            || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
             typeModifier += .1;
         } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
             typeModifier += .2;
@@ -1312,7 +1315,7 @@ public class Tank extends Entity {
                 this instanceof VTOL).getValue();
         // for the future, when we implement jumping tanks
         double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true,
-                false).getValue();
+                                                             false).getValue();
         if (hasStealth()) {
             tmmRan += 2;
             tmmJumped += 2;
@@ -1415,8 +1418,8 @@ public class Tank extends Entity {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getWeaponList()) {
                     if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted
-                                    .getLocation())) {
+                        && (possibleMG.getLocation() == mounted
+                            .getLocation())) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -1439,17 +1442,17 @@ public class Tank extends Entity {
                 }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                     bvText.append(" x 1.2 Artemis");
                 }
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                     bvText.append(" x 1.3 Artemis V");
                 }
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     bvText.append(" x 1.15 Apollo");
                 }
@@ -1460,7 +1463,7 @@ public class Tank extends Entity {
                 dBV *= 1.25;
                 bvText.append(" x 1.25 Direct Fire and TC");
             } else if ((this instanceof SupportTank)
-                    && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                       && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMod;
                 bvText.append(" x ");
                 bvText.append(targetingSystemBVMod);
@@ -1468,7 +1471,7 @@ public class Tank extends Entity {
             }
             bvText.append(endColumn);
             bvText.append(startColumn);
-            if (mounted.getLocation() == (this instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:this instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:LOC_REAR)) {
+            if (mounted.getLocation() == (this instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR : this instanceof LargeSupportTank ? LargeSupportTank.LOC_REAR : LOC_REAR)) {
                 weaponsBVRear += dBV;
                 bvText.append(" Rear");
             } else if (mounted.getLocation() == LOC_FRONT) {
@@ -1481,18 +1484,18 @@ public class Tank extends Entity {
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
-                    || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
-                    || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) || (wtype
-                    .getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                        .getAmmoType() == AmmoType.T_NA))) {
+                                                           || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
+                                                           || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) || (wtype
+                                                                                                                           .getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
+                  || wtype.hasFlag(WeaponType.F_ONESHOT)
+                  || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
+                                                                      .getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                 } else {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
-                            + weaponsForExcessiveAmmo.get(key));
+                                                     + weaponsForExcessiveAmmo.get(key));
                 }
             }
             bvText.append(endColumn);
@@ -1575,16 +1578,16 @@ public class Tank extends Entity {
 
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = getOwner();
+                || (atype.getMunitionType() == AmmoType.M_HOMING)) {
+                IPlayer tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP != null) {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != Player.TEAM_NONE)
-                            && (game != null)) {
+                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
+                               && (game != null)) {
                         for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
+                                .hasMoreElements(); ) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
@@ -1628,7 +1631,7 @@ public class Tank extends Entity {
         for (String key : keys) {
             // They dont exist in either hash then dont bother adding nulls.
             if (!ammo.containsKey(key)
-                    || !weaponsForExcessiveAmmo.containsKey(key)) {
+                || !weaponsForExcessiveAmmo.containsKey(key)) {
                 continue;
             }
             if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
@@ -1685,12 +1688,12 @@ public class Tank extends Entity {
 
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype
                     .hasFlag(MiscType.F_WATCHDOG))
-                    || mtype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)
-                    || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
+                || mtype.hasFlag(MiscType.F_AP_POD)
+                // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                || mtype.hasFlag(MiscType.F_CHAFF_POD)
+                || mtype.hasFlag(MiscType.F_BAP)
+                || mtype.hasFlag(MiscType.F_TARGCOMP)
+                || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;
             }
             double bv = mtype.getBV(this, mounted.getLocation());
@@ -1766,7 +1769,7 @@ public class Tank extends Entity {
         }
         double speedFactor = Math
                 .pow(1 + (((runMP + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10),
-                        1.2);
+                     1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
@@ -1888,13 +1891,13 @@ public class Tank extends Entity {
         // are we wheeled and in light snow?
         IHex hex = game.getBoard().getHex(getPosition());
         if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
-                && (hex.terrainLevel(Terrains.SNOW) == 1)) {
+            && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
         }
 
         // VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni")
-                && !getCrew().getOptions().booleanOption("bvdni")) {
+            && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -1951,7 +1954,7 @@ public class Tank extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+                                   boolean ignoremodulararmor) {
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
@@ -1962,7 +1965,7 @@ public class Tank extends Entity {
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+                        boolean ignoremodulararmor) {
         if (hasArmedMASC()) {
             return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
         }
@@ -2007,7 +2010,7 @@ public class Tank extends Entity {
         // 50 is a pretty arbitrary max amount, but that's also the
         // highest elevation for VTOLs, so I'll just use that
         if ((getElevation() > 0)
-                && (getMovementMode() == EntityMovementMode.WIGE)) {
+            && (getMovementMode() == EntityMovementMode.WIGE)) {
             return 50;
         }
         return super.getMaxElevationDown();
@@ -2031,7 +2034,7 @@ public class Tank extends Entity {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
-                    && (loc_is != IArmorState.ARMOR_DESTROYED);
+                     && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
         return retval;
     }
@@ -2040,9 +2043,9 @@ public class Tank extends Entity {
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && (EntityMovementMode.HOVER == getMovementMode()))
-                && !(EntityMovementMode.WIGE == getMovementMode())
-                && !(getStunnedTurns() > 0);
+               && !(game.getOptions().booleanOption("no_hover_charge") && (EntityMovementMode.HOVER == getMovementMode()))
+               && !(EntityMovementMode.WIGE == getMovementMode())
+               && !(getStunnedTurns() > 0);
     }
 
     @Override
@@ -2169,7 +2172,7 @@ public class Tank extends Entity {
                 "Omni Multiplier",
                 "Movement Multiplier",
                 "Flotation Hull/Vacuum Protection/Environmental Sealing multiplier",
-                "Off-Road Multiplier" };
+                "Off-Road Multiplier"};
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -2269,12 +2272,12 @@ public class Tank extends Entity {
         if (hasPatchworkArmor()) {
             for (int loc = 0; loc < locations(); loc++) {
                 costs[i++] = getArmorWeight(loc)
-                        * EquipmentType.getArmorCost(armorType[loc]);
+                             * EquipmentType.getArmorCost(armorType[loc]);
             }
 
         } else {
             costs[i++] = getArmorWeight()
-                    * EquipmentType.getArmorCost(armorType[0]);
+                         * EquipmentType.getArmorCost(armorType[0]);
         }
         double diveTonnage;
         switch (movementMode) {
@@ -2336,8 +2339,8 @@ public class Tank extends Entity {
         costs[i++] = -multiplier;
 
         if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+            || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             cost *= 1.25;
             costs[i++] = -1.25;
 
@@ -2354,11 +2357,11 @@ public class Tank extends Entity {
     public boolean doomedInVacuum() {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
+                && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
                 return false;
             }
             if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 return false;
             }
         }
@@ -2432,9 +2435,8 @@ public class Tank extends Entity {
     /**
      * adds minor, moderate or heavy movement system damage
      *
-     * @param level
-     *            a <code>int</code> representing minor damage (1), moderate
-     *            damage (2), heavy damage (3), or immobilized (4)
+     * @param level a <code>int</code> representing minor damage (1), moderate
+     *              damage (2), heavy damage (3), or immobilized (4)
      */
     public void addMovementDamage(int level) {
         switch (level) {
@@ -2459,7 +2461,7 @@ public class Tank extends Entity {
                 int nMP = getOriginalWalkMP() - motiveDamage;
                 if (nMP > 0) {
                     motiveDamage = getOriginalWalkMP()
-                            - (int) Math.ceil(nMP / 2.0);
+                                   - (int) Math.ceil(nMP / 2.0);
                 }
                 break;
             case 4:
@@ -2497,9 +2499,9 @@ public class Tank extends Entity {
         }
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true, mounted));
+                                          getEquipmentNum(mounted), true, mounted));
         if ((mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+            && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
             setOriginalJumpMP(getOriginalJumpMP() + 1);
         }
     }
@@ -2508,10 +2510,8 @@ public class Tank extends Entity {
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
      *
-     * @param roll
-     *            the final dice roll
-     * @param loc
-     *            the hit location
+     * @param roll the final dice roll
+     * @param loc  the hit location
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int loc) {
@@ -2519,7 +2519,7 @@ public class Tank extends Entity {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
+            || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -2541,8 +2541,8 @@ public class Tank extends Entity {
                     case 7:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                && !m.isJammed() && !m.isHit()
+                                && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2571,7 +2571,7 @@ public class Tank extends Entity {
                     case 11:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -2585,8 +2585,8 @@ public class Tank extends Entity {
                     case 6:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                && !m.isJammed() && !m.isHit()
+                                && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2605,7 +2605,7 @@ public class Tank extends Entity {
                     case 9:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -2616,7 +2616,7 @@ public class Tank extends Entity {
                     case 11:
                         for (Mounted m : getAmmo()) {
                             if (!m.isDestroyed() && !m.isHit()
-                                    && (m.getLocation() != Entity.LOC_NONE)) {
+                                && (m.getLocation() != Entity.LOC_NONE)) {
                                 return CRIT_AMMO;
                             }
                         }
@@ -2644,8 +2644,8 @@ public class Tank extends Entity {
                     case 8:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                && !m.isJammed() && !m.isHit()
+                                && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2656,14 +2656,14 @@ public class Tank extends Entity {
                     case 10:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
                             if (!m.isDestroyed() && !m.isHit()
-                                    && (m.getLocation() != Entity.LOC_NONE)) {
+                                && (m.getLocation() != Entity.LOC_NONE)) {
                                 return CRIT_AMMO;
                             }
                         }
@@ -2679,8 +2679,8 @@ public class Tank extends Entity {
                     case 7:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                && !m.isJammed() && !m.isHit()
+                                && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2702,7 +2702,7 @@ public class Tank extends Entity {
                     case 10:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -2839,7 +2839,7 @@ public class Tank extends Entity {
         for (int slot = 0; slot < getNumberOfCriticals(LOC_BODY); slot++) {
             CriticalSlot cs = getCritical(LOC_BODY, slot);
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                    && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
+                && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
                 return cs.isArmored();
             }
         }
@@ -2902,9 +2902,9 @@ public class Tank extends Entity {
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On")
-                        && hasActiveECM()
-                        && !Compute.isAffectedByECCM(this, getPosition(),
-                                getPosition())) {
+                    && hasActiveECM()
+                    && !Compute.isAffectedByECCM(this, getPosition(),
+                                                 getPosition())) {
                     // Return true if the mode is "On" and ECM is working
                     // and we're not in ECCM
                     return true;
@@ -2961,7 +2961,7 @@ public class Tank extends Entity {
         boolean addedCargo = false;
         for (Mounted mount : this.getEquipment()) {
             if ((mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_CARGO)) {
+                && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
                     usedSlots++;
                     addedCargo = true;
@@ -3009,7 +3009,7 @@ public class Tank extends Entity {
         for (Mounted ammo : getAmmo()) {
             // don't count oneshot ammo
             if ((ammo.getLocation() == Entity.LOC_NONE)
-                    && (ammo.getBaseShotsLeft() == 1)) {
+                && (ammo.getBaseShotsLeft() == 1)) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();
@@ -3031,7 +3031,7 @@ public class Tank extends Entity {
         // unit transport bays take 1 slot each
         for (Bay bay : getTransportBays()) {
             if (((bay instanceof BattleArmorBay) || (bay instanceof InfantryBay))
-                    && !infantryBayCounted) {
+                && !infantryBayCounted) {
                 usedSlots++;
                 infantryBayCounted = true;
             } else {
@@ -3086,8 +3086,8 @@ public class Tank extends Entity {
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType
-                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
-                        LOC_BODY);
+                                                            .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
+                                  LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
             }
@@ -3101,11 +3101,11 @@ public class Tank extends Entity {
     public boolean hasArmedMASC() {
         for (Mounted m : getEquipment()) {
             if (!m.isDestroyed()
-                    && !m.isBreached()
-                    && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)
-                    && (m.curMode().equals("Armed") || m.getType().hasSubType(
-                            MiscType.S_JETBOOSTER))) {
+                && !m.isBreached()
+                && (m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_MASC)
+                && (m.curMode().equals("Armed") || m.getType().hasSubType(
+                    MiscType.S_JETBOOSTER))) {
                 return true;
             }
         }
@@ -3131,11 +3131,9 @@ public class Tank extends Entity {
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param range
-     *            - an <code>int</code> value that must match one of the
-     *            <code>Compute</code> class range constants.
-     * @param ae
-     *            - entity making the attack
+     * @param range - an <code>int</code> value that must match one of the
+     *              <code>Compute</code> class range constants.
+     * @param ae    - entity making the attack
      * @return a <code>TargetRoll</code> value that contains the stealth
      *         modifier for the given range.
      */
@@ -3144,7 +3142,7 @@ public class Tank extends Entity {
         TargetRoll result = null;
 
         boolean isInfantry = (ae instanceof Infantry)
-                && !(ae instanceof BattleArmor);
+                             && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");
@@ -3388,9 +3386,9 @@ public class Tank extends Entity {
     public boolean isBackedIntoHullDown() {
         return m_bBackedIntoHullDown;
     }
-    
-    public long getEntityType(){
+
+    public long getEntityType() {
         return Entity.ETYPE_TANK;
     }
-    
+
 }

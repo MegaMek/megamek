@@ -62,9 +62,9 @@ public class Aero extends Entity {
     public static final int COCKPIT_COMMAND_CONSOLE = 2;
     public static final int COCKPIT_PRIMITIVE = 3;
     public static final String[] COCKPIT_STRING =
-        { "Standard Cockpit", "Small Cockpit", "Command Console", "Primitive Cockpit" };
+            {"Standard Cockpit", "Small Cockpit", "Command Console", "Primitive Cockpit"};
     public static final String[] COCKPIT_SHORT_STRING =
-        { "Standard", "Small", "Command Console", "Primitive" };
+            {"Standard", "Small", "Command Console", "Primitive"};
 
     // critical hits
     public static final int CRIT_NONE = -1;
@@ -96,12 +96,12 @@ public class Aero extends Entity {
     // warships
     // and bombs and such
     private static final int[] NUM_OF_SLOTS =
-        { 100, 100, 100, 100, 100, 100 };
+            {100, 100, 100, 100, 100, 100};
 
     private static String[] LOCATION_ABBRS =
-        { "NOS", "LWG", "RWG", "AFT", "WNG" };
+            {"NOS", "LWG", "RWG", "AFT", "WNG"};
     private static String[] LOCATION_NAMES =
-        { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
+            {"Nose", "Left Wing", "Right Wing", "Aft", "Wings"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -123,7 +123,7 @@ public class Aero extends Entity {
     private int orig_structIntegrity;
     // set up damage threshold
     protected int damThresh[] =
-        { 0, 0, 0, 0, 0 };
+            {0, 0, 0, 0, 0};
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
 
@@ -1060,7 +1060,7 @@ public class Aero extends Entity {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 0; loc < (this instanceof SmallCraft?locations():(locations() - 1)); loc++) {
+        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 1)); loc++) {
 
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
@@ -1347,9 +1347,9 @@ public class Aero extends Entity {
 
             // RACs, LACs and ACs don't really count
             if ((etype instanceof WeaponType)
-                    && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
-                            || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
-                            .getAmmoType() == AmmoType.T_LAC))) {
+                && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
+                                                                                         .getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }
 
@@ -1363,7 +1363,7 @@ public class Aero extends Entity {
                 explosivePenalty += toSubtract;
             }
         }
-        explosivePenalty += ammos.size()*15;
+        explosivePenalty += ammos.size() * 15;
         dbv = Math.max(1, dbv - explosivePenalty);
 
         bvText.append(startRow);
@@ -1696,17 +1696,17 @@ public class Aero extends Entity {
                 }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                     name = name.concat(" with Artemis IV");
                 }
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                     name = name.concat(" with Artemis V");
                 }
                 if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");
                 }
@@ -2008,14 +2008,14 @@ public class Aero extends Entity {
             }
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = getOwner();
+                IPlayer tmpP = getOwner();
 
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
+                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE) && (game != null)) {
+                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
@@ -2175,7 +2175,7 @@ public class Aero extends Entity {
         // units base BV
         boolean hasBombs = false;
         double bombBV = 0;
-        for (int bombType = 0; bombType < BombType.B_NUM; bombType++ ){
+        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
             BombType bomb = BombType.createBombByType(bombType);
             bombBV += bomb.bv * bombChoices[bombType];
             if (bombChoices[bombType] > 0) {
@@ -2183,7 +2183,7 @@ public class Aero extends Entity {
             }
         }
         finalBV += bombBV;
-        if (hasBombs){
+        if (hasBombs) {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("External Stores BV");
@@ -2383,16 +2383,16 @@ public class Aero extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-    	return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-    	//if aeros are on the ground, they can only move at cruising speed
-    	if (!isAirborne()) {
+        //if aeros are on the ground, they can only move at cruising speed
+        if (!isAirborne()) {
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         }
-    	return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
@@ -2622,10 +2622,8 @@ public class Aero extends Entity {
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
      *
-     * @param roll
-     *            the final dice roll
-     * @param target
-     *            the hit location
+     * @param roll   the final dice roll
+     * @param target the hit location
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int target) {
@@ -2958,11 +2956,10 @@ public class Aero extends Entity {
 
     /**
      * Used to determine net velocity of ramming attack
-     *
      */
     @Override
     public int sideTableRam(Coords src) {
-    	int side = super.sideTableRam(src);
+        int side = super.sideTableRam(src);
         if (game.useVectorMove() && game.getBoard().inSpace()) {
             int newside = chooseSideRam(src);
             if (newside != -1) {
@@ -3098,9 +3095,9 @@ public class Aero extends Entity {
         // add the space bomb attack
         // TODO: I don't know where else to put this (where do infantry attacks
         // get added)
-        if (game.getOptions().booleanOption("stratops_space_bomb") && 
-                loadedABomb && game.getBoard().inSpace() && 
-                (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+        if (game.getOptions().booleanOption("stratops_space_bomb") &&
+            loadedABomb && game.getBoard().inSpace() &&
+            (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
@@ -3108,7 +3105,7 @@ public class Aero extends Entity {
             }
         }
         if (loadedABomb && !game.getBoard().inSpace() &&
-                getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+            getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
@@ -3358,8 +3355,7 @@ public class Aero extends Entity {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
+     * @param unit - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
@@ -3374,7 +3370,7 @@ public class Aero extends Entity {
         return super.canLoad(unit, checkFalse);
     }
 
-    /***
+    /**
      * use the specified amount of fuel for this Aero. The amount may be
      * adjusted by certain game options
      */
@@ -3783,20 +3779,20 @@ public class Aero extends Entity {
         double internalPercent = getInternalRemainingPercent();
         String msg = getDisplayName() + " CRIPPLED: ";
         if (internalPercent < 0.5) {
-            System.out.println( msg + "only " + NumberFormat.getPercentInstance().format(internalPercent) +
-                                       " internals remaining.");
+            System.out.println(msg + "only " + NumberFormat.getPercentInstance().format(internalPercent) +
+                               " internals remaining.");
             return true;
         }
         if (getEngineHits() > 0) {
-            System.out.println( msg + engineHits + " Engine Hits.");
+            System.out.println(msg + engineHits + " Engine Hits.");
             return true;
         }
         if (getPotCrit() == CRIT_FUEL_TANK) {
-            System.out.println( msg + " Fuel Tank Hit.");
+            System.out.println(msg + " Fuel Tank Hit.");
             return true;
         }
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println( msg + getCrew().getHits() + " Crew Hits.");
+            System.out.println(msg + getCrew().getHits() + " Crew Hits.");
             return true;
         }
 
@@ -3806,7 +3802,7 @@ public class Aero extends Entity {
         }
 
         if (!hasViableWeapons()) {
-            System.out.println( msg + " no more viable weapons.");
+            System.out.println(msg + " no more viable weapons.");
             return true;
         }
         return false;
@@ -3838,7 +3834,7 @@ public class Aero extends Entity {
                 totalInoperable++;
             }
         }
-        return ((double)totalInoperable / totalWeapons) >= 0.75;
+        return ((double) totalInoperable / totalWeapons) >= 0.75;
     }
 
     @Override
@@ -3867,7 +3863,7 @@ public class Aero extends Entity {
                 totalInoperable++;
             }
         }
-        return ((double)totalInoperable / totalWeapons) >= 0.5;
+        return ((double) totalInoperable / totalWeapons) >= 0.5;
     }
 
     @Override
@@ -3896,7 +3892,7 @@ public class Aero extends Entity {
                 totalInoperable++;
             }
         }
-        return ((double)totalInoperable / totalWeapons) >= 0.25;
+        return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
 
     @Override
@@ -3970,7 +3966,7 @@ public class Aero extends Entity {
         return 0;
     }
 
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_AERO;
     }
 }

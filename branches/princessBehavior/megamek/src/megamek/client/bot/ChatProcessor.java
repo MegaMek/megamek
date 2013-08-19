@@ -17,12 +17,10 @@ package megamek.client.bot;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
 import megamek.server.commands.DefeatCommand;
@@ -32,8 +30,8 @@ public class ChatProcessor {
     protected boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
         if (!StringUtil.isNullOrEmpty(message) &&
-                (message.contains("declares individual victory at the end of the turn.")
-                        || message.contains("declares team victory at the end of the turn."))) {
+            (message.contains("declares individual victory at the end of the turn.")
+             || message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
@@ -41,7 +39,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.getGame().getPlayersVector()) {
+            for (IPlayer p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
@@ -58,16 +56,16 @@ public class ChatProcessor {
         boolean result = false;
 
         if (!StringUtil.isNullOrEmpty(message) &&
-                (message.contains(DefeatCommand.wantsDefeat) || message.contains(DefeatCommand.admitsDefeat))) {
+            (message.contains(DefeatCommand.wantsDefeat) || message.contains(DefeatCommand.admitsDefeat))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
             while (!splitMessage[i + 1].equals("wants")
-                    && !splitMessage[i + 1].equals("admits")) {
+                   && !splitMessage[i + 1].equals("admits")) {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (Player p : bot.getGame().getPlayersVector()) {
+            for (IPlayer p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
@@ -101,8 +99,8 @@ public class ChatProcessor {
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<Player> e = bot.game.getPlayers();
-        Player p = null;
+        Enumeration<IPlayer> e = bot.game.getPlayers();
+        IPlayer p = null;
         while (e.hasMoreElements()) {
             p = e.nextElement();
             if (name.equalsIgnoreCase(p.getName())) {
@@ -118,11 +116,11 @@ public class ChatProcessor {
     }
 
     private void additionalTestBotCommands(StringTokenizer st, TestBot tb,
-                                           Player p) {
+                                           IPlayer p) {
         try {
             if (st.hasMoreTokens()
-                    && st.nextToken().trim()
-                    .equalsIgnoreCase(tb.getLocalPlayer().getName())) {
+                && st.nextToken().trim()
+                     .equalsIgnoreCase(tb.getLocalPlayer().getName())) {
                 if (!p.isEnemyOf(tb.getLocalPlayer())) {
                     if (st.hasMoreTokens()) {
                         String command = st.nextToken().trim();
@@ -134,7 +132,7 @@ public class ChatProcessor {
                         }
                         if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
                             Iterator<Entity> i = tb.getEntitiesOwned()
-                                    .iterator();
+                                                   .iterator();
                             while (i.hasNext()) {
                                 CEntity cen = tb.centities.get(i.next());
                                 if (cen.strategy.attack > 1) {
@@ -144,7 +142,7 @@ public class ChatProcessor {
                             understood = true;
                         } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
                             Iterator<Entity> i = tb.getEntitiesOwned()
-                                    .iterator();
+                                                   .iterator();
                             while (i.hasNext()) {
                                 CEntity cen = tb.centities.get(i.next());
                                 cen.strategy.attack = Math.min(
@@ -161,8 +159,8 @@ public class ChatProcessor {
                                     CEntity cen = tb.centities.get(en);
                                     cen.strategy.target += 3;
                                     System.out.println(cen.entity
-                                            .getShortName()
-                                            + " " + cen.strategy.target); //$NON-NLS-1$
+                                                          .getShortName()
+                                                       + " " + cen.strategy.target); //$NON-NLS-1$
                                     understood = true;
                                 }
                             }

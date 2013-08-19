@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when Game turn changes
@@ -22,7 +22,7 @@ import megamek.common.Player;
 public class GameTurnChangeEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6812056631576383917L;
 
@@ -30,17 +30,17 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GameTurnChangeEvent(Object source, Player player) {
+    public GameTurnChangeEvent(Object source, IPlayer player) {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameTurnChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameTurnChange(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Turn Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Turn Change";
+    }
 }

@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when some Player is changed
@@ -22,7 +22,7 @@ import megamek.common.Player;
 public class GamePlayerChangeEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3708864968498633017L;
 
@@ -30,17 +30,17 @@ public class GamePlayerChangeEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GamePlayerChangeEvent(Object source, Player player) {
+    public GamePlayerChangeEvent(Object source, IPlayer player) {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerChange(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Status Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Status Change";
+    }
 }

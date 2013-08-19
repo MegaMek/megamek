@@ -81,13 +81,13 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Sensor;
@@ -238,8 +238,7 @@ public class MechDisplay extends BufferedPanel {
      * Adds the specified mech display listener to receive events from this
      * view.
      *
-     * @param listener
-     *            the listener.
+     * @param listener the listener.
      */
     public void addMechDisplayListener(MechDisplayListener listener) {
         eventListeners.addElement(listener);
@@ -248,8 +247,7 @@ public class MechDisplay extends BufferedPanel {
     /**
      * Removes the specified board listener.
      *
-     * @param listener
-     *            the listener.
+     * @param listener the listener.
      */
     public void removeMechDisplayListener(MechDisplayListener listener) {
         eventListeners.removeElement(listener);
@@ -258,20 +256,19 @@ public class MechDisplay extends BufferedPanel {
     /**
      * Notifies attached listeners of the event.
      *
-     * @param event
-     *            the mech display event.
+     * @param event the mech display event.
      */
     public void processMechDisplayEvent(MechDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
             MechDisplayListener lis = eventListeners.elementAt(i);
             switch (event.getType()) {
-            case MechDisplayEvent.WEAPON_SELECTED:
-                lis.weaponSelected(event);
-                break;
-            default:
-                System.err.println("unknown event " + event.getType()
-                        + " in processMechDisplayEvent");
-                break;
+                case MechDisplayEvent.WEAPON_SELECTED:
+                    lis.weaponSelected(event);
+                    break;
+                default:
+                    System.err.println("unknown event " + event.getType()
+                                       + " in processMechDisplayEvent");
+                    break;
             }
         }
     }
@@ -942,13 +939,13 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+                | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+                | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -959,31 +956,31 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "v_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "bl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tr_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "br_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1004,12 +1001,12 @@ public class MechDisplay extends BufferedPanel {
             entity = en;
 
             int currentHeatBuildup = (en.heat // heat from last round
-                    + en.getEngineCritHeat() // heat engine crits will add
-                    + Math.min(15, en.heatFromExternal) // heat from external
-                    // sources
-                    + en.heatBuildup // heat we're building up this round
-)
-                    - Math.min(9, en.coolFromExternal); // cooling from external sources
+                                      + en.getEngineCritHeat() // heat engine crits will add
+                                      + Math.min(15, en.heatFromExternal) // heat from external
+                                      // sources
+                                      + en.heatBuildup // heat we're building up this round
+                                     )
+                                     - Math.min(9, en.coolFromExternal); // cooling from external sources
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo
                     currentHeatBuildup += en.infernos.getHeat();
@@ -1018,10 +1015,10 @@ public class MechDisplay extends BufferedPanel {
                     // extreme temperatures.
                     if (game.getPlanetaryConditions().getTemperature() > 0) {
                         currentHeatBuildup += game.getPlanetaryConditions()
-                                .getTemperatureDifference(50, -30);
+                                                  .getTemperatureDifference(50, -30);
                     } else {
                         currentHeatBuildup -= game.getPlanetaryConditions()
-                                .getTemperatureDifference(50, -30);
+                                                  .getTemperatureDifference(50, -30);
                     }
                 }
             }
@@ -1038,10 +1035,10 @@ public class MechDisplay extends BufferedPanel {
                 }
             }
             if ((en instanceof Mech)
-                    && (en.isStealthActive() || en.isNullSigActive() || en
-                            .isVoidSigActive())) {
+                && (en.isStealthActive() || en.isNullSigActive() || en
+                    .isVoidSigActive())) {
                 currentHeatBuildup += 10; // active stealth/nullsig/void sig
-                                          // heat
+                // heat
             }
 
             if ((en instanceof Mech) && en.isChameleonShieldActive()) {
@@ -1092,10 +1089,10 @@ public class MechDisplay extends BufferedPanel {
                 wn.append("]"); //$NON-NLS-1$
                 // determine shots left & total shots left
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
-                        && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                    && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
                     int shotsLeft = 0;
                     if ((mounted.getLinked() != null)
-                            && !mounted.getLinked().isDumping()) {
+                        && !mounted.getLinked().isDumping()) {
                         shotsLeft = mounted.getLinked().getUsableShotsLeft();
                     }
 
@@ -1135,15 +1132,15 @@ public class MechDisplay extends BufferedPanel {
                 }
                 weaponList.add(wn.toString());
                 if (mounted.isUsedThisRound()
-                        && (game.getPhase() == mounted.usedInPhase())
-                        && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
+                    && (game.getPhase() == mounted.usedInPhase())
+                    && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
                     // add heat from weapons fire to heat tracker
                     if (entity.usesWeaponBays()) {
                         // if using bay heat option then don't add total arc
                         if (game.getOptions().booleanOption("heat_by_bay")) {
                             for (int wId : mounted.getBayWeapons()) {
                                 currentHeatBuildup += entity.getEquipment(wId)
-                                        .getCurrentHeat();
+                                                            .getCurrentHeat();
                             }
                         } else {
                             // check whether arc has fired
@@ -1287,7 +1284,7 @@ public class MechDisplay extends BufferedPanel {
             wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
 
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
-                    .getLocation(), mounted.isRearMounted())));
+                                                                           .getLocation(), mounted.isRearMounted())));
 
             if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 if (wtype instanceof HAGWeapon) {
@@ -1302,13 +1299,13 @@ public class MechDisplay extends BufferedPanel {
             } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 StringBuffer damage = new StringBuffer();
                 damage.append(Integer.toString(wtype.getRackSize()))
-                        .append('/').append(
-                                Integer.toString(wtype.getRackSize() / 2));
+                      .append('/').append(
+                        Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
             } else if (wtype.hasFlag(WeaponType.F_ENERGY)
-                    && wtype.hasModes()
-                    && clientgui.getClient().game.getOptions().booleanOption(
-                            "tacops_energy_weapons")) {
+                       && wtype.hasModes()
+                       && clientgui.getClient().game.getOptions().booleanOption(
+                    "tacops_energy_weapons")) {
                 if (mounted.hasChargedCapacitor() != 0) {
                     if (mounted.hasChargedCapacitor() == 2) {
                         wDamR.setText(Integer.toString(Compute.dialDownDamage(
@@ -1332,8 +1329,8 @@ public class MechDisplay extends BufferedPanel {
             int longR = wtype.getLongRange();
             int extremeR = wtype.getExtremeRange();
             if ((ILocationExposureStatus.WET == entity.getLocationStatus(mounted
-                    .getLocation()))
-                    || (longR == 0)) {
+                                                                                 .getLocation()))
+                || (longR == 0)) {
                 shortR = wtype.getWShortRange();
                 mediumR = wtype.getWMediumRange();
                 longR = wtype.getWLongRange();
@@ -1421,7 +1418,7 @@ public class MechDisplay extends BufferedPanel {
                     n = 0;
                 }
                 mounted = entity.getEquipment(mounted.getBayWeapons()
-                        .elementAt(n));
+                                                     .elementAt(n));
                 wtype = (WeaponType) mounted.getType();
             }
             if (wtype.getAmmoType() == AmmoType.T_NA) {
@@ -1435,7 +1432,7 @@ public class MechDisplay extends BufferedPanel {
                 }
             } else {
                 if (!(entity instanceof Infantry)
-                        || (entity instanceof BattleArmor)) {
+                    || (entity instanceof BattleArmor)) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);
@@ -1450,21 +1447,21 @@ public class MechDisplay extends BufferedPanel {
                     // ammo must be located in the same place to be usable
                     boolean same = true;
                     if ((entity instanceof SmallCraft)
-                            || (entity instanceof Jumpship)) {
+                        || (entity instanceof Jumpship)) {
                         same = (mounted.getLocation() == mountedAmmo
                                 .getLocation());
                     }
 
                     boolean rightBay = true;
                     if (entity.usesWeaponBays()
-                            && !(entity instanceof FighterSquadron)) {
+                        && !(entity instanceof FighterSquadron)) {
                         rightBay = oldmount.ammoInBay(entity
-                                .getEquipmentNum(mountedAmmo));
+                                                              .getEquipmentNum(mountedAmmo));
                     }
 
                     if (mountedAmmo.isAmmoUsable() && same && rightBay
-                            && (atype.getAmmoType() == wtype.getAmmoType())
-                            && (atype.getRackSize() == wtype.getRackSize())) {
+                        && (atype.getAmmoType() == wtype.getAmmoType())
+                        && (atype.getRackSize() == wtype.getRackSize())) {
 
                         vAmmo.addElement(mountedAmmo);
                         m_chAmmo.add(formatAmmo(mountedAmmo));
@@ -1481,7 +1478,7 @@ public class MechDisplay extends BufferedPanel {
 
             // send event to other parts of the UI which care
             owner.processMechDisplayEvent(new MechDisplayEvent(this, entity,
-                    mounted));
+                                                               mounted));
         }
 
         private String formatAmmo(Mounted m) {
@@ -1510,8 +1507,7 @@ public class MechDisplay extends BufferedPanel {
         /**
          * Update the range display for the selected ammo.
          *
-         * @param mAmmo
-         *            - the <code>AmmoType</code> of the weapon's loaded ammo.
+         * @param mAmmo - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
         private void updateRangeDisplayForAmmo(Mounted mAmmo) {
 
@@ -1573,7 +1569,7 @@ public class MechDisplay extends BufferedPanel {
             if (null != wAmmo) {
                 AmmoType atype = (AmmoType) wAmmo.getType();
                 double[] changes = changeAttackValues(atype, avShort, avMed,
-                        avLong, avExt, maxr);
+                                                      avLong, avExt, maxr);
                 avShort = (int) changes[0];
                 avMed = (int) changes[1];
                 avLong = (int) changes[2];
@@ -1624,7 +1620,7 @@ public class MechDisplay extends BufferedPanel {
         }
 
         private double[] changeAttackValues(AmmoType atype, double avShort,
-                double avMed, double avLong, double avExt, int maxr) {
+                                            double avMed, double avLong, double avExt, int maxr) {
 
             if (AmmoType.T_ATM == atype.getAmmoType()) {
                 if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
@@ -1664,7 +1660,7 @@ public class MechDisplay extends BufferedPanel {
                 }
             } // end weapon is MML
             else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)) {
+                     || (atype.getAmmoType() == AmmoType.T_SRM)) {
 
                 if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
                     if (atype.getAmmoType() == AmmoType.T_LRM) {
@@ -1719,7 +1715,7 @@ public class MechDisplay extends BufferedPanel {
 
             }
 
-            double[] result = { avShort, avMed, avLong, avExt, maxr };
+            double[] result = {avShort, avMed, avLong, avExt, maxr};
             return result;
 
         }
@@ -1754,7 +1750,7 @@ public class MechDisplay extends BufferedPanel {
                     // check for ammo
                     if (bayWType.getAmmoType() != AmmoType.T_NA) {
                         if ((m.getLinked() == null)
-                                || (m.getLinked().getUsableShotsLeft() < 1)) {
+                            || (m.getLinked().getUsableShotsLeft() < 1)) {
                             continue;
                         }
                     }
@@ -1769,7 +1765,7 @@ public class MechDisplay extends BufferedPanel {
                     if (null != m.getLinked()) {
                         double[] changes = changeAttackValues((AmmoType) m
                                 .getLinked().getType(), mAVShort, mAVMed,
-                                mAVLong, mAVExt, mMaxR);
+                                                              mAVLong, mAVExt, mMaxR);
                         mAVShort = changes[0];
                         mAVMed = changes[1];
                         mAVLong = changes[2];
@@ -1867,7 +1863,7 @@ public class MechDisplay extends BufferedPanel {
                         return;
                     }
                     mWeap = entity.getEquipment(mWeap.getBayWeapons()
-                            .elementAt(n));
+                                                     .elementAt(n));
                 }
 
                 Mounted oldAmmo = mWeap.getLinked();
@@ -1877,8 +1873,8 @@ public class MechDisplay extends BufferedPanel {
                 // Refresh for hot load change
                 if ((((oldAmmo == null) || !oldAmmo.isHotLoaded()) && mAmmo
                         .isHotLoaded())
-                        || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
-                                .isHotLoaded())) {
+                    || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
+                        .isHotLoaded())) {
                     displayMech(entity);
                     weaponList.select(n);
                     displaySelected();
@@ -1908,8 +1904,8 @@ public class MechDisplay extends BufferedPanel {
                 }
                 // Alert the server of the update.
                 client.getClient().sendAmmoChange(entity.getId(),
-                        entity.getEquipmentNum(mWeap),
-                        entity.getEquipmentNum(mAmmo));
+                                                  entity.getEquipmentNum(mWeap),
+                                                  entity.getEquipmentNum(mAmmo));
                 displaySelected();
             } else if (ev.getItemSelectable() == m_chBayWeapon) {
                 int n = weaponList.getSelectedIndex();
@@ -1926,12 +1922,12 @@ public class MechDisplay extends BufferedPanel {
      * This class shows the critical hits and systems for a mech
      */
     class SystemPanel extends BufferedPanel implements ItemListener,
-            ActionListener {
+                                                       ActionListener {
         /**
          *
          */
         private static final long serialVersionUID = -1294456418186738773L;
-        
+
         private TransparentLabel locLabel, slotLabel, modeLabel, unitLabel;
         public java.awt.List slotList;
         public java.awt.List locList;
@@ -1978,7 +1974,7 @@ public class MechDisplay extends BufferedPanel {
             m_chMode.addKeyListener(clientgui.menuBar);
 
             m_bDumpAmmo = new Button(Messages
-                    .getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
+                                             .getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
             m_bDumpAmmo.setEnabled(false);
             m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
             m_bDumpAmmo.addActionListener(this);
@@ -2151,36 +2147,36 @@ public class MechDisplay extends BufferedPanel {
                     sb.append("---"); //$NON-NLS-1$
                 } else {
                     switch (cs.getType()) {
-                    case CriticalSlot.TYPE_SYSTEM:
-                        sb.append(cs.isDestroyed() ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
-                                .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-                        // Protomechs have different systme names.
-                        if (en instanceof Protomech) {
-                            sb.append(Protomech.systemNames[cs.getIndex()]);
-                        } else {
-                            sb.append(((Mech) en).getSystemName(cs.getIndex()));
-                        }
-                        break;
-                    case CriticalSlot.TYPE_EQUIPMENT:
-                        Mounted m = en.getEquipment(cs.getIndex());
-                        sb
-                                .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                        if (m.isHotLoaded()) {
-                            sb.append(Messages
-                                    .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
-                        }
-                        if (m.getType().hasModes()) {
-                            sb
-                                    .append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-                            if ((m.getType() instanceof MiscType)
-                                    && ((MiscType) m.getType()).isShield()) {
-                                sb.append(" " + m.getDamageAbsorption(en, loc)
-                                        + "/"
-                                        + m.getCurrentDamageCapacity(en, loc)
-                                        + ")");
+                        case CriticalSlot.TYPE_SYSTEM:
+                            sb.append(cs.isDestroyed() ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
+                                    .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+                            // Protomechs have different systme names.
+                            if (en instanceof Protomech) {
+                                sb.append(Protomech.systemNames[cs.getIndex()]);
+                            } else {
+                                sb.append(((Mech) en).getSystemName(cs.getIndex()));
                             }
-                        }
-                        break;
+                            break;
+                        case CriticalSlot.TYPE_EQUIPMENT:
+                            Mounted m = en.getEquipment(cs.getIndex());
+                            sb
+                                    .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if (m.isHotLoaded()) {
+                                sb.append(Messages
+                                                  .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                            }
+                            if (m.getType().hasModes()) {
+                                sb
+                                        .append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                                if ((m.getType() instanceof MiscType)
+                                    && ((MiscType) m.getType()).isShield()) {
+                                    sb.append(" " + m.getDamageAbsorption(en, loc)
+                                              + "/"
+                                              + m.getCurrentDamageCapacity(en, loc)
+                                              + ")");
+                                }
+                            }
+                            break;
                     }
                 }
                 slotList.add(sb.toString());
@@ -2210,17 +2206,17 @@ public class MechDisplay extends BufferedPanel {
                 Mounted m = getSelectedEquipment();
                 boolean carryingBAsOnBack = false;
                 if ((en instanceof Mech)
-                        && ((en.getExteriorUnitAt(Mech.LOC_CT, true) != null)
-                                || (en.getExteriorUnitAt(Mech.LOC_LT, true) != null) || (en
-                                .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
+                    && ((en.getExteriorUnitAt(Mech.LOC_CT, true) != null)
+                        || (en.getExteriorUnitAt(Mech.LOC_LT, true) != null) || (en
+                                                                                         .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
                     carryingBAsOnBack = true;
                 }
-                
+
                 boolean invalidEnvironment = false;
                 if ((en instanceof Mech) && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
-                
+
                 if ((en instanceof Tank) && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
@@ -2228,32 +2224,32 @@ public class MechDisplay extends BufferedPanel {
                 boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
                         .getOwner());
                 if ((m != null)
-                        && bOwner
-                        && (m.getType() instanceof AmmoType)
-                        && !(m.getType().hasInstantModeSwitch())
-                        && (IGame.Phase.PHASE_DEPLOYMENT != clientgui
-                                .getClient().game.getPhase())
-                        && (IGame.Phase.PHASE_MOVEMENT != clientgui
-                                .getClient().game.getPhase())
-                        && (m.getUsableShotsLeft() > 0)
-                        && !m.isDumping()
-                        && en.isActive()
-                        && (clientgui.getClient().game.getOptions().intOption(
-                                "dumping_from_round") <= clientgui.getClient().game
+                    && bOwner
+                    && (m.getType() instanceof AmmoType)
+                    && !(m.getType().hasInstantModeSwitch())
+                    && (IGame.Phase.PHASE_DEPLOYMENT != clientgui
+                        .getClient().game.getPhase())
+                    && (IGame.Phase.PHASE_MOVEMENT != clientgui
+                        .getClient().game.getPhase())
+                    && (m.getUsableShotsLeft() > 0)
+                    && !m.isDumping()
+                    && en.isActive()
+                    && (clientgui.getClient().game.getOptions().intOption(
+                        "dumping_from_round") <= clientgui.getClient().game
                                 .getRoundCount())
-                        && !carryingBAsOnBack
-                        && !invalidEnvironment) {
+                    && !carryingBAsOnBack
+                    && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
                     if (clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_hotload")
-                            && (en instanceof Tank)
-                            && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                        && (en instanceof Tank)
+                        && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                         m_bDumpAmmo.setEnabled(false);
                         modeLabel.setEnabled(true);
                         m_chMode.setEnabled(true);
                         m_chMode.removeAll();
                         for (Enumeration<EquipmentMode> e = m.getType()
-                                .getModes(); e.hasMoreElements();) {
+                                                             .getModes(); e.hasMoreElements(); ) {
                             EquipmentMode em = e.nextElement();
                             m_chMode.add(em.getDisplayableName());
                         }
@@ -2264,21 +2260,21 @@ public class MechDisplay extends BufferedPanel {
                         m_chMode.setEnabled(true);
                     }
                     if (!m.isDestroyed() && !en.isActive()
-                            && en.isCapitalFighter()
-                            && en.isPartOfFighterSquadron()) {
+                        && en.isCapitalFighter()
+                        && en.isPartOfFighterSquadron()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!m.isDestroyed()
-                            && m.getType().hasFlag(MiscType.F_STEALTH)) {
+                        && m.getType().hasFlag(MiscType.F_STEALTH)) {
                         m_chMode.setEnabled(true);
                     }
 
                     // If not using tacops Energy Weapon rule then remove all
                     // the dial down statements
                     if (m.getType().hasFlag(WeaponType.F_ENERGY)
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("tacops_energy_weapons")) {
+                        && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
+                        && !clientgui.getClient().game.getOptions()
+                                                      .booleanOption("tacops_energy_weapons")) {
                         m_chMode.removeAll();
                         return;
                     }
@@ -2286,22 +2282,22 @@ public class MechDisplay extends BufferedPanel {
                     // If not using tacops Gauss Weapon rule then remove all the
                     // power up/down modes
                     if ((m.getType() instanceof GaussWeapon)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("tacops_gauss_weapons")) {
+                        && !clientgui.getClient().game.getOptions()
+                                                      .booleanOption("tacops_gauss_weapons")) {
                         m_chMode.removeAll();
                         return;
                     }
                     // disable rapid fire mode switching for Aeros
                     if (((en instanceof Aero) && (m.getType() instanceof ACWeapon))
-                            || (m.getType() instanceof RACWeapon)
-                            || (m.getType() instanceof UACWeapon)) {
+                        || (m.getType() instanceof RACWeapon)
+                        || (m.getType() instanceof UACWeapon)) {
                         m_chMode.removeAll();
                         return;
                     }
                     modeLabel.setEnabled(true);
                     m_chMode.removeAll();
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
-                            .hasMoreElements();) {
+                            .hasMoreElements(); ) {
                         EquipmentMode em = e.nextElement();
                         m_chMode.add(em.getDisplayableName());
                     }
@@ -2310,14 +2306,14 @@ public class MechDisplay extends BufferedPanel {
                     CriticalSlot cs = getSelectedCritical();
                     if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit() && (en instanceof Mech)) {
+                            && en.hasEiCockpit() && (en instanceof Mech)) {
                             m_chMode.removeAll();
                             m_chMode.setEnabled(true);
                             m_chMode.add("EI Off");
                             m_chMode.add("EI On");
                             m_chMode.add("Aimed shot");
                             m_chMode.select(((Mech) en)
-                                    .getCockpitStatusNextRound());
+                                                    .getCockpitStatusNextRound());
                         }
                     }
                 }
@@ -2329,40 +2325,40 @@ public class MechDisplay extends BufferedPanel {
                     if (nMode >= 0) {
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isShield()
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING)) {
+                            && ((MiscType) m.getType()).isShield()
+                            && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
+                            && ((MiscType) m.getType()).isVibroblade()
+                            && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType())
-                                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                            && ((MiscType) m.getType())
+                                .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                            && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                             clientgui
                                     .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
+                                                           .getString(
+                                                                   "MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
                         // Can only charge a capacitor if the weapon has not
                         // been fired.
                         if ((m.getType() instanceof MiscType)
-                                && (m.getLinked() != null)
-                                && ((MiscType) m.getType())
-                                        .hasFlag(MiscType.F_PPC_CAPACITOR)
-                                && m.getLinked().isUsedThisRound()
-                                && (nMode == 1)) {
+                            && (m.getLinked() != null)
+                            && ((MiscType) m.getType())
+                                .hasFlag(MiscType.F_PPC_CAPACITOR)
+                            && m.getLinked().isUsedThisRound()
+                            && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
                             return;
@@ -2370,35 +2366,35 @@ public class MechDisplay extends BufferedPanel {
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(),
-                                en.getEquipmentNum(m), nMode);
+                                                             en.getEquipmentNum(m), nMode);
 
                         // notify the player
                         if (m.canInstantSwitch(nMode)) {
                             clientgui
                                     .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
+                                                           .getString(
+                                                                   "MechDisplay.switched", new Object[]{m.getName(), m.curMode().getDisplayableName()}));//$NON-NLS-1$
                         } else {
                             if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
                                     .getClient().game.getPhase()) {
                                 clientgui
                                         .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtStart", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
+                                                               .getString(
+                                                                       "MechDisplay.willSwitchAtStart", new Object[]{m.getName(), m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
                             } else {
                                 clientgui
                                         .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd", new Object[] { m.getName(), m.pendingMode().getDisplayableName() }));//$NON-NLS-1$
+                                                               .getString(
+                                                                       "MechDisplay.willSwitchAtEnd", new Object[]{m.getName(), m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
                             }
                         }
                     }
                 } else if ((cs != null)
-                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                           && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit() && (en instanceof Mech)) {
+                            && en.hasEiCockpit() && (en instanceof Mech)) {
                             Mech mech = (Mech) en;
                             mech.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
@@ -2407,13 +2403,13 @@ public class MechDisplay extends BufferedPanel {
                                     .getCockpitStatusNextRound()) {
                                 clientgui
                                         .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.switched", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
+                                                               .getString(
+                                                                       "MechDisplay.switched", new Object[]{"Cockpit", m_chMode.getSelectedItem()}));//$NON-NLS-1$
                             } else {
                                 clientgui
                                         .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd", new Object[] { "Cockpit", m_chMode.getSelectedItem() }));//$NON-NLS-1$
+                                                               .getString(
+                                                                       "MechDisplay.willSwitchAtEnd", new Object[]{"Cockpit", m_chMode.getSelectedItem()}));//$NON-NLS-1$
                             }
                         }
                     }
@@ -2428,7 +2424,7 @@ public class MechDisplay extends BufferedPanel {
                 boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
                         .getOwner());
                 if ((m == null) || !bOwner || !(m.getType() instanceof AmmoType)
-                        || (m.getUsableShotsLeft() <= 0)) {
+                    || (m.getUsableShotsLeft() <= 0)) {
                     return;
                 }
 
@@ -2441,21 +2437,21 @@ public class MechDisplay extends BufferedPanel {
                             .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
                     String body = Messages
                             .getString(
-                                    "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                                    "MechDisplay.CancelDumping.message", new Object[]{m.getName()}); //$NON-NLS-1$
                     bConfirmed = clientgui.doYesNoDialog(title, body);
                 } else {
                     bDumping = true;
                     String title = Messages.getString("MechDisplay.Dump.title"); //$NON-NLS-1$
                     String body = Messages
                             .getString(
-                                    "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                                    "MechDisplay.Dump.message", new Object[]{m.getName()}); //$NON-NLS-1$
                     bConfirmed = clientgui.doYesNoDialog(title, body);
                 }
 
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
                     clientgui.getClient().sendModeChange(en.getId(),
-                            en.getEquipmentNum(m), bDumping ? -1 : 0);
+                                                         en.getEquipmentNum(m), bDumping ? -1 : 0);
                 }
             }
         }
@@ -2467,13 +2463,13 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+                | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+                | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2484,31 +2480,31 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "v_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "bl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tr_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "br_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2521,13 +2517,13 @@ public class MechDisplay extends BufferedPanel {
      * This class shows information about a unit that doesn't belong elsewhere.
      */
     class ExtraPanel extends BufferedPanel implements ItemListener,
-            ActionListener {
+                                                      ActionListener {
 
         /**
          *
          */
         private static final long serialVersionUID = -8727340674330120715L;
-        
+
         private TransparentLabel curSensorsL, narcLabel, unusedL, carrysL,
                 heatL, sinksL;
         public Choice chSensors;
@@ -2552,8 +2548,8 @@ public class MechDisplay extends BufferedPanel {
             FontMetrics fm = getFontMetrics(FONT_VALUE);
 
             curSensorsL = new TransparentLabel((Messages
-                    .getString("MechDisplay.CurrentSensors")).concat(" "), fm,
-                    Color.white, TransparentLabel.CENTER);
+                                                        .getString("MechDisplay.CurrentSensors")).concat(" "), fm,
+                                               Color.white, TransparentLabel.CENTER);
 
             chSensors = new Choice();
             chSensors.addItemListener(this);
@@ -2580,14 +2576,14 @@ public class MechDisplay extends BufferedPanel {
             carrysR.addKeyListener(clientgui.menuBar);
 
             sinksL = new TransparentLabel(Messages
-                    .getString("MechDisplay.activeSinksLabel"), fm,
-                    Color.white, TransparentLabel.CENTER);
+                                                  .getString("MechDisplay.activeSinksLabel"), fm,
+                                          Color.white, TransparentLabel.CENTER);
             sinksR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
             sinksR.setEditable(false);
             sinksR.addKeyListener(clientgui.menuBar);
 
             sinks2B = new Button(Messages
-                    .getString("MechDisplay.configureActiveSinksLabel"));
+                                         .getString("MechDisplay.configureActiveSinksLabel"));
             sinks2B.setActionCommand("changeSinks");
             sinks2B.addActionListener(this);
 
@@ -2678,13 +2674,13 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_TOP;
+                | BackGroundDrawer.VALIGN_TOP;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL
-                    | BackGroundDrawer.VALIGN_BOTTOM;
+                | BackGroundDrawer.VALIGN_BOTTOM;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2695,31 +2691,31 @@ public class MechDisplay extends BufferedPanel {
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.TILING_VERTICAL
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "v_line.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_LEFT;
+                | BackGroundDrawer.HALIGN_LEFT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "bl_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "tr_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
 
             b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                    | BackGroundDrawer.HALIGN_RIGHT;
+                | BackGroundDrawer.HALIGN_RIGHT;
             tile = getToolkit().getImage(new File(Configuration.widgetsDir(), "br_corner.gif").toString()); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
             addBgDrawer(new BackGroundDrawer(tile, b));
@@ -2747,24 +2743,24 @@ public class MechDisplay extends BufferedPanel {
             // Walk through the list of teams. There
             // can't be more teams than players.
             StringBuffer buff = null;
-            Enumeration<Player> loop = clientgui.getClient().game.getPlayers();
+            Enumeration<IPlayer> loop = clientgui.getClient().game.getPlayers();
             while (loop.hasMoreElements()) {
-                Player player = loop.nextElement();
+                IPlayer player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages
-                            .getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
+                                                    .getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append("]"); //$NON-NLS-1$
+                            .append(IPlayer.teamNames[team]).append("]"); //$NON-NLS-1$
                     narcList.add(buff.toString());
                 }
                 if (en.isINarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages
-                            .getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
+                                                    .getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append("] ")//$NON-NLS-1$
+                            .append(IPlayer.teamNames[team]).append("] ")//$NON-NLS-1$
                             .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
                             .append("."); //$NON-NLS-1$
                     narcList.add(buff.toString());
@@ -2772,24 +2768,24 @@ public class MechDisplay extends BufferedPanel {
             }
             if (en.isINarcedWith(INarcPod.ECM)) {
                 buff = new StringBuffer(Messages
-                        .getString("MechDisplay.iNarcECMPodAttached")); //$NON-NLS-1$
+                                                .getString("MechDisplay.iNarcECMPodAttached")); //$NON-NLS-1$
                 narcList.add(buff.toString());
             }
             if (en.isINarcedWith(INarcPod.HAYWIRE)) {
                 buff = new StringBuffer(Messages
-                        .getString("MechDisplay.iNarcHaywirePodAttached")); //$NON-NLS-1$
+                                                .getString("MechDisplay.iNarcHaywirePodAttached")); //$NON-NLS-1$
                 narcList.add(buff.toString());
             }
             if (en.isINarcedWith(INarcPod.NEMESIS)) {
                 buff = new StringBuffer(Messages
-                        .getString("MechDisplay.iNarcNemesisPodAttached")); //$NON-NLS-1$
+                                                .getString("MechDisplay.iNarcNemesisPodAttached")); //$NON-NLS-1$
                 narcList.add(buff.toString());
             }
 
             // Show inferno track.
             if (en.infernos.isStillBurning()) {
                 buff = new StringBuffer(Messages
-                        .getString("MechDisplay.InfernoBurnRemaining")); //$NON-NLS-1$
+                                                .getString("MechDisplay.InfernoBurnRemaining")); //$NON-NLS-1$
                 buff.append(en.infernos.getTurnsLeftToBurn());
                 narcList.add(buff.toString());
             }
@@ -2806,10 +2802,10 @@ public class MechDisplay extends BufferedPanel {
             Coords pos = en.getPosition();
             if (Compute.isAffectedByAngelECM(en, pos, pos)) {
                 narcList.add(Messages
-                        .getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
+                                     .getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
             } else if (Compute.isAffectedByECM(en, pos, pos)) {
                 narcList.add(Messages.getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
-            } 
+            }
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive() && ((en instanceof Mech) || (en instanceof Tank))) {
@@ -2825,7 +2821,7 @@ public class MechDisplay extends BufferedPanel {
             if (en.getTaserFeedBackRounds() > 0) {
                 narcList
                         .add(en.getTaserFeedBackRounds()
-                                + " " + Messages.getString("MechDisplay.TaserFeedBack"));//$NON-NLS-1$
+                             + " " + Messages.getString("MechDisplay.TaserFeedBack"));//$NON-NLS-1$
             }
 
             // taser interference?
@@ -2836,7 +2832,7 @@ public class MechDisplay extends BufferedPanel {
 
             // Show Turret Locked.
             if ((en instanceof Tank) && !((Tank) en).hasNoTurret()
-                    && !en.canChangeSecondaryFacing()) {
+                && !en.canChangeSecondaryFacing()) {
                 narcList.add(Messages.getString("MechDisplay.Turretlocked")); //$NON-NLS-1$
             }
 
@@ -2871,8 +2867,8 @@ public class MechDisplay extends BufferedPanel {
                 // if still being recovered, then let player know how long
                 if (nextUnit.getRecoveryTurn() > 0) {
                     carrysR.append(nextUnit.getShortName() + " (Recovery Turn "
-                            + Integer.toString(6 - nextUnit.getRecoveryTurn())
-                            + ")");
+                                   + Integer.toString(6 - nextUnit.getRecoveryTurn())
+                                   + ")");
                 } else {
                     carrysR.append(nextUnit.getShortName());
                 }
@@ -2889,10 +2885,10 @@ public class MechDisplay extends BufferedPanel {
             if (en.hasSpotlight()) {
                 if (en.isUsingSpotlight()) {
                     carrysR.append(Messages
-                            .getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
+                                           .getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
                 } else {
                     carrysR.append(Messages
-                            .getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
+                                           .getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
                 }
             }
 
@@ -2908,12 +2904,12 @@ public class MechDisplay extends BufferedPanel {
                 if (m.hasDoubleHeatSinks()) {
                     sinksR.append(Messages.getString(
                             "MechDisplay.activeSinksTextDouble",
-                            new Object[] { new Integer(sinks),
-                                    new Integer(sinks * 2) }));
+                            new Object[]{new Integer(sinks),
+                                         new Integer(sinks * 2)}));
                 } else {
                     sinksR.append(Messages.getString(
                             "MechDisplay.activeSinksTextSingle",
-                            new Object[] { new Integer(sinks) }));
+                            new Object[]{new Integer(sinks)}));
                 }
 
                 boolean hasTSM = false;
@@ -2927,7 +2923,7 @@ public class MechDisplay extends BufferedPanel {
                     mtHeat = true;
                 }
                 heatR.append(HeatEffects
-                        .getHeatEffects(en.heat, mtHeat, hasTSM));
+                                     .getHeatEffects(en.heat, mtHeat, hasTSM));
             } else {
                 // Non-Mechs cannot configure their heatsinks
                 sinks2B.setEnabled(false);
@@ -2937,12 +2933,12 @@ public class MechDisplay extends BufferedPanel {
 
             if (null != en.getActiveSensor()) {
                 curSensorsL.setText((Messages
-                        .getString("MechDisplay.CurrentSensors")).concat(" ")
-                        .concat(en.getSensorDesc()));
+                                             .getString("MechDisplay.CurrentSensors")).concat(" ")
+                                                                                      .concat(en.getSensorDesc()));
             } else {
                 curSensorsL.setText((Messages
-                        .getString("MechDisplay.CurrentSensors"))
-                        .concat(" None"));
+                                             .getString("MechDisplay.CurrentSensors"))
+                                            .concat(" None"));
             }
         } // End public void displayMech( Entity )
 
@@ -2955,7 +2951,7 @@ public class MechDisplay extends BufferedPanel {
                     condition = " (Disabled)";
                 }
                 chSensors.add(sensor.getDisplayName()
-                        + condition);
+                              + condition);
                 if (sensor.getType() == en.getNextSensor().getType()) {
                     chSensors.select(i);
                 }
@@ -2970,8 +2966,8 @@ public class MechDisplay extends BufferedPanel {
                 refreshSensorChoices(en);
                 clientgui
                         .systemMessage(Messages
-                                .getString(
-                                        "MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", en.getSensors().elementAt(chSensors.getSelectedIndex()).getDisplayName() }));//$NON-NLS-1$
+                                               .getString(
+                                                       "MechDisplay.willSwitchAtEnd", new Object[]{"Active Sensors", en.getSensors().elementAt(chSensors.getSelectedIndex()).getDisplayName()}));//$NON-NLS-1$
                 clientgui.getClient().sendUpdateEntity(
                         clientgui.getClient().game.getEntity(myMechId));
             }
@@ -2981,9 +2977,9 @@ public class MechDisplay extends BufferedPanel {
             if (ae.getActionCommand().equals("changeSinks") && !dontChange) { //$NON-NLS-1$
                 prompt = new Slider(clientgui.frame, Messages
                         .getString("MechDisplay.changeSinks"), Messages
-                        .getString("MechDisplay.changeSinks"), sinks, 0,
-                        ((Mech) clientgui.getClient().game.getEntity(myMechId))
-                                .getNumberOfSinks());
+                                            .getString("MechDisplay.changeSinks"), sinks, 0,
+                                    ((Mech) clientgui.getClient().game.getEntity(myMechId))
+                                            .getNumberOfSinks());
                 if (!prompt.showDialog()) {
                     return;
                 }

@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Report;
 
 /**
@@ -40,7 +40,7 @@ public class VictoryResult implements Victory.Result {
 
     public int getWinningPlayer() {
         double max = Double.MIN_VALUE;
-        int maxPlayer = Player.PLAYER_NONE;
+        int maxPlayer = IPlayer.PLAYER_NONE;
         boolean draw = false;
         for (int i : playerScore.keySet()) {
             if (playerScore.get(i) == max) {
@@ -53,13 +53,13 @@ public class VictoryResult implements Victory.Result {
             }
         }
         if (draw)
-            return Player.PLAYER_NONE;
+            return IPlayer.PLAYER_NONE;
         return maxPlayer;
     }
 
     public int getWinningTeam() {
         double max = Double.MIN_VALUE;
-        int maxTeam = Player.TEAM_NONE;
+        int maxTeam = IPlayer.TEAM_NONE;
         boolean draw = false;
         for (int i : teamScore.keySet()) {
             if (teamScore.get(i) == max) {
@@ -72,7 +72,7 @@ public class VictoryResult implements Victory.Result {
             }
         }
         if (draw)
-            return Player.TEAM_NONE;
+            return IPlayer.TEAM_NONE;
         return maxTeam;
     }
 
@@ -168,6 +168,6 @@ public class VictoryResult implements Victory.Result {
     }
 
     public boolean isDraw() {
-        return (getWinningPlayer() == Player.PLAYER_NONE && getWinningTeam() == Player.TEAM_NONE);
+        return (getWinningPlayer() == IPlayer.PLAYER_NONE && getWinningTeam() == IPlayer.TEAM_NONE);
     }
 }

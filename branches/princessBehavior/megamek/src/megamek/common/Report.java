@@ -26,14 +26,14 @@ import megamek.client.ui.AWT.util.PlayerColors;
  * This class defines a single server report. It holds information such as the
  * report ID, who the report is about, who should see the report, and some
  * formatting information.
- * <p>
+ * <p/>
  * Typically, the report will be created by the relevant section in the
  * <code>Server</code>, and added to the phase report vector. The actual text
  * of the report must also be added to the <i>report-messages.properties</i>
  * file.
- * <p>
+ * <p/>
  * Example:
- * <p>
+ * <p/>
  * <code>Report r = new Report(3455);\n
  * r.subject = entity.getId();\n
  * r.indent();\n
@@ -41,18 +41,18 @@ import megamek.client.ui.AWT.util.PlayerColors;
  * r.add(6);\n
  * r.choose(true);\n
  * vPhaseReport.addElement(r);</code>
- * <p>
+ * <p/>
  * Then the following line would be added to <i>report-messages.properties</i>:
- * <p>
+ * <p/>
  * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the
  * &lt;msg:3456,3457&gt;.\n
  * 3456::tank\n
  * 3457::building
- * <p>
+ * <p/>
  * When the client parses the report, it will fill in the &lt;data&gt; tags with
  * the values that were given to the <code>add</code> methods called on the
  * report object.
- * <p>
+ * <p/>
  * The example above might produce a report such as this when the
  * <code>getText</code> method was called:
  * <p> " Crusader (Bob) does 6 damage to the tank."
@@ -69,11 +69,15 @@ public class Report implements Serializable {
      */
 
     private static final long serialVersionUID = -5586008091586682078L;
-    /** Required - associates this object with its text. */
+    /**
+     * Required - associates this object with its text.
+     */
     public int messageId = Report.MESSAGE_NONE;
     private static final int MESSAGE_NONE = -1;
 
-    /** The number of spaces this report should be indented. */
+    /**
+     * The number of spaces this report should be indented.
+     */
     private int indentation = 0;
 
     /**
@@ -81,7 +85,9 @@ public class Report implements Serializable {
      */
     public int newlines = 1;
 
-    /** The data values to fill in the report with. */
+    /**
+     * The data values to fill in the report with.
+     */
     private Vector<String> tagData = new Vector<String>();
 
     /**
@@ -91,7 +97,9 @@ public class Report implements Serializable {
     // Maybe should be simple isPublic boolean? Or do we want to ever mix
     // obscured and totally hidden reports?
     public transient int type = Report.HIDDEN;
-    /** Report is visible to all players. */
+    /**
+     * Report is visible to all players.
+     */
     public static final int PUBLIC = 0;
     /**
      * Report is visible to all players, but all data marked for obscuration
@@ -106,7 +114,9 @@ public class Report implements Serializable {
      * <code>obscured</code> unless explicitly marked <code>public</code>.
      */
     public static final int HIDDEN = 2;
-    /** Testing only - remove me later. */
+    /**
+     * Testing only - remove me later.
+     */
     // debugReport
     public static final int TESTING = 3;
     /**
@@ -124,7 +134,7 @@ public class Report implements Serializable {
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
-    public transient int player = Player.PLAYER_NONE;
+    public transient int player = IPlayer.PLAYER_NONE;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
@@ -140,7 +150,9 @@ public class Report implements Serializable {
      */
     private Vector<String> obscuredRecipients = new Vector<String>();
 
-    /** Keep track of what data we have already substituted for tags. */
+    /**
+     * Keep track of what data we have already substituted for tags.
+     */
     private transient int tagCounter = 0;
 
     /**
@@ -148,7 +160,9 @@ public class Report implements Serializable {
      */
     public static final String OBSCURED_STRING = "????";
 
-    /** Number of spaces to use per indentation level. */
+    /**
+     * Number of spaces to use per indentation level.
+     */
     private static final int DEFAULT_INDENTATION = 4;
 
     /**
@@ -171,9 +185,9 @@ public class Report implements Serializable {
      * Create a new report associated with the given report text and having the
      * given type.
      *
-     * @param id the int value of the report from <i>report-messages.properties</i>
+     * @param id   the int value of the report from <i>report-messages.properties</i>
      * @param type the constant specifying the visibility of the report (PUBLIC,
-     *            OBSCURED, or HIDDEN)
+     *             OBSCURED, or HIDDEN)
      */
     public Report(int id, int type) {
         messageId = id;
@@ -194,7 +208,7 @@ public class Report implements Serializable {
         type = r.type;
         subject = r.subject;
         obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
-                .clone();
+                                                         .clone();
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
     }
@@ -216,14 +230,14 @@ public class Report implements Serializable {
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
      *
-     * @param data the int to be substituted
+     * @param data    the int to be substituted
      * @param obscure boolean indicating whether the data is double-blind
-     *            sensitive
+     *                sensitive
      */
     public void add(int data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(new Integer(tagData.size()),
-                    new Boolean(true));
+                                new Boolean(true));
         }
 
         tagData.addElement(String.valueOf(data));
@@ -246,14 +260,14 @@ public class Report implements Serializable {
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
      *
-     * @param data the String to be substituted
+     * @param data    the String to be substituted
      * @param obscure boolean indicating whether the data is double-blind
-     *            sensitive
+     *                sensitive
      */
     public void add(String data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(new Integer(tagData.size()),
-                    new Boolean(true));
+                                new Boolean(true));
         }
 
         tagData.addElement(data);
@@ -284,18 +298,18 @@ public class Report implements Serializable {
         if (entity != null) {
             add(entity.getShortName(), true);
             String colorcode = Integer.toHexString(PlayerColors.getColor(entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
-            add("<B><font color='" + colorcode + "'>" +entity.getOwner().getName()+"</font></B>");
+            add("<B><font color='" + colorcode + "'>" + entity.getOwner().getName() + "</font></B>");
         }
     }
 
     /**
      * Internal method. Not for typical use.
-     * <p>
+     * <p/>
      * Tests wheter the data value at the given index has been marked as
      * obscured.
      *
      * @param index position of data value (indexes are chronological and start
-     *            at zero)
+     *              at zero)
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
@@ -307,11 +321,11 @@ public class Report implements Serializable {
 
     /**
      * Internal method. Not for typical use.
-     * <p>
+     * <p/>
      * Remove the data value from the report. This operation is irreversible.
      *
      * @param index position of data value (indexes are chronological and start
-     *            at zero
+     *              at zero
      */
     public void hideData(int index) {
         tagData.setElementAt(null, index);
@@ -335,7 +349,7 @@ public class Report implements Serializable {
 
     /**
      * Internal method. Not for typical use.
-     * <p>
+     * <p/>
      * Get the total number of data values associated with this report. Note
      * that this includes the <code>true/false</code> values added for
      * &lt;msg&gt; tags as well.
@@ -359,11 +373,11 @@ public class Report implements Serializable {
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out
-                    .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
-                            + index
-                            + ") for a report with ID "
-                            + messageId
-                            + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+                  .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+                           + index
+                           + ") for a report with ID "
+                           + messageId
+                           + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megameklog.txt for details]";
         }
     }
@@ -384,7 +398,7 @@ public class Report implements Serializable {
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
             System.out.println("Error: No message found for ID "
-                    + messageId);
+                               + messageId);
             text.append("[Reporting Error for message ID ").append(
                     messageId).append("]");
         } else {
@@ -395,7 +409,7 @@ public class Report implements Serializable {
                     // find end of tag
                     int endTagIdx = raw.indexOf('>', i);
                     if ((raw.indexOf('<', i + 1) != -1)
-                            && (raw.indexOf('<', i + 1) < endTagIdx)) {
+                        && (raw.indexOf('<', i + 1) < endTagIdx)) {
                         // hmm...this must be a literal '<' character
                         i++;
                         continue;
@@ -415,7 +429,7 @@ public class Report implements Serializable {
                     } else if (raw.substring(i + 1, endTagIdx).startsWith(
                             "msg:")) {
                         boolean selector = Boolean.valueOf(getTag())
-                                .booleanValue();
+                                                  .booleanValue();
                         if (selector) {
                             text.append(ReportMessages.getString(raw.substring(
                                     i + 5, raw.indexOf(',', i))));
@@ -424,7 +438,7 @@ public class Report implements Serializable {
                                     raw.indexOf(',', i) + 1, endTagIdx)));
                         }
                     } else if (raw.substring(i + 1, endTagIdx)
-                            .equals("newline")) {
+                                  .equals("newline")) {
                         text.append("\n");
                     } else {
                         // not a special tag, so treat as literal text
@@ -452,8 +466,8 @@ public class Report implements Serializable {
             return;
         }
         int i = 0;
-        while (sb.substring(i, i+4).equals("\n")) {
-            i+=4;
+        while (sb.substring(i, i + 4).equals("\n")) {
+            i += 4;
             if (i == sb.length()) {
                 continue;
             }
@@ -485,15 +499,14 @@ public class Report implements Serializable {
     public static void addNewline(Vector<Report> v) {
         try {
             v.elementAt(v.size() - 1).newlines++;
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
+        } catch (ArrayIndexOutOfBoundsException ex) {
             System.err.println("Report.addNewline failed, array index out of bounds");
         }
     }
 
     /**
      * Internal method. Not for typical use.
-     * <p>
+     * <p/>
      * Adds the given player name to the report's list of players who received
      * an obscured version of this report from the server at some time in the
      * past.
@@ -506,7 +519,7 @@ public class Report implements Serializable {
 
     /**
      * Internal method. Not for typical use.
-     * <p>
+     * <p/>
      * Tests whether the given player name is on the report's list of players
      * who received an obscured version of this report from the server at some
      * time in the past.

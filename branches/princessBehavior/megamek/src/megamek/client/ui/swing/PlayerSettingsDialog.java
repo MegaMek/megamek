@@ -36,18 +36,18 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
  * minefields, and maybe other things in the future like force abilities.
- * 
+ *
  * @author Jay Lawson
  */
 public class PlayerSettingsDialog extends ClientDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4597870528499580517L;
 
@@ -267,7 +267,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     }
 
     private void refreshValues() {
-        Player player = client.getLocalPlayer();
+        IPlayer player = client.getLocalPlayer();
         texInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));

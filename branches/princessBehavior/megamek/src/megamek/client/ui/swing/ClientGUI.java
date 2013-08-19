@@ -73,9 +73,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
-import megamek.common.Player;
-import megamek.common.PlayerImpl;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -290,16 +289,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
-        ));
+                                                ));
         iconList.add(frame.getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
-        ));
+                                                ));
         frame.setIconImages(iconList);
     }
 
@@ -644,8 +643,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * and a file for salvage
      */
     public void doSaveUnit() {
-        for (Enumeration<Player> iter = getClient().game.getPlayers(); iter.hasMoreElements(); ) {
-            Player p = iter.nextElement();
+        for (Enumeration<IPlayer> iter = getClient().game.getPlayers(); iter.hasMoreElements(); ) {
+            IPlayer p = iter.nextElement();
             ArrayList<Entity> l = getClient().game.getPlayerEntities(p, false);
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements(); ) {
@@ -1181,7 +1180,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * @param player
      */
-    protected void loadListFile(Player player) {
+    protected void loadListFile(IPlayer player) {
         loadListFile(player, false);
     }
 
@@ -1194,7 +1193,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * @param Player
      */
-    protected void loadListFile(Player player, boolean reinforce) {
+    protected void loadListFile(IPlayer player, boolean reinforce) {
         boolean addedUnits = false;
 
         // Build the "load unit" dialog, if necessary.
@@ -1312,7 +1311,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
             if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
-                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                  || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
                 } catch (IOException ie) {
@@ -1391,11 +1390,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * @param entity
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
-        Player player = client.game.getPlayer(entity.getOwnerId());
+        IPlayer player = client.game.getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
     }
 
-    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
+    public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
         Image camo = null;
         if (entity.getCamoFileName() != null) {
             camo = bv.getTilesetManager().getEntityCamo(entity);
@@ -1513,7 +1512,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // Allow players to save their living units to a file.
             // Don't bother asking if none survived.
             if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
+                                                   Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
 
                 // Allow the player to save the units to a file.
                 saveListFile(living);
@@ -1553,7 +1552,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
             if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible() &&
-                    !e.isMapSettingsOnlyChange()) {
+                !e.isMapSettingsOnlyChange()) {
                 gameOptionsDialog.update(getClient().game.getOptions());
             }
             if (curPanel instanceof ChatLounge) {
@@ -1635,13 +1634,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JDialog waitD = new JDialog(frame, Messages
                 .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
         waitD.add(new JLabel(Messages
-                .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
+                                     .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
                 (frame.getSize().width / 2) - (waitD.getSize().width / 2), (frame
-                .getSize().height
-                / 2) - (waitD.getSize().height / 2));
+                                                                                    .getSize().height
+                                                                            / 2) - (waitD.getSize().height / 2));
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -1649,7 +1648,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         int filter = 0; // 0 - no filter; 1 - sub; 2 - up
         int compressionLevel = 9; // 0 to 9 with 0 being no compression
         PngEncoder png = new PngEncoder(bv.getEntireBoardImage(),
-                PngEncoder.NO_ALPHA, filter, compressionLevel);
+                                        PngEncoder.NO_ALPHA, filter, compressionLevel);
         try {
             FileOutputStream outfile = new FileOutputStream(curfileBoardImage);
             byte[] pngbytes;
@@ -1676,7 +1675,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc
                 .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+                             frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             @Override
@@ -1692,7 +1691,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         });
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+            || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1718,7 +1717,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JFileChooser fc = new JFileChooser(".");
         fc
                 .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+                             frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             @Override
@@ -1733,7 +1732,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         });
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+            || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1743,7 +1742,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!curfileBoardImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
             try {
                 curfileBoardImage = new File(curfileBoardImage.getCanonicalPath()
-                        + ".png"); //$NON-NLS-1$
+                                             + ".png"); //$NON-NLS-1$
             } catch (IOException ie) {
                 // failure!
                 return;

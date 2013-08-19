@@ -27,8 +27,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.Mounted;
-import megamek.common.Player;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -37,7 +37,6 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PhysicalAttackAction;
 
 /**
- *
  * @author jwalt
  */
 class AttackGroup extends BranchGroup {
@@ -47,7 +46,7 @@ class AttackGroup extends BranchGroup {
 
     Entity selectedEntity;
     Mounted selectedWeapon;
-    
+
 
     public AttackGroup(IGame g, TileTextureManager t, ViewTransform v) {
         game = g;
@@ -57,47 +56,47 @@ class AttackGroup extends BranchGroup {
         setCapability(Group.ALLOW_CHILDREN_WRITE);
         setPickable(false);
     }
-    
+
     public void add(AttackAction aa) {
         if (aa instanceof ArtilleryAttackAction) {
-            add((ArtilleryAttackAction)aa);
+            add((ArtilleryAttackAction) aa);
             return;
         }
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null 
-                || t.getTargetType() == Targetable.TYPE_INARC_POD 
-                || t.getPosition() == null
-                || ae.getPosition() == null
-                || !game.getBoard().contains(ae.getPosition())
-                || !game.getBoard().contains(t.getPosition())) {
+        if (ae == null || t == null
+            || t.getTargetType() == Targetable.TYPE_INARC_POD
+            || t.getPosition() == null
+            || ae.getPosition() == null
+            || !game.getBoard().contains(ae.getPosition())
+            || !game.getBoard().contains(t.getPosition())) {
             return;
         }
-        
+
         AttackModel attack = null;
 
         attack = new AttackModel(aa, ae, t, game);
-        
+
         attack.add(aa, currentView);
 
         addChild(attack);
     }
-    
+
     public void add(ArtilleryAttackAction aaa) {
         addChild(new ArtilleryAttackModel(TilesetManager.ARTILLERY_INCOMING, aaa, game, tileManager));
     }
 
     public void remove(Entity entity) {
-        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
-            BranchGroup bg = (BranchGroup)e.nextElement();
-            AttackAction a = (AttackAction)bg.getUserData();
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements(); ) {
+            BranchGroup bg = (BranchGroup) e.nextElement();
+            AttackAction a = (AttackAction) bg.getUserData();
             if (a != null && a.getEntityId() == entity.getId()) bg.detach();
         }
     }
 
     public void clear() {
-        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
-            ((BranchGroup)e.nextElement()).detach();
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements(); ) {
+            ((BranchGroup) e.nextElement()).detach();
         }
     }
 
@@ -105,7 +104,7 @@ class AttackGroup extends BranchGroup {
         clear();
         for (EntityAction ea : game.getActionsVector()) {
             if (ea instanceof AttackAction) {
-                add((AttackAction)ea);
+                add((AttackAction) ea);
             }
         }
         for (AttackAction ea : game.getChargesVector()) {
@@ -128,7 +127,7 @@ class AttackGroup extends BranchGroup {
             }
         }
 
-        for (Enumeration<ArtilleryAttackAction> attacks=game.getArtilleryAttacks(); attacks.hasMoreElements();) {
+        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             add(attacks.nextElement());
         }
     }
@@ -138,9 +137,9 @@ class AttackGroup extends BranchGroup {
         update();
     }
 
-    void setSelected(Entity e, Mounted w, Player p) {
+    void setSelected(Entity e, Mounted w, IPlayer p) {
         if (w == null || e == null || !e.getOwner().equals(p) || e.getEquipmentNum(w) == -1 ||
-                !(w.getType() instanceof WeaponType) || !w.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            !(w.getType() instanceof WeaponType) || !w.getType().hasFlag(WeaponType.F_ARTILLERY)) {
             w = null;
             e = null;
         }

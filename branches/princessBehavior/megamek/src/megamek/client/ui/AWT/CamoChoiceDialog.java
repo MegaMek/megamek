@@ -42,7 +42,7 @@ import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Configuration;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.util.DirectoryItems;
 
 /**
@@ -50,15 +50,15 @@ import megamek.common.util.DirectoryItems;
  * their units during the game. It automatically fills itself with all the color
  * choices in <code>Settings</code> and all the camo patterns in the
  * {@link Configuration#configDir()} directory tree. Created on January 19, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
 public class CamoChoiceDialog extends Dialog implements ActionListener,
-        ItemListener, ItemSelectable {
+                                                        ItemListener, ItemSelectable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7942369852180659605L;
 
@@ -122,9 +122,9 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /**
      * A helper function to fill the list with items in the selected category.
-     * 
+     *
      * @param category - the <code>String</code> name of the category whose
-     *            items should be displayed.
+     *                 items should be displayed.
      */
     /* package */void fillList(String category) {
 
@@ -133,9 +133,9 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // If this is the "no camos" category, then
         // fill the item list with the colors.
-        if (Player.NO_CAMO.equals(category)) {
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                items.add(Player.colorNames[color]);
+        if (IPlayer.NO_CAMO.equals(category)) {
+            for (int color = 0; color < IPlayer.colorNames.length; color++) {
+                items.add(IPlayer.colorNames[color]);
             }
         }
 
@@ -144,7 +144,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
             // Translate the "root camo" category name.
             Iterator<String> camoNames;
-            if (Player.ROOT_CAMO.equals(category)) {
+            if (IPlayer.ROOT_CAMO.equals(category)) {
                 camoNames = camos.getItemNames(""); //$NON-NLS-1$
             } else {
                 camoNames = camos.getItemNames(category);
@@ -172,23 +172,23 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
      * function will also set the "keep old camo" button's image. Please note,
      * if the specified selection does not exist, or if there is an error when
      * generating the selection's image, the values won't change.
-     * 
+     *
      * @param category - the <code>String</code> category name. This value
-     *            must be one of the categories from the
-     *            <code>DirectoryItems</code>.
-     * @param item - the <code>String</code> name of the item. This value must
-     *            be one of the items in the named category from
-     *            <code>DirectoryItems</code>.
+     *                 must be one of the categories from the
+     *                 <code>DirectoryItems</code>.
+     * @param item     - the <code>String</code> name of the item. This value must
+     *                 be one of the items in the named category from
+     *                 <code>DirectoryItems</code>.
      */
     /* package */void setPrevSelection(String category, String item) {
 
         // If a "no camo" item is selected, clear the image.
-        if (Player.NO_CAMO.equals(category)) {
+        if (IPlayer.NO_CAMO.equals(category)) {
             keep.setImage(null);
 
             // Find the correct background color.
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(item)) {
+            for (int color = 0; color < IPlayer.colorNames.length; color++) {
+                if (IPlayer.colorNames[color].equals(item)) {
                     keep.setBackground(PlayerColors.getColor(color));
                     prevCat = category;
                     prevItem = item;
@@ -203,7 +203,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             try {
                 // Don't forget to translate the ROOT_CAMO.
                 String curCat = category;
-                if (Player.ROOT_CAMO.equals(curCat)) {
+                if (IPlayer.ROOT_CAMO.equals(curCat)) {
                     curCat = ""; //$NON-NLS-1$
                 }
 
@@ -230,7 +230,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /**
      * Create a dialog that allows players to choose a camo pattern.
-     * 
+     *
      * @param parent - the <code>Frame</code> that displays this dialog.
      */
     public CamoChoiceDialog(Frame parent) {
@@ -278,10 +278,10 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         // Fill the pulldown. Include the "no camo" category.
         // Make sure the "no camo" and "root camo" are at top.
         // Only add the "root camo" category if it contains items.
-        categories.addItem(Player.NO_CAMO);
+        categories.addItem(IPlayer.NO_CAMO);
         if (camos != null) {
             if (camos.getItemNames("").hasNext()) { //$NON-NLS-1$
-                categories.addItem(Player.ROOT_CAMO);
+                categories.addItem(IPlayer.ROOT_CAMO);
             }
             names = camos.getCategoryNames();
             while (names.hasNext()) {
@@ -298,8 +298,8 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             public void itemStateChanged(ItemEvent event) {
                 fillList((String) event.getItem());
                 CamoChoiceDialog.this.itemStateChanged(new ItemEvent(items,
-                        event.getID(), items.getSelectedItem(),
-                        ItemEvent.SELECTED));
+                                                                     event.getID(), items.getSelectedItem(),
+                                                                     ItemEvent.SELECTED));
             }
         });
 
@@ -335,7 +335,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Add a label for the "keep old camo" button.
         panel.add(new AdvancedLabel(Messages
-                .getString("CamoChoiceDialog.keep_old_camo")), layout); //$NON-NLS-1$
+                                            .getString("CamoChoiceDialog.keep_old_camo")), layout); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "keep old camo" button.
@@ -362,7 +362,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Add a label for the "select new camo" button.
         panel.add(new AdvancedLabel(Messages
-                .getString("CamoChoiceDialog.select_new_camo")), layout); //$NON-NLS-1$
+                                            .getString("CamoChoiceDialog.select_new_camo")), layout); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "select new camo" button.
@@ -379,7 +379,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             public void keyPressed(KeyEvent event) {
                 if (KeyEvent.VK_ENTER == event.getKeyCode()) {
                     actionPerformed(new ActionEvent(select, event.getID(),
-                            select.getActionCommand()));
+                                                    select.getActionCommand()));
                 }
             }
         };
@@ -387,10 +387,10 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         select.addKeyListener(enterAdapter);
 
         // Set the "previously selected" values to the defaults.
-        setPrevSelection(Player.NO_CAMO, Player.colorNames[0]);
+        setPrevSelection(IPlayer.NO_CAMO, IPlayer.colorNames[0]);
 
         // Fill the item list with the colors.
-        fillList(Player.NO_CAMO);
+        fillList(IPlayer.NO_CAMO);
 
         // Perform the initial layout.
         this.pack();
@@ -399,7 +399,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * Handle the "select new camo" button's action. <p/> Implements
      * <code>ActionListener</code>.
-     * 
+     *
      * @param event - the <code>ActionEvent</code> that was invoked.
      */
     public void actionPerformed(ActionEvent event) {
@@ -423,7 +423,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
                 // Create an ItemEvent for the change.
                 ItemEvent alert = new ItemEvent(this, event.getID(), image,
-                        ItemEvent.ITEM_STATE_CHANGED);
+                                                ItemEvent.ITEM_STATE_CHANGED);
 
                 // Alert the listeners.
                 for (ItemListener l : listeners) {
@@ -441,7 +441,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * Update the "select new camo" button whenever a list item is selected.
      * <p/> Implements <code>ItemListener</code>.
-     * 
+     *
      * @param event - the <code>ItemEvent</code> for the list selection.
      */
     public void itemStateChanged(ItemEvent event) {
@@ -450,15 +450,15 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         String curCat = categories.getSelectedItem();
 
         // If a "no camo" item is selected, clear the image.
-        if (Player.NO_CAMO.equals(curCat)) {
+        if (IPlayer.NO_CAMO.equals(curCat)) {
             select.setImage(null);
             select.setBackground(PlayerColors
-                    .getColor(items.getSelectedIndex()));
+                                         .getColor(items.getSelectedIndex()));
             return;
         }
 
         // Replace the ROOT_CAMO string with "".
-        if (Player.ROOT_CAMO.equals(curCat)) {
+        if (IPlayer.ROOT_CAMO.equals(curCat)) {
             curCat = ""; //$NON-NLS-1$
         }
 
@@ -482,7 +482,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
      * Get the most recently selected (and confirmed) image. The player must
      * click the "select new camo" button to change this value. <p/> Implements
      * <code>ItemSelectable</code>.
-     * 
+     *
      * @return If the player has selected from the "no camo" category, or if an
      *         error occurs in getting the selected image, a <code>null</code>
      *         is returned. Otherwise, the array will contain a single
@@ -494,7 +494,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         setPrevSelection(categories.getSelectedItem(), items.getSelectedItem());
 
         // Return a null if the "no camo" category is selected.
-        if (Player.NO_CAMO.equals(prevCat))
+        if (IPlayer.NO_CAMO.equals(prevCat))
             return null;
 
         // Try to get the selected camo's Image.
@@ -502,7 +502,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         Image image = null;
         try {
             String curCat = prevCat;
-            if (Player.ROOT_CAMO.equals(curCat)) {
+            if (IPlayer.ROOT_CAMO.equals(curCat)) {
                 curCat = ""; //$NON-NLS-1$
             }
             image = (Image) camos.getItem(curCat, prevItem);
@@ -527,7 +527,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * Add an <code>ItemListener</code> that wants to be alerted when a new
      * camo is selected. <p/> Implements <code>ItemSelectable</code>.
-     * 
+     *
      * @param listener - the <code>ItemListener</code> to be alerted.
      */
     public void addItemListener(ItemListener listener) {
@@ -541,7 +541,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * Remove an <code>ItemListener</code> that wants to stop be alerted when
      * a new camo is selected. <p/> Implements <code>ItemSelectable</code>.
-     * 
+     *
      * @param listener - the <code>ItemListener</code> to be alerted.
      */
     public void removeItemListener(ItemListener listener) {
@@ -550,7 +550,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /**
      * Get the selected category.
-     * 
+     *
      * @return the <code>String</code> name of the most recently selected
      *         category. This value will not be <code>null</code>.
      */
@@ -562,7 +562,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
      * Get the selected item's name. If the most recently selected category is
      * <code>Player.NO_CAMO</code>, then the item named is a color from
      * <code>Player.colorNames</code>.
-     * 
+     *
      * @return the <code>String</code> name of the most recently selected
      *         item. This value will not be <code>null</code>.
      */
@@ -572,10 +572,10 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /**
      * Set the selected category.
-     * 
+     *
      * @param category - the <code>String</code> name of the desired category.
-     *            This value may be <code>null</code>. If no match is found,
-     *            the category will not change.
+     *                 This value may be <code>null</code>. If no match is found,
+     *                 the category will not change.
      */
     public void setCategory(String category) {
 
@@ -610,10 +610,10 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /**
      * Set the selected item in the currently-selected category.
-     * 
+     *
      * @param item - the <code>String</code> name of the desired item. This
-     *            value may be <code>null</code>. If no match is found, the
-     *            item selection will not change.
+     *             value may be <code>null</code>. If no match is found, the
+     *             item selection will not change.
      */
     public void setItemName(String item) {
 
@@ -662,7 +662,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
             // Make sure the "select" button is set correctly.
             itemStateChanged(new ItemEvent(items, 0, items.getSelectedItem(),
-                    ItemEvent.SELECTED));
+                                           ItemEvent.SELECTED));
 
             // Now show the dialog.
         }

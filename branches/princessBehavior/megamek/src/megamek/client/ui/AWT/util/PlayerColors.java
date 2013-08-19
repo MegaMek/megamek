@@ -17,15 +17,15 @@ package megamek.client.ui.AWT.util;
 import java.awt.Color;
 
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 public class PlayerColors {
 
-    public static final String colorNames[] = Player.colorNames;
+    public static final String colorNames[] = IPlayer.colorNames;
 
-    protected static final int colorRGBs[] = { 0x8686BF, 0xDAB508, 0xCC6666,
-            0x87BF86, 0xB0B0B0, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
-            0x98816B, 0x800080 };
+    protected static final int colorRGBs[] = {0x8686BF, 0xDAB508, 0xCC6666,
+                                              0x87BF86, 0xB0B0B0, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
+                                              0x98816B, 0x800080};
 
     protected static final int advancedColorRGBs[] = {
             0x000000, 0x000033, 0x000066, 0x000099, 0x0000CC, 0x0000FF,
@@ -63,7 +63,7 @@ public class PlayerColors {
             0xFF6600, 0xFF6633, 0xFF6666, 0xFF6699, 0xFF66CC, 0xFF66FF,
             0xFF9900, 0xFF9933, 0xFF9966, 0xFF9999, 0xFF99CC, 0xFF99FF,
             0xFFCC00, 0xFFCC33, 0xFFCC66, 0xFFCC99, 0xFFCCCC, 0xFFCCFF,
-            0xFFFF00, 0xFFFF33, 0xFFFF66, 0xFFFF99, 0xFFFFCC, 0xFFFFFF };
+            0xFFFF00, 0xFFFF33, 0xFFFF66, 0xFFFF99, 0xFFFFCC, 0xFFFFFF};
 
     public static Color getColor(int colorIndex) {
         int colour = colorRGBs[colorIndex];

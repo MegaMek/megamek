@@ -27,20 +27,20 @@ import java.awt.event.WindowEvent;
 import megamek.client.ui.AWT.CamoChoiceDialog;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.ImageButton;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * This class will test the <code>CamoChoiceDialog</code> by displaying it.
  * Created on January 19, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
 public class TestCamoChoice extends Frame implements ActionListener,
-        ItemListener {
+                                                     ItemListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8394784210464718865L;
     CamoChoiceDialog dialog = null;
@@ -100,8 +100,8 @@ public class TestCamoChoice extends Frame implements ActionListener,
         // If the image is null, a color was selected instead.
         if (null == image) {
             String item = dialog.getItemName();
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                if (Player.colorNames[color].equals(item)) {
+            for (int color = 0; color < IPlayer.colorNames.length; color++) {
+                if (IPlayer.colorNames[color].equals(item)) {
                     butCamo.setBackground(PlayerColors.getColor(color));
                     break;
                 }

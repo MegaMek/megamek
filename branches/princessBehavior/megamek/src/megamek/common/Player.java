@@ -1,140 +1,407 @@
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+
 package megamek.common;
 
-import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.event.GamePlayerChangeEvent;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Deric
- * Date: 8/17/13
- * Time: 10:17 AM
- * To change this template use File | Settings | File Templates.
+ * Represents a player in the game.
  */
-public interface Player extends TurnOrdered {
-    int PLAYER_NONE = -1;
-    int TEAM_NONE = 0;
-    String[] colorNames = {"Blue", "Yellow", "Red",
-            "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
-            "Purple"};
-    String[] teamNames = {"No Team", "Team 1", "Team 2",
-            "Team 3", "Team 4", "Team 5"};
-    int MAX_TEAMS = teamNames.length;
+public final class Player extends TurnOrdered implements IPlayer {
     /**
-     * The "no camo" category.
+     *
      */
-    String NO_CAMO = "-- No Camo --";
-    /**
-     * The category for camos in the root directory.
-     */
-    String ROOT_CAMO = "-- General --";
+    private static final long serialVersionUID = 6828849559007455760L;
 
-    Vector<Minefield> getMinefields();
+    private transient IGame game;
 
-    void addMinefield(Minefield mf);
+    private String name = "unnamed";
+    private int id;
 
-    void addMinefields(Vector<Minefield> minefields);
+    private int team = TEAM_NONE;
 
-    void removeMinefield(Minefield mf);
+    private boolean done = false; // done with phase
+    private boolean ghost = false; // disconnected player
+    private boolean observer = false;
 
-    void removeMinefields();
+    private boolean see_entire_board = false; // Player can observe
+    // double blind games
 
-    void removeArtyAutoHitHexes();
+    private int colorIndex = 0;
 
-    boolean containsMinefield(Minefield mf);
+    // these are game-specific, and maybe should be seperate from the player
+    // object
+    private int startingPos = Board.START_ANY;
 
-    boolean hasMinefields();
+    // number of minefields
+    private int num_mf_conv = 0;
+    private int num_mf_cmd = 0;
+    private int num_mf_vibra = 0;
+    private int num_mf_active = 0;
+    private int num_mf_inferno = 0;
 
-    void setNbrMFConventional(int nbrMF);
+    //now I need to actually keep a vector of minefields because more information is needed than just the number
 
-    void setNbrMFCommand(int nbrMF);
+    // hexes that are automatically hit by artillery
+    private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
 
-    void setNbrMFVibra(int nbrMF);
+    private int initialBV;
 
-    void setNbrMFActive(int nbrMF);
+    // initiative bonuses go here because we don't know if teams are rolling
+    // initiative collectively
+    // if they are then we pick the best non-zero bonuses
+    private int constantInitBonus = 0;
+    private int streakCompensationBonus = 0;
 
-    void setNbrMFInferno(int nbrMF);
+    private String camoCategory = IPlayer.NO_CAMO;
 
-    int getNbrMFConventional();
+    private String camoFileName = null;
 
-    int getNbrMFCommand();
+    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
 
-    int getNbrMFVibra();
+    private boolean admitsDefeat = false;
 
-    int getNbrMFActive();
+    @Override
+    public Vector<Minefield> getMinefields() {
+        return visibleMinefields;
+    }
 
-    int getNbrMFInferno();
+    @Override
+    public void addMinefield(Minefield mf) {
+        visibleMinefields.addElement(mf);
+    }
 
-    void setCamoCategory(String name);
+    @Override
+    public void addMinefields(Vector<Minefield> minefields) {
+        for (int i = 0; i < minefields.size(); i++) {
+            visibleMinefields.addElement(minefields.elementAt(i));
+        }
+    }
 
-    String getCamoCategory();
+    @Override
+    public void removeMinefield(Minefield mf) {
+        visibleMinefields.removeElement(mf);
+    }
 
-    void setCamoFileName(String name);
+    @Override
+    public void removeMinefields() {
+        visibleMinefields.removeAllElements();
+    }
 
-    String getCamoFileName();
+    @Override
+    public void removeArtyAutoHitHexes() {
+        artyAutoHitHexes.removeAllElements();
+    }
 
-    void setGame(IGame game);
+    @Override
+    public boolean containsMinefield(Minefield mf) {
+        return visibleMinefields.contains(mf);
+    }
 
-    String getName();
+    @Override
+    public boolean hasMinefields() {
+        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0) || (num_mf_active > 0) || (num_mf_inferno > 0);
+    }
 
-    void setName(String name);
+    @Override
+    public void setNbrMFConventional(int nbrMF) {
+        num_mf_conv = nbrMF;
+    }
 
-    int getId();
+    @Override
+    public void setNbrMFCommand(int nbrMF) {
+        num_mf_cmd = nbrMF;
+    }
 
-    int getTeam();
+    @Override
+    public void setNbrMFVibra(int nbrMF) {
+        num_mf_vibra = nbrMF;
+    }
 
-    void setTeam(int team);
+    @Override
+    public void setNbrMFActive(int nbrMF) {
+        num_mf_active = nbrMF;
+    }
 
-    boolean isDone();
+    @Override
+    public void setNbrMFInferno(int nbrMF) {
+        num_mf_inferno = nbrMF;
+    }
 
-    void setDone(boolean done);
+    @Override
+    public int getNbrMFConventional() {
+        return num_mf_conv;
+    }
 
-    boolean isGhost();
+    @Override
+    public int getNbrMFCommand() {
+        return num_mf_cmd;
+    }
 
-    void setGhost(boolean ghost);
+    @Override
+    public int getNbrMFVibra() {
+        return num_mf_vibra;
+    }
 
-    boolean isObserver();
+    @Override
+    public int getNbrMFActive() {
+        return num_mf_active;
+    }
 
-    void setSeeAll(boolean see_all);
+    @Override
+    public int getNbrMFInferno() {
+        return num_mf_inferno;
+    }
+
+    @Override
+    public void setCamoCategory(String name) {
+        camoCategory = name;
+    }
+
+    @Override
+    public String getCamoCategory() {
+        return camoCategory;
+    }
+
+    @Override
+    public void setCamoFileName(String name) {
+        camoFileName = name;
+    }
+
+    @Override
+    public String getCamoFileName() {
+        return camoFileName;
+    }
+
+    public Player(int id, String name) {
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public void setGame(IGame game) {
+        this.game = game;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public int getTeam() {
+        return team;
+    }
+
+    @Override
+    public void setTeam(int team) {
+        this.team = team;
+    }
+
+    @Override
+    public boolean isDone() {
+        return done;
+    }
+
+    @Override
+    public void setDone(boolean done) {
+        this.done = done;
+        game.processGameEvent(new GamePlayerChangeEvent(this, this));
+    }
+
+    @Override
+    public boolean isGhost() {
+        return ghost;
+    }
+
+    @Override
+    public void setGhost(boolean ghost) {
+        this.ghost = ghost;
+    }
+
+    @Override
+    public boolean isObserver() {
+        if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_VICTORY)) {
+            return false;
+        }
+        return observer;
+    }
+
+    @Override
+    public void setSeeAll(boolean see_all) {
+        see_entire_board = see_all;
+    }
 
     // This simply returns the value, without checking the observer flag
-    boolean getSeeAll();
+    @Override
+    public boolean getSeeAll() {
+        return see_entire_board;
+    }
 
     // If observer is false, see_entire_board does nothing
-    boolean canSeeAll();
+    @Override
+    public boolean canSeeAll() {
+        return (observer && see_entire_board);
+    }
 
-    void setObserver(boolean observer);
+    @Override
+    public void setObserver(boolean observer) {
+        this.observer = observer;
+        // If not an observer, clear the set see all flag
+        if (!observer) {
+            setSeeAll(false);
+        }
+    }
 
-    int getColorIndex();
+    @Override
+    public int getColorIndex() {
+        return colorIndex;
+    }
 
-    void setColorIndex(int index);
+    @Override
+    public void setColorIndex(int index) {
+        colorIndex = index;
+    }
 
-    int getStartingPos();
+    @Override
+    public int getStartingPos() {
+        return startingPos;
+    }
 
-    void setStartingPos(int startingPos);
+    @Override
+    public void setStartingPos(int startingPos) {
+        this.startingPos = startingPos;
+    }
 
     /**
      * Set deployment zone to edge of board for reinforcements
      */
-    void adjustStartingPosForReinforcements();
+    @Override
+    public void adjustStartingPosForReinforcements() {
+        if (startingPos > 10) {
+            startingPos -= 10; // deep deploy change to standard
+        }
+        if (startingPos == Board.START_CENTER) {
+            startingPos = Board.START_ANY; // center changes to any
+        }
+    }
 
-    boolean isEnemyOf(Player other);
+    @Override
+    public boolean isEnemyOf(IPlayer other) {
+        return ((id != other.getId()) && ((team == TEAM_NONE) || (team != other
+                .getTeam())));
+    }
 
-    void setAdmitsDefeat(boolean admitsDefeat);
+    /**
+     * Two players are equal if their ids are equal
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if ((object == null) || (getClass() != object.getClass())) {
+            return false;
+        }
+        IPlayer other = (IPlayer) object;
+        return other.getId() == id;
+    }
 
-    boolean admitsDefeat();
+    @Override
+    public int hashCode() {
+        return getId();
+    }
 
-    void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes);
+    @Override
+    public void setAdmitsDefeat(boolean admitsDefeat) {
+        this.admitsDefeat = admitsDefeat;
+    }
 
-    Vector<Coords> getArtyAutoHitHexes();
+    @Override
+    public boolean admitsDefeat() {
+        return admitsDefeat;
+    }
 
-    void addArtyAutoHitHex(Coords c);
+    @Override
+    public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {
+        this.artyAutoHitHexes = artyAutoHitHexes;
+    }
 
-    boolean hasTAG();
+    @Override
+    public Vector<Coords> getArtyAutoHitHexes() {
+        return artyAutoHitHexes;
+    }
+
+    @Override
+    public void addArtyAutoHitHex(Coords c) {
+        artyAutoHitHexes.add(c);
+    }
+
+    @Override
+    public boolean hasTAG() {
+        for (Enumeration<Entity> e = game
+                .getSelectedEntities(new EntitySelector() {
+                    private final int ownerId = getId();
+
+                    public boolean accept(Entity entity) {
+                        if (entity.getOwner() == null) {
+                            return false;
+                        }
+                        if (ownerId == entity.getOwner().getId()) {
+                            return true;
+                        }
+                        return false;
+                    }
+                }); e.hasMoreElements(); ) {
+            Entity m = e.nextElement();
+            if (m.hasTAG()) {
+                return true;
+            }
+            // A player can't be on two teams.
+        }
+        return false;
+    }
 
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
-    int getBV();
+    @Override
+    public int getBV() {
+        Enumeration<Entity> survivors = game.getEntities();
+        int bv = 0;
+
+        while (survivors.hasMoreElements()) {
+            Entity entity = survivors.nextElement();
+            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !entity.isTrapped()) {
+                bv += entity.calculateBattleValue();
+            }
+        }
+        return bv;
+    }
 
     /**
      * get the total BV (unmodified by force size mod) for the units of this
@@ -142,35 +409,130 @@ public interface Player extends TurnOrdered {
      *
      * @return the BV
      */
-    int getFledBV();
+    @Override
+    public int getFledBV() {
+        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
+        int bv = 0;
+        while (fledUnits.hasMoreElements()) {
+            Entity entity = fledUnits.nextElement();
+            if (entity.getOwner().equals(this)) {
+                bv += entity.calculateBattleValue();
+            }
+        }
+        return bv;
+    }
 
-    void setInitialBV();
+    @Override
+    public void setInitialBV() {
+        initialBV = getBV();
+    }
 
-    int getInitialBV();
+    @Override
+    public int getInitialBV() {
+        return initialBV;
+    }
 
-    void setCompensationInitBonus(int newBonus);
+    @Override
+    public void setCompensationInitBonus(int newBonus) {
+        streakCompensationBonus = newBonus;
+    }
 
-    int getCompensationInitBonus();
+    @Override
+    public int getCompensationInitBonus() {
+        return streakCompensationBonus;
+    }
 
-    void setConstantInitBonus(int b);
+    @Override
+    public void setConstantInitBonus(int b) {
+        constantInitBonus = b;
+    }
 
-    int getConstantInitBonus();
+    @Override
+    public int getConstantInitBonus() {
+        return constantInitBonus;
+    }
 
     /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
-    int getTurnInitBonus();
+    @Override
+    public int getTurnInitBonus() {
+        int bonusHQ = 0;
+        int bonusMD = 0;
+        int bonusQ = 0;
+        if (game == null) {
+            return 0;
+        }
+        if (game.getEntitiesVector() == null) {
+            return 0;
+        }
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwner().equals(this)) {
+                if (game.getOptions().booleanOption("tacops_mobile_hqs")
+                    && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
+                    bonusHQ = entity.getHQIniBonus();
+                }
+                if (game.getOptions().booleanOption("manei_domini")
+                    && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
+                    bonusMD = entity.getMDIniBonus();
+                }
+                if (entity.getQuirkIniBonus() > bonusQ) {
+                    //TODO: I am assuming that the quirk initiative bonuses go to the highest,
+                    //rather than being cumulative
+                    //http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
+                    bonusQ = entity.getQuirkIniBonus();
+                }
+            }
+        }
+        return bonusHQ + bonusMD + bonusQ;
+    }
 
     /**
      * @return the bonus to this player's initiative rolls for
      *         the highest value initiative (i.e. the 'commander')
      */
-    int getCommandBonus();
+    @Override
+    public int getCommandBonus() {
+        int commandb = 0;
+        if (game.getOptions().booleanOption("command_init")) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if ((null != entity.getOwner())
+                    && entity.getOwner().equals(this)
+                    && !entity.isDestroyed()
+                    && entity.isDeployed()
+                    && !entity.isOffBoard()
+                    && entity.getCrew().isActive()
+                    && !entity.isCaptured()
+                    && !(entity instanceof MechWarrior)) {
+                    if (entity.getCrew().getCommandBonus() > commandb) {
+                        commandb = entity.getCrew().getCommandBonus();
+                    }
+                }
+            }
+        }
+        return commandb;
+    }
 
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
      *
      * @return a vector of relevant entity ids
      */
-    Vector<Integer> getAirborneVTOL();
+    @Override
+    public Vector<Integer> getAirborneVTOL() {
+
+        //a vector of unit ids
+        Vector<Integer> units = new Vector<Integer>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwner().equals(this)) {
+                if (((entity instanceof VTOL)
+                     || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
+                    (!entity.isDestroyed()) &&
+                    (entity.getElevation() > 0)) {
+                    units.add(entity.getId());
+                }
+            }
+        }
+        return units;
+    }
 }

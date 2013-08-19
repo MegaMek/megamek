@@ -19,8 +19,8 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
-import megamek.common.Player;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -40,7 +40,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
     }
 
     public BAVibroClawAttackAction(int entityId, int targetType,
-            int targetId) {
+                                   int targetId) {
         super(entityId, targetType, targetId);
     }
 
@@ -48,12 +48,12 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
      * Damage a BA does with its vibroclaws.
      */
     public static int getDamageFor(Entity entity) {
-        return Compute.missilesHit(((BattleArmor)entity).getShootingStrength()) * entity.getVibroClaws();
+        return Compute.missilesHit(((BattleArmor) entity).getShootingStrength()) * entity.getVibroClaws();
     }
 
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+                                                         getTargetId()));
     }
 
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
@@ -73,10 +73,10 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption("friendly_fire")) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity)target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
+                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                    || ((((Entity) target).getOwner().getTeam() != IPlayer.TEAM_NONE)
+                        && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
+                        && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
             }
         }
@@ -94,36 +94,36 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         // can't target yourself
         if ((te != null) && ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+                                 "You can't target yourself");
         }
 
         // only BA can make this attack
         if (!(ae instanceof BattleArmor)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Non-BA can't make vibroclaw-physicalattacks");
+                                 "Non-BA can't make vibroclaw-physicalattacks");
         }
 
         if ((te != null) && !((te instanceof Infantry))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "can't target non-infantry");
+                                 "can't target non-infantry");
         }
 
         // need to have vibroclaws to make this attack
         if (ae.getVibroClaws() == 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no vibro claws mounted");
+                                 "no vibro claws mounted");
         }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+                                 "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+                                 "Target is swarming a Mek.");
         }
 
         // check range
@@ -135,13 +135,13 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         // check elevation
         if ((te != null) && (te.getElevation() > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                                 "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+                                 "Target is making a DFA attack");
         }
 
         // Can only attack other entities

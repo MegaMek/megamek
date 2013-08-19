@@ -9,7 +9,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.AWT.BotGUI;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -47,14 +47,14 @@ public class AddBotCommand extends ServerCommand {
         }
 
         String playerName = args[playerListStart];
-        for(int i = (playerListStart + 1); i < args.length; i++) {
+        for (int i = (playerListStart + 1); i < args.length; i++) {
             playerName = playerName + " " + args[i];
         }
 
-        Player target = null;
-        for (Enumeration<Player> i = server.getGame().getPlayers(); i
-                .hasMoreElements();) {
-            Player player = i.nextElement();
+        IPlayer target = null;
+        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i
+                .hasMoreElements(); ) {
+            IPlayer player = i.nextElement();
             if (player.getName().equals(playerName)) {
                 target = player;
             }
@@ -62,7 +62,7 @@ public class AddBotCommand extends ServerCommand {
 
         if (target == null) {
             server.sendServerChat(connId, "No player with the name '" + args[1]
-                    + "'.");
+                                          + "'.");
             return;
         }
 
@@ -89,7 +89,7 @@ public class AddBotCommand extends ServerCommand {
         }
 
         server.sendServerChat(connId, "Player " + target.getName()
-                + " is not a ghost.");
+                                      + " is not a ghost.");
     }
 
 }

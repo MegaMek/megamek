@@ -13,17 +13,18 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.common.Aero;
-import megamek.common.BombType;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serializable;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import megamek.common.Aero;
+import megamek.common.BombType;
 
 /**
  * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.

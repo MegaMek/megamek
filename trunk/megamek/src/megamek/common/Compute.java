@@ -37,7 +37,6 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ArtilleryCannonWeapon;
-import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;

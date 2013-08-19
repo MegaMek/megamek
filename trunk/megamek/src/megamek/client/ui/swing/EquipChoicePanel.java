@@ -39,7 +39,6 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.FighterSquadron;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;

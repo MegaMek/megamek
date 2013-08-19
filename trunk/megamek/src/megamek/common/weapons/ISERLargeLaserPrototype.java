@@ -23,7 +23,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.server.Server;
-import megamek.common.EquipmentType;
 
 /**
  * @author Andrew Hunter

@@ -13,6 +13,17 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
@@ -22,16 +33,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.

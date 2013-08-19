@@ -17,10 +17,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
-import megamek.server.Server;
 
 /**
  * @author Andrew Hunter

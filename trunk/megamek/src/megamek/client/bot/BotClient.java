@@ -14,8 +14,10 @@
 package megamek.client.bot;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +25,6 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,6 +33,7 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ReportDisplay;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -63,7 +64,6 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
-import megamek.client.ui.swing.ReportDisplay;
 
 public abstract class BotClient extends Client {
 

@@ -358,22 +358,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             zoomOut();
                         } else {
                             zoomIn();
-                        }                        
+                        }
                     }
                     else if (we.isShiftDown()){
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
                             hbar.setValue((int) (hbar.getValue() - (HEX_H * scale * (-1*notches))));
-    
+
                         } else {
                             hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (notches))));
                         }
                     }
-                    else{                                            
+                    else{
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
                             vbar.setValue((int) (vbar.getValue() - (HEX_H * scale * (-1*notches))));
-    
+
                         } else {
                             vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (notches))));
                         }
@@ -1016,12 +1016,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private Mounted getSelectedArtilleryWeapon() {
         //We don't want to display artillery auto-hit/adjusted fire hexes during
-        // the artyautohithexes phase.  These could be displayed if the player 
+        // the artyautohithexes phase.  These could be displayed if the player
         // uses the /reset command in some situations
         if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES){
             return null;
         }
-        
+
         if ((selectedEntity == null) || (selectedWeapon == null)) {
             return null;
         }
@@ -1062,51 +1062,51 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         //Draw incoming artillery sprites - requires server to update client's
         // view of game
-        for (Enumeration<ArtilleryAttackAction> attacks = 
+        for (Enumeration<ArtilleryAttackAction> attacks =
                 game.getArtilleryAttacks(); attacks.hasMoreElements();) {
             ArtilleryAttackAction a = attacks.nextElement();
             Coords c = a.getTarget(game).getPosition();
             //Is the Coord within the viewing area?
-            if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                 c.y >= drawY && c.y <= (drawY + drawHeight)){
-                
+            if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                 (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
+
                 Point p = getHexLocation(c);
                 scaledImage = tileManager
                         .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
-                g.drawImage(scaledImage, p.x, p.y, this);                
+                g.drawImage(scaledImage, p.x, p.y, this);
             }
         }
-     
+
         // Draw pre-designated auto-hit hexes
         if (localPlayer != null) //Could be null, like in map-editor
         {
             for (Coords c : localPlayer.getArtyAutoHitHexes()){
                 //Is the Coord within the viewing area?
-                if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                     c.y >= drawY && c.y <= (drawY + drawHeight)){
-                    
+                if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                     (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
+
                     Point p = getHexLocation(c);
                     scaledImage = tileManager
-                            .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);                   
-                    g.drawImage(scaledImage, p.x, p.y, this);                   
+                            .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
+                    g.drawImage(scaledImage, p.x, p.y, this);
                 }
             }
         }
-        
-        
+
+
         // Draw modifiers for selected entity and weapon
-        if (weapon != null){  
+        if (weapon != null){
             //Loop through all of the attack modifiers for this weapon
-            for (ArtilleryTracker.ArtilleryModifier attackMod : 
+            for (ArtilleryTracker.ArtilleryModifier attackMod :
                     selectedEntity.aTracker.getWeaponModifiers(weapon)){
                 Coords c = attackMod.getCoords();
                 //Is the Coord within the viewing area?
-                if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                     c.y >= drawY && c.y <= (drawY + drawHeight)){
-                    
+                if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                     (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
+
                     Point p = getHexLocation(c);
                     // draw the crosshairs
-                    if (attackMod.getModifier() == 
+                    if (attackMod.getModifier() ==
                             TargetRoll.AUTOMATIC_SUCCESS) {
                         // predesignated or already hit
                         scaledImage = tileManager.getArtilleryTarget(
@@ -1118,7 +1118,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     g.drawImage(scaledImage, p.x, p.y, this);
                 }
             }
-        }               
+        }
     }
 
     /*
@@ -1398,7 +1398,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (game.getBoard().inSpace()) {
             boardGraph.setColor(Color.LIGHT_GRAY);
         }
-        
+
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
@@ -1866,22 +1866,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void redrawEntity(Entity entity) {
         redrawEntity(entity,null);
     }
-    
+
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
-     * the old sprite with the new! Takes a reference to the Entity object 
-     * before changes, in case it contained important state information, like 
-     * Dropships taking off (airborne dropships lose their secondary hexes).  
+     * the old sprite with the new! Takes a reference to the Entity object
+     * before changes, in case it contained important state information, like
+     * Dropships taking off (airborne dropships lose their secondary hexes).
      * Try to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity, Entity oldEntity) {
         Integer entityId = new Integer(entity.getId());
         if (oldEntity == null){
             oldEntity = entity;
-        }                    
+        }
 
         if (entity.getPosition() == null) {
-            for (Iterator<EntitySprite> spriteIter = entitySprites.iterator(); 
+            for (Iterator<EntitySprite> spriteIter = entitySprites.iterator();
                     spriteIter.hasNext();) {
                 EntitySprite sprite = spriteIter.next();
                 if (sprite.entity.equals(entity)) {
@@ -2426,7 +2426,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
             if (e.getPosition() != null) {
-                if (en != null && e.getId() == en.getId()) {
+                if ((en != null) && (e.getId() == en.getId())) {
                     movementSprites.add(new MovementSprite(e, md
                             .getFinalVectors(), col, true));
                 } else {
@@ -2760,6 +2760,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
                     me.getModifiers());
+            // stop scrolling
+            shouldScroll = false;
             return;
         }
 

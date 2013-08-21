@@ -4292,6 +4292,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private class StepSprite extends Sprite {
         private MoveStep step;
+        private Image baseScaleImage;
 
         public StepSprite(final MoveStep step) {
             this.step = step;
@@ -4299,6 +4300,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             image = null;
+        }
+        
+        /**
+         * Refreshes this StepSprite's image to handle changes in the zoom 
+         * level.
+         */
+        public void refreshZoomLevel(){
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT))));
+            }
         }
 
         @Override
@@ -4632,6 +4649,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     break;
             }
 
+            baseScaleImage = createImage(new FilteredImageSource(
+                    tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(
@@ -6686,6 +6705,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         updateFontSizes();
         updateBoard();
+        for (StepSprite sprite : pathSprites){
+            sprite.refreshZoomLevel();
+        }
         this.setSize(boardSize);
         redrawWholeBoard = true;
 

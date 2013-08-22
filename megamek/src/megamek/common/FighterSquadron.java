@@ -600,21 +600,15 @@ public class FighterSquadron extends Aero {
      */
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
-        for (int btype = 0; btype < BombType.B_NUM; btype++){
-            int salvoSize = 0;
             for (Integer fId : fighters){
                 Aero fighter = (Aero)game.getEntity(fId);
                 for (Mounted m : fighter.getBombs()){
-                    if (((BombType)m.getType()).getBombType() == btype){
-                        salvoSize++;
-                        break;
-                    }
+                    loadout[((BombType)m.getType()).getBombType()]++;
                 }
-            }
-            loadout[btype] = salvoSize;
-        }        
+            }              
         return loadout;
     }
+    
     
     public void applyBombs() {
         // Make sure all of the aeros have their bombs applied, otherwise problems
@@ -643,7 +637,7 @@ public class FighterSquadron extends Aero {
         // Find out what bombs everyone has
         for (int btype = 0; btype < BombType.B_NUM; btype++){
             // This is smallest number of such a bomb
-            int minBombCount = Integer.MAX_VALUE;
+            int maxBombCount = 0;
             for (Integer fId : fighters){
                 int bombCount = 0;
                 Aero fighter = (Aero)game.getEntity(fId);
@@ -653,14 +647,9 @@ public class FighterSquadron extends Aero {
                         bombCount++;
                     }
                 }
-                if (bombCount != 0){
-                    minBombCount = Math.min(bombCount, minBombCount);
-                }                            
+                maxBombCount = Math.max(bombCount, maxBombCount);                            
             }
-            if (minBombCount == Integer.MAX_VALUE){
-                minBombCount = 0;
-            }
-            bombChoices[btype] = minBombCount;
+            bombChoices[btype] = maxBombCount;
         }
         
         // Now that we know our bomb choices, load 'em

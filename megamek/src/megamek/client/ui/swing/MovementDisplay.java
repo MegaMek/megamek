@@ -3478,10 +3478,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
+        int numFighters = 0;
+        if (ce() instanceof FighterSquadron){
+            numFighters = ((FighterSquadron)ce()).getNFighters();
+        }
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                a.getBombLoadout(), false, true, -1,false);
+                a.getBombLoadout(), false, true, -1,numFighters);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             int[] bombsDumped = dumpBombsDialog.getChoices();

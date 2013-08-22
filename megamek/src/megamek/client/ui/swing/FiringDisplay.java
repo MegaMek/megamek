@@ -912,10 +912,14 @@ KeyListener, ItemListener, ListSelectionListener {
             }
         }
         
+        int numFighters = 0;
+        if (ce() instanceof FighterSquadron){
+            numFighters = ((FighterSquadron)ce()).getNFighters();
+        }
         BombPayloadDialog bombsDialog = new BombPayloadDialog(
                 clientgui.frame, Messages
                 .getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
-                loadout, isSpace, false, limit, ce() instanceof FighterSquadron);
+                loadout, isSpace, false, limit, numFighters);
         bombsDialog.setVisible(true);
         if (bombsDialog.getAnswer()) {
             payload = bombsDialog.getChoices();

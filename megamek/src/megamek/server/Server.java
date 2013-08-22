@@ -25416,12 +25416,12 @@ public class Server implements Runnable {
             if (null != fighter) {
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
-                fighter.setTransportId(fs.getId());
-                entityUpdate(fighter.getId());
+                fighter.setTransportId(fs.getId());                
                 // If this is the lounge, we want to configure bombs
                 if (game.getPhase() == Phase.PHASE_LOUNGE){
                     fighter.setBombChoices(fs.getBombChoices());
                 }
+                entityUpdate(fighter.getId());
             }
         }
         send(createAddEntityPacket(fs.getId()));

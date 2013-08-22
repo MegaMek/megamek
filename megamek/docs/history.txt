@@ -116,6 +116,7 @@ v0.35.41-dev (SVN)
     a turn
 + Bug: Fighters added to a squadron have their bomb loadout removed on the 
     server, but the change isn't reflected in the client
++ Bug: Missing break in HexTarget caused Hex: Bomb to display Hex: TAG
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

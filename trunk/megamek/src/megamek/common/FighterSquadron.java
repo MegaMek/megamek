@@ -811,7 +811,7 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
-        boolean success = fighters.removeElement(unit);
+        boolean success = fighters.removeElement(unit.getId());
         if (game.getPhase() != Phase.PHASE_LOUNGE){
             computeSquadronBombLoadout();
             // updateWeaponGroups() and loadAllWeapons() are called in 

@@ -119,6 +119,10 @@ v0.35.41-dev (SVN)
 + Bug: Missing break in HexTarget caused Hex: Bomb to display Hex: TAG
 + Bug: Fixed a divide-by-zero in Game.getEntity if Game.entities is 0 (ie, the 
     player is an observer)
++Bug: Problems with unload(Entity) methods: transporters were changed to use 
+    entity Ids instead of Entity references.  Many of the unload methods were 
+    trying to remove an Entity object from a Vector<Integer> which caused 
+    problems
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

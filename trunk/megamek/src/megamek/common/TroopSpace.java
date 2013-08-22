@@ -151,7 +151,7 @@ public final class TroopSpace implements Transporter {
      */
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
-        boolean retval = troops.removeElement(unit);
+        boolean retval = troops.removeElement(unit.getId());
 
         // If we removed it, restore our space.
         if (retval) {

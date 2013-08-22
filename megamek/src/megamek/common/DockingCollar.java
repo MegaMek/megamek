@@ -213,7 +213,7 @@ public class DockingCollar implements Transporter {
         }
 
         // Remove the unit if we are carrying it.
-        boolean retval = troops.removeElement(unit);
+        boolean retval = troops.removeElement(unit.getId());
 
         // If we removed it, restore our space.
         if (retval) {

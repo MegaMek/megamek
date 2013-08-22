@@ -88,6 +88,7 @@ public class HexTarget implements Targetable {
         break;
         case (Targetable.TYPE_HEX_AERO_BOMB):
             name = Messages.getString("HexTarget.Bomb");
+        break;
         case (Targetable.TYPE_HEX_TAG):
             name = Messages.getString("HexTarget.Tag");
         break;

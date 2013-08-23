@@ -275,6 +275,13 @@ public class Game implements Serializable, IGame {
 
     protected void clearMinefieldsHelper() {
         minefields.clear();
+        vibrabombs.removeAllElements();
+
+        Enumeration<Player> iter = getPlayers();
+        while (iter.hasMoreElements()) {
+            Player player = iter.nextElement();
+            player.removeMinefields();
+        }
     }
 
     public Vector<Minefield> getVibrabombs() {
@@ -1288,7 +1295,8 @@ public class Game implements Serializable, IGame {
         resetPSRs();
         resetArtilleryAttacks();
         resetAttacks();
-        removeMinefields();
+        // removeMinefields();  Broken and bad!
+        clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
         clearAllReports();
@@ -1309,16 +1317,16 @@ public class Game implements Serializable, IGame {
         }
     }
 
-    private void removeMinefields() {
-        minefields.clear();
-        vibrabombs.removeAllElements();
-
-        Enumeration<Player> iter = getPlayers();
-        while (iter.hasMoreElements()) {
-            Player player = iter.nextElement();
-            player.removeMinefields();
-        }
-    }
+//    private void removeMinefields() {
+//        minefields.clear();
+//        vibrabombs.removeAllElements();
+//
+//        Enumeration<Player> iter = getPlayers();
+//        while (iter.hasMoreElements()) {
+//            Player player = iter.nextElement();
+//            player.removeMinefields();
+//        }
+//    }
 
     /**
      * Regenerates the entities by id hashtable by going thru all entities in

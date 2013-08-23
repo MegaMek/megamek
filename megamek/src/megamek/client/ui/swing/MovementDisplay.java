@@ -1590,8 +1590,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
+        Coords currPosition = cmd != null ? cmd.getFinalCoords()
+                : ce != null ? ce.getPosition() : null;
+        
         if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
-            if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor())
+            if (!b.getCoords().equals(currPosition)
                     || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 clientgui.getBoardView().cursor(b.getCoords());
 

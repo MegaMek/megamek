@@ -124,6 +124,7 @@ v0.35.41-dev (SVN)
     trying to remove an Entity object from a Vector<Integer> which caused 
     problems
 + Bug: Improper clearing of minefields on game reset could lead to NPEs in subsequent games.
++ Bug [#3824]: Clicking on a hex won't path to that hex in certain circumstances 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

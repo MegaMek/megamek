@@ -2987,8 +2987,11 @@ public class Compute {
         }
 
         visualRange = Math.max(visualRange, 1);
-
-        return ae.getPosition().distance(target.getPosition()) <= visualRange;
+        int distance;
+        //Ground distance
+        distance = ae.getPosition().distance(target.getPosition());
+        distance += 2 * target.getAltitude();
+        return distance <= visualRange;
 
     }
 
@@ -3017,7 +3020,7 @@ public class Compute {
         }
 
         int distance = ae.getPosition().distance(target.getPosition());
-
+        distance += 2 * target.getAltitude();
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
 

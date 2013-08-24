@@ -17,6 +17,8 @@ package megamek.common;
 
 import java.util.Vector;
 
+import megamek.common.preference.PreferenceManager;
+
 /**
  * A building with weapons fitted and, optionally, a turret.
  * Taharqa: I am completely re-writing this entity to bring it up to code with TacOps rules
@@ -450,7 +452,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled() {
         if (isMilitary() && !hasViableWeapons()) {
-            System.out.println(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: no viable weapons left.");
+            }
             return true;
         }
         return false;

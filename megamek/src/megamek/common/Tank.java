@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.preference.PreferenceManager;
+
 /**
  * You know what tanks are, silly.
  */
@@ -3247,23 +3249,38 @@ public class Tank extends Entity {
     @Override
     public boolean isCrippled() {
         if (getArmor(LOC_FRONT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Front armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_RIGHT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Right armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Right armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_LEFT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Left armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Left armor destroyed.");
+            }
             return true;
         }
         if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Turret destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Turret destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_REAR) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Rear armor destroyed.");
+            }
             return true;
         }
 
@@ -3277,7 +3294,11 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn())
+            {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: has no more viable weapons.");
+            }
             return true;
         }
         return false;

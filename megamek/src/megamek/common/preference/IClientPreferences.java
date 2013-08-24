@@ -38,6 +38,7 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String MECH_DIRECTORY = "MechDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
+    public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
     // public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
@@ -114,6 +115,8 @@ public interface IClientPreferences extends IPreferenceStore {
     boolean keepGameLog();
 
     boolean memoryDumpOn();
+    
+    boolean debugOutputOn();
 
     void setDefaultAutoejectDisabled(boolean state);
 

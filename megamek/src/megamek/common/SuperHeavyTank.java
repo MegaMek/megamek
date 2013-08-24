@@ -15,6 +15,8 @@ package megamek.common;
 
 import java.util.ArrayList;
 
+import megamek.common.preference.PreferenceManager;
+
 public class SuperHeavyTank extends Tank {
 
     /**
@@ -332,35 +334,59 @@ public class SuperHeavyTank extends Tank {
     @Override
     public boolean isCrippled() {
         if (getArmor(LOC_FRONT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Front armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_FRONTRIGHT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Front Right armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_FRONTLEFT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Front Left armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_REARRIGHT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Rear Right armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_REARLEFT) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Rear Left armor destroyed.");
+            }
             return true;
         }
         if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Turret armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Turret armor destroyed.");
+            }
             return true;
         }
         if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Front Turret armor destroyed.");
+            }
             return true;
         }
         if (getArmor(LOC_REAR) < 1) {
-            System.out.println(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Rear armor destroyed.");
+            }
             return true;
         }
 
@@ -374,7 +400,10 @@ public class SuperHeavyTank extends Tank {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: has no more viable weapons.");
+            }
             return true;
         }
         return false;

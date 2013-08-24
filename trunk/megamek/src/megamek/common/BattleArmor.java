@@ -17,6 +17,7 @@ package megamek.common;
 import java.text.NumberFormat;
 import java.util.Vector;
 
+import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1746,9 +1747,12 @@ public class BattleArmor extends Infantry {
     public boolean isCrippled() {
         double activeTroopPercent = (double)getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            System.out.println(getDisplayName() + " CRIPPLED: only " +
-                               NumberFormat.getPercentInstance().format(activeTroopPercent) +
-                               " troops remaining.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: only "
+                        + NumberFormat.getPercentInstance().format(
+                                activeTroopPercent) + " troops remaining.");
+            }
             return true;
         }
         return false;

@@ -17,6 +17,7 @@ package megamek.common;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
+import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -1407,9 +1408,12 @@ public class Infantry extends Entity {
     public boolean isCrippled() {
         double activeTroopPercent = (double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            System.out.println(getDisplayName() + " CRIPPLED: only " +
-                               DecimalFormat.getPercentInstance().format(activeTroopPercent) +
-                               " troops remaining.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: only "
+                        + DecimalFormat.getPercentInstance().format(
+                                activeTroopPercent) + " troops remaining.");
+            }
             return true;
         }
         return false;

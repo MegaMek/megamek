@@ -2771,7 +2771,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (target.getTargetType() != Targetable.TYPE_HEX_AERO_BOMB) {
                 return "only hexes can be targeted for bomb attacks";
             }
-            if (!ae.passedThrough(target.getPosition())) {
+            if (!ae.passedOver(target)) {
                 return "bombing only possible along flight path";
             }
 
@@ -2935,7 +2935,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // for air to ground attacks, the target's position must be within
             // the flight path, unless it is an artillery weapon in the nose.
             // http://www.classicbattletech.com/forums/index.php?topic=65110.0
-            if (!ae.passedThrough(target.getPosition())) {
+            if (!ae.passedOver(target)) {
                 if (!wtype.hasFlag(WeaponType.F_ARTILLERY)) {
                     return "target not along flight path";
                 } else if (weapon.getLocation() != Aero.LOC_NOSE) {

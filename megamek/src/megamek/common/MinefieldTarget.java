@@ -14,6 +14,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MinefieldTarget implements Targetable {
     /**
      *
@@ -37,6 +40,10 @@ public class MinefieldTarget implements Targetable {
 
     public Coords getPosition() {
         return m_coords;
+    }
+    
+    public Map<Integer, Coords> getSecondaryPositions(){
+        return new HashMap<Integer, Coords>();
     }
 
     public int absHeight() {

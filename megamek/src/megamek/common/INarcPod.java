@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Sebastian Brocks This class represents an iNarc pod attached to an
@@ -135,6 +136,13 @@ public class INarcPod implements Serializable, Targetable {
         throw new IllegalStateException(
                 "Never ask for the coords of an INarcPod.");
     }
+    
+    public Map<Integer, Coords> getSecondaryPositions() {
+        // Hopefully, this will **never** get called.
+        throw new IllegalStateException(
+                "Never ask for the coords of an INarcPod.");
+    }
+    
 
     public int absHeight() {
         return 0;

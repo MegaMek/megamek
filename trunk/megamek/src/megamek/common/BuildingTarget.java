@@ -14,6 +14,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexex.
@@ -158,6 +161,10 @@ public class BuildingTarget implements Targetable {
 
     public Coords getPosition() {
         return position;
+    }
+    
+    public Map<Integer, Coords> getSecondaryPositions(){
+        return new HashMap<Integer, Coords>();
     }
 
     public int absHeight() {

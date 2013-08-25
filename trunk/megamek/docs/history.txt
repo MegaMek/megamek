@@ -129,6 +129,8 @@ v0.35.41-dev (SVN)
 + Bug [#3381]: Compute.inVisualRange and inSensorRange don't consider altitude
 + Bug [#3826]: Added a ClientPreference DebugOutputOn which can be used to 
     configure the client to print out additional debug information (or not).
++ Bug [#3828]: Secondary positions aren't considered when targeting with flight 
+    paths
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

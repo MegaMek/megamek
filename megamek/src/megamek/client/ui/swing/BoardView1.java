@@ -4300,6 +4300,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             image = null;
+            baseScaleImage = null;
         }
         
         /**
@@ -4307,6 +4308,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
          * level.
          */
         public void refreshZoomLevel(){
+            
+            if (baseScaleImage == null){
+                return;
+            }
+            
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(
                         baseScaleImage.getSource(), new KeyAlphaFilter(

@@ -12167,7 +12167,7 @@ public class Server implements Runnable {
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
-                r = new Report(3090);
+                r = new Report(3090,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
@@ -12176,7 +12176,7 @@ public class Server implements Runnable {
                         Terrains.WOODS, 1));
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
-                r = new Report(3085);
+                r = new Report(3085,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
@@ -12185,7 +12185,7 @@ public class Server implements Runnable {
                         Terrains.WOODS, 2));
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
-                r = new Report(3082);
+                r = new Report(3082,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             }
@@ -12199,7 +12199,7 @@ public class Server implements Runnable {
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
-                r = new Report(3091);
+                r = new Report(3091,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
@@ -12208,7 +12208,7 @@ public class Server implements Runnable {
                         Terrains.JUNGLE, 1));
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
-                r = new Report(3086);
+                r = new Report(3086,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
@@ -12217,7 +12217,7 @@ public class Server implements Runnable {
                         Terrains.JUNGLE, 2));
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
-                r = new Report(3083);
+                r = new Report(3083,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             }
@@ -12227,7 +12227,7 @@ public class Server implements Runnable {
             int tf = ice.getTerrainFactor() - nDamage;
             if (tf <= 0) {
                 // ice melted
-                r = new Report(3092);
+                r = new Report(3092,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 vPhaseReport.addAll(resolveIceBroken(c));
@@ -12239,7 +12239,7 @@ public class Server implements Runnable {
             int tf = magma.getTerrainFactor() - nDamage;
             if (tf <= 0) {
                 // magma crust destroyed
-                r = new Report(3093);
+                r = new Report(3093,Report.PUBLIC);
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 h.removeTerrain(Terrains.MAGMA);

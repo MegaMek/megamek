@@ -84,7 +84,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
-import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -100,7 +99,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
-import megamek.common.InfantryBay;
 import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
@@ -3476,9 +3474,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 	                            	if (t.canLoad(en)) {
 	                            		if (t instanceof Bay) {
 	                            			Bay bay = (Bay)t;
-	                            			if (bay instanceof BattleArmorBay || bay instanceof InfantryBay) {
-	                            				System.err.println("DEBUG: BA or Infantry Bay, #"+bay.getBayNumber()+" on "+en.getShortName());
-	                            			}
 	                            			menuItem = new JMenuItem("Into Bay #"+bay.getBayNumber()+" (Free Slots: "+(int)loader.getBayById(bay.getBayNumber()).getUnused()+")");
 	                            			menuItem.setActionCommand("LOAD|" + loader.getId() + ":" + bay.getBayNumber());
 	                            		/*} else {

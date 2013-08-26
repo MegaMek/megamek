@@ -2545,10 +2545,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             choice = mountableUnits.get(0);
         }
         
-        if (!(ce instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+        if (!(ce instanceof Infantry)) {
 	        Vector<Integer> bayChoices = new Vector<Integer>();
 	        for (Transporter t : choice.getTransports()) {
-	        	if (t.canLoad(ce)) {
+	        	if (t.canLoad(ce) && t instanceof Bay) {
 	        		bayChoices.add(((Bay) t).getBayNumber());
 	        	}
 	        }
@@ -2557,7 +2557,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 	        for (Integer bn : bayChoices) {
 	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
 	        }
-	        if (bayChoices.size() > 1 && !(choice instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+	        if (bayChoices.size() > 1 && !(choice instanceof Infantry)) {
 	        	String bayString = (String) JOptionPane.showInputDialog(
 	        				clientgui,
 	        				Messages

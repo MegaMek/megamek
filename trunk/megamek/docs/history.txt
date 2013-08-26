@@ -132,6 +132,7 @@ v0.35.41-dev (SVN)
 + Bug [#3828]: Secondary positions aren't considered when targeting with flight 
     paths
 + Bug: Fixed potential NPE in StepSprite.refreshZoomLevel()
++ Bug [#3827]: Report 3090 can't be seen in double blind
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

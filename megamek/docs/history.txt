@@ -137,6 +137,7 @@ v0.35.41-dev (SVN)
 + Bug: Added an option to flip the zoom direction for the mouse wheel
 + Bug: CommonSettingsDialog was not initializing the selected values for 
     MouseWheelZoom and MouseWheelZoomFlip
++ Bug: Visibility state of the UnitOverview was not being remembered
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

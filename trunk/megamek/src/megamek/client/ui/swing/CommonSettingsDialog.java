@@ -342,6 +342,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         soundMute.setSelected(gs.getSoundMute());
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
+        
+        mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
+        mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.setSelectedIndex(0);

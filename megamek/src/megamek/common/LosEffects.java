@@ -826,12 +826,20 @@ public class LosEffects {
                     //vertical cover, left
                     leftLos.targetCover  = COVER_LEFT;
                     rightLos.targetCover = COVER_LEFT;
+                    rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
+                    rightLos.setCoverDropshipPrimary(leftLos.getCoverDropshipPrimary());
+                    rightLos.setDamagableCoverTypePrimary(leftLos.getDamagableCoverTypePrimary());
+                    rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
                     losBlockedByCover = true;
                 }else if (leftLos.targetCover == COVER_NONE && 
                          rightLos.targetCover == COVER_FULL) {
                     //vertical cover, right
                     leftLos.targetCover  = COVER_RIGHT;
                     rightLos.targetCover = COVER_RIGHT;
+                    leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
+                    leftLos.setCoverDropshipPrimary(rightLos.getCoverDropshipPrimary());
+                    leftLos.setDamagableCoverTypePrimary(rightLos.getDamagableCoverTypePrimary());
+                    leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
                     losBlockedByCover = true;
                 } else if(leftLos.targetCover == COVER_FULL && 
                          rightLos.targetCover == COVER_HORIZONTAL){

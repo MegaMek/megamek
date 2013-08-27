@@ -134,6 +134,7 @@ v0.35.41-dev (SVN)
 + Bug: Fixed potential NPE in StepSprite.refreshZoomLevel()
 + Bug [#3827]: Report 3090 can't be seen in double blind
 + Bug: ClassException from bad typecasting in Deployment and Movement phases' loading routines
++ Bug: Added an option to flip the zoom direction for the mouse wheel
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

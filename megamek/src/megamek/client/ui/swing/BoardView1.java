@@ -347,14 +347,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    if (we.getWheelRotation() > 0) {
+                    boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                            .getInstance().getMouseWheelZoomFlip())
+                            || (we.getWheelRotation() <= 0 && GUIPreferences
+                                    .getInstance().getMouseWheelZoomFlip());
+                    if (zoomIn) {
                         zoomIn();
                     } else {
                         zoomOut();
                     }
                 } else {
                     if (we.isControlDown()){
-                        if (we.getWheelRotation() > 0) {
+                        boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                                .getInstance().getMouseWheelZoomFlip())
+                                || (we.getWheelRotation() <= 0 && GUIPreferences
+                                        .getInstance().getMouseWheelZoomFlip());
+                        if (zoomIn) {
                             zoomOut();
                         } else {
                             zoomIn();

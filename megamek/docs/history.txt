@@ -144,6 +144,7 @@ v0.35.41-dev (SVN)
 + Bug [#3603]: Refactored Entity.isHexProhibited(IHex) to 
     Entity.isLocationProhibited(Coords)
 + Bug[#3603]: deployment and movement checks for grounded dropships
++ Bug: Fixing error in Mechset.txt.
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

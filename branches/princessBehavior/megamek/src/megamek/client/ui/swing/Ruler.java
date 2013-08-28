@@ -16,10 +16,8 @@ package megamek.client.ui.swing;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
-// import java.awt.Dimension; Import never used
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-// import java.awt.Insets; Import never used
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -47,6 +45,8 @@ import megamek.common.Coords;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+// import java.awt.Dimension; Import never used
+// import java.awt.Insets; Import never used
 
 /**
  * <p>

@@ -62,7 +62,6 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.Transporter;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -75,6 +74,7 @@ import megamek.common.Targetable;
 import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.Transporter;
 import megamek.common.VTOL;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -1590,8 +1590,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
+        Coords currPosition = cmd != null ? cmd.getFinalCoords()
+                : ce != null ? ce.getPosition() : null;
+        
         if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
-            if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor())
+            if (!b.getCoords().equals(currPosition)
                     || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 clientgui.getBoardView().cursor(b.getCoords());
 
@@ -2542,10 +2545,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             choice = mountableUnits.get(0);
         }
         
-        if (!(ce instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+        if (!(ce instanceof Infantry)) {
 	        Vector<Integer> bayChoices = new Vector<Integer>();
 	        for (Transporter t : choice.getTransports()) {
-	        	if (t.canLoad(ce)) {
+	        	if (t.canLoad(ce) && t instanceof Bay) {
 	        		bayChoices.add(((Bay) t).getBayNumber());
 	        	}
 	        }
@@ -2554,7 +2557,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 	        for (Integer bn : bayChoices) {
 	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
 	        }
-	        if (bayChoices.size() > 1 && !(choice instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+	        if (bayChoices.size() > 1 && !(choice instanceof Infantry)) {
 	        	String bayString = (String) JOptionPane.showInputDialog(
 	        				clientgui,
 	        				Messages
@@ -3478,10 +3481,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
+        int numFighters = 0;
+        if (ce() instanceof FighterSquadron){
+            numFighters = ((FighterSquadron)ce()).getNFighters();
+        }
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                a.getBombLoadout(), false, true, -1,false);
+                a.getBombLoadout(), false, true, -1,numFighters);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             int[] bombsDumped = dumpBombsDialog.getChoices();

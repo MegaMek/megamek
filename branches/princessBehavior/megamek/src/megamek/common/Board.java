@@ -718,6 +718,7 @@ public class Board implements Serializable, IBoard {
     public void load(InputStream is) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
+        resetStoredElevation();
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
             StreamTokenizer st = new StreamTokenizer(r);

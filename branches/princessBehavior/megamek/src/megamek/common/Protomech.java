@@ -1678,8 +1678,11 @@ public class Protomech extends Entity {
     @Override
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: Pilot has taken 4+ damage.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn())
+            {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Pilot has taken 4+ damage.");
+            }
             return true;
         }
 
@@ -1688,8 +1691,11 @@ public class Protomech extends Entity {
                 return false;
             }
         }
-        System.out.println(getDisplayName()
-                           + " CRIPPLED: has no more viable weapons.");
+        if (PreferenceManager.getClientPreferences().debugOutputOn())
+        {
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: has no more viable weapons.");
+        }
         return true;
     }
 

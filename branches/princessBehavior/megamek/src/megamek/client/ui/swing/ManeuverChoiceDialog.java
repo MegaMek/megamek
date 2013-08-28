@@ -34,9 +34,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;

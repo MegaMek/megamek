@@ -26,6 +26,7 @@ import megamek.common.BombType;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -46,13 +47,13 @@ import megamek.common.MechWarrior;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Crew;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.RangeType;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
+import megamek.common.TagInfo;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -405,6 +406,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 narcSpotter = true;
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
+            }
+            if (spotter == null && atype != null
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                            .getAmmoType() == AmmoType.T_NLRM))
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED))
+            {
+                for (TagInfo ti : game.getTagInfo()){
+                    if (target.getTargetId() == ti.target.getTargetId()){
+                        spotter = game.getEntity(ti.attackerId);
+                    }
+                }
             }
         }
 
@@ -1467,9 +1480,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             || (atype.getAmmoType() == AmmoType.T_MML) || (atype
                             .getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    && (te.getTaggedBy() != -1)) {
-                toHit.addModifier(-1,
-                        "semiguided ignores spotter movement & indirect fire penalties");
+                    ) {
+                boolean targetTagged = false;
+                // If this is an entity, we can see if it's tagged
+                if (te != null){
+                    targetTagged = te.getTaggedBy() != -1; 
+                } else{ // Non entities will require us to look harder
+                    for (TagInfo ti : game.getTagInfo()){
+                        if (target.getTargetId() == ti.target.getTargetId()){
+                            targetTagged = true;
+                        }
+                    }
+                }
+                
+                if (targetTagged){
+                    toHit.addModifier(-1,"semiguided ignores spotter " +
+                    		"movement & indirect fire penalties");
+                }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game,
                         spotter.getId()));
@@ -2439,7 +2466,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         
         // The TAG system cannot target Airborne Aeros.
-        if (isTAG && (te.isAirborne() || te.isSpaceborne())) {
+        if (isTAG && te != null && (te.isAirborne() || te.isSpaceborne())) {
             return "Can not target airborne units with TAG.";
         }
         
@@ -2744,7 +2771,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (target.getTargetType() != Targetable.TYPE_HEX_AERO_BOMB) {
                 return "only hexes can be targeted for bomb attacks";
             }
-            if (!ae.passedThrough(target.getPosition())) {
+            if (!ae.passedOver(target)) {
                 return "bombing only possible along flight path";
             }
 
@@ -2758,7 +2785,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
-        Entity spotter = null;
+        Entity spotter = null;     
         if (isIndirect) {
             if ((target instanceof Entity)
                     && !isTargetECMAffected
@@ -2770,8 +2797,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
+                       
+            if (spotter == null && atype != null
+                && ((atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                        .getAmmoType() == AmmoType.T_NLRM))
+                && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED))
+            {
+                for (TagInfo ti : game.getTagInfo()){
+                    if (target.getTargetId() == ti.target.getTargetId()){
+                        spotter = game.getEntity(ti.attackerId);
+                    }
+                }
+            }
 
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon)
+            if ((spotter == null) && 
+                    !(wtype instanceof MekMortarWeapon)
                     && !(wtype instanceof ArtilleryCannonWeapon)) {
                 return "No available spotter";
             }
@@ -2894,7 +2935,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // for air to ground attacks, the target's position must be within
             // the flight path, unless it is an artillery weapon in the nose.
             // http://www.classicbattletech.com/forums/index.php?topic=65110.0
-            if (!ae.passedThrough(target.getPosition())) {
+            if (!ae.passedOver(target)) {
                 if (!wtype.hasFlag(WeaponType.F_ARTILLERY)) {
                     return "target not along flight path";
                 } else if (weapon.getLocation() != Aero.LOC_NOSE) {

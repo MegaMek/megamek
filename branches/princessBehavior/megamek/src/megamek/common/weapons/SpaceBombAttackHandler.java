@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -128,14 +127,18 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                 }
                 // Now remove a bomb from the squadron
                 if (payload[type] > 0){
-                    for (Mounted bomb : ae.getBombs()) {
-                        if (((BombType) bomb.getType()).getBombType() == type && 
-                                !bomb.isDestroyed()
-                                && bomb.getUsableShotsLeft() > 0) {
-                            bomb.setShotsLeft(0);                                
-                            break;
-                        }
-                    }  
+                    double numSalvos = Math.ceil((payload[type] + 0.0)
+                            / ((FighterSquadron) ae).getNFighters());
+                    for (int salvo = 0; salvo < numSalvos; salvo++){
+                        for (Mounted bomb : ae.getBombs()) {
+                            if (((BombType) bomb.getType()).getBombType() == type
+                                    && !bomb.isDestroyed()
+                                    && bomb.getUsableShotsLeft() > 0) {
+                                bomb.setShotsLeft(0);
+                                break;
+                            }
+                        }  
+                    }
                 }
             }
         }else{ // Ammo expenditure for a single fighter        

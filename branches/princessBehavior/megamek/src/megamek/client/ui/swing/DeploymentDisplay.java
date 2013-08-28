@@ -32,7 +32,6 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
-import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.Building;
@@ -42,6 +41,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -579,10 +579,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 JOptionPane.QUESTION_MESSAGE, null,
                                 SharedUtility.getDisplayArray(choices), null);
                 other = (Entity) SharedUtility.getTargetPicked(choices, input);
-                if (!((other instanceof BattleArmor) && ce().hasBattleArmorHandles())) {
+                if (!(other instanceof Infantry)) {
                 	Vector<Integer> bayChoices = new Vector<Integer>();
                     for (Transporter t : ce().getTransports()) {
-	                	if (t.canLoad(other)) {
+	                	if (t.canLoad(other) && t instanceof Bay) {
 	                		bayChoices.add(((Bay) t).getBayNumber());
 	                	}
 	                }
@@ -591,7 +591,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 	                for (Integer bn : bayChoices) {
 	                	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
 	                }
-	                if ((bayChoices.size() > 1) && !((other instanceof BattleArmor) && ce().hasBattleArmorHandles())) {
+	                if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
 	                	String bayString = (String) JOptionPane.showInputDialog(
 	                				clientgui,
 	                				Messages

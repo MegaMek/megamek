@@ -15,13 +15,16 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public interface Targetable extends Serializable {
     public static final int TYPE_ENTITY = 0;
     public static final int TYPE_HEX_CLEAR = 1;
     public static final int TYPE_HEX_IGNITE = 2;
+    public static final int TYPE_HEX_TAG = 19;
     public static final int TYPE_BUILDING = 3;
     public static final int TYPE_BLDG_IGNITE = 4;
+    public static final int TYPE_BLDG_TAG = 20;    
     public static final int TYPE_MINEFIELD_CLEAR = 5;
     public static final int TYPE_MINEFIELD_DELIVER = 6;
     public static final int TYPE_HEX_ARTILLERY = 7;
@@ -41,6 +44,8 @@ public interface Targetable extends Serializable {
 
     /** @return the coordinates of the hex containing the target */
     public Coords getPosition();
+    
+    public Map<Integer, Coords> getSecondaryPositions();
 
     /**
      * @return elevation of the top (e.g. torso) of the target relative to

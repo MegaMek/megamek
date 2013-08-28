@@ -84,6 +84,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JCheckBox showMapsheets;
     private JCheckBox mouseWheelZoom;
+    private JCheckBox mouseWheelZoomFlip;
 
     private JList keys;
     private int keysIndex = 0;
@@ -176,6 +177,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         mouseWheelZoom = new JCheckBox(Messages
                 .getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
         tempPanel.add(mouseWheelZoom);
+        
+        mouseWheelZoomFlip = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
+        tempPanel.add(mouseWheelZoomFlip);
 
         nagForPSR = new JCheckBox(Messages
                 .getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
@@ -337,6 +342,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         soundMute.setSelected(gs.getSoundMute());
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
+        
+        mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
+        mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.setSelectedIndex(0);
@@ -427,6 +435,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .charAt(0));
 
         gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
+        gs.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 

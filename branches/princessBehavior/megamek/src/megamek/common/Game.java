@@ -289,6 +289,13 @@ public class Game implements Serializable, IGame {
 
     protected void clearMinefieldsHelper() {
         minefields.clear();
+        vibrabombs.removeAllElements();
+
+        Enumeration<IPlayer> iter = getPlayers();
+        while (iter.hasMoreElements()) {
+            IPlayer player = iter.nextElement();
+            player.removeMinefields();
+        }
     }
 
     public Vector<Minefield> getVibrabombs() {
@@ -1128,12 +1135,14 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_HEX_ARTILLERY:
                 case Targetable.TYPE_HEX_SCREEN:
                 case Targetable.TYPE_HEX_AERO_BOMB:
+                case Targetable.TYPE_HEX_TAG:
                     return new HexTarget(HexTarget.idToCoords(nID), board,
                                          nType);
                 case Targetable.TYPE_FUEL_TANK:
                 case Targetable.TYPE_FUEL_TANK_IGNITE:
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
+                case Targetable.TYPE_BLDG_TAG:
                     return new BuildingTarget(BuildingTarget.idToCoords(nID),
                                               board, nType);
                 case Targetable.TYPE_MINEFIELD_CLEAR:
@@ -1313,7 +1322,8 @@ public class Game implements Serializable, IGame {
         resetPSRs();
         resetArtilleryAttacks();
         resetAttacks();
-        removeMinefields();
+        // removeMinefields();  Broken and bad!
+        clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
         clearAllReports();
@@ -1334,16 +1344,16 @@ public class Game implements Serializable, IGame {
         }
     }
 
-    private void removeMinefields() {
-        minefields.clear();
-        vibrabombs.removeAllElements();
-
-        Enumeration<IPlayer> iter = getPlayers();
-        while (iter.hasMoreElements()) {
-            IPlayer player = iter.nextElement();
-            player.removeMinefields();
-        }
-    }
+//    private void removeMinefields() {
+//        minefields.clear();
+//        vibrabombs.removeAllElements();
+//
+//        Enumeration<Player> iter = getPlayers();
+//        while (iter.hasMoreElements()) {
+//            Player player = iter.nextElement();
+//            player.removeMinefields();
+//        }
+//    }
 
     /**
      * Regenerates the entities by id hashtable by going thru all entities in
@@ -1643,6 +1653,9 @@ public class Game implements Serializable, IGame {
      * @param start the index number to start at (not an Entity Id)
      */
     public Entity getNextEntity(int start) {
+        if (entities.size() == 0)
+            return null;
+        start = start % entities.size();
         int entityId = entities.get(start).getId();
         return getEntity(getNextEntityNum(getTurn(), entityId));
     }
@@ -2828,12 +2841,28 @@ public class Game implements Serializable, IGame {
         for (int i = 0; i < tagInfoForTurn.size(); i++) {
             TagInfo info = tagInfoForTurn.elementAt(i);
             Entity attacker = getEntity(info.attackerId);
-            Entity target = getEntity(info.targetId);
-            if (!ae.isEnemyOf(attacker) && target.isOnSameSheet(tc)) {
+            Targetable target = info.target;
+            if (!ae.isEnemyOf(attacker) && isOnSameSheet(target.getPosition(),tc)) {
                 info.shots = info.priority;
                 tagInfoForTurn.setElementAt(info, i);
             }
         }
+    }
+    
+    public boolean isOnSameSheet(Coords c1, Coords c2){
+        if (getOptions().booleanOption("a4homing_target_area")) {
+            // unofficial rule which may be better with odd sized boards
+            if (c2.distance(c1) <= 8) {
+                return true;
+            }
+            return false;
+        }
+        // using FASA map sheets
+        if (((c2.x / 16) == (c1.x / 16))
+                && ((c2.y / 17) == (c1.y / 17))) {
+            return true;
+        }
+        return false;
     }
 
     /**

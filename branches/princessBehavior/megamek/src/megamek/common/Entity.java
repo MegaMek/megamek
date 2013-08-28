@@ -9356,6 +9356,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         passedThrough.add(c);
     }
 
+    /**
+     * Method taht determines if this Entity passed over another entity during
+     * its current path
+     * @param e
+     * @return
+     */
+    public boolean passedOver(Targetable t){
+        for (Coords crd : passedThrough) {
+            if (crd.equals(t.getPosition())) {
+                return true;
+            }
+            for (Coords secondary : t.getSecondaryPositions().values()){
+                if (crd.equals(secondary)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public boolean passedThrough(Coords c) {
         for (Coords crd : passedThrough) {
             if (crd.equals(c)) {

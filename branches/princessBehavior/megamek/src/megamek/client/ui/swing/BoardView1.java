@@ -347,30 +347,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    if (we.getWheelRotation() > 0) {
+                    boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                            .getInstance().getMouseWheelZoomFlip())
+                            || (we.getWheelRotation() <= 0 && GUIPreferences
+                                    .getInstance().getMouseWheelZoomFlip());
+                    if (zoomIn) {
                         zoomIn();
                     } else {
                         zoomOut();
                     }
                 } else {
                     if (we.isControlDown()) {
-                        if (we.getWheelRotation() > 0) {
+                        boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                                .getInstance().getMouseWheelZoomFlip())
+                                || (we.getWheelRotation() <= 0 && GUIPreferences
+                                        .getInstance().getMouseWheelZoomFlip());
+                        if (zoomIn) {
                             zoomOut();
                         } else {
                             zoomIn();
                         }
-                    } else if (we.isShiftDown()) {
+                    }
+                    else if (we.isShiftDown()){
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
-                            hbar.setValue((int) (hbar.getValue() - (HEX_H * scale * (-1 * notches))));
+                            hbar.setValue((int) (hbar.getValue() - (HEX_H * scale * (-1*notches))));
 
                         } else {
                             hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (notches))));
                         }
-                    } else {
+                    }
+                    else{
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
-                            vbar.setValue((int) (vbar.getValue() - (HEX_H * scale * (-1 * notches))));
+                            vbar.setValue((int) (vbar.getValue() - (HEX_H * scale * (-1*notches))));
 
                         } else {
                             vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (notches))));
@@ -1005,7 +1015,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private Mounted getSelectedArtilleryWeapon() {
         //We don't want to display artillery auto-hit/adjusted fire hexes during
-        // the artyautohithexes phase.  These could be displayed if the player 
+        // the artyautohithexes phase.  These could be displayed if the player
         // uses the /reset command in some situations
         if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             return null;
@@ -1052,12 +1062,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         //Draw incoming artillery sprites - requires server to update client's
         // view of game
         for (Enumeration<ArtilleryAttackAction> attacks =
-                     game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
+                game.getArtilleryAttacks(); attacks.hasMoreElements();) {
             ArtilleryAttackAction a = attacks.nextElement();
             Coords c = a.getTarget(game).getPosition();
             //Is the Coord within the viewing area?
-            if (c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                c.y >= drawY && c.y <= (drawY + drawHeight)) {
+            if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                 (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
 
                 Point p = getHexLocation(c);
                 scaledImage = tileManager
@@ -1071,8 +1081,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         {
             for (Coords c : localPlayer.getArtyAutoHitHexes()) {
                 //Is the Coord within the viewing area?
-                if (c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                    c.y >= drawY && c.y <= (drawY + drawHeight)) {
+                if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                     (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
 
                     Point p = getHexLocation(c);
                     scaledImage = tileManager
@@ -1084,19 +1094,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 
         // Draw modifiers for selected entity and weapon
-        if (weapon != null) {
+        if (weapon != null){
             //Loop through all of the attack modifiers for this weapon
             for (ArtilleryTracker.ArtilleryModifier attackMod :
-                    selectedEntity.aTracker.getWeaponModifiers(weapon)) {
+                    selectedEntity.aTracker.getWeaponModifiers(weapon)){
                 Coords c = attackMod.getCoords();
                 //Is the Coord within the viewing area?
-                if (c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                    c.y >= drawY && c.y <= (drawY + drawHeight)) {
+                if ( (c.x >= drawX) && (c.x <= (drawX + drawWidth)) &&
+                     (c.y >= drawY) && (c.y <= (drawY + drawHeight))){
 
                     Point p = getHexLocation(c);
                     // draw the crosshairs
                     if (attackMod.getModifier() ==
-                        TargetRoll.AUTOMATIC_SUCCESS) {
+                            TargetRoll.AUTOMATIC_SUCCESS) {
                         // predesignated or already hit
                         scaledImage = tileManager.getArtilleryTarget(
                                 TilesetManager.ARTILLERY_AUTOHIT);
@@ -1867,7 +1877,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (entity.getPosition() == null) {
             for (Iterator<EntitySprite> spriteIter = entitySprites.iterator();
-                 spriteIter.hasNext(); ) {
+                    spriteIter.hasNext();) {
                 EntitySprite sprite = spriteIter.next();
                 if (sprite.entity.equals(entity)) {
                     spriteIter.remove();
@@ -2413,7 +2423,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
             Entity e = i.nextElement();
             if (e.getPosition() != null) {
-                if (en != null && e.getId() == en.getId()) {
+                if ((en != null) && (e.getId() == en.getId())) {
                     movementSprites.add(new MovementSprite(e, md
                             .getFinalVectors(), col, true));
                 } else {
@@ -2747,6 +2757,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
                         me.getModifiers());
+            // stop scrolling
+            shouldScroll = false;
             return;
         }
 
@@ -4276,6 +4288,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private class StepSprite extends Sprite {
         private MoveStep step;
+        private Image baseScaleImage;
 
         public StepSprite(final MoveStep step) {
             this.step = step;
@@ -4283,6 +4296,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             image = null;
+            baseScaleImage = null;
+        }
+        
+        /**
+         * Refreshes this StepSprite's image to handle changes in the zoom 
+         * level.
+         */
+        public void refreshZoomLevel(){
+            
+            if (baseScaleImage == null){
+                return;
+            }
+            
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT))));
+            }
         }
 
         @Override
@@ -4616,6 +4651,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     break;
             }
 
+            baseScaleImage = createImage(new FilteredImageSource(
+                    tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(
@@ -6654,6 +6691,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         updateFontSizes();
         updateBoard();
+        for (StepSprite sprite : pathSprites){
+            sprite.refreshZoomLevel();
+        }
         this.setSize(boardSize);
         redrawWholeBoard = true;
 

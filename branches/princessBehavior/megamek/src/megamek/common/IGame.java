@@ -1227,6 +1227,17 @@ public interface IGame {
      */
     public abstract void clearTagInfoShots(Entity ae, Coords tc);
 
+    
+    /**
+     * Computes whether two coordinates are considered to be on the same mapsheet
+     * 
+     * @param c1 The first coordinate
+     * @param c2 The second coordinate
+     * @return True if both coordinates are on the same mapsheet, else false
+     */
+    public boolean isOnSameSheet(Coords c1, Coords c2);
+    
+    
     /**
      * Reset tag information
      */

@@ -1044,6 +1044,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     private void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
+        GUIPreferences.getInstance().setShowUnitOverview(uo.isVisible());
         bv.refreshDisplayables();
     }
 

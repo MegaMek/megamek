@@ -35,7 +35,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
-import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -207,7 +206,7 @@ public class MapMenu extends JPopupMenu {
         if (t instanceof Entity) {
             targetCode = "E|" + ((Entity) t).getId();
         } else if (t instanceof BuildingTarget) {
-            targetCode = "B|" + t.getPosition().x + "|" + t.getPosition().y + "|" + (t.getTargetType() == Targetable.TYPE_BLDG_IGNITE ? true : false);
+            targetCode = "B|" + t.getPosition().x + "|" + t.getPosition().y + "|" + t.getTargetType();
         } else if (t instanceof MinefieldTarget) {
             targetCode = "M|" + t.getPosition().x + "|" + t.getPosition().y;
         } else {
@@ -940,6 +939,13 @@ public class MapMenu extends JPopupMenu {
                 if ((h != null) && (currentPanel instanceof TargetingPhaseDisplay) && !board.inSpace() && !board.inAtmosphere() && (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER))) {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
+                // Check for adding TAG targeting buildings and hexes
+                if ( h != null && currentPanel instanceof TargetingPhaseDisplay && myEntity.hasTAG() && !board.inSpace()){
+                    menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_TAG)));
+                    if (h.containsTerrain(Terrains.FUEL_TANK) || h.containsTerrain(Terrains.BUILDING) || h.containsTerrain(Terrains.BRIDGE)){
+                        menu.add(TargetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG))); 
+                    }
+                }
             }
         }
         return menu;
@@ -966,7 +972,7 @@ public class MapMenu extends JPopupMenu {
         Coords targetCoords = new Coords(Integer.parseInt(target.nextToken()), Integer.parseInt(target.nextToken()));
 
         if (type.equals("B")) {
-            return new BuildingTarget(targetCoords, board, Boolean.parseBoolean(target.nextToken()));
+            return new BuildingTarget(targetCoords, board, Integer.parseInt(target.nextToken()));
         }
 
         if (type.equals("M")) {

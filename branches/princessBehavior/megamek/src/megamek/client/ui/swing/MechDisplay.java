@@ -2862,7 +2862,9 @@ public class MechDisplay extends JPanel {
                            && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner && m.getType().hasModes()) {
-                    if (!m.isInoperable() && en.isActive() && m.isModeSwitchable()) {
+                    if (!m.isInoperable()
+                            && (en.isActive() || (en instanceof Aero && ((Aero) en)
+                                    .isInASquadron())) && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!m.isInoperable() && m.getType() instanceof MiscType

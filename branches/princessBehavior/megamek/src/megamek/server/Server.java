@@ -1876,6 +1876,7 @@ public class Server implements Runnable {
                 // remove the last traces of last round
                 game.resetActions();
                 game.resetTagInfo();
+                sendTagInfoReset();
                 clearReports();
                 resetEntityRound();
                 resetEntityPhase(phase);
@@ -2450,6 +2451,7 @@ public class Server implements Runnable {
                 checkForFlawedCooling();
 
                 sendSpecialHexDisplayPackets();
+                sendTagInfoUpdates();
 
                 // check reports
                 if (vPhaseReport.size() > 1) {
@@ -2519,6 +2521,28 @@ public class Server implements Runnable {
         for (int i = 0; i < connections.size(); i++) {
             if (connections.get(i) != null) {
                 connections.get(i).send(createSpecialHexDisplayPacket(i));
+            }
+        }
+    }
+    
+    private void sendTagInfoUpdates(){
+        if (connections == null) {
+            return;
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i) != null) {
+                connections.get(i).send(createTagInfoUpdatesPacket());
+            }
+        }
+    }
+    
+    public void sendTagInfoReset(){
+        if (connections == null) {
+            return;
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i) != null) {
+                connections.get(i).send(new Packet(Packet.COMMAND_RESET_TAGINFO));
             }
         }
     }
@@ -11986,6 +12010,10 @@ public class Server implements Runnable {
         ITerrain ice = h.getTerrain(Terrains.ICE);
         ITerrain magma = h.getTerrain(Terrains.MAGMA);
         Report r;
+        int reportType = Report.HIDDEN;
+        if (entityId == Entity.NONE){
+            reportType = Report.PUBLIC;
+        }
         if (woods != null) {
             int tf = woods.getTerrainFactor() - nDamage;
             int level = woods.getLevel();
@@ -11994,7 +12022,7 @@ public class Server implements Runnable {
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
-                r = new Report(3090);
+                r = new Report(3090,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
@@ -12003,7 +12031,7 @@ public class Server implements Runnable {
                         Terrains.WOODS, 1));
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
-                r = new Report(3085);
+                r = new Report(3085,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
@@ -12012,7 +12040,7 @@ public class Server implements Runnable {
                         Terrains.WOODS, 2));
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
-                r = new Report(3082);
+                r = new Report(3082,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             }
@@ -12026,7 +12054,7 @@ public class Server implements Runnable {
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
-                r = new Report(3091);
+                r = new Report(3091,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
@@ -12035,7 +12063,7 @@ public class Server implements Runnable {
                         Terrains.JUNGLE, 1));
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
-                r = new Report(3086);
+                r = new Report(3086,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
@@ -12044,7 +12072,7 @@ public class Server implements Runnable {
                         Terrains.JUNGLE, 2));
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
-                r = new Report(3083);
+                r = new Report(3083,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             }
@@ -12054,7 +12082,7 @@ public class Server implements Runnable {
             int tf = ice.getTerrainFactor() - nDamage;
             if (tf <= 0) {
                 // ice melted
-                r = new Report(3092);
+                r = new Report(3092,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 vPhaseReport.addAll(resolveIceBroken(c));
@@ -12066,7 +12094,7 @@ public class Server implements Runnable {
             int tf = magma.getTerrainFactor() - nDamage;
             if (tf <= 0) {
                 // magma crust destroyed
-                r = new Report(3093);
+                r = new Report(3093,reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 h.removeTerrain(Terrains.MAGMA);
@@ -25107,12 +25135,12 @@ public class Server implements Runnable {
             if (null != fighter) {
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
-                fighter.setTransportId(fs.getId());
-                entityUpdate(fighter.getId());
+                fighter.setTransportId(fs.getId());                
                 // If this is the lounge, we want to configure bombs
                 if (game.getPhase() == Phase.PHASE_LOUNGE) {
                     fighter.setBombChoices(fs.getBombChoices());
                 }
+                entityUpdate(fighter.getId());
             }
         }
         send(createAddEntityPacket(fs.getId()));
@@ -26024,6 +26052,10 @@ public class Server implements Runnable {
             }
         }
         return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
+    }
+    
+    private Packet createTagInfoUpdatesPacket(){
+        return new Packet(Packet.COMMAND_SENDING_TAGINFO,game.getTagInfo());
     }
 
     /**

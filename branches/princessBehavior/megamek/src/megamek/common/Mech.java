@@ -7494,37 +7494,53 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isCrippled() {
         if (countInternalDamagedLimbs() >= 3) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: 3+ limbs have taken internals.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: 3+ limbs have taken internals.");
+            }
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: 2+ torsos have taken internals.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: 2+ torsos have taken internals.");
+            }
             return true;
         }
 
         if (isLocationBad(LOC_LT)) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: Left Torso destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Left Torso destroyed.");
+            }
             return true;
         }
 
         if (isLocationBad(LOC_RT)) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: Right Torso destroyed.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Right Torso destroyed.");
+            }
             return true;
         }
 
         if (getEngineHits() >= 2) {
-            System.out.println(getDisplayName() + " CRIPPLED: 2 Engine Hits.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: 2 Engine Hits.");
+            }
             return true;
+
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: Engine + Gyro hit.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Engine + Gyro hit.");
+            }
             return true;
         }
 
@@ -7534,20 +7550,27 @@ public abstract class Mech extends Entity {
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
                 || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                     SYSTEM_SENSORS, LOC_CT) > 0)) {
-                System.out.println(getDisplayName()
-                                   + " CRIPPLED: Sensors destroyed.");
+                if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                    System.out.println(getDisplayName()
+                            + " CRIPPLED: Sensors destroyed.");
+                }
                 return true;
             }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: Pilot has taken 4+ damage.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: Pilot has taken 4+ damage.");
+            }
             return true;
         }
 
         if (isPermanentlyImmobilized()) {
-            System.out.println(getDisplayName() + " CRIPPLED: Immobilized.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out
+                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
+            }
             return true;
         }
 
@@ -7560,8 +7583,10 @@ public abstract class Mech extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            System.out.println(getDisplayName()
-                               + " CRIPPLED: has no more viable weapons.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: has no more viable weapons.");
+            }
             return true;
         }
         return false;

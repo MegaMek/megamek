@@ -95,20 +95,68 @@ v0.35.41-dev (SVN)
     Entity object
 + Bug: NPE if a pilot has too many skills and abilities
 + Remove binary saves, all save files will be gzipped xml from here forward.
-    Leaving .sav support in the file filters so that people can unzip and edit their
-    xml save, and then reload it without having to gzip it back up
-+ Bug [#3813]: The Next button doesn't work after some Entities are deleted, since [r9688] 
-+ Feature: Added an unofficial optional rule to allow on-map artillery pieces to pre-designate autohit hexes
-+ Bug [#3815]: Changing weapon selection in the MechDisplay outside of the firing phase can lead to NPEs.
-+ Bug: Ground bombing was allowed in space, space bombing was allowed in ground/atmosphere
-+ Bug: FighterSquadron had a collection of Entity objects.  When server/client communication happens, these objects can get de-synched with the global collection of Entities in the client/server.  To prevent this, the collection was changed to Entity IDs
+    Leaving .sav support in the file filters so that people can unzip and edit
+    their xml save, and then reload it without having to gzip it back up
++ Bug [#3813]: The Next button doesn't work after some Entities are deleted,
+    since [r9688] 
++ Feature: Added an unofficial optional rule to allow on-map artillery pieces
+    to pre-designate autohit hexes
++ Bug [#3815]: Changing weapon selection in the MechDisplay outside of the
+    firing phase can lead to NPEs.
++ Bug: Ground bombing was allowed in space, space bombing was allowed in ground
+    /atmosphere
++ Bug: FighterSquadron had a collection of Entity objects.  When server/client
+    communication happens, these objects can get de-synched with the global
+    collection of Entities in the client/server.  To prevent this, the
+    collection was changed to Entity IDs
 + Bug [#3816]: Bombs cannot be used with fighter squadrons
 + Bug: Timestamp comparision backwards
 + Bug: Server.sendLoadGame() modification for XML saves only incorrect
-+ Bug: transports added to an Entity don't have their game state variable set, which can lead to NPEs
-+ Bug: Jumping backwards across elevation changes with mechanical jump boosters could cause PSR nags, although no PSRs would be rolled
++ Bug: transports added to an Entity don't have their game state variable set,
+    which can lead to NPEs
++ Bug: Jumping backwards across elevation changes with mechanical jump boosters
+    could cause PSR nags, although no PSRs would be rolled
 + Bug [#3795]:  Mechanical jump boosters shouldn't allow drops from any height 
 + Bug [#3819]: Ejected pilots/crews still provide Command Bonus 
++ Bug [#3113]: TAG against hexes (and buildings)
++ Bug [#3820]: ArrayIndexOutOfBounds in Game.getNextEntity(int)
++ Bug [#3596]: Assorted Aero Bugs (BAP mode switching in Squadrons)
++ Bug: Exception when recovering a Fighter into a squadron: FighterSquadron
+    needed to overload load(Entity,boolean,int)
++ Bug: Squadron MAX_SIZE is smaller than StratOps indicates
++ Bug: Fixed being stuck in drag-scroll mode after choosing an option in the 
+    context menu with the right mouse button
++ Bug: Movement path for currently moving entity was not scaling as zoom level 
+    changes
++ Bug [#3821]: Squadrons should be able to drop more than one salvo of bombs in 
+    a turn
++ Bug: Fighters added to a squadron have their bomb loadout removed on the 
+    server, but the change isn't reflected in the client
++ Bug: Missing break in HexTarget caused Hex: Bomb to display Hex: TAG
++ Bug: Fixed a divide-by-zero in Game.getEntity if Game.entities is 0 (ie, the 
+    player is an observer)
++ Bug: Problems with unload(Entity) methods: transporters were changed to use 
+    entity Ids instead of Entity references.  Many of the unload methods were 
+    trying to remove an Entity object from a Vector<Integer> which caused 
+    problems
++ Bug: Improper clearing of minefields on game reset could lead to NPEs in 
+    subsequent games.
++ Bug [#3824]: Clicking on a hex won't path to that hex in certain circumstances 
++ Bug [#3381]: Compute.inVisualRange and inSensorRange don't consider altitude
++ Bug [#3826]: Added a ClientPreference DebugOutputOn which can be used to 
+    configure the client to print out additional debug information (or not).
++ Bug [#3828]: Secondary positions aren't considered when targeting with flight 
+    paths
++ Bug: Fixed potential NPE in StepSprite.refreshZoomLevel()
++ Bug [#3827]: Report 3090 can't be seen in double blind
++ Bug: ClassException from bad typecasting in Deployment and Movement phases' loading routines
++ Bug: Added an option to flip the zoom direction for the mouse wheel
++ Bug: CommonSettingsDialog was not initializing the selected values for 
+    MouseWheelZoom and MouseWheelZoomFlip
++ Bug: Visibility state of the UnitOverview was not being remembered
++ Bug: TacOps partial cover damaging cover not working in some situations with 
+  vertical cover
++ Bug [#3831]: Board.load(InputStream) does not reset board min/max elevations
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

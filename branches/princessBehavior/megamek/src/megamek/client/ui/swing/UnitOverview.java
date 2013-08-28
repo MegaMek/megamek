@@ -38,6 +38,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IArmorState;
+import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
@@ -91,6 +92,8 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageUp, clientgui);
         pageDown = toolkit.getImage(new File(Configuration.widgetsDir(), "pageDown.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
+        
+        visible = GUIPreferences.getInstance().getShowUnitOverview();
     }
 
     public void draw(Graphics graph, Rectangle clipBounds) {

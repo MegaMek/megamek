@@ -14,13 +14,13 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-
-import java.util.Vector;
 
 /**
  * Deric Page (deric.page@usa.net)

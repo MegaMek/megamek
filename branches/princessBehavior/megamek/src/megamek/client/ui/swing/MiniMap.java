@@ -150,9 +150,7 @@ public class MiniMap extends JPanel {
     boolean dirtyMap = true;
     boolean[][] dirty;
     private Image terrainBuffer;
-    
-    private int scrollXDifference = 0;
-    private int scrollYDifference = 0;
+
     // are we drag-scrolling?
     private boolean dragging = false;
 
@@ -1458,20 +1456,13 @@ public class MiniMap extends JPanel {
     };
 
     MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mousePressed(MouseEvent me) {
-            scrollXDifference = me.getX();
-            scrollYDifference = me.getY();
-        }
         
         public void mouseReleased(MouseEvent me) {
-            // center main map on clicked area, if there was no dragging
+            // Center main map on clicked area, if there was no dragging
             if(m_dialog instanceof JDialog && !dragging) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
-            // Clear up variables related to draggin
-            scrollXDifference = 0;
-            scrollYDifference = 0;
+            // Clear up variables related to dragging
             dragging = false;
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));            
         }
@@ -1482,8 +1473,6 @@ public class MiniMap extends JPanel {
  
         @Override
         public void mouseDragged(MouseEvent e) {
-            //if we have not yet been dragging, set the var so popups don't
-            // appear when we stop scrolling
             if (!dragging) {
                 dragging = true;
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

@@ -75,6 +75,7 @@ import megamek.common.MovePath;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.UnitLocation;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -1228,6 +1229,15 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
                 game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
                 game.processGameEvent(new GameSettingsChangeEvent(this));
+                break;
+            case Packet.COMMAND_SENDING_TAGINFO:
+                Vector<TagInfo> vti = (Vector<TagInfo>)c.getObject(0);
+                for (TagInfo ti : vti) {
+                    game.addTagInfo(ti);
+                }
+                break;
+            case Packet.COMMAND_RESET_TAGINFO:
+                game.resetTagInfo();
                 break;
             case Packet.COMMAND_END_OF_GAME:
                 String sEntityStatus = (String) c.getObject(0);

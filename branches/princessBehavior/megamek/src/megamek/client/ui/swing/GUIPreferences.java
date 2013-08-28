@@ -107,6 +107,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
+    public static final String MOUSE_WHEEL_ZOOM_FLIP = "MouseWheelZoomFlip";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
     public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
@@ -138,6 +139,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
+    public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -210,6 +212,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
         store.setDefault(MOUSE_WHEEL_ZOOM, false);
+        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, false);
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
@@ -236,6 +239,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(USE_ISOMETRIC, false);
+        store.setDefault(SHOW_UNIT_OVERVIEW, true);
     }
 
     public void setDefault(String name, Color color) {
@@ -387,6 +391,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getMouseWheelZoom() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM);
     }
+    
+    public boolean getMouseWheelZoomFlip(){
+        return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
+    }
 
     public boolean getNagForBotReadme() {
         return store.getBoolean(NAG_FOR_BOT_README);
@@ -507,6 +515,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowMapsheets() {
         return store.getBoolean(SHOW_MAPSHEETS);
+    }
+    
+    public boolean getShowUnitOverview(){
+        return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
 
     public void setAutoEndFiring(boolean state) {
@@ -630,6 +642,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMouseWheelZoom(boolean b) {
         store.setValue(MOUSE_WHEEL_ZOOM, b);
     }
+    
+    public void setMouseWheelZoomFlip(boolean b){
+        store.setValue(MOUSE_WHEEL_ZOOM_FLIP,b);
+    }
 
     public void setNagForBotReadme(boolean b) {
         store.setValue(NAG_FOR_BOT_README, b);
@@ -746,6 +762,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setIsometricEnabled(boolean b) {
         store.setValue(USE_ISOMETRIC, b);
+    }
+    
+    public void setShowUnitOverview(boolean b){
+        store.setValue(SHOW_UNIT_OVERVIEW, b);
     }
 
     protected ColorParser p = new ColorParser();

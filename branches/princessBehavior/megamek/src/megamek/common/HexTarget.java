@@ -14,6 +14,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HexTarget implements Targetable {
     /**
      *
@@ -41,6 +44,10 @@ public class HexTarget implements Targetable {
 
     public Coords getPosition() {
         return m_coords;
+    }
+    
+    public Map<Integer, Coords> getSecondaryPositions(){
+        return new HashMap<Integer, Coords>();
     }
 
     public int absHeight() {
@@ -88,6 +95,9 @@ public class HexTarget implements Targetable {
         break;
         case (Targetable.TYPE_HEX_AERO_BOMB):
             name = Messages.getString("HexTarget.Bomb");
+        break;
+        case (Targetable.TYPE_HEX_TAG):
+            name = Messages.getString("HexTarget.Tag");
         break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;

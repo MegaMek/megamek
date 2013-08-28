@@ -14,6 +14,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexex.
@@ -34,11 +37,6 @@ public class BuildingTarget implements Targetable {
     private Coords position = null;
 
     /**
-     * Flag that indicates an attempt to ignite the building.
-     */
-    private boolean isIgnite = false;
-
-    /**
      * The ID of the building being targeted.
      */
     private int id = Building.UNKNOWN;
@@ -57,6 +55,11 @@ public class BuildingTarget implements Targetable {
      * The name of this hex of the building.
      */
     private String name = null;
+    
+    /**
+     * The type of attack that is targeting this building.
+     */
+    private int type;
 
     /**
      * Initialize this object from the input.
@@ -68,9 +71,9 @@ public class BuildingTarget implements Targetable {
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *                the given coordinates do not contain a building.
      */
-    protected void init(Coords coords, IBoard board, boolean ignite) {
+    protected void init(Coords coords, IBoard board, int nType) {
         position = coords;
-        isIgnite = ignite;
+        type = nType;
 
         // Get the building at the given coordinates.
         Building bldg = board.getBuildingAt(position);
@@ -87,11 +90,18 @@ public class BuildingTarget implements Targetable {
         StringBuffer buff = new StringBuffer();
         buff.append("Hex ").append(position.getBoardNum()).append(" of ")
                 .append(bldg.getName());
-        if (isIgnite) {
-            buff.append(" (Ignite)");
-        } else {
-            buff.append(" (Collapse)");
+        switch (nType){
+            case Targetable.TYPE_BLDG_IGNITE:
+                buff.append(Messages.getString("BuildingTarget.Ignite"));
+                break;
+            case Targetable.TYPE_BUILDING:
+                buff.append(Messages.getString("BuildingTarget.Collapse"));
+                break;
+            case Targetable.TYPE_BLDG_TAG:
+                buff.append(Messages.getString("BuildingTarget.Tag"));
+                break;                    
         }
+
         name = buff.toString();
 
         // Bottom of building is at ground level, top of building is at
@@ -121,8 +131,7 @@ public class BuildingTarget implements Targetable {
      *                the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, IBoard board, int nType) {
-        boolean ignite = (nType == Targetable.TYPE_BLDG_IGNITE);
-        init(coords, board, ignite);
+        init(coords, board, nType);
     }
 
     /**
@@ -136,17 +145,14 @@ public class BuildingTarget implements Targetable {
      *                the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, IBoard board, boolean ignite) {
-        init(coords, board, ignite);
+        init(coords, board, 
+                ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
     }
 
     // Implementation of Targetable
 
     public int getTargetType() {
-        int retval = Targetable.TYPE_BUILDING;
-        if (isIgnite) {
-            retval = Targetable.TYPE_BLDG_IGNITE;
-        }
-        return retval;
+        return type;
     }
 
     public int getTargetId() {
@@ -155,6 +161,10 @@ public class BuildingTarget implements Targetable {
 
     public Coords getPosition() {
         return position;
+    }
+    
+    public Map<Integer, Coords> getSecondaryPositions(){
+        return new HashMap<Integer, Coords>();
     }
 
     public int absHeight() {
@@ -178,21 +188,22 @@ public class BuildingTarget implements Targetable {
     }
 
     /**
+     * Creates an id for this building based on its location as well as a 
+     * building code.
      * The transformation encodes the y value in the top 5 decimal digits and
      * the x value in the bottom 5. Could more efficiently encode this by
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
-
-    // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
-        return c.y * 100000 + c.x;
+        return Targetable.TYPE_BUILDING * 1000000 + c.y * 1000 + c.x;
     }
 
     // decode 1 number into 2
     public static Coords idToCoords(int id) {
-        int y = id / 100000;
-        return new Coords(id - (y * 100000), y);
+        int idNoType =  id - Targetable.TYPE_BUILDING * 1000000;
+        int y = (idNoType) / 1000;
+        return new Coords(idNoType - (y * 1000), y);
     }
 
     public int sideTable(Coords src) {

@@ -53,8 +53,10 @@ public class Dropship extends SmallCraft {
             return false;
         }
         // Check prohibited terrain
-        //  treat grounded Dropships like wheeled tanks
+        //  treat grounded Dropships like wheeled tanks, 
+        //   plus buildings are prohibited
         boolean isProhibited = hex.containsTerrain(Terrains.WOODS)
+                || hex.containsTerrain(Terrains.BUILDING)
                 || hex.containsTerrain(Terrains.ROUGH)
                 || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                         .containsTerrain(Terrains.ICE))
@@ -64,13 +66,13 @@ public class Dropship extends SmallCraft {
                 || (hex.terrainLevel(Terrains.SNOW) > 1)
                 || (hex.terrainLevel(Terrains.GEYSER) == 2);
         
-        Coords centralCoords = hex.getCoords();
         HashMap<Integer,Integer> elevations = new HashMap<Integer,Integer>();
         elevations.put(hex.getElevation(), 1);
         for (int dir = 0; dir < 6; dir++){
-            Coords secondaryCoord = centralCoords.translated(dir);
+            Coords secondaryCoord = c.translated(dir);
             IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
             isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
+                    || secondaryHex.containsTerrain(Terrains.BUILDING)
                     || secondaryHex.containsTerrain(Terrains.ROUGH)
                     || ((secondaryHex.terrainLevel(Terrains.WATER) > 0) && 
                             !secondaryHex.containsTerrain(Terrains.ICE))
@@ -106,12 +108,40 @@ public class Dropship extends SmallCraft {
         Object elevs[] = elevations.keySet().toArray();
         int elev1 = (Integer)elevs[0];
         int elev2 = (Integer)elevs[1];
-        int elevDifference = Math.abs(elev1 - elev2);
-        int elevMinCount = (int)Math.floor((secondaryPositions.size())/2.0);
+        int elevDifference = Math.abs(elev1 - elev2);        
+        int elevMinCount = 2;
+        // Check elevation difference and make sure that the counts of different
+        //  elevations will allow for a legal deployment to exist
         if (elevDifference > 1 || elevations.get(elevs[0]) < elevMinCount
                 || elevations.get(elevs[1]) < elevMinCount) {
             return true;
-        }          
+        }     
+        
+        // It's still possible we have a legal deployment, we now have to check
+        //  the arrangement of hexes
+        // The way this is done is we start at the hex directly above the 
+        //  central hex and then move around clockwise and compare the two hexes 
+        //  to see if they share an elevation. We need to have a number of these
+        //  adjacencies equal to the number of secondary elevation hexes - 1.
+        int numAdjacencies = 0;
+        int centralElev = hex.getElevation();       
+        int secondElev = centralElev;
+        IHex currHex = game.getBoard().getHex(c.translated(5));
+        for (int dir = 0; dir < 6; dir++){
+            if (currHex.getElevation() != centralElev){
+                secondElev = currHex.getElevation();
+            }
+            IHex nextHex = game.getBoard().getHex(c.translated(dir));
+            if (currHex.getElevation() != centralElev &&
+                    currHex.getElevation() == nextHex.getElevation()){
+                numAdjacencies++;
+            }   
+            currHex = nextHex;
+        }
+        if (numAdjacencies < (elevations.get(secondElev) - 1)){
+            return true;
+        }
+        
         
         return isProhibited;
     }  

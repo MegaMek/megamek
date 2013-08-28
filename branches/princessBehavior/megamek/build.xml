@@ -17,8 +17,12 @@
     <property name="apidocdir" value="apidocs"/>
     <property name="docdir" value="docs"/>
     <property name="util" value="packaging_utils"/>
-    <property name="dir.unit.test" value="unittests"/>
-    <property name="dir.test.report" value="reports/tests"/>
+    <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
+    <property name="dir.build.testreport" location="${builddir}/testreport"/>
+    <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
+    <property name="dir.build.testreport" location="${builddir}/testreport"/>
+    <property name="dir.test.src" location="unittests"/>
+    <property name="dir.build.test" location="${builddir}/test"/>
 
     <property name="timestampfile" value="${logdir}/timestamp"/>
     <property name="TinyXMLsrc" value="TinyXML07-src.zip"/>
@@ -29,6 +33,21 @@
 
     <!-- This is the relative path to the 'data' directory -->
     <property name="dataclasspath" value="."/>
+
+    <path id="classpath">
+        <fileset dir="${libdir}" includes="*.jar"/>
+    </path>
+
+    <path id="classpath.compile-unittest">
+        <path refid="classpath"/>
+        <pathelement location="${builddir}"/>
+        <fileset dir="${libdir.test}"/>
+    </path>
+
+    <path id="classpath.run-unittest">
+        <path refid="classpath.compile-unittest"/>
+        <pathelement location="${dir.build.test}"/>
+    </path>
 
     <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
     <pathconvert pathsep=" " property="jarclasspath">
@@ -131,7 +150,6 @@
         <!-- Delete the ${build} directory tree -->
         <delete dir="${builddir}"/>
         <delete dir="${apidocdir}"/>
-        <delete dir="${dir.test.report}"/>
         <delete file="${timestampfile}"/>
         <delete file="${jarfile}"/>
         <delete>
@@ -148,18 +166,36 @@
 
     <target depends="clean, compile, jar" name="all"/>
 
-    <target depends="clean, compile" name="unit.test">
-        <junit fork="yes" maxmemory="256">
-            <classpath>
-                <pathelement path="${libdir.test}"/>
-            </classpath>
+    <target name="compileTests" depends="compile" unless="skip.tests">
+        <delete dir="${dir.build.test}"/>
+        <mkdir dir="${dir.build.test}"/>
+        <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
+            <classpath refid="classpath.compile-unittest"/>
+        </javac>
+    </target>
 
-            <batchtest todir="${dir.test.report}">
-                <fileset dir="${dir.unit.test}">
+    <target depends="compileTests" name="unit.test">
+        <delete dir="${dir.build.teststaging}"/>
+        <delete dir="${dir.build.testreport}"/>
+        <mkdir dir="${dir.build.teststaging}"/>
+        <mkdir dir="${dir.build.testreport}"/>
+
+        <junit fork="true" maxmemory="256m" showoutput="true" printsummary="yes" forkmode="once" haltonfailure="true"
+               haltonerror="true" failureproperty="tests.failed">
+            <classpath refid="classpath.run-unittest"/>
+            <formatter type="xml" usefile="true"/>
+            <batchtest fork="true" todir="${dir.build.teststaging}">
+                <fileset dir="${dir.build.test}">
                     <include name="**/*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
+
+        <junitreport todir="${dir.build.testreport}">
+            <fileset dir="${dir.build.teststaging}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+        </junitreport>
     </target>
 
 </project>

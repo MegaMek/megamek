@@ -419,7 +419,8 @@ public class Tank extends Entity {
      * Tanks have all sorts of prohibited terrain.
      */
     @Override
-    public boolean isHexProhibited(IHex hex) {
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }

@@ -3021,7 +3021,8 @@ public class Aero extends Entity {
     }
 
     @Override
-    public boolean isHexProhibited(IHex hex) {
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (isAirborne()) {
             if (hex.containsTerrain(Terrains.IMPASSABLE)) {
                 return true;

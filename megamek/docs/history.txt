@@ -139,8 +139,10 @@ v0.35.41-dev (SVN)
     MouseWheelZoom and MouseWheelZoomFlip
 + Bug: Visibility state of the UnitOverview was not being remembered
 + Bug: TacOps partial cover damaging cover not working in some situations with 
-  vertical cover
+    vertical cover
 + Bug [#3831]: Board.load(InputStream) does not reset board min/max elevations
++ Bug [#3603]: Refactored Entity.isHexProhibited(IHex) to 
+    Entity.isLocationProhibited(Coords)
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

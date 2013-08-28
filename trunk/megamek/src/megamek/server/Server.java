@@ -12572,7 +12572,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -12843,7 +12849,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -13110,7 +13122,13 @@ public class Server implements Runnable {
                 addReport(r);
             } else {
                 if (glancing) {
-                    damage = (int) Math.floor(damage / 2.0);
+                    // Round up glancing blows against conventional infantry
+                    if ((te instanceof Infantry) && 
+                            !(te instanceof BattleArmor)){
+                        damage = (int) Math.ceil(damage / 2.0);
+                    }else{
+                        damage = (int) Math.floor(damage / 2.0);
+                    }
                 }
                 if (directBlow) {
                     damage += toHit.getMoS() / 3;
@@ -13302,7 +13320,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -14046,7 +14070,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+             // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -15116,8 +15146,14 @@ public class Server implements Runnable {
 
         int damage = RamAttackAction.getDamageFor(ae, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(ae, te);
-        if (glancing) {
-            damage = (int) Math.floor(damage / 2.0);
+        if (glancing) {            
+            // Round up glancing blows against conventional infantry
+            if ((te instanceof Infantry) && 
+                   !(te instanceof BattleArmor)){
+                damage = (int) Math.ceil(damage / 2.0);
+            }else{
+                damage = (int) Math.floor(damage / 2.0);
+            }               
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
@@ -15202,7 +15238,12 @@ public class Server implements Runnable {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
             // or DFA is halved as well, assume yes. TODO: Check with PM
-            damage = (int) Math.floor(damage / 2.0);
+            if ((te instanceof Infantry) && 
+                    !(te instanceof BattleArmor)){
+                 damage = (int) Math.ceil(damage / 2.0);
+             }else{
+                 damage = (int) Math.floor(damage / 2.0);
+             }      
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
         boolean bDirect = false;
@@ -15648,7 +15689,12 @@ public class Server implements Runnable {
         } else { // Target isn't building.
 
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                     damage = (int) Math.ceil(damage / 2.0);
+                 }else{
+                     damage = (int) Math.floor(damage / 2.0);
+                 }      
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;

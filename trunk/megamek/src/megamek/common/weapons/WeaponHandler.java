@@ -520,7 +520,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
+            // Round up glancing blows against conventional infantry
+            if ((target instanceof Infantry) && 
+                    !(target instanceof BattleArmor)){
+                toReturn = (int) Math.ceil(toReturn / 2.0);
+            }else{
+                toReturn = (int) Math.floor(toReturn / 2.0);
+            }
         }
 
         if (game.getOptions().booleanOption("tacops_range")

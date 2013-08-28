@@ -446,7 +446,7 @@ public class Compute {
 
         // can't be displaced into prohibited terrain
         // unless we're displacing a tracked or wheeled vee into water
-        if (entity.isHexProhibited(destHex)
+        if (entity.isLocationProhibited(dest)
                 && !((entity instanceof Tank) && destHex.containsTerrain(Terrains.WATER) && ((entity.movementMode == EntityMovementMode.TRACKED) || (entity.movementMode == EntityMovementMode.WHEELED)))) {
             return false;
         }
@@ -5288,7 +5288,7 @@ public class Compute {
             }
             //no stacking violations, no prohibited terrain, and within 2 elevations
 
-            if(!unit.isHexProhibited(hex)
+            if(!unit.isLocationProhibited(pos)
                     && (null == stackingViolation(game, unit.getId(), pos))
                     && (Math.abs(hex.getElevation() - elev) < 3)) {
                 acceptable.add(pos);

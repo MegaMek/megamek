@@ -5036,8 +5036,8 @@ public class Server implements Runnable {
 
             // Can the skiding entity enter the next hex from this?
             // N.B. can skid along roads.
-            if ((entity.isHexProhibited(curHex) || entity
-                    .isHexProhibited(nextHex))
+            if ((entity.isLocationProhibited(start) || entity
+                    .isLocationProhibited(nextPos))
                     && !Compute.canMoveOnPavement(game, curPos, nextPos,
                             step.getParentUpToThisStep())) {
                 // Update report.
@@ -23439,8 +23439,7 @@ public class Server implements Runnable {
 
             // Handle escape of transported units.
             if (entity.getLoadedUnits().size() > 0) {
-                Coords curPos = entity.getPosition();
-                IHex entityHex = game.getBoard().getHex(curPos);
+                Coords curPos = entity.getPosition();                
                 int curFacing = entity.getFacing();
                 for (Entity other : entity.getLoadedUnits()) {
                     // Can the other unit survive?
@@ -23485,7 +23484,7 @@ public class Server implements Runnable {
                     // explicitly prohibited in the BMRr.
                     else if ((null != Compute.stackingViolation(game,
                             other.getId(), curPos))
-                            || other.isHexProhibited(entityHex)) {
+                            || other.isLocationProhibited(curPos)) {
                         // Nope.
                         other.setDestroyed(true);
                         game.moveToGraveyard(other.getId());
@@ -27415,7 +27414,7 @@ public class Server implements Runnable {
             // Walk through the entities in this position.
             for (Entity entity : entities) {
 
-                int floor = entity.getElevation();
+                //int floor = entity.getElevation();
 
                 int cfDamage = (int) Math
                         .ceil(Math.round(entity.getWeight() / 10.0));

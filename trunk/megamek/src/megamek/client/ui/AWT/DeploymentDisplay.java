@@ -462,7 +462,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             return;
         } else if (!(client.game.getBoard().isLegalDeployment(moveto,
                 ce().getStartingPos()) || assaultDropPreference)
-                || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
+                || ce().isLocationProhibited(moveto)) {
             AlertDialog dlg = new AlertDialog(clientgui.frame,
                     Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                     Messages

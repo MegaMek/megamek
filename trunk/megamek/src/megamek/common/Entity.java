@@ -2089,8 +2089,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns true if the specified hex contains some sort of prohibited
      * terrain.
      */
-    public boolean isHexProhibited(IHex hex) {
-
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }

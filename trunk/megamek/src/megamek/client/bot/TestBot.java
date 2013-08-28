@@ -1815,7 +1815,7 @@ public class TestBot extends BotClient {
         }
 
         Entity ce = game.getEntity(entNum);
-        assert (!ce.isHexProhibited(game.getBoard().getHex(cDeploy))) : "Bot tried to deploy to an invalid hex";
+        assert (!ce.isLocationProhibited(cDeploy)) : "Bot tried to deploy to an invalid hex";
         deploy(entNum, cDeploy, nDir, 0);
     }
 

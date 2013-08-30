@@ -969,7 +969,7 @@ public abstract class Mech extends Entity {
     }
 
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false, false, false)
+        return super.getOriginalRunMP()
                 - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 

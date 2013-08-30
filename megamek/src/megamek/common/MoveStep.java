@@ -2884,6 +2884,18 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
+        
+        // We need extra checking for dropships, due to secondary positions
+        if (entity instanceof Dropship && !entity.isAirborne() && 
+                isPavementStep() && entity.isLocationProhibited(dest)){
+            for (int dir = 0; dir < 6; dir++){
+                Coords secondaryCoords = dest.translated(dir);
+                IHex secondaryHex = game.getBoard().getHex(secondaryCoords);
+                if (!secondaryHex.hasPavement()){
+                    return false;
+                }
+            }
+        }
 
         // Jumping into a building hex below the roof ends the move
         // assume this applies also to sylph vtol movement

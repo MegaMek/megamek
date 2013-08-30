@@ -157,7 +157,7 @@ public class MechDisplay extends JPanel {
         displayP.add("movement", mPan); //$NON-NLS-1$
         pPan = new PilotPanel();
         displayP.add("pilot", pPan); //$NON-NLS-1$
-        aPan = new ArmorPanel();
+        aPan = new ArmorPanel(clientgui.getClient().game);
         displayP.add("armor", aPan); //$NON-NLS-1$
         wPan = new WeaponPanel();
         displayP.add("weapons", wPan); //$NON-NLS-1$
@@ -446,6 +446,16 @@ public class MechDisplay extends JPanel {
         private static final int minInfLeftMargin = 8;
         private static final int minAeroTopMargin = 8;
         private static final int minAeroLeftMargin = 8;
+        
+        private IGame game;
+        
+        ArmorPanel(IGame g) {
+        	game = g;
+        }
+        
+        public IGame getGame() {
+        	return game;
+        }
 
         @Override
         public void addNotify() {
@@ -466,7 +476,7 @@ public class MechDisplay extends JPanel {
             sphere = new SpheroidMapSet(this);
             jump = new JumpshipMapSet(this);
             warship = new WarshipMapSet(this);
-            squad = new SquadronMapSet(this);
+            squad = new SquadronMapSet(this, game);
         }
 
         @Override

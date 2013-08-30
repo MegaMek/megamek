@@ -152,6 +152,8 @@ v0.35.41-dev (SVN)
 + Bug [#3832]: One legged mechs jumping without a PSR 
 + Bug [#3833]: Aerospace Unit Deployment Not shown Correctly on Minimap when 
   returning from off-map 
++ Optionize large (greater than 6, less than or equal to 10) squadrons and provide corrected
+  support for FS.MAX_SIZE detection
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

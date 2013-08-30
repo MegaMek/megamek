@@ -150,6 +150,8 @@ v0.35.41-dev (SVN)
   of Entity.getOriginalRunMP, this could cause Mechs withs JJs and leg damaged 
   to be marked as invalid
 + Bug [#3832]: One legged mechs jumping without a PSR 
++ Bug [#3833]: Aerospace Unit Deployment Not shown Correctly on Minimap when 
+  returning from off-map 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

@@ -572,11 +572,21 @@ public class MiniMap extends JPanel {
                     if ((turn != null)
                             && (turn.getPlayerNum() == m_client.getLocalPlayer()
                                     .getId())) {
+                        Entity depEnt = m_bview.getDeployingEntity();
+                        int dir;
+                        // We need to draw the same deployment zone as boardview
+                        if (depEnt != null && 
+                                depEnt.getOwnerId() == turn.getPlayerNum()){
+                            dir = depEnt.getStartingPos();    
+                        } else { // if we can't get the deploy zone from the 
+                            // board view, punt and use the players zone
+                            dir = m_client.getLocalPlayer().getStartingPos();
+                        }
+                        
                         for (int j = 0; j < m_board.getWidth(); j++) {
                             for (int k = 0; k < m_board.getHeight(); k++) {
                                 if (m_board.isLegalDeployment(
-                                        new Coords(j, k),
-                                        m_client.getLocalPlayer().getStartingPos())) {
+                                        new Coords(j, k),dir)) {
                                     paintSingleCoordBorder(g, j, k,
                                             Color.yellow);
                                 }

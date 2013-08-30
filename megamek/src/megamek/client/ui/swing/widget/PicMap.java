@@ -85,7 +85,7 @@ public abstract class PicMap extends JComponent {
     private boolean bgIsOpaque = true;
 
     /**
-     * ?reates PicMap engine. If no areas, labels or Backround-drawers added
+     * creates PicMap engine. If no areas, labels or Backround-drawers added
      * this is just transparent layer over container.
      */
     public PicMap() {

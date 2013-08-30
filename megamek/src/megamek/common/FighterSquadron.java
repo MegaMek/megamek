@@ -31,7 +31,10 @@ public class FighterSquadron extends Aero {
 
     private static final long serialVersionUID = 3491212296982370726L;
 
-    public static int MAX_SIZE = 10; // Value is arbitrary, but StratOps shows up to 10 so we'll use that
+    public static int MAX_SIZE = 6;
+    // Value is arbitrary, but StratOps shows up to 10 so we'll use that as an alternate MAX_SIZE when using
+    // the option for larger squadrons
+    public static int ALTERNATE_MAX_SIZE = 10;
 
     private Vector<Integer> fighters = new Vector<Integer>();
 
@@ -215,7 +218,7 @@ public class FighterSquadron extends Aero {
      */
     @Override
     public double getInternalRemainingPercent() {
-        return ((double) getNFighters() / (double) MAX_SIZE);
+        return ((double) getNFighters() / (double) getMaxSize());
     }
 
     @Override
@@ -722,6 +725,16 @@ public class FighterSquadron extends Aero {
         updateWeaponGroups();
         loadAllWeapons();
     }
+    
+    /*
+     * Determine MAX_SIZE based on game options
+     */
+    public int getMaxSize() {
+    	if (game.getOptions().booleanOption("allow_large_squadrons")) {
+    		return ALTERNATE_MAX_SIZE;
+    	}
+    	return MAX_SIZE;
+    }
 
     /*
      * The transporter functions
@@ -739,7 +752,7 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean canLoad(Entity unit, boolean checkFalse) {
         // We must have enough space for the new fighter.
-        if (!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < MAX_SIZE)) {
+        if (!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
             return true;
         }
         // fighter squadrons can also load other fighter squadrons provided
@@ -749,7 +762,7 @@ public class FighterSquadron extends Aero {
                 && !unit.isEnemyOf(this)
                 && (getId() != unit.getId())
                 && (((FighterSquadron) unit).getN0Fighters() > 0)
-                && ((fighters.size() + ((FighterSquadron) unit).getN0Fighters()) <= MAX_SIZE)) {
+                && ((fighters.size() + ((FighterSquadron) unit).getN0Fighters()) <= getMaxSize())) {
             return true;
         }
 
@@ -850,11 +863,11 @@ public class FighterSquadron extends Aero {
      */
     @Override
     public String getUnusedString() {
-        return " - " + (MAX_SIZE - fighters.size()) + " units";
+        return " - " + (getMaxSize() - fighters.size()) + " units";
     }
     
     public double getUnused(){
-        return MAX_SIZE - fighters.size();
+        return getMaxSize() - fighters.size();
     }
     
     /**

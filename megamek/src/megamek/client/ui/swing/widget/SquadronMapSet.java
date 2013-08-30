@@ -29,6 +29,7 @@ import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
+import megamek.common.IGame;
 
 /**
  * Class which keeps set of all areas required to 
@@ -37,29 +38,29 @@ import megamek.common.FighterSquadron;
 public class SquadronMapSet implements DisplayMapSet{
 
     private JComponent comp;
-//  Images that shows how much armor left.
-    private Image[] armorImage = new Image[FighterSquadron.MAX_SIZE];
+    //  Images that shows how much armor left.
+    private Image[] armorImage;
     // Set of areas to show fighter armor left
-    private PMPicArea[] armorArea = new PMPicArea[FighterSquadron.MAX_SIZE];
+    private PMPicArea[] armorArea;
     // Set of labels to show fighter armor left
     //images and areas for each crit tally
-    private Image[] avCritImage = new Image[FighterSquadron.MAX_SIZE];
-    private PMPicArea[] avCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
-    private Image[] engineCritImage = new Image[FighterSquadron.MAX_SIZE];
-    private PMPicArea[] engineCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
-    private Image[] fcsCritImage = new Image[FighterSquadron.MAX_SIZE];
-    private PMPicArea[] fcsCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
-    private Image[] sensorCritImage = new Image[FighterSquadron.MAX_SIZE];
-    private PMPicArea[] sensorCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
-    private Image[] pilotCritImage = new Image[FighterSquadron.MAX_SIZE];
-    private PMPicArea[] pilotCritArea = new PMPicArea[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] nameLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    private PMValueLabel[] armorVLabel = new PMValueLabel[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] avCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] engineCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] fcsCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] sensorCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
-    private PMSimpleLabel[] pilotCritLabel = new PMSimpleLabel[FighterSquadron.MAX_SIZE];
+    private Image[] avCritImage;
+    private PMPicArea[] avCritArea;
+    private Image[] engineCritImage;
+    private PMPicArea[] engineCritArea;
+    private Image[] fcsCritImage;
+    private PMPicArea[] fcsCritArea;
+    private Image[] sensorCritImage;
+    private PMPicArea[] sensorCritArea;
+    private Image[] pilotCritImage;
+    private PMPicArea[] pilotCritArea;
+    private PMSimpleLabel[] nameLabel;
+    private PMValueLabel[] armorVLabel;
+    private PMSimpleLabel[] avCritLabel;
+    private PMSimpleLabel[] engineCritLabel;
+    private PMSimpleLabel[] fcsCritLabel;
+    private PMSimpleLabel[] sensorCritLabel;
+    private PMSimpleLabel[] pilotCritLabel;
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
@@ -68,10 +69,44 @@ public class SquadronMapSet implements DisplayMapSet{
     private int armorRows = 6;
     private int armorCols = 8;
     
+    private int max_size;
+    
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
  
-    public SquadronMapSet(JComponent c){
+    public SquadronMapSet(JComponent c, IGame g) {
         comp = c;
+        
+        /*
+         * Set the max_size based on current game options
+         */
+        if (g.getOptions().booleanOption("allow_large_squadrons")) {
+        	max_size = FighterSquadron.ALTERNATE_MAX_SIZE;
+        } else {
+        	max_size = FighterSquadron.MAX_SIZE;
+        }
+        
+        /*
+         * Now set all our variables based upon that max_size
+         */
+        armorImage = new Image[max_size];
+        armorArea = new PMPicArea[max_size];
+        avCritImage = new Image[max_size];
+        avCritArea = new PMPicArea[max_size];
+        engineCritImage = new Image[max_size];
+        engineCritArea = new PMPicArea[max_size];
+        fcsCritImage = new Image[max_size];
+        fcsCritArea = new PMPicArea[max_size];
+        sensorCritImage = new Image[max_size];
+        sensorCritArea = new PMPicArea[max_size];
+        pilotCritImage = new Image[max_size];
+        pilotCritArea = new PMPicArea[max_size];
+        nameLabel = new PMSimpleLabel[max_size];
+        armorVLabel = new PMValueLabel[max_size];
+        avCritLabel = new PMSimpleLabel[max_size];
+        engineCritLabel = new PMSimpleLabel[max_size];
+        fcsCritLabel = new PMSimpleLabel[max_size];
+        sensorCritLabel = new PMSimpleLabel[max_size];
+        pilotCritLabel = new PMSimpleLabel[max_size];
         setAreas();
         setLabels();
         setBackGround();
@@ -123,7 +158,7 @@ public class SquadronMapSet implements DisplayMapSet{
             pilotCritLabel[i].setVisible(true);
         }
         
-        for(int j = fs.getN0Fighters(); j < FighterSquadron.MAX_SIZE; j++) {
+        for(int j = fs.getN0Fighters(); j < max_size; j++) {
             armorArea[j].setVisible(false);
             armorVLabel[j].setVisible(false);
             avCritArea[j].setVisible(false);
@@ -143,7 +178,7 @@ public class SquadronMapSet implements DisplayMapSet{
 
     private void setContent(){
         
-        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+        for(int i = 0; i < max_size; i++) {
             content.addArea(nameLabel[i]);
             content.addArea(armorArea[i]);
             content.addArea(armorVLabel[i]);
@@ -161,7 +196,7 @@ public class SquadronMapSet implements DisplayMapSet{
     }
 
     private void setAreas(){
-        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+        for(int i = 0; i < max_size; i++) {
             armorImage[i] = comp.createImage(armorCols*(squareSize+1), armorRows*(squareSize+1));
             armorArea[i] = new PMPicArea(armorImage[i]);
             
@@ -180,7 +215,7 @@ public class SquadronMapSet implements DisplayMapSet{
 
     private void setLabels(){
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
-        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+        for(int i = 0; i < max_size; i++) {
             nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white); //$NON-NLS-1$
             armorVLabel[i] = new PMValueLabel(fm, Color.red.brighter());    
             avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
@@ -254,7 +289,7 @@ public class SquadronMapSet implements DisplayMapSet{
     private void translateAreas() { 
         //get size of each fighter block
         int blockSize = 6*stepY;
-        for(int i = 0; i < FighterSquadron.MAX_SIZE; i++) {
+        for(int i = 0; i < max_size; i++) {
             nameLabel[i].translate(0, blockSize*i);
             armorArea[i].translate(0, squareSize+blockSize*i);
             armorVLabel[i].translate((armorCols*(squareSize+1))/2, blockSize*i+squareSize+(armorRows*(squareSize+1))/2);
@@ -285,7 +320,7 @@ public class SquadronMapSet implements DisplayMapSet{
         }
     }
     
-//  Redraws armor images
+    //  Redraws armor images
     private void drawArmorImage(Image im, int a, int initial) {
         int w = im.getWidth(null);
         int h = im.getHeight(null);

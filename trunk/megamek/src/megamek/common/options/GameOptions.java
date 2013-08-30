@@ -236,6 +236,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, "ind_weapons_grounded_dropper", false); //$NON-NLS-1$
         addOption(advAeroRules, "return_flyover", false); //$NON-NLS-1$
         addOption(advAeroRules, "aa_move_mod", false); //$NON-NLS-1$
+        addOption(advAeroRules, "allow_large_squadrons", false); //$NON-NLS-1$
         addOption(advAeroRules, "single_no_cap", false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$

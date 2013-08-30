@@ -3231,7 +3231,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     fighters.add(e.getId());
                 }
-                if (fighters.size() > FighterSquadron.MAX_SIZE) {
+                if ((!clientgui.getClient().game.getOptions().booleanOption("allow_large_squadrons")
+                		&& fighters.size() > FighterSquadron.MAX_SIZE)
+                		|| (clientgui.getClient().game.getOptions().booleanOption("allow_large_squadrons")
+                        		&& fighters.size() > FighterSquadron.ALTERNATE_MAX_SIZE)) {
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("FighterSquadron.toomany"),
                             Messages.getString("FighterSquadron.error"),
@@ -3294,12 +3297,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             for (int i = 0; i < rows.length; i++) {
                 entities.add(mekModel.getEntityAt(rows[i]));
             }
-            boolean isOwner = entity.getOwner().equals(
-                    clientgui.getClient().getLocalPlayer());
-            boolean isBot = clientgui.getBots()
-                    .get(entity.getOwner().getName()) != null;
-            boolean blindDrop = clientgui.getClient().game.getOptions()
-                    .booleanOption("blind_drop");
+            boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
+            boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
+            boolean blindDrop = clientgui.getClient().game.getOptions().booleanOption("blind_drop");
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;

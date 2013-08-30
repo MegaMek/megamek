@@ -2197,8 +2197,7 @@ public class MoveStep implements Serializable {
                     Entity other = (Entity) target;
                     if ((null != Compute.stackingViolation(game, other, curPos,
                             entity))
-                            || other.isHexProhibited(game.getBoard().getHex(
-                                    curPos))) {
+                            || other.isLocationProhibited(curPos)) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {
@@ -2869,7 +2868,7 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
-        if (entity.isHexProhibited(destHex)
+        if (entity.isLocationProhibited(dest)
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                         || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
@@ -2901,7 +2900,7 @@ public class MoveStep implements Serializable {
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
-                && entity.isHexProhibited(srcHex) && !isPavementStep) {
+                && entity.isLocationProhibited(src) && !isPavementStep) {
             //System.err.println("in restriced terrain");
             return false;
         }

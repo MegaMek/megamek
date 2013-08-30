@@ -2077,8 +2077,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns true if the specified hex contains some sort of prohibited
      * terrain.
      */
-    public boolean isHexProhibited(IHex hex) {
-
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -4911,8 +4911,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             for (int j = 0; j < getNumberOfCriticals(i); j++) {
                 final CriticalSlot cs = getCritical(i, j);
-                if (cs != null) {
-                    cs.setDestroyed(cs.isHit());
+                if (cs != null && cs.isHit()) {
+                    cs.setDestroyed(true);
                 }
             }
         }

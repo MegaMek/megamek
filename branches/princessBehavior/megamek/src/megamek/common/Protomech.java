@@ -1557,7 +1557,8 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public boolean isHexProhibited(IHex hex) {
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }

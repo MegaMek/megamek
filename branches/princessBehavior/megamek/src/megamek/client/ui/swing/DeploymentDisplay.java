@@ -415,7 +415,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         } else if (!(clientgui.getClient().game.getBoard().isLegalDeployment(moveto,
                 ce().getStartingPos()) || assaultDropPreference)
-                || ce().isHexProhibited(clientgui.getClient().game.getBoard().getHex(moveto))) {
+                || ce().isLocationProhibited(moveto)) {
             JOptionPane
                     .showMessageDialog(
                             clientgui.frame,

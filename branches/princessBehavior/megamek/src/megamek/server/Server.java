@@ -4998,8 +4998,8 @@ public class Server implements Runnable {
 
             // Can the skiding entity enter the next hex from this?
             // N.B. can skid along roads.
-            if ((entity.isHexProhibited(curHex) || entity
-                    .isHexProhibited(nextHex))
+            if ((entity.isLocationProhibited(start) || entity
+                    .isLocationProhibited(nextPos))
                 && !Compute.canMoveOnPavement(game, curPos, nextPos,
                                               step.getParentUpToThisStep())) {
                 // Update report.
@@ -12423,7 +12423,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -12694,7 +12700,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -12961,7 +12973,13 @@ public class Server implements Runnable {
                 addReport(r);
             } else {
                 if (glancing) {
-                    damage = (int) Math.floor(damage / 2.0);
+                    // Round up glancing blows against conventional infantry
+                    if ((te instanceof Infantry) && 
+                            !(te instanceof BattleArmor)){
+                        damage = (int) Math.ceil(damage / 2.0);
+                    }else{
+                        damage = (int) Math.floor(damage / 2.0);
+                    }
                 }
                 if (directBlow) {
                     damage += toHit.getMoS() / 3;
@@ -13153,7 +13171,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -13897,7 +13921,13 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+             // Round up glancing blows against conventional infantry
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                    damage = (int) Math.ceil(damage / 2.0);
+                }else{
+                    damage = (int) Math.floor(damage / 2.0);
+                }
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -14967,8 +14997,14 @@ public class Server implements Runnable {
 
         int damage = RamAttackAction.getDamageFor(ae, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(ae, te);
-        if (glancing) {
-            damage = (int) Math.floor(damage / 2.0);
+        if (glancing) {            
+            // Round up glancing blows against conventional infantry
+            if ((te instanceof Infantry) && 
+                   !(te instanceof BattleArmor)){
+                damage = (int) Math.ceil(damage / 2.0);
+            }else{
+                damage = (int) Math.floor(damage / 2.0);
+            }               
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
@@ -15053,7 +15089,12 @@ public class Server implements Runnable {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
             // or DFA is halved as well, assume yes. TODO: Check with PM
-            damage = (int) Math.floor(damage / 2.0);
+            if ((te instanceof Infantry) && 
+                    !(te instanceof BattleArmor)){
+                 damage = (int) Math.ceil(damage / 2.0);
+             }else{
+                 damage = (int) Math.floor(damage / 2.0);
+             }      
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
         boolean bDirect = false;
@@ -15499,7 +15540,12 @@ public class Server implements Runnable {
         } else { // Target isn't building.
 
             if (glancing) {
-                damage = (int) Math.floor(damage / 2.0);
+                if ((te instanceof Infantry) && 
+                        !(te instanceof BattleArmor)){
+                     damage = (int) Math.ceil(damage / 2.0);
+                 }else{
+                     damage = (int) Math.floor(damage / 2.0);
+                 }      
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -23181,8 +23227,7 @@ public class Server implements Runnable {
 
             // Handle escape of transported units.
             if (entity.getLoadedUnits().size() > 0) {
-                Coords curPos = entity.getPosition();
-                IHex entityHex = game.getBoard().getHex(curPos);
+                Coords curPos = entity.getPosition();                
                 int curFacing = entity.getFacing();
                 for (Entity other : entity.getLoadedUnits()) {
                     // Can the other unit survive?
@@ -23226,8 +23271,8 @@ public class Server implements Runnable {
                     // TODO : unloading into stacking violation is not
                     // explicitly prohibited in the BMRr.
                     else if ((null != Compute.stackingViolation(game,
-                                                                other.getId(), curPos))
-                             || other.isHexProhibited(entityHex)) {
+                            other.getId(), curPos))
+                            || other.isLocationProhibited(curPos)) {
                         // Nope.
                         other.setDestroyed(true);
                         game.moveToGraveyard(other.getId());
@@ -27115,7 +27160,7 @@ public class Server implements Runnable {
             // Walk through the entities in this position.
             for (Entity entity : entities) {
 
-                int floor = entity.getElevation();
+                //int floor = entity.getElevation();
 
                 int cfDamage = (int) Math
                         .ceil(Math.round(entity.getWeight() / 10.0));

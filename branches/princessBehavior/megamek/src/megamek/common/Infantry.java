@@ -287,8 +287,8 @@ public class Infantry extends Entity {
      * Infantry can not enter water unless they have UMU mp or hover.
      */
     @Override
-    public boolean isHexProhibited(IHex hex) {
-
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         //Taharqa: waiting to hear back from Welshie but I am goign to assume that units pulling artillery
         //should be treated as wheeled rather than motorized because otherwise mechanized units face fewer
         //terrain restrictions when pulling field artillery

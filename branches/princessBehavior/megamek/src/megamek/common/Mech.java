@@ -967,7 +967,7 @@ public abstract class Mech extends Entity {
     }
 
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false, false, false)
+        return super.getOriginalRunMP()
                - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
@@ -5631,7 +5631,8 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public boolean isHexProhibited(IHex hex) {
+    public boolean isLocationProhibited(Coords c) {
+        IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }

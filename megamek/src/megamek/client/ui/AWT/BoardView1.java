@@ -1956,6 +1956,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void markDeploymentHexesFor(Entity ce) {
         en_Deployer = ce;
     }
+    
+    /**
+     * Returns the entity that is currently being deployed
+     */
+    public Entity getDeployingEntity() {
+        return en_Deployer;
+    }
 
     /**
      * Adds a c3 line to the sprite list.

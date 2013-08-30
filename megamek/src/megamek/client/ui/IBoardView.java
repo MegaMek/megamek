@@ -38,6 +38,8 @@ public interface IBoardView extends MechDisplayListener {
     public void markDeploymentHexesFor(Entity ce);
     public void redrawEntity(Entity ce);
 
+    public Entity getDeployingEntity();
+    
     public void drawMovementData(Entity ce, MovePath cmd);
     public void clearMovementData();
     public boolean isMovingUnits();

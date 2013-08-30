@@ -4953,8 +4953,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             for (int j = 0; j < getNumberOfCriticals(i); j++) {
                 final CriticalSlot cs = getCritical(i, j);
-                if (cs != null) {
-                    cs.setDestroyed(cs.isHit());
+                if (cs != null && cs.isHit()) {
+                    cs.setDestroyed(true);
                 }
             }
         }

@@ -2251,6 +2251,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
+     * Returns the entity that is currently being deployed
+     */
+    public Entity getDeployingEntity() {
+        return en_Deployer;
+    }
+
+    /**
      * add a fly over path to the sprite list
      */
     public void addFlyOverPath(Entity e) {

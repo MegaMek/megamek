@@ -155,6 +155,7 @@ v0.35.41-dev (SVN)
 + Optionize large (greater than 6, less than or equal to 10) squadrons and provide corrected
   support for FS.MAX_SIZE detection
 + Data: Adding some missing Aerospace Images including landed Aerodyne.
++ Bug [#3834]: NPE in Entity.setGame line 762
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

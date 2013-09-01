@@ -56,7 +56,6 @@ public class Dropship extends SmallCraft {
         //  treat grounded Dropships like wheeled tanks, 
         //   plus buildings are prohibited
         boolean isProhibited = hex.containsTerrain(Terrains.WOODS)
-                || hex.containsTerrain(Terrains.BUILDING)
                 || hex.containsTerrain(Terrains.ROUGH)
                 || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
                         .containsTerrain(Terrains.ICE))
@@ -72,7 +71,6 @@ public class Dropship extends SmallCraft {
             Coords secondaryCoord = c.translated(dir);
             IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
             isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
-                    || secondaryHex.containsTerrain(Terrains.BUILDING)
                     || secondaryHex.containsTerrain(Terrains.ROUGH)
                     || ((secondaryHex.terrainLevel(Terrains.WATER) > 0) && 
                             !secondaryHex.containsTerrain(Terrains.ICE))

@@ -1054,6 +1054,15 @@ public class MovePath implements Cloneable, Serializable {
         return getMaxElevation() - 
                 game.getBoard().getHex(getFinalCoords()).getElevation(); 
     }
+    
+    public boolean willCrushBuildings(){
+        for (MoveStep step : steps){
+            if (!step.getCrushedBuildingLocs().isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected static class MovePathComparator implements Comparator<MovePath> {
         private final Coords destination;

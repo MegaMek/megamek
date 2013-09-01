@@ -1469,6 +1469,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // will still have steps added to the movepath.
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
+        
+        if (cmd.willCrushBuildings() && 
+                GUIPreferences.getInstance().getNagForCrushingBuildings()) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString(
+                            "MovementDisplay.ConfirmCrushingBuildings"), true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForCrushingBuildings(false);
+                }
+            }
+        }
 
         disableButtons();
         clientgui.bv.clearMovementData();

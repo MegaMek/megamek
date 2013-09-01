@@ -193,6 +193,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected Coords position = null;
 
+    /**
+     * Used for Entities that are bigger than a single hex.  This contains the
+     * central hex plus all of the other hexes this entity occupies.  The 
+     * central hex is important for drawing multi-hex sprites.
+     */
     protected Map<Integer, Coords> secondaryPositions = null;
 
     protected int facing = 0;

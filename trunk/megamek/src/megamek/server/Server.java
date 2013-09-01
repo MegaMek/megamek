@@ -7551,6 +7551,27 @@ public class Server implements Runnable {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
             }
+            
+            // Check for crushing buildings by Dropships/Mobile Structures
+            for (Coords pos : step.getCrushedBuildingLocs()){               
+                Building bldg = game.getBoard().getBuildingAt(pos);
+                IHex hex = game.getBoard().getHex(pos);
+                
+                r = new Report(3443);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(bldg.getName());
+                vPhaseReport.add(r);
+                
+                final int cf = bldg.getCurrentCF(pos);
+                final int numFloors = Math.max(0,
+                        hex.terrainLevel(Terrains.BLDG_ELEV));
+                vPhaseReport.addAll(damageBuilding(bldg,150," is crushed for ",pos));
+                int damage = (int)Math.round(cf / 10.0 * numFloors);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, 
+                        ToHitData.SIDE_FRONT);
+                vPhaseReport.addAll(damageEntity(entity, hit, damage));                      
+            }
 
             // Track this step's location.
             movePath.addElement(new UnitLocation(entity.getId(), curPos,
@@ -7574,6 +7595,8 @@ public class Server implements Runnable {
 
             firstStep = false;
         }
+        
+       
 
         // set entity parameters
         entity.setPosition(curPos);
@@ -11093,7 +11116,9 @@ public class Server implements Runnable {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            System.err.println("error: server got invalid attack packet");
+            System.err.println("error: server got invalid attack packet from " +
+            		"connection " + connId + 
+            		", Entity: " + entity.getShortName());
             send(connId, createTurnVectorPacket());
             send(connId, createTurnIndexPacket());
             return;

@@ -67,7 +67,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -256,7 +256,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
         server.artilleryDamageArea(targetPos, ae.getPosition(), atype,
                 subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak);
+                asfFlak, -1);
 
         // artillery may unintentionally clear minefields, but only if it wasn't
         // trying to
@@ -282,7 +282,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

@@ -2535,7 +2535,7 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     private void sendTagInfoUpdates(){
         if (connections == null) {
             return;
@@ -2546,7 +2546,7 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     public void sendTagInfoReset(){
         if (connections == null) {
             return;
@@ -3744,17 +3744,17 @@ public class Server implements Runnable {
             send(createTurnVectorPacket());
         }
 
-        // When loading an Aero into a squadron in the lounge, make sure the 
+        // When loading an Aero into a squadron in the lounge, make sure the
         // loaded aero has the same bomb loadout as the squadron
-        //  We want to do this before the fighter is loaded: when the fighter 
-        //  is loaded into the squadron, the squadrons bombing attacks are 
+        //  We want to do this before the fighter is loaded: when the fighter
+        //  is loaded into the squadron, the squadrons bombing attacks are
         //  adjusted based on the bomb-loadout on the fighter.
-        if (game.getPhase() == Phase.PHASE_LOUNGE && 
-                loader instanceof FighterSquadron ){
+        if ((game.getPhase() == Phase.PHASE_LOUNGE) &&
+                (loader instanceof FighterSquadron) ){
             ((Aero) unit).setBombChoices(
                     ((FighterSquadron)loader).getBombChoices());
         }
-        
+
         // Load the unit. Do not check for elevation during deployment
         boolean checkElevation = (game.getPhase() != Phase.PHASE_DEPLOYMENT)
                 && (game.getPhase() != Phase.PHASE_LOUNGE);
@@ -3763,7 +3763,7 @@ public class Server implements Runnable {
         } else {
         	loader.load(unit, checkElevation, bayNumber);
         }
-        
+
 
 
         // The loaded unit is being carried by the loader.
@@ -10376,7 +10376,7 @@ public class Server implements Runnable {
             Coords dest, PilotingRollData roll, boolean causeAffa){
         return doEntityFallsInto(entity, src, dest, roll, causeAffa, 0);
     }
-            
+
     /**
      * The entity falls into the hex specified. Check for any conflicts and
      * resolve them. Deal damage to faller.
@@ -10397,7 +10397,7 @@ public class Server implements Runnable {
      *            An integer value to reduce the fall distance by
      */
     private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
-            Coords dest, PilotingRollData roll, boolean causeAffa, 
+            Coords dest, PilotingRollData roll, boolean causeAffa,
             int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         final IHex srcHex = game.getBoard().getHex(src);
@@ -25490,7 +25490,7 @@ public class Server implements Runnable {
             if (null != fighter) {
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
-                fighter.setTransportId(fs.getId());                
+                fighter.setTransportId(fs.getId());
                 // If this is the lounge, we want to configure bombs
                 if (game.getPhase() == Phase.PHASE_LOUNGE){
                     fighter.setBombChoices(fs.getBombChoices());
@@ -26401,7 +26401,7 @@ public class Server implements Runnable {
         }
         return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
-    
+
     private Packet createTagInfoUpdatesPacket(){
         return new Packet(Packet.COMMAND_SENDING_TAGINFO,game.getTagInfo());
     }
@@ -30297,15 +30297,21 @@ public class Server implements Runnable {
      *            The Vector of Reports for the phasereport
      * @param asfFlak
      *            Is this flak against ASF?
+     * @param attackingBA
+     *            How many BA suits are in the squad if this is a BA Tube arty
+     *            attack, -1 otherwise
      */
     public void artilleryDamageArea(Coords centre, Coords attackSource,
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
-            boolean asfFlak) {
+            boolean asfFlak, int attackingBA) {
         int damage = ammo.getRackSize();
         int falloff = 10;
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
             falloff = 25;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
+            falloff = 2 * attackingBA;
         }
         if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
             // non-arrow-iv cluster does 5 less than standard

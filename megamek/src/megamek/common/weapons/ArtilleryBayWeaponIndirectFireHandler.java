@@ -74,7 +74,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
@@ -88,7 +88,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -465,7 +465,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
         server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                 subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak);
+                asfFlak, -1);
 
         // artillery may unintentially clear minefields, but only if it wasn't
         // trying to
@@ -490,7 +490,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

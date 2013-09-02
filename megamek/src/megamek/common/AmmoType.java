@@ -123,7 +123,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_AC_PRIMITIVE = 95;
     public static final int T_LRM_PRIMITIVE = 96;
     public static final int T_SRM_PRIMITIVE = 97;
-    public static final int NUM_TYPES = 98;
+    public static final int T_BA_TUBE = 98;
+    public static final int NUM_TYPES = 99;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -924,6 +925,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISMRM4Ammo());
         EquipmentType.addType(AmmoType.createISMRM5Ammo());
         EquipmentType.addType(AmmoType.createISBATaserAmmo());
+        EquipmentType.addType(AmmoType.createBATubeArtyAmmo());
         base = AmmoType.createBAISLRM1Ammo();
         isBaLrmAmmos.add(base);
         EquipmentType.addType(base);
@@ -7203,6 +7205,29 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         return ammo;
     }
+
+    private static AmmoType createBATubeArtyAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        ammo.name = "BA Tube Artillery Ammo";
+        ammo.shortName = "Tube Artillerye";
+        ammo.setInternalName("ISBATubeArtilleryAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_BA_TUBE;
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.shots = 1;
+        ammo.bv = 4;
+        ammo.kgPerShot = 15;
+        ammo.introDate = 3075;
+        ammo.cost = 900;
+        ammo.techLevel.put(3075, ammo.techLevel.get(3067));
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        ammo.techRating = RATING_E;
+        return ammo;
+    }
+
 
     private static AmmoType createISMRM1Ammo() {
         AmmoType ammo = new AmmoType();

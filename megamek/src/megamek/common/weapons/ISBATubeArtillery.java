@@ -49,6 +49,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         cost = 200000;
         techRating = RATING_B;
         introDate = 3075;
+        flags = flags.or(F_BA_WEAPON);
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
 
     }

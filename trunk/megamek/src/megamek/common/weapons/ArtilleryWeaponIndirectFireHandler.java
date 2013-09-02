@@ -54,9 +54,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
+    private int shootingBA = -1;
 
     /**
-     * This consructor may only be used for deserialization.
+     * This constructor may only be used for deserialization.
      */
     protected ArtilleryWeaponIndirectFireHandler() {
         super();
@@ -70,11 +71,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     public ArtilleryWeaponIndirectFireHandler(ToHitData t,
             WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        if (w.getEntity(g) instanceof BattleArmor) {
+            shootingBA = ((BattleArmor)w.getEntity(g)).getNumberActiverTroopers();
+        }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
@@ -88,7 +92,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -464,7 +468,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                 subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak);
+                asfFlak, shootingBA);
 
         // artillery may unintentially clear minefields, but only if it wasn't
         // trying to
@@ -489,12 +493,18 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        float toReturn = wtype.rackSize;
+        // BA Tube artillery is the only artillery that can be mounted by BA
+        // so we do the multiplication here
+        if (ae instanceof BattleArmor) {
+            BattleArmor ba = (BattleArmor)ae;
+            toReturn *= ba.getNumberActiverTroopers();
+        }
         // area effect damage is double
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn /= 0.5;

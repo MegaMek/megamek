@@ -55,7 +55,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -271,7 +271,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        
+
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
         bldg = null;
@@ -435,7 +435,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)

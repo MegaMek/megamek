@@ -175,7 +175,8 @@ public class Compute {
      * When compiling an unloading step, both the transporter and the unloaded
      * unit probably occupy some other position on the board.
      */
-    public static Entity stackingViolation(IGame game, Entity entering, Coords coords, Entity transport) {
+    public static Entity stackingViolation(IGame game, Entity entering,
+            Coords dest, Entity transport) {
         // no stacking violations on the low-atmosphere and space maps
         if (!game.getBoard().onGround()) {
             return null;
@@ -186,95 +187,111 @@ public class Compute {
             return null;
         }
 
-        boolean isMech = (entering instanceof Mech) || (entering instanceof SmallCraft);
-        boolean isLargeSupport = (entering instanceof LargeSupportTank) || (entering instanceof Dropship);
+        boolean isMech = (entering instanceof Mech) || 
+                (entering instanceof SmallCraft);
+        boolean isLargeSupport = (entering instanceof LargeSupportTank) || 
+                (entering instanceof Dropship);
+        boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
         int totalUnits = 1;
-        int thisLowStackingLevel = entering.getElevation();
-        if ((coords != null) && (entering.getPosition() != null)) {
-            thisLowStackingLevel = entering.calcElevation(game.getBoard().getHex(entering.getPosition()), game
-                    .getBoard().getHex(coords));
-        }
-        int thisHighStackingLevel = thisLowStackingLevel;
-        //mechs only occupy one level of a building
-        if(!Compute.isInBuilding(game, entering, coords)) {
-            thisHighStackingLevel += entering.height();
-        }
-
-        // Walk through the entities in the given hex.
-        for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
-            final Entity inHex = i.nextElement();
-
-            if (inHex.isAirborne()) {
-                continue;
+        Vector<Coords> positions = new Vector<Coords>();
+        positions.add(dest);
+        if (isDropship){
+            for (int dir = 0; dir < 6; dir++){
+                positions.add(dest.translated(dir));
             }
-
-            int lowStackingLevel = inHex.getElevation();
-            int highStackingLevel = lowStackingLevel;
-            //units only occupy one level of a building
-            if(!Compute.isInBuilding(game, inHex)) {
-                highStackingLevel += inHex.height();
+        }
+        for (Coords coords : positions){
+            int thisLowStackingLevel = entering.getElevation();
+            if ((coords != null) && (entering.getPosition() != null)) {
+                thisLowStackingLevel = entering.calcElevation(game.getBoard()
+                        .getHex(entering.getPosition()), game
+                        .getBoard().getHex(coords));
             }
-
-            // Only do all this jazz if they're close enough together on level
-            // to interfere.
-            if ((thisLowStackingLevel <= highStackingLevel) && (thisHighStackingLevel >= lowStackingLevel)) {
-                // Don't compare the entering entity to itself.
-                if (inHex.equals(entering)) {
+            int thisHighStackingLevel = thisLowStackingLevel;
+            //mechs only occupy one level of a building
+            if(!Compute.isInBuilding(game, entering, coords)) {
+                thisHighStackingLevel += entering.height();
+            }
+    
+            // Walk through the entities in the given hex.
+            for (Enumeration<Entity> i = game.getEntities(coords); 
+                    i.hasMoreElements();) {
+                final Entity inHex = i.nextElement();
+    
+                if (inHex.isAirborne()) {
                     continue;
                 }
-
-                // Ignore the transport of the entering entity.
-                if (inHex.equals(transport)) {
-                    continue;
+    
+                int lowStackingLevel = inHex.getElevation();
+                int highStackingLevel = lowStackingLevel;
+                //units only occupy one level of a building
+                if(!Compute.isInBuilding(game, inHex)) {
+                    highStackingLevel += inHex.height();
                 }
-
-                // DFAing units don't count towards stacking
-                if (inHex.isMakingDfa()) {
-                    continue;
-                }
-
-                // If the entering entity is a mech,
-                // then any other mech in the hex is a violation.
-                // Unless grappled
-                // grounded small craft are also treated as mechs for purposes
-                // of stacking
-                if (isMech
-                        && (((inHex instanceof Mech) && (((Mech) inHex).getGrappled() != entering.getId())) || (inHex instanceof SmallCraft))) {
-                    return inHex;
-                }
-
-                //only infantry can be in the same hex as a large support vee
-                //grounded dropships are treated as large support vees
-                if(isLargeSupport && !(inHex instanceof Infantry)) {
-                    return inHex;
-                }
-                if(((inHex instanceof LargeSupportTank) || (inHex instanceof Dropship)) && !isInfantry) {
-                    return inHex;
-                }
-
-                totalUnits++;
-                // If the new one is the most
-                if (totalUnits > 4) {
-                    // Arbitrarily return this one, because we can, and it's
-                    // simpler.
-                    return inHex;
-                }
-
-                // Otherwise, if there are two present entities controlled
-                // by this player, returns a random one of the two.
-                // Somewhat arbitrary, but how else should we resolve it?
-                if (!inHex.getOwner().isEnemyOf(entering.getOwner())) {
-                    if (firstEntity == null) {
-                        firstEntity = inHex;
-                    } else {
-                        return Compute.d6() > 3 ? firstEntity : inHex;
+    
+                // Only do all this jazz if they're close enough together on lvl
+                // to interfere.
+                if ((thisLowStackingLevel <= highStackingLevel) && 
+                        (thisHighStackingLevel >= lowStackingLevel)) {
+                    // Don't compare the entering entity to itself.
+                    if (inHex.equals(entering)) {
+                        continue;
+                    }
+    
+                    // Ignore the transport of the entering entity.
+                    if (inHex.equals(transport)) {
+                        continue;
+                    }
+    
+                    // DFAing units don't count towards stacking
+                    if (inHex.isMakingDfa()) {
+                        continue;
+                    }
+    
+                    // If the entering entity is a mech,
+                    // then any other mech in the hex is a violation.
+                    // Unless grappled
+                    // grounded small craft are treated as mechs for purposes
+                    // of stacking
+                    if (isMech && (((inHex instanceof Mech) && 
+                            (((Mech) inHex).getGrappled() != entering.getId())) 
+                            || (inHex instanceof SmallCraft))) {
+                        return inHex;
+                    }
+    
+                    //only inf can be in the same hex as a large support vee
+                    //grounded dropships are treated as large support vees
+                    if(isLargeSupport && !(inHex instanceof Infantry)) {
+                        return inHex;
+                    }
+                    if(((inHex instanceof LargeSupportTank) || 
+                            (inHex instanceof Dropship)) && !isInfantry) {
+                        return inHex;
+                    }
+    
+                    totalUnits++;
+                    // If the new one is the most
+                    if (totalUnits > 4) {
+                        // Arbitrarily return this one, because we can, and it's
+                        // simpler.
+                        return inHex;
+                    }
+    
+                    // Otherwise, if there are two present entities controlled
+                    // by this player, returns a random one of the two.
+                    // Somewhat arbitrary, but how else should we resolve it?
+                    if (!inHex.getOwner().isEnemyOf(entering.getOwner())) {
+                        if (firstEntity == null) {
+                            firstEntity = inHex;
+                        } else {
+                            return Compute.d6() > 3 ? firstEntity : inHex;
+                        }
                     }
                 }
             }
         }
-
         // okay, all clear
         return null;
     }

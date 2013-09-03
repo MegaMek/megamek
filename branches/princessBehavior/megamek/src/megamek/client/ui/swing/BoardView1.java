@@ -1943,34 +1943,44 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         Coords position = entity.getPosition();
         if (position != null) {
-            sprite = new EntitySprite(entity, -1);
-            newSprites.add(sprite);
-            temp = new ArrayList<Integer>();
-            temp.add(entityId);
-            temp.add(-1);
-            newSpriteIds.put(temp, sprite);
-            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                sprite = new EntitySprite(entity, secondaryPos);
+            // If no secondary positions, add a sprite for the central position
+            if (entity.getSecondaryPositions().isEmpty()){
+                sprite = new EntitySprite(entity, -1);
                 newSprites.add(sprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
-                temp.add(secondaryPos);
+                temp.add(-1);
                 newSpriteIds.put(temp, sprite);
+            }else{ // Add all secondary position sprites, which includes a 
+                //     sprite for the central hex
+                for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                    sprite = new EntitySprite(entity, secondaryPos);
+                    newSprites.add(sprite);
+                    temp = new ArrayList<Integer>();
+                    temp.add(entityId);
+                    temp.add(secondaryPos);
+                    newSpriteIds.put(temp, sprite);
+                }
             }
 
-            isoSprite = new IsometricSprite(entity, -1);
-            isoSprites.add(isoSprite);
-            temp = new ArrayList<Integer>();
-            temp.add(entityId);
-            temp.add(-1);
-            newIsoSpriteIds.put(temp, isoSprite);
-            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                isoSprite = new IsometricSprite(entity, secondaryPos);
+            // If no secondary positions, add a sprite for the central position
+            if (entity.getSecondaryPositions().isEmpty()){
+                isoSprite = new IsometricSprite(entity, -1);
                 isoSprites.add(isoSprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
-                temp.add(secondaryPos);
+                temp.add(-1);
                 newIsoSpriteIds.put(temp, isoSprite);
+            }else{ // Add all secondary position sprites, which includes a 
+                //     sprite for the central hex
+                for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                    isoSprite = new IsometricSprite(entity, secondaryPos);
+                    isoSprites.add(isoSprite);
+                    temp = new ArrayList<Integer>();
+                    temp.add(entityId);
+                    temp.add(secondaryPos);
+                    newIsoSpriteIds.put(temp, isoSprite);
+                }
             }
         }
 
@@ -2025,15 +2035,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
             if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
-                WreckSprite ws = new WreckSprite(entity, -1);
-                newWrecks.add(ws);
-                IsometricWreckSprite iws = new IsometricWreckSprite(entity, -1);
-                newIsometricWrecks.add(iws);
+                WreckSprite ws;
+                IsometricWreckSprite iws;
+                if (entity.getSecondaryPositions().isEmpty()){
+                    ws = new WreckSprite(entity, -1);
+                    newWrecks.add(ws);
+                    iws = new IsometricWreckSprite(entity, -1);
+                    newIsometricWrecks.add(iws);
+                } else {
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     ws = new WreckSprite(entity, secondaryPos);
                     newWrecks.add(ws);
                     iws = new IsometricWreckSprite(entity, secondaryPos);
                     newIsometricWrecks.add(iws);
+                }
                 }
             }
         }
@@ -2235,6 +2250,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void markDeploymentHexesFor(Entity ce) {
         en_Deployer = ce;
         repaint(100);
+    }
+
+    /**
+     * Returns the entity that is currently being deployed
+     */
+    public Entity getDeployingEntity() {
+        return en_Deployer;
     }
 
     /**

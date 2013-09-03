@@ -1366,12 +1366,17 @@ public class Game implements Serializable, IGame {
             // Add these entities to the game.
             for (Entity entity : entities) {
                 final int id = entity.getId();
-                entityIds.put(new Integer(id), entity);
-                entity.setGame(this);
+                entityIds.put(new Integer(id), entity);                
 
                 if (id > lastEntityId) {
                     lastEntityId = id;
                 }
+            }
+            // We need to ensure that each entity has the propery Game reference
+            //  however, the entityIds Hashmap must be fully formed before this
+            //  is called, since setGame also calls setGame for loaded Entities
+            for (Entity entity : entities){
+                entity.setGame(this);
             }
         }
     }

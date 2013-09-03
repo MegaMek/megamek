@@ -434,6 +434,13 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     public void markDeploymentHexesFor(Entity en) {
         board.showDeployment(en.getOwner());
     }
+    
+    /**
+     * Returns the entity that is currently being deployed
+     */
+    public Entity getDeployingEntity() {
+        return null;
+    }
 
     public void addAttack(AttackAction aa) {
         attacks.add(aa);

@@ -23,6 +23,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -142,7 +143,12 @@ public class MoveStep implements Serializable {
      * Flag that indicates that this step's position is the end of a path.
      */
     private boolean isEndPos = true;
-
+    
+    /**
+     * A collection of buildings that are crushed during this move step.  This
+     * is used for landed Aerodyne Dropships and Mobile Structures.
+     */
+    private ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
     /**
      * Create a step of the given type.
      *
@@ -646,6 +652,23 @@ public class MoveStep implements Serializable {
         else if (magmaLevel == 2) {
             heat = 5;
             totalHeat += 5;
+        }
+        
+        // Checks for landed dropships collapsing buildings
+        if ((entity instanceof Dropship) && !entity.isAirborne()){
+            ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
+            secondaryPositions.add(getPosition());
+            for (int dir = 0; dir < 6; dir++){
+                secondaryPositions.add(getPosition().translated(dir));
+            }
+            for (Coords pos : secondaryPositions){
+                Building bld = game.getBoard().getBuildingAt(pos);
+                if (bld != null){
+                    crushedBuildingLocs.add(pos);
+                    // This is dangerous!
+                    danger = true;
+                }
+            }                
         }
 
     }
@@ -1664,6 +1687,12 @@ public class MoveStep implements Serializable {
         // guilty until proven innocent
         movementType = EntityMovementType.MOVE_ILLEGAL;
 
+        // Crushing buildings creates rubble, and Dropships can't drive on
+        //  rubble, so they get stuck
+        if (entity instanceof Dropship && 
+                !prev.getCrushedBuildingLocs().isEmpty()){
+            return;
+        }
         // AERO STUFF
         // I am going to put in a whole seperate section for Aeros and just
         // return from it
@@ -2884,6 +2913,18 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
+        
+        // We need extra checking for dropships, due to secondary positions
+        if (entity instanceof Dropship && !entity.isAirborne() && 
+                isPavementStep() && entity.isLocationProhibited(dest)){
+            for (int dir = 0; dir < 6; dir++){
+                Coords secondaryCoords = dest.translated(dir);
+                IHex secondaryHex = game.getBoard().getHex(secondaryCoords);
+                if (!secondaryHex.hasPavement()){
+                    return false;
+                }
+            }
+        }
 
         // Jumping into a building hex below the roof ends the move
         // assume this applies also to sylph vtol movement
@@ -3306,6 +3347,10 @@ public class MoveStep implements Serializable {
         // are we in atmosphere?
         return en.isAirborne();
 
+    }
+
+    public ArrayList<Coords> getCrushedBuildingLocs() {
+        return crushedBuildingLocs;
     }
 
 }

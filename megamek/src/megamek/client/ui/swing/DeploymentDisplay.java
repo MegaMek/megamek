@@ -18,6 +18,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
@@ -37,6 +38,7 @@ import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
@@ -308,6 +310,30 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void ready() {
         disableButtons();
         Entity en = ce();
+        
+        if ((en instanceof Dropship) && !en.isAirborne()){
+            ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
+            ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
+            secondaryPositions.add(en.getPosition());
+            for (int dir = 0; dir < 6; dir++){
+                secondaryPositions.add(en.getPosition().translated(dir));
+            }
+            for (Coords pos : secondaryPositions){
+                Building bld = 
+                       clientgui.getClient().game.getBoard().getBuildingAt(pos);
+                if (bld != null){
+                    crushedBuildingLocs.add(pos);
+                }
+            }
+            if (!crushedBuildingLocs.isEmpty() ) {
+                JOptionPane.showMessageDialog(clientgui,                        
+                        Messages.getString("DeploymentDisplay.dropshipBuildingDeploy"), //$NON-NLS-1$
+                        Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
+                        JOptionPane.ERROR_MESSAGE);                        
+                return;            
+            }
+        }
+        
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);

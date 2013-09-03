@@ -1482,6 +1482,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 if (!nag.getShowAgain()) {
                     GUIPreferences.getInstance().setNagForCrushingBuildings(false);
                 }
+            } else {
+                return;
             }
         }
 

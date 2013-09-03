@@ -7211,7 +7211,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "BA Tube Artillery Ammo";
-        ammo.shortName = "Tube Artillerye";
+        ammo.shortName = "Tube Artillery";
         ammo.setInternalName("ISBATubeArtilleryAmmo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;

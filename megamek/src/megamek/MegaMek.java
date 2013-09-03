@@ -53,7 +53,10 @@ import megamek.server.DedicatedServer;
 public class MegaMek {
 
     public static String VERSION = "0.35.41-dev"; //$NON-NLS-1$
-    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
+    public static long TIMESTAMP = new File(PreferenceManager
+            .getClientPreferences().getLogDirectory()
+            + File.separator
+            + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:"; //$NON-NLS-1$
@@ -93,13 +96,15 @@ public class MegaMek {
             } else {
                 String interfaceName = cp.getGuiName();
                 if (interfaceName == null) {
-                    interfaceName = PreferenceManager.getClientPreferences().getGUIName();
+                    interfaceName = PreferenceManager.getClientPreferences()
+                            .getGUIName();
                 }
                 MegaMek.startGUI(interfaceName, restArgs);
             }
 
         } catch (CommandLineParser.ParseException e) {
-            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE).append(e.getMessage()).append('\n');
+            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
+                    .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             MegaMek.displayMessageAndExit(message.toString());
         }
@@ -128,12 +133,15 @@ public class MegaMek {
     private static void redirectOutput(String logFileName) {
         try {
             System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
-            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+            String sLogDir = PreferenceManager.getClientPreferences()
+                    .getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(sLogDir + File.separator + logFileName), 64));
+            PrintStream ps = new PrintStream(
+                    new BufferedOutputStream(new FileOutputStream(sLogDir
+                            + File.separator + logFileName), 64));
             System.setOut(ps);
             System.setErr(ps);
         } catch (Exception e) {
@@ -202,7 +210,8 @@ public class MegaMek {
                     return result;
                 }
             } catch (Exception e) {
-                MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE + guiClassName);
+                MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE
+                        + guiClassName);
             }
         }
         return null;
@@ -212,7 +221,8 @@ public class MegaMek {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName; //$NON-NLS-1$
-        InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+        InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(
+                PROPERTIES_FILE);
         if (is != null) {
             try {
                 p.load(is);
@@ -277,7 +287,8 @@ public class MegaMek {
         System.out.println("Compiled on " + new Date(TIMESTAMP).toString()); //$NON-NLS-1$
         System.out.println("Today is " + new Date().toString()); //$NON-NLS-1$
         System.out.println("Java vendor " + System.getProperty("java.vendor")); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out.println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out
+                .println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println("Platform " //$NON-NLS-1$
                 + System.getProperty("os.name") //$NON-NLS-1$
                 + " " //$NON-NLS-1$
@@ -286,7 +297,8 @@ public class MegaMek {
                 + System.getProperty("os.arch") //$NON-NLS-1$
                 + ")"); //$NON-NLS-1$
         long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
-        System.out.println("Total memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out
+                .println("Total memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println();
     }
 
@@ -367,44 +379,54 @@ public class MegaMek {
         @Override
         protected void start() throws ParseException {
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_LOG)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_LOG)) {
                 nextToken();
                 parseLog();
             }
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
                 nextToken();
                 processEquipmentDb();
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
                 nextToken();
                 processExtendedEquipmentDb();
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
                 nextToken();
                 processUnitValidator();
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
                 processUnitExporter();
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_OFFICAL_UNIT_LIST)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_OFFICAL_UNIT_LIST)) {
                 nextToken();
                 processUnitExporter(true);
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(
+                            OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
                 nextToken();
                 processUnitBattleForceConverter();
             }
 
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_DEDICATED)) {
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_DEDICATED)) {
                 nextToken();
                 dedicatedServer = true;
-            } else if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_GUI)) {
+            } else if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(OPTION_GUI)) {
                 nextToken();
                 parseGUI();
             }
@@ -437,7 +459,8 @@ public class MegaMek {
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
-                megamek.common.EquipmentType.writeEquipmentDatabase(new File(filename));
+                megamek.common.EquipmentType.writeEquipmentDatabase(new File(
+                        filename));
             } else {
                 error("file name expected"); //$NON-NLS-1$
             }
@@ -449,7 +472,8 @@ public class MegaMek {
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
-                megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
+                megamek.common.EquipmentType
+                        .writeEquipmentExtendedDatabase(new File(filename));
             } else {
                 error("file name expected"); //$NON-NLS-1$
             }
@@ -461,13 +485,16 @@ public class MegaMek {
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
-                MechSummary ms = MechSummaryCache.getInstance().getMech(filename);
+                MechSummary ms = MechSummaryCache.getInstance().getMech(
+                        filename);
                 if (ms == null) {
-                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    MechSummary[] units = MechSummaryCache.getInstance()
+                            .getAllMechs();
                     // System.err.println("units: "+units.length);
                     for (MechSummary unit : units) {
                         // System.err.println(unit.getSourceFile().getName());
-                        if (unit.getSourceFile().getName().equalsIgnoreCase(filename)) {
+                        if (unit.getSourceFile().getName()
+                                .equalsIgnoreCase(filename)) {
                             ms = unit;
                             break;
                         }
@@ -475,23 +502,32 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    System.err.println(filename + " not found try using \"chassis model\" for input."); //$NON-NLS-1$
+                    System.err
+                            .println(filename
+                                    + " not found try using \"chassis model\" for input."); //$NON-NLS-1$
                 } else {
                     try {
-                        Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                        System.err.println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                        Entity entity = new MechFileParser(ms.getSourceFile(),
+                                ms.getEntryName()).getEntity();
+                        System.err
+                                .println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                         EntityVerifier entityVerifier = new EntityVerifier(
-                                new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME)
-                        );
+                                new File(Configuration.unitsDir(),
+                                        EntityVerifier.CONFIG_FILENAME));
                         MechView mechView = new MechView(entity, false);
-                        StringBuffer sb = new StringBuffer(mechView.getMechReadout());
-                        if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                        StringBuffer sb = new StringBuffer(
+                                mechView.getMechReadout());
+                        if ((entity instanceof Mech)
+                                || (entity instanceof Tank)) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
-                                testEntity = new TestMech((Mech) entity, entityVerifier.mechOption, null);
+                                testEntity = new TestMech((Mech) entity,
+                                        entityVerifier.mechOption, null);
                             }
-                            if ((entity instanceof Tank) && !(entity instanceof GunEmplacement)) {
-                                testEntity = new TestTank((Tank) entity, entityVerifier.tankOption, null);
+                            if ((entity instanceof Tank)
+                                    && !(entity instanceof GunEmplacement)) {
+                                testEntity = new TestTank((Tank) entity,
+                                        entityVerifier.tankOption, null);
                             }
 
                             if (testEntity != null) {
@@ -532,12 +568,15 @@ public class MegaMek {
                     w.write("Element\tSize\tMP\tArmor\tStructure\tS\tM\tL\tOV\tPoint Cost\tAbilites");
                     w.newLine();
 
-                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    MechSummary[] units = MechSummaryCache.getInstance()
+                            .getAllMechs();
                     for (MechSummary unit : units) {
                         if (!unit.getUnitType().equalsIgnoreCase("mek")) {
                             continue;
                         }
-                        Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                        Entity entity = new MechFileParser(
+                                unit.getSourceFile(), unit.getEntryName())
+                                .getEntity();
 
                         w.write(unit.getName());
                         w.write("\t");
@@ -545,17 +584,24 @@ public class MegaMek {
                         w.write("\t");
                         w.write(entity.getBattleForceMovement());
                         w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceArmorPoints()));
+                        w.write(Integer.toString(entity
+                                .getBattleForceArmorPoints()));
                         w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceStructurePoints()));
+                        w.write(Integer.toString(entity
+                                .getBattleForceStructurePoints()));
                         w.write("\t");
-                        //Most Aero units and some ground units have multiple facings.
-                        //Also, each facing potentially has Capital, Capital Missile, and Sub Capital brackets as well.
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
+                        // Most Aero units and some ground units have multiple
+                        // facings.
+                        // Also, each facing potentially has Capital, Capital
+                        // Missile, and Sub Capital brackets as well.
+                        w.write(Integer.toString(entity
+                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
                         w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
+                        w.write(Integer.toString(entity
+                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
                         w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
+                        w.write(Integer.toString(entity
+                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
                         w.write("\t");
                         w.write(entity.getBattleForceOverHeatValue());
                         w.write("\t");
@@ -576,18 +622,18 @@ public class MegaMek {
 
         @SuppressWarnings("nls")
         private void processUnitExporter() {
-        	processUnitExporter(false);
+            processUnitExporter(false);
         }
 
         @SuppressWarnings("nls")
         private void processUnitExporter(boolean officialUnitList) {
             String filename;
-            if (getToken() == TOK_LITERAL || officialUnitList) {
-            	if (officialUnitList) {
-            		filename = MechFileParser.FILENAME_OFFICIAL_UNITS;
-            	} else {
-            		filename = getTokenValue();
-            	}
+            if ((getToken() == TOK_LITERAL) || officialUnitList) {
+                if (officialUnitList) {
+                    filename = MechFileParser.FILENAME_OFFICIAL_UNITS;
+                } else {
+                    filename = getTokenValue();
+                }
                 nextToken();
 
                 if (!new File("./docs").exists()) {
@@ -598,22 +644,23 @@ public class MegaMek {
                     File file = new File("./docs/" + filename);
                     BufferedWriter w = new BufferedWriter(new FileWriter(file));
                     if (officialUnitList) {
-	                    w.write("Megamek Official Unit List");
-	                    w.newLine();
-	                    w.write("This file can be regenerated with java -jar MegaMek.jar -oul");
-	                    w.newLine();
-	                    w.write("Format is: Chassis Model|");
-	                    w.newLine();
+                        w.write("Megamek Official Unit List");
+                        w.newLine();
+                        w.write("This file can be regenerated with java -jar MegaMek.jar -oul");
+                        w.newLine();
+                        w.write("Format is: Chassis Model|");
+                        w.newLine();
                     } else {
-	                    w.write("Megamek Unit Database");
-	                    w.newLine();
-	                    w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
-	                    w.newLine();
-	                    w.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump");
-	                    w.newLine();
+                        w.write("Megamek Unit Database");
+                        w.newLine();
+                        w.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
+                        w.newLine();
+                        w.write("Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump");
+                        w.newLine();
                     }
 
-                    MechSummary[] units = MechSummaryCache.getInstance(officialUnitList).getAllMechs();
+                    MechSummary[] units = MechSummaryCache.getInstance(
+                            officialUnitList).getAllMechs();
                     for (MechSummary unit : units) {
                         String unitType = unit.getUnitType();
                         if (unitType.equalsIgnoreCase("mek")) {
@@ -621,43 +668,46 @@ public class MegaMek {
                         }
 
                         if (!officialUnitList) {
-	                        w.write(unitType);
-	                        w.write(",");
-	                        w.write(unit.getUnitSubType());
-	                        w.write(",");
-	                        w.write(unit.getChassis());
-	                        w.write(",");
-	                        w.write(unit.getModel());
-	                        w.write(",");
-	                        w.write(Integer.toString(unit.getBV()));
-	                        w.write(",");
-	                        w.write(Long.toString(unit.getCost()));
-	                        w.write(",");
-	                        w.write(Long.toString(unit.getUnloadedCost()));
-	                        w.write(",");
-	                        w.write(Integer.toString(unit.getYear()));
-	                        w.write(",");
-	                        w.write(TechConstants.getLevelDisplayableName(unit.getType()));
-	                        w.write(",");
-	                        w.write(Float.toString(unit.getTons()));
-	                        w.write(",");
-	                        if (unit.isClan()) {
-	                            w.write("Clan,");
-	                        } else {
-	                            w.write("IS,");
-	                        }
-	                        if (unit.isCanon()) {
-	                            w.write("Canon,");
-	                        } else {
-	                            w.write("Non-Canon,");
-	                        }
-	                        w.write(Integer.toString(unit.getWalkMp()));
-	                        w.write(",");
-	                        w.write(Integer.toString(unit.getRunMp()));
-	                        w.write(",");
-	                        w.write(Integer.toString(unit.getJumpMp()));
+                            w.write(unitType);
+                            w.write(",");
+                            w.write(unit.getUnitSubType());
+                            w.write(",");
+                            w.write(unit.getChassis());
+                            w.write(",");
+                            w.write(unit.getModel());
+                            w.write(",");
+                            w.write(Integer.toString(unit.getBV()));
+                            w.write(",");
+                            w.write(Long.toString(unit.getCost()));
+                            w.write(",");
+                            w.write(Long.toString(unit.getUnloadedCost()));
+                            w.write(",");
+                            w.write(Integer.toString(unit.getYear()));
+                            w.write(",");
+                            w.write(TechConstants.getLevelDisplayableName(unit
+                                    .getType()));
+                            w.write(",");
+                            w.write(Float.toString(unit.getTons()));
+                            w.write(",");
+                            if (unit.isClan()) {
+                                w.write("Clan,");
+                            } else {
+                                w.write("IS,");
+                            }
+                            if (unit.isCanon()) {
+                                w.write("Canon,");
+                            } else {
+                                w.write("Non-Canon,");
+                            }
+                            w.write(Integer.toString(unit.getWalkMp()));
+                            w.write(",");
+                            w.write(Integer.toString(unit.getRunMp()));
+                            w.write(",");
+                            w.write(Integer.toString(unit.getJumpMp()));
                         } else {
-                        	w.write(unit.getChassis()+(unit.getModel().equals("")?"|":" "+unit.getModel()+"|"));
+                            w.write(unit.getChassis()
+                                    + (unit.getModel().equals("") ? "|" : " "
+                                            + unit.getModel() + "|"));
                         }
                         w.newLine();
                     }

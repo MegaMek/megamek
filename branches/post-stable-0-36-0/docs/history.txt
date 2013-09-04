@@ -7,6 +7,15 @@ v0.36.0 post-stable
   turn, units that can be moved are highlighted in light-blue, the currently 
   selected unit is highlighted in purple, and ineligible units aren't 
   highlighted.  Additionally, no highlighting is done when it's not 'your' turn
++ Bug: Fixed some issues with the path planner.  First, for the candidate list, 
+  I changed the ArrayList to a PriorityQueue.  There was also a bug where every 
+  256 iterations it would check to see if the current path was better than the 
+  currently saved best path and if it wasn't it would end.  This is an 
+  assumption that doesn't always hold and basically resulted in the A* 
+  path-planner halting prematurely.  If the A* path-planner didn't reach the 
+  goal, the path is finished with a straight-line planner.  Fixing this allows 
+  the A* planner to work for longer and hence find much better paths 
+  (although it's still has a maximu time limit).
 
 ----------------
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)

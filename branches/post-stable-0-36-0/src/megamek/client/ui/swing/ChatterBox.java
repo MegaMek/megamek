@@ -17,6 +17,8 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
@@ -128,13 +130,28 @@ public class ChatterBox implements KeyListener {
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
-
+        chatPanel.setLayout(new GridBagLayout());
+        
         JPanel subPanel = new JPanel(new BorderLayout());
+        subPanel.setPreferredSize(new Dimension(284,100));
+        subPanel.setMinimumSize(new Dimension(284,100));
         subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
         subPanel.add(scrPlayers, BorderLayout.WEST);
         subPanel.add(inputField, BorderLayout.SOUTH);
-        chatPanel.add(subPanel, BorderLayout.CENTER);
-        chatPanel.add(butDone, BorderLayout.EAST);
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.gridheight = 3; gbc.gridwidth = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = gbc.weighty = 1;
+        
+        chatPanel.add(subPanel, gbc);
+        
+        gbc.gridx = 5; gbc.gridy = 1;
+        gbc.gridheight = 1; gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = .13; gbc.weighty = .05;
+        chatPanel.add(butDone, gbc);
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
     }
 
@@ -174,7 +191,14 @@ public class ChatterBox implements KeyListener {
     public void setDoneButton(JButton button) {
         chatPanel.remove(butDone);
         butDone = button;
-        chatPanel.add(butDone, BorderLayout.EAST);
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 5; gbc.gridy = 1;
+        gbc.gridheight = 1; gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = .1; gbc.weighty = .05;
+        
+        chatPanel.add(butDone, gbc);
     }
 
     //

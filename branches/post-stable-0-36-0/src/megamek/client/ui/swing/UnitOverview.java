@@ -145,10 +145,24 @@ public class UnitOverview implements IDisplayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
+            IGame game = clientgui.getClient().game;
+            if (game.getTurn() != null && game.getTurn().isValidEntity(e,game)) {
+                Color oldColor = graph.getColor();
+                graph.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
+                graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
+                graph.setColor(oldColor);
+            }
+            
             Entity se = clientgui == null ? null : clientgui.getClient()
                     .getEntity(clientgui.getSelectedEntityNum());
-            if (e == se) {
+            if (e == se && game.getTurn() != null && 
+                    game.getTurn().isValidEntity(e,game)) {
+                Color oldColor = graph.getColor();
+                graph.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
+                graph.setColor(oldColor);
             }
 
             y += ICON_HEIGHT + PADDING;

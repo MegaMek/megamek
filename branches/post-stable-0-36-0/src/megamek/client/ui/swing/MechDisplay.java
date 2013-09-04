@@ -2564,7 +2564,7 @@ public class MechDisplay extends JPanel {
                     case CriticalSlot.TYPE_SYSTEM:
                         sb.append((cs.isDestroyed() || cs.isMissing()) ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
                                 .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-                        // Protomechs have different systme names.
+                        // Protomechs have different system names.
                         if (en instanceof Protomech) {
                             sb.append(Protomech.systemNames[cs.getIndex()]);
                         } else {

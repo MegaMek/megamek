@@ -134,7 +134,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         unitModel = new MechTableModel();
         initComponents();
         setLocationRelativeTo(cl.frame);
-        asd = new AdvancedSearchDialog(cl.frame);
+        asd = new AdvancedSearchDialog(cl.frame,
+                client.game.getOptions().intOption("year"));
     }
 
     private void initComponents() {
@@ -444,81 +445,48 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         final int nType = comboType.getSelectedIndex();
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        // If current expression doesn't parse, don't update.
+        //If current expression doesn't parse, don't update.
         try {
-            unitTypeFilter = new RowFilter<MechTableModel, Integer>() {
+            unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
                 @Override
-                public boolean include(
-                        Entry<? extends MechTableModel, ? extends Integer> entry) {
+                public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
-                    MechSummary mech = mechModel.getMechSummary(entry
-                            .getIdentifier());
+                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     if (/* Weight */
-                    ((nClass == EntityWeightClass.SIZE) || (mech
-                            .getWeightClass() == nClass))
-                            &&
-                            /* Canon */
-                            (!client.game.getOptions().booleanOption(
-                                    "canon_only") || mech.isCanon())
-                            &&
-                            /* Technology Level */
+                            ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
+                            /*Canon*/
+                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) &&
+                            /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
-                                    || (nType == mech.getType())
-                                    || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
-                                            .getType() <= TechConstants.T_IS_TW_NON_BOX) || (mech
-                                            .getType() == TechConstants.T_INTRO_BOXSET)))
-                                    || ((nType == TechConstants.T_TW_ALL) && ((mech
-                                            .getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                            || (mech.getType() <= TechConstants.T_INTRO_BOXSET) || (mech
-                                            .getType() <= TechConstants.T_CLAN_TW)))
-                                    || ((nType == TechConstants.T_ALL_IS) && ((mech
-                                            .getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                            || (mech.getType() == TechConstants.T_INTRO_BOXSET)
-                                            || (mech.getType() == TechConstants.T_IS_ADVANCED)
-                                            || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL) || (mech
-                                            .getType() == TechConstants.T_IS_UNOFFICIAL))) || ((nType == TechConstants.T_ALL_CLAN) && ((mech
-                                    .getType() == TechConstants.T_CLAN_TW)
-                                    || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
-                                    || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL) || (mech
-                                    .getType() == TechConstants.T_CLAN_UNOFFICIAL))))
-                            && ((nUnit == -1) || mech.getUnitType().equals(
-                                    UnitType.getTypeName(nUnit)))
-                            /* Advanced Search */
-                            && ((searchFilter == null) || MechSearchFilter
-                                    .isMatch(mech, searchFilter))) {
-                        // yuck, I have to pull up a full Entity to get MechView
-                        // to search in
-                        // TODO: why not put mechview into the mech summary
-                        // itself?
-                        if (txtFilter.getText().length() > 0) {
-                            // TODO: this search routine is too slow
-                            // I think putting a copy of the mechreadout in
-                            // the mechsummary would speed things up enormously
-                            // NOTE: now getting weirdness on txtFilter when I
-                            // do this
+                                || (nType == mech.getType())
+                                || ((nType == TechConstants.T_IS_TW_ALL)
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
+                                || ((nType == TechConstants.T_TW_ALL)
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET)
+                                     || (mech.getType() <= TechConstants.T_CLAN_TW)))
+                                || ((nType == TechConstants.T_ALL_IS)
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)
+                                     || (mech.getType() == TechConstants.T_IS_ADVANCED)
+                                     || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
+                                     || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
+                                || ((nType == TechConstants.T_ALL_CLAN)
+                                    && ((mech.getType() == TechConstants.T_CLAN_TW)
+                                     || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
+                                     || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
+                                     || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
+                            && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
+                            /*Advanced Search*/
+                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))) {
+                        if(txtFilter.getText().length() > 0) {
                             String text = txtFilter.getText();
-                            // String [] ind_words = text.split(" "); //split
-                            // with regex as space
-                            /*
-                             * MechView mv = null; try { Entity entity = new
-                             * MechFileParser(mech.getSourceFile(),
-                             * mech.getEntryName()).getEntity(); mv = new
-                             * MechView(entity, true); } catch
-                             * (EntityLoadingException ex) { // do nothing, I
-                             * guess } if(null == mv) { return false; }
-                             */
-                            /*
-                             * boolean match = true; for(int i = 0; i <
-                             * ind_words.length; i++) {
-                             * if(!mv.getMechReadout().contains(ind_words[i])) {
-                             * match = false; break; } } return match;
-                             */
-                            return mech.getName().toLowerCase()
-                                    .contains(text.toLowerCase());
-                        }
-                        return true;
+                            return mech.getName().toLowerCase().contains(text.toLowerCase());
                     }
-                    return false;
+                    return true;
+                }
+                return false;
                 }
             };
         } catch (java.util.regex.PatternSyntaxException e) {
@@ -830,18 +798,14 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             Dimension size = new Dimension(550, 300);
             tScroll.setPreferredSize(size);
-            JOptionPane.showMessageDialog(null, tScroll, "BV",
-                    JOptionPane.INFORMATION_MESSAGE, null);
-        } else if (ev.getSource().equals(btnAdvSearch)) {
+            JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
+        } else if(ev.getSource().equals(btnAdvSearch)) {
             searchFilter = asd.showDialog();
-            btnResetSearch.setEnabled(searchFilter != null);
-            // TurretFacingDialog tfd = new TurretFacingDialog(clientgui.frame,
-            // "test", "test2", (Mech)getSelectedEntity(), null, clientgui);
-            // tfd.setVisible(true);
-            filterUnits();
-        } else if (ev.getSource().equals(btnResetSearch)) {
+            btnResetSearch.setEnabled(searchFilter != null && !searchFilter.isDisabled);
+            filterUnits();            
+        } else if(ev.getSource().equals(btnResetSearch)) {
             asd.clearValues();
-            searchFilter = null;
+            searchFilter=null;            
             btnResetSearch.setEnabled(false);
             filterUnits();
         }

@@ -1,0 +1,135 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Medium/Large Factory
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+17000
+</Tonnage>
+
+<Armor>
+30
+26
+26
+26
+26
+26
+</Armor>
+
+<Nose Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Front Left Side Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+52
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+100
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2150
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:12:2
+CargoBay:8184.5:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+20
+</escape_pod>
+
+<life_boat>
+20
+</life_boat>
+
+<crew>
+111
+</crew>
+
+<passengers>
+285
+</passengers>
+
+<History>
+Unit has 1 Factory Unit. No Rules for Factory Units are in MegaMek. Unit included for completeness.
+</history>

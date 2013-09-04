@@ -1,0 +1,12 @@
+3053 Clan Goliath Scorpion Mech - Medium
+Hunchback IIC,1
+Griffin IIC 3,2
+Goshawk (Vapor Eagle) 2,3
+Fenris (Ice Ferret) A,4
+Black Hawk (Nova) Prime,5
+Dragonfly (Viper) Prime,6
+Fenris (Ice Ferret) Prime,5
+Ryoken (Stormcrow) A,4
+Dragonfly (Viper) B,3
+Hellhound (Conjurer) 3,2
+Shadow Hawk IIC,1

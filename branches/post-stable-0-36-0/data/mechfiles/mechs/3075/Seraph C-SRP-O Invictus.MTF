@@ -1,0 +1,155 @@
+Version:1.1
+Seraph
+C-SRP-O Invictus
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3069
+Source:Jihad
+Rules Level:2
+
+Mass:85
+Engine:255 Light Engine
+Structure:Standard
+Myomer:Triple-Strength
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:27
+RA Armor:27
+LT Armor:26
+RT Armor:26
+CT Armor:40
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:9
+RTR Armor:9
+RTC Armor:13
+
+Weapons:5
+Ultra AC/10, Right Arm
+MML 5, Left Torso
+MML 5, Right Torso
+Streak SRM 6, Left Torso
+Snub-Nose PPC, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+TSM
+TSM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+ISStreakSRM6
+ISStreakSRM6
+ISC3iUnit
+ISC3iUnit
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISMML5
+ISMML5
+ISMML5
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+IS Streak SRM 6 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISSNPPC
+ISSNPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+TSM
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+TSM
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

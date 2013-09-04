@@ -1,0 +1,149 @@
+Version:1.0
+Cougar
+X
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3132
+Rules Level:4
+
+Mass:35
+Engine:175 XL Engine
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:7
+
+Armor:Clan Ferro-Fibrous Armor
+LA Armor:6
+RA Armor:6
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:8
+LL Armor:9
+RL Armor:9
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:4
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLStreakLRM10, Right Torso, Ammo:24
+1 CLStreakLRM10, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLStreakLRM10
+CLStreakLRM10
+CLStreakLRM10 Ammo
+CLStreakLRM10 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLStreakLRM10
+CLStreakLRM10
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLImprovedJump Jet
+CLImprovedJump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

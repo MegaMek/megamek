@@ -1,0 +1,294 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Avalon Cruiser
+</Name>
+<Model>
+</Model>
+<Tonnage>
+770000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+344
+310
+310
+302
+302
+275
+</Armor>
+<Nose Equipment>
+NL45
+NL45
+NAC20
+NAC20
+NAC20 Ammo:100
+AR10
+AR10
+AR10 KillerWhale Ammo:30
+AR10 Barracuda Ammo:30
+ScreenLauncher
+ScreenLauncher Ammo:10
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:180
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:152
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Nose Equipment>
+<Front Left Side Equipment>
+NL45
+NL45
+NAC40
+NAC40 Ammo:50
+MediumNGauss
+MediumNGauss Ammo:36
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:40
+AR10 Barracuda Ammo:40
+ISLargeLaser
+ISLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:120
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL45
+NL45
+NAC40
+NAC40 Ammo:50
+MediumNGauss
+MediumNGauss Ammo:36
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:40
+AR10 Barracuda Ammo:40
+ISLargeLaser
+ISLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:120
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC20
+NAC20 Ammo:50
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:78
+ScreenLauncher
+ScreenLauncher Ammo:10
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+ISLBXAC10
+ISLBXAC10 
+ISLBXAC10 CL Ammo:125
+ISLBXAC10 Ammo:125
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:168
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC20
+NAC20 Ammo:50
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:78
+ScreenLauncher
+ScreenLauncher Ammo:10
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+ISLBXAC10
+ISLBXAC10 
+ISLBXAC10 CL Ammo:125
+ISLBXAC10 Ammo:125
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:168
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NAC20
+NAC20 Ammo:50
+MediumNGauss
+MediumNGauss Ammo:36
+AR10
+AR10
+AR10 KillerWhale Ammo:20
+AR10 Barracuda Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAMS Ammo:60
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+NAC20
+NAC20 Ammo:50
+MediumNGauss
+MediumNGauss Ammo:36
+AR10
+AR10
+AR10 KillerWhale Ammo:20
+AR10 Barracuda Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAMS Ammo:60
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Right Side Equipment>
+<Aft Equipment>
+NL55
+NL55
+NAC40
+NAC40 Ammo:50
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:180
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo Artemis-capable:136
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+</Aft Equipment>
+<structural_integrity>
+120
+</structural_integrity>
+<heatsinks>
+937
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+25000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3061
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:12:4
+CargoBay:14200:4
+</transporters>
+<docking_collar>
+6
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+35
+</escape_pod>
+<life_boat>
+15
+</life_boat>
+<crew>
+363
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

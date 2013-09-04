@@ -1,0 +1,150 @@
+Version:1.0
+Jenner IIC
+2
+
+Config:Biped
+TechBase:Clan
+Era:3044
+Source:Succession Wars
+Rules Level:2
+
+Mass:35
+Engine:315 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:9
+Jump MP:9
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:3
+RA Armor:3
+LT Armor:6
+RT Armor:6
+CT Armor:13
+HD Armor:7
+LL Armor:8
+RL Armor:8
+RTL Armor:3
+RTR Armor:3
+RTC Armor:7
+
+Weapons:3
+Small Pulse Laser, Left Arm
+ER Large Laser, Right Arm
+LRM 5, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLSmallPulseLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Clan Ammo LRM-5
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLLRM5
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,12 @@
+3085 Ghost Bear Dominion Medium Aerospace Keshik
+Shilone SL-17R,1
+Ammon 2,2
+Tyre 3,3
+Ammon,4
+Tyre 3,5
+Ammon 2,6
+Turk Prime,5
+Ammon,4
+Jagatai Prime,3
+Visigoth Prime,2
+Jagatai Prime,1

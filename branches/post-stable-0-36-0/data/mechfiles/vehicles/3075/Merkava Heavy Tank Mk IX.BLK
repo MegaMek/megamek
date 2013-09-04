@@ -1,0 +1,95 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Merkava Heavy Tank
+</Name>
+
+<Model>
+Mk IX
+</Model>
+
+<year>
+3073
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+75.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+4
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+36
+32
+32
+26
+34
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Streak SRM 4 Ammo
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+LRM 15
+ISStreakSRM4
+ISLightGaussRifle
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>

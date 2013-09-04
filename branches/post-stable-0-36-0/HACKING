@@ -1,0 +1,68 @@
+ATTENTION TO FREE/LIBRE/OPEN SOURCE SOFTWARE HACKERS
+
+This project started on a Windows system and as such, it has a few quirks that
+you may find disconcerting.  The first is a complete lack of a Makefile; the
+primary means of building this project is Apache Ant.  Also, there is an EXE
+(which calls a BAT file) to run the game on a Windows system; the corresponding
+shell script is called "startup.sh").  The release file is a ZIP file, and it
+does not place everything into a directory with a version number; many files
+are deposited directly into the directory that you unzip into.  As is typical
+in a Windows-centric Java app, all third party libraries (i.e. JAR files) are
+supplied by the project itself.  Finally, MegaMek is very particular about the
+contents of the directory in which it runs; the startup.sh script attempt to
+solve this problem, but let me know if it doesn't work in your setup.
+
+Someday, I intend to address every single issue listed above.  For now,
+however, please accept the limitations and move on.
+
+MegaMek can be run on any Java v1.5 runtime, but we've gotten some
+problem reports from specific OS/JVM combinations.
+
+While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
+computer is running Debian Sarge with GCC installed.  Therefore, I can build
+MegaMek with the following command; please modify the command to meet your
+environment (email me if you have any problems).
+
+jikes-gij -q -d classes -classpath classes -extdirs lib -sourcepath src `find src -name '*.java'`
+
+Once MegaMek is built, I can run it with GIJ with the following command.
+
+gij --classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:l10n:classes megamek.MegaMek -log | tee MegaMek.log
+
+I can run it under Kaffe with a similar command.
+
+kaffe -classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:l10n:classes megamek.MegaMek -log | tee MegaMek.log
+
+The following runtime flags are available:
+        -testdice : Test the random number generator used by MegaMek, and exit.
+        -dedicated [gamefile.sav] : Run MegaMek as a headless server; if the
+                optional SAV file is supplied, that saved game will be loaded.
+        -log [filename] : If no filename is given, run MegaMek without a log
+                file.  If a file is named, write the log to that file.  If this
+                flag is omitted, output is automatically sent to MegaMek.log.
+        -testxml filename : Parse the named XML file, display its contents, and
+                then exit.
+        -gui swing : Start the swing GUI
+        -eqdb filename : creates a list of all valid Equipment names for MTF
+                files and saves it to the specified file
+        -validate unitname : tests if the specified unit is a valid design
+        		E.g. to test the Stalker STK-4N, use -validate "Stalker STK-4N"
+
+TODO list:
+ * The Splash Screen that is displayed first when MegaMek starts contains an
+        image.  This image should always be shown, but it flickers in and out
+        of view under certain FLOSS Java runtimes.
+ * The Splash Screen has a column of buttons to the right of the image.  Under
+        certain FLOSS runtimes, this column has a strange width, and it has a
+        stranger resize behavior.
+ * The Map Editor (launched from the button with the same name) has a strange
+        layout in the runtimes that have trouble laying out the Splash Screen.
+ * The Map Editor has image display problems in the runtimes that have problems
+        showing the image on the Splash Screen.
+ * The default random number generator that MegaMek uses is an instance of the
+        java.security.SecureRandom class.  Under certain runtimes, this RNG is
+        very poorly implemented, as evidenced by the "-testdice" flag.
+
+James Damour
+suvarov454@users.sourceforge.net
+last updated 2008-01-25

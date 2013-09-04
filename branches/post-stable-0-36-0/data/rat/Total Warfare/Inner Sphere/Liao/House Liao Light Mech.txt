@@ -1,0 +1,14 @@
+House Liao Light 'Mech
+Jackal JA-KL-1532,1
+Jenner JR7-D,2
+Raven RVN-3L,3
+UrbanMech UM-R63,4
+Firestarter FS9-S,5
+Raven RVN-3L,6
+Spider SDR-5V,5
+Cossack C-SK1,4
+Tarantula ZPH-1A,3
+Javelin JVN-10N,2
+UrbanMech UM-R60,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

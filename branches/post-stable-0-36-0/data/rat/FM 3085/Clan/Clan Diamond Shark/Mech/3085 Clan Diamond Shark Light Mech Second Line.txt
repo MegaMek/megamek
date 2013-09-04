@@ -1,0 +1,12 @@
+3085 Clan Diamond Shark Light Mech Second Line
+Mercury MCY-97,1
+Arbalest 2,2
+Jenner IIC 4,3
+Solitaire 2,4
+Piranha 4,5
+Solitaire,6
+Crimson Hawk,5
+Pack Hunter,4
+Arbalest,3
+Morrigan,2
+Ocelot 3,1

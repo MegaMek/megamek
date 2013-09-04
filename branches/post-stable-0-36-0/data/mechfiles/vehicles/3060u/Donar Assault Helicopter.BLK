@@ -1,0 +1,89 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Donar Assault Helicopter
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3017
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+16
+14
+14
+11
+2
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 2 Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLERLargeLaser
+CLStreakSRM2
+CLStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+21.0
+</tonnage>
+

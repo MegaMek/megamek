@@ -1,0 +1,51 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Fenrir Battle Armor
+</Name>
+<Model>
+[SRM]
+</Model>
+<chassis>
+quad
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+5
+</Armor>
+<Squad Equipment>
+ISSRM4:Body
+BASRM-4 Ammo
+BASRM-4 Ammo
+BASRM-4 Ammo
+BASRM-4 Ammo
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3060
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+Clan Invasion
+</source>

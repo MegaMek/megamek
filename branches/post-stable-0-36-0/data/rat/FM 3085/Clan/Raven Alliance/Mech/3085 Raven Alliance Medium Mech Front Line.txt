@@ -1,0 +1,12 @@
+3085 Raven Alliance Medium Mech Front Line
+Dark Crow 3,1
+Shadow Hawk IIC 7,2
+Clint IIC 2,3
+Phantom Prime,4
+Shadow Cat Prime,5
+Black Hawk,6
+Ryoken (Stormcrow) Prime,5
+Dasher II 2,4
+Ryoken (Stormcrow) Prime,3
+Dark Crow,2
+Dark Crow 2,1

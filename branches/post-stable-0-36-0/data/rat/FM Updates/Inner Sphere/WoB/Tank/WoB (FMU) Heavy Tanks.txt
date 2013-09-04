@@ -1,0 +1,12 @@
+WoB Heavy Tanks 3067 (FMU)
+Zhukov Heavy Tank,1
+Marksman Artillery Vehicle,2
+Von Luckner Heavy Tank VNL-K70,3
+Po Heavy Tank,4
+Manticore Heavy Tank,5
+Demon Tank,6
+Burke Defense Tank,5
+Brutus Assault Tank,4
+Bulldog Medium Tank,3
+Pike Support Vehicle,2
+Padilla Heavy Artillery Tank,1

@@ -1,0 +1,12 @@
+3085 Federated Suns Light Mech C
+Fireball ALM-7D,1
+Valkyrie VLK-QD,2
+Javelin JVN-10P,3
+Osiris OSR-3D,4
+Valiant V4-LNT-J3,5
+Valkyrie VLK-QD1,6
+Javelin JVN-11D,5
+Valkyrie VLK-QD4,4
+Fireball ALM-10D,3
+Valkyrie VLK-QD3,2
+Scarabus SCB-9T,1

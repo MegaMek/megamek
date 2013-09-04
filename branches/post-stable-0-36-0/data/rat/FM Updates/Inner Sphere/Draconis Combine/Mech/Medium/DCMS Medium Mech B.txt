@@ -1,0 +1,12 @@
+DCMS Medium Mechs B 3067 FM-U
+Bishamon BSN-3K,1
+Whitworth WTH-2A,2
+Lynx LNX-9Q,3
+Komodo KIM-2,4
+Griffin GRF-3M,5
+Wolf Trap (Tora) WFT-1,6
+Daimyo DMO-1K,5
+Grim Reaper GRM-R-PR29,4
+Blackjack BJ2-O,3
+Wolverine WVR-8K,2
+Strider SR1-O,1

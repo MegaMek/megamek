@@ -1,0 +1,201 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Newgrange Yardship
+</Name>
+<Tonnage>
+2300000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+84
+81
+81
+81
+81
+91
+</Armor>
+<Nose Equipment>
+Barracuda
+Barracuda
+Barracuda Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Nose Equipment>
+<Front Left Side Equipment>
+NL45
+NL45
+ISPPC
+ISPPC
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL45
+NL45
+ISPPC
+ISPPC
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+Barracuda
+Barracuda
+Barracuda Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+Barracuda
+Barracuda
+Barracuda Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL45
+NL45
+ISPPC
+ISPPC
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NL45
+NL45
+ISPPC
+ISPPC
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Right Side Equipment>
+<Aft Equipment>
+Barracuda
+Barracuda
+Barracuda Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:240
+</Aft Equipment>
+<structural_integrity>
+25
+</structural_integrity>
+<heatsinks>
+787
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+10000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2600
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+UnPressurisedRepairFacility:2100000:1
+MechBay:36:1
+CargoBay:12000:0
+SmallCraftBay:72:12
+CargoBay:24000:1
+CargoBay:461788:6
+Workshops:250000:1
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+4
+</grav_deck>
+<escape_pod>
+600
+</escape_pod>
+<life_boat>
+600
+</life_boat>
+<crew>
+1102
+</crew>
+<passengers>
+7180
+</passengers>

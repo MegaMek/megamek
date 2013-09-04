@@ -1,0 +1,156 @@
+Version:1.0
+Defiance
+DFN-3T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3074
+Source:Jihad
+Rules Level:2
+
+Mass:75
+Engine:300 Light Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:21
+RT Armor:21
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:9
+LB 10-X AC, Right Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+SRM 6, Center Torso
+Machine Gun, Head
+Particle Cannon, Left Arm
+Particle Cannon, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Particle Cannon
+Particle Cannon
+Particle Cannon
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Particle Cannon
+Particle Cannon
+Particle Cannon
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser
+ISERSmallLaser
+ISERSmallLaser
+IS Machine Gun Ammo - Half
+TSM
+TSM
+TSM
+TSM
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS Ammo SRM-6
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Machine Gun
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

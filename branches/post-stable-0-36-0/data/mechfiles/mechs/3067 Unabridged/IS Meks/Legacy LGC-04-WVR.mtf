@@ -1,0 +1,132 @@
+Version:1.1
+Legacy
+LGC-04-WVR
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Rules Level:3
+
+Mass:80
+Engine:320 Light Fusion Engine
+Structure:Endo-Steel
+Gyro:Compact Gyro
+Myomer:ISMASC
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Light Ferro-Fibrous
+LA Armor:26
+RA Armor:26
+LT Armor:27
+RT Armor:27
+CT Armor:40
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:5
+1 ISImprovedC3CPU, Left Torso
+1 Claw, Right Arm
+1 Claw, Left Arm
+1 ISSNPPC, Right Torso
+1 ISSNPPC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Claw
+Claw
+Claw
+Claw
+Claw
+Claw
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Claw
+Claw
+Claw
+Claw
+Claw
+Claw
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+ISSNPPC
+ISSNPPC
+ISImprovedC3CPU
+ISImprovedC3CPU
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+ISSNPPC
+ISSNPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMASC
+ISMASC
+ISMASC
+ISMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Light Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

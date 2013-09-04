@@ -1,0 +1,14 @@
+Clan Aerospace Heavy
+Xerxes 1,1
+Sabutai Prime,2
+Scytha Prime,3
+Kirghiz Prime,4
+Jengiz Prime,5
+Scytha Prime,6
+Hydaspes,5
+Kirghiz Prime,4
+Scytha Prime,3
+Jengiz Prime,2
+Sabutai Prime,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

@@ -1,0 +1,12 @@
+LAAF Medium Mechs F 3067 (FMU)
+Assassin ASN-21,1
+Clint CLNT-2-3T,2
+Vulcan VL-2T,3
+Shadow Hawk SHD-2H,4
+Griffin GRF-1S,5
+Wolverine WVR-6R,6
+Hatchetman HCT-3F,5
+Blackjack BJ-1,4
+Phoenix Hawk PXH-1,3
+Centurion CN9-A,2
+Vulcan VT-5S,1

@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Ontos Heavy Tank X
+</Name>
+
+<Model>
+"All-Aspect Assault Tank"
+</Model>
+
+<year>
+3072
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+30
+25
+25
+25
+20
+</armor>
+
+<Body Equipment>
+ISEnhancedLRM15 Ammo
+ISEnhancedLRM15 Ammo
+Environmental Sealing
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISCombatVehicleEscapePod
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Enhanced LRM 15
+</Turret Equipment>
+
+<source>
+XTR Pirates
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

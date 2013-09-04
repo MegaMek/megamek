@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+BattleSat System-Defense Station
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+2000
+</Tonnage>
+
+<Armor>
+5
+5
+5
+5
+5
+5
+</Armor>
+
+<Nose Equipment>
+NL55
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NL55
+
+</Front Left Side Equipment>
+
+<Front Right Side Equipment> 
+NL55
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+NL55
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+NL55
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+NL55
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+51
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+200
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3056
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+cargobay:150:1
+cargobay:150:1
+cargobay:150:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+0
+</grav_deck>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+1
+</life_boat>
+
+<crew>
+46
+</crew>
+
+<passengers>
+</passengers>

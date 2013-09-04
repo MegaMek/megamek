@@ -1,0 +1,112 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Nightwing Surveillance
+</Name>
+<Tonnage>
+100000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+28
+24
+24
+24
+24
+22
+</Armor>
+<Nose Equipment>
+MediumNPPC
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC20
+NAC20 Ammo:10
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC20
+NAC20 Ammo:10
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC20
+NAC20 Ammo:10
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC20
+NAC20 Ammo:10
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL45
+NL45
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+NL45
+NL45
+</Aft Right Side Equipment>
+<Aft Equipment> 
+MediumNPPC
+MediumNPPC
+</Aft Equipment>
+<structural_integrity>
+65
+</structural_integrity>
+<heatsinks>
+1200
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+56000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2447
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:4:1
+SensorBay:75:3
+CargoBay:2295:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+15
+</life_boat>
+<crew>
+128
+</crew>
+<passengers>
+0
+</passengers>

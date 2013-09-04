@@ -1,0 +1,12 @@
+3085 Periphery General - Lesser States Medium Mech D
+Blackjack BJ-1,1
+Whitworth WTH-1,2
+Hunchback HBK-4G,3
+Griffin GRF-1N,4
+Phoenix Hawk PXH-1,5
+Shadow Hawk SHD-2H,6
+Whitworth WTH-2,5
+Enforcer ENF-4R,4
+Marshal MHL-X1,3
+Dervish DV-6Mr,2
+Centurion CN9-Ar,1

@@ -1,0 +1,12 @@
+3055 House Marik - Assault
+Albatross ALB-3U,1
+BattleMaster BLR-1G,2
+Grand Titan T-IT-N10M,3
+Goliath GOL-1H,4
+Atlas AS7-D,5
+Awesome AWS-8Q,6
+Cerberus MR-V2,5
+Sirocco SRC-5C,4
+Stalker STK-3F,3
+Longbow LGB-7Q,2
+Grand Crusader GRN-D-01,1

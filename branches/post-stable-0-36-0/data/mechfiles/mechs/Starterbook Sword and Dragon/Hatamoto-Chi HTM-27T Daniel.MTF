@@ -1,0 +1,149 @@
+Version:1.0
+Hatamoto-Chi
+HTM-27T Daniel
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3039
+Rules Level:5
+
+Mass:80
+Engine:320 Fusion Engine
+Structure:Endo Steel Prototype
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:23
+RA Armor:23
+LT Armor:22
+RT Armor:22
+CT Armor:31
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+1 ISLBXAC10Prototype, Left Arm
+1 ISLBXAC10Prototype, Right Arm, Ammo:40
+1 ISSRM4, Left Torso
+1 ISSRM4, Right Torso, Ammo:50
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+ISLBXAC10Prototype
+Endo Steel Prototype
+
+Left Torso:
+ISSRM4
+ISSRM4 Ammo
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+ISCASE
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISSRM4
+ISSRM4 Ammo
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+ISCASE
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel Prototype
+Endo Steel Prototype
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel Prototype
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

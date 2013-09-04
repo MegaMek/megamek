@@ -1,0 +1,151 @@
+Version:1.0
+Goliath
+GOL-4S
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3067
+Source:Civil War
+Rules Level:2
+
+Mass:80
+Engine:320 Light Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+FLL Armor:33
+FRL Armor:33
+LT Armor:25
+RT Armor:25
+CT Armor:37
+HD Armor:9
+RLL Armor:33
+RRL Armor:33
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:4
+Heavy Gauss Rifle, Center Torso
+LRM 10, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+LRM 10
+LRM 10
+ISERMediumLaser
+ISERMediumLaser
+IS Ammo LRM-10
+IS Ammo LRM-10
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

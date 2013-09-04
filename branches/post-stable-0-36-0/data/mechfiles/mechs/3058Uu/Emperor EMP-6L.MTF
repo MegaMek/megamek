@@ -1,0 +1,153 @@
+Version:1.0
+Emperor
+EMP-6L
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3069
+Source:Jihad
+Rules Level:2
+
+Mass:90
+Engine:270 Fusion Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Stealth(Inner Sphere)
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:44
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:6
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Left Torso
+ER PPC, Left Arm
+Gauss Rifle, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISGuardianECMSuite
+ISGuardianECMSuite
+Stealth
+Stealth
+TSM
+TSM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+Stealth
+Stealth
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+ISMediumPulseLaser
+ISMediumPulseLaser
+Stealth
+Stealth
+TSM
+TSM
+TSM
+TSM
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+ISMediumPulseLaser
+ISMediumPulseLaser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+ISCASE
+Stealth
+Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

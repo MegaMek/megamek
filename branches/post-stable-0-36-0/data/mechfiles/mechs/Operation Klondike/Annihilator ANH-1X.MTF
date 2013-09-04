@@ -1,0 +1,137 @@
+Version:1.1
+Annihilator
+ANH-1X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2779
+Rules Level:2
+
+Mass:100
+Engine:200 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:2
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:11
+1 ISLBXAC10, Right Torso, Ammo:60
+1 ISLBXAC10, Left Torso
+1 ISLBXAC10, Left Arm
+1 ISLBXAC10, Right Arm
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Center Torso
+1 ISSmallLaser, Head
+1 ISSmallPulseLaser, Right Arm
+1 ISSmallPulseLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISMediumLaser
+ISSmallPulseLaser
+ISLBXAC10 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISMediumLaser
+ISSmallPulseLaser
+ISLBXAC10 CL Ammo
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+ISCASE
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+ISCASE
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMediumLaser
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

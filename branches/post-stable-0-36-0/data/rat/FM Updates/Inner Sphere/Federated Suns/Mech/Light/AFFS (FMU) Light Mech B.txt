@@ -1,0 +1,12 @@
+AFFS Light Mechs B 3067 (FMU)
+Night Hawk NTK-2Q,1
+Dart DRT-6S,2
+Scarabus SCB-9A,3
+Garm GRM-01C,4
+Raptor RTX1-OD,5
+Javelin JVN-11D,6
+Wolfhound WLF-2,5
+Osiris OSR-4D,4
+Hollander BZK-F3,3
+Owens OW-1C,2
+Spector SPR-5F,1

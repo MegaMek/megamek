@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Burke Defense Tank
+</Name>
+
+<Model>
+(Royal)
+</Model>
+
+<year>
+2713
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+42
+30
+30
+20
+30
+</armor>
+
+<Body Equipment>
+IS Streak SRM 2 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+PPC
+PPC
+PPC
+</Turret Equipment>
+
+<tonnage>
+75.0
+</tonnage>
+

@@ -1,0 +1,12 @@
+3085 Cappellan Confederation Light Mech F
+UrbanMech UM-R63,1
+Wasp WSP-8T,2
+Locust LCT-1V,3
+UrbanMech UM-R80,4
+Flea FLE-17,5
+Duan Gung D9-G9,6
+Cossack C-SK1,5
+Raven RVN-3L,4
+Stinger STG-6L,3
+Anubis ABS-3T,2
+Wasp WSP-3L,1

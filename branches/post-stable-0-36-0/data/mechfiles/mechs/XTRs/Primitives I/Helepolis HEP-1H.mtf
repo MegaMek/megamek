@@ -1,0 +1,131 @@
+Version:1.1
+Helepolis
+HEP-1H
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2460
+Rules Level:4
+
+Mass:75
+Engine:180 Primitive Fusion Engine
+Structure:Standard
+Cockpit:Primitive Cockpit
+Myomer:Standard
+
+Heat Sinks:11 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Industrial
+LA Armor:21
+RA Armor:21
+LT Armor:22
+RT Armor:22
+CT Armor:32
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:4
+1 ISMediumLaser, Head
+1 ISLargeLaser, Left Arm
+1 ISSRM6, Center Torso, Ammo:15
+1 ISSniper, Right Torso, Ammo:20
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Heat Sink
+ISLargeLaser
+ISLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+
+Left Torso:
+Heat Sink
+Heat Sink
+ISSniperAmmo
+ISSniperAmmo
+ISSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISSRM6
+ISSRM6
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

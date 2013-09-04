@@ -1,0 +1,52 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Purifier Terra
+</Name>
+<Model>
+Medium Recoiless(C)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+2
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+10
+</Armor>
+<Squad Equipment>
+CLMedium Recoilless Rifle
+Standard Armor
+BABattleClaw
+</Squad Equipment>
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+<year>
+3075
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+XTR Phantoms
+</source>

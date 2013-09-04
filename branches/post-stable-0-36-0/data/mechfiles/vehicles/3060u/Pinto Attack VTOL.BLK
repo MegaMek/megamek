@@ -1,0 +1,95 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Pinto Attack VTOL
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3055
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+20
+18
+18
+13
+2
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-5 Artemis-capable
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+LRM 5
+ISArtemisIV
+BeagleActiveProbe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+Clan Invasion
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

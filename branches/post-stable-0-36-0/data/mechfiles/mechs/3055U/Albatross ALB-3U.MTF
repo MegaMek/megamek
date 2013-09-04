@@ -1,0 +1,154 @@
+Version:1.0
+Albatross
+ALB-3U
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3053
+Source:Clan Invasion
+Rules Level:2
+
+Mass:95
+Engine:380 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:21
+RA Armor:21
+LT Armor:24
+RT Armor:24
+CT Armor:37
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:7
+LB 10-X AC, Left Arm
+Large Pulse Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+ER Large Laser, Left Torso
+LRM 15, Right Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+Medium Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 15
+LRM 15
+LRM 15
+SRM 6
+SRM 6
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-6
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

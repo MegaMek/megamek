@@ -1,0 +1,151 @@
+Version:1.2
+Shadow Hawk
+SHD-12C
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3079
+Source:Jihad
+Rules Level:2
+
+Mass:55
+Engine:330 XL Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+Ejection:Full Head Ejection System
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:4
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:25
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:3
+ER Medium Laser, Right Arm
+Heavy PPC, Left Torso
+MML 7, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+ISCASE
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3085 Shadowhawk .jpg

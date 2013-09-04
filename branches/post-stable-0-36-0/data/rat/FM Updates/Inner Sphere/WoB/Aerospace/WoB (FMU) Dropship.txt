@@ -1,0 +1,12 @@
+WoB Military Dropship 3067 (FMU)
+Hamilcar,1
+Overlord (3056),2
+Overlord (3056),3
+Triumph (Assault),4
+Leopard CV (3054),5
+Union (3055),6
+Leopard (3054),5
+Triumph (Assault),4
+Fury (3056),3
+Merlin (3063),2
+Hannibal,1

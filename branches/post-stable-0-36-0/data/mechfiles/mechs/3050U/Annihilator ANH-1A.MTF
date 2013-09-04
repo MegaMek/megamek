@@ -1,0 +1,152 @@
+Version:1.0
+Annihilator
+ANH-1A
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3009
+Rules Level:1
+
+Mass:100
+Engine:200 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:18 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:21
+RT Armor:21
+CT Armor:25
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:9
+RTR Armor:9
+RTC Armor:10
+
+Weapons:7
+1 ISAC10, Left Torso
+1 ISAC10, Right Torso
+1 ISAC10, Left Arm
+1 ISAC10, Right Arm, Ammo:40
+2 ISMediumLaser, Center Torso
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISMediumLaser
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISMediumLaser
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+
+Right Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

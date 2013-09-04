@@ -1,0 +1,152 @@
+Version:1.0
+Zeus
+ZEU-5T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2787
+Source:Succession Wars
+Rules Level:2
+
+Mass:80
+Engine:320 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:23
+RA Armor:23
+LT Armor:24
+RT Armor:24
+CT Armor:36
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:5
+Medium Laser, Left Torso
+Medium Laser, Center Torso
+LRM 15, Right Arm
+ER Large Laser, Left Torso
+ER PPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser (R)
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

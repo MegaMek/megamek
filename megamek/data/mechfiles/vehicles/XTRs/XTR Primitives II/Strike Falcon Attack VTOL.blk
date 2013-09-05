@@ -52,14 +52,9 @@ troopspace:6.0
 2
 </armor>
 
-<barrating>
-7
-</barrating>
-
 <Body Equipment>
-Advanced Fire Control
-IS SRM 4 Ammo
-ISMG Ammo (100)
+IS Ammo SRM-4
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -81,6 +76,10 @@ Machine Gun
 
 <Rotor Equipment>
 </Rotor Equipment>
+
+<barrating>
+7
+</barrating>
 
 <source>
 XTR Primitives II

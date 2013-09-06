@@ -72,11 +72,12 @@ public class MechSummaryCache {
     private Thread loader;
 
     public static synchronized MechSummaryCache getInstance() {
-    	return getInstance(false);
+        return getInstance(false);
     }
 
-	public static synchronized MechSummaryCache getInstance(boolean ignoreUnofficial) {
-		final boolean ignoringUnofficial = ignoreUnofficial;
+    public static synchronized MechSummaryCache getInstance(
+            boolean ignoreUnofficial) {
+        final boolean ignoringUnofficial = ignoreUnofficial;
         if (m_instance == null) {
             m_instance = new MechSummaryCache();
         }
@@ -182,7 +183,7 @@ public class MechSummaryCache {
     }
 
     public void loadMechData() {
-    	loadMechData(false);
+        loadMechData(false);
     }
 
     public void loadMechData(boolean ignoreUnofficial) {
@@ -199,46 +200,47 @@ public class MechSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-	        File unit_cache_path = new File(getUnitCacheDir(), FILENAME_UNITS_CACHE);
-	        // check the cache
-	        try {
-	            if (unit_cache_path.exists()
-	                    && (unit_cache_path.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
-	                loadReport.append("  Reading from unit cache file...\n");
-	                lLastCheck = unit_cache_path.lastModified();
-	                InputStream istream = new BufferedInputStream(
-	                        new FileInputStream(unit_cache_path));
-	                ObjectInputStream fin = new ObjectInputStream(istream);
-	                Integer num_units = (Integer) fin.readObject();
-	                for (int i = 0; i < num_units; i++) {
-	                    if (interrupted) {
-	                        done();
-	                        fin.close();
-	                        istream.close();
-	                        return;
-	                    }
-	                    MechSummary ms = (MechSummary) fin.readObject();
-	                    // Verify that this file still exists and is older than
-	                    // the cache.
-	                    File fSource = ms.getSourceFile();
-	                    if (fSource.exists()) {
-	                        vMechs.addElement(ms);
-	                        if (null == ms.getEntryName()) {
-	                            sKnownFiles.add(fSource.toString());
-	                        } else {
-	                            sKnownFiles.add(ms.getEntryName());
-	                        }
-	                        cacheCount++;
-	                    }
-	                }
-	                fin.close();
-	                istream.close();
-	            }
-	        } catch (Exception e) {
-	            loadReport.append("  Unable to load unit cache: ")
-	                    .append(e.getMessage()).append("\n");
-	            e.printStackTrace();
-	        }
+            File unit_cache_path = new File(getUnitCacheDir(),
+                    FILENAME_UNITS_CACHE);
+            // check the cache
+            try {
+                if (unit_cache_path.exists()
+                        && (unit_cache_path.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
+                    loadReport.append("  Reading from unit cache file...\n");
+                    lLastCheck = unit_cache_path.lastModified();
+                    InputStream istream = new BufferedInputStream(
+                            new FileInputStream(unit_cache_path));
+                    ObjectInputStream fin = new ObjectInputStream(istream);
+                    Integer num_units = (Integer) fin.readObject();
+                    for (int i = 0; i < num_units; i++) {
+                        if (interrupted) {
+                            done();
+                            fin.close();
+                            istream.close();
+                            return;
+                        }
+                        MechSummary ms = (MechSummary) fin.readObject();
+                        // Verify that this file still exists and is older than
+                        // the cache.
+                        File fSource = ms.getSourceFile();
+                        if (fSource.exists()) {
+                            vMechs.addElement(ms);
+                            if (null == ms.getEntryName()) {
+                                sKnownFiles.add(fSource.toString());
+                            } else {
+                                sKnownFiles.add(ms.getEntryName());
+                            }
+                            cacheCount++;
+                        }
+                    }
+                    fin.close();
+                    istream.close();
+                }
+            } catch (Exception e) {
+                loadReport.append("  Unable to load unit cache: ")
+                        .append(e.getMessage()).append("\n");
+                e.printStackTrace();
+            }
         }
 
         // load any changes since the last check time
@@ -361,8 +363,8 @@ public class MechSummaryCache {
         ms.setRunMp(e.getRunMP(false, false, false));
         ms.setJumpMp(e.getJumpMP(false));
         ms.setClan(e.isClan());
-        if (e instanceof SupportTank || e instanceof SupportVTOL) {
-        	ms.setSupport(true);
+        if ((e instanceof SupportTank) || (e instanceof SupportVTOL)) {
+            ms.setSupport(true);
         }
         if (e instanceof Mech) {
             if (((Mech) e).isIndustrial()) {
@@ -379,23 +381,24 @@ public class MechSummaryCache {
         ms.setTotalArmor(e.getTotalArmor());
         ms.setTotalInternal(e.getTotalInternal());
         ms.setInternalsType(e.getStructureType());
-        int [] armorTypes = new int[e.locations()];
-        for (int i = 0; i < armorTypes.length; i++)
+        int[] armorTypes = new int[e.locations()];
+        for (int i = 0; i < armorTypes.length; i++) {
             armorTypes[i] = e.getArmorType(i);
+        }
         ms.setArmorType(armorTypes);
-        
+
         // Check to see if this entity has a cockpit, and if so, set it's type
-        if ((e instanceof Mech)){            
-            ms.setCockpitType(((Mech)e).getCockpitType());
-        }else if ((e instanceof Aero) ){
-            ms.setCockpitType(((Aero)e).getCockpitType());
-        }else{
+        if ((e instanceof Mech)) {
+            ms.setCockpitType(((Mech) e).getCockpitType());
+        } else if ((e instanceof Aero)) {
+            ms.setCockpitType(((Aero) e).getCockpitType());
+        } else {
             // TODO: There's currently no NO_COCKPIT type value, if this value
-            //  existed, Entity could have a getCockpitType function and this
-            //  logic could become unnecessary
+            // existed, Entity could have a getCockpitType function and this
+            // logic could become unnecessary
             ms.setCockpitType(-2);
         }
-        
+
         // we can only test meks and vehicles right now
         if ((e instanceof Mech)
                 || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {
@@ -426,7 +429,8 @@ public class MechSummaryCache {
      */
     private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fDir) {
-    	return loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, fDir, false);
+        return loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, fDir,
+                false);
     }
 
     /**
@@ -440,7 +444,8 @@ public class MechSummaryCache {
      * @return
      */
     private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
-            Set<String> sKnownFiles, long lLastCheck, File fDir, boolean ignoreUnofficial) {
+            Set<String> sKnownFiles, long lLastCheck, File fDir,
+            boolean ignoreUnofficial) {
         boolean bNeedsUpdate = false;
         loadReport.append("  Looking in ").append(fDir.getPath())
                 .append("...\n");
@@ -462,9 +467,11 @@ public class MechSummaryCache {
                         // Mechs in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
-                    } else if (f.getName().toLowerCase().equals("unofficial") && ignoreUnofficial) {
+                    } else if (f.getName().toLowerCase().equals("unofficial")
+                            && ignoreUnofficial) {
                         // Mechs in this directory are ignored because
-                        // they are unofficial and we don't want those right now.
+                        // they are unofficial and we don't want those right
+                        // now.
                         continue;
                     } else if (f.getName().toLowerCase().equals("_svn")
                             || f.getName().toLowerCase().equals(".svn")) {

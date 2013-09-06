@@ -18,6 +18,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -143,7 +144,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         GridBagConstraints c;
 
         selectionPanel = new JPanel(new GridBagLayout());
-        selectionPanel.setMinimumSize(new java.awt.Dimension(500, 600));
+        selectionPanel.setMinimumSize(new java.awt.Dimension(500, 500));
         selectionPanel.setPreferredSize(new java.awt.Dimension(500, 600));
 
         panelFilterBtns = new JPanel();
@@ -154,7 +155,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         tableUnits = new JTable();
         tableUnits.addKeyListener(this);
         panelMekView = new MechViewPanel();
-        panelMekView.setMinimumSize(new java.awt.Dimension(300, 600));
+        panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
 
         comboType = new JComboBox();
@@ -413,6 +414,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.fill = GridBagConstraints.BOTH;
         c.weightx = c.weighty = 1;
         getContentPane().add(splitPane, c);
+        c.insets = new Insets(5,0,5,0);
+        c.weightx = c.weighty = 0;
         c.gridy = 1;
         getContentPane().add(panelOKBtns, c);
 

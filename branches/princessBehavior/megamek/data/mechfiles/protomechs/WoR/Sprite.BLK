@@ -36,6 +36,11 @@ Sprite
 </Armor>
 
 
+<Left Arm Equipment>
+CLLRM5
+CLLRM5 Ammo (12)
+</Left Arm Equipment>
+
 <Right Arm Equipment>
 CLLRM5
 CLLRM5 Ammo (12)
@@ -44,8 +49,7 @@ CLLRM5 Ammo (12)
 <Torso Equipment>
 CLLRM5
 CLLRM5
-CLLRM5
-CLLRM5 Ammo (36)
+CLLRM5 Ammo (24)
 </Torso Equipment>
 
 <type>

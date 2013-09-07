@@ -1,0 +1,225 @@
+package megamek.client.bot.princess;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since: 8/31/13 1:10 PM
+ */
+public class BehaviorSettingsTestConstants {
+    public static final String GOOD_BEHAVIOR_NAME = "- default -";
+    public static final HomeEdge GOOD_HOME_EDGE = HomeEdge.NORTH;
+    public static final boolean GOOD_FORCED_WITHDRAWAL = true;
+    public static final boolean GOOD_GO_HOME = false;
+    public static final boolean GOOD_AUTO_FLEE = false;
+    public static final int GOOD_FALL_SHAME_INDEX = 5;
+    public static final int GOOD_HYPER_AGGRESSION_INDEX = 5;
+    public static final int GOOD_SELF_PRESERVATION_INDEX = 5;
+    public static final int GOOD_HERD_MENTALITY_INDEX = 5;
+    public static final int GOOD_BRAVERY_INDEX = 5;
+    public static final String STRATEGIC_TARGET_1 = "1234";
+    public static final String STRATEGIC_TARGET_2 = "9876";
+    public static final int BAD_INDEX_BIG = Integer.MAX_VALUE;
+    public static final int BAD_INDEX_SMALL = Integer.MIN_VALUE;
+    public static final String GOOD_BEHAVIOR_XML =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_NAME =
+            "<behavior>\n" +
+            "    <name>" + null + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_EMPTY_NAME =
+            "<behavior>\n" +
+            "    <name></name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_HOME_EDGE =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + null + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + null + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_GO_HOME =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + null + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_AUTO_FLEE =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + null + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_TOO_BIG_FALL_SHAME =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + BAD_INDEX_BIG + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_TOO_SMALL_FALL_SHAME =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + BAD_INDEX_SMALL + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
+            "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_NULL_STRATEGIC_TARGET =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target>" + null + "</target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "        <target></target>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+    public static final String GOOD_BEHAVIOR_XML_NO_TARGETS =
+            "<behavior>\n" +
+            "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
+            "    <homeEdge>" + GOOD_HOME_EDGE.getIndex() + "</homeEdge>\n" +
+            "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
+            "    <goHome>" + GOOD_GO_HOME + "</goHome>\n" +
+            "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
+            "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
+            "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
+            "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
+            "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+            "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
+            "    <strategicTargets>\n" +
+            "    </strategicTargets>\n" +
+            "</behavior>";
+
+}

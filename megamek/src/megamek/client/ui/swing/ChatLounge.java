@@ -44,6 +44,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -1940,6 +1941,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             c = clientgui.getClient();
         }
         Player new_owner = c.game.getPlayer(player_id);
+        // We if the unit is switching teams, we need to unload it
+        if (e.getOwner().getTeam() != new_owner.getTeam()){
+            List<Entity> loadedUnits = e.getLoadedUnits();
+            for (Entity loadee : loadedUnits){
+                unloader(loadee);
+            }
+        }
         e.setOwner(new_owner);
         c.sendUpdateEntity(e);
     }    

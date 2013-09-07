@@ -114,7 +114,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private String helpFileName = "readme.txt"; //$NON-NLS-1$
+    private String helpFileName = "docs/readme.txt"; //$NON-NLS-1$
 
     // keep me
     ChatterBox cb;

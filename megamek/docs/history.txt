@@ -4,6 +4,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size
 + Data: Fixes to Mechset and Unit fixes.
 + Bug [#3838]: Turn button greyed out on dropship deployment
++ Bug [#3842]: Issues with ChatLounge Change Owner menu item
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

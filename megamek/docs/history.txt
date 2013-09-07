@@ -7,6 +7,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Bug [#3842]: Issues with ChatLounge Change Owner menu item
 + Bug [#3840]: NPE on entity.setGame 
 + Refactor license and readme files into the docs folder & code references to them
++ RFE: Adjusted the MechSelectorDialog presets for unit type, weight, and rules
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

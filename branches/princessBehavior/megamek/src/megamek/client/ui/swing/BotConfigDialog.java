@@ -49,6 +49,7 @@ import megamek.client.bot.princess.HomeEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
+import megamek.common.util.LogLevel;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties TODO add
@@ -171,7 +172,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
 
         //Row 1 Column 2;
         constraints.gridx++;
-        princessVerbosity = new JComboBox(Princess.LogLevel.getLogLevelNames());
+        princessVerbosity = new JComboBox(LogLevel.getLogLevelNames());
         princessVerbosity.setSelectedIndex(0);
         layout.setConstraints(princessVerbosity, constraints);
         panel.add(princessVerbosity);
@@ -337,7 +338,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         if (testbot_radiobutton.isSelected()) {
             return new TestBot(getBotName(), host, port);
         } else if (princess_radiobutton.isSelected()) {
-            Princess toreturn = new Princess(getBotName(), host, port, Princess.LogLevel.getLogLevel
+            Princess toreturn = new Princess(getBotName(), host, port, LogLevel.getLogLevel
                     (princessVerbosity.getSelectedIndex()));
             toreturn.aggression = aggression_slidebar.getValue();
             // Add targets, adjusting hexes appropriately

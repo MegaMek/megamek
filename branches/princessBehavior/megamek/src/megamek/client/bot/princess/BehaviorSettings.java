@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,17 +31,17 @@ import java.util.Set;
  */
 public class BehaviorSettings {
 
-    private static final double[] SELF_PRESERVATION_VALUES = new double[]{5,
-                                                                          10,
-                                                                          15,
-                                                                          20,
-                                                                          25,
-                                                                          30,
-                                                                          35,
-                                                                          40,
-                                                                          45,
-                                                                          50,
-                                                                          60};
+    private static final int[] SELF_PRESERVATION_VALUES = new int[]{5,
+                                                                    10,
+                                                                    15,
+                                                                    20,
+                                                                    25,
+                                                                    30,
+                                                                    35,
+                                                                    40,
+                                                                    45,
+                                                                    50,
+                                                                    60};
     private static final int[] FALL_SHAME_VALUES = new int[]{1,
                                                              2,
                                                              4,
@@ -52,39 +53,39 @@ public class BehaviorSettings {
                                                              16,
                                                              18,
                                                              20};
-    private static final double[] BRAVERY = new double[]{0.1,
-                                                         0.3,
-                                                         0.6,
-                                                         0.9,
-                                                         1.2,
-                                                         1.5,
-                                                         1.8,
-                                                         2.1,
-                                                         2.4,
-                                                         2.7,
-                                                         3.0};
-    private static final double[] HYPER_AGGRESSION_VALUES = new double[]{1,
-                                                                         2,
-                                                                         4,
-                                                                         6,
-                                                                         8,
-                                                                         10,
-                                                                         12,
-                                                                         14,
-                                                                         16,
-                                                                         18,
-                                                                         20};
-    private static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
-                                                                       0.002,
-                                                                       0.004,
-                                                                       0.006,
-                                                                       0.008,
-                                                                       0.01,
-                                                                       0.012,
-                                                                       0.014,
-                                                                       0.016,
-                                                                       0.018,
-                                                                       0.02};
+    private static final BigDecimal[] BRAVERY = new BigDecimal[]{new BigDecimal("0.1"),
+                                                                 new BigDecimal("0.3"),
+                                                                 new BigDecimal("0.6"),
+                                                                 new BigDecimal("0.9"),
+                                                                 new BigDecimal("1.2"),
+                                                                 new BigDecimal("1.5"),
+                                                                 new BigDecimal("1.8"),
+                                                                 new BigDecimal("2.1"),
+                                                                 new BigDecimal("2.4"),
+                                                                 new BigDecimal("2.7"),
+                                                                 new BigDecimal("3.0")};
+    private static final int[] HYPER_AGGRESSION_VALUES = new int[]{1,
+                                                                   2,
+                                                                   4,
+                                                                   6,
+                                                                   8,
+                                                                   10,
+                                                                   12,
+                                                                   14,
+                                                                   16,
+                                                                   18,
+                                                                   20};
+    private static final BigDecimal[] HERD_MENTALITY_VALUES = new BigDecimal[]{new BigDecimal("0.001"),
+                                                                               new BigDecimal("0.002"),
+                                                                               new BigDecimal("0.004"),
+                                                                               new BigDecimal("0.006"),
+                                                                               new BigDecimal("0.008"),
+                                                                               new BigDecimal("0.01"),
+                                                                               new BigDecimal("0.012"),
+                                                                               new BigDecimal("0.014"),
+                                                                               new BigDecimal("0.016"),
+                                                                               new BigDecimal("0.018"),
+                                                                               new BigDecimal("0.02")};
 
     public static final String DEFAULT_DESC = "- default -";
 
@@ -238,7 +239,7 @@ public class BehaviorSettings {
      *
      * @return Bravery modifier value.
      */
-    public double getBraveryValue() {
+    public BigDecimal getBraveryValue() {
         return getBraveryValue(braveryIndex);
     }
 
@@ -248,7 +249,7 @@ public class BehaviorSettings {
      * @param index The index of the Bravery modifier to retrieve.
      * @return Bravery modifier value at given index.
      */
-    public double getBraveryValue(int index) {
+    public BigDecimal getBraveryValue(int index) {
         return BRAVERY[validateIndex(index)];
     }
 
@@ -284,7 +285,7 @@ public class BehaviorSettings {
     /**
      * @return How much do I want to avoid failed Piloting Rolls?
      */
-    public double getFallShameValue() {
+    public int getFallShameValue() {
         return getFallShameValue(getFallShameIndex());
     }
 
@@ -293,7 +294,7 @@ public class BehaviorSettings {
      * @return The value at the given index.  Indexes less than 0 are treated as 0 and indexes greater than 10 are
      *         treated as 10.
      */
-    public double getFallShameValue(int index) {
+    public int getFallShameValue(int index) {
         return FALL_SHAME_VALUES[validateIndex(index)];
     }
 
@@ -329,7 +330,7 @@ public class BehaviorSettings {
      *
      * @return Current herd mentality value.
      */
-    public double getHerdMentalityValue() {
+    public BigDecimal getHerdMentalityValue() {
         return getHerdMentalityValue(herdMentalityIndex);
     }
 
@@ -339,7 +340,7 @@ public class BehaviorSettings {
      * @param index The index [0-10] of the herd mentality value that should be used.
      * @return The herd mentality value at the specified index.
      */
-    public double getHerdMentalityValue(int index) {
+    public BigDecimal getHerdMentalityValue(int index) {
         return HERD_MENTALITY_VALUES[validateIndex(index)];
     }
 
@@ -422,7 +423,7 @@ public class BehaviorSettings {
      *
      * @return Current hyper aggression value.
      */
-    public double getHyperAggressionValue() {
+    public int getHyperAggressionValue() {
         return getHyperAggressionValue(hyperAggressionIndex);
     }
 
@@ -432,7 +433,7 @@ public class BehaviorSettings {
      * @param index The index[0-10] of the hyper aggression value desired.
      * @return The hyper aggression value at the given index.
      */
-    public double getHyperAggressionValue(int index) {
+    public int getHyperAggressionValue(int index) {
         return HYPER_AGGRESSION_VALUES[validateIndex(index)];
     }
 
@@ -472,7 +473,7 @@ public class BehaviorSettings {
      *
      * @return The current self preservation value.
      */
-    public double getSelfPreservationValue() {
+    public int getSelfPreservationValue() {
         return getSelfPreservationValue(selfPreservationIndex);
     }
 
@@ -482,7 +483,7 @@ public class BehaviorSettings {
      * @param index The index [0-10] of the self preservation value desired.
      * @return The self preservation value at the specified index.
      */
-    public double getSelfPreservationValue(int index) {
+    public int getSelfPreservationValue(int index) {
         if (index < 0) {
             index = 0;
         } else if (index > 10) {

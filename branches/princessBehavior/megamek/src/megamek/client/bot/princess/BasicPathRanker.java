@@ -36,6 +36,8 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.util.LogLevel;
+import megamek.common.util.Logger;
 
 /**
  * A very basic pathranker
@@ -171,7 +173,7 @@ public class BasicPathRanker extends PathRanker {
      */
     public EntityEvaluationResponse evaluateUnmovedEnemy(Entity e, MovePath p, IGame game) {
         final String METHOD_NAME = "EntityEvaluationResponse evaluateUnmovedEnemy(Entity,MovePath,IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             //some preliminary calculations
@@ -223,13 +225,13 @@ public class BasicPathRanker extends PathRanker {
                     ret.damage_enemy_can_do += Math.ceil(e.getWeight() / 5.0) * damage_discount;
                 }
             } else {
-                owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING, "warning, " +
-                                                                              "no facing set for " + e.getDisplayName
+                Logger.log(getClass(), METHOD_NAME, LogLevel.WARNING, "warning, " +
+                                                                      "no facing set for " + e.getDisplayName
                         ());
             }
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -239,7 +241,7 @@ public class BasicPathRanker extends PathRanker {
     @Override
     public double rankPath(MovePath p, IGame game) {
         final String METHOD_NAME = "rankPath(MovePath, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             boolean isaero = (p.getEntity() instanceof Aero);
@@ -272,11 +274,11 @@ public class BasicPathRanker extends PathRanker {
                 Building b = game.getBoard().getBuildingAt(finalCoords);
                 if ((b != null) && (pathCopy.isJumping() || (b.getBasement(finalCoords).getValue() > BasementType
                         .NONE.getValue()))) {
-                    owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
-                              "Final hex is on top of a building...");
+                    Logger.log(getClass(), METHOD_NAME, LogLevel.WARNING,
+                               "Final hex is on top of a building...");
                     if (b.getCurrentCF(finalCoords) < pathCopy.getEntity().getWeight()) {
-                        owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
-                                  "\tthat cannot hold my weight.");
+                        Logger.log(getClass(), METHOD_NAME, LogLevel.WARNING,
+                                   "\tthat cannot hold my weight.");
                         return -1000;
                     }
                 }
@@ -425,7 +427,7 @@ public class BasicPathRanker extends PathRanker {
 
             return utility;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
 
     }
@@ -437,7 +439,7 @@ public class BasicPathRanker extends PathRanker {
     @Override
     public void initUnitTurn(Entity unit, IGame game) {
         final String METHOD_NAME = "initUnitTurn(Entity, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             best_damage_by_enemies.clear();
@@ -458,7 +460,7 @@ public class BasicPathRanker extends PathRanker {
                 best_damage_by_enemies.put(e.getId(), max_damage);
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -467,7 +469,7 @@ public class BasicPathRanker extends PathRanker {
      */
     public double distanceToClosestFriend(MovePath p, IGame game) {
         final String METHOD_NAME = "distanceToClosestFriend(MovePath, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             Entity closest = findClosestFriend(p, game);
@@ -476,7 +478,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return closest.getPosition().distance(p.getFinalCoords());
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -489,7 +491,7 @@ public class BasicPathRanker extends PathRanker {
      */
     static public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        Logger.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             Entity closest = findClosestEnemy(me, position, game);
@@ -498,7 +500,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return closest.getPosition().distance(position);
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            Logger.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 
@@ -507,7 +509,7 @@ public class BasicPathRanker extends PathRanker {
      */
     static public int distanceToClosestEdge(Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        Logger.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             int width = game.getBoard().getWidth();
@@ -524,7 +526,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return minimum;
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            Logger.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 
@@ -586,7 +588,7 @@ public class BasicPathRanker extends PathRanker {
      */
     public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        Logger.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             String msg = "Getting distance to home edge: " + homeEdge.toString();
@@ -613,16 +615,17 @@ public class BasicPathRanker extends PathRanker {
                     break;
                 }
                 default: {
-                    owner.log(BasicPathRanker.class, METHOD_NAME, Princess.LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                    Logger.log(BasicPathRanker.class, METHOD_NAME, LogLevel.WARNING,
+                               "Invalid home edge.  Defaulting to NORTH.");
                     distance = position.y;
                 }
             }
 
             msg += " -> " + distance;
-            owner.log(BasicPathRanker.class, METHOD_NAME, msg);
+            Logger.log(BasicPathRanker.class, METHOD_NAME, msg);
             return distance;
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            Logger.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 }

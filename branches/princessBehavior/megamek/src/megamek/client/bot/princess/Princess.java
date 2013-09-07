@@ -43,11 +43,13 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.util.LogLevel;
+import megamek.common.util.Logger;
 
 public class Princess extends BotClient {
 
     private boolean initialized = false;
-    public boolean verbose_errorlog;
+    public boolean verboseErrorLog;
     public LogLevel verbosity; // controls how many messages are sent to chat
 
     public String properties_file_name;
@@ -95,14 +97,14 @@ public class Princess extends BotClient {
         super(name, host, port);
         // default properties file
         properties_file_name = "mmconf/princess_bot.properties";
-        verbose_errorlog = true;
+        verboseErrorLog = true;
         this.verbosity = verbosity;
     }
 
     @Override
     protected Vector<Coords> calculateArtyAutoHitHexes() {
         final String METHOD_NAME = "calculateArtyAutoHitHexes()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // currently returns no artillery hit spots
@@ -112,14 +114,14 @@ public class Princess extends BotClient {
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected void calculateDeployment() {
         final String METHOD_NAME = "calculateDeployment()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
 
@@ -132,18 +134,18 @@ public class Princess extends BotClient {
             // get a set of all the
             Coords[] cStart = getStartingCoordsArray();
             if (cStart.length == 0) {
-                log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                    "No valid locations to deploy "
-                    + getEntity(entNum).getDisplayName());
+                Logger.log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                           "No valid locations to deploy "
+                           + getEntity(entNum).getDisplayName());
             }
             // get the coordinates I can deploy on
             Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
             if (cDeploy == null) {
-                log(getClass(),
-                    METHOD_NAME,
-                    LogLevel.ERROR,
-                    "getCoordsAround gave no location for "
-                    + getEntity(entNum).getChassis());
+                Logger.log(getClass(),
+                           METHOD_NAME,
+                           LogLevel.ERROR,
+                           "getCoordsAround gave no location for "
+                           + getEntity(entNum).getChassis());
             }
             // first coordinate that is legal to put this unit on now find some
             // sort
@@ -165,14 +167,14 @@ public class Princess extends BotClient {
             }
             deploy(entNum, cDeploy, decent_facing, 0);
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected void calculateFiringTurn() {
         final String METHOD_NAME = "calculateFiringTurn()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
@@ -183,7 +185,7 @@ public class Princess extends BotClient {
             FireControl.FiringPlan plan = fire_control.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
-                log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
+                Logger.log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(),
                                plan.getEntityActionVector(game));
@@ -192,28 +194,28 @@ public class Princess extends BotClient {
                 sendAttackData(shooter.getId(), null);
             }
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected Vector<Minefield> calculateMinefieldDeployment() {
         final String METHOD_NAME = "calculateMinefieldDeployment()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // currently returns no minefields
             // make an empty vector
             return new Vector<Minefield>();
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected MovePath calculateMoveTurn() {
         final String METHOD_NAME = "calculateMoveTurn()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // first move useless units: immobile units, ejected mechwarrior,
@@ -256,14 +258,14 @@ public class Princess extends BotClient {
 
             return continueMovementFor(moving_entity);
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected PhysicalOption calculatePhysicalTurn() {
         final String METHOD_NAME = "calculatePhysicalTurn()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // get the first entity that can act this turn
@@ -271,10 +273,10 @@ public class Princess extends BotClient {
             Entity hitter = first_entity;
             FireControl.PhysicalInfo best_attack = null;
             do {
-                log(getClass(),
-                    METHOD_NAME,
-                    "Calculating physical attacks for "
-                    + hitter.getDisplayName());
+                Logger.log(getClass(),
+                           METHOD_NAME,
+                           "Calculating physical attacks for "
+                           + hitter.getDisplayName());
                 // this is an array of all my enemies
                 ArrayList<Entity> enemies = getEnemyEntities();
                 // cycle through potential enemies
@@ -319,10 +321,10 @@ public class Princess extends BotClient {
 
                 }
                 if (best_attack != null) {
-                    log(getClass(), METHOD_NAME, "Attack is a "
-                                                 + best_attack.attack_type.name());
+                    Logger.log(getClass(), METHOD_NAME, "Attack is a "
+                                                        + best_attack.attack_type.name());
                 } else {
-                    log(getClass(), METHOD_NAME, "No useful attack to be made");
+                    Logger.log(getClass(), METHOD_NAME, "No useful attack to be made");
                 }
                 if (best_attack != null) {
                     return best_attack.getAsPhysicalOption();
@@ -338,22 +340,22 @@ public class Princess extends BotClient {
             // no one can hit anything anymore, so give up
             return null;
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // figure out who moved last, and who's move lists need to be
             // updated
 
             // moves this entity during movement phase
-            log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName()
-                                         + " (ID " + entity.getId() + ")");
+            Logger.log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName()
+                                                + " (ID " + entity.getId() + ")");
             precognition.insureUpToDate();
 
             if (((entity.isCrippled() && forced_withdrawal) || must_flee || should_flee)
@@ -361,7 +363,7 @@ public class Princess extends BotClient {
                 String msg = entity.getDisplayName()
                              + (should_flee ? " is retreating"
                                             : must_flee ? "is forced to withdraw" : " is crippled and withdrawing");
-                log(getClass(), METHOD_NAME, msg);
+                Logger.log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
             }
 
@@ -408,7 +410,7 @@ public class Princess extends BotClient {
                 && entity.isCrippled() && ejectionPossible) {
                 String msg = entity.getDisplayName()
                              + " is immobile.  Abandoning unit.";
-                log(getClass(), METHOD_NAME, msg);
+                Logger.log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
                 MovePath mp = new MovePath(game, entity);
                 mp.addStep(MovePath.MoveStepType.EJECT);
@@ -420,8 +422,8 @@ public class Princess extends BotClient {
             ArrayList<MovePath> paths = precognition.getPathEnumerator().unit_paths.get(entity.getId());
 
             if (paths == null) {
-                log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                    "No valid paths found.");
+                Logger.log(getClass(), METHOD_NAME, LogLevel.WARNING,
+                           "No valid paths found.");
                 return new MovePath(game, entity);
             }
             double this_time_estimate = (paths.size() * move_evaluation_time_estimate) / 1e3;
@@ -452,27 +454,27 @@ public class Princess extends BotClient {
             if (rankedpaths.size() == 0) {
                 return new MovePath(game, entity);
             }
-            log(getClass(),
-                METHOD_NAME,
-                "Path ranking took "
-                + Long.toString(stop_time - start_time)
-                + " milliseconds");
+            Logger.log(getClass(),
+                       METHOD_NAME,
+                       "Path ranking took "
+                       + Long.toString(stop_time - start_time)
+                       + " milliseconds");
             precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
-            log(getClass(), METHOD_NAME,
-                "Best Path: " + bestpath.path.toString() + "  Rank: "
-                + bestpath.rank);
+            Logger.log(getClass(), METHOD_NAME,
+                       "Best Path: " + bestpath.path.toString() + "  Rank: "
+                       + bestpath.rank);
             bestpath.path.printAllSteps();
             return bestpath.path;
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected void initFiring() {
         final String METHOD_NAME = "initFiring()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
 
@@ -482,19 +484,19 @@ public class Princess extends BotClient {
             for (Entity ent : ents) {
                 String errors = fire_control.checkAllGuesses(ent, game);
                 if (errors != null) {
-                    log(getClass(), METHOD_NAME, LogLevel.ERROR, errors);
+                    Logger.log(getClass(), METHOD_NAME, LogLevel.ERROR, errors);
                 }
             }
             // -----------------------------------------------------------------------
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected void initMovement() {
         final String METHOD_NAME = "initMovement()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // reset strategic targets
@@ -538,14 +540,14 @@ public class Princess extends BotClient {
                 }
             }
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     public void initialize() {
         final String METHOD_NAME = "initialize()";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             if (initialized) {
@@ -554,16 +556,16 @@ public class Princess extends BotClient {
             Properties configfile = new Properties();
             try {
                 configfile.load(new FileInputStream(properties_file_name));
-                log(getClass(), METHOD_NAME, "Loading behavior from "
-                                             + properties_file_name);
+                Logger.log(getClass(), METHOD_NAME, "Loading behavior from "
+                                                    + properties_file_name);
             } catch (FileNotFoundException e) {
-                log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                    "Princess config file not found!");
-                log(getClass(), METHOD_NAME, e);
+                Logger.log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                           "Princess config file not found!");
+                Logger.log(getClass(), METHOD_NAME, e);
             } catch (IOException e) {
-                log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                    "IO Error in Princess config file!");
-                log(getClass(), METHOD_NAME, e);
+                Logger.log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                           "IO Error in Princess config file!");
+                Logger.log(getClass(), METHOD_NAME, e);
             }
             path_searcher = new PathSearcher(this);
             path_ranker = new BasicPathRanker(configfile, this);
@@ -584,19 +586,19 @@ public class Princess extends BotClient {
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     @Override
     protected void processChat(GamePlayerChatEvent ge) {
         final String METHOD_NAME = "processChat(GamePlayerChatEvent)";
-        methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             String msg = "Received message: \"" + ge.getMessage()
                          + "\".\tMessage type: " + ge.getEventName();
-            log(getClass(), METHOD_NAME, msg);
+            Logger.log(getClass(), METHOD_NAME, msg);
 
             //            StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
             // String message = st.nextToken();
@@ -645,15 +647,15 @@ public class Princess extends BotClient {
 
             if (nameTo.equalsIgnoreCase(getLocalPlayer().getName())) {
                 if (message.equalsIgnoreCase("flee")) {
-                    log(getClass(), METHOD_NAME,
-                        " received flee order. Running away to " + getHomeEdge().toString() + " edge !");
+                    Logger.log(getClass(), METHOD_NAME,
+                               " received flee order. Running away to " + getHomeEdge().toString() + " edge !");
                     sendChat(getLocalPlayer().getName()
                              + " received flee order. Running away to "
                              + getHomeEdge().toString() + " edge !");
                     should_flee = true;
                 } else if (message.equalsIgnoreCase("reset")) {
-                    log(getClass(), METHOD_NAME,
-                        " reseting parameters from properties file");
+                    Logger.log(getClass(), METHOD_NAME,
+                               " reseting parameters from properties file");
                     sendChat(getLocalPlayer().getName()
                              + " reseting parameters from properties file");
                     path_ranker.resetParametersFromProperties();
@@ -663,101 +665,8 @@ public class Princess extends BotClient {
 
             chatp.processChat(ge, this);
         } finally {
-            methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
-    }
-
-    public enum LogLevel {
-        ERROR(0), WARNING(1), DEBUG(2);
-
-        private int level;
-
-        LogLevel(int level) {
-            this.level = level;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public static String[] getLogLevelNames() {
-            List<String> out = new ArrayList<String>();
-            for (LogLevel l : values()) {
-                out.add(l.toString());
-            }
-            return out.toArray(new String[]{});
-        }
-
-        public static Integer[] getLogLevels() {
-            List<Integer> out = new ArrayList<Integer>();
-            for (LogLevel l : values()) {
-                out.add(l.getLevel());
-            }
-            return out.toArray(new Integer[]{});
-        }
-
-        public static LogLevel getLogLevel(String levelName) {
-            for (LogLevel l : values()) {
-                if (l.toString().equals(levelName)) {
-                    return l;
-                }
-            }
-            return ERROR;
-        }
-
-        public static LogLevel getLogLevel(int level) {
-            for (LogLevel l : values()) {
-                if (l.getLevel() == level) {
-                    return l;
-                }
-            }
-            return ERROR;
-        }
-    }
-
-    public void log(Class<?> callingClass, String methodName, LogLevel level,
-                    String msg) {
-        if (level.getLevel() > verbosity.getLevel()) {
-            return;
-        }
-        StringBuilder out = new StringBuilder(DateFormat.getDateTimeInstance()
-                                                        .format(new Date()));
-        out.append(" ").append(callingClass.getName());
-        out.append(".").append(methodName);
-        out.append(" [").append(level.toString()).append("]");
-        out.append(" ").append(msg);
-        System.out.println(out);
-    }
-
-    public void log(Class<?> callingClass, String methodName, String msg) {
-        log(callingClass, methodName, LogLevel.DEBUG, msg);
-    }
-
-    public void log(Class<?> callingClass, String methodName, LogLevel level,
-                    Throwable t) {
-        if (t == null) {
-            return;
-        }
-        if (level.getLevel() > verbosity.getLevel()) {
-            return;
-        }
-        StringBuilder msg = new StringBuilder(t.getMessage());
-        for (StackTraceElement e : t.getStackTrace()) {
-            msg.append("\n").append(e.toString());
-        }
-        log(callingClass, methodName, level, t);
-    }
-
-    public void log(Class<?> callingClass, String methodName, Throwable t) {
-        log(callingClass, methodName, LogLevel.ERROR, t);
-    }
-
-    public void methodBegin(Class<?> callingClass, String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG, "method begin");
-    }
-
-    public void methodEnd(Class<?> callingClass, String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 
     public HomeEdge getHomeEdge() {
@@ -769,8 +678,8 @@ public class Princess extends BotClient {
 
     public void setHomeEdge(HomeEdge homeEdge) {
         if (homeEdge == null) {
-            log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
-                new IllegalArgumentException("Home Edge is required!"));
+            Logger.log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
+                       new IllegalArgumentException("Home Edge is required!"));
             homeEdge = BasicPathRanker.getDefaultHomeEdge();
         }
         this.homeEdge = homeEdge;

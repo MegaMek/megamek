@@ -10,6 +10,9 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + RFE: Adjusted the MechSelectorDialog presets for unit type, weight, and rules
 + Bug: MechSelectorDialog combo box selections not saved if "x" button is used 
   to close dialog
++ RFE: ChatLounge 'Select Maps' usability fixes: the selected map now doesn't 
+  change when options are updated, the selected map selection also increases by 
+  one when a new map is selected.
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

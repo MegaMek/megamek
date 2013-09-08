@@ -308,7 +308,9 @@ public class LRMSwarmHandler extends LRMHandler {
         if (swarmMissilesNowLeft == 0) {
             swarmMissilesNowLeft = wtype.getRackSize();
         }
-        ae.setLastTarget(entityTarget.getId());
+        if (entityTarget != null) {
+            ae.setLastTarget(entityTarget.getId());
+        }
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 entityTarget, waa.getWeaponId());

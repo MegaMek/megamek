@@ -28,6 +28,7 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.util.Logger;
 
 /**
  * unit_potential_locations keeps track of all the potential coordinates and
@@ -61,7 +62,7 @@ public class Precognition implements Runnable {
 
     void setGame(IGame g) {
         final String METHOD_NAME = "setGame(IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             game = g;
@@ -88,13 +89,13 @@ public class Precognition implements Runnable {
 
             });
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public void pause() {
         final String METHOD_NAME = "pause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             wait_when_done = true;
@@ -105,19 +106,19 @@ public class Precognition implements Runnable {
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public synchronized void unpause() {
         final String METHOD_NAME = "unpause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             wait_when_done = false;
             notifyAll();
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -128,12 +129,12 @@ public class Precognition implements Runnable {
      */
     public synchronized void wake_up() {
         final String METHOD_NAME = "wake_up()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             notifyAll();
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -143,21 +144,22 @@ public class Precognition implements Runnable {
      */
     public void insureUpToDate() {
         final String METHOD_NAME = "insureUpToDate()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             pause();
             for (Enumeration<Entity> ents = game.getEntities(); ents
-                    .hasMoreElements();) {
+                    .hasMoreElements(); ) {
                 Entity e = ents.nextElement();
                 if (!e.isDeployed() || e.isOffBoard()) {
                     continue;
                 }
                 if (((!path_enumerator.last_known_location.containsKey(e.getId()))
-                        || (!path_enumerator.last_known_location.get(e.getId()).equals(new CoordFacingCombo(e))))) {
+                     || (!path_enumerator.last_known_location.get(e.getId()).equals(new CoordFacingCombo(e))))) {
                     // System.err.println("entity "+e.getDisplayName()+" not where I left it");
                     // if(path_enumerator.last_known_location.containsKey(e.getId()))
-                    // System.err.println("  I thought it was at "+path_enumerator.last_known_location.get(e.getId()).coords+" but its actually at "+e.getPosition());
+                    // System.err.println("  I thought it was at "+path_enumerator.last_known_location.get(e.getId())
+                    // .coords+" but its actually at "+e.getPosition());
                     // else
                     // System.err.println("  I had no idea where it was");
                     dirtifyUnit(e.getId());
@@ -170,21 +172,21 @@ public class Precognition implements Runnable {
                 }
                 Entity e = game.getEntity(entity_id);
                 if (e != null) {
-                    owner.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
+                    Logger.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
                     synchronized (PATH_ENUM_LOCK) {
                         path_enumerator.recalculateMovesFor(game, e);
                     }
-                    owner.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
+                    Logger.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public void run() {
         final String METHOD_NAME = "run()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
@@ -198,11 +200,11 @@ public class Precognition implements Runnable {
                         e = game.getEntity(dirty_units.pollFirst());
                     }
                     if (e != null) {
-                        owner.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
+                        Logger.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
                         synchronized (PATH_ENUM_LOCK) {
                             path_enumerator.recalculateMovesFor(game, e);
                         }
-                        owner.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
+                        Logger.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
                     }
                 } else if (wait_when_done) {
                     wait_for_unpause(); // paused for a reason
@@ -211,7 +213,7 @@ public class Precognition implements Runnable {
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -221,15 +223,15 @@ public class Precognition implements Runnable {
      */
     public synchronized void wait_for_unpause() {
         final String METHOD_NAME = "wait_for_unpause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             while (wait_when_done
-                    || (events_to_process.isEmpty() && dirty_units.isEmpty())) {
+                   || (events_to_process.isEmpty() && dirty_units.isEmpty())) {
                 StringBuilder msg = new StringBuilder("wait_when_done = " + wait_when_done);
                 msg.append(" :: events_to_process = ").append(events_to_process.size());
                 msg.append(" :: dirty_units = ").append(dirty_units.size());
-                owner.log(getClass(), METHOD_NAME, msg.toString());
+                Logger.log(getClass(), METHOD_NAME, msg.toString());
                 waiting = true;
                 try {
                     wait();
@@ -239,7 +241,7 @@ public class Precognition implements Runnable {
             }
             waiting = false;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -249,7 +251,7 @@ public class Precognition implements Runnable {
      */
     public synchronized void processGameEvents() {
         final String METHOD_NAME = "processGameEvents()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             LinkedList<GameEvent> eventsToProcessIterator;
@@ -258,12 +260,12 @@ public class Precognition implements Runnable {
             }
             int numEvents = eventsToProcessIterator.size();
             for (int count = 0; count < numEvents; count++) {
-                owner.log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
+                Logger.log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
                 GameEvent event = eventsToProcessIterator.get(count);
                 if (event == null) {
                     continue;
                 }
-                owner.log(getClass(), METHOD_NAME, "Processing " + event.toString());
+                Logger.log(getClass(), METHOD_NAME, "Processing " + event.toString());
                 synchronized (events_to_process) {
                     events_to_process.remove(event);
                 }
@@ -280,7 +282,7 @@ public class Precognition implements Runnable {
                     Entity onentity = game.getEntity(changeevent.getEntity().getId());
                     if (onentity == null) {
                         continue; // not sure how this can happen, but just to be
-                                  // safe
+                        // safe
                     }
                     // a lot of odd entity changes are send during the firing phase,
                     // none of which are relevant
@@ -293,21 +295,21 @@ public class Precognition implements Runnable {
                     if (onentity.getPosition().equals(path_enumerator.getLastKnownCoords(onentity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    owner.log(getClass(), METHOD_NAME, "Received entity change event for "
-                            + changeevent.getEntity().getDisplayName() + " (ID "
-                            + onentity.getId() + ")");
+                    Logger.log(getClass(), METHOD_NAME, "Received entity change event for "
+                                                        + changeevent.getEntity().getDisplayName() + " (ID "
+                                                        + onentity.getId() + ")");
                     Integer entity = changeevent.getEntity().getId();
                     dirtifyUnit(entity);
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phasechange = (GamePhaseChangeEvent) event;
-                    owner.log(getClass(), METHOD_NAME, "Phase change detected: " + phasechange.getNewPhase().name());
+                    Logger.log(getClass(), METHOD_NAME, "Phase change detected: " + phasechange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
                     if (phasechange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
                         synchronized (PATH_ENUM_LOCK) {
                             path_enumerator.clear();
                         }
-                        for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
+                        for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements(); ) {
                             Entity e = ents.nextElement();
                             if (e.isActive() && e.isDeployed()) {
                                 synchronized (dirty_units) {
@@ -318,9 +320,9 @@ public class Precognition implements Runnable {
                     }
                 }
             }
-            owner.log(getClass(), METHOD_NAME, "Events still to process: " + events_to_process.size());
+            Logger.log(getClass(), METHOD_NAME, "Events still to process: " + events_to_process.size());
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -330,7 +332,7 @@ public class Precognition implements Runnable {
      */
     public synchronized void dirtifyUnit(int id) {
         final String METHOD_NAME = "dirtifyUnit(int)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             // first of all, if a unit has been removed, remove it from the list and
@@ -349,18 +351,18 @@ public class Precognition implements Runnable {
             // in their list become dirty
             if (!(game.getEntity(id) instanceof Aero)) {
                 TreeSet<Integer> to_dirty = path_enumerator.getEntitiesWithLocation(game.getEntity(id).getPosition(),
-                                true);
+                                                                                    true);
                 if (path_enumerator.last_known_location.containsKey(id)) {
                     if ((game.getEntity(id) != null) && game.getEntity(id).isSelectableThisTurn()) {
                         to_dirty.addAll(path_enumerator.getEntitiesWithLocation(path_enumerator.last_known_location
-                                .get(id).coords, true));
+                                                                                               .get(id).coords, true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<Integer>();
                 for (Integer index : to_dirty) {
                     if ((game.getEntity(index) == null) || (!game.getEntity(index).isSelectableThisTurn())
-                            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                                                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                         toRemove.add(index);
                     }
                 }
@@ -381,7 +383,7 @@ public class Precognition implements Runnable {
                         if (e != null)
                             msg += "\n  " + e.getDisplayName();
                     }
-                    owner.log(getClass(), METHOD_NAME, msg);
+                    Logger.log(getClass(), METHOD_NAME, msg);
                 }
                 synchronized (dirty_units) {
                     dirty_units.addAll(to_dirty);
@@ -389,7 +391,7 @@ public class Precognition implements Runnable {
             }
             Entity e = game.getEntity(id);
             if ((e != null) && (e.isSelectableThisTurn())
-                    || (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                || (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                 synchronized (dirty_units) {
                     dirty_units.add(id);
                 }
@@ -399,7 +401,7 @@ public class Precognition implements Runnable {
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 

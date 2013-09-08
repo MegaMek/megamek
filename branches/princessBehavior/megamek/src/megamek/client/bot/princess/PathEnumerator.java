@@ -36,6 +36,7 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.WeaponType;
+import megamek.common.util.Logger;
 
 public class PathEnumerator {
 
@@ -62,17 +63,19 @@ public class PathEnumerator {
      */
     public static int hashPath(MovePath p) {
         final String METHOD_NAME = "hashPath(MovePath)";
-        owner.methodBegin(PathEnumerator.class, METHOD_NAME);
+        Logger.methodBegin(PathEnumerator.class, METHOD_NAME);
         try {
             int off = ((p.getLastStep() != null) && (p.getLastStep().getType() == MoveStepType.OFF)) ? 1
-                    : 0;
+                                                                                                     : 0;
             return ((((((((p.getFinalCoords().hashCode() * 7) + p.getFinalFacing()) * 2) + (p
-                    .getFinalHullDown() ? 0 : 1)) * 2)
-                    + ((p.getFinalProne() ? 0 : 1) * 2) + (p
-                    .contains(MoveStepType.MANEUVER) ? 0 : 1))) * 2)
-                    + off;
+                                                                                                    .getFinalHullDown
+                                                                                                            () ? 0 :
+                                                                                            1)) * 2)
+                      + ((p.getFinalProne() ? 0 : 1) * 2) + (p
+                                                                     .contains(MoveStepType.MANEUVER) ? 0 : 1))) * 2)
+                   + off;
         } finally {
-            owner.methodEnd(PathEnumerator.class, METHOD_NAME);
+            Logger.methodEnd(PathEnumerator.class, METHOD_NAME);
         }
     }
 
@@ -88,14 +91,14 @@ public class PathEnumerator {
 
         MovePathCalculation() {
             final String METHOD_NAME = "MovePathCalculation()";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            Logger.methodBegin(getClass(), METHOD_NAME);
             try {
                 open_bymp = new LinkedList<MovePath>();
                 closed = new TreeMap<Integer, Integer>();
                 potential_moves = new ArrayList<MovePath>();
                 passed_over = new TreeMap<Integer, HashSet<Integer>>();
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                Logger.methodEnd(getClass(), METHOD_NAME);
             }
         }
 
@@ -106,7 +109,7 @@ public class PathEnumerator {
          */
         int comparePath(MovePath a, MovePath b) {
             final String METHOD_NAME = "comparePath(MovePath, MovePath)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            Logger.methodBegin(getClass(), METHOD_NAME);
             try {
                 if (!a.getFinalCoords().equals(b.getFinalCoords())) {
                     return 0;
@@ -125,7 +128,7 @@ public class PathEnumerator {
                 }
                 return 1;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                Logger.methodEnd(getClass(), METHOD_NAME);
             }
         }
 
@@ -135,12 +138,12 @@ public class PathEnumerator {
          */
         boolean hasAlreadyConsidered(MovePath p) {
             final String METHOD_NAME = "hasAlreadyConsidered(MovePath)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            Logger.methodBegin(getClass(), METHOD_NAME);
             try {
                 Integer mpinclosed = closed.get(PathEnumerator.hashPath(p));
                 return (mpinclosed != null) && (mpinclosed <= p.getMpUsed());
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                Logger.methodEnd(getClass(), METHOD_NAME);
             }
         }
 
@@ -153,12 +156,12 @@ public class PathEnumerator {
          */
         boolean hasAlreadyAeroConsidered(MovePath p, IGame game) {
             final String METHOD_NAME = "hasAlreadyAeroConsidered(MovePath, IGame)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            Logger.methodBegin(getClass(), METHOD_NAME);
             try {
                 Integer pathhash = PathEnumerator.hashPath(p);
                 // build the list of units this path goes over
                 HashSet<Integer> flown_over = new HashSet<Integer>();
-                for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements();) {
+                for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements(); ) {
                     Coords cord = e.nextElement().getPosition();
                     Entity enemy = game.getFirstEnemyEntity(cord, p.getEntity());
                     if (enemy != null) {
@@ -172,7 +175,7 @@ public class PathEnumerator {
                 }
                 return true;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                Logger.methodEnd(getClass(), METHOD_NAME);
             }
         }
 
@@ -196,25 +199,26 @@ public class PathEnumerator {
 
     HashMap<Integer, ArrayList<MovePath>> unit_paths = new HashMap<Integer, ArrayList<MovePath>>();
     HashMap<Integer, ConvexBoardArea> unit_movable_areas = new HashMap<Integer, ConvexBoardArea>();
-    HashMap<Integer, HashSet<CoordFacingCombo>> unit_potential_locations = new HashMap<Integer, HashSet<CoordFacingCombo>>();
+    HashMap<Integer, HashSet<CoordFacingCombo>> unit_potential_locations = new HashMap<Integer,
+            HashSet<CoordFacingCombo>>();
     HashMap<Integer, CoordFacingCombo> last_known_location = new HashMap<Integer, CoordFacingCombo>();
     IGame game;
 
     void clear() {
         final String METHOD_NAME = "clear()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             unit_paths.clear();
             unit_potential_locations.clear();
             last_known_location.clear();
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     Coords getLastKnownCoords(Integer entityid) {
         final String METHOD_NAME = "getLastKnownCoords(Integer)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             CoordFacingCombo ccr = last_known_location.get(entityid);
             if (ccr == null) {
@@ -222,13 +226,13 @@ public class PathEnumerator {
             }
             return ccr.coords;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public TreeSet<Integer> getEntitiesWithLocation(Coords c, boolean groundnotair) {
         final String METHOD_NAME = "getEntitiesWithLocation(Coords, boolean)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             TreeSet<Integer> ret = new TreeSet<Integer>();
             if (c == null) {
@@ -236,7 +240,7 @@ public class PathEnumerator {
             }
             for (Integer onentity : unit_potential_locations.keySet()) {
                 if ((!(game.getEntity(onentity) instanceof Aero))
-                        || (!groundnotair)) {
+                    || (!groundnotair)) {
                     for (int i = 0; i < 5; i++) {
                         if (unit_potential_locations.get(onentity).contains(
                                 new CoordFacingCombo(c, i))) {
@@ -248,7 +252,7 @@ public class PathEnumerator {
             }
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -257,7 +261,7 @@ public class PathEnumerator {
      */
     void updateUnitLocations(Entity e, ArrayList<MovePath> paths) {
         final String METHOD_NAME = "updateUnitLocations(Entity, ArrayList<MovePath>)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             // clear previous locations for this entity
             unit_potential_locations.remove(e.getId());
@@ -268,7 +272,7 @@ public class PathEnumerator {
             }
             unit_potential_locations.put(e.getId(), toadd);
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -278,7 +282,7 @@ public class PathEnumerator {
      */
     public void recalculateMovesFor(IGame g, Entity e) {
         final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             last_known_location.put(e.getId(), new CoordFacingCombo(e.getPosition(), e.getFacing()));
             unit_paths.remove(e.getId());
@@ -310,21 +314,23 @@ public class PathEnumerator {
                 for (MovePath nextpath : nextpaths) {
                     // add to open as potential path
                     if ((e instanceof Aero)
-                            || (!paths.hasAlreadyConsidered(nextpath))) {
+                        || (!paths.hasAlreadyConsidered(nextpath))) {
                         // paths.open_bymp.add(nextpath); breadth-first
                         paths.open_bymp.push(nextpath); // depth first, saves memory
                         if (!(e instanceof Aero)) {
                             paths.closed.put(PathEnumerator.hashPath(nextpath),
-                                    nextpath.getMpUsed());
+                                             nextpath.getMpUsed());
                         }
                         // if legal to finish, add as potential location
                         if ((e instanceof Aero) && isLegalAeroMove(nextpath)) {
                             if ((nextpath.getLastStep() != null)
-                                    && ((nextpath.getLastStep().getType() == MoveStepType.OFF) || (nextpath
-                                            .getLastStep().getType() == MoveStepType.RETURN))) {
+                                && ((nextpath.getLastStep().getType() == MoveStepType.OFF) || (nextpath
+                                                                                                       .getLastStep()
+                                                                                                       .getType() ==
+                                                                                               MoveStepType.RETURN))) {
                                 if (aero_has_flyoff_option) {
                                     continue; // no need to compute more than one
-                                              // flyoff option
+                                    // flyoff option
                                 } else {
                                     aero_has_flyoff_option = true;
                                 }
@@ -340,16 +346,17 @@ public class PathEnumerator {
                 }
             }
             updateUnitLocations(e, paths.potential_moves);
-            // System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e.getChassis());
+            // System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e
+            // .getChassis());
             // System.err.println("#of partial moves: "+paths.closed.size());
             unit_paths.put(e.getId(), paths.potential_moves);
             // calculate bounding area for move
             ConvexBoardArea myarea = new ConvexBoardArea();
             myarea.addCoordFacingCombos(unit_potential_locations.get(e.getId())
-                    .iterator());
+                                                                .iterator());
             unit_movable_areas.put(e.getId(), myarea);
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -361,7 +368,7 @@ public class PathEnumerator {
      */
     ArrayList<MovePath> getValidStartingMoves(IGame g, Entity e) {
         final String METHOD_NAME = "getValidStartingMoves(IGame, Entity)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             ArrayList<MovePath> ret = new ArrayList<MovePath>();
             ret.add(new MovePath(g, e));
@@ -375,7 +382,7 @@ public class PathEnumerator {
             // System.err.println("number of starting moves for "+e.getChassis()+" is "+ret.size());
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -387,27 +394,27 @@ public class PathEnumerator {
      */
     ArrayList<MovePath> getNextMoves(IGame game, MovePath start) {
         final String METHOD_NAME = "getNextMoves(IGame, MovePath)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             ArrayList<MovePath> ret = new ArrayList<MovePath>();
             if (start.getEntity() instanceof Aero) {
                 // if I've already done something illegal, or flown off, ignore
                 if ((start.getSecondLastStep() != null)
-                        && (start.getSecondLastStep().getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+                    && (start.getSecondLastStep().getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
                     return ret;
                 }
                 if ((start.getLastStep() != null)
-                        && (start.getLastStep().getType() == MoveStepType.OFF)) {
+                    && (start.getLastStep().getType() == MoveStepType.OFF)) {
                     return ret;
                 }
                 if ((start.getLastStep() != null)
-                        && (start.getLastStep().getType() == MoveStepType.RETURN)) {
+                    && (start.getLastStep().getType() == MoveStepType.RETURN)) {
                     return ret;
                 }
                 boolean can_accel = (start.getLastStep() == null)
-                        || (start.getLastStep().getType() == MoveStepType.ACC);
+                                    || (start.getLastStep().getType() == MoveStepType.ACC);
                 boolean can_deccel = (start.getLastStep() == null)
-                        || (start.getLastStep().getType() == MoveStepType.DEC);
+                                     || (start.getLastStep().getType() == MoveStepType.DEC);
                 boolean has_moved = !(can_accel || can_deccel);
                 // move forward
                 // FIXME is velocity*16 -always- the number of hexes moved?
@@ -425,18 +432,18 @@ public class PathEnumerator {
                 }
                 // turn left and right
                 if ((start.getLastStep() != null)
-                        && ((start.getLastStep().dueFreeTurn()))
-                        && (start.getLastStep().getType() != MoveStepType.TURN_RIGHT)
-                        && (start.getLastStep().getType() != MoveStepType.TURN_LEFT)) {
+                    && ((start.getLastStep().dueFreeTurn()))
+                    && (start.getLastStep().getType() != MoveStepType.TURN_RIGHT)
+                    && (start.getLastStep().getType() != MoveStepType.TURN_LEFT)) {
                     ret.add(start.clone().addStep(MoveStepType.TURN_LEFT));
                     ret.add(start.clone().addStep(MoveStepType.TURN_RIGHT));
                 }
                 // fly off of edge of board
                 Coords c = start.getFinalCoords();
                 if (((c.x == 0) || (c.y == 0)
-                        || (c.x == (game.getBoard().getWidth() - 1)) || (c.y == (game
-                        .getBoard().getHeight() - 1)))
-                        && (start.getFinalVelocity() > 0)) {
+                     || (c.x == (game.getBoard().getWidth() - 1)) || (c.y == (game
+                                                                                      .getBoard().getHeight() - 1)))
+                    && (start.getFinalVelocity() > 0)) {
                     ret.add(start.clone().addStep(MoveStepType.RETURN));
                 }
                 // maneuvers
@@ -445,11 +452,11 @@ public class PathEnumerator {
                 if (!start.contains(MoveStepType.MANEUVER)) {
                     // side slips
                     ret.add(start.clone()
-                            .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
-                            .addStep(MoveStepType.LATERAL_LEFT, true, true));
+                                 .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
+                                 .addStep(MoveStepType.LATERAL_LEFT, true, true));
                     ret.add(start.clone()
-                            .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
-                            .addStep(MoveStepType.LATERAL_RIGHT, true, true));
+                                 .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
+                                 .addStep(MoveStepType.LATERAL_RIGHT, true, true));
                 }
                 // */
 
@@ -463,54 +470,54 @@ public class PathEnumerator {
                         // there is no reason to do an immelman and not turn
                         // ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
                         ret.add(start.clone()
-                                .addManeuver(ManeuverType.MAN_IMMELMAN)
-                                .addStep(MoveStepType.TURN_LEFT));
+                                     .addManeuver(ManeuverType.MAN_IMMELMAN)
+                                     .addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone()
-                                .addManeuver(ManeuverType.MAN_IMMELMAN)
-                                .addStep(MoveStepType.TURN_LEFT)
-                                .addStep(MoveStepType.TURN_LEFT));
+                                     .addManeuver(ManeuverType.MAN_IMMELMAN)
+                                     .addStep(MoveStepType.TURN_LEFT)
+                                     .addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone()
-                                .addManeuver(ManeuverType.MAN_IMMELMAN)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addManeuver(ManeuverType.MAN_IMMELMAN)
+                                     .addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone()
-                                .addManeuver(ManeuverType.MAN_IMMELMAN)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addManeuver(ManeuverType.MAN_IMMELMAN)
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone()
-                                .addManeuver(ManeuverType.MAN_IMMELMAN)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addManeuver(ManeuverType.MAN_IMMELMAN)
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT));
                     }
                     // split s
                     if (start.getFinalAltitude() > 2) {
                         // there is no reason to do a split-s and not turn
                         // ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S)
-                                .addStep(MoveStepType.TURN_LEFT));
+                                     .addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S)
-                                .addStep(MoveStepType.TURN_LEFT)
-                                .addStep(MoveStepType.TURN_LEFT));
+                                     .addStep(MoveStepType.TURN_LEFT)
+                                     .addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT)
-                                .addStep(MoveStepType.TURN_RIGHT));
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT)
+                                     .addStep(MoveStepType.TURN_RIGHT));
                     }
                     // loop
                     if (start.getFinalVelocity() > 4) {
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP)
-                                .addStep(MoveStepType.LOOP, true, true));
+                                     .addStep(MoveStepType.LOOP, true, true));
                     }
                 }
             } else { // meks and tanks and infantry oh my
                 // if I've already done something illegal, ignore
                 if ((start.getSecondLastStep() != null)
-                        && (start.getSecondLastStep().getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+                    && (start.getSecondLastStep().getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
                     return ret;
                 }
                 // if I'm out of movement points, ignore
@@ -523,41 +530,43 @@ public class PathEnumerator {
                 }
                 // some useful variables
                 MoveStepType laststeptype = start.getLastStep() == null ? null
-                        : start.getLastStep().getType();
+                                                                        : start.getLastStep().getType();
                 Coords finalcoords = start.getLastStep() == null ? start
                         .getEntity().getPosition() : start.getFinalCoords();
                 if (finalcoords == null) {
                     return ret;
                 }
                 int finalfacing = start.getLastStep() == null ? start.getEntity()
-                        .getFacing() : start.getFinalFacing();
+                                                                     .getFacing() : start.getFinalFacing();
                 // move forward
                 if (game.getBoard().contains(finalcoords.translated(finalfacing))
-                        && (laststeptype != MoveStepType.BACKWARDS)) {
+                    && (laststeptype != MoveStepType.BACKWARDS)) {
                     ret.add(start.clone().addStep(MoveStepType.FORWARDS));
                 }
                 // move backward
                 if (game.getBoard().contains(
                         finalcoords.translated((finalfacing + 3) % 6))
-                        && (laststeptype != MoveStepType.FORWARDS)) {
+                    && (laststeptype != MoveStepType.FORWARDS)) {
                     ret.add(start.clone().addStep(MoveStepType.BACKWARDS));
                 }
                 // turn left and right
                 int last_consec_turns = countLastConsecutiveTurns(start);
                 if ((laststeptype != MoveStepType.TURN_RIGHT)
-                        && (last_consec_turns < 2)) {
+                    && (last_consec_turns < 2)) {
                     ret.add(start.clone().addStep(MoveStepType.TURN_LEFT));
                 }
                 // trick here, only do 180 degree turns by turning right, never left
                 if ((laststeptype != MoveStepType.TURN_LEFT)
-                        && (last_consec_turns < 3)) {
+                    && (last_consec_turns < 3)) {
                     ret.add(start.clone().addStep(MoveStepType.TURN_RIGHT));
                 }
                 // get up if laying down
                 if (start.getFinalProne() || start.getFinalHullDown()) {
-                    if (start.getEntity().isCarefulStand() && (start.getEntity().checkGetUp(start.clone().addStep(MoveStepType.CAREFUL_STAND).getLastStep()).getValue() < 13)) {
+                    if (start.getEntity().isCarefulStand() && (start.getEntity().checkGetUp(start.clone().addStep
+                            (MoveStepType.CAREFUL_STAND).getLastStep()).getValue() < 13)) {
                         ret.add(start.clone().addStep(MoveStepType.CAREFUL_STAND));
-                    } else if (start.getEntity().checkGetUp(start.clone().addStep(MoveStepType.GET_UP).getLastStep()).getValue() < 13) {
+                    } else if (start.getEntity().checkGetUp(start.clone().addStep(MoveStepType.GET_UP).getLastStep())
+                                    .getValue() < 13) {
                         ret.add(start.clone().addStep(MoveStepType.GET_UP));
                     }
                 }
@@ -567,8 +576,8 @@ public class PathEnumerator {
                 if (start.getLastStep() != null) {
                     if (start.getEntity().canUnjamRAC()) {
                         if ((start.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
-                                || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                                || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
+                            || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                            || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
                             // Cycle through all available weapons, only unjam if the
                             // jam(med)
                             // RACs count for a significant portion of possible damage
@@ -580,10 +589,10 @@ public class PathEnumerator {
 
                                 test_weapon = (WeaponType) equip.getType();
                                 if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY
-                                        || (game.getOptions().booleanOption("uac_tworolls")
-                                        && (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA
-                                        || test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))
-                                        && (equip.isJammed())) {
+                                     || (game.getOptions().booleanOption("uac_tworolls")
+                                         && (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA
+                                             || test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))
+                                    && (equip.isJammed())) {
                                     rac_damage = rac_damage + (4 * (test_weapon.getDamage()));
                                 } else {
                                     if (equip.canFire()) {
@@ -601,23 +610,23 @@ public class PathEnumerator {
                             // If nothing is "close" then unjam anyways
                             int check_range = 100;
                             for (Enumeration<Entity> unit_selection = game
-                                    .getEntities(); unit_selection.hasMoreElements();) {
+                                    .getEntities(); unit_selection.hasMoreElements(); ) {
                                 Entity enemy = unit_selection.nextElement();
                                 if ((start.getEntity().getPosition() != null)
-                                        && (enemy.getPosition() != null)
-                                        && (enemy.isEnemyOf(start.getEntity()))) {
+                                    && (enemy.getPosition() != null)
+                                    && (enemy.isEnemyOf(start.getEntity()))) {
                                     if (enemy.isVisibleToEnemy()) {
                                         if (start.getEntity().getPosition()
-                                                .distance(enemy.getPosition()) < check_range) {
+                                                 .distance(enemy.getPosition()) < check_range) {
                                             check_range = start.getEntity()
-                                                    .getPosition().distance(
+                                                               .getPosition().distance(
                                                             enemy.getPosition());
                                         }
                                     }
                                 }
                             }
                             if ((rac_damage >= other_damage)
-                                    || (check_range < clearance_range)) {
+                                || (check_range < clearance_range)) {
                                 ret.add(start.clone().addStep(MoveStepType.UNJAM_RAC));
                             }
                         }
@@ -636,18 +645,18 @@ public class PathEnumerator {
             }
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     int countLastConsecutiveTurns(MovePath p) {
         final String METHOD_NAME = "countLastConsecutiveTurns(MovePath)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             int ret = 0;
             for (int i = p.length() - 1; i >= 0; i--) {
                 if ((p.getStep(i).getType() == MoveStepType.TURN_RIGHT)
-                        || (p.getStep(i).getType() == MoveStepType.TURN_LEFT)) {
+                    || (p.getStep(i).getType() == MoveStepType.TURN_LEFT)) {
                     ret++;
                 } else {
                     return ret;
@@ -655,23 +664,24 @@ public class PathEnumerator {
             }
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public void debugPrintContents() {
         final String METHOD_NAME = "debugPrintContents()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             for (Integer id : unit_paths.keySet()) {
                 Entity mye = game.getEntity(id);
                 ArrayList<MovePath> paths = unit_paths.get(id);
                 int paths_size = paths.size();
-                owner.log(getClass(), METHOD_NAME, "unit " + mye.getDisplayName() + " has " + paths_size + "paths ");
-                owner.log(getClass(), METHOD_NAME, " and " + unit_potential_locations.get(id).size() + " ending locations");
+                Logger.log(getClass(), METHOD_NAME, "unit " + mye.getDisplayName() + " has " + paths_size + "paths ");
+                Logger.log(getClass(), METHOD_NAME, " and " + unit_potential_locations.get(id).size() + " ending " +
+                                                    "locations");
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -688,7 +698,7 @@ public class PathEnumerator {
      */
     public boolean isLegalAeroMove(MovePath p) {
         final String METHOD_NAME = "isLegalAeroMove(MovePath)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
         try {
             if (!(p.getEntity() instanceof Aero)) {
                 return true; // no non-aeros allowed
@@ -698,20 +708,20 @@ public class PathEnumerator {
                     return false;
                 }
                 if ((p.getLastStep().getType() != MoveStepType.RETURN)
-                        && (p.getLastStep().getType() != MoveStepType.OFF)) {
+                    && (p.getLastStep().getType() != MoveStepType.OFF)) {
                     return false;
                 }
             }
             if ((p.getLastStep() != null)
-                    && (p.getLastStep().getVelocityLeft() != 0)) {
+                && (p.getLastStep().getVelocityLeft() != 0)) {
                 if ((p.getLastStep().getType() != MoveStepType.RETURN)
-                        && (p.getLastStep().getType() != MoveStepType.OFF)) {
+                    && (p.getLastStep().getType() != MoveStepType.OFF)) {
                     return false;
                 }
             }
             return true;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 

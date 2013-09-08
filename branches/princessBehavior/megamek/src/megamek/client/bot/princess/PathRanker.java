@@ -25,31 +25,33 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.TargetRoll;
+import megamek.common.util.Logger;
 
-public class PathRanker {       
+public class PathRanker {
 
     Princess botbase;
     private static Princess owner;
 
-    class RankedPath implements Comparable<RankedPath>{
+    class RankedPath implements Comparable<RankedPath> {
         public MovePath path;
         public double rank;
 
-        public RankedPath(double r,MovePath p) {
-            rank=r;
-            path=p;
+        public RankedPath(double r, MovePath p) {
+            rank = r;
+            path = p;
         }
+
         public int compareTo(RankedPath p) {
-            if(rank<p.rank) {
+            if (rank < p.rank) {
                 return -1;
             }
-            if(p.rank<rank) {
+            if (p.rank < rank) {
                 return 1;
             }
-            if(path.getKey().hashCode()<p.path.getKey().hashCode()) {
+            if (path.getKey().hashCode() < p.path.getKey().hashCode()) {
                 return -1;
             }
-            if(path.getKey().hashCode()>p.path.getKey().hashCode()) {
+            if (path.getKey().hashCode() > p.path.getKey().hashCode()) {
                 return 1;
             }
             return 0;
@@ -69,49 +71,49 @@ public class PathRanker {
         return 0;
     }
 
-    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> ps,IGame game) {
+    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> ps, IGame game) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
-            for(MovePath p:ps) {
-                ret.add(new RankedPath(rankPath(p,game),p));
+            ArrayList<RankedPath> ret = new ArrayList<RankedPath>();
+            for (MovePath p : ps) {
+                ret.add(new RankedPath(rankPath(p, game), p));
             }
             return ret;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
-    public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps,double lessthan) {
+    public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps, double lessthan) {
         final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        Logger.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
-            ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
-            for(RankedPath p:ps) {
-                if(p.rank>lessthan) {
+            ArrayList<RankedPath> ret = new ArrayList<RankedPath>();
+            for (RankedPath p : ps) {
+                if (p.rank > lessthan) {
                     ret.add(p);
                 }
             }
             return ret;
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
+            Logger.methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
     public static RankedPath getBestPath(ArrayList<RankedPath> ps) {
         final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        Logger.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
-            if(ps.size()==0) {
+            if (ps.size() == 0) {
                 return null;
             }
             return Collections.max(ps);
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
+            Logger.methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
@@ -127,9 +129,9 @@ public class PathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    static Entity findClosestEnemy(Entity me,Coords position, IGame game) {
+    static Entity findClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        Logger.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             int range = 9999;
@@ -143,7 +145,7 @@ public class PathRanker {
             }
             return closest;
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
+            Logger.methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
@@ -152,7 +154,7 @@ public class PathRanker {
      */
     Entity findClosestFriend(MovePath p, IGame game) {
         final String METHOD_NAME = "findClosestFriend(MovePath, IGame";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             int range = 9999;
@@ -166,7 +168,7 @@ public class PathRanker {
             }
             return closest;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -175,20 +177,20 @@ public class PathRanker {
      */
     static ArrayList<Entity> getEnemies(Entity myunit, IGame game) {
         final String METHOD_NAME = "getEnemies(Entity, IGame)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        Logger.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             ArrayList<Entity> enemies = new ArrayList<Entity>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (entity.getOwner().isEnemyOf(myunit.getOwner())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()) {
                     enemies.add(entity);
                 }
             }
             return enemies;
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
+            Logger.methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
@@ -197,29 +199,29 @@ public class PathRanker {
      */
     ArrayList<Entity> getFriends(Entity myunit, IGame game) {
         final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             ArrayList<Entity> friends = new ArrayList<Entity>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()
-                        && (!entity.equals(myunit))) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (!entity.equals(myunit))) {
                     friends.add(entity);
                 }
             }
             return friends;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
+
     /**
      * Returns the probability of success of a movepath
      */
     public static double getMovePathSuccessProbability(MovePath mp) {
-    	MovePath pcopy=mp.clone();
+        MovePath pcopy = mp.clone();
         List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
         double success_probability = 1.0;
         for (TargetRoll t : targets) {

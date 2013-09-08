@@ -22,6 +22,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.util.Logger;
 
 public class PathSelector {
 
@@ -37,7 +38,7 @@ public class PathSelector {
 
     public MovePath selectPath(IGame game, ArrayList<MovePath> paths) {
         final String METHOD_NAME = "selectPath(IGame, ArrayList<MovePath>)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        Logger.methodBegin(getClass(), METHOD_NAME);
 
         try {
             if (paths.size() == 0) {
@@ -48,7 +49,7 @@ public class PathSelector {
                 for (MovePath p : paths) {
                     // chooses the first path that overflies an enemy
                     for (Enumeration<MoveStep> e = p.getSteps(); e
-                            .hasMoreElements();) {
+                            .hasMoreElements(); ) {
                         Coords cord = (e.nextElement()).getPosition();
                         Entity enemy = game.getFirstEnemyEntity(cord, entity);
                         if (enemy != null) {
@@ -79,7 +80,7 @@ public class PathSelector {
                 return paths.get(0);
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            Logger.methodEnd(getClass(), METHOD_NAME);
         }
     }
 

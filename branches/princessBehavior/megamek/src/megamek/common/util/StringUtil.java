@@ -68,9 +68,9 @@ public class StringUtil {
      * <code>false</code>. The default is <code>false</code>. This ensures
      * the <code>String</code> will always be parsed against the English
      * "true"
-     * 
+     *
      * @param input - the <code>String</code> to be evaluated. This value may
-     *            be <code>null</code>.
+     *              be <code>null</code>.
      * @return The <code>boolean</code> equivalent of the input.
      */
     public static boolean parseBoolean(String input) {
@@ -94,9 +94,9 @@ public class StringUtil {
 
     /**
      * A utility for padding out a string with spaces.
-     * 
-     * @param s the string to pad
-     * @param n the desired length of the resultant string
+     *
+     * @param s             the string to pad
+     * @param n             the desired length of the resultant string
      * @param bRightJustify true if the string should be right justified
      */
     public static String makeLength(String s, int n, boolean bRightJustify) {
@@ -119,26 +119,26 @@ public class StringUtil {
      * the end. The format of the stamp is dictated by the client option
      * "StampFormat", which must use the same formatting as Java's
      * SimpleDateFormat class.
-     * 
+     *
      * @param filename the String containing the filename (with extension)
      * @return the filname with date/time stamp added
      */
     public static String addDateTimeStamp(String filename) {
         SimpleDateFormat formatter = new SimpleDateFormat(PreferenceManager
-                .getClientPreferences().getStampFormat());
+                                                                  .getClientPreferences().getStampFormat());
         Date current = new Date();
         if (filename.lastIndexOf(".") == -1) {
             return filename + formatter.format(current);
         }
         return filename.substring(0, filename.lastIndexOf("."))
-                + formatter.format(current)
-                + filename.substring(filename.lastIndexOf("."));
+               + formatter.format(current)
+               + filename.substring(filename.lastIndexOf("."));
     }
 
     /**
      * Returns TRUE if the passed in text is either a NULL value or is an empty string.
      *
-     * @param text  The string to be evalutated.
+     * @param text The string to be evalutated.
      * @return
      */
     public static boolean isNullOrEmpty(String text) {
@@ -165,4 +165,40 @@ public class StringUtil {
 
         return text;
     } //public static String makeXmlSafe(String text)
+
+    public static boolean isNumeric(String text) {
+        if (isNullOrEmpty(text)) {
+            return false;
+        }
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isInteger(String text) {
+        if (isNullOrEmpty(text)) {
+            return false;
+        }
+        try {
+            Integer.parseInt(text);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isPositiveInteger(String text) {
+        if (isNullOrEmpty(text)) {
+            return false;
+        }
+        try {
+            int test = Integer.parseInt(text);
+            return test >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }

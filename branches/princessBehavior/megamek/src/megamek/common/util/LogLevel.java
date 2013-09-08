@@ -24,7 +24,7 @@ import java.util.List;
  * @since: 9/7/13 9:31 AM
  */
 public enum LogLevel {
-    ERROR(0), INFO(1), WARNING(2), DEBUG(3);
+    ERROR(0), WARNING(1), INFO(2), DEBUG(3);
 
     private int level;
 

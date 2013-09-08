@@ -68,6 +68,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.LogLevel;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
@@ -160,7 +161,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame, Messages
-                                                                     .getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
+                                                                     .getString("MegaMek.welcome.title") + MegaMek
+                                                                     .VERSION, //$NON-NLS-1$
                                                       Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
                                                       true);
             confirm.setVisible(true);
@@ -325,7 +327,9 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.PlayerNameAlert.message"), Messages.getString("MegaMek.PlayerNameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.PlayerNameAlert.message"),
+                            Messages.getString("MegaMek.PlayerNameAlert.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -413,7 +417,9 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.PlayerNameAlert1.message"), Messages.getString("MegaMek.PlayerNameAlert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.PlayerNameAlert1.message"),
+                            Messages.getString("MegaMek.PlayerNameAlert1.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -440,7 +446,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             JOptionPane
                     .showMessageDialog(
                             frame,
-                            Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MegaMek.LoadGameAlert.message"),
+                            Messages.getString("MegaMek.LoadGameAlert.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             server.die();
             server = null;
             return;
@@ -541,7 +549,9 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.HostScenarioAlert.message") + e.getMessage(), Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.HostScenarioAlert.message") + e.getMessage(),
+                            Messages.getString("MegaMek.HostScenarioAlert.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -600,7 +610,9 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.HostScenarioAlert1.message"), Messages.getString("MegaMek.HostScenarioAlert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.HostScenarioAlert1.message"),
+                            Messages.getString("MegaMek.HostScenarioAlert1.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -643,7 +655,8 @@ public class MegaMekGUI implements IMegaMekGUI {
                                 frame,
                                 error.toString(),
                                 Messages
-                                        .getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                                        .getString("MegaMek.HostScenarioAlert.title"),
+                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 frame.setVisible(false);
                 client.die();
             }
@@ -667,7 +680,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
-                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, Princess.LogLevel.ERROR); //$NON-NLS-1$
+                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, LogLevel.ERROR); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect
@@ -718,7 +731,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             JOptionPane
                     .showMessageDialog(
                             frame,
-                            Messages.getString("MegaMek.ConnectAlert.message"), Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MegaMek.ConnectAlert.message"),
+                            Messages.getString("MegaMek.ConnectAlert.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -766,7 +781,9 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.ConnectGameAlert.message"), Messages.getString("MegaMek.ConnectGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.ConnectGameAlert.message"),
+                            Messages.getString("MegaMek.ConnectGameAlert.title"),
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 

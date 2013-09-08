@@ -22,6 +22,7 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.common.IPlayer;
+import megamek.common.util.LogLevel;
 
 /**
  * @author dirk
@@ -34,7 +35,9 @@ public class AddBotCommand extends ClientCommand {
         super(
                 client,
                 "replacePlayer",
-                "Replaces a player who is a ghost with a bot. Usage /replacePlayer <-b:TestBot/Princess> name, to replace the player named name. They must be a ghost.  If the -b argument is left out, the TestBot will be used by default.");
+                "Replaces a player who is a ghost with a bot. Usage /replacePlayer <-b:TestBot/Princess> name, " +
+                "to replace the player named name. They must be a ghost.  If the -b argument is left out, " +
+                "the TestBot will be used by default.");
     }
 
     /*
@@ -76,7 +79,7 @@ public class AddBotCommand extends ClientCommand {
         if (target.isGhost()) {
             BotClient c = null;
             if ("Princess".equalsIgnoreCase(botName)) {
-                c = new Princess(target.getName(), client.getHost(), client.getPort(), Princess.LogLevel.ERROR);
+                c = new Princess(target.getName(), client.getHost(), client.getPort(), LogLevel.ERROR);
             } else if ("TestBot".equalsIgnoreCase(botName)) {
                 c = new TestBot(target.getName(), client.getHost(), client.getPort());
             } else {

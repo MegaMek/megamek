@@ -13,6 +13,8 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.util.LogLevel;
+import megamek.common.util.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -102,7 +104,8 @@ public class BehaviorSettingsFactory {
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
-                System.out.println("Could not load " + PRINCESS_BEHAVIOR_PATH);
+                Logger.log(BehaviorSettingsFactory.class, "buildPrincessBehaviorDoc()", LogLevel.ERROR,
+                           "Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(behaviorFile));
@@ -156,18 +159,21 @@ public class BehaviorSettingsFactory {
      * @return TRUE if the save is successful.
      */
     public static boolean saveBehaviorSettings(boolean includeTargets) {
+        final String METHOD_NAME = "saveBehaviorSettings(boolean)";
         init(false);
 
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists()) {
                 if (!behaviorFile.createNewFile()) {
-                    System.out.println("Could not create " + PRINCESS_BEHAVIOR_PATH);
+                    Logger.log(BehaviorSettingsFactory.class, METHOD_NAME, LogLevel.ERROR,
+                               "Could not create " + PRINCESS_BEHAVIOR_PATH);
                     return false;
                 }
             }
             if (!behaviorFile.canWrite()) {
-                System.out.println("Could not write to " + PRINCESS_BEHAVIOR_PATH);
+                Logger.log(BehaviorSettingsFactory.class, METHOD_NAME, LogLevel.ERROR,
+                           "Could not write to " + PRINCESS_BEHAVIOR_PATH);
                 return false;
             }
 

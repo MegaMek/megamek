@@ -1303,10 +1303,14 @@ public class Server implements Runnable {
         }
     }
     
-    private void destroyDoomedEntities()
+    /**
+     * Check a list of entity Ids for doomed entities and destroy those.
+     */
+    private void destroyDoomedEntities(Vector<Integer> entityIds)
     {
         Vector<Entity> toRemove = new Vector<Entity>(0, 10);
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Integer entityId : entityIds) {
+            Entity entity = game.getEntity(entityId);
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
 
@@ -3707,7 +3711,7 @@ public class Server implements Runnable {
                  */
             }
         }
-        destroyDoomedEntities();
+        destroyDoomedEntities(alreadyHit);
     }
 
     /**

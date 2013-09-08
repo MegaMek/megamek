@@ -546,6 +546,12 @@ public class Board implements Serializable, IBoard {
      */
     public void setHex(Coords c, IHex hex) {
         setHex(c.x, c.y, hex);
+        if (hex.getElevation() < minElevation){
+            minElevation = hex.getElevation();
+        }
+        if (hex.getElevation() > maxElevation){
+            maxElevation = hex.getElevation();
+        }
     }
 
     /**

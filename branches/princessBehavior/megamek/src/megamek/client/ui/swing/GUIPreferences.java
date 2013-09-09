@@ -199,10 +199,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
-        store.setDefault(MECH_SELECTOR_SHOW_ADVANCED,0);
         store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
-        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,12);
-        store.setDefault(MECH_SELECTOR_RULES_LEVEL,0);
+        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
+        store.setDefault(MECH_SELECTOR_RULES_LEVEL,13);
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);

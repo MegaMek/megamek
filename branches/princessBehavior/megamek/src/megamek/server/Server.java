@@ -1291,6 +1291,50 @@ public class Server implements Runnable {
             entity.newRound(game.getRoundCount());
         }
     }
+    
+    /**
+     * Check a list of entity Ids for doomed entities and destroy those.
+     */
+    private void destroyDoomedEntities(Vector<Integer> entityIds)
+    {
+        Vector<Entity> toRemove = new Vector<Entity>(0, 10);
+        for (Integer entityId : entityIds) {
+            Entity entity = game.getEntity(entityId);
+            if (entity.isDoomed()) {
+                entity.setDestroyed(true);
+
+                // Is this unit swarming somebody? Better let go before
+                // it's too late.
+                final int swarmedId = entity.getSwarmTargetId();
+                if (Entity.NONE != swarmedId) {
+                    final Entity swarmed = game.getEntity(swarmedId);
+                    swarmed.setSwarmAttackerId(Entity.NONE);
+                    entity.setSwarmTargetId(Entity.NONE);
+                    Report r = new Report(5165);
+                    r.subject = swarmedId;
+                    r.addDesc(swarmed);
+                    addReport(r);
+                    entityUpdate(swarmedId);
+                }
+            }
+
+            if (entity.isDestroyed()) {
+                toRemove.addElement(entity);
+            }
+        }
+
+        // actually remove all flagged entities
+        for (Entity entity : toRemove) {
+            int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
+            if (!entity.isSalvage()) {
+                condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
+            }
+
+            entityUpdate(entity.getId());
+            game.removeEntity(entity.getId(), condition);
+            send(createRemoveEntityPacket(entity.getId(), condition));
+        }
+    }
 
     /**
      * Called at the beginning of each phase. Sets and resets any entity
@@ -3650,6 +3694,7 @@ public class Server implements Runnable {
                  */
             }
         }
+        destroyDoomedEntities(alreadyHit);
     }
 
     /**

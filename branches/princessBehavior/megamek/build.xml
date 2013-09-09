@@ -96,7 +96,7 @@
         <touch file="${timestampfile}"/>
     </target>
 
-    <target name="jar" depends="compile" description="Generates JAR File from compiled sources">
+    <target name="jar" depends="unit.test" description="Generates JAR File from compiled sources">
         <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>

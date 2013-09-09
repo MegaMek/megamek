@@ -307,8 +307,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * Sends a deployment to the server
      */
     @Override
-    public void ready() {
-        disableButtons();
+    public void ready() {        
         Entity en = ce();
         
         if ((en instanceof Dropship) && !en.isAirborne()){
@@ -333,6 +332,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 return;            
             }
         }
+        
+        disableButtons();
         
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 en.getElevation(), en.getLoadedUnits(), assaultDropPreference);

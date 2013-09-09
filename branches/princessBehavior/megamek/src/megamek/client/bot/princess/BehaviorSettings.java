@@ -87,7 +87,7 @@ public class BehaviorSettings {
                                                                                new BigDecimal("0.018"),
                                                                                new BigDecimal("0.02")};
 
-    public static final String DEFAULT_DESC = "- default -";
+    public static final String DEFAULT_DESC = BehaviorSettingsFactory.DEFAULT_BEHAVIOR.getDescription();
 
     private String description = DEFAULT_DESC;
 

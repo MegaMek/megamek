@@ -65,9 +65,22 @@ public class BehaviorSettingsFactory {
             if (behaviorMap.isEmpty()) {
                 loadBehaviorSettings(buildPrincessBehaviorDoc());
             }
-            if (!behaviorMap.containsKey(BehaviorSettings.DEFAULT_DESC)) {
-                addBehavior(createDefaultBehavior());
-            }
+            addDefaultBehaviors();
+        }
+    }
+
+    private static void addDefaultBehaviors() {
+        if (!behaviorMap.keySet().contains(DEFAULT_BEHAVIOR.getDescription())) {
+            addBehavior(DEFAULT_BEHAVIOR);
+        }
+        if (!behaviorMap.keySet().contains(BERSERK_BEHAVIOR.getDescription())) {
+            addBehavior(BERSERK_BEHAVIOR);
+        }
+        if (!behaviorMap.keySet().contains(COWARDLY_BEHAVIOR.getDescription())) {
+            addBehavior(COWARDLY_BEHAVIOR);
+        }
+        if (!behaviorMap.keySet().contains(ESCAPE_BEHAVIOR.getDescription())) {
+            addBehavior(ESCAPE_BEHAVIOR);
         }
     }
 
@@ -91,13 +104,6 @@ public class BehaviorSettingsFactory {
      */
     public static BehaviorSettings getBehavior(String desc) {
         return behaviorMap.get(desc);
-    }
-
-    /**
-     * @return a new {@link BehaviorSettings} object with default values.
-     */
-    public static BehaviorSettings createDefaultBehavior() {
-        return new BehaviorSettings();
     }
 
     protected static Document buildPrincessBehaviorDoc() {
@@ -125,7 +131,7 @@ public class BehaviorSettingsFactory {
         synchronized (CACHE_LOCK) {
             try {
                 if (princessBehaviorDoc == null && behaviorMap.isEmpty()) {
-                    addBehavior(createDefaultBehavior());
+                    addDefaultBehaviors();
                     return false;
                 } else if (princessBehaviorDoc == null) {
                     return false;
@@ -140,10 +146,7 @@ public class BehaviorSettingsFactory {
                     behaviorSettings = new BehaviorSettings((Element) child);
                     addBehavior(behaviorSettings);
                 }
-
-                if (!behaviorMap.keySet().contains(BehaviorSettings.DEFAULT_DESC)) {
-                    addBehavior(createDefaultBehavior());
-                }
+                addDefaultBehaviors();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -211,4 +214,143 @@ public class BehaviorSettingsFactory {
         Collections.sort(names);
         return names.toArray(new String[names.size()]);
     }
+
+    //******************
+    // DEFAULT BEHAVIORS
+    //******************
+    /**
+     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Forced Withdrawal: False <br>
+     * Go Home: False <br>
+     * Auto Flee: False <br>
+     * Fall Shame: 2 <br>
+     * Hyper Aggression: 10 <br>
+     * Self Preservation: 2 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 9 <br>
+     * Strategic Targets: None
+     */
+    public static final BehaviorSettings BERSERK_BEHAVIOR = buildBerserkBehavior();
+    private static BehaviorSettings buildBerserkBehavior() {
+        try {
+            BehaviorSettings berserkBehavior = new BehaviorSettings();
+            berserkBehavior.setDescription("BERSERK");
+            berserkBehavior.setHomeEdge(HomeEdge.NORTH);
+            berserkBehavior.setForcedWithdrawal(false);
+            berserkBehavior.setGoHome(false);
+            berserkBehavior.setAutoFlee(false);
+            berserkBehavior.setFallShameIndex(2);
+            berserkBehavior.setHyperAggressionIndex(10);
+            berserkBehavior.setSelfPreservationIndex(2);
+            berserkBehavior.setHerdMentalityIndex(5);
+            berserkBehavior.setBraveryIndex(9);
+            return berserkBehavior;
+        } catch (Exception e) {
+            Logger.log(BehaviorSettingsFactory.class, "buildBerserkBehavior", e);
+            return null;
+        }
+    }
+
+    /**
+     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: False <br>
+     * Auto Flee: False <br>
+     * Fall Shame: 8 <br>
+     * Hyper Aggression: 1 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 8 <br>
+     * Bravery: 2 <br>
+     * Strategic Targets: None
+     */
+    public static final BehaviorSettings COWARDLY_BEHAVIOR = buildCowardlyBehavior();
+    private static BehaviorSettings buildCowardlyBehavior() {
+        try {
+            BehaviorSettings cowardlyBehavior = new BehaviorSettings();
+            cowardlyBehavior.setDescription("COWARDLY");
+            cowardlyBehavior.setHomeEdge(HomeEdge.NORTH);
+            cowardlyBehavior.setForcedWithdrawal(true);
+            cowardlyBehavior.setGoHome(false);
+            cowardlyBehavior.setAutoFlee(false);
+            cowardlyBehavior.setFallShameIndex(8);
+            cowardlyBehavior.setHyperAggressionIndex(1);
+            cowardlyBehavior.setSelfPreservationIndex(10);
+            cowardlyBehavior.setHerdMentalityIndex(8);
+            cowardlyBehavior.setBraveryIndex(2);
+            return cowardlyBehavior;
+        } catch (Exception e) {
+            Logger.log(BehaviorSettingsFactory.class, "buildCowardlyBehavior", e);
+            return null;
+        }
+    }
+
+    /**
+     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: True <br>
+     * Auto Flee: True <br>
+     * Fall Shame: 7 <br>
+     * Hyper Aggression: 3 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 2 <br>
+     * Strategic Targets: None
+     */
+    public static final BehaviorSettings ESCAPE_BEHAVIOR = buildEscapeBehavior();
+    private static BehaviorSettings buildEscapeBehavior() {
+        try {
+            BehaviorSettings berserkBehavior = new BehaviorSettings();
+            berserkBehavior.setDescription("ESCAPE");
+            berserkBehavior.setHomeEdge(HomeEdge.NORTH);
+            berserkBehavior.setForcedWithdrawal(true);
+            berserkBehavior.setGoHome(true);
+            berserkBehavior.setAutoFlee(true);
+            berserkBehavior.setFallShameIndex(7);
+            berserkBehavior.setHyperAggressionIndex(3);
+            berserkBehavior.setSelfPreservationIndex(10);
+            berserkBehavior.setHerdMentalityIndex(5);
+            berserkBehavior.setBraveryIndex(2);
+            return berserkBehavior;
+        } catch (Exception e) {
+            Logger.log(BehaviorSettingsFactory.class, "buildBerserkBehavior", e);
+            return null;
+        }
+    }
+
+    /**
+     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: False <br>
+     * Auto Flee: False <br>
+     * Fall Shame: 5 <br>
+     * Hyper Aggression: 5 <br>
+     * Self Preservation: 5 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 5 <br>
+     * Strategic Targets: None <br>
+     */
+    public static final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();
+    private static BehaviorSettings buildDefaultBehavior() {
+        try {
+            BehaviorSettings berserkBehavior = new BehaviorSettings();
+            berserkBehavior.setDescription("- DEFAULT -");
+            berserkBehavior.setHomeEdge(HomeEdge.NORTH);
+            berserkBehavior.setForcedWithdrawal(true);
+            berserkBehavior.setGoHome(false);
+            berserkBehavior.setAutoFlee(false);
+            berserkBehavior.setFallShameIndex(5);
+            berserkBehavior.setHyperAggressionIndex(5);
+            berserkBehavior.setSelfPreservationIndex(5);
+            berserkBehavior.setHerdMentalityIndex(5);
+            berserkBehavior.setBraveryIndex(5);
+            return berserkBehavior;
+        } catch (Exception e) {
+            Logger.log(BehaviorSettingsFactory.class, "buildBerserkBehavior", e);
+            return null;
+        }
+    }
+    //******************
+    // DEFAULT BEHAVIORS
+    //******************
+
 }

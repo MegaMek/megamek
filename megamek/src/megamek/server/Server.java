@@ -5404,6 +5404,16 @@ public class Server implements Runnable {
                     true));
             return vReport;
         }
+        
+        if (game.getBoard().inAtmosphere()) {
+            r = new Report(9393, Report.PUBLIC);
+            r.indent();
+            r.addDesc(entity);
+            vReport.add(r);
+            entity.setDoomed(true);
+        } else {
+            ((Aero) entity).land();
+        }
 
         // we might hit multiple hexes, if we're a dropship, so we do some
         // checks for all of them
@@ -5595,34 +5605,27 @@ public class Server implements Runnable {
             h.setElevation(crateredElevation);
             sendChangedHex(hitCoords);
 
-            // check for a stacking violation - which should only happen in the
-            // case of
-            // grounded dropships, because they are not moveable
-            if (null != Compute.stackingViolation(game, entity.getId(),
-                    hitCoords)) {
-                Coords dest = Compute.getValidDisplacement(game,
-                        entity.getId(), hitCoords, Compute.d6() - 1);
-                if (null != dest) {
-                    doEntityDisplacement(entity, hitCoords, dest, null);
-                } else {
-                    // ack! automatic death! Tanks
-                    // suffer an ammo/power plant hit.
-                    // TODO : a Mech suffers a Head Blown Off crit.
-                    vPhaseReport.addAll(destroyEntity(entity,
-                            "impossible displacement", entity instanceof Mech,
-                            entity instanceof Mech));
-                }
+           
+        }
+        
+        // check for a stacking violation - which should only happen in the
+        // case of
+        // grounded dropships, because they are not moveable
+        if (null != Compute.stackingViolation(game, entity.getId(),c)) {
+            Coords dest = Compute.getValidDisplacement(game,
+                    entity.getId(), c, Compute.d6() - 1);
+            if (null != dest) {
+                doEntityDisplacement(entity, c, dest, null);
+            } else {
+                // ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                vPhaseReport.addAll(destroyEntity(entity,
+                        "impossible displacement", entity instanceof Mech,
+                        entity instanceof Mech));
             }
         }
-        if (game.getBoard().inAtmosphere()) {
-            r = new Report(9393, Report.PUBLIC);
-            r.indent();
-            r.addDesc(entity);
-            vReport.add(r);
-            entity.setDoomed(true);
-        } else {
-            ((Aero) entity).land();
-        }
+        
 
         return vReport;
     }

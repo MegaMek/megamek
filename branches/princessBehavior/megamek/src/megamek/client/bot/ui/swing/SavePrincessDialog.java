@@ -1,0 +1,95 @@
+/*
+ * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+package megamek.client.bot.ui.swing;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @version %Id%
+ * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since: 9/8/13 1:33 PM
+ */
+public class SavePrincessDialog extends JDialog implements ActionListener {
+
+    JLabel question;
+    JCheckBox saveTargets;
+    JButton yesButton;
+    JButton noButton;
+    boolean save = false;
+    boolean saveTargetList = false;
+    ResourceBundle bundle = ResourceBundle.getBundle("megamek.client.messages");
+
+    public SavePrincessDialog() {
+        initGUI();
+    }
+
+    private void initGUI() {
+        setLayout(new GridLayout(3, 1));
+        setModal(true);
+
+        JPanel questionPanel = new JPanel();
+        question = new JLabel(bundle.getString("SavePrincessDialog.question"));
+        questionPanel.add(question);
+        add(questionPanel);
+
+        JPanel saveTargetsPanel = new JPanel();
+        saveTargets = new JCheckBox(bundle.getString("SavePrincessDialog.saveTargets"));
+        saveTargetsPanel.add(saveTargets);
+        add(saveTargetsPanel);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        yesButton = new JButton(bundle.getString("Yes"));
+        yesButton.addActionListener(this);
+        buttonPanel.add(yesButton);
+
+        noButton = new JButton(bundle.getString("No"));
+        noButton.addActionListener(this);
+        buttonPanel.add(noButton);
+
+        add(buttonPanel);
+
+        pack();
+        validate();
+        setResizable(false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (yesButton.equals(e.getSource())) {
+            save = true;
+            saveTargetList = saveTargets.isSelected();
+            setVisible(false);
+        } else if (noButton.equals(e.getSource())) {
+            save = false;
+            saveTargetList = false;
+            setVisible(false);
+        }
+        System.out.println("Save: " + save + "\tSave Target List: " + saveTargetList);
+    }
+
+    public boolean doSave() {
+        return save;
+    }
+
+    public boolean doSaveTargets() {
+        return saveTargetList;
+    }
+}

@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.client.bot.princess.FireControl.EntityState;
 import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;

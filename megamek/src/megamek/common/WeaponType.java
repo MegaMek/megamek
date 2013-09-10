@@ -122,6 +122,7 @@ public class WeaponType extends EquipmentType {
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
+    public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -1368,6 +1369,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMRM30IOS());
         EquipmentType.addType(new ISMRM40IOS());
 
+        EquipmentType.addType(new ISSmallReengineeredLaser());
+        EquipmentType.addType(new ISMediumReengineeredLaser());
+        EquipmentType.addType(new ISLargeReengineeredLaser());
+
+        EquipmentType.addType(new ISTSEMPCannon());
+        EquipmentType.addType(new ISTSEMPOneShot());
     }
 
     public int getExplosionDamage() {

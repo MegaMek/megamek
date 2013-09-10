@@ -48,7 +48,7 @@ public class TestMech extends TestEntity {
 
     private static Structure getStructure(Mech mech) {
         int type = mech.getStructureType();
-        return new Structure(type, false, mech.getMovementMode());
+        return new Structure(type, mech.isSuperHeavy(), mech.getMovementMode());
     }
 
     private static Armor[] getArmor(Mech mech) {
@@ -144,6 +144,10 @@ public class TestMech extends TestEntity {
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
             weight = 5.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
+            weight = 5.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
+            weight = 4.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             weight = 5.0f;
         }
 
@@ -480,6 +484,9 @@ public class TestMech extends TestEntity {
         // Engine criticals
         boolean engineCorrect = true;
         int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
+        if (mech.isSuperHeavy()) {
+            requiredSideCrits = (int)Math.ceil(((double)requiredSideCrits)/2.0f);
+        }
         if ((requiredSideCrits != mech.getNumberOfCriticals(
                 CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT))
                 || (requiredSideCrits != mech.getNumberOfCriticals(
@@ -487,7 +494,11 @@ public class TestMech extends TestEntity {
                         Mech.LOC_RT))) {
             engineCorrect = false;
         }
-        if (engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length != mech
+        int requiredCTCrits = engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length;
+        if (mech.isSuperHeavy()) {
+            requiredCTCrits = (int)Math.ceil(((double)requiredCTCrits)/2.0f);
+        }
+        if (requiredCTCrits != mech
                 .getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {
             engineCorrect = false;
@@ -511,7 +522,7 @@ public class TestMech extends TestEntity {
         boolean correct = true;
         for (int loc = 0; loc < mech.locations(); loc++) {
             if (loc == Mech.LOC_HEAD) {
-                if (mech.getOArmor(Mech.LOC_HEAD) > 9) {
+                if (((mech.getOArmor(Mech.LOC_HEAD) > 9) && !mech.isSuperHeavy()) || ((mech.getOArmor(Mech.LOC_HEAD) > 12) && mech.isSuperHeavy())) {
                     buff.append(printArmorLocation(Mech.LOC_HEAD))
                             .append(printArmorLocProp(Mech.LOC_HEAD, 9))
                             .append("\n");

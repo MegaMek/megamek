@@ -1081,10 +1081,12 @@ public class Tank extends Entity {
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:
                 case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     armorMultiplier = 1.5;
                     break;
                 case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
                     armorMultiplier = 1.2;
                     break;
                 default:

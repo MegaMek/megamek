@@ -2311,6 +2311,14 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
+        //super heavy mechs can't climb on buildings
+        if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()
+                && climbMode
+                && game.getBoard().getHex(curPos)
+                .containsTerrain(Terrains.BUILDING)) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
         // anyone who can and does lay mines is legal
         if ((type == MoveStepType.LAY_MINE) && entity.canLayMine()) {
             if (entity instanceof BattleArmor) {
@@ -2432,6 +2440,7 @@ public class MoveStep implements Serializable {
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
+        final boolean isSuperHeavyMech = (parent.getEntity() instanceof Mech) && ((Mech)parent.getEntity()).isSuperHeavy();
         final boolean isMechanizedInfantry = isInfantry
                 && ((Infantry) parent.getEntity()).isMechanized();
         final boolean isProto = parent.getEntity() instanceof Protomech;
@@ -2558,7 +2567,7 @@ public class MoveStep implements Serializable {
                     && (destHex.terrainLevel(Terrains.BLDG_ELEV) > parent
                             .getEntity().height())) {
                 mp += 0;
-            } else if (!isInfantry) {
+            } else if (!isInfantry && !isSuperHeavyMech ) {
                 if (!isProto) {
                     // non-protos pay extra according to the building type
                     mp += bldg.getType();

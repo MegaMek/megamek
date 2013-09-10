@@ -501,6 +501,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
             }
+            if ((te instanceof Mech) && ((Mech)te).isSuperHeavy()) {
+                toHit.addModifier(-1, "target is superheavy mech");
+            }
 
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
@@ -510,6 +513,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             if (te instanceof Tank) {
                 toHit.addModifier(-2, "target is vehicle");
+            }
+            if ((te instanceof Mech) && ((Mech)te).isSuperHeavy()) {
+                toHit.addModifier(-1, "target is superheavy mech");
             }
 
             // If the defender carries mechanized BA, they can fight off the
@@ -549,8 +555,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
                 // Micro bombs use anti-mech skill
-                return new ToHitData(ae.getCrew().getPiloting(),
+                toHit = new ToHitData(ae.getCrew().getPiloting(),
                         "anti-mech skill");
+                if ((te instanceof Mech) && ((Mech)te).isSuperHeavy()) {
+                    toHit.addModifier(-1, "target is superheavy mech");
+                }
+                return toHit;
             }
             return new ToHitData(TargetRoll.IMPOSSIBLE, "out of range");
         }
@@ -636,6 +646,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
+        }
+
+        if ((te instanceof Mech) && ((Mech)te).isSuperHeavy()) {
+            toHit.addModifier(-1, "target is superheavy mech");
         }
 
         // fatigue
@@ -1086,12 +1100,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(-1, "VDNI");
         }
 
-        if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
+        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
             if (ae.getCrew().getOptions().booleanOption("pl_masc")
-                    && (ae.moved == EntityMovementType.MOVE_WALK || ae.moved == EntityMovementType.MOVE_RUN)) {
+                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
                 toHit.addModifier(+1, "PL-MASC");
             }
 
@@ -1801,7 +1815,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 if (game.getOptions().booleanOption("tacops_partial_cover")) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(los.getTargetCover());                    
+                    toHit.setCover(los.getTargetCover());
                 } else {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
@@ -1814,10 +1828,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
                 toHit.setCoverLocSecondary(los.getCoverLocSecondary());
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
-                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());                
+                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
             }
             // XXX what to do about GunEmplacements with partial cover?
-            //    Only 'mechs can have partial cover - Arlith 
+            //    Only 'mechs can have partial cover - Arlith
         }
 
         // add penalty for called shots and change hit table, if necessary
@@ -2112,7 +2126,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && ae.isAirborne()) {
             return "Airborne units cannot make direct-Fire artillery attacks";
         }
-        
+
         if (isArtilleryDirect
                 && (Compute.effectiveDistance(game, ae, target) <= 6)) {
             return "Direct-Fire artillery attacks impossible at range <= 6";
@@ -2713,7 +2727,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Indirect fire option not enabled";
         }
 
-        if (isIndirect 
+        if (isIndirect
                 && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, attackerId, target).canSee()
@@ -3199,11 +3213,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (boardRange > wtype.getLongRange()) {
                 return "Indirect artillery attack out of range";
             }
-            if ((distance <= 17 && !ae.isAirborne())
+            if (((distance <= 17) && !ae.isAirborne())
                     && !(losMods.getValue() == TargetRoll.IMPOSSIBLE)) {
                 return "Cannot fire indirectly at range <=17 hexes unless no LOS.";
             }
-            if(ae.isAirborne() && ae.getAltitude() >= 10) {
+            if(ae.isAirborne() && (ae.getAltitude() >= 10)) {
                 return "Cannot fire indirectly at altitude 10";
             }
             if (isHoming) {

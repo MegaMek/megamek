@@ -273,6 +273,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
                 inSameBuilding));
 
+        if ((ae instanceof Mech) && ((Mech)ae).isSuperHeavy()) {
+            toHit.addModifier(+1, "attacker is superheavy mech");
+        }
+
         // attacker is spotting
         if (ae.isSpotting()) {
             toHit.addModifier(+1, "attacker is spotting");

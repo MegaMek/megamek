@@ -320,10 +320,19 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 0;
         case Terrains.RUBBLE:
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return 0;
+            }
             return 1;
         case Terrains.WOODS:
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return level - 1;
+            }
             return level;
         case Terrains.JUNGLE:
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return level;
+            }
             return level + 1;
         case Terrains.SNOW:
             if (level == 2) {
@@ -367,7 +376,13 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.RAPIDS:
         case Terrains.ROUGH:
             if (level == 2) {
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return 1;
+                }
                 return 2;
+            }
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return 0;
             }
             return 1;
         case Terrains.SAND:

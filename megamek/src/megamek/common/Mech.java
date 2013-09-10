@@ -38,6 +38,7 @@ import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.UACWeapon;
 
 /**
@@ -143,14 +144,20 @@ public abstract class Mech extends Entity {
 
     public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
 
+    public static final int COCKPIT_SUPERHEAVY = 8;
+
+    public static final int COCKPIT_SUPERHEAVY_TRIPOD = 9;
+
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
-            "Primitive Industrial Cockpit" };
+            "Primitive Industrial Cockpit", "Superheavy Cockpit",
+            "Superheavy Tripod Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
-            "Primitive", "Primitive Industrial" };
+            "Primitive", "Primitive Industrial", "Superheavy",
+            "Superheavy Tripod" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -1275,10 +1282,10 @@ public abstract class Mech extends Entity {
         jumpType = JUMP_NONE;
         for (Mounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED) &&
-                        m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                if (m.getType().hasSubType(MiscType.S_IMPROVED)
+                        && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE_IMPROVED;
-                }else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                } else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else if (m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE;
@@ -1315,7 +1322,7 @@ public abstract class Mech extends Entity {
                 return engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
             case JUMP_PROTOTYPE_IMPROVED:
                 // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
-                return Math.max(6, engine.getJumpHeat(movedMP*2));
+                return Math.max(6, engine.getJumpHeat(movedMP * 2));
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
             case JUMP_NONE:
@@ -1380,7 +1387,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int height() {
-        return isProne() ? 0 : 1;
+        return isProne() ? 0 : isSuperHeavy() ? 2 : 1;
     }
 
     /**
@@ -1546,10 +1553,11 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getHeatCapacity() {
-        return getHeatCapacity(true);
+        return getHeatCapacity(true, true);
     }
 
-    public int getHeatCapacity(boolean includePartialWing) {
+    public int getHeatCapacity(boolean includePartialWing,
+            boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
 
@@ -1584,6 +1592,10 @@ public abstract class Mech extends Entity {
                 includePartialWing = false; // Only count the partial wing bonus
                                             // once.
             }
+        }
+        if (includeRadicalHeatSink
+                && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += Math.ceil(getActiveSinks() * 0.4);
         }
 
         return capacity;
@@ -2743,6 +2755,9 @@ public abstract class Mech extends Entity {
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             slots = 1;
         }
+        if (isSuperHeavy()) {
+            slots = (int) Math.ceil(((double) slots / 2.0f));
+        }
         // gauss and AC weapons on omni arms means no arm actuators, so we
         // remove them
         if (isOmni()
@@ -2836,11 +2851,16 @@ public abstract class Mech extends Entity {
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:
                 case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     armorMultiplier = 1.5;
                     break;
                 case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
                     armorMultiplier = 1.2;
+                    break;
+                case EquipmentType.T_ARMOR_HEAT_DISSIPATING:
+                    armorMultiplier = 1.1;
                     break;
                 default:
                     armorMultiplier = 1.0;
@@ -2849,6 +2869,12 @@ public abstract class Mech extends Entity {
 
             if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
                 armorMultiplier += 0.2;
+            }
+            if (countWorkingMisc(MiscType.F_HARJEL_II, loc) > 0) {
+                armorMultiplier *= 1.1;
+            }
+            if (countWorkingMisc(MiscType.F_HARJEL_III, loc) > 0) {
+                armorMultiplier *= 1.2;
             }
 
             // BV for torso mounted cockpit.
@@ -2908,7 +2934,8 @@ public abstract class Mech extends Entity {
 
         // total internal structure
         double internalMultiplier = 1.0;
-        if ((getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) || (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE)) {
+        if ((getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL)
+                || (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE)) {
             internalMultiplier = 0.5;
         } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
             internalMultiplier = 2.0;
@@ -3001,6 +3028,8 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_CHAFF_POD)
+                            || etype.hasFlag(MiscType.F_HARJEL_II)
+                            || etype.hasFlag(MiscType.F_HARJEL_III)
                             || etype.hasFlag(MiscType.F_SPIKES) || (etype
                             .hasFlag(MiscType.F_CLUB) && (etype
                             .hasSubType(MiscType.S_SHIELD_LARGE)
@@ -3097,12 +3126,6 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             }
-            // PPC caps count as 1 for each crit
-            if ((etype instanceof MiscType)
-                    && etype.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && (mounted.getLinked() != null)) {
-                toSubtract = 1;
-            }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
@@ -3154,6 +3177,7 @@ public abstract class Mech extends Entity {
                     || (etype instanceof CLImprovedHeavyLargeLaser)
                     || (etype instanceof CLImprovedHeavyMediumLaser)
                     || (etype instanceof CLImprovedHeavySmallLaser)
+                    || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)) {
                 toSubtract = 1;
             }
@@ -3184,12 +3208,6 @@ public abstract class Mech extends Entity {
                     && (etype.hasFlag(WeaponType.F_B_POD) || etype
                             .hasFlag(WeaponType.F_M_POD))) {
                 toSubtract = 0;
-            }
-
-            // coolant pods subtract 1 each
-            if ((etype instanceof AmmoType)
-                    && (((AmmoType) etype).getAmmoType() == AmmoType.T_COOLANT_POD)) {
-                toSubtract = 1;
             }
 
             // we subtract per critical slot
@@ -4202,6 +4220,8 @@ public abstract class Mech extends Entity {
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)
                     || mtype.hasFlag(MiscType.F_SPIKES)
+                    || mtype.hasFlag(MiscType.F_HARJEL_II)
+                    || mtype.hasFlag(MiscType.F_HARJEL_III)
                     || (mtype.hasFlag(MiscType.F_CLUB) && (mtype
                             .hasSubType(MiscType.S_SHIELD_LARGE)
                             || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype
@@ -5634,6 +5654,12 @@ public abstract class Mech extends Entity {
             case COCKPIT_PRIMITIVE_INDUSTRIAL:
                 inName = "COCKPIT_PRIMITIVE_INDUSTRIAL";
                 break;
+            case COCKPIT_SUPERHEAVY:
+                inName = "COCKPIT_SUPERHEAVY";
+                break;
+            case COCKPIT_SUPERHEAVY_TRIPOD:
+                inName = "COCKPIT_SUPERHEAVY_TRIPOD";
+                break;
             default:
                 inName = "COCKPIT_UNKNOWN";
         }
@@ -5731,7 +5757,8 @@ public abstract class Mech extends Entity {
                         : "");
         sb.append(newLine);
         sb.append("Structure:");
-        sb.append(EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(structureTechLevel)));
+        sb.append(EquipmentType.getStructureTypeName(getStructureType(),
+                TechConstants.isClan(structureTechLevel)));
         sb.append(newLine);
 
         sb.append("Myomer:");
@@ -5798,7 +5825,9 @@ public abstract class Mech extends Entity {
         for (int element : MtfFile.locationOrder) {
             sb.append(getLocationAbbr(element)).append(" Armor:");
             if (hasPatchworkArmor()) {
-                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), isClan()))
+                sb.append(
+                        EquipmentType.getArmorTypeName(getArmorType(element),
+                                isClan()))
                         .append('(')
                         .append(TechConstants
                                 .getTechName(getArmorTechLevel(element)))
@@ -6128,14 +6157,16 @@ public abstract class Mech extends Entity {
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
-        if (getEmptyCriticals(LOC_CT) < 4) {
+        if (getEmptyCriticals(LOC_CT) < (isSuperHeavy() ? 2 : 4)) {
             return false;
         }
         addCompactGyro();
-        addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
-        addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_GYRO));
+        if (!isSuperHeavy()) {
+            addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+            addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+        }
         setGyroType(GYRO_STANDARD);
         return true;
     }
@@ -6218,7 +6249,6 @@ public abstract class Mech extends Entity {
                         CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
-
         int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
         if ((getEmptyCriticals(LOC_LT) < sideSlots.length)
                 || (getEmptyCriticals(LOC_RT) < sideSlots.length) || !success) {
@@ -6398,8 +6428,51 @@ public abstract class Mech extends Entity {
             return false;
         }
         for (Mounted mounted : getMisc()) {
+            if ((mounted.getLocation() == loc)
+                    && mounted.isReady()
+                    && (mounted.getType().hasFlag(MiscType.F_HARJEL)
+                            || mounted.getType().hasFlag(MiscType.F_HARJEL_II) || mounted
+                            .getType().hasFlag(MiscType.F_HARJEL_III))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does this mech have an undamaged HarJel system in this location?
+     *
+     * @param loc
+     *            the <code>int</code> location to check
+     * @return a <code>boolean</code> value indicating a present HarJel system
+     */
+    public boolean hasHarJelIIIn(int loc) {
+        if (loc == Mech.LOC_HEAD) {
+            return false;
+        }
+        for (Mounted mounted : getMisc()) {
             if ((mounted.getLocation() == loc) && mounted.isReady()
-                    && mounted.getType().hasFlag(MiscType.F_HARJEL)) {
+                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_II))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does this mech have an undamaged HarJel system in this location?
+     *
+     * @param loc
+     *            the <code>int</code> location to check
+     * @return a <code>boolean</code> value indicating a present HarJel system
+     */
+    public boolean hasHarJelIIIIn(int loc) {
+        if (loc == Mech.LOC_HEAD) {
+            return false;
+        }
+        for (Mounted mounted : getMisc()) {
+            if ((mounted.getLocation() == loc) && mounted.isReady()
+                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_III))) {
                 return true;
             }
         }
@@ -7801,8 +7874,13 @@ public abstract class Mech extends Entity {
         }
         return super.getInternal(loc);
     }
-    
-    public long getEntityType(){
+
+    public boolean isSuperHeavy() {
+        return weight > 100;
+    }
+
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_MECH;
     }
 }

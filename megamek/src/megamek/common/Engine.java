@@ -52,6 +52,7 @@ public class Engine implements Serializable {
     public final static int CLAN_ENGINE = 0x1;
     public final static int TANK_ENGINE = 0x2;
     public final static int LARGE_ENGINE = 0x4;
+    public final static int SUPERHEAVY_ENGINE = 0x8;
 
     // types
     public final static int COMBUSTION_ENGINE = 0;
@@ -116,7 +117,7 @@ public class Engine implements Serializable {
      * @return true if the engine is useable.
      */
     private boolean isValidEngine() {
-        if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE))) {
+        if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE |SUPERHEAVY_ENGINE))) {
             problem.append("Flags:" + engineFlags);
             return false;
         }
@@ -409,24 +410,54 @@ public class Engine implements Serializable {
      */
     public int[] getCenterTorsoCriticalSlots(int gyroType) {
         if (engineType == COMPACT_ENGINE) {
-            int[] slots = { 0, 1, 2 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1 };
+            } else {
+                slots = new int[]{ 0, 1, 2 };
+            }
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
             if (gyroType == Mech.GYRO_COMPACT) {
-                int[] slots = { 0, 1, 2, 5, 6, 7, 8, 9 };
+                int[] slots;
+                if (hasFlag(SUPERHEAVY_ENGINE)) {
+                    slots = new int[]{ 0, 1, 2, 5 };
+                } else {
+                    slots = new int[]{ 0, 1, 2, 5, 6, 7, 8, 9 };
+                }
                 return slots;
             }
-            int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1, 2, 7 };
+            } else {
+                slots = new int[]{ 0, 1, 2, 7, 8, 9, 10, 11 };
+            }
             return slots;
         } else {
             if (gyroType == Mech.GYRO_COMPACT) {
-                int[] slots = { 0, 1, 2, 5, 6, 7 };
+                int[] slots;
+                if (hasFlag(SUPERHEAVY_ENGINE)) {
+                    slots = new int[]{ 0, 1, 2 };
+                } else {
+                    slots = new int[]{ 0, 1, 2, 5, 6, 7 };
+                }
                 return slots;
             } else if (gyroType == Mech.GYRO_XL) {
-                int[] slots = { 0, 1, 2, 9, 10, 11 };
+                int[] slots;
+                if (hasFlag(SUPERHEAVY_ENGINE)) {
+                    slots = new int[]{ 0, 1, 2 };
+                } else {
+                    slots = new int[]{ 0, 1, 2, 9, 10, 11 };
+                }
                 return slots;
             } else {
-                int[] slots = { 0, 1, 2, 7, 8, 9 };
+                int[] slots;
+                if (hasFlag(SUPERHEAVY_ENGINE)) {
+                    slots = new int[]{ 0, 1, 2 };
+                } else {
+                    slots = new int[]{ 0, 1, 2, 7, 8, 9 };
+                }
                 return slots;
             }
         }
@@ -440,16 +471,36 @@ public class Engine implements Serializable {
     public int[] getSideTorsoCriticalSlots() {
         if ((engineType == LIGHT_ENGINE)
                 || ((engineType == XL_ENGINE) && hasFlag(CLAN_ENGINE))) {
-            int[] slots = { 0, 1 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0 };
+            } else {
+                slots = new int[]{ 0, 1 };
+            }
             return slots;
         } else if (engineType == XL_ENGINE) {
-            int[] slots = { 0, 1, 2 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1 };
+            } else {
+                slots = new int[]{ 0, 1, 2 };
+            }
             return slots;
         } else if ((engineType == XXL_ENGINE) && hasFlag(CLAN_ENGINE)) {
-            int[] slots = { 0, 1, 2, 3 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1 };
+            } else {
+                slots = new int[]{ 0, 1, 2, 3 };
+            }
             return slots;
         } else if (engineType == XXL_ENGINE) {
-            int[] slots = { 0, 1, 2, 3, 4, 5 };
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1, 2 };
+            } else {
+                slots = new int[]{ 0, 1, 2, 3, 4, 5 };
+            }
             return slots;
         } else {
             int[] slots = {};

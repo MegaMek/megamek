@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
@@ -155,6 +157,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
         tableUnits.addKeyListener(this);
+        tableUnits.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
         panelMekView = new MechViewPanel();
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
@@ -629,10 +633,12 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
      @Override
      public void setVisible(boolean visible) {
-         GUIPreferences guip = GUIPreferences.getInstance();
-         comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
-         comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
-         comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
+         if (visible){             
+             GUIPreferences guip = GUIPreferences.getInstance();
+             comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
+             comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
+             comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
+         }
          asd.clearValues();
          searchFilter=null;
          btnResetSearch.setEnabled(false);
@@ -640,6 +646,16 @@ public class MechSelectorDialog extends JDialog implements Runnable,
          //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
          filterUnits();
          super.setVisible(visible);
+     }
+     
+     protected void processWindowEvent(WindowEvent e){
+         super.processWindowEvent(e);         
+         if (e.getID() == WindowEvent.WINDOW_DEACTIVATED){
+             GUIPreferences guip = GUIPreferences.getInstance();
+             guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
+             guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
+             guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
+         }
      }
 
 
@@ -774,16 +790,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         } else if (ev.getSource().equals(btnSelect)) {
             select(false);
         } else if (ev.getSource().equals(btnSelectClose)) {
-            GUIPreferences guip = GUIPreferences.getInstance();
-            guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
-            guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-            guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
             select(true);
         } else if (ev.getSource().equals(btnClose)) {
-            GUIPreferences guip = GUIPreferences.getInstance();
-            guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
-            guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-            guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
             setVisible(false);
         } else if (ev.getSource().equals(btnShowBV)) {
             JEditorPane tEditorPane = new JEditorPane();

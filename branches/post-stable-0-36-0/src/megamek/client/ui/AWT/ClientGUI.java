@@ -107,7 +107,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     private CommonAboutDialog about = null;
     private CommonHelpDialog help = null;
     private CommonSettingsDialog setdlg = null;
-    private String helpFileName = "readme.txt"; //$NON-NLS-1$
+    private String helpFileName = "docs/readme.txt"; //$NON-NLS-1$
 
     // keep me
     ChatterBox cb;

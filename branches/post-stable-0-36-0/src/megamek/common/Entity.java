@@ -761,11 +761,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // IDs
         for (Transporter transport : getTransports()) {
             transport.setGame(game);
-        }
-        // Also set game for each entity "loaded" in this entity.
-        for (Targetable target : getLoadedUnits()) {
-            ((Entity) target).setGame(game);
-        }
+        }        
     }
 
     /**

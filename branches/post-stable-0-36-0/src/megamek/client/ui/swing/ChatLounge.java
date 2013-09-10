@@ -44,6 +44,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -129,6 +130,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private static final long serialVersionUID = 1454736776730903786L;
 
     private JButton butOptions;
+    private JLabel lblMapSummary;
 
     private JTabbedPane panTabs;
     private JPanel panMain;
@@ -187,6 +189,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
     private Set<BoardDimensions> mapSizes = new TreeSet<BoardDimensions>();
+    
+    boolean resetAvailBoardSelection = false;
+    boolean resetSelectedBoards = true;
 
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;
@@ -234,6 +239,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         butOptions = new JButton(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
+        
+        lblMapSummary = new JLabel("");                
 
         butCompact = new JToggleButton(
                 Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
@@ -266,6 +273,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         // layout main thing
         setLayout(new BorderLayout());
+        
+        refreshMapSummaryLabel();
 
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             add(panTabs, BorderLayout.CENTER);
@@ -580,15 +589,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
 
+        JPanel panel1 = new JPanel(new GridBagLayout());
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0; c.gridy = 0;
+        c.weightx = 1.0; c.weighty = 0.0;
+        c.anchor = GridBagConstraints.WEST;
+        panel1.add(lblMapSummary,c);
         c.fill = GridBagConstraints.VERTICAL;
+        c.gridx = 1; c.gridy = 0;
+        c.weightx = 0; c.weighty = 0.0; 
+        c.anchor = GridBagConstraints.NORTHEAST;
+        panel1.add(butCompact,c);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.NORTHEAST;
-        gridbag.setConstraints(butCompact, c);
-        panMain.add(butCompact);
+        panMain.add(panel1,c);
 
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
@@ -751,9 +771,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisBoardsSelected = new JList(new DefaultListModel());
+        lisBoardsSelected.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lisBoardsAvailable = new JList(new DefaultListModel());
         refreshBoardsSelected();
         refreshBoardsAvailable();
+        lisBoardsAvailable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lisBoardsAvailable.addMouseListener(this);
         lisBoardsAvailable.addListSelectionListener(this);
 
@@ -1056,21 +1078,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void refreshBoardsAvailable() {
-        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
+        int selectedRow = lisBoardsAvailable.getSelectedIndex();
+        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();        
         for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
             ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i
                     .next());
         }
+        if (resetAvailBoardSelection){
+            lisBoardsAvailable.setSelectedIndex(0);
+            resetAvailBoardSelection = false;
+        } else {
+            lisBoardsAvailable.setSelectedIndex(selectedRow);
+        }
     }
 
     private void refreshBoardsSelected() {
+        int selectedRow = lisBoardsSelected.getSelectedIndex();
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
             ((DefaultListModel) lisBoardsSelected.getModel())
                     .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
-        lisBoardsSelected.setSelectedIndex(0);
+        lisBoardsSelected.setSelectedIndex(selectedRow);
+        if (resetSelectedBoards){
+            lisBoardsSelected.setSelectedIndex(0);
+            resetSelectedBoards = false;
+        } else {
+            lisBoardsSelected.setSelectedIndex(selectedRow);
+        }
     }
 
     /**
@@ -1940,6 +1976,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             c = clientgui.getClient();
         }
         Player new_owner = c.game.getPlayer(player_id);
+        // We if the unit is switching teams, we need to unload it
+        if (e.getOwner().getTeam() != new_owner.getTeam()){
+            List<Entity> loadedUnits = e.getLoadedUnits();
+            for (Entity loadee : loadedUnits){
+                unloader(loadee);
+            }
+        }
         e.setOwner(new_owner);
         c.sendUpdateEntity(e);
     }    
@@ -2390,6 +2433,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 changeMap((String) lisBoardsAvailable.getSelectedValue());
+                lisBoardsSelected.setSelectedIndex(
+                        lisBoardsSelected.getSelectedIndex()+1);
             }
         } else if (ev.getSource().equals(buttonBoardPreview)) {
             previewGameBoard();
@@ -2405,6 +2450,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             ) {
                 BoardDimensions size = (BoardDimensions) comboMapSizes.getSelectedItem();
                 mapSettings.setBoardSize(size.width(), size.height());
+                resetAvailBoardSelection = true;
+                resetSelectedBoards = true;
                 clientgui.getClient().sendMapSettings(mapSettings);
             }
         } else if (ev.getSource().equals(chkRotateBoard)
@@ -2476,6 +2523,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshSpaceGround();
         refreshBoardsSelected();
         refreshBoardsAvailable();
+        refreshMapSummaryLabel();
+    }
+    
+    public void refreshMapSummaryLabel(){
+        String txt = Messages.getString("ChatLounge.MapSummary");
+        txt = txt + " " + 
+                mapSettings.getBoardWidth() * mapSettings.getMapWidth() + 
+                " x " + 
+                mapSettings.getBoardHeight() * mapSettings.getMapHeight();
+        if (chkIncludeGround.isSelected()){
+            txt = txt + " " + (String)comboMapType.getSelectedItem();
+        } else {
+            txt = txt + " " + "Space Map";
+        } 
+        lblMapSummary.setText(txt);
     }
 
     @Override

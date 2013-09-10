@@ -20,6 +20,26 @@ v0.36.0 post-stable
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size
++ Data: Fixes to Mechset and Unit fixes.
++ Bug [#3838]: Turn button greyed out on dropship deployment
++ Bug [#3842]: Issues with ChatLounge Change Owner menu item
++ Bug [#3840]: NPE on entity.setGame 
++ Refactor license and readme files into the docs folder & code references to them
++ RFE: Adjusted the MechSelectorDialog presets for unit type, weight, and rules
++ Bug: MechSelectorDialog combo box selections not saved if "x" button is used 
+    to close dialog
++ RFE: ChatLounge 'Select Maps' usability fixes: the selected map now doesn't 
+    change when options are updated, the selected map selection also increases by 
+    one when a new map is selected.
++ Bug [#3845]: NPE after clicking done on an ejected MW that had been killed in 
+    a dropship liftoff
++ Bug [#3846]: RC1 hangs when firing on an infantry platoon in a building
++ Bug: Board.setHex does not update min/max elevations
++ Bug [#3843]: Crashed Dropships Not Displacing Units Properly
++ RFE: Added a text label to the Selected Units panel in ChatLounge that gives 
+    a brief summary of the current map
++ RFE: Removed the advance-a-row on enter behavior of the JTable in the 
+    MechSelectorDialog
 
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)

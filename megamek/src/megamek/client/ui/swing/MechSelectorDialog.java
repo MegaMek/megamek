@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
@@ -155,6 +156,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
         tableUnits.addKeyListener(this);
+        tableUnits.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
         panelMekView = new MechViewPanel();
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));

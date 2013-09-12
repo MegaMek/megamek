@@ -3629,8 +3629,8 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
         misc.setInternalName(EquipmentType.getStructureTypeName(
                 T_STRUCTURE_ENDO_STEEL, false));
-        misc.addLookupName("IS Endo Steel");
         misc.addLookupName("IS EndoSteel");
+        misc.addLookupName("IS Endo-Steel");
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 14;
@@ -3702,7 +3702,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
         misc.setInternalName(EquipmentType.getStructureTypeName(
                 T_STRUCTURE_ENDO_STEEL, true));
-        misc.addLookupName("Clan Endo Steel");
+        misc.addLookupName("Clan Endo-Steel");
         misc.addLookupName("Clan EndoSteel");
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.tonnage = TONNAGE_VARIABLE;

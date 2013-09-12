@@ -55,6 +55,10 @@ public class MechSummary implements Serializable {
     private int totalArmor;
     private int totalInternal;
     private int cockpitType;
+    private String engineName;
+    private int gyroType;
+    private String myomerName;
+    
 
     /** Stores the type of internal structure on this unit **/
     private int internalsType;
@@ -387,6 +391,30 @@ public class MechSummary implements Serializable {
         return cockpitType;
     }
 
+
+    public String getEngineName() {
+        return engineName;
+    }
+
+    public void setEngineName(String engineName) {
+        this.engineName = engineName;
+    }
+
+    public int getGyroType() {
+        return gyroType;
+    }
+
+    public void setGyroType(int gyroType) {
+        this.gyroType = gyroType;
+    }
+
+    public String getMyomerName() {
+        return myomerName;
+    }
+
+    public void setMyomerName(String myomerName) {
+        this.myomerName = myomerName;
+    }
 
     @Override
     public boolean equals(Object other) {

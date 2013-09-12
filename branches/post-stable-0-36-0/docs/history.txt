@@ -16,6 +16,8 @@ v0.36.0 post-stable
   goal, the path is finished with a straight-line planner.  Fixing this allows 
   the A* planner to work for longer and hence find much better paths 
   (although it's still has a maximu time limit).
++ Feature: Added engine name, gyro type and myomer name to MechSummary and set 
+  these values when the summaries are created
 
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)

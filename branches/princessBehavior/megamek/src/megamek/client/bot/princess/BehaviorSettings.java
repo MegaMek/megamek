@@ -27,6 +27,7 @@ import java.util.Set;
  * Created with IntelliJ IDEA.
  *
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @version %Id%
  * @since: 8/17/13 10:47 PM
  */
 public class BehaviorSettings {

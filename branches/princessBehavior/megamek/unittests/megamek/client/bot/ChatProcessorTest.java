@@ -29,9 +29,10 @@ import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Deric
- * Date: 8/17/13
- * Time: 9:32 AM
+ *
+ * @version %Id%
+ * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 9/6/2013
  */
 @RunWith(JUnit4.class)
 public class ChatProcessorTest {

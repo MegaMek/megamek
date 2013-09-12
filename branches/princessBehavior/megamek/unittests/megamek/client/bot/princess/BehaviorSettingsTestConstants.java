@@ -17,6 +17,7 @@ package megamek.client.bot.princess;
  * Created with IntelliJ IDEA.
  *
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @version %Id%
  * @since: 8/31/13 1:10 PM
  */
 public class BehaviorSettingsTestConstants {

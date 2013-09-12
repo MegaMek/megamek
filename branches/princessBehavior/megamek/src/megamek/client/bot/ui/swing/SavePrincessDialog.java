@@ -71,7 +71,6 @@ public class SavePrincessDialog extends JDialog implements ActionListener {
         setResizable(false);
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         if (yesButton.equals(e.getSource())) {
             save = true;

@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.bot.princess;
 
 import junit.framework.TestCase;
@@ -17,7 +30,12 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 
 /**
- * @author Deric Page (deric.page@nisc.coop) (ext 2335)
+ * PhysicalInfo is a wrapper around a PhysicalAttackAction that includes
+ * probability to hit and expected damage
+ *
+ * @version %Id%
+ * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since: 9/12/13 8:16 PM
  */
 @RunWith(JUnit4.class)
 public class PhysicalInfoTest {

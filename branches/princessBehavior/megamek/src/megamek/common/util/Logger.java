@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public class Logger {
 
-    private static LogLevel verbosity;
+    private static LogLevel verbosity = LogLevel.ERROR;
 
     public static LogLevel getVerbosity() {
         return verbosity;

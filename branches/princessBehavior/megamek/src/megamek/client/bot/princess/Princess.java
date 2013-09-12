@@ -16,11 +16,8 @@ package megamek.client.bot.princess;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -28,7 +25,6 @@ import java.util.Vector;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
-import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.bot.princess.PathRanker.RankedPath;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -181,7 +177,7 @@ public class Princess extends BotClient {
             // entity that can
             // act this turn
             // make sure weapons are loaded
-            fire_control.loadAmmo(shooter, game);
+            fire_control.loadAmmo(shooter);
             FireControl.FiringPlan plan = fire_control.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
@@ -271,7 +267,7 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn
             Entity first_entity = game.getFirstEntity(getMyTurn());
             Entity hitter = first_entity;
-            FireControl.PhysicalInfo best_attack = null;
+            PhysicalInfo bestAttack = null;
             do {
                 Logger.log(getClass(),
                            METHOD_NAME,
@@ -284,50 +280,47 @@ public class Princess extends BotClient {
                     if (e.getPosition() == null) {
                         continue; // Skip enemies not on the board.
                     }
-                    FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
+                    PhysicalInfo right_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
-                    fire_control.calculateUtility(right_punch);
-                    if (right_punch.utility > 0) {
-                        if ((best_attack == null)
-                            || (right_punch.utility > best_attack.utility)) {
-                            best_attack = right_punch;
+                    if (right_punch.getUtility().intValue() > 0) {
+                        if ((bestAttack == null)
+                            || (right_punch.getUtility().compareTo(bestAttack.getUtility())) > 0) {
+                            bestAttack = right_punch;
                         }
                     }
-                    FireControl.PhysicalInfo left_punch = new FireControl.PhysicalInfo(
+                    PhysicalInfo left_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
-                    fire_control.calculateUtility(left_punch);
-                    if (left_punch.utility > 0) {
-                        if ((best_attack == null)
-                            || (left_punch.utility > best_attack.utility)) {
-                            best_attack = left_punch;
+                    if (left_punch.getUtility().intValue() > 0) {
+                        if ((bestAttack == null)
+                            || (left_punch.getUtility().compareTo(bestAttack.getUtility())) > 0) {
+                            bestAttack = left_punch;
                         }
                     }
-                    FireControl.PhysicalInfo right_kick = new FireControl.PhysicalInfo(
+                    PhysicalInfo right_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_KICK, game);
-                    if (right_kick.utility > 0) {
-                        if ((best_attack == null)
-                            || (right_kick.utility > best_attack.utility)) {
-                            best_attack = right_kick;
+                    if (right_kick.getUtility().intValue() > 0) {
+                        if ((bestAttack == null)
+                            || (right_kick.getUtility().compareTo(bestAttack.getUtility()) > 0)) {
+                            bestAttack = right_kick;
                         }
                     }
-                    FireControl.PhysicalInfo left_kick = new FireControl.PhysicalInfo(
+                    PhysicalInfo left_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_KICK, game);
-                    if (left_kick.getExpectedDamage() > 0) {
-                        if ((best_attack == null)
-                            || (left_kick.utility > best_attack.utility)) {
-                            best_attack = left_kick;
+                    if (left_kick.getUtility().intValue() > 0) {
+                        if ((bestAttack == null)
+                            || (left_kick.getUtility().compareTo(bestAttack.getUtility()) > 0)) {
+                            bestAttack = left_kick;
                         }
                     }
 
                 }
-                if (best_attack != null) {
-                    Logger.log(getClass(), METHOD_NAME, "Attack is a "
-                                                        + best_attack.attack_type.name());
+                if (bestAttack != null) {
+                    Logger.log(getClass(), METHOD_NAME, "Attack is a " + bestAttack.getAttackType().name());
                 } else {
                     Logger.log(getClass(), METHOD_NAME, "No useful attack to be made");
                 }
-                if (best_attack != null) {
-                    return best_attack.getAsPhysicalOption();
+                if (bestAttack != null) {
+                    return bestAttack.getAsPhysicalOption(this);
                 }
                 hitter = game.getNextEntity(hitter.getId() + 1);
                 // otherwise, check if the next entity can hit something
@@ -573,7 +566,7 @@ public class Princess extends BotClient {
                     .pow(10.0, aggression / 50);
             path_ranker.botbase = this;
             path_searcher.ranker = path_ranker;
-            fire_control = new FireControl(this);
+            fire_control = new FireControl();
             path_ranker.firecontrol = fire_control;
             precognition = new Precognition(this);
             precognition.setGame(game);

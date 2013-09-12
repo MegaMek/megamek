@@ -817,7 +817,7 @@ public abstract class BotClient extends Client {
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc. This has been copied almost wholesale from
-     * Compute.getExpectedDamage; the logfile print commands were removed due to
+     * Compute.calcExpectedDamage; the logfile print commands were removed due to
      * excessive data generated
      */
     private static float getDeployDamage(IGame g, WeaponAttackAction waa) {

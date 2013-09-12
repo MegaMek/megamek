@@ -22,7 +22,6 @@ import java.util.TreeMap;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.FireControl.FiringPlan;
-import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
 import megamek.common.Building;
@@ -311,12 +310,13 @@ public class BasicPathRanker extends PathRanker {
                                                                     (e.getHeatCapacity() - e.heat) + 5, game)
                             .utility;
                     // if they can kick me, and probably hit, they probably will.
-                    FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
+                    PhysicalInfo theirkick = new PhysicalInfo(
                             e, null, p.getEntity(), new EntityState(p),
                             PhysicalAttackType.RIGHT_KICK, game);
-                    if (theirkick.prob_to_hit > 0.5) {
-                        their_damage_potential += theirkick.expected_damage_on_hit
-                                                  * theirkick.prob_to_hit;
+                    if (theirkick.getProbabilityToHit().doubleValue() > 0.5) {
+                        their_damage_potential += theirkick.getExpectedDamageOnHit()
+                                                           .multiply(theirkick.getProbabilityToHit())
+                                                           .doubleValue();
                     }
 
                     // How much damage can I do to them?
@@ -330,12 +330,13 @@ public class BasicPathRanker extends PathRanker {
                     }
                     double my_damage_potential = my_firing_plan.utility;
                     // If I can kick them and probably hit, I probably will
-                    FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                    PhysicalInfo mykick = new PhysicalInfo(
                             p.getEntity(), new EntityState(p), e, null,
                             PhysicalAttackType.RIGHT_KICK, game);
-                    if (mykick.prob_to_hit > 0.5) {
-                        double expected_kick_damage = mykick.expected_damage_on_hit
-                                                      * mykick.prob_to_hit;
+                    if (mykick.getProbabilityToHit().doubleValue() > 0.5) {
+                        double expected_kick_damage = mykick.getExpectedDamageOnHit()
+                                                            .multiply(mykick.getProbabilityToHit())
+                                                            .doubleValue();
                         if (expected_kick_damage > maximum_physical_damage) {
                             maximum_physical_damage = expected_kick_damage;
                         }
@@ -373,13 +374,14 @@ public class BasicPathRanker extends PathRanker {
                 if (my_damage_potential > maximum_damage_done) {
                     maximum_damage_done = my_damage_potential;
                 }
-                FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                PhysicalInfo mykick = new PhysicalInfo(
                         p.getEntity(), new EntityState(p), t, null,
                         PhysicalAttackType.RIGHT_KICK, game);
-                double expected_kick_damage = mykick.expected_damage_on_hit
-                                              * mykick.prob_to_hit;
-                if (expected_kick_damage > maximum_physical_damage) {
-                    maximum_physical_damage = expected_kick_damage;
+                double expectedKickDamage = mykick.getExpectedDamageOnHit()
+                                                  .multiply(mykick.getProbabilityToHit())
+                                                  .doubleValue();
+                if (expectedKickDamage > maximum_physical_damage) {
+                    maximum_physical_damage = expectedKickDamage;
                 }
             }
 

@@ -20,6 +20,9 @@ v0.36.0 post-stable
   these values when the summaries are created
 + Added a tool to create a CSV of MechSummaries for all units in the data files, 
   excluding infantry.  This was requested by Hammer for some MekHQ data work.
++ Feature: Added the ability to specify quirks by chassis as well as 
+  chassis+model.  Now, entries in defaultQuirks.xml don't have to specify a 
+  <model> tag, and if they don't the quirks apply to every specified chassis.
 
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)

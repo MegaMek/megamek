@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -15,71 +16,142 @@
 package megamek.client.ui.swing.util;
 
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author pjm1 <p/> TODO As soon as we get a stable release and we can upgrade
- *         to 1.5 this class should be replaced with a LinkedHashMap<Hex,
- *         Image> and LinkedHashMap<Hex,List<Image>> and the methods should be
- *         reworked to have that take care of all the LRU removal.
+ * An ImageCache that keeps a Hashtable of mapped keys and values.  The cache is
+ * prevented from exceeding a set maximum.  If the cache exceeds its maximum 
+ * size, items are removed based by looking at access times: the items with the
+ * oldest access time are removed first.
+ * 
+ * @author pjm1
+ * @author Arlith
  */
 public class ImageCache<K, V> {
-
+    
+    /**
+     * Default maximum size
+     */
     public static int MAX_SIZE = 20000;
+    
+    /**
+     * Stores the current maximum size
+     */
     private int maxSize;
+    
+    /**
+     * The cache of Key/Value pairs.
+     */
     private Hashtable<K, V> cache;
-    private LinkedList<K> lru = new LinkedList<K>();
+    
+    /**
+     * Keeps track of the access times for each key in the cache.
+     */
+    private HashSet<KeyTimestampPair> times;
 
+    
+    /**
+     * Create a cache with the default maximum size.
+     */
     public ImageCache() {
         cache = new Hashtable<K, V>(MAX_SIZE * 5 / 4, .75f);
+        times = new HashSet<KeyTimestampPair>(MAX_SIZE * 5 / 4, .75f);
         maxSize = MAX_SIZE;
     }
 
+    
     public ImageCache(int max) {
         cache = new Hashtable<K, V>(max * 5 / 4, .75f);
+        times = new HashSet<KeyTimestampPair>(max * 5 / 4, .75f);
         maxSize = max;
     }
 
+    /**
+     * Adds a new key/value pair into the cache.  A timestamp is stored and used
+     * to determine which objects to remove if the cache gets too large.
+     * 
+     * @param key
+     * @param value
+     * @return
+     */
     public synchronized V put(K key, V value) {
         if ((key == null) || (value == null))
             return null;
 
-        if (cache.containsKey(key)) {
-            lru.remove(key);
-        } else {
-            if (cache.size() == maxSize) { // must remove one element
-                K keyToNix = lru.removeFirst();
-                V valToNix = cache.get(key);
-                cache.remove(keyToNix);
-                // Images must be flushed before dereference
-                if (valToNix instanceof Image) {
-                    ((Image) valToNix).flush();
-                } else if (valToNix instanceof List) {
-                    for (Object o : ((List<?>) valToNix)) {
-                        if (o instanceof Image) {
-                            ((Image) o).flush();
-                        }
+        if (cache.size() == maxSize) { // must remove one element
+            System.out.println("!ImageCache Max Size reached!");
+            @SuppressWarnings("unchecked")
+            KeyTimestampPair[] timestamps = 
+                    (KeyTimestampPair[])times.toArray();
+            Arrays.sort(timestamps);
+            K keyToNix = timestamps[0].key;
+            V valToNix = cache.get(key);
+            cache.remove(keyToNix);
+            // Images must be flushed before dereference
+            if (valToNix instanceof Image) {
+                ((Image) valToNix).flush();
+            } else if (valToNix instanceof List) {
+                for (Object o : ((List<?>) valToNix)) {
+                    if (o instanceof Image) {
+                        ((Image) o).flush();
                     }
                 }
             }
-        }
-        lru.addLast(key);
+        }        
         cache.put(key, value);
-
         return value;
     }
 
     public synchronized V get(K key) {
         if (!cache.containsKey(key))
             return null;
-        lru.remove(key);
-        lru.addLast(key);
+        
+        KeyTimestampPair ktp = 
+                new KeyTimestampPair(key,System.currentTimeMillis());        
+        if (times.contains(ktp)){
+            // If the set already contains this key, update the timestmap
+            times.remove(ktp);
+            times.add(ktp);
+        } else {
+            times.add(ktp);
+        }
         return cache.get(key);
     }
 
     public void remove(Object key) {
         cache.remove(key);
+    }
+    
+    /**
+     * Class used to store a key and timestamp
+     * 
+     * @author walczak
+     *
+     */
+    private class KeyTimestampPair implements Comparable<KeyTimestampPair>{
+        public K key;
+        long timestamp;
+
+        public KeyTimestampPair(K k, long ts){
+            key = k;
+            timestamp = ts;
+        }
+
+        @SuppressWarnings("unchecked")
+        public boolean equals(Object o){
+            try {
+                KeyTimestampPair other = (KeyTimestampPair)o;
+                return this.equals(other.key);
+            } catch (Exception e){
+                return false;
+            }
+        }
+        @Override
+        public int compareTo(KeyTimestampPair other) {            
+            return (int)(timestamp - other.timestamp);
+        }
     }
 }

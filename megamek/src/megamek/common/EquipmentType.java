@@ -102,7 +102,7 @@ public class EquipmentType {
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
-            "Endo-Steel", "Endo-Steel Prototype", "Reinforced", "Composite",
+            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive

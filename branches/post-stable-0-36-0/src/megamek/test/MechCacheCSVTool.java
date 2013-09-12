@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import megamek.common.Aero;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MechSummary;
@@ -76,7 +77,11 @@ public class MechCacheCSVTool {
                 // Cockpit Type
                 if (mech.getCockpitType() > 0 && 
                         mech.getCockpitType() < Mech.COCKPIT_STRING.length){
-                    csvLine.append(Mech.COCKPIT_STRING[mech.getCockpitType()]+ ",");
+                    if (mech.getUnitType().equals("Mek")){
+                        csvLine.append(Mech.COCKPIT_STRING[mech.getCockpitType()]+ ",");
+                    } else {
+                        csvLine.append(Aero.COCKPIT_STRING[mech.getCockpitType()]+ ",");
+                    }
                 } else {
                     csvLine.append(mech.getCockpitType()+ ",");
                 }

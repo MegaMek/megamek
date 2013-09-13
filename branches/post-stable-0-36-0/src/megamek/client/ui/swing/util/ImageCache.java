@@ -83,11 +83,14 @@ public class ImageCache<K, V> {
 
         if (cache.size() == maxSize) { // must remove one element
             System.out.println("!ImageCache Max Size reached!");
-            @SuppressWarnings("unchecked")
-            KeyTimestampPair[] timestamps = 
-                    (KeyTimestampPair[])times.toArray();
+            long start = System.currentTimeMillis();
+            Object[] timestamps = 
+                    (Object[])times.toArray();
             Arrays.sort(timestamps);
-            K keyToNix = timestamps[0].key;
+            System.out.println("Sort time: " + (System.currentTimeMillis() - start));
+            
+            @SuppressWarnings("unchecked")
+            K keyToNix = ((KeyTimestampPair)timestamps[0]).key;
             V valToNix = cache.get(key);
             cache.remove(keyToNix);
             // Images must be flushed before dereference

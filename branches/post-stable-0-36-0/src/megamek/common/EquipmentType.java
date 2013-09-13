@@ -74,6 +74,11 @@ public class EquipmentType {
     public static final int T_ARMOR_HEAVY_ALUM = 20;
     public static final int T_ARMOR_LIGHT_ALUM = 21;
     public static final int T_ARMOR_STEALTH_VEHICLE = 22;
+    public static final int T_ARMOR_ANTI_PENETRATIVE_ABLATION = 23;
+    public static final int T_ARMOR_HEAT_DISSIPATING = 24;
+    public static final int T_ARMOR_IMPACT_RESISTANT = 25;
+    public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
+
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -91,10 +96,13 @@ public class EquipmentType {
             "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
             "Heavy Industrial", "Ferro-Lamellor", "Primitive",
             "Electric Discharge ProtoMech", "Ferro-Aluminum",
-            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum", "Vehicular Stealth" };
+            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
+            "Vehicular Stealth", "Anti-Penetrative Ablation",
+            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced" };
+
 
     public static final String[] structureNames = { "Standard", "Industrial",
-            "Endo-Steel", "Endo-Steel Prototype", "Reinforced", "Composite",
+            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive
@@ -105,11 +113,11 @@ public class EquipmentType {
     public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
             15000, 15000, 25000, /* patchwork */0, 50000, 20000, 3000, 75000,
             100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000,
-            25000, 15000, 50000};
+            25000, 15000, 50000, 15000, 25000, 20000, 25000 };
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
             1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1,
-            1.12, 1.24, 1.06, 1};
+            1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 

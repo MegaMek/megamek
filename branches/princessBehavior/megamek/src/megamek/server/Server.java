@@ -1291,7 +1291,7 @@ public class Server implements Runnable {
             entity.newRound(game.getRoundCount());
         }
     }
-    
+
     /**
      * Check a list of entity Ids for doomed entities and destroy those.
      */
@@ -5368,6 +5368,16 @@ public class Server implements Runnable {
             return vReport;
         }
 
+        if (game.getBoard().inAtmosphere()) {
+            r = new Report(9393, Report.PUBLIC);
+            r.indent();
+            r.addDesc(entity);
+            vReport.add(r);
+            entity.setDoomed(true);
+        } else {
+            ((Aero) entity).land();
+        }
+
         // we might hit multiple hexes, if we're a dropship, so we do some
         // checks for all of them
         ArrayList<Coords> coords = new ArrayList<Coords>();
@@ -5558,34 +5568,27 @@ public class Server implements Runnable {
             h.setElevation(crateredElevation);
             sendChangedHex(hitCoords);
 
-            // check for a stacking violation - which should only happen in the
-            // case of
-            // grounded dropships, because they are not moveable
-            if (null != Compute.stackingViolation(game, entity.getId(),
-                                                  hitCoords)) {
-                Coords dest = Compute.getValidDisplacement(game,
-                                                           entity.getId(), hitCoords, Compute.d6() - 1);
-                if (null != dest) {
-                    doEntityDisplacement(entity, hitCoords, dest, null);
-                } else {
-                    // ack! automatic death! Tanks
-                    // suffer an ammo/power plant hit.
-                    // TODO : a Mech suffers a Head Blown Off crit.
-                    vPhaseReport.addAll(destroyEntity(entity,
-                                                      "impossible displacement", entity instanceof Mech,
-                                                      entity instanceof Mech));
-                }
+
+        }
+
+        // check for a stacking violation - which should only happen in the
+        // case of
+        // grounded dropships, because they are not moveable
+        if (null != Compute.stackingViolation(game, entity.getId(),c)) {
+            Coords dest = Compute.getValidDisplacement(game,
+                    entity.getId(), c, Compute.d6() - 1);
+            if (null != dest) {
+                doEntityDisplacement(entity, c, dest, null);
+            } else {
+                // ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                vPhaseReport.addAll(destroyEntity(entity,
+                        "impossible displacement", entity instanceof Mech,
+                        entity instanceof Mech));
             }
         }
-        if (game.getBoard().inAtmosphere()) {
-            r = new Report(9393, Report.PUBLIC);
-            r.indent();
-            r.addDesc(entity);
-            vReport.add(r);
-            entity.setDoomed(true);
-        } else {
-            ((Aero) entity).land();
-        }
+
 
         return vReport;
     }
@@ -17043,6 +17046,9 @@ public class Server implements Runnable {
                                     weightMod = -2;
                                     break;
                             }
+                            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                                weightMod = -4;
+                            }
                             // the weight class PSR modifier is not cumulative
                             damPRD.addModifier(weightMod,
                                                "weight class modifier", false);
@@ -19781,7 +19787,14 @@ public class Server implements Runnable {
                     boolean engineExploded = checkEngineExplosion(te, vDesc,
                                                                   numEngineHits);
 
-                    if (!engineExploded && (numEngineHits > 2)) {
+                    int hitsToDestroy = 3;
+                    if ((te instanceof Mech)
+                            && ((Mech) te).isSuperHeavy()
+                            && (te.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+                        hitsToDestroy = 2;
+                    }
+
+                    if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                         // third engine hit
                         vDesc.addAll(destroyEntity(te, "engine destruction"));
                         if (game.getOptions()
@@ -21936,8 +21949,14 @@ public class Server implements Runnable {
                         int numEngineHits = en.getEngineHits();
                         boolean engineExploded = checkEngineExplosion(en,
                                                                       vDesc, numEngineHits);
+                        int hitsToDestroy = 3;
+                        if ((en instanceof Mech)
+                                && ((Mech) en).isSuperHeavy()
+                                && (en.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+                            hitsToDestroy = 2;
+                        }
 
-                        if (!engineExploded && (numEngineHits > 2)) {
+                        if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
                             // third engine hit
                             vDesc.addAll(destroyEntity(en, "engine destruction"));
                             if (game.getOptions().booleanOption(
@@ -23005,6 +23024,15 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                     return vDesc;
                 }
+                if ((entity instanceof Mech)
+                        && (((Mech) entity).hasHarJelIIIn(loc) ||
+                                ((Mech) entity).hasHarJelIIIIn(loc))) {
+                    r = new Report(6342);
+                    r.subject = entity.getId();
+                    r.indent(3);
+                    vDesc.addElement(r);
+                    target -= 2;
+                }
                 breachroll = Compute.d6(2);
                 r = new Report(6345);
                 r.subject = entity.getId();
@@ -23082,97 +23110,106 @@ public class Server implements Runnable {
             vDesc.addAll(destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
-        // equipment and crits will be marked in applyDamage?
+        if (entity instanceof Mech) {
+            Mech mech = (Mech) entity;
+            // equipment and crits will be marked in applyDamage?
 
-        // equipment marked missing
-        for (Mounted mounted : entity.getEquipment()) {
-            if (mounted.getLocation() == loc) {
-                mounted.setBreached(true);
+            // equipment marked missing
+            for (Mounted mounted : entity.getEquipment()) {
+                if (mounted.getLocation() == loc) {
+                    mounted.setBreached(true);
+                }
             }
-        }
-        // all critical slots set as useless
-        for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
-            final CriticalSlot cs = entity.getCritical(loc, i);
-            if (cs != null) {
-                // for every undamaged actuator destroyed by breaching,
-                // we make a PSR (see bug 1040858)
-                if (entity.locationIsLeg(loc)) {
-                    if (cs.isHittable()) {
-                        switch (cs.getIndex()) {
-                            case Mech.ACTUATOR_UPPER_LEG:
-                            case Mech.ACTUATOR_LOWER_LEG:
-                            case Mech.ACTUATOR_FOOT:
-                                // leg/foot actuator piloting roll
-                                game.addPSR(new PilotingRollData(
-                                        entity.getId(), 1,
-                                        "leg/foot actuator hit"));
-                                break;
-                            case Mech.ACTUATOR_HIP:
-                                // hip piloting roll (at +0, because we get the
-                                // +2
-                                // anyway because the location is breached
-                                // phase report will look a bit weird, but the
-                                // roll
-                                // is correct
-                                game.addPSR(new PilotingRollData(
-                                        entity.getId(), 0, "hip actuator hit"));
-                                break;
+            // all critical slots set as useless
+            for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+                final CriticalSlot cs = entity.getCritical(loc, i);
+                if (cs != null) {
+                    // for every undamaged actuator destroyed by breaching,
+                    // we make a PSR (see bug 1040858)
+                    if (entity.locationIsLeg(loc)) {
+                        if (cs.isHittable()) {
+                            switch (cs.getIndex()) {
+                                case Mech.ACTUATOR_UPPER_LEG:
+                                case Mech.ACTUATOR_LOWER_LEG:
+                                case Mech.ACTUATOR_FOOT:
+                                    // leg/foot actuator piloting roll
+                                    game.addPSR(new PilotingRollData(entity
+                                            .getId(), 1,
+                                            "leg/foot actuator hit"));
+                                    break;
+                                case Mech.ACTUATOR_HIP:
+                                    // hip piloting roll (at +0, because we get
+                                    // the
+                                    // +2
+                                    // anyway because the location is breached
+                                    // phase report will look a bit weird, but
+                                    // the
+                                    // roll
+                                    // is correct
+                                    game.addPSR(new PilotingRollData(entity
+                                            .getId(), 0, "hip actuator hit"));
+                                    break;
+                            }
                         }
                     }
+                    cs.setBreached(true);
                 }
-                cs.setBreached(true);
             }
-        }
 
-        // Check location for engine/cockpit breach and report accordingly
-        if (loc == Mech.LOC_CT) {
-            vDesc.addAll(destroyEntity(entity, "hull breach"));
-            if (game.getOptions().booleanOption("auto_abandon_unit")) {
-                vDesc.addAll(abandonEntity(entity));
+            // Check location for engine/cockpit breach and report accordingly
+            if (loc == Mech.LOC_CT) {
+                vDesc.addAll(destroyEntity(entity, "hull breach"));
+                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                    vDesc.addAll(abandonEntity(entity));
+                }
             }
-        }
-        if (loc == Mech.LOC_HEAD) {
-            entity.getCrew().setDoomed(true);
-            vDesc.addAll(destroyEntity(entity, "hull breach"));
-            if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
-                r = new Report(6355);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                vDesc.addElement(r);
-            } else {
-                r = new Report(6360);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                vDesc.addElement(r);
+            if (loc == Mech.LOC_HEAD) {
+                entity.getCrew().setDoomed(true);
+                vDesc.addAll(destroyEntity(entity, "hull breach"));
+                if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
+                    r = new Report(6355);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    vDesc.addElement(r);
+                } else {
+                    r = new Report(6360);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    vDesc.addElement(r);
+                }
             }
-        }
 
-        // Set the status of the location.
-        // N.B. if we set the status before rolling water PSRs, we get a
-        // "LEG DESTROYED" modifier; setting the status after gives a hip
-        // actuator modifier.
-        entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
+            // Set the status of the location.
+            // N.B. if we set the status before rolling water PSRs, we get a
+            // "LEG DESTROYED" modifier; setting the status after gives a hip
+            // actuator modifier.
+            entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
 
-        // Did the hull breach destroy the engine?
-        if ((entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_ENGINE, Mech.LOC_LT)
-             + entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                      Mech.SYSTEM_ENGINE, Mech.LOC_CT) + entity
-                     .getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                      Mech.SYSTEM_ENGINE, Mech.LOC_RT)) >= 3) {
-            vDesc.addAll(destroyEntity(entity, "engine destruction"));
-            if (game.getOptions().booleanOption("auto_abandon_unit")) {
-                vDesc.addAll(abandonEntity(entity));
+            // Did the hull breach destroy the engine?
+            int hitsToDestroy = 3;
+            if (mech.isSuperHeavy()
+                    && (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+                hitsToDestroy = 2;
             }
-        }
+            if ((entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_ENGINE, Mech.LOC_LT)
+                    + entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                            Mech.SYSTEM_ENGINE, Mech.LOC_CT) + entity
+                        .getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.SYSTEM_ENGINE, Mech.LOC_RT)) >= hitsToDestroy) {
+                vDesc.addAll(destroyEntity(entity, "engine destruction"));
+                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                    vDesc.addAll(abandonEntity(entity));
+                }
+            }
 
-        if (entity instanceof Mech) {
             if (loc == Mech.LOC_LT) {
                 vDesc.addAll(breachLocation(entity, Mech.LOC_LARM, hex, false));
             }
             if (loc == Mech.LOC_RT) {
                 vDesc.addAll(breachLocation(entity, Mech.LOC_RARM, hex, false));
             }
+
         }
 
         return vDesc;

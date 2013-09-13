@@ -307,6 +307,9 @@ public class MtfFile implements IMechLoader {
             if ((mech.isClan() && !mech.isMixedTech()) || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine)) || (mech.isMixedTech() && !mech.isClan() && mech.itemOppositeTech(engine))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
+            if (mech.isSuperHeavy()) {
+                engineFlags |= Engine.SUPERHEAVY_ENGINE;
+            }
 
             int engineRating = Integer.parseInt(engine.substring(engine.indexOf(":") + 1, engine.indexOf(" ")));
             mech.setEngine(new Engine(engineRating, Engine.getEngineTypeByString(engine), engineFlags));

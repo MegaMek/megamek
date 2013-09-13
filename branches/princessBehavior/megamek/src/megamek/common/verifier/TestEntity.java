@@ -707,6 +707,8 @@ public abstract class TestEntity implements TestEntityOption {
         boolean illegal = false;
         int fieldKitchenCount = 0;
         boolean hasSponsonTurret = false;
+        boolean hasHarjelII = false;
+        boolean hasHarjelIII = false;
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_VOIDSIG) && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
                 illegal = true;
@@ -717,6 +719,12 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_HARJEL_II)) {
+                hasHarjelII = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
+                hasHarjelIII = true;
             }
             if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
                 for (Mounted m2 : getEntity().getMisc()) {
@@ -793,6 +801,10 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
+            if (hasHarjelII && hasHarjelIII) {
+                illegal = true;
+                buff.append("Can't mix HarJel II and HarJel III");
+            }
             if (mech.hasWorkingWeapon(WeaponType.F_TASER)) {
                 switch (mech.getEngine().getEngineType()) {
                     case Engine.FISSION:
@@ -1288,10 +1300,20 @@ class Structure {
         } else if (structureType == EquipmentType.T_STRUCTURE_COMPOSITE) {
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
-            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+            if (isSuperHeavy) {
+                return TestEntity.ceilMaxHalf(weight / 2.5f, roundWeight);
+            } else {
+                return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+            }
+
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
-            return TestEntity
-                    .ceilMaxHalf((weight / 10.0f) * 0.75f, roundWeight);
+            if (isSuperHeavy) {
+                return TestEntity
+                        .ceilMaxHalf((weight / 10.0f) * 1.5f, roundWeight);
+            } else {
+                return TestEntity
+                        .ceilMaxHalf((weight / 10.0f) * 0.75f, roundWeight);
+            }
         }
         if (isSuperHeavy
                 && ((movementmode != EntityMovementMode.NAVAL) && (movementmode != EntityMovementMode.SUBMARINE))) {

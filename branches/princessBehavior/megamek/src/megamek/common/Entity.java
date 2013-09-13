@@ -5854,6 +5854,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod,
                                              "avoid bogging down"));
+            if ((this instanceof Mech) && ((Mech)this).isSuperHeavy()) {
+                roll.addModifier(1, "superheavy mech avoiding bogging down");
+            }
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(
@@ -6026,6 +6029,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData rollMovementInBuilding(Building bldg, int distance,
                                                    String why, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if ((this instanceof Mech) && ((Mech)this).isSuperHeavy()) {
+            roll.addModifier(4, "superheavy mech moving in building");
+        }
 
         int mod = 0;
         String desc;

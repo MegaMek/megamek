@@ -170,6 +170,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Modular Armor");
         }
 
+        if ((ae instanceof Mech) && ((Mech)ae).isSuperHeavy()) {
+            toHit.addModifier(1, "attacker is superheavy mech");
+        }
+
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
@@ -214,7 +218,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.addModifier(-2, "target is large support tank");
             }
 
-            if (te instanceof Dropship) {
+            if(te instanceof Dropship) {
                 toHit.addModifier(-2, "target is dropship");
             }
 

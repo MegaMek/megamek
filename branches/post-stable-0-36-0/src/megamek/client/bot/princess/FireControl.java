@@ -802,7 +802,7 @@ public class FireControl {
             tohit.append(Compute.getAttackerMovementModifier(game, shooter.getId(),
                     shooter_state.movement_type));
             tohit.append(Compute.getTargetMovementModifier(
-                    target_state.hexes_moved, target_state.isjumping, target instanceof VTOL));
+                    target_state.hexes_moved, target_state.isjumping, target instanceof VTOL, game));
             if (shooter_state.isprone) {
                 tohit.addModifier(2, "attacker prone");
             }

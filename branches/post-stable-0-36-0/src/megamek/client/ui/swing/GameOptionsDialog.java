@@ -340,6 +340,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("alternate_masc_enhanced")) {
+            if ((options.getOption("alternate_masc")).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -546,6 +552,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("begin_shutdown".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
+                    comp_i.setSelected(false);
+                }
+            }
+        }
+        if (option.getName().equals("alternate_masc")) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("alternate_masc_enhanced".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setSelected(false);
                 }

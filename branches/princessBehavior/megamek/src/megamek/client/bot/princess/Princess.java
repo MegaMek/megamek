@@ -184,7 +184,7 @@ public class Princess extends BotClient {
                 Logger.log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(),
-                               plan.getEntityActionVector(game));
+                               plan.getEntityActionVector());
 
             } else {
                 sendAttackData(shooter.getId(), null);

@@ -114,6 +114,10 @@ public class PhysicalInfo {
         this.damageDirection = damageDirection;
     }
 
+    private int calcAttackDirection() {
+        return getTargetState().getPosition().direction(getShooterState().getPosition());
+    }
+
     public BigDecimal getExpectedCriticals() {
         return expectedCriticals;
     }
@@ -223,10 +227,6 @@ public class PhysicalInfo {
         this.targetState = targetState;
     }
 
-    private int calcAttackDirection() {
-        return getTargetState().getPosition().direction(getShooterState().getPosition());
-    }
-
     /**
      * Helper function to determine damage and criticals
      */
@@ -251,60 +251,62 @@ public class PhysicalInfo {
             BigDecimal expectedCriticalHitCount =
                     new BigDecimal(ProbabilityCalculator.getExpectedCriticalHitCount());
 
-            // now guess how many critical hits will be done
-            setExpectedCriticals(BigDecimal.ZERO);
-            setKillProbability(BigDecimal.ZERO);
-            if (target instanceof Mech) {
-                Mech targetMech = (Mech) target;
-                for (int i = 0; i <= 7; i++) {
-                    int hitLocation = i;
-                    while (targetMech.isLocationBad(hitLocation) && (hitLocation != Mech.LOC_CT)) {
-                        hitLocation++;
-                        if (hitLocation > 7) {
-                            hitLocation = 0;
-                        }
-                        hitLocation = Mech.getInnerLocation(hitLocation);
-                    }
-                    BigDecimal hitLocationProbability;
-                    if ((PhysicalAttackType.RIGHT_PUNCH == getAttackType())
-                            || (PhysicalAttackType.LEFT_PUNCH == getAttackType())) {
-                        hitLocationProbability =
-                                new BigDecimal(ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(),
-                                                                                             hitLocation));
-                    } else { // assume kick
-                        hitLocationProbability =
-                                new BigDecimal(ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(),
-                                                                                                     hitLocation));
-                    }
-                    int targetArmor = targetMech.getArmor(hitLocation, (getDamageDirection() == 3));
-                    int targetInternals = targetMech.getInternal(hitLocation);
-                    if (targetArmor < 0) {
-                        targetArmor = 0; // ignore NA or Destroyed cases
-                    }
-                    if (targetInternals < 0) {
-                        targetInternals = 0;
-                    }
-                    // If the location could be destroyed outright...
-                    if (getExpectedDamageOnHit().intValue() > ((targetArmor + targetInternals))) {
-                        setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                                .multiply(getProbabilityToHit())));
-                        if ((Mech.LOC_HEAD == hitLocation) || (Mech.LOC_CT == hitLocation)) {
-                            setKillProbability(getKillProbability().add(hitLocationProbability
-                                                                                .multiply(getProbabilityToHit())));
-                        }
-
-                    // If the armor can be breached, but the location not destroyed...
-                    } else if (getExpectedDamageOnHit().intValue() > (targetArmor)) {
-                        setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                                .multiply(getProbabilityToHit())
-                                                                                .multiply(expectedCriticalHitCount)));
-                    }
-                }
-            }
             // there's always the chance of rolling a '2'
             BigDecimal rollTwo = new BigDecimal("0.028");
-            setExpectedCriticals(getExpectedCriticals().add(rollTwo.multiply(expectedCriticalHitCount)
-                                                                   .multiply(getProbabilityToHit())));
+            setExpectedCriticals(rollTwo.multiply(expectedCriticalHitCount).multiply(getProbabilityToHit()));
+            setKillProbability(BigDecimal.ZERO);
+
+            if (!(getTarget() instanceof Mech)) {
+                calculateUtility();
+                return;
+            }
+
+            // now guess how many critical hits will be done
+            Mech targetMech = (Mech)getTarget();
+            for (int i = 0; i <= 7; i++) {
+                int hitLocation = i;
+                while (targetMech.isLocationBad(hitLocation) && (hitLocation != Mech.LOC_CT)) {
+                    hitLocation++;
+                    if (hitLocation > 7) {
+                        hitLocation = 0;
+                    }
+                    hitLocation = Mech.getInnerLocation(hitLocation);
+                }
+                BigDecimal hitLocationProbability;
+                if ((PhysicalAttackType.RIGHT_PUNCH == getAttackType())
+                        || (PhysicalAttackType.LEFT_PUNCH == getAttackType())) {
+                    hitLocationProbability =
+                            new BigDecimal(ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(),
+                                                                                         hitLocation));
+                } else { // assume kick
+                    hitLocationProbability =
+                            new BigDecimal(ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(),
+                                                                                                 hitLocation));
+                }
+                int targetArmor = targetMech.getArmor(hitLocation, (getDamageDirection() == 3));
+                int targetInternals = targetMech.getInternal(hitLocation);
+                if (targetArmor < 0) {
+                    targetArmor = 0; // ignore NA or Destroyed cases
+                }
+                if (targetInternals < 0) {
+                    targetInternals = 0;
+                }
+                // If the location could be destroyed outright...
+                if (getExpectedDamageOnHit().intValue() > ((targetArmor + targetInternals))) {
+                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
+                                                                            .multiply(getProbabilityToHit())));
+                    if ((Mech.LOC_HEAD == hitLocation) || (Mech.LOC_CT == hitLocation)) {
+                        setKillProbability(getKillProbability().add(hitLocationProbability
+                                                                            .multiply(getProbabilityToHit())));
+                    }
+
+                // If the armor can be breached, but the location not destroyed...
+                } else if (getExpectedDamageOnHit().intValue() > (targetArmor)) {
+                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
+                                                                            .multiply(getProbabilityToHit())
+                                                                            .multiply(expectedCriticalHitCount)));
+                }
+            }
             calculateUtility();
         } finally {
             Logger.methodEnd(getClass(), METHOD_NAME);

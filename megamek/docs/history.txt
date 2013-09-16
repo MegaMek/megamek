@@ -32,6 +32,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Added radical heat sink construction data
 + Started work on super-heavy mechs
 + Bug [#3849]: Advanced Map Creation wrong naming
++ Bug: Commit [r9821] missed several key Endo-Steel to Endo Steel conversions and so bugged MechView
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

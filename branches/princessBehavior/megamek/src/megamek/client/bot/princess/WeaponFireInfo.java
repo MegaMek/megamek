@@ -26,7 +26,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.LogLevel;
 import megamek.common.util.Logger;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -46,14 +45,14 @@ public class WeaponFireInfo {
     private Entity shooter;
     private Targetable target;
     private Mounted weapon;
-    private BigDecimal probabilityToHit;
+    private double probabilityToHit;
     private int heat;
-    private BigDecimal maxDamage;
-    private BigDecimal expectedDamageOnHit;
+    private double maxDamage;
+    private double expectedDamageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
-    private BigDecimal expectedCriticals;
-    private BigDecimal killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double expectedCriticals;
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
     private IGame game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
@@ -140,8 +139,8 @@ public class WeaponFireInfo {
         }
     }
 
-    protected BigDecimal calcExpectedDamage() {
-        return probabilityToHit.multiply(expectedDamageOnHit);
+    protected double calcExpectedDamage() {
+        return probabilityToHit * expectedDamageOnHit;
     }
 
     protected WeaponAttackAction getAction() {
@@ -171,52 +170,44 @@ public class WeaponFireInfo {
         return getTargetState().getPosition().direction(getShooterState().getPosition());
     }
 
-    public BigDecimal getExpectedCriticals() {
+    public double getExpectedCriticals() {
         return expectedCriticals;
     }
 
-    protected void setExpectedCriticals(BigDecimal expectedCriticals) {
+    protected void setExpectedCriticals(double expectedCriticals) {
         this.expectedCriticals = expectedCriticals;
     }
 
-    public BigDecimal getExpectedDamageOnHit() {
+    public double getExpectedDamageOnHit() {
         return expectedDamageOnHit;
     }
 
-    protected void setExpectedDamageOnHit(BigDecimal expectedDamageOnHit) {
+    protected void setExpectedDamageOnHit(double expectedDamageOnHit) {
         this.expectedDamageOnHit = expectedDamageOnHit;
     }
 
-    protected void setExpectedDamageOnHit(double expectedDamageOnHit) {
-        setExpectedDamageOnHit(new BigDecimal(expectedDamageOnHit));
-    }
-
-    public BigDecimal getKillProbability() {
+    public double getKillProbability() {
         return killProbability;
     }
 
-    protected void setKillProbability(BigDecimal killProbability) {
+    protected void setKillProbability(double killProbability) {
         this.killProbability = killProbability;
     }
 
-    public BigDecimal getMaxDamage() {
+    public double getMaxDamage() {
         return maxDamage;
     }
 
-    protected void setMaxDamage(BigDecimal maxDamage) {
+    protected void setMaxDamage(double maxDamage) {
         this.maxDamage = maxDamage;
     }
 
-    public BigDecimal getProbabilityToHit() {
+    public double getProbabilityToHit() {
         return probabilityToHit;
     }
 
-    protected void setProbabilityToHit(BigDecimal probabilityToHit) {
-        this.probabilityToHit = probabilityToHit;
-    }
-
     protected void setProbabilityToHit(double probabilityToHit) {
-        setProbabilityToHit(new BigDecimal(probabilityToHit));
+        this.probabilityToHit = probabilityToHit;
     }
 
     public Entity getShooter() {
@@ -310,8 +301,8 @@ public class WeaponFireInfo {
         return weapon;
     }
 
-    public BigDecimal getExpectedDamage() {
-        return probabilityToHit.multiply(expectedDamageOnHit);
+    public double getExpectedDamage() {
+        return probabilityToHit * expectedDamageOnHit;
     }
 
     protected WeaponAttackAction buildWeaponAttackAction() {
@@ -319,14 +310,11 @@ public class WeaponFireInfo {
                                       getShooter().getEquipmentNum(getWeapon()));
     }
 
-    protected BigDecimal computeExpectedDamage() {
-        BigDecimal result;
+    protected double computeExpectedDamage() {
         if (getTarget() instanceof Entity) {
-            result = new BigDecimal(Compute.getExpectedDamage(getGame(), getAction(), true));
-        } else {
-            result = new BigDecimal(((WeaponType)weapon.getType()).getDamage());
+           return Compute.getExpectedDamage(getGame(), getAction(), true);
         }
-        return result;
+        return ((WeaponType)weapon.getType()).getDamage();
     }
 
     /*
@@ -355,12 +343,12 @@ public class WeaponFireInfo {
             if (getToHit().getValue() > 12) {
                 Logger.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                        .append(getToHit().getValue()).toString());
-                setProbabilityToHit(BigDecimal.ZERO);
-                setMaxDamage(BigDecimal.ZERO);
+                setProbabilityToHit(0);
+                setMaxDamage(0);
                 setHeat(0);
-                setExpectedCriticals(BigDecimal.ZERO);
-                setKillProbability(BigDecimal.ZERO);
-                setExpectedDamageOnHit(BigDecimal.ZERO);
+                setExpectedCriticals(0);
+                setKillProbability(0);
+                setExpectedDamageOnHit(0);
                 return;
             }
 
@@ -374,13 +362,13 @@ public class WeaponFireInfo {
             setMaxDamage(getExpectedDamageOnHit());
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
 
-            BigDecimal expectedCriticalHitCount =
-                    new BigDecimal(ProbabilityCalculator.getExpectedCriticalHitCount());
+            double expectedCriticalHitCount =ProbabilityCalculator.getExpectedCriticalHitCount();
 
             // there's always the chance of rolling a '2'
-            BigDecimal rollTwo = new BigDecimal("0.028");
-            setExpectedCriticals(rollTwo.multiply(expectedCriticalHitCount).multiply(getProbabilityToHit()));
-            setKillProbability(BigDecimal.ZERO);
+            final double ROLL_TWO = 0.028;
+            setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
+
+            setKillProbability(0);
             if (!(getTarget() instanceof Mech)) {
                 return;
             }
@@ -397,8 +385,8 @@ public class WeaponFireInfo {
                     }
                     hitLocation = Mech.getInnerLocation(hitLocation);
                 }
-                BigDecimal hitLocationProbability =
-                        new BigDecimal(ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation));
+                double hitLocationProbability =
+                        ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
                 int targetArmor = targetMech.getArmor(hitLocation, (getDamageDirection() == 3));
                 int targetInternals = targetMech.getInternal(hitLocation);
                 if (targetArmor < 0) {
@@ -409,19 +397,16 @@ public class WeaponFireInfo {
                 }
 
                 // If the location could be destroyed outright...
-                if (getExpectedDamageOnHit().intValue() > ((targetArmor + targetInternals))) {
-                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())));
+                if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
+                    setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                     if ((Mech.LOC_HEAD == hitLocation) || (Mech.LOC_CT == hitLocation)) {
-                        setKillProbability(getKillProbability().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())));
+                        setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                     }
 
                     // If the armor can be breached, but the location not destroyed...
-                } else if (getExpectedDamageOnHit().intValue() > (targetArmor)) {
-                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())
-                                                                            .multiply(expectedCriticalHitCount)));
+                } else if (getExpectedDamageOnHit() > (targetArmor)) {
+                    setExpectedCriticals(getExpectedCriticals() +
+                                         (hitLocationProbability * getProbabilityToHit() * expectedCriticalHitCount));
                 }
             }
         } finally {
@@ -440,7 +425,7 @@ public class WeaponFireInfo {
             setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
                                              getShooter().getEquipmentNum(getWeapon())));
             if (getAction() == null) {
-                setProbabilityToHit(BigDecimal.ZERO);
+                setProbabilityToHit(0);
                 return null;
             }
             setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue()) / 100.0);

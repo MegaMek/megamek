@@ -16,7 +16,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.PhysicalOption;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
@@ -24,8 +23,6 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.util.Logger;
-
-import java.math.BigDecimal;
 
 /**
  * PhysicalInfo is a wrapper around a PhysicalAttackAction that includes
@@ -41,13 +38,13 @@ public class PhysicalInfo {
     private PhysicalAttackAction action;
     private PhysicalAttackType attackType;
     private ToHitData toHit = null;
-    private BigDecimal probabilityToHit;
-    private BigDecimal maxDamage;
-    private BigDecimal expectedDamageOnHit;
+    private double probabilityToHit;
+    private double maxDamage;
+    private double expectedDamageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
-    private BigDecimal expectedCriticals;
-    private BigDecimal killProbability; // probability to destroy CT or HEAD (ignores criticals)
-    private BigDecimal utility = null;
+    private double expectedCriticals;
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double utility = -1;
     private EntityState shooterState = null;
     private EntityState targetState = null;
     private IGame game;
@@ -79,8 +76,8 @@ public class PhysicalInfo {
         this(shooter, null, target, null, physicalAttackType, game);
     }
 
-    public BigDecimal calcExpectedDamage() {
-        return probabilityToHit.multiply(expectedDamageOnHit);
+    public double calcExpectedDamage() {
+        return probabilityToHit * expectedDamageOnHit;
     }
 
     public PhysicalAttackAction getAction() {
@@ -118,43 +115,43 @@ public class PhysicalInfo {
         return getTargetState().getPosition().direction(getShooterState().getPosition());
     }
 
-    public BigDecimal getExpectedCriticals() {
+    public double getExpectedCriticals() {
         return expectedCriticals;
     }
 
-    public void setExpectedCriticals(BigDecimal expectedCriticals) {
+    public void setExpectedCriticals(double expectedCriticals) {
         this.expectedCriticals = expectedCriticals;
     }
 
-    public BigDecimal getExpectedDamageOnHit() {
+    public double getExpectedDamageOnHit() {
         return expectedDamageOnHit;
     }
 
-    public void setExpectedDamageOnHit(BigDecimal expectedDamageOnHit) {
+    public void setExpectedDamageOnHit(double expectedDamageOnHit) {
         this.expectedDamageOnHit = expectedDamageOnHit;
     }
 
-    public BigDecimal getKillProbability() {
+    public double getKillProbability() {
         return killProbability;
     }
 
-    public void setKillProbability(BigDecimal killProbability) {
+    public void setKillProbability(double killProbability) {
         this.killProbability = killProbability;
     }
 
-    public BigDecimal getMaxDamage() {
+    public double getMaxDamage() {
         return maxDamage;
     }
 
-    public void setMaxDamage(BigDecimal maxDamage) {
+    public void setMaxDamage(double maxDamage) {
         this.maxDamage = maxDamage;
     }
 
-    public BigDecimal getProbabilityToHit() {
+    public double getProbabilityToHit() {
         return probabilityToHit;
     }
 
-    public void setProbabilityToHit(BigDecimal probabilityToHit) {
+    public void setProbabilityToHit(double probabilityToHit) {
         this.probabilityToHit = probabilityToHit;
     }
 
@@ -186,14 +183,14 @@ public class PhysicalInfo {
                                                                    getAttackType(), getGame());
     }
 
-    public BigDecimal getUtility() {
-        if (utility == null) {
+    public double getUtility() {
+        if (utility == -1) {
             calculateUtility();
         }
         return utility;
     }
 
-    private void setUtility(BigDecimal utility) {
+    private void setUtility(double utility) {
         this.utility = utility;
     }
 
@@ -238,23 +235,22 @@ public class PhysicalInfo {
             if ((PhysicalAttackType.LEFT_PUNCH == getAttackType())
                     || (PhysicalAttackType.RIGHT_PUNCH == getAttackType())) {
                 if (shooter instanceof BipedMech) {
-                    setMaxDamage(new BigDecimal((int) Math.ceil(getShooter().getWeight() / 10.0)));
+                    setMaxDamage(Math.ceil(getShooter().getWeight() / 10.0));
                 } else {
-                    setMaxDamage(BigDecimal.ZERO);
+                    setMaxDamage(0);
                 }
             } else { // assuming kick
-                setMaxDamage(new BigDecimal((int) Math.floor(getShooter().getWeight() / 5.0)));
+                setMaxDamage(Math.floor(getShooter().getWeight()) / 5.0);
             }
 
-            setProbabilityToHit(new BigDecimal(Compute.oddsAbove(getToHit().getValue())));
+            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()));
             setExpectedDamageOnHit(getMaxDamage());
-            BigDecimal expectedCriticalHitCount =
-                    new BigDecimal(ProbabilityCalculator.getExpectedCriticalHitCount());
+            double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
 
             // there's always the chance of rolling a '2'
-            BigDecimal rollTwo = new BigDecimal("0.028");
-            setExpectedCriticals(rollTwo.multiply(expectedCriticalHitCount).multiply(getProbabilityToHit()));
-            setKillProbability(BigDecimal.ZERO);
+            final double ROLL_TWO = 0.028;
+            setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
+            setKillProbability(0);
 
             if (!(getTarget() instanceof Mech)) {
                 calculateUtility();
@@ -272,16 +268,14 @@ public class PhysicalInfo {
                     }
                     hitLocation = Mech.getInnerLocation(hitLocation);
                 }
-                BigDecimal hitLocationProbability;
+                double hitLocationProbability;
                 if ((PhysicalAttackType.RIGHT_PUNCH == getAttackType())
                         || (PhysicalAttackType.LEFT_PUNCH == getAttackType())) {
-                    hitLocationProbability =
-                            new BigDecimal(ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(),
-                                                                                         hitLocation));
+                    hitLocationProbability = ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(),
+                                                                                           hitLocation);
                 } else { // assume kick
-                    hitLocationProbability =
-                            new BigDecimal(ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(),
-                                                                                                 hitLocation));
+                    hitLocationProbability = ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(),
+                                                                                          hitLocation);
                 }
                 int targetArmor = targetMech.getArmor(hitLocation, (getDamageDirection() == 3));
                 int targetInternals = targetMech.getInternal(hitLocation);
@@ -292,19 +286,16 @@ public class PhysicalInfo {
                     targetInternals = 0;
                 }
                 // If the location could be destroyed outright...
-                if (getExpectedDamageOnHit().intValue() > ((targetArmor + targetInternals))) {
-                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())));
+                if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
+                    setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                     if ((Mech.LOC_HEAD == hitLocation) || (Mech.LOC_CT == hitLocation)) {
-                        setKillProbability(getKillProbability().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())));
+                        setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                     }
 
                 // If the armor can be breached, but the location not destroyed...
-                } else if (getExpectedDamageOnHit().intValue() > (targetArmor)) {
-                    setExpectedCriticals(getExpectedCriticals().add(hitLocationProbability
-                                                                            .multiply(getProbabilityToHit())
-                                                                            .multiply(expectedCriticalHitCount)));
+                } else if (getExpectedDamageOnHit() > (targetArmor)) {
+                    setExpectedCriticals(getExpectedCriticals() +
+                                         (hitLocationProbability * getProbabilityToHit() * expectedCriticalHitCount));
                 }
             }
             calculateUtility();
@@ -345,13 +336,13 @@ public class PhysicalInfo {
      * calculates the 'utility' of a physical action.
      */
     protected void calculateUtility() {
-        final BigDecimal damageUtility = BigDecimal.ONE;
-        final BigDecimal criticalUtility = BigDecimal.TEN;
-        final BigDecimal killUtility = new BigDecimal("50.0");
+        final double damageUtility = 1.0;
+        final double criticalUtility = 10.0;
+        final double killUtility = 50.0;
 
-        BigDecimal utility = damageUtility.multiply(calcExpectedDamage());
-        utility = utility.add(criticalUtility.multiply(getExpectedCriticals()));
-        utility = utility.add(killUtility.multiply(getKillProbability()));
+        double utility = damageUtility * calcExpectedDamage();
+        utility += criticalUtility * getExpectedCriticals();
+        utility += killUtility * getKillProbability();
         setUtility(utility);
     }
 }

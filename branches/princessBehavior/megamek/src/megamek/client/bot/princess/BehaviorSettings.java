@@ -19,16 +19,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
  *
- * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @lastModifiedBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
- * @since: 8/17/13 10:47 PM
+ * @since 8/17/13 10:47 PM
  */
 public class BehaviorSettings {
 
@@ -54,17 +53,17 @@ public class BehaviorSettings {
                                                              16,
                                                              18,
                                                              20};
-    private static final BigDecimal[] BRAVERY = new BigDecimal[]{new BigDecimal("0.1"),
-                                                                 new BigDecimal("0.3"),
-                                                                 new BigDecimal("0.6"),
-                                                                 new BigDecimal("0.9"),
-                                                                 new BigDecimal("1.2"),
-                                                                 new BigDecimal("1.5"),
-                                                                 new BigDecimal("1.8"),
-                                                                 new BigDecimal("2.1"),
-                                                                 new BigDecimal("2.4"),
-                                                                 new BigDecimal("2.7"),
-                                                                 new BigDecimal("3.0")};
+    private static final double[] BRAVERY = new double[]{0.1,
+                                                         0.3,
+                                                         0.6,
+                                                         0.9,
+                                                         1.2,
+                                                         1.5,
+                                                         1.8,
+                                                         2.1,
+                                                         2.4,
+                                                         2.7,
+                                                         3.0};
     private static final int[] HYPER_AGGRESSION_VALUES = new int[]{1,
                                                                    2,
                                                                    4,
@@ -76,17 +75,17 @@ public class BehaviorSettings {
                                                                    16,
                                                                    18,
                                                                    20};
-    private static final BigDecimal[] HERD_MENTALITY_VALUES = new BigDecimal[]{new BigDecimal("0.001"),
-                                                                               new BigDecimal("0.002"),
-                                                                               new BigDecimal("0.004"),
-                                                                               new BigDecimal("0.006"),
-                                                                               new BigDecimal("0.008"),
-                                                                               new BigDecimal("0.01"),
-                                                                               new BigDecimal("0.012"),
-                                                                               new BigDecimal("0.014"),
-                                                                               new BigDecimal("0.016"),
-                                                                               new BigDecimal("0.018"),
-                                                                               new BigDecimal("0.02")};
+    private static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
+                                                                       0.002,
+                                                                       0.004,
+                                                                       0.006,
+                                                                       0.008,
+                                                                       0.01,
+                                                                       0.012,
+                                                                       0.014,
+                                                                       0.016,
+                                                                       0.018,
+                                                                       0.02};
 
     public static final String DEFAULT_DESC = BehaviorSettingsFactory.DEFAULT_BEHAVIOR.getDescription();
 
@@ -240,7 +239,7 @@ public class BehaviorSettings {
      *
      * @return Bravery modifier value.
      */
-    public BigDecimal getBraveryValue() {
+    public double getBraveryValue() {
         return getBraveryValue(braveryIndex);
     }
 
@@ -250,7 +249,7 @@ public class BehaviorSettings {
      * @param index The index of the Bravery modifier to retrieve.
      * @return Bravery modifier value at given index.
      */
-    public BigDecimal getBraveryValue(int index) {
+    public double getBraveryValue(int index) {
         return BRAVERY[validateIndex(index)];
     }
 
@@ -331,7 +330,7 @@ public class BehaviorSettings {
      *
      * @return Current herd mentality value.
      */
-    public BigDecimal getHerdMentalityValue() {
+    public double getHerdMentalityValue() {
         return getHerdMentalityValue(herdMentalityIndex);
     }
 
@@ -341,7 +340,7 @@ public class BehaviorSettings {
      * @param index The index [0-10] of the herd mentality value that should be used.
      * @return The herd mentality value at the specified index.
      */
-    public BigDecimal getHerdMentalityValue(int index) {
+    public double getHerdMentalityValue(int index) {
         return HERD_MENTALITY_VALUES[validateIndex(index)];
     }
 

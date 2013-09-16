@@ -13,7 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import asserts.BigDecimalAssert;
 import junit.framework.TestCase;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
@@ -27,8 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.math.BigDecimal;
 
 /**
  * PhysicalInfo is a wrapper around a PhysicalAttackAction that includes
@@ -76,6 +73,8 @@ public class PhysicalInfoTest {
 
     @Test
     public void testInitDamage() {
+        final double DELTA = 0.000001;
+
         PhysicalInfo testPhysicalInfo = Mockito.spy(new PhysicalInfo());
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setShooterState(mockShooterState);
@@ -90,50 +89,50 @@ public class PhysicalInfoTest {
         Mockito.when(mockTarget.getInternal(Mockito.anyInt())).thenReturn(6);
         Mockito.when(mockTarget.getInternal(Mockito.eq(0))).thenReturn(3);
         testPhysicalInfo.setAttackType(PhysicalAttackType.RIGHT_PUNCH);
-        BigDecimal expectedMaxDamage = new BigDecimal((int) Math.ceil(mockShooter.getWeight() / 10.0));
-        BigDecimal expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitEight.getValue()));
-        BigDecimal expectedCriticals = new BigDecimal("0.0004756024");
-        BigDecimal expectedKill = BigDecimal.ZERO;
-        BigDecimal expectedUtility = new BigDecimal("339.916928");
+        double expectedMaxDamage = Math.ceil(mockShooter.getWeight() / 10.0);
+        double expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue());
+        double expectedCriticals = 0.0004756024;
+        double expectedKill = 0;
+        double expectedUtility = 339.916928;
         Mockito.doReturn(mockToHitEight).when(testPhysicalInfo).getToHit();
         testPhysicalInfo.initDamage();
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testPhysicalInfo.getProbabilityToHit());
-        BigDecimalAssert.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), 5);
-        BigDecimalAssert.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), 5);
+        TestCase.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), DELTA);
+        TestCase.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), DELTA);
 
         // Test a punch against an adjacent mech target with armor/internals of 6/6 on all locations except a head of
         // 4/3.
         Mockito.when(mockTarget.getArmor(Mockito.anyInt(), Mockito.anyBoolean())).thenReturn(6);
         Mockito.when(mockTarget.getArmor(Mockito.eq(0), Mockito.anyBoolean())).thenReturn(4);
-        expectedCriticals = new BigDecimal("28.8263594667");
-        expectedKill = new BigDecimal("6.9333333333");
-        expectedUtility = new BigDecimal("967.7302613333");
+        expectedCriticals = 28.8263594667;
+        expectedKill = 6.9333333333;
+        expectedUtility = 967.7302613333;
         testPhysicalInfo.initDamage();
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testPhysicalInfo.getProbabilityToHit());
-        BigDecimalAssert.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), 5);
-        BigDecimalAssert.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), 5);
+        TestCase.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), DELTA);
+        TestCase.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), DELTA);
 
         // Test a punch against a non-adjacent mech.
         Mockito.when(mockTarget.getPosition()).thenReturn(TARGET_NON_ADJACENT_COORDS);
         Mockito.when(mockTargetState.getPosition()).thenReturn(TARGET_NON_ADJACENT_COORDS);
         Mockito.doReturn(mockToHitNonAdjacent).when(testPhysicalInfo).getToHit();
-        expectedCriticals = BigDecimal.ZERO;
-        expectedKill = BigDecimal.ZERO;
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitNonAdjacent.getValue()));
-        expectedUtility = BigDecimal.ZERO;
+        expectedCriticals = 0;
+        expectedKill = 0;
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitNonAdjacent.getValue());
+        expectedUtility = 0;
         testPhysicalInfo.initDamage();
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testPhysicalInfo.getProbabilityToHit());
-        BigDecimalAssert.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), 5);
-        BigDecimalAssert.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), 5);
+        TestCase.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), DELTA);
+        TestCase.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), DELTA);
 
         // Test a kick against an adjacent mech target with armor/internals of 10/6 on all locations except a head of
         // 9/3.
@@ -141,30 +140,30 @@ public class PhysicalInfoTest {
         Mockito.when(mockTarget.getArmor(Mockito.eq(0), Mockito.anyBoolean())).thenReturn(9);
         Mockito.doReturn(mockToHitEight).when(testPhysicalInfo).getToHit();
         testPhysicalInfo.setAttackType(PhysicalAttackType.RIGHT_KICK);
-        expectedMaxDamage = new BigDecimal((int) Math.ceil(mockShooter.getWeight() / 5.0));
-        expectedCriticals = new BigDecimal("26.1292928");
-        expectedKill = BigDecimal.ZERO;
-        expectedUtility = new BigDecimal("885.292928");
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitEight.getValue()));
+        expectedMaxDamage = Math.ceil(mockShooter.getWeight() / 5.0);
+        expectedCriticals = 26.1292928;
+        expectedKill = 0;
+        expectedUtility = 885.292928;
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue());
         testPhysicalInfo.initDamage();
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testPhysicalInfo.getProbabilityToHit());
-        BigDecimalAssert.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), 5);
-        BigDecimalAssert.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), 5);
+        TestCase.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), DELTA);
+        TestCase.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), DELTA);
 
         // Improve the to-hit roll of the kick to 6.
         Mockito.doReturn(mockToHitSix).when(testPhysicalInfo).getToHit();
-        expectedCriticals = new BigDecimal("45.3493976");
-        expectedUtility = new BigDecimal("1536.493976");
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitSix.getValue()));
+        expectedCriticals = 45.3493976;
+        expectedUtility = 1536.493976;
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue());
         testPhysicalInfo.initDamage();
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testPhysicalInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testPhysicalInfo.getProbabilityToHit());
-        BigDecimalAssert.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), 5);
-        BigDecimalAssert.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), 5);
+        TestCase.assertEquals(expectedCriticals, testPhysicalInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testPhysicalInfo.getKillProbability(), DELTA);
+        TestCase.assertEquals(expectedUtility, testPhysicalInfo.getUtility(), DELTA);
     }
 }

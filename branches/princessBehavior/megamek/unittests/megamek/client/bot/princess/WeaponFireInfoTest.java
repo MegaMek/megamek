@@ -1,7 +1,5 @@
 package megamek.client.bot.princess;
 
-import asserts.BigDecimalAssert;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
@@ -19,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -125,6 +121,8 @@ public class WeaponFireInfoTest {
 
     @Test
     public void testInitDamage() {
+        final double DELTA = 0.000001;
+
         WeaponFireInfo testWeaponFireInfo = Mockito.spy(new WeaponFireInfo());
         testWeaponFireInfo.setShooter(mockShooter);
         testWeaponFireInfo.setShooterState(mockShooterState);
@@ -136,87 +134,87 @@ public class WeaponFireInfoTest {
         // Test a medium laser vs light target with a to hit roll of 6.
         setupMediumLaser();
         setupLightTarget();
-        BigDecimal expectedMaxDamage = new BigDecimal(mockWeaponType.getDamage());
-        BigDecimal expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitSix.getValue())/100);
-        BigDecimal expectedCriticals = new BigDecimal("0.02460");
-        BigDecimal expectedKill = BigDecimal.ZERO;
+        double expectedMaxDamage = mockWeaponType.getDamage();
+        double expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue())/100;
+        double expectedCriticals = 0.02460;
+        double expectedKill = 0;
         Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        BigDecimalAssert.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), 5);
-        BigDecimalAssert.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), 5);
+        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a PPC vs light target with a to hit roll of 8.
         setupPPC();
         setupLightTarget();
-        expectedMaxDamage = new BigDecimal(mockWeaponType.getDamage());
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitEight.getValue())/100);
-        expectedCriticals = new BigDecimal("0.01867");
-        expectedKill = new BigDecimal("0.01155");
+        expectedMaxDamage = mockWeaponType.getDamage();
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue())/100;
+        expectedCriticals = 0.01867;
+        expectedKill = 0.01155;
         Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        BigDecimalAssert.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), 5);
-        BigDecimalAssert.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), 5);
+        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs a light target with a to hit roll of 6.
         setupCGR();
         setupLightTarget();
-        expectedMaxDamage = new BigDecimal(mockWeaponType.getDamage());
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitSix.getValue())/100);
-        expectedCriticals = new BigDecimal("0.46129");
-        expectedKill = new BigDecimal("0.02005");
+        expectedMaxDamage = mockWeaponType.getDamage();
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue())/100;
+        expectedCriticals = 0.46129;
+        expectedKill = 0.02005;
         Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        BigDecimalAssert.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), 5);
-        BigDecimalAssert.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), 5);
+        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs. a medium target with a to hit roll of 8.
         setupCGR();
         setupMediumTarget();
-        expectedMaxDamage = new BigDecimal(mockWeaponType.getDamage());
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitEight.getValue())/100);
-        expectedCriticals = new BigDecimal("0.01867");
-        expectedKill = new BigDecimal("0.01155");
+        expectedMaxDamage = mockWeaponType.getDamage();
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue())/100;
+        expectedCriticals = 0.01867;
+        expectedKill = 0.01155;
         Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        BigDecimalAssert.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), 5);
-        BigDecimalAssert.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), 5);
+        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a medium laser vs. a medium target with no chance to hit.
         setupMediumLaser();
         setupMediumTarget();
-        expectedMaxDamage = BigDecimal.ZERO;
-        expectedProbabilityToHit = new BigDecimal(Compute.oddsAbove(mockToHitThirteen.getValue())/100);
-        expectedCriticals = BigDecimal.ZERO;
-        expectedKill = BigDecimal.ZERO;
+        expectedMaxDamage = 0;
+        expectedProbabilityToHit = Compute.oddsAbove(mockToHitThirteen.getValue())/100;
+        expectedCriticals = 0;
+        expectedKill = 0;
         Mockito.doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        BigDecimalAssert.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), 5);
-        BigDecimalAssert.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), 5);
-        BigDecimalAssert.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), 5);
+        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // todo build tests for AeroSpace attacks.
     }

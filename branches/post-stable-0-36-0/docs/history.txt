@@ -58,6 +58,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Added heat-dissipating armor construction data
 + Added radical heat sink construction data
 + Started work on super-heavy mechs
++ Bug [#3849]: Advanced Map Creation wrong naming
 
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)

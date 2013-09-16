@@ -684,7 +684,7 @@ public class MechView {
                     || (name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
                     || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
                     || (name.indexOf("Heat Sink") != -1)//$NON-NLS-1$
-                    || (name.indexOf("Endo-Steel") != -1) //$NON-NLS-1$
+                    || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reactive") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reflective") != -1) //$NON-NLS-1$

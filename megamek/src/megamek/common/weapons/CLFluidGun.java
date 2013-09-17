@@ -30,7 +30,7 @@ public class CLFluidGun extends FluidGunWeapon {
      */
     public CLFluidGun() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2820, TechConstants.T_CLAN_ADVANCED);
         name = "Fluid Gun";
         setInternalName("Clan Fluid Gun");
         addLookupName("CLFluidGun");
@@ -44,6 +44,7 @@ public class CLFluidGun extends FluidGunWeapon {
         criticals = 2;
         tonnage = 2;
         cost = 35000;
+        introDate = 2820;
         techRating = RATING_B;
         availRating = new int[] { RATING_B, RATING_B, RATING_B };
     }

@@ -36,6 +36,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
     and so bugged MechView
 + Bug: Fixed an ArrayIndexOutOfBounds exception when the Load button is pressed 
     when no valid units can be loaded
++ Bug [#3854]: Units without bays cannot load units during the game 
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

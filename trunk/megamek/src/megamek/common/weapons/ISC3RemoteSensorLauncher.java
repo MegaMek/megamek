@@ -57,6 +57,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
         introDate = 3072;
         techLevel.put(3072, techLevel.get(3071));
+        techLevel.put(3093, TechConstants.T_IS_ADVANCED);
         // suppveeslots = 3;
     }
 

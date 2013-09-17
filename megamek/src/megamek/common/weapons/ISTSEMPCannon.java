@@ -24,12 +24,13 @@ public class ISTSEMPCannon extends TSEMPWeapon {
     private static final long serialVersionUID = -4861067053206502295L;
 
     public ISTSEMPCannon() {
-        techLevel.put(3109,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085,TechConstants.T_IS_EXPERIMENTAL);
         cost = 800000;
         bv = 488;
         name = "TSEMP Cannon";
         setInternalName(name);
-        introDate = 3109;
+        introDate = 3085;
+        techLevel.put(3109,TechConstants.T_IS_ADVANCED);
         tonnage = 6;
         criticals  = 5;
     }

@@ -48,10 +48,6 @@ VTOL
 2
 </armor>
 
-<barrating>
-10
-</barrating>
-
 <Body Equipment>
 ISAngelECMSuite
 </Body Equipment>
@@ -74,11 +70,15 @@ ISReconCamera
 <Rotor Equipment>
 </Rotor Equipment>
 
+<barrating>
+10
+</barrating>
+
 <source>
 XTR Boondocks
 </source>
 
 <tonnage>
-17.0
+15.0
 </tonnage>
 

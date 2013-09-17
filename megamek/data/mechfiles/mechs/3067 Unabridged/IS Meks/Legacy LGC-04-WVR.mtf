@@ -8,16 +8,17 @@ Era:3072
 Rules Level:3
 
 Mass:80
-Engine:320 Light Fusion Engine
-Structure:Endo-Steel
+Engine:320 Light Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
 Gyro:Compact Gyro
-Myomer:ISMASC
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:4
 
-Armor:Light Ferro-Fibrous
+Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:26
 RA Armor:26
 LT Armor:27
@@ -30,78 +31,75 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:10
 
-Weapons:5
-1 ISImprovedC3CPU, Left Torso
-1 Claw, Right Arm
-1 Claw, Left Arm
-1 ISSNPPC, Right Torso
-1 ISSNPPC, Left Torso
+Weapons:2
+Snub-Nose PPC, Left Torso
+Snub-Nose PPC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Claw
-Claw
-Claw
-Claw
-Claw
-Claw
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Claw
-Claw
-Claw
-Claw
-Claw
-Claw
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 ISSNPPC
 ISSNPPC
-ISImprovedC3CPU
-ISImprovedC3CPU
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISC3iUnit
+ISC3iUnit
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 ISSNPPC
 ISSNPPC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMASC
 ISMASC
 ISMASC
@@ -111,9 +109,15 @@ Head:
 Life Support
 Sensors
 Cockpit
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -122,6 +126,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -130,3 +140,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

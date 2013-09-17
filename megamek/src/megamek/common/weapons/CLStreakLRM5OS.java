@@ -51,6 +51,6 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3079, TechConstants.T_CLAN_TW);
     }
 }

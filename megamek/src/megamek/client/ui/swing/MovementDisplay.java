@@ -2615,6 +2615,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (choices.size() == 0) {
             System.err
                     .println("MovementDisplay#getLoadedUnit() called without loadable units."); //$NON-NLS-1$
+            return null;
         }
 
         // If we have multiple choices, display a selection dialog.

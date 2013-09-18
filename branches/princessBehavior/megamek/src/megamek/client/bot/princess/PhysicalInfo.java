@@ -77,7 +77,7 @@ public class PhysicalInfo {
     }
 
     public double calcExpectedDamage() {
-        return probabilityToHit * expectedDamageOnHit;
+        return getProbabilityToHit() * getExpectedDamageOnHit();
     }
 
     public PhysicalAttackAction getAction() {
@@ -243,7 +243,7 @@ public class PhysicalInfo {
                 setMaxDamage(Math.floor(getShooter().getWeight()) / 5.0);
             }
 
-            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()));
+            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()) / 100);
             setExpectedDamageOnHit(getMaxDamage());
             double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
 

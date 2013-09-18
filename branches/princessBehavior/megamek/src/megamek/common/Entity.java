@@ -12238,4 +12238,5 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
+    public abstract boolean tracksHeat();
 }

@@ -1460,4 +1460,9 @@ public class Infantry extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 } // End class Infantry

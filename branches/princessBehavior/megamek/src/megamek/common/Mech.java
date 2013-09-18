@@ -7863,4 +7863,9 @@ public abstract class Mech extends Entity {
     public long getEntityType() {
         return Entity.ETYPE_MECH;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return true;
+    }
 }

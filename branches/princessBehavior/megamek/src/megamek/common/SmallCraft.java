@@ -689,4 +689,9 @@ public class SmallCraft extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return true;
+    }
 }

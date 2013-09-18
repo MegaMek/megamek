@@ -932,4 +932,9 @@ public class FighterSquadron extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_FIGHTER_SQUADRON;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return true;
+    }
 }

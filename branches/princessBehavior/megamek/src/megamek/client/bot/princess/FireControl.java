@@ -16,7 +16,6 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -44,8 +43,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.TorsoTwistAction;
 import megamek.common.util.LogLevel;
 import megamek.common.util.Logger;
 import megamek.common.weapons.StopSwarmAttack;
@@ -58,152 +55,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class FireControl {
 
+    // todo What about extended torso twist & turrets?
+
     public FireControl() {}
-
-    /**
-     * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
-     */
-    public class FiringPlan extends ArrayList<WeaponFireInfo> {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 8938385222775928559L;
-        int twist;
-        public double utility; // calculated elsewhere
-
-        FiringPlan() {
-            twist = 0;
-            utility = 0;
-        }
-
-        int getHeat() {
-            final String METHOD_NAME = "getHeat()";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                int heat = 0;
-                for (WeaponFireInfo f : this) {
-                    heat += f.getHeat();
-                }
-                return heat;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getExpectedDamage() {
-            final String METHOD_NAME = "calcExpectedDamage()";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double exdam = 0;
-                for (WeaponFireInfo f : this) {
-                    exdam += f.getExpectedDamageOnHit().multiply(f.getProbabilityToHit()).doubleValue();
-                }
-                return exdam;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getExpectedCriticals() {
-            final String METHOD_NAME = "getExpectedCriticals()";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double expcrit = 0;
-                for (WeaponFireInfo f : this) {
-                    expcrit += f.getExpectedCriticals().doubleValue();
-                }
-                return expcrit;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getKillProbability() {
-            final String METHOD_NAME = "getKillProbability()";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double killprob = 0;
-                for (WeaponFireInfo f : this) {
-                    killprob = killprob + ((1 - killprob) * f.getKillProbability().doubleValue());
-                }
-                return killprob;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        boolean containsWeapon(Mounted weapon) {
-            final String METHOD_NAME = "containsWeapon(Mounted)";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                for (WeaponFireInfo weaponFireInfo : this) {
-                    if (weaponFireInfo.getWeapon().equals(weapon)) {
-                        return true;
-                    }
-                }
-                return false;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        public Vector<EntityAction> getEntityActionVector() {
-            final String METHOD_NAME = "getEntiyActionVector(IGame)";
-            Logger.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                Vector<EntityAction> ret = new Vector<EntityAction>();
-                if (size() == 0) {
-                    return ret;
-                }
-                if (twist == -1) {
-                    ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                                                 correct_facing(get(0).getShooter().getFacing() - 1)));
-                } else if (twist == +1) {
-                    ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                                                 correct_facing(get(0).getShooter().getFacing() + 1)));
-                }
-                for (WeaponFireInfo f : this) {
-                    ret.add(f.getWeaponAttackAction());
-                }
-                return ret;
-            } finally {
-                Logger.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        /*
-         * Returns a string describing the firing actions, their likelyhood to
-         * hit, and damage
-         */
-        String getDebugDescription(boolean detailed) {
-            if (size() == 0) {
-                return "Empty FiringPlan!";
-            }
-            String ret = "Firing Plan for "
-                         + get(0).getShooter().getChassis() + " at "
-                         + get(0).getShooter().getDisplayName() + " "
-                         + Integer.toString(size()) + " weapons fired \n";
-            if (detailed) {
-                for (WeaponFireInfo wfi : this) {
-                    ret += wfi.getDebugDescription() + "\n";
-                }
-            }
-            ret += "Total Expected Damage="
-                   + Double.toString(getExpectedDamage()) + "\n";
-            ret += "Total Expected Criticals="
-                   + Double.toString(getExpectedCriticals()) + "\n";
-            ret += "Kill Probability=" + Double.toString(getKillProbability())
-                   + "\n";
-            return ret;
-        }
-
-    }
 
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
@@ -832,24 +686,6 @@ public class FireControl {
     }
 
     /**
-     * calculates the 'utility' of a firing plan. override this function if you
-     * have a better idea about what firing plans are good
-     */
-    void calculateUtility(FiringPlan p, int overheat_value) {
-        double damage_utility = 1.0;
-        double critical_utility = 10.0;
-        double kill_utility = 50.0;
-        double overheat_disutility = 5.0;
-        int overheat = 0;
-        if (p.getHeat() > overheat_value) {
-            overheat = p.getHeat() - overheat_value;
-        }
-        p.utility = ((damage_utility * p.getExpectedDamage())
-                     + (critical_utility * p.getExpectedCriticals()) + (kill_utility * p
-                .getKillProbability())) - (overheat_disutility * overheat);
-    }
-
-    /**
      * Creates a firing plan that fires all weapons with nonzero to hit value at
      * a target ignoring heat, and using best guess from different states Does
      * not change facing
@@ -859,7 +695,7 @@ public class FireControl {
         if (shooterState == null) {
             shooterState = new EntityState(shooter);
         }
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(target);
         if (shooter.getPosition() == null) {
             Logger.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
                        LogLevel.ERROR, "Shooter's position is NULL!");
@@ -873,15 +709,15 @@ public class FireControl {
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooterState,
                                                       target, target_state, mw, game);
-            if (shoot.getProbabilityToHit().intValue() > 0) {
-                myplan.add(shoot);
+            if (shoot.getProbabilityToHit() > 0) {
+                myplan.addWeaponFire(shoot);
             }
         }
 
-        calculateUtility(myplan,
-                         (shooter instanceof Mech) ?
-                         ((shooter.getHeatCapacity() - shooterState.getHeat()) + 5) :
-                         999);
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooterState.getHeat()) + 5) :
+                            999;
+        myplan.calcUtility(overheatValue);
         return myplan;
     }
 
@@ -905,10 +741,10 @@ public class FireControl {
         }
         if (!assume_under_flight_path) {
             if (!isTargetUnderMovePath(shooter_path, target_state)) {
-                return new FiringPlan();
+                return new FiringPlan(target);
             }
         }
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(target);
         if (shooter.getPosition() == null) {
             Logger.log(getClass(),
                        "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
@@ -925,11 +761,14 @@ public class FireControl {
 
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_path,
                                                       target, target_state, mw, game, true);
-            if (shoot.getProbabilityToHit().intValue() > 0) {
-                myplan.add(shoot);
+            if (shoot.getProbabilityToHit() > 0) {
+                myplan.addWeaponFire(shoot);
             }
         }
-        calculateUtility(myplan, 999); // Aeros don't have heat capacity, (I think?) todo yes they do.
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 5) :
+                            999;
+        myplan.calcUtility(overheatValue);
         return myplan;
     }
 
@@ -952,7 +791,7 @@ public class FireControl {
      * states
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(target);
         if (shooter.getPosition() == null) {
             Logger.log(getClass(),
                        "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
@@ -967,11 +806,14 @@ public class FireControl {
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, target, mw, game);
-            if ((shoot.getProbabilityToHit().intValue() > 0)) {
-                myplan.add(shoot);
+            if ((shoot.getProbabilityToHit() > 0)) {
+                myplan.addWeaponFire(shoot);
             }
         }
-        calculateUtility(myplan, (shooter.getHeatCapacity() - shooter.heat) + 5);
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 5) :
+                            999;
+        myplan.calcUtility(overheatValue);
         return myplan;
     }
 
@@ -983,29 +825,34 @@ public class FireControl {
         if (maxHeat < 0) {
             maxHeat = 0; // can't be worse than zero heat
         }
+        Targetable target = maxPlan.getTarget();
         FiringPlan[] bestPlans = new FiringPlan[maxHeat + 1];
-        bestPlans[0] = new FiringPlan();
-        FiringPlan nonZeroHeatOptions = new FiringPlan();
+        bestPlans[0] = new FiringPlan(target);
+        FiringPlan nonZeroHeatOptions = new FiringPlan(target);
         // first extract any firings of zero heat
-        for (WeaponFireInfo weaponFireInfo : maxPlan) {
+        for (WeaponFireInfo weaponFireInfo : maxPlan.getFiringInfo()) {
             if (weaponFireInfo.getHeat() == 0) {
-                bestPlans[0].add(weaponFireInfo);
+                bestPlans[0].addWeaponFire(weaponFireInfo);
             } else {
-                nonZeroHeatOptions.add(weaponFireInfo);
+                nonZeroHeatOptions.addWeaponFire(weaponFireInfo);
             }
         }
         // build up heat table
         for (int i = 1; i <= maxHeat; i++) {
-            bestPlans[i] = new FiringPlan();
-            bestPlans[i].addAll(bestPlans[i - 1]);
-            for (WeaponFireInfo f : nonZeroHeatOptions) {
-                if ((i - f.getHeat()) >= 0) {
-                    if (!bestPlans[i - f.getHeat()].containsWeapon(f.getWeapon())) {
-                        FiringPlan testplan = new FiringPlan();
-                        testplan.addAll(bestPlans[i - f.getHeat()]);
-                        testplan.add(f);
-                        calculateUtility(testplan, 999); // TODO fix overheat
-                        if (testplan.utility > bestPlans[i].utility) {
+            bestPlans[i] = new FiringPlan(target);
+            bestPlans[i].addWeaponFireList(bestPlans[i - 1].getFiringInfo());
+            for (WeaponFireInfo weaponFireInfo : nonZeroHeatOptions.getFiringInfo()) {
+                if ((i - weaponFireInfo.getHeat()) >= 0) {
+                    if (!bestPlans[i - weaponFireInfo.getHeat()].containsWeapon(weaponFireInfo.getWeapon())) {
+                        FiringPlan testplan = new FiringPlan(target);
+                        testplan.addWeaponFireList(bestPlans[i - weaponFireInfo.getHeat()].getFiringInfo());
+                        testplan.addWeaponFire(weaponFireInfo);
+                        Entity shooter = weaponFireInfo.getShooter();
+                        int overheatValue = shooter.tracksHeat() ?
+                                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 5) :
+                                            999;
+                        testplan.calcUtility(overheatValue);
+                        if (testplan.getUtility() > bestPlans[i].getUtility()) {
                             bestPlans[i] = testplan;
                         }
                     }
@@ -1040,12 +887,15 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 4) :
+                            999;
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat());
-        FiringPlan best_plan = new FiringPlan();
-        int overheat = (shooter.getHeatCapacity() - shooter.heat) + 4;
+        FiringPlan best_plan = new FiringPlan(target);
+        best_plan.calcUtility(overheatValue);
         for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
-            calculateUtility(heatplans[i], overheat);
-            if ((best_plan.utility < heatplans[i].utility)) {
+            heatplans[i].calcUtility(overheatValue);
+            if ((best_plan.getUtility() < heatplans[i].getUtility())) {
                 best_plan = heatplans[i];
             }
         }
@@ -1084,12 +934,15 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 4) :
+                            999;
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat());
-        FiringPlan best_plan = new FiringPlan();
-        int overheat = (shooter.getHeatCapacity() - shooterState.getHeat()) + 4;
+        FiringPlan best_plan = new FiringPlan(target);
+        best_plan.calcUtility(overheatValue);
         for (int i = 0; i < fullplan.getHeat(); i++) {
-            calculateUtility(heatplans[i], overheat);
-            if ((best_plan.utility < heatplans[i].utility)) {
+            heatplans[i].calcUtility(overheatValue);
+            if ((best_plan.getUtility() < heatplans[i].getUtility())) {
                 best_plan = heatplans[i];
             }
         }
@@ -1108,14 +961,14 @@ public class FireControl {
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
+        shooter.setSecondaryFacing(correctFacing(orig_facing + 1));
         FiringPlan righttwist_plan = getBestFiringPlanUnderHeat(shooter,
                                                                 target, maxheat, game);
-        righttwist_plan.twist = 1;
-        shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
+        righttwist_plan.setTwist(1);
+        shooter.setSecondaryFacing(correctFacing(orig_facing - 1));
         FiringPlan lefttwist_plan = getBestFiringPlanUnderHeat(shooter, target,
                                                                maxheat, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1141,12 +994,12 @@ public class FireControl {
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
+        shooter.setSecondaryFacing(correctFacing(orig_facing + 1));
         FiringPlan righttwist_plan = getBestFiringPlan(shooter, target, game);
-        righttwist_plan.twist = 1;
-        shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
+        righttwist_plan.setTwist(1);
+        shooter.setSecondaryFacing(correctFacing(orig_facing - 1));
         FiringPlan lefttwist_plan = getBestFiringPlan(shooter, target, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1177,14 +1030,14 @@ public class FireControl {
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooterState.setSecondaryFacing(correct_facing(origFacing + 1));
+        shooterState.setSecondaryFacing(correctFacing(origFacing + 1));
         FiringPlan righttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                                                                   shooterState, target, target_state, maxheat, game);
-        righttwist_plan.twist = 1;
-        shooterState.setSecondaryFacing(correct_facing(origFacing - 1));
+        righttwist_plan.setTwist(1);
+        shooterState.setSecondaryFacing(correctFacing(origFacing - 1));
         FiringPlan lefttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                                                                  shooterState, target, target_state, maxheat, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooterState.setSecondaryFacing(origFacing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1215,14 +1068,14 @@ public class FireControl {
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooterState.setSecondaryFacing(correct_facing(orig_facing + 1));
+        shooterState.setSecondaryFacing(correctFacing(orig_facing + 1));
         FiringPlan rightTwistPlan = guessBestFiringPlan(shooter,
                                                          shooterState, target, targetState, game);
-        rightTwistPlan.twist = 1;
-        shooterState.setSecondaryFacing(correct_facing(orig_facing - 1));
+        rightTwistPlan.setTwist(1);
+        shooterState.setSecondaryFacing(correctFacing(orig_facing - 1));
         FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState,
                                                         target, targetState, game);
-        leftTwistPlan.twist = -1;
+        leftTwistPlan.setTwist(-1);
         shooterState.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > rightTwistPlan
                 .getExpectedDamage())
@@ -1273,12 +1126,16 @@ public class FireControl {
      * Overload this function if you think you can do better.
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
-        FiringPlan bestplan = new FiringPlan();
+        FiringPlan bestplan = null;
         ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter,
                                                                    game);
+        int overheatValue = shooter.tracksHeat() ?
+                            ((shooter.getHeatCapacity() - shooter.getHeat()) + 4) :
+                            999;
         for (Targetable e : enemies) {
             FiringPlan plan = getBestFiringPlanWithTwists(shooter, e, game);
-            if ((bestplan == null) || (plan.utility > bestplan.utility)) {
+            plan.calcUtility(overheatValue);
+            if ((bestplan == null) || (plan.getUtility() > bestplan.getUtility())) {
                 bestplan = plan;
             }
         }
@@ -1302,7 +1159,7 @@ public class FireControl {
      * makes sure facing falls between 0 and 5 This function likely already
      * exists somewhere else
      */
-    public static int correct_facing(int f) {
+    public static int correctFacing(int f) {
         while (f < 0) {
             f += 6;
         }

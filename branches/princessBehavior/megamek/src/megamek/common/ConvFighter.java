@@ -140,4 +140,8 @@ public class ConvFighter extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }
 
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 }

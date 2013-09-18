@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
 import megamek.common.Building;
@@ -308,15 +307,14 @@ public class BasicPathRanker extends PathRanker {
                             .guessBestFiringPlanUnderHeatWithTwists(e, null,
                                                                     p.getEntity(), new EntityState(p),
                                                                     (e.getHeatCapacity() - e.heat) + 5, game)
-                            .utility;
+                            .getUtility();
                     // if they can kick me, and probably hit, they probably will.
                     PhysicalInfo theirkick = new PhysicalInfo(
                             e, null, p.getEntity(), new EntityState(p),
                             PhysicalAttackType.RIGHT_KICK, game);
-                    if (theirkick.getProbabilityToHit().doubleValue() > 0.5) {
-                        their_damage_potential += theirkick.getExpectedDamageOnHit()
-                                                           .multiply(theirkick.getProbabilityToHit())
-                                                           .doubleValue();
+                    if (theirkick.getProbabilityToHit() > 0.5) {
+                        their_damage_potential += theirkick.getExpectedDamageOnHit() *
+                                                           theirkick.getProbabilityToHit();
                     }
 
                     // How much damage can I do to them?
@@ -328,15 +326,14 @@ public class BasicPathRanker extends PathRanker {
                         my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(), new EntityState(p),
                                                                                    e, null, game);
                     }
-                    double my_damage_potential = my_firing_plan.utility;
+                    double my_damage_potential = my_firing_plan.getUtility();
                     // If I can kick them and probably hit, I probably will
                     PhysicalInfo mykick = new PhysicalInfo(
                             p.getEntity(), new EntityState(p), e, null,
                             PhysicalAttackType.RIGHT_KICK, game);
-                    if (mykick.getProbabilityToHit().doubleValue() > 0.5) {
-                        double expected_kick_damage = mykick.getExpectedDamageOnHit()
-                                                            .multiply(mykick.getProbabilityToHit())
-                                                            .doubleValue();
+                    if (mykick.getProbabilityToHit() > 0.5) {
+                        double expected_kick_damage = mykick.getExpectedDamageOnHit() *
+                                                            mykick.getProbabilityToHit();
                         if (expected_kick_damage > maximum_physical_damage) {
                             maximum_physical_damage = expected_kick_damage;
                         }
@@ -370,16 +367,15 @@ public class BasicPathRanker extends PathRanker {
                 FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),
                                                                                       new EntityState(p), t, null,
                                                                                       game);
-                double my_damage_potential = my_firing_plan.utility;
+                double my_damage_potential = my_firing_plan.getUtility();
                 if (my_damage_potential > maximum_damage_done) {
                     maximum_damage_done = my_damage_potential;
                 }
                 PhysicalInfo mykick = new PhysicalInfo(
                         p.getEntity(), new EntityState(p), t, null,
                         PhysicalAttackType.RIGHT_KICK, game);
-                double expectedKickDamage = mykick.getExpectedDamageOnHit()
-                                                  .multiply(mykick.getProbabilityToHit())
-                                                  .doubleValue();
+                double expectedKickDamage = mykick.getExpectedDamageOnHit() *
+                                                  mykick.getProbabilityToHit();
                 if (expectedKickDamage > maximum_physical_damage) {
                     maximum_physical_damage = expectedKickDamage;
                 }

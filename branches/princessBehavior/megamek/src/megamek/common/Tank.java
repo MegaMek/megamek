@@ -3415,4 +3415,8 @@ public class Tank extends Entity {
         return Entity.ETYPE_TANK;
     }
 
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 }

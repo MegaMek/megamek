@@ -206,5 +206,9 @@ public class TeleMissile extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
     }
-    
+
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 }

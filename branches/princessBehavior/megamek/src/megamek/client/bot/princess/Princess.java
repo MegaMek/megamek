@@ -178,7 +178,7 @@ public class Princess extends BotClient {
             // act this turn
             // make sure weapons are loaded
             fire_control.loadAmmo(shooter);
-            FireControl.FiringPlan plan = fire_control.getBestFiringPlan(
+            FiringPlan plan = fire_control.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
                 Logger.log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
@@ -282,33 +282,33 @@ public class Princess extends BotClient {
                     }
                     PhysicalInfo right_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
-                    if (right_punch.getUtility().intValue() > 0) {
+                    if (right_punch.getUtility() > 0) {
                         if ((bestAttack == null)
-                            || (right_punch.getUtility().compareTo(bestAttack.getUtility())) > 0) {
+                            || (right_punch.getUtility()> bestAttack.getUtility())) {
                             bestAttack = right_punch;
                         }
                     }
                     PhysicalInfo left_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
-                    if (left_punch.getUtility().intValue() > 0) {
+                    if (left_punch.getUtility() > 0) {
                         if ((bestAttack == null)
-                            || (left_punch.getUtility().compareTo(bestAttack.getUtility())) > 0) {
+                            || (left_punch.getUtility() >bestAttack.getUtility())) {
                             bestAttack = left_punch;
                         }
                     }
                     PhysicalInfo right_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_KICK, game);
-                    if (right_kick.getUtility().intValue() > 0) {
+                    if (right_kick.getUtility() > 0) {
                         if ((bestAttack == null)
-                            || (right_kick.getUtility().compareTo(bestAttack.getUtility()) > 0)) {
+                            || (right_kick.getUtility() > bestAttack.getUtility())) {
                             bestAttack = right_kick;
                         }
                     }
                     PhysicalInfo left_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_KICK, game);
-                    if (left_kick.getUtility().intValue() > 0) {
+                    if (left_kick.getUtility() > 0) {
                         if ((bestAttack == null)
-                            || (left_kick.getUtility().compareTo(bestAttack.getUtility()) > 0)) {
+                            || (left_kick.getUtility() > bestAttack.getUtility())) {
                             bestAttack = left_kick;
                         }
                     }

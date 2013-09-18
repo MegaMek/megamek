@@ -3977,4 +3977,9 @@ public class Aero extends Entity {
     public boolean isInASquadron(){
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return true;
+    }
 }

@@ -33,4 +33,27 @@ public class TorsoTwistAction extends AbstractEntityAction {
     public void setFacing(int facing) {
         this.facing = facing;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TorsoTwistAction that = (TorsoTwistAction) o;
+
+        if (facing != that.facing) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return facing;
+    }
 }

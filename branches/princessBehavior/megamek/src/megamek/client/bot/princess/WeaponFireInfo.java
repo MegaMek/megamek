@@ -38,8 +38,8 @@ import java.text.NumberFormat;
  * @since: 9/14/13 12:46 AM
  */
 public class WeaponFireInfo {
-    private final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
-    private final NumberFormat LOG_DEC = DecimalFormat.getInstance();
+    private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
+    private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
     private WeaponAttackAction action;
     private Entity shooter;
@@ -302,7 +302,7 @@ public class WeaponFireInfo {
     }
 
     public double getExpectedDamage() {
-        return probabilityToHit * expectedDamageOnHit;
+        return getProbabilityToHit() * getExpectedDamageOnHit();
     }
 
     protected WeaponAttackAction buildWeaponAttackAction() {
@@ -352,7 +352,7 @@ public class WeaponFireInfo {
                 return;
             }
 
-            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue())/100);
+            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
             setHeat(((WeaponType)getWeapon().getType()).getHeat());
@@ -436,11 +436,11 @@ public class WeaponFireInfo {
     }
 
     String getDebugDescription() {
-        return weapon.getName() + " P_hit: " + LOG_PER.format(getProbabilityToHit())
-                + " Max Dam: " + LOG_DEC.format(getMaxDamage())
-                + " Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
-                + " Num Crits: " + LOG_DEC.format(getExpectedCriticals())
-                + " Kill Prob: " + LOG_PER.format(getKillProbability());
+        return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
+                + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
+                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
+                + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
+                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
     }
 

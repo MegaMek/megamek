@@ -1156,4 +1156,8 @@ public class Jumpship extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }
 
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 }

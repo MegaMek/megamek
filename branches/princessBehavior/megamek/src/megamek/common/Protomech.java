@@ -1784,4 +1784,9 @@ public class Protomech extends Entity {
     public long getEntityType() {
         return Entity.ETYPE_PROTOMECH;
     }
+
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
 }

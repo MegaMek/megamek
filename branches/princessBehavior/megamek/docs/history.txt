@@ -1,24 +1,21 @@
 VERSION HISTORY:
 ----------------
 vPrincessBehavior
-+ Built unit test for ChatProcessor class in anticipation of adding additional chat commands for Princess.
-+ Added test method for shouldBotAcknowledgeDefeat.
 + Refactoring for testability:
 +   Made shouldBotAcknowledgeDefeat protected.
 +   Interface extracted from Player class.  Player implementation named PlayerImpl
 +   Refactored old uses of Player class to now use Player interface.
 +   Interface extracted from TurnOrdered class.  TurnOrdered implementation named TurnOrderedImpl
 +   Refactored old uses of TurnOrdered class to now use TurnOrdered interface.
-+ Added test method for shouldBotAcknowledgeVictory.
-+ Refactoring for testability:
++   Broke out EntityState, PhysicalInfo, WeaponFireInfo and FiringPlan into separete classes.
 +   Replaced magic strings in VictoryCommand & DefeatCommand with constants.
 +   Made shouldBotAcknowledgeVictory protected.
 +   Added formatChatMessage method to Server to ensure consistent formatting of chat-based server commands.
-+ Code Standards: Renamed Player to IPlayer, PlayerImpl to Player, TurnOrdered to ITurnOrdered and TurnOrderedImpl to TurnOrdered.
 + Created new BehaviorSettings class to store separate instances of Princess behaviors.
 +   Separated HomeEdge out into its own class.
 + Created BehaviorSettingsFactory class to serve up instances of BehaviorSettings.
 + Separated Princess logging code out into it's own helper class to make it easily accessable from anywhere in the project.
++ Found out why Princess likes to charge into melee combat so much.  Turns out that while WeaponFireInfo divided the hit chance by 100, PhysicalInfo did not, thus weighting physical attacks 100x more heavily than ranged.  This has been corrected.
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size

@@ -49,5 +49,9 @@ public class ISC3M extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
+        techRating = RATING_E;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        introDate = 3050;
+        techLevel.put(3050, techLevel.get(3071));
     }
 }

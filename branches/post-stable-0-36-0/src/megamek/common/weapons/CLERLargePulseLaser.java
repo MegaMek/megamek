@@ -57,6 +57,6 @@ public class CLERLargePulseLaser extends PulseLaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
         techLevel.put(3057, techLevel.get(3071));
-        techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3082, TechConstants.T_CLAN_TW);
     }
 }

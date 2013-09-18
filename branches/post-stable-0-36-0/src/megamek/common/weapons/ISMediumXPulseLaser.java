@@ -59,6 +59,6 @@ public class ISMediumXPulseLaser extends PulseLaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
         techLevel.put(3057, techLevel.get(3071));
-        techLevel.put(3078, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3078, TechConstants.T_IS_TW_NON_BOX);
     }
 }

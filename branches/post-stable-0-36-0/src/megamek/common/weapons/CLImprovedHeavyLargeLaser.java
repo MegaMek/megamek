@@ -61,6 +61,6 @@ public class CLImprovedHeavyLargeLaser extends LaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3069;
         techLevel.put(3069, techLevel.get(3071));
-        techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3085, TechConstants.T_CLAN_TW);
     }
 }

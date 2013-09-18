@@ -48,7 +48,8 @@ public class CLBAHeavyFlamer extends BAFlamerWeapon {
         flags = flags.or(F_BA_WEAPON);
         techRating = RATING_C;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
+        introDate = 3070;
+        techLevel.put(3070, techLevel.get(3071));
+        techLevel.put(3073, TechConstants.T_CLAN_TW);
     }
 }

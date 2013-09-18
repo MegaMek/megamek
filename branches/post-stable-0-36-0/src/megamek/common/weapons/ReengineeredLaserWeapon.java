@@ -30,10 +30,11 @@ public class ReengineeredLaserWeapon extends LaserWeapon {
 
     public ReengineeredLaserWeapon() {
         super();
+        techLevel.put(3120,TechConstants.T_IS_EXPERIMENTAL);
         techLevel.put(3130,TechConstants.T_IS_ADVANCED);
         techRating = RATING_E;
         availRating= new int[] {RATING_X,RATING_X,RATING_X,RATING_E};
-        introDate = 3130;
+        introDate = 3120;
     }
 
     /*

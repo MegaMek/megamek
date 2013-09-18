@@ -54,5 +54,6 @@ public class ISC3MBS extends TAGWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3073;
         techLevel.put(3073, techLevel.get(3071));
+        techLevel.put(3100, TechConstants.T_IS_ADVANCED);
     }
 }

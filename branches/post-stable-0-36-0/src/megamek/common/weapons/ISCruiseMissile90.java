@@ -53,6 +53,7 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3065;
         techLevel.put(3065, techLevel.get(3071));
+        techLevel.put(3095, TechConstants.T_IS_ADVANCED);
     }
 
 }

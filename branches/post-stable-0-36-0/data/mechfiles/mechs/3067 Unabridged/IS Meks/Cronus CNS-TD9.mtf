@@ -5,20 +5,21 @@ CNS-TD9
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
+Source:TRO3067U
 Rules Level:3
 
 Mass:55
-Engine:330 XL Fusion Engine
-Structure:Endo-Steel
-Gyro:Compact Gyro
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
 Cockpit:Small Cockpit
-Myomer:ISMASC
+Gyro:Compact Gyro
 
 Heat Sinks:11 Double
 Walk MP:6
 Jump MP:0
 
-Armor:Stealth Armor
+Armor:Stealth(Inner Sphere)
 LA Armor:11
 RA Armor:11
 LT Armor:14
@@ -31,105 +32,121 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:5
 
-Weapons:7
-1 ISGuardianECM, Left Torso
-1 ISImprovedC3CPU, Center Torso
-1 Claw, Right Arm
-1 Claw, Left Arm
-1 ISSmallVSPLaser, Right Arm
-1 ISSmallVSPLaser, Left Arm
-1 ISSmallVSPLaser, Left Torso
+Weapons:3
+Small VSP Laser, Left Arm
+Small VSP Laser, Right Arm
+Small VSP Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Claw
-Claw
-Claw
-Claw
-ISSmallVSPLaser
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISSmallVariableSpeedLaser
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISSmallVSPLaser
-Claw
-Claw
-Claw
-Claw
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+ISSmallVariableSpeedLaser
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Left Torso:
-Engine
-Engine
-Engine
-ISSmallVSPLaser
-ISGuardianECM
-ISGuardianECM
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallVariableSpeedLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMASC
 ISMASC
 ISMASC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Stealth Armor
-Stealth Armor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISTargeting Computer
 ISTargeting Computer
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth Armor
-Stealth Armor
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

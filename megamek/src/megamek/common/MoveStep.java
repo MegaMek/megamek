@@ -2624,7 +2624,8 @@ public class MoveStep implements Serializable {
         if ((entity instanceof Tank)
                 && !entity.getCrew().isUnconscious()
                 && ((type == MoveStepType.UNJAM_RAC)
-                        || (type == MoveStepType.EJECT) || (type == MoveStepType.SEARCHLIGHT))) {
+                        || (type == MoveStepType.EJECT) 
+                        || (type == MoveStepType.SEARCHLIGHT))) {
             return true;
         }
 

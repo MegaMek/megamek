@@ -16,6 +16,7 @@ vPrincessBehavior
 + Created BehaviorSettingsFactory class to serve up instances of BehaviorSettings.
 + Separated Princess logging code out into it's own helper class to make it easily accessable from anywhere in the project.
 + Found out why Princess likes to charge into melee combat so much.  Turns out that while WeaponFireInfo divided the hit chance by 100, PhysicalInfo did not, thus weighting physical attacks 100x more heavily than ranged.  This has been corrected.
++ Upated client\messages.properties: Removed duplicate entries; added Princess-config entries.
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size

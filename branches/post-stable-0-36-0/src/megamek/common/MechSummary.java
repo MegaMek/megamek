@@ -319,9 +319,9 @@ public class MechSummary implements Serializable {
         equipmentQuantities = new Vector<Integer>(mountedList.size());
         for (Mounted mnt : mountedList)
         {
-            String eqName = mnt.getType().getName();
+            String eqName = mnt.getType().getInternalName();
             int index = equipmentNames.indexOf(eqName);
-            if (index == -1){ //We aven't seen this piece of equipment before
+            if (index == -1){ //We haven't seen this piece of equipment before
                 equipmentNames.add(eqName);
                 equipmentQuantities.add(1);
             }else{ //We've seen this before, update count

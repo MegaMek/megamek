@@ -486,7 +486,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
                             && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
-                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))) {
+                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))
+                            && !(mech.getYear() > client.game.getOptions().intOption("year"))) {
                         if(txtFilter.getText().length() > 0) {
                             String text = txtFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());

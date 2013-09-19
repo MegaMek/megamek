@@ -24,6 +24,7 @@ Any line begining with the "#" is a comment and is not read by MegaMek when load
 16. Initial Damage to Units
 17. Ammunition Options
 18. Game options
+19. Camo options
 
 1. The MegaMek Version 
 # Versionstamp required to be recognized as a Scenario file 
@@ -244,4 +245,14 @@ Unit_WacosRangers_1_SetAmmoTo=2:11-3
 # path is specified relative to the scenario file
 # This is one way to set victory conditions
 GameOptionsFile=Example_options.xml
+
+
+
+19. Camo options
+# Set a camo for the player
+# Replace Category and File with the appropriate names 
+Camo_Faction=Category,File
+# Set a unit specific individual camo
+# Again, replace Category and File with the appropriate names
+Unit_WacosRangers_1_Camo=Category,File
 # Destroy the enemy!

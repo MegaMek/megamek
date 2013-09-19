@@ -51,6 +51,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
   <model> tag, and if they don't the quirks apply to every specified chassis.
 + Bug: Compute.getMetalInPath() not checking for null entities
 + Scenario readme updated to include camo settings
++ Bug: ASF incorrect damage when using the unofficial UAC roll twice option (2 shots at 30 damage instead of 20 damage)
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

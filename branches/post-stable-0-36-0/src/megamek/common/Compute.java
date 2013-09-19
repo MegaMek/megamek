@@ -4086,10 +4086,10 @@ public class Compute {
      */
     public static int getMetalInPath(Entity ae, Coords a, Coords b) {
         // If we're in space, or anything is null... get out.
-        if (ae.getGame().getBoard().inSpace()) {
+        if (ae == null || (a == null) || (b == null)) {
             return 0;
         }
-        if ((a == null) || (b == null)) {
+        if (ae.getGame().getBoard().inSpace()) {
             return 0;
         }
 

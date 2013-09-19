@@ -270,7 +270,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Image, Image> scaledImageCache = new ImageCache<Image, Image>();
+    private ImageCache<Image, Image> scaledImageCache =  
+            new ImageCache<Image, Image>(GUIPreferences.getInstance().getInt(
+                    GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
@@ -6731,7 +6733,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<Image, Image>();
+        scaledImageCache = new ImageCache<Image, Image>(
+                GUIPreferences.getInstance().getInt(
+                        GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
 
         cursorSprite.prepare();
         highlightSprite.prepare();

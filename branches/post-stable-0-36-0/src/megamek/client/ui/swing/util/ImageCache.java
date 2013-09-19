@@ -81,13 +81,11 @@ public class ImageCache<K, V> {
         if ((key == null) || (value == null))
             return null;
 
-        if (cache.size() == maxSize) { // must remove one element
+        if (cache.size() >= maxSize) { // must remove one element
             System.out.println("!ImageCache Max Size reached!");
-            long start = System.currentTimeMillis();
             Object[] timestamps = 
                     (Object[])times.toArray();
             Arrays.sort(timestamps);
-            System.out.println("Sort time: " + (System.currentTimeMillis() - start));
             
             @SuppressWarnings("unchecked")
             K keyToNix = ((KeyTimestampPair)timestamps[0]).key;
@@ -155,6 +153,10 @@ public class ImageCache<K, V> {
         @Override
         public int compareTo(KeyTimestampPair other) {            
             return (int)(timestamp - other.timestamp);
+        }
+        
+        public String toString(){
+            return timestamp + "";
         }
     }
 }

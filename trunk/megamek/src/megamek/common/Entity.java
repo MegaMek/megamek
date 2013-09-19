@@ -12313,5 +12313,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Unknown";
         }
     }
+    
+    public void damageSystem(int type, int slot, int hits) {
+        for (int loc = 0; loc < locations(); loc++) {
+            damageSystem(type, slot, loc, hits);
+        }
+    }
+    
+    public void damageSystem(int type, int slot, int loc, int hits) {
+        int nhits = 0;
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot cs = getCritical(loc, i);
+            // ignore empty & system slots
+            if ((cs == null) || (cs.getType() != type)) {
+                continue;
+            }
+            if (cs.getIndex() == slot) {
+                if(nhits < hits) {
+                    cs.setHit(true);
+                    cs.setDestroyed(true);
+                    cs.setRepairable(true);
+                    nhits++;
+                } else {
+                    cs.setHit(false);
+                    cs.setDestroyed(false);
+                    cs.setRepairable(true);
+                }
+            }
+        }
+    }
 
 }

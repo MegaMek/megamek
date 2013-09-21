@@ -20,7 +20,8 @@ v0.36.0 post-stable
 + Feature: ImageCache max size now an advanced client parameter, this allows 
     users to have a better experience on very large maps if they have the memory
 + Bug: MechSummary and AdvancedSearch were using EquipmentType.getName() instead
-    of getInternalName()  
+    of getInternalName()
++ Enabled the MechEditorDialog for post-stable branch
 
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
@@ -74,6 +75,10 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
   <model> tag, and if they don't the quirks apply to every specified chassis.
 + Bug: Compute.getMetalInPath() not checking for null entities
 + Scenario readme updated to include camo settings
++ Bug: ASF incorrect damage when using the unofficial UAC roll twice option (2 shots at 30 damage instead of 20 damage)
++ Bug: Game year not taken into account for Unit Selector Dialog
++ MechEditorDialog for editing entity damage in the chat lounge - disabled for the stable
++ Bug: Timestamp mismatch code was supposed to allow a 90 second variance but was accidentally only 90ms
 
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)

@@ -102,6 +102,7 @@ import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.MapSettings;
+import megamek.common.Mech;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
@@ -2093,6 +2094,28 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             c.sendUpdateEntity(entity);
         }
     }
+    
+    public void mechEdit(Entity entity) {
+        boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
+        Client c;
+        if (editable) {
+            c = clientgui.getBots().get(entity.getOwner().getName());
+        } else {
+            editable |= entity.getOwnerId() == clientgui.getClient()
+                    .getLocalPlayer().getId();
+            c = clientgui.getClient();
+        }
+
+        // display dialog
+        MechEditorDialog med = new MechEditorDialog(clientgui.getFrame(), entity);
+        //med.setPlayer(c.getLocalPlayer());
+        med.setVisible(true);
+        c.sendUpdateEntity(entity);
+        /*if (editable && med.isSelect()) {
+            // send changes
+            c.sendUpdateEntity(entity);
+        }*/
+    }
 
     public void customizePlayer() {
         Client c = getPlayerSelected();
@@ -3130,6 +3153,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             if (command.equalsIgnoreCase("VIEW")) {
                 mechReadout(entity);
+            } else if (command.equalsIgnoreCase("DAMAGE")) {
+                mechEdit(entity);
             } else if (command.equalsIgnoreCase("INDI_CAMO")) {
                 mechCamo(entity);
             } else if (command.equalsIgnoreCase("CONFIGURE")) {
@@ -3416,6 +3441,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled(isOwner || isBot);
                     menuItem.setMnemonic(KeyEvent.VK_C);
                     popup.add(menuItem);
+                    
+                    menuItem = new JMenuItem("Edit Damage...");
+                    menuItem.setActionCommand("DAMAGE");
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled(isOwner || isBot);
+                    popup.add(menuItem);
+                    
                     menuItem = new JMenuItem("Set individual camo");
                     menuItem.setActionCommand("INDI_CAMO");
                     menuItem.addActionListener(this);

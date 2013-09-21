@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="trunk/megamek/src"/>
 	<classpathentry kind="src" path="trunk/megamek/l10n"/>
+	<classpathentry kind="src" path="trunk/megamek/src"/>
 	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/j3dcore.jar"/>
 	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/j3dutils.jar"/>
 	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/Ostermiller.jar"/>

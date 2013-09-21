@@ -202,8 +202,9 @@ public class DefaultQuirksHandler {
         if (defaultQuirkMap.containsKey(unitId)) {
             if (quirks == null){
                 quirks = defaultQuirkMap.get(unitId);
-            } else {
-                quirks.addAll(defaultQuirkMap.get(unitId));
+            } else if (defaultQuirkMap.get(unitId).size() > 0){
+                quirks = new ArrayList(quirks);
+                quirks.addAll(defaultQuirkMap.get(unitId));                                    
             }
         }
       

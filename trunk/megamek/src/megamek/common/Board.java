@@ -1174,8 +1174,9 @@ public class Board implements Serializable, IBoard {
 
         // Add rubble terrain that matches the building type.
         if (type > 0) {
+            int rubbleLevel = bldg.getBldgClass() == Building.FORTRESS ? 2 : 1; 
             curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.RUBBLE, type));
+                    Terrains.RUBBLE, rubbleLevel));
         }
 
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {

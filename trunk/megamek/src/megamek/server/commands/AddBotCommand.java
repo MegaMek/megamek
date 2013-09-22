@@ -44,6 +44,10 @@ public class AddBotCommand extends ServerCommand {
         if (args[1].toLowerCase().startsWith("-b:")) {
             botName = args[1].replaceFirst("-b:", "");
             playerListStart = 2;
+            if (args.length < 3){
+                server.sendServerChat(connId, "You must specify a player name.");
+                return; 
+            }
         }
 
         String playerName = args[playerListStart];

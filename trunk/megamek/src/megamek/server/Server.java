@@ -28954,6 +28954,13 @@ public class Server implements Runnable {
                     }
                     vDesc.addAll(damageCrew(pilot, damage));
                 }
+
+                // If this is a skin of the teeth ejection...
+                if (skin_of_the_teeth && (pilot.getCrew().getHits() < 6)) {
+                    Report.addNewline(vDesc);
+                    pilot.setDoomed(true); // Set them to doomed so they die later by 'deadly ejection'
+                    vDesc.addAll(damageCrew(pilot, 6 - pilot.getCrew().getHits()));
+                }
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -29019,13 +29026,13 @@ public class Server implements Runnable {
                     send(createRemoveEntityPacket(pilot.getId(),
                             IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
-            } // Crew safely ejects.
 
-            // If this is a skin of the teeth ejection...
-            if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
-                Report.addNewline(vDesc);
-                vDesc.addAll(damageCrew(pilot, 5 - pilot.getCrew().getHits()));
-            }
+                // If this is a skin of the teeth ejection...
+                if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
+                    Report.addNewline(vDesc);
+                    vDesc.addAll(damageCrew(pilot, 5 - pilot.getCrew().getHits()));
+                }
+            } // Crew safely ejects.
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())

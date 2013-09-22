@@ -24268,7 +24268,6 @@ public class Server implements Runnable {
             r.add(waterDamage);
         }
         vPhaseReport.add(r);
-        damage += waterDamage;
 
         // Any swarming infantry will be dislodged, but we don't want to
         // interrupt the fall's report. We have to get the ID now because
@@ -24284,12 +24283,7 @@ public class Server implements Runnable {
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
-        if (waterDepth > 0) {
-            for (int loop = 0; loop < entity.locations(); loop++) {
-                entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-            }
-        }
-
+        
         // if falling into a bog-down hex, the entity automatically gets stuck
         if (fallHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
@@ -24323,6 +24317,20 @@ public class Server implements Runnable {
                 damage -= cluster;
             }
         }
+        
+        if (waterDepth > 0) {
+            for (int loop = 0; loop < entity.locations(); loop++) {
+                entity.setLocationStatus(loop, ILocationExposureStatus.WET);
+            }
+        }
+        //Water damage
+        while (waterDamage > 0) {
+            int cluster = Math.min(5, waterDamage);
+            HitData hit = entity.rollHitLocation(damageTable, table);
+            hit.makeFallDamage(true);
+            vPhaseReport.addAll(damageEntity(entity, hit, cluster));
+            waterDamage -= cluster;
+        }        
 
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false,

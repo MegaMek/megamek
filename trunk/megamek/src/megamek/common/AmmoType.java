@@ -3118,6 +3118,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "RAC/2";
         ammo.setInternalName("ISRotaryAC2 Ammo");
         ammo.addLookupName("IS Rotary AC/2 Ammo");
+        ammo.addLookupName("ISRAC2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
@@ -3141,6 +3142,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "RAC/5";
         ammo.setInternalName("ISRotaryAC5 Ammo");
         ammo.addLookupName("IS Rotary AC/5 Ammo");
+        ammo.addLookupName("ISRAC5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
@@ -3278,6 +3280,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iHeavy Gauss";
         ammo.setInternalName("ISImprovedHeavyGauss Ammo");
         ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
+        ammo.addLookupName("ISImprovedHeavyGaussRifle Ammo");
         ammo.damagePerShot = 22;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_IGAUSS_HEAVY;
@@ -9602,8 +9605,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
-        ammo.introDate = 2531;
-        ammo.techLevel.put(2531, ammo.techLevel.get(3067));
+        ammo.introDate = 2840;
+        ammo.techLevel.put(2840, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
         return ammo;
@@ -9626,8 +9629,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
-        ammo.introDate = 2531;
-        ammo.techLevel.put(2531, ammo.techLevel.get(3067));
+        ammo.introDate = 2840;
+        ammo.techLevel.put(2840, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
         return ammo;
@@ -9650,8 +9653,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
-        ammo.introDate = 2531;
-        ammo.techLevel.put(2531, ammo.techLevel.get(3067));
+        ammo.introDate = 2840;
+        ammo.techLevel.put(2840, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
         return ammo;
@@ -9674,8 +9677,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
-        ammo.introDate = 2531;
-        ammo.techLevel.put(2531, ammo.techLevel.get(3067));
+        ammo.introDate = 2840;
+        ammo.techLevel.put(2840, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
         return ammo;

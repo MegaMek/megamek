@@ -2422,7 +2422,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         misc.introDate = 3059;
         misc.techLevel.put(3059, misc.techLevel.get(3071));
-        misc.techLevel.put(3080, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3080, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_F;
 
         return misc;
@@ -4189,6 +4189,9 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3061;
         misc.techLevel.put(3061, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
+        misc.techRating = RATING_E;
 
         return misc;
     }
@@ -4303,6 +4306,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Improved Sensors";
+        misc.addLookupName("IS Improved Sensors");
         misc.setInternalName(Sensor.ISIMPROVED);
         misc.tonnage = 0.0f;
         misc.cost = 200000;
@@ -4321,6 +4325,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.CLIMPROVED);
+        misc.addLookupName("Clan Improved Sensors");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT);

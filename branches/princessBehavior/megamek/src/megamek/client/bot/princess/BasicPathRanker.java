@@ -204,10 +204,10 @@ public class BasicPathRanker extends PathRanker {
             }
             if ((leftbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId())) > 0) &&
                 (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId())) < 0)) {
-                ret.damage_i_can_do += firecontrol.getMaxDamageAtRange(p.getEntity(), range) * damage_discount;
+                ret.damage_i_can_do += firecontrol.estimatedDamageAtRange(p.getEntity(), range) * damage_discount;
             }
             //in general if an enemy can end its position in range, it can hit me
-            ret.damage_enemy_can_do += firecontrol.getMaxDamageAtRange(e, range) * damage_discount;
+            ret.damage_enemy_can_do += firecontrol.estimatedDamageAtRange(e, range) * damage_discount;
             //It is especially embarassing if the enemy can move behind or flank me and then kick me
             if (enemy_facing_set != null) {
                 if (enemy_facing_set.contains(new CoordFacingCombo(behind, myfacing)) ||
@@ -359,8 +359,8 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
             // Include damage I can do to strategic targets
-            for (int i = 0; i < botbase.fire_control.additional_targets.size(); i++) {
-                Targetable t = botbase.fire_control.additional_targets.get(i);
+            for (int i = 0; i < botbase.fire_control.getAdditionalTargets().size(); i++) {
+                Targetable t = botbase.fire_control.getAdditionalTargets().get(i);
                 if (t.getPosition() == null) {
                     continue; // Skip targets not actually on the board.
                 }

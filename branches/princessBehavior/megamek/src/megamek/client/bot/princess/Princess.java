@@ -177,7 +177,7 @@ public class Princess extends BotClient {
             // entity that can
             // act this turn
             // make sure weapons are loaded
-            fire_control.loadAmmo(shooter);
+//            fire_control.loadAmmo(shooter);
             FiringPlan plan = fire_control.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
@@ -493,14 +493,14 @@ public class Princess extends BotClient {
 
         try {
             // reset strategic targets
-            fire_control.additional_targets = new ArrayList<Targetable>();
+//            fire_control.additional_targets = new ArrayList<Targetable>();
             for (Coords strategic_target : strategic_targets) {
                 if (game.getBoard().getBuildingAt(strategic_target) == null) {
                     sendChat("No building to target in Hex "
                              + strategic_target.toFriendlyString()
                              + ", ignoring.");
                 } else {
-                    fire_control.additional_targets.add(new BuildingTarget(
+                    fire_control.addAdditionalTarget(new BuildingTarget(
                             strategic_target, game.getBoard(), false));
                     sendChat("Building in Hex "
                              + strategic_target.toFriendlyString()
@@ -523,8 +523,8 @@ public class Princess extends BotClient {
                         if ((entity instanceof GunEmplacement)
                             && entity.getOwner()
                                      .isEnemyOf(getLocalPlayer())
-                            && (fire_control.additional_targets.indexOf(bt) == -1)) {
-                            fire_control.additional_targets.add(bt);
+                            && (fire_control.getAdditionalTargets().indexOf(bt) == -1)) {
+                            fire_control.addAdditionalTarget(bt);
                             sendChat("Building in Hex "
                                      + coords.toFriendlyString()
                                      + " designated target due to Gun Emplacement.");

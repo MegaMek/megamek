@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import junit.framework.TestCase;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.actions.EntityAction;
@@ -50,6 +51,7 @@ public class FiringPlanTest {
     private Mounted mockPPC = Mockito.mock(Mounted.class);
     private WeaponFireInfo mockLRM20Info = Mockito.mock(WeaponFireInfo.class);
     private Mounted mockLRM20 = Mockito.mock(Mounted.class);
+    private IGame mockGame = Mockito.mock(IGame.class);
 
     @Before
     public void setUp() {
@@ -104,7 +106,7 @@ public class FiringPlanTest {
 
     @Test
     public void testGetHeat() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
 
         // Firing plan with no weapons.
         int expectedHeat = 0;
@@ -124,7 +126,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedHeat, actualHeat);
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -137,7 +139,7 @@ public class FiringPlanTest {
 
     @Test
     public void testGetExpectedDamage() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         final double DELTA = 0.001;
 
         // Firing plan with no weapons.
@@ -164,7 +166,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedDmg, actualDmg, DELTA);
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -178,7 +180,7 @@ public class FiringPlanTest {
 
     @Test
     public void testGetExpectedCriticals() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         final double DELTA = 0.0001;
 
         // Firing plan with no weapons.
@@ -205,7 +207,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedCrits, actualCrits, DELTA);
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -219,7 +221,7 @@ public class FiringPlanTest {
 
     @Test
     public void testGetKillProbability() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         final double DELTA = 0.0001;
 
         // Firing plan with no weapons.
@@ -246,7 +248,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedProb, actualProb, DELTA);
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -260,7 +262,7 @@ public class FiringPlanTest {
 
     @Test
     public void testHasWeapon() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
 
         // Firing plan with no weapons.
         TestCase.assertFalse(testFiringPlan.containsWeapon(null));
@@ -290,7 +292,7 @@ public class FiringPlanTest {
         TestCase.assertTrue(testFiringPlan.containsWeapon(mockLRM20));
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -304,7 +306,7 @@ public class FiringPlanTest {
 
     @Test
     public void testGetEntityActionVector() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
 
         // Firing plan with no weapons.
         Vector<EntityAction> expectedVector = new Vector<EntityAction>(0);
@@ -357,7 +359,7 @@ public class FiringPlanTest {
         expectedVector.add(mockMediumLaserInfo.getWeaponAttackAction());
         expectedVector.add(mockPPCInfo.getWeaponAttackAction());
         expectedVector.add(mockLRM20Info.getWeaponAttackAction());
-        testFiringPlan = new FiringPlan(mockTarget);
+        testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         testFiringPlan.setTwist(leftTwist);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
@@ -373,7 +375,7 @@ public class FiringPlanTest {
         final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
         final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
-        FiringPlan testFiringePlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringePlan = new FiringPlan(mockTarget, mockShooter, mockGame);
 
         // Test an empty firing plan.
         String expectedDebug = "Empty FiringPlan!";
@@ -500,7 +502,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedDescription.toString(), actualDescription);
 
         // Reset and add all weapons at once, undetailed.
-        testFiringePlan = new FiringPlan(mockTarget);
+        testFiringePlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -529,7 +531,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedDescription.toString(), actualDescription);
 
         // Reset and add all weapons at once, detailed.
-        testFiringePlan = new FiringPlan(mockTarget);
+        testFiringePlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);
@@ -561,7 +563,7 @@ public class FiringPlanTest {
 
     @Test
     public void testCalcUtility() {
-        FiringPlan testFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         final double DELTA = 0.001;
 
         // Firing plan with no weapons.
@@ -593,7 +595,7 @@ public class FiringPlanTest {
         TestCase.assertEquals(expectedUtility, actualUtility, DELTA);
 
         // Reset and test adding all weapons at once.
-        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget);
+        FiringPlan testGroupFiringPlan = new FiringPlan(mockTarget, mockShooter, mockGame);
         List<WeaponFireInfo> testList = new ArrayList<WeaponFireInfo>(3);
         testList.add(mockMediumLaserInfo);
         testList.add(mockPPCInfo);

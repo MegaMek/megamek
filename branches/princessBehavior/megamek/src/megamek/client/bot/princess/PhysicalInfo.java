@@ -15,6 +15,7 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.PhysicalOption;
 import megamek.common.BipedMech;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -22,7 +23,12 @@ import megamek.common.Mech;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.PhysicalAttackAction;
+import megamek.common.util.LogLevel;
 import megamek.common.util.Logger;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Enumeration;
 
 /**
  * PhysicalInfo is a wrapper around a PhysicalAttackAction that includes
@@ -33,6 +39,9 @@ import megamek.common.util.Logger;
  * @since: 9/12/13 8:16 PM
  */
 public class PhysicalInfo {
+    private final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
+    private final NumberFormat LOG_DEC = DecimalFormat.getInstance();
+
     private Entity shooter;
     private Targetable target;
     private PhysicalAttackAction action;
@@ -336,13 +345,79 @@ public class PhysicalInfo {
      * calculates the 'utility' of a physical action.
      */
     protected void calculateUtility() {
+        final String METHOD_NAME = "calculateUtility()";
+
         final double damageUtility = 1.0;
         final double criticalUtility = 10.0;
         final double killUtility = 50.0;
+        final double commanderUtility = 20.0;
+        final double buildingAsCoverUtility = 10.0;
 
-        double utility = damageUtility * calcExpectedDamage();
-        utility += criticalUtility * getExpectedCriticals();
-        utility += killUtility * getKillProbability();
-        setUtility(utility);
+        double total = 0;
+        StringBuilder msg = new StringBuilder("Calculating Physical Attack Utility:");
+
+        // Damage
+        double expected = calcExpectedDamage();
+        double mod = expected * damageUtility;
+        msg.append("\n\tExpected Damage Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(LOG_DEC.format(damageUtility))
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Crits
+        expected = getExpectedCriticals();
+        mod = expected * criticalUtility;
+        msg.append("\n\tExpected Crit Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(LOG_DEC.format(criticalUtility))
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Kill
+        expected = getKillProbability();
+        mod = expected * killUtility;
+        msg.append("\n\tKill Probability Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(killUtility)
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Commander
+        mod = getTargetState().isCommander() ? commanderUtility : 0;
+        msg.append("\n\tCommander Mod = ").append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Using a building for cover.
+        if (getTarget() instanceof BuildingTarget) {
+            Enumeration<Entity> enemies = game.getEnemyEntities(target.getPosition(), shooter);
+            int enemyCount = 0;
+            while (enemies.hasMoreElements()) {
+                Entity enemy = enemies.nextElement();
+                if (enemy.isAirborne()) {
+                    continue; // Not in or on a building.
+                }
+                enemyCount++;
+            }
+            mod = enemyCount * buildingAsCoverUtility;
+            msg.append("\n\tBuilding as Cover mod: ")
+               .append(enemyCount)
+               .append(" units * ")
+               .append(LOG_DEC.format(buildingAsCoverUtility))
+               .append(" = ")
+               .append(LOG_DEC.format(mod));
+            total += mod;
+        }
+
+        // Final total.
+        msg.append("\n\tTOTAL = ").append(LOG_DEC.format(total));
+        utility = total;
+        Logger.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
     }
 }

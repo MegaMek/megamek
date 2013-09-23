@@ -13,18 +13,22 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.BuildingTarget;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.util.LogLevel;
 import megamek.common.util.Logger;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
@@ -38,19 +42,33 @@ import java.util.Vector;
 public class FiringPlan {
 
     private static final long serialVersionUID = 8938385222775928559L;
+    private final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
+    private final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
     private final List<WeaponFireInfo> firingInfo = Collections.synchronizedList(new ArrayList<WeaponFireInfo>());
 
     private int twist;
-    private Targetable target = null;
+    private Targetable target;
     private boolean initialized;
     private int heat;
     private double expectedDamage;
     private double expectedCriticals;
     private double killProbability;
     private double utility;
+    private IGame game;
+    private Entity shooter;
 
-    FiringPlan(Targetable target) {
+    FiringPlan(Targetable target, Entity shooter, IGame game) {
+        if (target == null) {
+            throw new IllegalArgumentException("Target is NULL!");
+        }
+        if (shooter == null) {
+            throw new IllegalArgumentException("Shooter is NULL!");
+        }
+        if (game == null) {
+            throw new IllegalArgumentException("Game is NULL!");
+        }
+
         twist = 0;
         initialized = false;
         heat = 0;
@@ -59,6 +77,8 @@ public class FiringPlan {
         killProbability = 0;
         utility = 0;
         this.target = target;
+        this.game = game;
+        this.shooter = shooter;
     }
 
     private void initialize() {
@@ -71,6 +91,14 @@ public class FiringPlan {
         }
     }
 
+    public Entity getShooter() {
+        return shooter;
+    }
+
+    public IGame getGame() {
+        return game;
+    }
+
     public Targetable getTarget() {
         return target;
     }
@@ -81,10 +109,6 @@ public class FiringPlan {
 
     public void setTwist(int twist) {
         this.twist = twist;
-    }
-
-    public boolean isCommander() {
-        return (target instanceof Entity) && ((Entity) target).isCommander();
     }
 
     public void addWeaponFire(WeaponFireInfo weaponFire) {
@@ -248,8 +272,6 @@ public class FiringPlan {
      * hit, and damage
      */
     public String getDebugDescription(boolean detailed) {
-        final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
-        final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
         if (firingInfo.size() == 0) {
             return "Empty FiringPlan!";
@@ -271,22 +293,134 @@ public class FiringPlan {
     }
 
     public void calcUtility(int overheatValue) {
+        final String METHOD_NAME = "calcUtility(int)";
         double damageUtility = 1.0;
         double criticalUtility = 10.0;
         double killUtility = 50.0;
-        double overheatDisutility = 5.0;
+        double overheatDisutility = -5.0;
+        double commanderUtility = 20.0;
+        double buildingAsCoverUtility = 10.0;
         int overheat = 0;
         if (getHeat() > overheatValue) {
             overheat = getHeat() - overheatValue;
         }
-        utility = ((damageUtility * getExpectedDamage()) +
-                   (criticalUtility * getExpectedCriticals()) +
-                   (killUtility * getKillProbability())) -
-                  (overheatDisutility * overheat);
+
+        double total = 0;
+        StringBuilder msg = new StringBuilder("Calculating Firing Plan Utility:");
+        msg.append(getDebugDescription(true));
+
+        // Damage
+        double expected = getExpectedDamage();
+        double mod = expected * damageUtility;
+        msg.append("\n\tExpected Damage Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(LOG_DEC.format(damageUtility))
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Crits
+        expected = getExpectedCriticals();
+        mod = expected * criticalUtility;
+        msg.append("\n\tExpected Crit Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(LOG_DEC.format(criticalUtility))
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Kill
+        expected = getKillProbability();
+        mod = expected * killUtility;
+        msg.append("\n\tKill Probability Mod = ")
+           .append(LOG_DEC.format(expected))
+           .append(" * ")
+           .append(killUtility)
+           .append(" = ")
+           .append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Commander
+        mod = new EntityState(getTarget()).isCommander() ? commanderUtility : 0;
+        msg.append("\n\tCommander Mod = ").append(LOG_DEC.format(mod));
+        total += mod;
+
+        // Using a building for cover.
+        if (getTarget() instanceof BuildingTarget) {
+            Enumeration<Entity> enemies = game.getEnemyEntities(target.getPosition(), shooter);
+            int enemyCount = 0;
+            while (enemies.hasMoreElements()) {
+                Entity enemy = enemies.nextElement();
+                if (enemy.isAirborne()) {
+                    continue; // Not in or on a building.
+                }
+                enemyCount++;
+            }
+            mod = enemyCount * buildingAsCoverUtility;
+            msg.append("\n\tBuilding as Cover mod: ")
+               .append(enemyCount)
+               .append(" units * ")
+               .append(LOG_DEC.format(buildingAsCoverUtility))
+               .append(" = ")
+               .append(LOG_DEC.format(mod));
+            total += mod;
+        }
+
+        // Overheating.
+        mod = overheat * overheatDisutility;
+        msg.append("\n\tOverheat Mod = ")
+           .append(overheat)
+           .append(" * ")
+           .append(LOG_DEC.format(overheatDisutility))
+           .append(" = ")
+           .append(mod);
+        total += mod;
+
+        // Final total.
+        msg.append("\n\tTOTAL = ").append(LOG_DEC.format(total));
+        utility = total;
+        Logger.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
     }
 
     public double getUtility() {
         return utility;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        FiringPlan that = (FiringPlan) o;
+
+        if (twist != that.twist) {
+            return false;
+        }
+        if (!firingInfo.equals(that.firingInfo)) {
+            return false;
+        }
+        if (!shooter.equals(that.shooter)) {
+            return false;
+        }
+        if (!target.equals(that.target)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firingInfo.hashCode();
+        result = 31 * result + twist;
+        result = 31 * result + target.hashCode();
+        result = 31 * result + shooter.hashCode();
+        return result;
+    }
 }

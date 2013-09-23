@@ -10775,4 +10775,50 @@ public class AmmoType extends EquipmentType {
         return shortName;
     }
 
+    /**
+     * Checks to ensure that the given ammo can be used with the giveen weapon type.  Performs the following tests:<br/>
+     * {@code ammo} != null<br/>
+     * {@link Mounted#getType()} instanceof {@link AmmoType}<br/>
+     * {@link Mounted#isAmmoUsable()}<br/>
+     * {@link #isAmmoValid(AmmoType, WeaponType)}.
+     *
+     * @param ammo The ammunition to be tested.
+     * @param weaponType The weapon the ammo is to be used with.
+     * @return TRUE if the ammmo and weapon are compatible.
+     */
+    @SuppressWarnings("SimplifiableIfStatement")
+    public static boolean isAmmoValid(Mounted ammo, WeaponType weaponType) {
+        if (ammo == null) {
+            return false;
+        }
+        if (!(ammo.getType() instanceof AmmoType)) {
+            return false;
+        }
+        return ammo.isAmmoUsable() && isAmmoValid((AmmoType)ammo.getType(), weaponType);
+    }
+
+    /**
+     * Checks to ensure that the given ammunition type is compatable with the given weapon type.  Performs the following
+     * tests:<br/>
+     * {@code ammoType} != null<br/>
+     * {@link AmmoType#getAmmoType()} == {@link WeaponType#getAmmoType()}<br/>
+     * {@link AmmoType#getRackSize()} == {@link WeaponType#getRackSize()}
+     *
+     * @param ammoType The type of ammo to be tested.
+     * @param weaponType The type of weapon the ammo is to be used with.
+     * @return TRUE if the ammo type and wepaon type are compatable.
+     */
+    @SuppressWarnings("RedundantIfStatement")
+    public static boolean isAmmoValid(AmmoType ammoType, WeaponType weaponType) {
+        if (ammoType == null) {
+            return false;
+        }
+        if (ammoType.getAmmoType() != weaponType.getAmmoType()) {
+            return false;
+        }
+        if (ammoType.getRackSize() != weaponType.getRackSize()) {
+            return false;
+        }
+        return true;
+    }
 }

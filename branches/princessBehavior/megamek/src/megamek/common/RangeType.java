@@ -108,4 +108,23 @@ public class RangeType {
         return range;
     }
 
+    public static String getBracketName(int rangeBracket) {
+        switch (rangeBracket) {
+            case RANGE_MINIMUM:
+                return "MINIMUM";
+            case RANGE_SHORT:
+                return "SHORT";
+            case RANGE_MEDIUM:
+                return "MEDIUM";
+            case RANGE_LONG:
+                return "LONG";
+            case RANGE_EXTREME:
+                return "EXTREME";
+            case RANGE_OUT:
+                return "OUT";
+            default:
+                return "unknown";
+        }
+    }
+
 }

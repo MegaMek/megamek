@@ -4188,6 +4188,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    public boolean hasArtemisV() {
+        for (Mounted m : getMisc()) {
+            if ((m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                return !m.isInoperable();
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns wether or not this entity has a Targeting Computer that is in
      * aimed shot mode.
@@ -9394,7 +9404,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Method taht determines if this Entity passed over another entity during
      * its current path
      *
-     * @param e
+     * @param t
      * @return
      */
     public boolean passedOver(Targetable t) {

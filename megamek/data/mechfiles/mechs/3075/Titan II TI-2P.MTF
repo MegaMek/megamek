@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:2
 
 Mass:100
-Engine:300 Fusion Engine
-Structure:Standard
+Engine:300 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:18 Double
@@ -31,14 +31,14 @@ RTR Armor:15
 RTC Armor:20
 
 Weapons:9
-Heavy PPC, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Center Torso
 Streak SRM 6, Left Arm
-MML 9, Right Torso
-MML 9, Left Torso
-ER Medium Laser, Center Torso
+ER Medium Laser, Left Arm
+Heavy PPC, Right Arm
 ER Medium Laser, Right Arm
+MML 9, Left Torso
+MML 9, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 ER Small Laser, Head
 
 Left Arm:
@@ -115,7 +115,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser (R)
+ISERSmallLaser
 Sensors
 Life Support
 -Empty-

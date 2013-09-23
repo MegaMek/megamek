@@ -17,6 +17,7 @@ v0.35.43-dev (0.36.0 Release Candidate 3)
 + bug [#3861]: Skin-of-teeth Still Not Right
 + Data: All TRO 3145 Units and some images(Thanks Deadborder).  Some of these units fail validation
 	since the construction and tech level data is not complete.
++ Bug: Assault Drop button not being disabled in DeploymentDisplay
 	
 v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size

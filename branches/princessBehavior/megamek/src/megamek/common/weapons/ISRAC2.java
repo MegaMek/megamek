@@ -37,6 +37,7 @@ public class ISRAC2 extends RACWeapon {
         this.name = "Rotary AC/2";
         this.setInternalName("ISRotaryAC2");
         this.addLookupName("IS Rotary AC/2");
+        this.addLookupName("ISRAC2");
         this.heat = 1;
         this.damage = 2;
         this.rackSize = 2;

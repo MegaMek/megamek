@@ -33,7 +33,7 @@ public class CLProtoMechAC8 extends ProtoMechACWeapon {
      */
     public CLProtoMechAC8() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+
         name = "ProtoMech AC/8";
         setInternalName("CLProtoMechAC8");
         addLookupName("Clan ProtoMech AC/8");
@@ -56,7 +56,8 @@ public class CLProtoMechAC8 extends ProtoMechACWeapon {
         explosionDamage = damage;
         techRating = RATING_F;
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3073;
-        techLevel.put(3073, techLevel.get(3071));
+        techLevel.put(3070, techLevel.get(3071));
+        techLevel.put(3070, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3073, TechConstants.T_CLAN_TW);
     }
 }

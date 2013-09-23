@@ -1547,7 +1547,22 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true, true);
     }
-
+    
+    /** 
+     * Returns the name of the heat sinks mounted on this 'mech.
+     * @return
+     */
+    public String getHeatSinkTypeName(){
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_HEAT_SINK) ||
+                    m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
+                    m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK) ||
+                    m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)){
+                return m.getName();
+            }
+        }
+        return "";
+    }
     public int getHeatCapacity(boolean includePartialWing,
             boolean includeRadicalHeatSink) {
         int capacity = 0;

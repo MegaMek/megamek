@@ -26,13 +26,14 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
 
     public ISTSEMPOneShot() {
         super();
-        techLevel.put(3109,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3095,TechConstants.T_IS_EXPERIMENTAL);
         flags.or(F_ONESHOT);
         cost = 500000;
         bv = 98;
         name = "TSEMP One-Shot";
         setInternalName(name);
-        introDate = 3109;
+        introDate = 3095;
+        techLevel.put(3100,TechConstants.T_IS_ADVANCED);
         tonnage = 4;
         criticals = 3;
     }

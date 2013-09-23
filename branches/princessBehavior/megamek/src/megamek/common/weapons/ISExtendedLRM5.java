@@ -51,6 +51,6 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3054;
         techLevel.put(3054, techLevel.get(3071));
-        techLevel.put(3080, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
     }
 }

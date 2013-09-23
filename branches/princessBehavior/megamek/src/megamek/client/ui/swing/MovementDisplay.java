@@ -2574,7 +2574,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 	        for (Integer bn : bayChoices) {
 	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
 	        }
-	        if (bayChoices.size() > 1 && !(choice instanceof Infantry)) {
+	        if (bayChoices.size() > 1) {
 	        	String bayString = (String) JOptionPane.showInputDialog(
 	        				clientgui,
 	        				Messages
@@ -2615,6 +2615,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (choices.size() == 0) {
             System.err
                     .println("MovementDisplay#getLoadedUnit() called without loadable units."); //$NON-NLS-1$
+            return null;
         }
 
         // If we have multiple choices, display a selection dialog.
@@ -2637,19 +2638,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             choice = choices.get(0);
         }
         
-        if (!(choice instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+        if (!(choice instanceof Infantry)) {
 	        Vector<Integer> bayChoices = new Vector<Integer>();
 	        for (Transporter t : ce().getTransports()) {
-	        	if (t.canLoad(choice)) {
-	        		bayChoices.add(((Bay) t).getBayNumber());
-	        	}
-	        }
+                if (t.canLoad(choice) && t instanceof Bay) {
+                    bayChoices.add(((Bay) t).getBayNumber());
+                }
+            }
 	        String[] retVal = new String[bayChoices.size()];
 	        int i = 0;
 	        for (Integer bn : bayChoices) {
 	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
 	        }
-	        if (bayChoices.size() > 1 && !(choice instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+	        if (bayChoices.size() > 1) {
 	        	String bayString = (String) JOptionPane.showInputDialog(
 	        				clientgui,
 	        				Messages

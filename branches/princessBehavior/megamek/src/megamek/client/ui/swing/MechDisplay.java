@@ -2559,18 +2559,25 @@ public class MechDisplay extends JPanel {
                     sb.append("---"); //$NON-NLS-1$
                 } else {
                     switch (cs.getType()) {
-                        case CriticalSlot.TYPE_SYSTEM:
-                            sb.append((cs.isDestroyed() || cs.isMissing()) ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
-                                    .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-                            // Protomechs have different systme names.
-                            if (en instanceof Protomech) {
-                                sb.append(Protomech.systemNames[cs.getIndex()]);
-                            } else {
-                                sb.append(((Mech) en).getSystemName(cs.getIndex()));
-                            }
-                            break;
-                        case CriticalSlot.TYPE_EQUIPMENT:
-                            Mounted m = en.getEquipment(cs.getIndex());
+                    case CriticalSlot.TYPE_SYSTEM:
+                        sb.append((cs.isDestroyed() || cs.isMissing()) ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
+                                .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+                        // Protomechs have different system names.
+                        if (en instanceof Protomech) {
+                            sb.append(Protomech.systemNames[cs.getIndex()]);
+                        } else {
+                            sb.append(((Mech) en).getSystemName(cs.getIndex()));
+                        }
+                        break;
+                    case CriticalSlot.TYPE_EQUIPMENT:
+                        Mounted m = en.getEquipment(cs.getIndex());
+                        sb
+                                .append((cs.isDestroyed() || cs.isMissing()) ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        if (m.isHotLoaded()) {
+                            sb.append(Messages
+                                    .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                        }
+                        if (m.getType().hasModes()) {
                             sb
                                     .append((cs.isDestroyed() || cs.isMissing()) ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             if (m.isHotLoaded()) {
@@ -2589,11 +2596,11 @@ public class MechDisplay extends JPanel {
                                 }
                             }
                             break;
+                        }
                         default:
                     }
                 }
-                ((DefaultListModel) slotList.getModel()).addElement(sb
-                                                                            .toString());
+                ((DefaultListModel) slotList.getModel()).addElement(sb.toString());
             }
             onResize();
         }

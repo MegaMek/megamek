@@ -21,6 +21,23 @@ vPrincessBehavior
 + Refactored FireControl for readability and to cut down on redundant code.
 
 v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
+
+v0.35.43-dev (0.36.0 Release Candidate 3)
++ Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 
+    image
++ Bug: Having Chassis level and model level quirks could cause memory issues
++ Bug [#3859]: Difficult Terrain Penalty for rubble of collapsed medium building 
+    and bridge 
++ Bug [#3857]: Radical Heat Sink System not displaying during mech selection 
++ Bug: MechView doesn't specify heat sink type; heat sink header now canged to 
+    reflect heat sink type
++ Bug [#3856]: 3145 Armor Display in Select Mech
++ Bug: More Tech level and date changes.
++ Bug [#3858]: When a bridge collapsed, not resolving falling damage separately
++ Bug: Fixed possible ArrayIndexOutOfBoundsException in replacePlayer command
++ bug [#3861]: Skin-of-teeth Still Not Right 
+
+v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size
 + Data: Fixes to Mechset and Unit fixes.
 + Bug [#3838]: Turn button greyed out on dropship deployment
@@ -51,6 +68,29 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
 + Added heat-dissipating armor construction data
 + Added radical heat sink construction data
 + Started work on super-heavy mechs
++ Bug: Commit [r9821] missed several key Endo-Steel to Endo Steel conversions 
+    and so bugged MechView
++ Bug: Fixed an ArrayIndexOutOfBounds exception when the Load button is pressed 
+    when no valid units can be loaded
++ Bug [#3854]: Units without bays cannot load units during the game 
++ Adding tech level changes for FM3145/TRO3145 Print.
++ Bug: Fixes to Weapon/Misc Equipment and Ammo Dates.
++ Data:Unit fixes and duplicate removal
++ Feature: Overhaul to advanced search.  Now allows for an arbitrarily complex 
+  search expression for weapons and equipment
++ Feature: UnitOverview now has more informative highlighting.  During 'your' 
+  turn, units that can be moved are highlighted in light-blue, the currently 
+  selected unit is highlighted in purple, and ineligible units aren't 
+  highlighted.  Additionally, no highlighting is done when it's not 'your' turn
++ Feature: Added the ability to specify quirks by chassis as well as 
+  chassis+model.  Now, entries in defaultQuirks.xml don't have to specify a 
+  <model> tag, and if they don't the quirks apply to every specified chassis.
++ Bug: Compute.getMetalInPath() not checking for null entities
++ Scenario readme updated to include camo settings
++ Bug: ASF incorrect damage when using the unofficial UAC roll twice option (2 shots at 30 damage instead of 20 damage)
++ Bug: Game year not taken into account for Unit Selector Dialog
++ MechEditorDialog for editing entity damage in the chat lounge - disabled for the stable
++ Bug: Timestamp mismatch code was supposed to allow a 90 second variance but was accidentally only 90ms
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

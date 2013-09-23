@@ -39,6 +39,7 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         setInternalName("CLERSmallPulseLaser");
         addLookupName("Clan ER Pulse Small Laser");
         addLookupName("Clan ER Small Pulse Laser");
+        addLookupName("ClanERSmallPulseLaser");
         heat = 3;
         damage = 5;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
@@ -60,6 +61,6 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
         techLevel.put(3057, techLevel.get(3071));
-        techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3082, TechConstants.T_CLAN_TW);
     }
 }

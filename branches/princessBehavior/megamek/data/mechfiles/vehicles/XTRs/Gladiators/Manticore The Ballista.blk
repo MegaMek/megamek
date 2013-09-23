@@ -61,7 +61,7 @@ ISC3SlaveUnit
 IS Ammo HVAC/5
 IS Ammo Extended LRM-10
 ISCASE
-ISSuperCharger
+Supercharger
 </Body Equipment>
 
 <Front Equipment>
@@ -84,13 +84,13 @@ Hyper Velocity Auto Cannon/5
 Extended LRM 10
 </Turret Equipment>
 
-<source>
-XTR Gladiators
-</source>
-
 <history>
 Unit is .5 tons overweight as a result of too much armor
 </history>
+
+<source>
+XTR Gladiators
+</source>
 
 <tonnage>
 60.0

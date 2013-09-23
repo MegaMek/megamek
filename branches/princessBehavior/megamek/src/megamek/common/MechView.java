@@ -196,7 +196,7 @@ public class MechView {
 
         if (isMech) {
             Mech aMech = (Mech) entity;
-            sBasic.append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$
+            sBasic.append(aMech.getHeatSinkTypeName() + "s: ")
                     .append(aMech.heatSinks());
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
                 sBasic.append(" [") //$NON-NLS-1$
@@ -683,8 +683,9 @@ public class MechView {
             if ((mounted.getLocation() == Entity.LOC_NONE)
                     || (name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
                     || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
-                    || (name.indexOf("Heat Sink") != -1)//$NON-NLS-1$
-                    || (name.indexOf("Endo-Steel") != -1) //$NON-NLS-1$
+                    || ((name.indexOf("Heat Sink") != -1) &&//$NON-NLS-1$ 
+                            (name.indexOf("Radical") == -1))//$NON-NLS-1$
+                    || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reactive") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reflective") != -1) //$NON-NLS-1$

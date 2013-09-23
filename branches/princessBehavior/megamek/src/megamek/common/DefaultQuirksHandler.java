@@ -94,10 +94,10 @@ public class DefaultQuirksHandler {
 
                 //Get the model.
                 Element modelElement = (Element)unitList.getElementsByTagName(MODEL).item(0);
-                if (modelElement == null) {
-                    continue;
-                }
-                String model = modelElement.getTextContent();
+                String model = null;
+                if (modelElement != null) {
+                    model = modelElement.getTextContent();
+                }              
 
                 //Generate the unit ID
                 String unitId = chassis;
@@ -186,7 +186,8 @@ public class DefaultQuirksHandler {
         if (!initialized || null == defaultQuirkMap) {
             return null;
         }
-
+        List<QuirkEntry> quirks = null;
+        
         //Build the unit ID from the chassis and model.
         String unitId = chassis;
         if ((model != null) && !model.isEmpty()) {
@@ -194,10 +195,19 @@ public class DefaultQuirksHandler {
         }
         //System.out.println("Getting quirks for " + unitId);
 
-        if (!defaultQuirkMap.containsKey(unitId)) {
-            return null;
+        if (defaultQuirkMap.containsKey(chassis)){
+            quirks = defaultQuirkMap.get(chassis);
         }
-
-        return defaultQuirkMap.get(unitId);
+        
+        if (defaultQuirkMap.containsKey(unitId)) {
+            if (quirks == null){
+                quirks = defaultQuirkMap.get(unitId);
+            } else if (defaultQuirkMap.get(unitId).size() > 0){
+                quirks = new ArrayList(quirks);
+                quirks.addAll(defaultQuirkMap.get(unitId));                                    
+            }
+        }
+      
+        return quirks;       
     }
 }

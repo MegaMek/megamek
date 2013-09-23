@@ -1340,7 +1340,13 @@ public class Server implements Runnable {
             if (!entity.isSalvage()) {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
-
+            // If we removed a unit during the movement phase that hasn't moved,
+            //  remove its turn.
+            if (game.getPhase() == Phase.PHASE_MOVEMENT && 
+                    entity.isSelectableThisTurn()){
+                game.removeTurnFor(entity);
+                send(createTurnVectorPacket());
+            }
             entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));

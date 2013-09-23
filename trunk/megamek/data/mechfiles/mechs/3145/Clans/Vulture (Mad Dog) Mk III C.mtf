@@ -1,0 +1,160 @@
+Version:1.0
+Vulture (Mad Dog) Mk III
+C
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3109
+Source:TRO 3145 Clan
+Rules Level:2
+
+Mass:60
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:12
+Micro Pulse Laser, Center Torso
+Micro Pulse Laser, Center Torso
+Micro Pulse Laser, Right Arm
+Micro Pulse Laser, Left Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLMicroPulseLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLMicroPulseLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMicroPulseLaser
+CLMicroPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

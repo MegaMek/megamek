@@ -1,0 +1,154 @@
+Version:1.0
+Vulture Mk IV
+D
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3137
+Source:Merc 3145
+Rules Level:3
+
+Mass:60
+Engine:300 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:14 Double
+Base Chassis Heat Sinks:12
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:6
+Micro Pulse Laser, Center Torso
+Micro Pulse Laser, Center Torso
+ATM 12, Left Torso
+ATM 12, Right Torso
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ammo ATM-12
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ammo ATM-12
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12 ER
+Clan Ammo ATM-12 HE
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12 ER
+Clan Ammo ATM-12 HE
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMicroPulseLaser
+CLMicroPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Lamellor
+Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Lamellor
+Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Bulwark Assault Vehicle
+</Name>
+
+<Model>
+(Standardl)
+</Model>
+
+<year>
+3114
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+63
+45
+45
+30
+45
+</armor>
+
+<Body Equipment>
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISImprovedHeavyGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Heavy PPC
+</Turret Equipment>
+
+<source>
+TRO 3145 FWL
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Axel Heavy Tank IIC
+</Name>
+
+<Model>
+(XL)
+</Model>
+
+<year>
+3074
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+65
+45
+45
+30
+35
+</armor>
+
+<Body Equipment>
+CLTargeting Computer
+CLAPGaussRifle Ammo
+CLAMS Ammo
+CLECMSuite
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLAPGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERLargeLaser
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLAntiMissileSystem
+CLArtemisIV
+</Turret Equipment>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

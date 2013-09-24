@@ -142,7 +142,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     }
 
     private void initComponents() {
-        setMinimumSize(new java.awt.Dimension(800, 600));
+        setMinimumSize(new java.awt.Dimension(640, 480));
 
         GridBagConstraints c;
 

@@ -715,7 +715,7 @@ KeyListener, ItemListener, ListSelectionListener {
         }
         
         // We need to nag for overheat on capital fighters
-        if (ce().isCapitalFighter() &&
+        if (ce() != null && ce().isCapitalFighter() &&
                 GUIPreferences.getInstance().getNagForOverheat()) {
             int totalheat = 0;
             for (EntityAction action : attacks){

@@ -15,10 +15,12 @@ v0.35.43-dev (0.36.0 Release Candidate 3)
 + Bug [#3858]: When a bridge collapsed, not resolving falling damage separately
 + Bug: Fixed possible ArrayIndexOutOfBoundsException in replacePlayer command
 + bug [#3861]: Skin-of-teeth Still Not Right
-+ Data: All TRO 3145 Units and some images(Thanks Deadborder).  Some of these units fail validation
++ Data: All TRO 3145 Units and some images(Thanks Deadborder).  Some of these 
+    units fail validation
 	since the construction and tech level data is not complete.
 + Bug: Assault Drop button not being disabled in DeploymentDisplay
 + Bug [#3863]: Game.destroyEntity removes turns when it shouldn't
++ Bug [#3867]: Potential infinite loop in Princess.calculateMoveTurn
 	
 v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size

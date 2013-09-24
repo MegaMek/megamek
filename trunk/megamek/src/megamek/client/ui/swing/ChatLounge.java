@@ -68,6 +68,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -2572,6 +2573,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             txt = txt + " " + "Space Map";
         } 
         lblMapSummary.setText(txt);
+         
+        StringBuilder selectedMaps = new StringBuilder();
+        selectedMaps.append("<html>");
+        selectedMaps.append(
+                Messages.getString("ChatLounge.MapSummarySelectedMaps"));
+        selectedMaps.append("<br>");
+        ListModel model = lisBoardsSelected.getModel();
+        for (int i = 0; i < model.getSize(); i++){
+            String map = (String)model.getElementAt(i);
+            selectedMaps.append(map);
+            if (i+1 <model.getSize()){
+                selectedMaps.append("<br>");
+            }
+        }
+        lblMapSummary.setToolTipText(selectedMaps.toString());
     }
     
     public void refreshGameYearLabel(){

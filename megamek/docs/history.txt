@@ -24,6 +24,7 @@ v0.35.43-dev (0.36.0 Release Candidate 3)
 + Bug: Fixed a potential NPE in FiringDisplay
 + Changed the minimum size of the MechSelectorDialog to 640x480 (from 800x600)
 + Added a label in the ChatLounge that displays the current game year
++ Added a tooltip to the map summary that lists the currently selected maps
 + Bug: Manually shut down units skipped as "ineligible"
 	
 v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)

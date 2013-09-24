@@ -6,8 +6,9 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2998
 Rules Level:1
+History:FLUFF note In earlier years, the Stalker commonly suffered structural weakness symptomatic of the extreme stress the 85 ton 'Mech's skeleton had to bear, necessitating the lightening of the load by a full ten tons. The 4P was a common solution to this problem; techs simply removed a single LRM-10 in order to keep an otherwise capable 'Mech in service. 
 
-Mass:75
+Mass:85
 Engine:225 Fusion Engine
 Structure:Standard
 Myomer:Standard

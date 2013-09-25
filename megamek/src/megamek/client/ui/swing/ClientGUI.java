@@ -467,11 +467,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
+        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);      
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         randomNameDialog = new RandomNameDialog(this);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$        
         frame.setVisible(true);
     }
 

@@ -741,8 +741,9 @@ public interface IGame {
     /**
      * Returns the next selectable entity that can act this turn, or null if
      * none can.
-     *
-     * @param start the index number to start at
+     * 
+     * @param start
+     *            the index number to start at (not an Entity Id)
      */
     public abstract Entity getNextEntity(int start);
 
@@ -750,7 +751,8 @@ public interface IGame {
      * Returns the next selectable entity ID that can act this turn, or null if
      * none can.
      *
-     * @param start the index number to start at
+     * @param start the index number to start at (and index into the entities 
+     *                  collection)
      */
     public abstract int getNextEntityNum(int start);
 

@@ -1,0 +1,96 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Testudo Siege Tank
+</Name>
+
+<Model>
+Tank
+</Model>
+
+<year>
+3131
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+64
+40
+40
+40
+40
+</armor>
+
+<Body Equipment>
+ISCASE
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVClusterAmmo
+IS Light Machine Gun Ammo - Half
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Body Equipment>
+
+<Front Equipment>
+Light Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISUltraAC10
+Light Machine Gun
+ISArrowIV
+</Turret Equipment>
+
+<source>
+TRO 3145 Merc
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

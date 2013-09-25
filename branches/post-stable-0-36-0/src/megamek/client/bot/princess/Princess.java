@@ -233,8 +233,8 @@ public class Princess extends BotClient {
                     moving_entity = e;
                     break;
                 }
-            } while (!(e = game.getNextEntity(e.getId() + 1)).equals(game
-                    .getFirstEntity()));
+                e = game.getEntity(game.getNextEntityNum(e.getId()));
+            } while (!e.equals(game.getFirstEntity()));
             // after that, moving farthest units first
             if (moving_entity == null) {
                 double furthest_dist = 0;
@@ -250,8 +250,8 @@ public class Princess extends BotClient {
                         moving_entity = e;
                         furthest_dist = dist;
                     }
-                } while (!(e = game.getNextEntity(e.getId() + 1)).equals(game
-                        .getFirstEntity()));
+                    e = game.getEntity(game.getNextEntityNum(e.getId()));
+                } while (!e.equals(game.getFirstEntity()));
             }
 
             return continueMovementFor(moving_entity);
@@ -327,7 +327,7 @@ public class Princess extends BotClient {
                 if (best_attack != null) {
                     return best_attack.getAsPhysicalOption();
                 }
-                hitter = game.getNextEntity(hitter.getId() + 1);
+                hitter = game.getEntity(game.getNextEntityNum(hitter.getId()));
                 // otherwise, check if the next entity can hit something
                 if (hitter.equals(first_entity)) {
                     hitter = null; // getNextEntity is incorrect, it does not

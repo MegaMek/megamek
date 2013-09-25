@@ -1,0 +1,98 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Cutlass
+</Name>
+
+<Model>
+CUT-01E
+</Model>
+
+<Tonnage>
+70
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+71
+54
+54
+53
+</Armor>
+
+<Nose Equipment>
+ISERLargeLaser
+ISGuardianECMSuite
+ISBeagleActiveProbe
+ISExtendedLRM20
+ISExtendedLRM20 Ammo
+ISExtendedLRM20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3102
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+3
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+

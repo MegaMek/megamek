@@ -1340,7 +1340,13 @@ public class Server implements Runnable {
             if (!entity.isSalvage()) {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
-
+            // If we removed a unit during the movement phase that hasn't moved,
+            //  remove its turn.
+            if (game.getPhase() == Phase.PHASE_MOVEMENT && 
+                    entity.isSelectableThisTurn()){
+                game.removeTurnFor(entity);
+                send(createTurnVectorPacket());
+            }
             entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));
@@ -24268,7 +24274,6 @@ public class Server implements Runnable {
             r.add(waterDamage);
         }
         vPhaseReport.add(r);
-        damage += waterDamage;
 
         // Any swarming infantry will be dislodged, but we don't want to
         // interrupt the fall's report. We have to get the ID now because
@@ -24284,12 +24289,7 @@ public class Server implements Runnable {
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
-        if (waterDepth > 0) {
-            for (int loop = 0; loop < entity.locations(); loop++) {
-                entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-            }
-        }
-
+        
         // if falling into a bog-down hex, the entity automatically gets stuck
         if (fallHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
@@ -24323,6 +24323,20 @@ public class Server implements Runnable {
                 damage -= cluster;
             }
         }
+        
+        if (waterDepth > 0) {
+            for (int loop = 0; loop < entity.locations(); loop++) {
+                entity.setLocationStatus(loop, ILocationExposureStatus.WET);
+            }
+        }
+        //Water damage
+        while (waterDamage > 0) {
+            int cluster = Math.min(5, waterDamage);
+            HitData hit = entity.rollHitLocation(damageTable, table);
+            hit.makeFallDamage(true);
+            vPhaseReport.addAll(damageEntity(entity, hit, cluster));
+            waterDamage -= cluster;
+        }        
 
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false,
@@ -28946,6 +28960,13 @@ public class Server implements Runnable {
                     }
                     vDesc.addAll(damageCrew(pilot, damage));
                 }
+
+                // If this is a skin of the teeth ejection...
+                if (skin_of_the_teeth && (pilot.getCrew().getHits() < 6)) {
+                    Report.addNewline(vDesc);
+                    pilot.setDoomed(true); // Set them to doomed so they die later by 'deadly ejection'
+                    vDesc.addAll(damageCrew(pilot, 6 - pilot.getCrew().getHits()));
+                }
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -29011,13 +29032,13 @@ public class Server implements Runnable {
                     send(createRemoveEntityPacket(pilot.getId(),
                             IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
-            } // Crew safely ejects.
 
-            // If this is a skin of the teeth ejection...
-            if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
-                Report.addNewline(vDesc);
-                vDesc.addAll(damageCrew(pilot, 5 - pilot.getCrew().getHits()));
-            }
+                // If this is a skin of the teeth ejection...
+                if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
+                    Report.addNewline(vDesc);
+                    vDesc.addAll(damageCrew(pilot, 5 - pilot.getCrew().getHits()));
+                }
+            } // Crew safely ejects.
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())

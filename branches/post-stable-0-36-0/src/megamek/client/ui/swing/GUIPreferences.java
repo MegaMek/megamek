@@ -81,6 +81,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String FOCUS = "Focus";
+    public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
+    public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -94,10 +96,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
     public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
     public static final String MECH_SELECTOR_RULES_LEVEL= "MechSelectorRuleType";
-    // public static final String MECH_SELECTOR_SIZE_HEIGHT =
-    // "MechSelectorSizeHeight";
-    // public static final String MECH_SELECTOR_SIZE_WIDTH =
-    // "MechSelectorSizeWidth";
+    public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
+    public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
@@ -197,6 +197,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CHAT_LOUNGE_TABS, true);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
+        store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -210,6 +212,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
         store.setDefault(MECH_SELECTOR_RULES_LEVEL,13);
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
+        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
+        store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -289,6 +293,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getFocus() {
         return store.getBoolean(FOCUS);
     }
+    
+    public int getGameOptionsSizeHeight(){
+        return store.getInt(GAME_OPTIONS_SIZE_HEIGHT);
+    }
+    
+    public int getGameOptionsSizeWidth(){
+        return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
+    }
 
     public Color getMapTextColor() {
         return getColor(MAP_TEXT_COLOR);
@@ -342,12 +354,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MECH_SELECTOR_RULES_LEVEL);
     }
 
-    /*
-     * public int getMechSelectorSizeHeight() { return
-     * store.getInt(MECH_SELECTOR_SIZE_HEIGHT); } public int
-     * getMechSelectorSizeWidth() { return
-     * store.getInt(MECH_SELECTOR_SIZE_WIDTH); }
-     */
+    
+    public int getMechSelectorSizeHeight() {
+        return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
+    }
+
+    public int getMechSelectorSizeWidth() {
+        return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
+    }
+     
     public String getMinimapColours() {
         return store.getString(MINIMAP_COLOURS);
     }
@@ -564,6 +579,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setGetFocus(boolean state) {
         store.setValue(FOCUS, state);
     }
+    
+    public void setGameOptionsSizeHeight(int i){
+        store.setValue(GAME_OPTIONS_SIZE_HEIGHT,i);
+    }
+    
+    public void setGameOptionsSizeWidth(int i){
+        store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
+    }
 
     public void setMapZoomIndex(int zoomIndex) {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
@@ -613,12 +636,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_RULES_LEVEL,rulesLevel);
     }
 
-    /*
-     * public void setMechSelectorSizeHeight(int i) {
-     * store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i); } public void
-     * setMechSelectorSizeWidth(int i) {
-     * store.setValue(MECH_SELECTOR_SIZE_WIDTH, i); }
-     */
+    
+    public void setMechSelectorSizeHeight(int i) {
+        store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
+    }
+
+    public void setMechSelectorSizeWidth(int i) {
+        store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
+    }
+     
     public void setMinimapEnabled(boolean b) {
         store.setValue(MINIMAP_ENABLED, b);
     }

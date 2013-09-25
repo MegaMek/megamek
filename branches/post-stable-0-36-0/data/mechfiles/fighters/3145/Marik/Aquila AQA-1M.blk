@@ -1,0 +1,102 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Aquila
+</Name>
+
+<Model>
+AQA-1M
+</Model>
+
+<Tonnage>
+55
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+60
+48
+48
+41
+</Armor>
+
+<Nose Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3104
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+

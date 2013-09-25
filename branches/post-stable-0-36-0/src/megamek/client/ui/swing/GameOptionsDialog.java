@@ -97,7 +97,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
-    private void init(JFrame frame, GameOptions options) {
+    private void init(JFrame frame, GameOptions options){
         this.options = options;
         currentFrame = frame;
 
@@ -120,7 +120,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         });
 
         pack();
-        setSize(mainPanel.getSize().width, Math.max(mainPanel.getSize().height, 400));
+        GUIPreferences guip = GUIPreferences.getInstance();
+        int width = guip.getGameOptionsSizeWidth();
+        int height = guip.getGameOptionsSizeHeight();
+        setSize(width,height);
         setResizable(true);
         setLocationRelativeTo(frame);
         Dimension size = new Dimension(getSize().width*40/100,getSize().height*59/100);
@@ -220,8 +223,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
         // Make the width accomadate the longest game option label
         // without needing to scroll horizontally.
-        setSize(Math.min(currentFrame.getSize().width, maxOptionWidth + 30),
-                Math.min(getSize().height, 400));
+        setSize(Math.max(getSize().width, maxOptionWidth + 30),
+                Math.max(getSize().height, 400));
 
         validate();
     }
@@ -567,13 +570,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             }
         }
         if (option.getName().equals("ba_grab_bars")) {
-            for (Enumeration<Entity> e = client.getClient().game.getEntities(); e.hasMoreElements();) {
-                Entity ent = e.nextElement();
-                if (ent instanceof Mech) {
-                    ((Mech) ent).setBAGrabBars();
-                }
-                if (ent instanceof Tank) {
-                    ((Tank) ent).setBAGrabBars();
+            if (client != null){
+                for (Enumeration<Entity> e = client.getClient().game.getEntities(); e.hasMoreElements();) {
+                    Entity ent = e.nextElement();
+                    if (ent instanceof Mech) {
+                        ((Mech) ent).setBAGrabBars();
+                    }
+                    if (ent instanceof Tank) {
+                        ((Tank) ent).setBAGrabBars();
+                    }
                 }
             }
         }
@@ -644,6 +649,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      */
     public boolean isEditable() {
         return editable;
+    }
+    
+    protected void processWindowEvent(WindowEvent e){
+        super.processWindowEvent(e);         
+        if (e.getID() == WindowEvent.WINDOW_DEACTIVATED){
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setGameOptionsSizeHeight(getSize().height);
+            guip.setGameOptionsSizeWidth(getSize().width);
+        }
     }
 
 }

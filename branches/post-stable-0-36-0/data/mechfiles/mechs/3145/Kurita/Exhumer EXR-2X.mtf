@@ -1,0 +1,152 @@
+Version:1.0
+Exhumer
+EXR-2X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3129
+Source:TRO 3145 DC
+Rules Level:2
+
+Mass:55
+Engine:330 XL Engine(IS)
+Structure:IS Endo-Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:26
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:5
+ER Large Laser, Left Arm
+ER Large Laser, Right Arm
+LRM 5, Left Torso
+LRM 5, Right Torso
+MRM 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERLargeLaser
+ISERLargeLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERLargeLaser
+ISERLargeLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 5
+IS Ammo LRM-5
+IS MRM 10 Ammo
+ISCASEII
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 5
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+MRM 10
+MRM 10
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

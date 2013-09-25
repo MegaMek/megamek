@@ -1,0 +1,156 @@
+Version:1.0
+Tomahawk II
+B
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3088
+Source:TRO 3145 Clan
+Rules Level:4
+
+Mass:100
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo-Composite
+Myomer:Standard
+
+Heat Sinks:22 Double
+Base Chassis Heat Sinks:12
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(IS/Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:8
+Laser AMS, Head
+ER Medium Laser, Center Torso
+ER Large Laser, Left Torso
+ER Large Laser, Right Torso
+ER Large Pulse Laser, Left Arm
+ER Large Pulse Laser, Right Arm
+Streak LRM 15, Right Arm
+Streak LRM 15, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+CLERLargeLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+CLERLargeLaser
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLaserAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

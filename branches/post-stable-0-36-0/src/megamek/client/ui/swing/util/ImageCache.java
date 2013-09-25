@@ -15,11 +15,7 @@
 
 package megamek.client.ui.swing.util;
 
-import java.awt.Image;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * An ImageCache that keeps a Hashtable of mapped keys and values.  The cache is
@@ -37,36 +33,22 @@ public class ImageCache<K, V> {
      */
     public static int MAX_SIZE = 20000;
     
-    /**
-     * Stores the current maximum size
-     */
-    private int maxSize;
-    
+
     /**
      * The cache of Key/Value pairs.
      */
     private Hashtable<K, V> cache;
-    
-    /**
-     * Keeps track of the access times for each key in the cache.
-     */
-    private HashSet<KeyTimestampPair> times;
-
-    
+        
     /**
      * Create a cache with the default maximum size.
      */
     public ImageCache() {
         cache = new Hashtable<K, V>(MAX_SIZE * 5 / 4, .75f);
-        times = new HashSet<KeyTimestampPair>(MAX_SIZE * 5 / 4, .75f);
-        maxSize = MAX_SIZE;
     }
 
     
     public ImageCache(int max) {
         cache = new Hashtable<K, V>(max * 5 / 4, .75f);
-        times = new HashSet<KeyTimestampPair>(max * 5 / 4, .75f);
-        maxSize = max;
     }
 
     /**
@@ -80,28 +62,7 @@ public class ImageCache<K, V> {
     public synchronized V put(K key, V value) {
         if ((key == null) || (value == null))
             return null;
-
-        if (cache.size() >= maxSize) { // must remove one element
-            System.out.println("!ImageCache Max Size reached!");
-            Object[] timestamps = 
-                    (Object[])times.toArray();
-            Arrays.sort(timestamps);
-            
-            @SuppressWarnings("unchecked")
-            K keyToNix = ((KeyTimestampPair)timestamps[0]).key;
-            V valToNix = cache.get(key);
-            cache.remove(keyToNix);
-            // Images must be flushed before dereference
-            if (valToNix instanceof Image) {
-                ((Image) valToNix).flush();
-            } else if (valToNix instanceof List) {
-                for (Object o : ((List<?>) valToNix)) {
-                    if (o instanceof Image) {
-                        ((Image) o).flush();
-                    }
-                }
-            }
-        }        
+      
         cache.put(key, value);
         return value;
     }
@@ -109,16 +70,7 @@ public class ImageCache<K, V> {
     public synchronized V get(K key) {
         if (!cache.containsKey(key))
             return null;
-        
-        KeyTimestampPair ktp = 
-                new KeyTimestampPair(key,System.currentTimeMillis());        
-        if (times.contains(ktp)){
-            // If the set already contains this key, update the timestmap
-            times.remove(ktp);
-            times.add(ktp);
-        } else {
-            times.add(ktp);
-        }
+
         return cache.get(key);
     }
 
@@ -126,37 +78,4 @@ public class ImageCache<K, V> {
         cache.remove(key);
     }
     
-    /**
-     * Class used to store a key and timestamp
-     * 
-     * @author walczak
-     *
-     */
-    private class KeyTimestampPair implements Comparable<KeyTimestampPair>{
-        public K key;
-        long timestamp;
-
-        public KeyTimestampPair(K k, long ts){
-            key = k;
-            timestamp = ts;
-        }
-
-        @SuppressWarnings("unchecked")
-        public boolean equals(Object o){
-            try {
-                KeyTimestampPair other = (KeyTimestampPair)o;
-                return this.equals(other.key);
-            } catch (Exception e){
-                return false;
-            }
-        }
-        @Override
-        public int compareTo(KeyTimestampPair other) {            
-            return (int)(timestamp - other.timestamp);
-        }
-        
-        public String toString(){
-            return timestamp + "";
-        }
-    }
 }

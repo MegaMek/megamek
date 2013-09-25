@@ -136,6 +136,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
         unitModel = new MechTableModel();
         initComponents();
+        GUIPreferences guip = GUIPreferences.getInstance();
+        int width = guip.getMechSelectorSizeWidth();
+        int height = guip.getMechSelectorSizeHeight();
+        setSize(width,height);
         setLocationRelativeTo(cl.frame);
         asd = new AdvancedSearchDialog(cl.frame,
                 client.game.getOptions().intOption("year"));
@@ -630,6 +634,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                  new UnitFailureDialog(clientgui.frame, hFailedFiles);
              }
          }
+         GUIPreferences guip = GUIPreferences.getInstance();
+         int width = guip.getMechSelectorSizeWidth();
+         int height = guip.getMechSelectorSizeHeight();
+         setSize(width,height);
      }
 
      @Override
@@ -656,6 +664,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
              guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
              guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
              guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
+             guip.setMechSelectorSizeHeight(getSize().height);
+             guip.setMechSelectorSizeWidth(getSize().width);
          }
      }
 

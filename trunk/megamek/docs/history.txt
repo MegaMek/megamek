@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.35.44-dev (0.36.0 Release Candidate 4)
++ Width and height for MechSelectorDialog and GameOptions are now saved
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

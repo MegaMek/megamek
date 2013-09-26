@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Zeus
 ZEU-10WB
 
@@ -8,16 +8,17 @@ Era:3070
 Rules Level:2
 
 Mass:80
-Engine:320 Fusion Engine
-Structure:Standard
+Engine:320 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
+Cockpit:Standard Cockpit
 Gyro:XL Gyro
 
-Heat Sinks:11 Double
+Heat Sinks:17 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:26
 RA Armor:26
 LT Armor:26
@@ -30,69 +31,70 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:12
 
-Weapons:6
-1 ISHeavyPPC, Right Arm
-1 ISHeavyPPC, Left Arm
-1 ISERLargeLaser, Right Torso
-1 ISERMediumLaser, Right Torso
-3 ISERMediumLaser, Left Torso
-1 ISSmallLaser, Head
+Weapons:7
+Heavy PPC, Left Arm
+Heavy PPC, Right Arm
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+ER Large Laser, Left Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
 ISERMediumLaser
-ISERMediumLaser
-Ferro-Fibrous
-ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
--Empty-
--Empty-
+IS Ferro-Fibrous
 
 Right Torso:
-ISERLargeLaser
-ISERLargeLaser
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
--Empty-
--Empty-
+ISERMediumLaser
+ISERMediumLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -112,7 +114,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
--Empty-
--Empty-
+
+

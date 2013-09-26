@@ -6,6 +6,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3871]: Missing Entity issues with double blind and transports
 + Bug[#3852]: Extra turret on Support Tank
 + Bug: Fixed a rare NPE in BoardView1
++ Bug [#3865]: Space Movement Sub-Phases Not Enforced
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

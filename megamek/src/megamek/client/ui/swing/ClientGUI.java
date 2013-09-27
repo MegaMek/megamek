@@ -1242,11 +1242,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
                     if (reinforce) {
-                    	if (client.game.getPhase().isBefore(IGame.Phase.PHASE_TARGETING)) {
-                    		entity.setDeployRound(client.game.getRoundCount());
-                    	} else {
-                    		entity.setDeployRound(client.game.getRoundCount()+1);
-                    	}
+                    	entity.setDeployRound(client.game.getRoundCount()+1);
                     }
                     client.sendAddEntity(entity);
                 }

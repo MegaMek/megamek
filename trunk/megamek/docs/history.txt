@@ -17,6 +17,8 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
     isometric view
 + Bug: Damage dots can leave transparent holes in icons in some circumstances
 + Errata for patchwork armor changed a round up to just round
++ jumping jill becomes jumpy - deal with it
++ slight change to MechView so zero armor (not ARMOR_DESTROYED) is red not black X (for MHQ) 
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

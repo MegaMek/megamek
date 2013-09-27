@@ -744,7 +744,7 @@ public class MechView {
     private static String renderArmor(int nArmor, int origArmor) {
         double percentRemaining = ((double) nArmor) / ((double) origArmor);
         String armor = Integer.toString(nArmor);
-        if (percentRemaining <= 0) {
+        if (percentRemaining < 0) {
             return "<td align='center' bgcolor='black'><font color='white'>"
                     + "X" + "</font>";
         } else if (percentRemaining <= .25) {

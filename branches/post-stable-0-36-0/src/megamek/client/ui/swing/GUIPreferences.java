@@ -70,7 +70,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
     public static final String ADVANCED_UNITOVERVIEW_SELECTED_COLOR = "AdvancedUnitOverviewSelectedColor";    
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
-    public static final String ADVANCED_IMAGECACHE_MAXSIZE= "AdvancedImageCacheMaxSize";
     /* --End advanced settings-- */
 
     public static final String AUTO_END_FIRING = "AutoEndFiring";
@@ -173,7 +172,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
         setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255,0,255));
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
-        setDefault(ADVANCED_IMAGECACHE_MAXSIZE,20000);
         
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");

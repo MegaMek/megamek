@@ -54,14 +54,11 @@ public class HexTileset {
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
     private ImageCache<IHex, Image> hexToImageCache = 
-        new ImageCache<IHex, Image>(GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+        new ImageCache<IHex, Image>();
     private ImageCache<IHex, List<Image>> hexToImageListCache = 
-        new ImageCache<IHex, List<Image>>(GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+        new ImageCache<IHex, List<Image>>();
     private ImageCache<IHex, List<Image>> orthoListCache = 
-        new ImageCache<IHex, List<Image>>(GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+        new ImageCache<IHex, List<Image>>();
 
     /**
      * Creates new HexTileset
@@ -335,15 +332,9 @@ public class HexTileset {
     }
 
     public synchronized void reset() {
-        hexToImageCache = new ImageCache<IHex, Image>(
-                GUIPreferences.getInstance().getInt(
-                        GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
-        hexToImageListCache = new ImageCache<IHex, List<Image>>(
-                GUIPreferences.getInstance().getInt(
-                        GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
-        orthoListCache = new ImageCache<IHex, List<Image>>(
-                GUIPreferences.getInstance().getInt(
-                        GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+        hexToImageCache = new ImageCache<IHex, Image>();
+        hexToImageListCache = new ImageCache<IHex, List<Image>>();
+        orthoListCache = new ImageCache<IHex, List<Image>>();
     }
 
     /**

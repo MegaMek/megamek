@@ -17,8 +17,6 @@ v0.36.0 post-stable
 + Bug [#3848]: ImageCache.get uses expensive operations
 + Patch: MaxTech Movement Modifiers & Unofficial MASC Options
 + Bug: The ImageCache max size check was using == instead of >=
-+ Feature: ImageCache max size now an advanced client parameter, this allows 
-    users to have a better experience on very large maps if they have the memory
 + Bug: MechSummary and AdvancedSearch were using EquipmentType.getName() instead
     of getInternalName()
 + Enabled the MechEditorDialog for post-stable branch

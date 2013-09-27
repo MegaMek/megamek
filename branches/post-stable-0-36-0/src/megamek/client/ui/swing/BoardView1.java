@@ -271,8 +271,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // Initial scale factor for sprites and map
     float scale = 1.00f;
     private ImageCache<Image, Image> scaledImageCache =  
-            new ImageCache<Image, Image>(GUIPreferences.getInstance().getInt(
-                    GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+            new ImageCache<Image, Image>();
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
@@ -1312,7 +1311,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // If we are using Isometric rendering, redraw the entity
             // sprites at 50% transparent so sprites hidden behind hills can
             // still be seen by the user.
-            drawIsometricSprites(g, isometricSprites);
+            //drawIsometricSprites(g, isometricSprites);
         } else {
             // Draw hexes without regard to elevation when
             // not using Isometric, since it does not matter.
@@ -6738,9 +6737,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<Image, Image>(
-                GUIPreferences.getInstance().getInt(
-                        GUIPreferences.ADVANCED_IMAGECACHE_MAXSIZE));
+        scaledImageCache = new ImageCache<Image, Image>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();

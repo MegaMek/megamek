@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-AC2 Carrier
+AC/2 Carrier
 </Name>
 
 <Model>
-Primitive
+(Primitive)
 </Model>
 
 <year>

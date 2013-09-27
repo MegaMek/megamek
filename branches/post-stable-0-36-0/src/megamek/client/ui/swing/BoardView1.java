@@ -2166,7 +2166,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         MoveStep previousStep = null;
 
         clearMovementData();
-
+        
+        // Nothing to do if we don't have a MovePath
+        if (md == null){
+            return;
+        }
         // need to update the movement sprites based on the move path for this
         // entity
         // only way to do this is to clear and refresh (seems wasteful)
@@ -3025,7 +3029,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         g.drawImage(shadow, p.x, p.y, this);
                     }
 
-                } else if (entity.getElevation() != 0) {
+                } else if (entity.getElevation() != 0 && 
+                        !(entity instanceof GunEmplacement)) {
                     Image shadow = createShadowMask(tileManager.imageFor(
                             entity, entity.getFacing(), secondaryPos));
 

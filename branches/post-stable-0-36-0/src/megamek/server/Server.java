@@ -3146,7 +3146,23 @@ public class Server implements Runnable {
             final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
-                if (entity.isAirborne()
+               if ((entity instanceof SpaceStation)
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementSpaceStationTurns();
+                } else if ((entity instanceof Warship)
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementWarshipTurns();
+                } else if ((entity instanceof Jumpship)
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementJumpshipTurns();
+                } else if ((entity instanceof Dropship) && entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementDropshipTurns();
+                } else if ((entity instanceof SmallCraft)
+                        && entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementSmallCraftTurns();                    
+                } else  if (entity.isAirborne()
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementAeroTurns();
                 } else if ((entity instanceof Infantry)) {
@@ -3169,22 +3185,6 @@ public class Server implements Runnable {
                     }
                 } else if ((entity instanceof Tank) && tankMoveByLance) {
                     player.incrementMultiTurns();
-                } else if ((entity instanceof SpaceStation)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementSpaceStationTurns();
-                } else if ((entity instanceof Warship)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementWarshipTurns();
-                } else if ((entity instanceof Jumpship)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementJumpshipTurns();
-                } else if ((entity instanceof Dropship) && entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementDropshipTurns();
-                } else if ((entity instanceof SmallCraft)
-                        && entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementSmallCraftTurns();
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -25025,6 +25025,27 @@ public class Server implements Runnable {
                     send(p.getId(), pack);
                 }
             }
+            
+            // In double-blind, the client may not know about the loaded units,
+            //  so we need to send them.
+            for (Entity eLoaded : eTarget.getLoadedUnits()){
+                // send an entity update to everyone who can see
+                 pack = createEntityPacket(eLoaded.getId(), null);
+                for (int x = 0; x < vCanSee.size(); x++) {
+                    Player p = vCanSee.elementAt(x);
+                    send(p.getId(), pack);
+                }
+                // send an entity delete to everyone else
+                pack = createRemoveEntityPacket(eLoaded.getId(),
+                        eLoaded.getRemovalCondition());
+                for (int x = 0; x < vPlayers.size(); x++) {
+                    if (!vCanSee.contains(vPlayers.elementAt(x))) {
+                        Player p = vPlayers.elementAt(x);
+                        send(p.getId(), pack);
+                    }
+                }
+            }
+            
         } else {
             // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));

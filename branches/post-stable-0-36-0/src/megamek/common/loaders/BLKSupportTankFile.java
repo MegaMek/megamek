@@ -140,6 +140,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         }
 
         t.setHasNoTurret(armor.length == 4);
+        t.setHasNoDualTurret(armor.length == 4 || armor.length == 5);
 
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];

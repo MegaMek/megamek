@@ -12,6 +12,10 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug: Could not move and shutdown on the same turn (manual shutdown was clearing existing movement)
 + Bug [#3873]: Unfriendly behavior in the Save Locally dialog
 + More bug [#3873]: Forgot the savegames folder portion
++ Bug [#3869]: Gun Emplacement Isometric 
++ Bug: Bottom 2 hexes of landed dropships are drawn semi-transparent in 
+    isometric view
++ Bug: Damage dots can leave transparent holes in icons in some circumstances
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

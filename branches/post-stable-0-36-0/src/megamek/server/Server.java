@@ -1104,7 +1104,11 @@ public class Server implements Runnable {
         saveGame(sFile, false);
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav.gz")) {
-            sFinalFile = sFile + ".sav.gz";
+            if (sFinalFile.endsWith(".sav")) {
+                sFinalFile = sFile + ".gz";
+            } else {
+                sFinalFile = sFile + ".sav.gz";
+            }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
@@ -1132,6 +1136,11 @@ public class Server implements Runnable {
      *            saving to the server chat.
      */
     public void saveGame(String sFile, boolean sendChat) {
+        // We need to strip the .gz if it exists,
+        // otherwise we'll double up on it.
+        if (sFile.endsWith(".gz")) {
+            sFile = sFile.replace(".gz", "");
+        }
         XStream xstream = new XStream();
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
@@ -2091,6 +2100,7 @@ public class Server implements Runnable {
                 resolveAmmoDumps();
                 resolveCrewWakeUp();
                 resolveSelfDestruct();
+                resolveShutdownCrashes();
                 checkForIndustrialEndOfTurn();
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
@@ -16108,17 +16118,14 @@ public class Server implements Runnable {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
                         if ((entity.heat < 14)
-                                && !(game.getOptions().booleanOption(
-                                        "manual_shutdown") && entity
-                                        .isManualShutdown())) {
+                                && !(entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
                             r = new Report(5045);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             addReport(r);
-                        } else if (!(game.getOptions().booleanOption(
-                                "manual_shutdown") && entity.isManualShutdown())) {
+                        } else if (!(entity.isManualShutdown())) {
                             // roll for startup
                             int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                     - hotDogMod;
@@ -16341,8 +16348,7 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (!(game.getOptions().booleanOption("manual_shutdown") && entity
-                            .isManualShutdown())) {
+                    if (!(entity.isManualShutdown())) {
                         entity.setShutDown(false);
                     }
                     entity.setBATaserShutdown(false);
@@ -16353,9 +16359,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 8) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -16629,17 +16633,14 @@ public class Server implements Runnable {
                     && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
                     if ((entity.heat < 14)
-                            && !(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
                         r = new Report(5045);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         addReport(r);
-                    } else if (!(game.getOptions().booleanOption(
-                            "manual_shutdown") && entity.isManualShutdown())) {
+                    } else if (!(entity.isManualShutdown())) {
                         // roll for startup
                         int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                 - hotDogMod;
@@ -16684,9 +16685,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 7) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -18223,6 +18222,21 @@ public class Server implements Runnable {
                 r.subject = e.getId();
                 r.addDesc(e);
                 addReport(r);
+            }
+        }
+    }
+
+    /*
+     * Resolve any outstanding crashes from shutting down
+     * and being airborne VTOL or WiGE...
+     */
+    private void resolveShutdownCrashes() {
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.isShutDown() && e.isAirborneVTOLorWIGE()
+                    && !(e.isDestroyed() || e.isDoomed())) {
+                Tank t = (Tank) e;
+                t.immobilize();
+                addReport(forceLandVTOLorWiGE(t));
             }
         }
     }

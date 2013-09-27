@@ -4029,7 +4029,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     .doYesNoDialog(
                             Messages.getString("MovementDisplay.ShutdownDialog.title"),
                             Messages.getString("MovementDisplay.ShutdownDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
-                clear();
                 cmd.addStep(MoveStepType.SHUTDOWN);
                 ready();
             }

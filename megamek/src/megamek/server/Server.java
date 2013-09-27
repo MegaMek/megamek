@@ -2091,6 +2091,7 @@ public class Server implements Runnable {
                 resolveAmmoDumps();
                 resolveCrewWakeUp();
                 resolveSelfDestruct();
+                resolveShutdownCrashes();
                 checkForIndustrialEndOfTurn();
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
@@ -16108,17 +16109,14 @@ public class Server implements Runnable {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
                         if ((entity.heat < 14)
-                                && !(game.getOptions().booleanOption(
-                                        "manual_shutdown") && entity
-                                        .isManualShutdown())) {
+                                && !(entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
                             r = new Report(5045);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             addReport(r);
-                        } else if (!(game.getOptions().booleanOption(
-                                "manual_shutdown") && entity.isManualShutdown())) {
+                        } else if (!(entity.isManualShutdown())) {
                             // roll for startup
                             int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                     - hotDogMod;
@@ -16341,8 +16339,7 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (!(game.getOptions().booleanOption("manual_shutdown") && entity
-                            .isManualShutdown())) {
+                    if (!(entity.isManualShutdown())) {
                         entity.setShutDown(false);
                     }
                     entity.setBATaserShutdown(false);
@@ -16353,9 +16350,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 8) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -16629,17 +16624,14 @@ public class Server implements Runnable {
                     && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
                     if ((entity.heat < 14)
-                            && !(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
                         r = new Report(5045);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         addReport(r);
-                    } else if (!(game.getOptions().booleanOption(
-                            "manual_shutdown") && entity.isManualShutdown())) {
+                    } else if (!(entity.isManualShutdown())) {
                         // roll for startup
                         int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                 - hotDogMod;
@@ -16684,9 +16676,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 7) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                    .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -18223,6 +18213,21 @@ public class Server implements Runnable {
                 r.subject = e.getId();
                 r.addDesc(e);
                 addReport(r);
+            }
+        }
+    }
+
+    /*
+     * Resolve any outstanding crashes from shutting down
+     * and being airborne VTOL or WiGE...
+     */
+    private void resolveShutdownCrashes() {
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.isShutDown() && e.isAirborneVTOLorWIGE()
+                    && !(e.isDestroyed() || e.isDoomed())) {
+                Tank t = (Tank) e;
+                t.immobilize();
+                addReport(forceLandVTOLorWiGE(t));
             }
         }
     }

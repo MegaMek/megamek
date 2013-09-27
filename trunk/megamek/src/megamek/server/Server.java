@@ -1104,7 +1104,11 @@ public class Server implements Runnable {
         saveGame(sFile, false);
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav.gz")) {
-            sFinalFile = sFile + ".sav.gz";
+            if (sFinalFile.endsWith(".sav")) {
+                sFinalFile = sFile + ".gz";
+            } else {
+                sFinalFile = sFile + ".sav.gz";
+            }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
@@ -1132,6 +1136,11 @@ public class Server implements Runnable {
      *            saving to the server chat.
      */
     public void saveGame(String sFile, boolean sendChat) {
+        // We need to strip the .gz if it exists,
+        // otherwise we'll double up on it.
+        if (sFile.endsWith(".gz")) {
+            sFile = sFile.replace(".gz", "");
+        }
         XStream xstream = new XStream();
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {

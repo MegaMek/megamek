@@ -10,6 +10,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3874]: Reinforcements never deploy
 + Bug [#3864]: Airborne units not handling Manual Shutdown Correctly
 + Bug: Could not move and shutdown on the same turn (manual shutdown was clearing existing movement)
++ Bug [#3873]: Unfriendly behavior in the Save Locally dialog
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

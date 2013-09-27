@@ -901,7 +901,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ArrayList<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
-            Coords cp = sprite.getEntity().getPosition();
+            Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                     && !sprite.hidden) {
                 if (!sprite.isReady()) {
@@ -1311,7 +1311,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // If we are using Isometric rendering, redraw the entity
             // sprites at 50% transparent so sprites hidden behind hills can
             // still be seen by the user.
-            //drawIsometricSprites(g, isometricSprites);
+            drawIsometricSprites(g, isometricSprites);
         } else {
             // Draw hexes without regard to elevation when
             // not using Isometric, since it does not matter.
@@ -2963,7 +2963,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0)) {
+            } else if (useIsometric() && (entity.getElevation() != 0) && 
+                    !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
 
@@ -2977,15 +2978,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 tempBounds.setLocation(getHexLocation(entity
                         .getSecondaryPositions().get(secondaryPos)));
             }
-            if (entity.getElevation() > 0) {
+            if (entity.getElevation() > 0 ) {
                 tempBounds.y = tempBounds.y - altAdjust;
             }
             bounds = tempBounds;
             image = null;
-        }
-
-        public Entity getEntity() {
-            return entity;
+        }       
+        
+        public Coords getPosition(){
+            if (secondaryPos == -1){
+                return entity.getPosition();
+            } else {
+                return entity.getSecondaryPositions().get(secondaryPos);
+            }
         }
 
         /**
@@ -3690,7 +3695,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0)) {
+            } else if (useIsometric() && (entity.getElevation() != 0) && 
+                    !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
 
@@ -3721,7 +3727,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0)) {
+            } else if (useIsometric() && (entity.getElevation() != 0) && 
+                    !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
 
@@ -4148,12 +4155,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.setColor(getStatusBarColor(percentRemaining));
                     graph.fillRect(55, 10, barLength, 3);
                 }
+                
+                if (game.getOptions().booleanOption("show_dmg_level")) {
+                    Color damageColor = getDamageColor();
+                    if (damageColor != null){
+                        graph.setColor(damageColor);
+                        graph.fillOval(20, 15, 12, 12);
+                    }
+                }
             }
 
-            if (game.getOptions().booleanOption("show_dmg_level")) {
-                graph.setColor(getDamageColor());
-                graph.fillOval(20, 15, 12, 12);
-            }
+            
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -4178,7 +4190,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 case Entity.DMG_LIGHT:
                     return Color.green;
             }
-            return new Color(TRANSPARENT);
+            return null;
         }
 
         /**

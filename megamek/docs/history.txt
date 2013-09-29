@@ -24,6 +24,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Fix name for Mech Mortar 
 + jumpy/jumping jill references all to hopping jack - thats my final answer
 + static methods to get EntityMovementMode via xml
++ Data: Unit Name and Date fixes.  A couple of new images.
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

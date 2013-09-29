@@ -6,7 +6,7 @@ Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3102
 Source:TRO 3145 Clans
-Rules Level:3
+Rules Level:4
 
 Mass:50
 Engine:200 XL Engine(IS)
@@ -30,7 +30,10 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:0
+Weapons:3
+LB 5-X AC, Right Arm
+ER PPC, Left Arm
+Streak LRM 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -38,24 +41,24 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
+CLERPPC
+CLERPPC
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
--Empty-
--Empty-
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
--Empty-
--Empty-
--Empty-
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -81,12 +84,12 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+Clan LB 5-X AC Ammo
 ISCASEII
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Center Torso:
 Fusion Engine
@@ -106,7 +109,7 @@ Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+CLActiveProbe
 Sensors
 Life Support
 -Empty-

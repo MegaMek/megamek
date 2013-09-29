@@ -1869,7 +1869,7 @@ public class Compute {
             if (entity.getCrew().getOptions().booleanOption("jumping_jack")) {
                 toHit.addModifier(1, "attacker jumped");
             } else if (entity.getCrew().getOptions()
-                    .booleanOption("jumping_jill")) {
+                    .booleanOption("hopping_jack")) {
                 toHit.addModifier(2, "attacker jumped");
             } else {
                 toHit.addModifier(3, "attacker jumped");

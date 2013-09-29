@@ -13,10 +13,11 @@ SpaceStation
 </UnitType>
 
 <Name>
-Capitol System-Defense Station
+Capitol System Defense Station
 </Name>
 
 <Model>
+(Standard)
 </Model>
 
 <Tonnage>

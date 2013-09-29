@@ -9,7 +9,8 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3865]: Space Movement Sub-Phases Not Enforced
 + Bug [#3874]: Reinforcements never deploy
 + Bug [#3864]: Airborne units not handling Manual Shutdown Correctly
-+ Bug: Could not move and shutdown on the same turn (manual shutdown was clearing existing movement)
++ Bug: Could not move and shutdown on the same turn (manual shutdown was
+    clearing existing movement)
 + Bug [#3873]: Unfriendly behavior in the Save Locally dialog
 + More bug [#3873]: Forgot the savegames folder portion
 + Bug [#3869]: Gun Emplacement Isometric 
@@ -18,7 +19,9 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug: Damage dots can leave transparent holes in icons in some circumstances
 + Errata for patchwork armor changed a round up to just round
 + jumping jill becomes jumpy - deal with it
-+ slight change to MechView so zero armor (not ARMOR_DESTROYED) is red not black X (for MHQ) 
++ slight change to MechView so zero armor (not ARMOR_DESTROYED) is red not
+    black X (for MHQ)
++ Fix name for Mech Mortar 
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

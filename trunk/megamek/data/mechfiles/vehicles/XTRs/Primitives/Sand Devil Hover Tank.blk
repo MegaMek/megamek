@@ -13,11 +13,11 @@ SupportTank
 </UnitType>
 
 <Name>
-Sand Devil
+Sand Devil Hover Tank
 </Name>
 
 <Model>
-Hover Tank
+(Standard)
 </Model>
 
 <year>

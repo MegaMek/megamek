@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Void Medium Armor
+Void Medium Battle Armor
 </Name>
 
 <Model>
-Minelayer
+(Minelayer)
 </Model>
 
 <year>

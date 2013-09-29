@@ -66,4 +66,13 @@ public enum EntityMovementMode {
         }
         return NONE;
     }
+    
+    public static EntityMovementMode type(String token)
+    {
+        return EntityMovementMode.valueOf(token);
+    }
+    public static String token(EntityMovementMode t)
+    {
+        return t.name();
+    }
 }

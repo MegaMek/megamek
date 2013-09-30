@@ -25,6 +25,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + jumpy/jumping jill references all to hopping jack - thats my final answer
 + static methods to get EntityMovementMode via xml
 + Data: Unit Name and Date fixes.  A couple of new images.
++ Bug: Large Chemical Laser missing medium range
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

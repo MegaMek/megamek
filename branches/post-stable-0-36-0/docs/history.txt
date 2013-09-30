@@ -21,6 +21,7 @@ v0.36.0 post-stable
     of getInternalName()
 + Enabled the MechEditorDialog for post-stable branch
 + Removed ImageCache maximum size
++ Bug: Board.setHex - shouldn't adust min/max elev if they are undefined
 
 v0.35.44-dev (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved
@@ -31,13 +32,22 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3865]: Space Movement Sub-Phases Not Enforced
 + Bug [#3874]: Reinforcements never deploy
 + Bug [#3864]: Airborne units not handling Manual Shutdown Correctly
-+ Bug: Could not move and shutdown on the same turn (manual shutdown was clearing existing movement)
++ Bug: Could not move and shutdown on the same turn (manual shutdown was
+    clearing existing movement)
 + Bug [#3873]: Unfriendly behavior in the Save Locally dialog
 + More bug [#3873]: Forgot the savegames folder portion
 + Bug [#3869]: Gun Emplacement Isometric 
 + Bug: Bottom 2 hexes of landed dropships are drawn semi-transparent in 
     isometric view
 + Bug: Damage dots can leave transparent holes in icons in some circumstances
++ Errata for patchwork armor changed a round up to just round
++ jumping jill becomes jumpy - deal with it
++ slight change to MechView so zero armor (not ARMOR_DESTROYED) is red not
+    black X (for MHQ)
++ Fix name for Mech Mortar 
++ jumpy/jumping jill references all to hopping jack - thats my final answer
++ static methods to get EntityMovementMode via xml
++ Data: Unit Name and Date fixes.  A couple of new images.
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

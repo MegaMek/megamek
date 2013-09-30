@@ -31,7 +31,7 @@ public class CLMekMortar4 extends MekMortarWeapon {
     public CLMekMortar4() {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
-        name = "Mortar 4";
+        name = "'Mech Mortar 4";
         setInternalName("Clan Mech Mortar-4");
         addLookupName("CLMekMortar4");
         addLookupName("Clan Mek Mortar 4");

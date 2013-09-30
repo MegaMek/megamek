@@ -19,10 +19,33 @@ vPrincessBehavior
 + Upated client\messages.properties: Removed duplicate entries; added Princess-config entries.
 + Added logic to have Princess make better choices in regards to ammo usage.  While not perfect, she should no longer try to use erATM ammo at range 3 or flechette ammo against mechs (unless that's all she's left with).
 + Refactored FireControl for readability and to cut down on redundant code.
+v0.35.44-dev (0.36.0 Release Candidate 4)
++ Width and height for MechSelectorDialog and GameOptions are now saved
++ Data: Unit Image Fixes and a couple of unit fixes.
++ Bug [#3871]: Missing Entity issues with double blind and transports
++ Bug[#3852]: Extra turret on Support Tank
++ Bug: Fixed a rare NPE in BoardView1
++ Bug [#3865]: Space Movement Sub-Phases Not Enforced
++ Bug [#3874]: Reinforcements never deploy
++ Bug [#3864]: Airborne units not handling Manual Shutdown Correctly
++ Bug: Could not move and shutdown on the same turn (manual shutdown was
+    clearing existing movement)
++ Bug [#3873]: Unfriendly behavior in the Save Locally dialog
++ More bug [#3873]: Forgot the savegames folder portion
++ Bug [#3869]: Gun Emplacement Isometric 
++ Bug: Bottom 2 hexes of landed dropships are drawn semi-transparent in 
+    isometric view
++ Bug: Damage dots can leave transparent holes in icons in some circumstances
++ Errata for patchwork armor changed a round up to just round
++ jumping jill becomes jumpy - deal with it
++ slight change to MechView so zero armor (not ARMOR_DESTROYED) is red not
+    black X (for MHQ)
++ Fix name for Mech Mortar 
++ jumpy/jumping jill references all to hopping jack - thats my final answer
++ static methods to get EntityMovementMode via xml
++ Data: Unit Name and Date fixes.  A couple of new images.
 
-v0.35.42 (0.36.0 Release Candidate 2) (2013-04-09, 00:16 UTC+2)
-
-v0.35.43-dev (0.36.0 Release Candidate 3)
+v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 
     image
 + Bug: Having Chassis level and model level quirks could cause memory issues
@@ -35,8 +58,20 @@ v0.35.43-dev (0.36.0 Release Candidate 3)
 + Bug: More Tech level and date changes.
 + Bug [#3858]: When a bridge collapsed, not resolving falling damage separately
 + Bug: Fixed possible ArrayIndexOutOfBoundsException in replacePlayer command
-+ bug [#3861]: Skin-of-teeth Still Not Right 
-
++ bug [#3861]: Skin-of-teeth Still Not Right
++ Data: All TRO 3145 Units and some images(Thanks Deadborder).  Some of these 
+    units fail validation
+	since the construction and tech level data is not complete.
++ Bug: Assault Drop button not being disabled in DeploymentDisplay
++ Bug [#3863]: Game.destroyEntity removes turns when it shouldn't
++ Bug [#3867]: Potential infinite loop in Princess.calculateMoveTurn
++ Bug: Fixed a potential NPE in FiringDisplay
++ Changed the minimum size of the MechSelectorDialog to 640x480 (from 800x600)
++ Added a label in the ChatLounge that displays the current game year
++ Added a tooltip to the map summary that lists the currently selected maps
++ Bug: Manually shut down units skipped as "ineligible"
++ Data: Unit and a couple of image fixes
+	
 v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)
 + Bug [#3837]: Button panel on MechSelectorDialog can be hidden at minimum size
 + Data: Fixes to Mechset and Unit fixes.

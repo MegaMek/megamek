@@ -29,6 +29,7 @@ IIA
 </Armor>
 <Nose Equipment>
 Autocannon/5
+IS Ammo AC/5
 Large Laser
 </Nose Equipment>
 
@@ -37,7 +38,7 @@ Autocannon/5
 IS Ammo AC/5
 Large Laser
 Medium Laser
-Medium Laser
+(R) Medium Laser
 </Left Side Equipment>
 
 <Right Side Equipment>
@@ -45,7 +46,7 @@ Autocannon/5
 IS Ammo AC/5
 Large Laser
 Medium Laser
-Medium Laser
+(R) Medium Laser
 </Right Side Equipment>
 
 <Aft Equipment>
@@ -88,6 +89,8 @@ aerodyne
 SmallCraftBay:2:2
 CargoBay:1000:3
 CargoBay:1211:3
+infantrybay:5:3
+infantrybay:5:3
 </transporters>
 
 <escape_pod>

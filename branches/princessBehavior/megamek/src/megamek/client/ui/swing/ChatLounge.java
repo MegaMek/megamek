@@ -68,6 +68,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -103,7 +104,6 @@ import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.MapSettings;
-import megamek.common.Mech;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
@@ -132,6 +132,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private JButton butOptions;
     private JLabel lblMapSummary;
+    private JLabel lblGameYear;
 
     private JTabbedPane panTabs;
     private JPanel panMain;
@@ -241,7 +242,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butOptions = new JButton(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
         
-        lblMapSummary = new JLabel("");                
+        lblMapSummary = new JLabel("");     
+        lblGameYear = new JLabel("");
+        lblGameYear.setToolTipText(Messages.getString("ChatLounge.GameYearLabelToolTip"));
 
         butCompact = new JToggleButton(
                 Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
@@ -276,6 +279,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         setLayout(new BorderLayout());
         
         refreshMapSummaryLabel();
+        refreshGameYearLabel();
 
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             add(panTabs, BorderLayout.CENTER);
@@ -593,11 +597,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         JPanel panel1 = new JPanel(new GridBagLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0; c.gridy = 0;
-        c.weightx = 1.0; c.weighty = 0.0;
+        c.weightx = 1; c.weighty = 0.0;
         c.anchor = GridBagConstraints.WEST;
         panel1.add(lblMapSummary,c);
+        c.anchor = GridBagConstraints.WEST;
+        c.gridx = 1;
+        c.weightx = 0;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(0,0,0,20);
+        panel1.add(lblGameYear,c);
+        c.insets = new Insets(0,0,0,0);
         c.fill = GridBagConstraints.VERTICAL;
-        c.gridx = 1; c.gridy = 0;
+        c.gridx = 2; c.gridy = 0;
         c.weightx = 0; c.weighty = 0.0; 
         c.anchor = GridBagConstraints.NORTHEAST;
         panel1.add(butCompact,c);
@@ -2540,6 +2551,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshBoardsSelected();
         refreshBoardsAvailable();
         refreshMapSummaryLabel();
+        refreshGameYearLabel();
     }
     
     public void refreshMapSummaryLabel(){
@@ -2554,6 +2566,28 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             txt = txt + " " + "Space Map";
         } 
         lblMapSummary.setText(txt);
+         
+        StringBuilder selectedMaps = new StringBuilder();
+        selectedMaps.append("<html>");
+        selectedMaps.append(
+                Messages.getString("ChatLounge.MapSummarySelectedMaps"));
+        selectedMaps.append("<br>");
+        ListModel model = lisBoardsSelected.getModel();
+        for (int i = 0; i < model.getSize(); i++){
+            String map = (String)model.getElementAt(i);
+            selectedMaps.append(map);
+            if (i+1 <model.getSize()){
+                selectedMaps.append("<br>");
+            }
+        }
+        lblMapSummary.setToolTipText(selectedMaps.toString());
+    }
+    
+    public void refreshGameYearLabel(){
+        String txt = Messages.getString("ChatLounge.GameYear");
+        txt = txt + " " + 
+                clientgui.getClient().game.getOptions().intOption("year");
+        lblGameYear.setText(txt);
     }
 
     @Override

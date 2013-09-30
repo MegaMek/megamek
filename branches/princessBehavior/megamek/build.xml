@@ -19,8 +19,6 @@
     <property name="util" value="packaging_utils"/>
     <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
     <property name="dir.build.testreport" location="${builddir}/testreport"/>
-    <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
-    <property name="dir.build.testreport" location="${builddir}/testreport"/>
     <property name="dir.test.src" location="unittests"/>
     <property name="dir.build.test" location="${builddir}/test"/>
 

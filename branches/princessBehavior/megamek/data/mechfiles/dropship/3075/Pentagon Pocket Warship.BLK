@@ -1,0 +1,149 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Pentagon
+</Name>
+
+<Model>
+(Pocket Warship)
+</Model>
+<Tonnage>
+4000
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+368
+323
+323
+278
+</Armor>
+
+<Nose Equipment>
+AR10
+AR10 Barracuda Ammo:4
+AR10 WhiteShark Ammo:2
+AR10 KillerWhale Ammo:4
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:48
+ISERPPC
+ISERPPC
+ISERLargeLaser
+ISERLargeLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISGaussRifle
+ISGauss Ammo:16
+ISERPPC
+ISERPPC
+(R) ISERLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISERPPC
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISGaussRifle
+ISGauss Ammo:16
+ISERPPC
+ISERPPC
+(R) ISERLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISERPPC
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISERPPC
+</Aft Equipment>
+
+<structural_integrity>
+21
+</structural_integrity>
+
+<heatsinks>
+170
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+18000
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3075
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+
+
+<transporters>
+CargoBay:161:1
+</transporters>
+
+<escape_pod>
+8
+</escape_pod>
+
+<life_boat>
+1
+</life_boat>
+
+<crew>
+22
+</crew>
+
+<passengers>
+0
+</passengers>

@@ -1100,7 +1100,11 @@ public class Server implements Runnable {
         saveGame(sFile, false);
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav.gz")) {
-            sFinalFile = sFile + ".sav.gz";
+            if (sFinalFile.endsWith(".sav")) {
+                sFinalFile = sFile + ".gz";
+            } else {
+                sFinalFile = sFile + ".sav.gz";
+            }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
@@ -1126,6 +1130,11 @@ public class Server implements Runnable {
      *                 saving to the server chat.
      */
     public void saveGame(String sFile, boolean sendChat) {
+        // We need to strip the .gz if it exists,
+        // otherwise we'll double up on it.
+        if (sFile.endsWith(".gz")) {
+            sFile = sFile.replace(".gz", "");
+        }
         XStream xstream = new XStream();
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
@@ -1329,7 +1338,13 @@ public class Server implements Runnable {
             if (!entity.isSalvage()) {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
-
+            // If we removed a unit during the movement phase that hasn't moved,
+            //  remove its turn.
+            if (game.getPhase() == Phase.PHASE_MOVEMENT && 
+                    entity.isSelectableThisTurn()){
+                game.removeTurnFor(entity);
+                send(createTurnVectorPacket());
+            }
             entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));
@@ -2074,6 +2089,7 @@ public class Server implements Runnable {
                 resolveAmmoDumps();
                 resolveCrewWakeUp();
                 resolveSelfDestruct();
+                resolveShutdownCrashes();
                 checkForIndustrialEndOfTurn();
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
@@ -3124,8 +3140,24 @@ public class Server implements Runnable {
             final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final IPlayer player = entity.getOwner();
-                if (entity.isAirborne()
+               if ((entity instanceof SpaceStation)
                     && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementSpaceStationTurns();
+                } else if ((entity instanceof Warship)
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementWarshipTurns();
+                } else if ((entity instanceof Jumpship)
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementJumpshipTurns();
+                } else if ((entity instanceof Dropship) && entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementDropshipTurns();
+                } else if ((entity instanceof SmallCraft)
+                        && entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementSmallCraftTurns();                    
+                } else  if (entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementAeroTurns();
                 } else if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
@@ -15954,17 +15986,14 @@ public class Server implements Runnable {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
                         if ((entity.heat < 14)
-                            && !(game.getOptions().booleanOption(
-                                "manual_shutdown") && entity
-                                         .isManualShutdown())) {
+                                && !(entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
                             r = new Report(5045);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             addReport(r);
-                        } else if (!(game.getOptions().booleanOption(
-                                "manual_shutdown") && entity.isManualShutdown())) {
+                        } else if (!(entity.isManualShutdown())) {
                             // roll for startup
                             int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                           - hotDogMod;
@@ -16187,8 +16216,7 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (!(game.getOptions().booleanOption("manual_shutdown") && entity
-                            .isManualShutdown())) {
+                    if (!(entity.isManualShutdown())) {
                         entity.setShutDown(false);
                     }
                     entity.setBATaserShutdown(false);
@@ -16199,9 +16227,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 8) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                          .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -16475,17 +16501,14 @@ public class Server implements Runnable {
                 && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
                     if ((entity.heat < 14)
-                        && !(game.getOptions().booleanOption(
-                            "manual_shutdown") && entity
-                                     .isManualShutdown())) {
+                            && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
                         r = new Report(5045);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         addReport(r);
-                    } else if (!(game.getOptions().booleanOption(
-                            "manual_shutdown") && entity.isManualShutdown())) {
+                    } else if (!(entity.isManualShutdown())) {
                         // roll for startup
                         int startup = (4 + (((entity.heat - 14) / 4) * 2))
                                       - hotDogMod;
@@ -16530,9 +16553,7 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 7) {
                             entity.setTaserShutdownRounds(0);
-                            if (!(game.getOptions().booleanOption(
-                                    "manual_shutdown") && entity
-                                          .isManualShutdown())) {
+                            if (!(entity.isManualShutdown())) {
                                 entity.setShutDown(false);
                             }
                             entity.setBATaserShutdown(false);
@@ -18066,6 +18087,21 @@ public class Server implements Runnable {
                 r.subject = e.getId();
                 r.addDesc(e);
                 addReport(r);
+            }
+        }
+    }
+
+    /*
+     * Resolve any outstanding crashes from shutting down
+     * and being airborne VTOL or WiGE...
+     */
+    private void resolveShutdownCrashes() {
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.isShutDown() && e.isAirborneVTOLorWIGE()
+                    && !(e.isDestroyed() || e.isDoomed())) {
+                Tank t = (Tank) e;
+                t.immobilize();
+                addReport(forceLandVTOLorWiGE(t));
             }
         }
     }
@@ -24762,6 +24798,27 @@ public class Server implements Runnable {
                     send(p.getId(), pack);
                 }
             }
+            
+            // In double-blind, the client may not know about the loaded units,
+            //  so we need to send them.
+            for (Entity eLoaded : eTarget.getLoadedUnits()){
+                // send an entity update to everyone who can see
+                 pack = createEntityPacket(eLoaded.getId(), null);
+                for (int x = 0; x < vCanSee.size(); x++) {
+                    IPlayer p = vCanSee.elementAt(x);
+                    send(p.getId(), pack);
+                }
+                // send an entity delete to everyone else
+                pack = createRemoveEntityPacket(eLoaded.getId(),
+                        eLoaded.getRemovalCondition());
+                for (int x = 0; x < vPlayers.size(); x++) {
+                    if (!vCanSee.contains(vPlayers.elementAt(x))) {
+                        IPlayer p = vPlayers.elementAt(x);
+                        send(p.getId(), pack);
+                    }
+                }
+            }
+            
         } else {
             // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));

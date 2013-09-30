@@ -32,6 +32,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     public MekMortarWeapon() {
         super();
         ammoType = AmmoType.T_MEK_MORTAR;
+        damage = DAMAGE_BY_CLUSTERTABLE;
         setModes(new String[] { "", "Indirect" });
         atClass = CLASS_NONE;
         flags = flags.or(F_MECH_WEAPON).or(F_MISSILE);
@@ -40,7 +41,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

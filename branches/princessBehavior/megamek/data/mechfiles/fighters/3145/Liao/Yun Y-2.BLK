@@ -1,0 +1,101 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Yùn
+</Name>
+
+<Model>
+Y-2
+</Model>
+
+<Tonnage>
+40
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+43
+34
+34
+25
+</Armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISStreakSRM6 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECM
+</Aft Equipment>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3107
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<transporters>
+infantrybay:4:1
+</transporters>

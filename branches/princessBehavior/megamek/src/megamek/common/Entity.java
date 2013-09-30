@@ -7729,8 +7729,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // must be active
-        if (!isActive() || (isImmobile() && !canUnjamRAC() &&
-                            !game.getOptions().booleanOption("vehicles_can_eject"))) {
+        if (!isActive() || (isImmobile() && !isManualShutdown() && !canUnjamRAC() && 
+                !game.getOptions().booleanOption("vehicles_can_eject"))) {
             return false;
         }
 
@@ -8587,12 +8587,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract boolean doomedInSpace();
 
     /**
-     * The weight of the armor in a specific location, rounded up to the nearest
-     * half-ton for patchwork armor as per TacOps page 377. Note: Unless
-     * overridden, this should <em>only</em> be called on units with patchwork
-     * armor, as rounding behavior is not guaranteed to be correct or even the
-     * same for others and units with a single overall armor type have no real
-     * reason to specifically care about weight per location anyway.
+     * The weight of the armor in a specific location, rounded to the nearest
+     * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1). 
+     * Note: Unless overridden, this should <em>only</em> be called on units 
+     * with patchwork armor, as rounding behavior is not guaranteed to be 
+     * correct or even the same for others and units with a single overall 
+     * armor type have no real reason to specifically care about weight per 
+     * location anyway.
      *
      * @param loc The code value for the location in question (unit
      *            type-specific).
@@ -8604,7 +8605,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         double points = getOArmor(loc)
                         + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
         double armorWeight = points / armorPerTon;
-        return Math.ceil(armorWeight * 2.0) / 2.0;
+        return Math.round(armorWeight * 2.0) / 2.0;
 
     }
 

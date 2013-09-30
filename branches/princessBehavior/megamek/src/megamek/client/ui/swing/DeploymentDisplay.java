@@ -301,6 +301,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setUnloadEnabled(false);
+        setAssaultDropEnabled(false);        
     }
 
     /**

@@ -467,11 +467,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
+        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);      
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         randomNameDialog = new RandomNameDialog(this);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$        
         frame.setVisible(true);
     }
 
@@ -560,7 +560,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            JFileChooser fc = new JFileChooser(".");
+            JFileChooser fc = new JFileChooser("./savegames");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
 
@@ -1235,11 +1235,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
                     if (reinforce) {
-                        if (client.game.getPhase().isBefore(IGame.Phase.PHASE_TARGETING)) {
-                            entity.setDeployRound(client.game.getRoundCount());
-                        } else {
-                            entity.setDeployRound(client.game.getRoundCount() + 1);
-                        }
+                    	entity.setDeployRound(client.game.getRoundCount()+1);
                     }
                     client.sendAddEntity(entity);
                 }

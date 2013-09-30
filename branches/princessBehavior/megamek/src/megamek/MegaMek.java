@@ -52,7 +52,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "v0.35.43-dev (0.36.0 RC 3)"; //$NON-NLS-1$
+    public static String VERSION = "0.35.44-dev (0.36.0 RC 4)"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator

@@ -1,0 +1,153 @@
+Version:1.0
+Catapult II
+CPLT-L7
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3135
+Source:TRO 3145 CC
+Rules Level:3
+
+Mass:70
+Engine:280 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:20
+RT Armor:20
+CT Armor:26
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:6
+LRM 20, Left Arm
+LRM 20, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+TSEMP Cannon, Left Torso
+TSEMP Cannon, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+IS Ammo LRM-20
+IS Ammo LRM-20
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+IS Ammo LRM-20
+IS Ammo LRM-20
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

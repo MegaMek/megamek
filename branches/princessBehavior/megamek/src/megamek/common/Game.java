@@ -1275,17 +1275,7 @@ public class Game implements Serializable, IGame {
         entityIds.remove(new Integer(id));
 
         toRemove.setRemovalCondition(condition);
-        
-        // If we removed a unit during the movement phase, we may need to 
-        //  remove its turn
-        if (phase == Phase.PHASE_MOVEMENT && toRemove.isSelectableThisTurn()){
-            for (GameTurn turn : turnVector){
-                if (turn.isValidEntity(toRemove, this)){
-                    turnVector.remove(turn);
-                    break;
-                }
-            }
-        }
+                
         // do not keep never-joined entities
         if ((vOutOfGame != null)
             && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {

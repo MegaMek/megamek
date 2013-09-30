@@ -3076,6 +3076,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.setInternalName(BattleArmor.SINGLE_HEX_ECM);
+        misc.setInternalName("BA ECM");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;

@@ -1189,75 +1189,93 @@ public class BattleArmor extends Infantry {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-        // TODO: do this correctly
-        // Hopefully the cost is correctly set.
-        if (myCost > 0) {
-            return myCost;
-        }
-
-        // If it's not, I guess we default to the book values...
-        if (chassis.equals("Clan Elemental")) {
-            return 3500000;
-        }
-        if (chassis.equals("Clan Gnome")) {
-            return 5250000;
-        }
-        if (chassis.equals("Clan Salamander")) {
-            return 3325000;
-        }
-        if (chassis.equals("Clan Sylph")) {
-            return 3325000;
-        }
-        if (chassis.equals("Clan Undine")) {
-            return 3500000;
-        }
-        if (chassis.equals("IS Standard")) {
-            return 2400000;
-        }
-        if (chassis.equals("Achileus")) {
-            return 1920000;
-        }
-        if (chassis.equals("Cavalier")) {
-            return 2400000;
-        }
-        if (chassis.equals("Fa Shih")) {
-            return 2250000;
-        }
-        if (chassis.equals("Fenrir")) {
-            return 2250000;
-        }
-        if (chassis.equals("Gray Death Light Scout")) {
-            return 1650000;
-        }
-        if (chassis.equals("Gray Death Standard")) {
-            return 2400000;
-        }
-        if (chassis.equals("Infiltrator")) {
-            if (model.equals("Mk I")) {
-                return 1800000;
+        return getCost(ignoreAmmo, true);
+    }
+    
+    public double getAlternateCost() {
+        return getCost(false, false);
+    }
+    
+    public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
+        
+        double cost = 0;
+        switch(weightClass) {
+        case EntityWeightClass.WEIGHT_MEDIUM:
+            cost += 100000;
+            if(getMovementMode() == EntityMovementMode.VTOL) {
+                cost += getOriginalJumpMP() * 100000;
+            } else {
+                cost += getOriginalJumpMP() * 75000;
             }
-            return 2400000; // Mk II
+            break;
+        case EntityWeightClass.WEIGHT_HEAVY:
+            cost += 200000;
+            if(getMovementMode() == EntityMovementMode.INF_UMU) {
+                cost += getOriginalJumpMP() * 100000;
+            } else {
+                cost += getOriginalJumpMP() * 150000;
+            }
+            break;
+        case EntityWeightClass.WEIGHT_ASSAULT:
+            cost += 400000;
+            if(getMovementMode() == EntityMovementMode.INF_UMU) {
+                cost += getOriginalJumpMP() * 150000;
+            } else {
+                cost += getOriginalJumpMP() * 300000;
+            }
+            break;
+        default:
+            cost += 50000;
+            cost += 50000 * getOriginalJumpMP();
         }
-        if (chassis.equals("Kage")) {
-            return 1850000;
-        }
-        if (chassis.equals("Kanazuchi")) {
-            return 3300000;
-        }
-        if (chassis.equals("Longinus")) {
-            return 2550000;
-        }
-        if (chassis.equals("Purifier")) {
-            return 2400000;
-        }
-        if (chassis.equals("Raiden")) {
-            return 2400000;
-        }
-        if (chassis.equals("Sloth")) {
-            return 1800000;
-        }
+        cost += 25000 * (getOriginalWalkMP()-1);
 
-        return 0;
+        //damn, manipulators are supposed to be treated as structural costs
+        //and get multiplied by 1.1 if clan
+        long manipulatorCost = 0;
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getType() instanceof MiscType && ((MiscType)mounted.getType()).hasFlag(MiscType.F_BA_MANIPULATOR)) {
+                
+            }
+            long itemCost = (long) mounted.getType().getCost(this,
+                    mounted.isArmored(), mounted.getLocation());
+            manipulatorCost += itemCost;
+        }
+        cost += manipulatorCost;
+        
+        double baseArmorCost = 10000;
+        //TODO: how do I get standard advanced?
+        //TODO: stealth prototype
+        for(Mounted m :getMisc()) {
+            if(m.getType().getName().equals(BASIC_STEALTH_ARMOR)) {
+                baseArmorCost = 12000;
+                break;
+            }
+            else if(m.getType().getName().equals(STANDARD_STEALTH_ARMOR) || m.getType().getName().equals(MIMETIC_ARMOR)) {
+                baseArmorCost = 15000;
+                break;
+            }
+            else if(m.getType().getName().equals(IMPROVED_STEALTH_ARMOR)) {
+                baseArmorCost = 20000;
+                break;
+            }
+        }
+        cost += (baseArmorCost * getOArmor(LOC_TROOPER_1));
+        
+        //training cost and clan mod
+        if(includeTrainingAndClan) {
+            if(isClan()) {
+                cost *= 1.1;
+                cost += 200000;
+            } else {
+                cost += 150000;
+            }
+        }
+        
+        //TODO: we do not track the modular weapons mount for 1000 C-bills in the unit files
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo) - manipulatorCost;
+
+        return getSquadSize() * cost;
     }
 
     @Override

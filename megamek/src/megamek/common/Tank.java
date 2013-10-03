@@ -88,7 +88,7 @@ public class Tank extends Entity {
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "TU", "TU2" };
+            "TU", "FT" };
     private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
             "Left", "Rear", "Turret" };
 
@@ -3412,9 +3412,10 @@ public class Tank extends Entity {
     public boolean isBackedIntoHullDown() {
         return m_bBackedIntoHullDown;
     }
-    
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK;
     }
-    
+
 }

@@ -549,4 +549,22 @@ public class FireControlTest {
                                                                                 mockWeaponTypeAC5));
         TestCase.assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockMML5));
     }
+
+    @Test
+    public void testCorrectFacing() {
+        for (int i = 0; i < 6; i++) {
+            int result = FireControl.correctFacing(i);
+            TestCase.assertEquals(i, result);
+        }
+
+        int testFacing = -10;
+        int expected = 2;
+        int actual = FireControl.correctFacing(testFacing);
+        TestCase.assertEquals(expected, actual);
+
+        testFacing = 10;
+        expected = 4;
+        actual = FireControl.correctFacing(testFacing);
+        TestCase.assertEquals(expected, actual);
+    }
 }

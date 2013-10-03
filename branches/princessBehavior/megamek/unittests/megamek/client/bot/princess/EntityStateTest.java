@@ -14,15 +14,24 @@
 package megamek.client.bot.princess;
 
 import junit.framework.TestCase;
+import megamek.common.AmmoType;
+import megamek.common.BipedMech;
 import megamek.common.Coords;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
+import megamek.common.WeaponType;
+import megamek.common.weapons.ISLRM10;
+import megamek.common.weapons.ISPPC;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -232,5 +241,68 @@ public class EntityStateTest {
         TestCase.assertFalse(testEntityState.isImmobile());
         TestCase.assertFalse(testEntityState.isJumping());
         TestCase.assertEquals(expectedMovementType, testEntityState.getMovementType());
+    }
+
+    @Test
+    public void tesTestimatedDamageAtRange() {
+        Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockCrew.getGunnery()).thenReturn(4);
+
+        Entity testEntity = Mockito.mock(BipedMech.class);
+        Mockito.when(testEntity.getPosition()).thenReturn(new Coords(10, 10));
+        Mockito.when(testEntity.getFacing()).thenReturn(3);
+        Mockito.when(testEntity.getDeltaDistance()).thenReturn(4);
+        Mockito.when(testEntity.getHeat()).thenReturn(2);
+        Mockito.when(testEntity.isProne()).thenReturn(false);
+        Mockito.when(testEntity.isHullDown()).thenReturn(false);
+        Mockito.when(testEntity.isImmobile()).thenReturn(false);
+        Mockito.when(testEntity.getMoved()).thenReturn(EntityMovementType.MOVE_RUN);
+        Mockito.when(testEntity.getSecondaryFacing()).thenReturn(4);
+        Mockito.when(testEntity.getDisplayName()).thenReturn("Test Mech 1");
+        Mockito.when(testEntity.getCrew()).thenReturn(mockCrew);
+        Mockito.when(testEntity.hasTargComp()).thenReturn(false);
+
+        WeaponType mockPPCType = Mockito.mock(ISPPC.class);
+        Mockito.when(mockPPCType.hasFlag(Mockito.eq(WeaponType.F_AMS))).thenReturn(false);
+        Mockito.when(mockPPCType.getShortName()).thenReturn("PPC");
+        Mockito.when(mockPPCType.getRanges(Mockito.any(Mounted.class))).thenReturn(new int[]{3, 6, 12, 18, 24});
+        Mockito.when(mockPPCType.getDamage()).thenReturn(10);
+        Mockito.when(mockPPCType.getAmmoType()).thenReturn(AmmoType.T_NA);
+        Mockito.when(mockPPCType.getRackSize()).thenReturn(1);
+        Mockito.when(mockPPCType.getMinimumRange()).thenReturn(3);
+        Mounted mockPPC = Mockito.mock(Mounted.class);
+        Mockito.when(mockPPC.getType()).thenReturn(mockPPCType);
+
+        WeaponType mockLRM10Type = Mockito.mock(ISLRM10.class);
+        Mockito.when(mockLRM10Type.hasFlag(Mockito.eq(WeaponType.F_AMS))).thenReturn(false);
+        Mockito.when(mockLRM10Type.getShortName()).thenReturn("LRM10");
+        Mockito.when(mockLRM10Type.getRanges(Mockito.any(Mounted.class))).thenReturn(new int[]{6, 7, 14, 21, 28});
+        Mockito.when(mockLRM10Type.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
+        Mockito.when(mockLRM10Type.getAmmoType()).thenReturn(AmmoType.T_LRM);
+        Mockito.when(mockLRM10Type.getRackSize()).thenReturn(10);
+        Mockito.when(mockLRM10Type.getMinimumRange()).thenReturn(6);
+        Mounted mockLRM10 = Mockito.mock(Mounted.class);
+        Mockito.when(mockLRM10.getType()).thenReturn(mockLRM10Type);
+
+        ArrayList<Mounted> weaponList = new ArrayList<Mounted>();
+        weaponList.add(mockPPC);
+        weaponList.add(mockLRM10);
+        Mockito.when(testEntity.getWeaponList()).thenReturn(weaponList);
+
+        // Test a running Griffin shoot at a target 6 hexes away.
+        EntityState testEntityState = Mockito.spy(new EntityState(testEntity));
+        double expectedDmg = 10.718;
+        double actualDmg = testEntityState.estimatedDamageAtRange(6, false);
+        TestCase.assertEquals(expectedDmg, actualDmg, 0.001);
+
+        // Test the same griffin against a target 15 hexes away.
+        expectedDmg = 2.656;
+        actualDmg = testEntityState.estimatedDamageAtRange(15, false);
+        TestCase.assertEquals(expectedDmg, actualDmg, 0.001);
+
+        // Test the same griffin against an out of range target.
+        expectedDmg = 0.0;
+        actualDmg = testEntityState.estimatedDamageAtRange(30, false);
+        TestCase.assertEquals(expectedDmg, actualDmg, 0.001);
     }
 }

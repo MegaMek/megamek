@@ -246,7 +246,7 @@ public class EntityState {
                 msg.append(", Rack Size: ").append(rack);
                 int hits = Compute.calculateClusterHitTableAmount(clusterRoll, rack);
                 msg.append(", Hits: ").append(hits);
-                damage = rack * hits;
+                damage = hits;
                 // todo should probably check to make sure the correct ammo type is carried for MMLs and ATMs.
                 if ((weaponType instanceof MMLWeapon) && (range <= 9)) {
                     damage *= 2;
@@ -296,12 +296,12 @@ public class EntityState {
             int moveMod = 0;
             if (EntityMovementType.MOVE_JUMP.equals(shooter.moved)) {
                 moveMod = 3;
-            } else if (EntityMovementType.MOVE_RUN.equals(shooter.moved)
-                    || EntityMovementType.MOVE_OVER_THRUST.equals(shooter.moved)
-                    || EntityMovementType.MOVE_SUBMARINE_RUN.equals(shooter.moved)
-                    || EntityMovementType.MOVE_VTOL_RUN.equals(shooter.moved)) {
+            } else if (EntityMovementType.MOVE_RUN.equals(shooter.getMoved())
+                    || EntityMovementType.MOVE_OVER_THRUST.equals(shooter.getMoved())
+                    || EntityMovementType.MOVE_SUBMARINE_RUN.equals(shooter.getMoved())
+                    || EntityMovementType.MOVE_VTOL_RUN.equals(shooter.getMoved())) {
                 moveMod = 2;
-            } else if (!EntityMovementType.MOVE_NONE.equals(shooter.moved)) {
+            } else if (!EntityMovementType.MOVE_NONE.equals(shooter.getMoved())) {
                 moveMod = 1;
             }
             skill += moveMod;

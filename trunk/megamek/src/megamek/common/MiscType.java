@@ -1247,7 +1247,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISHarJel());
         EquipmentType.addType(MiscType.createISUMU());
         EquipmentType.addType(MiscType.createCLUMU());
-        EquipmentType.addType(MiscType.createISLance()); 
+        EquipmentType.addType(MiscType.createISLance());
         EquipmentType.addType(MiscType.createISWreckingBall());
         EquipmentType.addType(MiscType.createCLWreckingBall());
         EquipmentType.addType(MiscType.createISFlail());
@@ -3774,10 +3774,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         misc.techRating = RATING_E;
-        
+
         return misc;
     }
-    
+
     public static MiscType createCLReinforcedStructure() {
         MiscType misc = new MiscType();
 
@@ -3797,7 +3797,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         misc.techRating = RATING_E;
-        
+
         return misc;
     }
 
@@ -4907,7 +4907,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3083, TechConstants.T_IS_TW_NON_BOX);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        
+
 
         return misc;
     }
@@ -5064,7 +5064,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createClClaw() {
         MiscType misc = new MiscType();
 
@@ -7950,7 +7950,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
         misc.techLevel.put(3126,TechConstants.T_CLAN_ADVANCED);
-   
+
 
         return misc;
     }
@@ -8066,7 +8066,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_F };
         misc.introDate = 3120;
         misc.techRating = RATING_F;
-        misc.techLevel.put(3120, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3120, TechConstants.T_CLAN_ADVANCED);
 
         return misc;
     }
@@ -8109,7 +8109,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-   
+
     @Override
     public String toString() {
         return "MiscType: " + name;

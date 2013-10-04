@@ -33,6 +33,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
     (fix patch included)
 + Fix turret location abbreviations for dual turret tanks
 + Fix Harjel II and III tech levels, should be clan advanced
++ Fix Random Name Generator memory leak
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

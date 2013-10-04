@@ -108,7 +108,6 @@ public class SpecialHexDisplay implements Serializable {
 
     public static int NO_ROUND = -99;
 
-    @SuppressWarnings("unused")
     private SpecialHexDisplay() {
         // deserialization use only
     }

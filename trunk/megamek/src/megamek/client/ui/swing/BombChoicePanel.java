@@ -45,9 +45,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private int maxPoints = 0;
     private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
 
-    @SuppressWarnings("unused")
     private BombChoicePanel m_bombs;
-    @SuppressWarnings("unused")
     private JPanel panBombs = new JPanel();
 
     public BombChoicePanel(Aero aero, boolean at2Nukes, boolean allowAdvancedAmmo) {

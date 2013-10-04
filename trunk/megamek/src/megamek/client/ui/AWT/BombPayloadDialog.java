@@ -48,18 +48,14 @@ public class BombPayloadDialog
      */
     private static final long serialVersionUID = -9040626038371951886L;
 
-    @SuppressWarnings("unused")
     private boolean confirm = false;
 
     private Panel panButtons = new Panel();
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    @SuppressWarnings("unused")
     private Checkbox[] b_choices;
-    @SuppressWarnings("unused")
     private Label[] b_labels;
-    @SuppressWarnings("unused")
     private int maxRows;
 
     /**

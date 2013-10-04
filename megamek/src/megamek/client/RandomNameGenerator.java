@@ -311,6 +311,7 @@ public class RandomNameGenerator implements Serializable {
                     if (dispose) {
                         clear();
                     }
+                    input.close();
                     return;
                 }
                 String line = input.nextLine();

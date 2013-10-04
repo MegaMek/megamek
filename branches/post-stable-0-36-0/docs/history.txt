@@ -48,6 +48,17 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + jumpy/jumping jill references all to hopping jack - thats my final answer
 + static methods to get EntityMovementMode via xml
 + Data: Unit Name and Date fixes.  A couple of new images.
++ Bug: Large Chemical Laser missing medium range
++ Data: Fixing Black Knight and other name Fixes.  A couple of new images.
++ real BattleArmor costs - still missing standard advanced and stealth prototype
+    armor and modular weapon mounts
++ Patch [#453]: Graphic artifacts when scrolling to the right on linux
+    (fix patch included)
++ Fix turret location abbreviations for dual turret tanks
++ Fix Harjel II and III tech levels, should be clan advanced
++ Fix Random Name Generator memory leak
++ Remove unnecessary warning suppressions
++ Fix multiple zipfile related memory leaks 
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

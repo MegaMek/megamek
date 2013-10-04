@@ -37,6 +37,7 @@ public class CLLargeChemicalLaser extends CLChemicalLaserWeapon {
         damage = 8;
         rackSize = 1;
         shortRange = 5;
+        mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
         waterShortRange = 3;

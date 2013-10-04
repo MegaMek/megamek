@@ -621,7 +621,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             }
         }
 
-        @SuppressWarnings("unused")
         public Image loadPreviewImage() {
             base = applyColor(base);
             return base;

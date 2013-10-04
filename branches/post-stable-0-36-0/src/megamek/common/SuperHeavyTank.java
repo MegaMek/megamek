@@ -39,7 +39,7 @@ public class SuperHeavyTank extends Tank {
         { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RRRS", "RRLS", "RR", "TU", "TU2" };
+        "RRRS", "RRLS", "RR", "TU", "FT" };
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
@@ -409,8 +409,9 @@ public class SuperHeavyTank extends Tank {
         return false;
     }
 
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
     }
-    
+
 }

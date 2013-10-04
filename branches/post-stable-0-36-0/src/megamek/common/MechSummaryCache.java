@@ -20,6 +20,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -599,7 +600,11 @@ public class MechSummaryCache {
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
             if (interrupted) {
                 done();
-                return false;
+                try {
+                    zFile.close();
+                    return false;
+                } catch (IOException e) {
+                }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
 

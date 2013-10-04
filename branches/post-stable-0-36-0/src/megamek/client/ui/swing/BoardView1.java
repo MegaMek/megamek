@@ -6880,8 +6880,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int midWidth = viewRect.width - Math.abs(viewRect.x - drawRect.x);
         Rectangle unLeft = new Rectangle(viewRect.x, viewRect.y, drawRect.x
                 - viewRect.x, viewRect.height);
-        Rectangle unRight = new Rectangle(drawRect.x + drawRect.width,
-                viewRect.y, viewRect.x - drawRect.x, viewRect.height);
+        Rectangle unRight = new Rectangle(viewRect.x - drawRect.x, viewRect.y,
+                drawRect.x + drawRect.width, viewRect.height);
         Rectangle unTop = new Rectangle(midX, viewRect.y, midWidth, drawRect.y
                 - viewRect.y);
         Rectangle unBottom = new Rectangle(midX, drawRect.y + drawRect.height,

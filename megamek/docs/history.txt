@@ -35,8 +35,9 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Fix Harjel II and III tech levels, should be clan advanced
 + Fix Random Name Generator memory leak
 + Remove unnecessary warning suppressions
-+ Fix multiple zipfile related memory leaks 
++ Fix multiple zipfile related memory leaks
 + Bug [#3879]: Battle Armor can't operate in vacuum
++ Data: New Images and Unit file fix.
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

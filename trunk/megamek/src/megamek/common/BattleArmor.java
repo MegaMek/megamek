@@ -1831,4 +1831,9 @@ public class BattleArmor extends Infantry {
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_BATTLEARMOR;
     }
+    
+    @Override
+    public boolean doomedInVacuum() {
+        return false;
+    }
 } // End public class BattleArmor extends Infantry implements Serializable

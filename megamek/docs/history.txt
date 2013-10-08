@@ -38,6 +38,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Fix multiple zipfile related memory leaks
 + Bug [#3879]: Battle Armor can't operate in vacuum
 + Data: New Images and Unit file fix.
++ Bug [#3880]: Protomech and buildings 
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

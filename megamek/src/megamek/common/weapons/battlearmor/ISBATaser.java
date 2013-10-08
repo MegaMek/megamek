@@ -11,35 +11,51 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Oct 20, 2004
- *
- */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  */
-public abstract class MGWeapon extends AmmoWeapon {
-
-    private static final long serialVersionUID = 923749421748564257L;
+public class ISBATaser extends AmmoWeapon {
 
     /**
      *
      */
-    public MGWeapon() {
+    private static final long serialVersionUID = 4393086562754363816L;
+
+    /**
+     *
+     */
+    public ISBATaser() {
         super();
-        ammoType = AmmoType.T_MG;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
-                .or(F_BURST_FIRE);
-        atClass = CLASS_POINT_DEFENSE;
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        name = "Battle Armor Taser";
+        setInternalName(name);
+        addLookupName("ISBATaser");
+        heat = 0;
+        rackSize = 1;
+        damage = 1;
+        ammoType = AmmoType.T_TASER;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        bv = 15;
+        toHitModifier = 1;
+        introDate = 3067;
+        techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        techRating = RATING_E;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER);
     }
 
     /*
@@ -53,6 +69,6 @@ public abstract class MGWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MGHandler(toHit, waa, game, server);
+        return new BATaserHandler(toHit, waa, game, server);
     }
 }

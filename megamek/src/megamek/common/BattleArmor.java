@@ -91,11 +91,6 @@ public class BattleArmor extends Infantry {
     private int troopers = -1;
 
     /**
-     * The weight of a single trooper
-     */
-    private float trooperWeight = -1.0f;
-
-    /**
      * The cost of this unit. This value should be set when the unit's file is
      * read.
      */
@@ -143,7 +138,7 @@ public class BattleArmor extends Infantry {
     private String camoName = null;
 
     // Public and Protected constants, constructors, and methods.
-
+    
     /**
      * Internal name of the Inner disposable SRM2 ammo pack.
      */
@@ -158,6 +153,21 @@ public class BattleArmor extends Infantry {
      * The internal name for the Mine Launcher weapon.
      */
     public static final String MINE_LAUNCHER = "BAMineLauncher";
+
+    /**
+     * The internal name for advanced.
+     */
+    public static final String ADVANCED_ARMOR = "Advanced Armor";
+
+    /**
+     * The internal name for standard Prototype.
+     */
+    public static final String STANDARD_PROTOTYPE = "Standard Prototype Armor";
+
+    /**
+     * The internal name for stealth Prototype.
+     */
+    public static final String STEALTH_PROTOTYPE = "Stealth Prototype";
 
     /**
      * The internal name for basic Stealth armor.
@@ -179,6 +189,12 @@ public class BattleArmor extends Infantry {
      */
     public static final String MIMETIC_ARMOR = "Mimetic Armor";
 
+    /**
+     * The internal name for fire-resistant armor.
+     */
+    public static final String FIRE_RESISTANT = "Fire Resistant Armor";
+
+    
     /**
      * The internal name for Simple Camo equipment.
      */
@@ -253,6 +269,8 @@ public class BattleArmor extends Infantry {
         // Instantiate the superclass.
         super();
 
+        setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
+        
         // BA are always one squad
         squadn = 1;
 
@@ -673,28 +691,50 @@ public class BattleArmor extends Infantry {
 
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?
+        //TODO: (Taharqa) for the stable 0.36 release I am going to leave this intact and just 
+        //set the armor type properly as well, but starting in 0.37 we should redo all of this
+        //stuff to just pull stealth modifiers directly from getArmorType() instead of this hack
+        //and armor type should be set directly from the blk file.
         String name = mounted.getType().getInternalName();
-        if (BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
+        if(BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_BASIC);
+            isStealthy = true;
+            shortStealthMod = 0;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = name;
+        }
+        if (BattleArmor.STEALTH_PROTOTYPE.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE);
             isStealthy = true;
             shortStealthMod = 0;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = name;
         } else if (BattleArmor.STANDARD_STEALTH_ARMOR.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH);
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = name;
         } else if (BattleArmor.IMPROVED_STEALTH_ARMOR.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_IMP);
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 2;
             longStealthMod = 3;
             stealthName = name;
         } else if (BattleArmor.MIMETIC_ARMOR.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_MIMETIC);
             isMimetic = true;
             stealthName = name;
+        } else if (BattleArmor.STANDARD_PROTOTYPE.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE);
+        } else if (BattleArmor.ADVANCED_ARMOR.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED);
+        } else if (BattleArmor.FIRE_RESISTANT.equals(name)) {
+            setArmorType(EquipmentType.T_ARMOR_BA_FIRE_RESIST);
         } else if (BattleArmor.CAMO_SYSTEM.equals(name)) {
             hasCamoSystem = true;
             camoName = name;
@@ -1304,11 +1344,7 @@ public class BattleArmor extends Infantry {
     }
 
     public float getTrooperWeight() {
-        return trooperWeight;
-    }
-
-    public void setTrooperWeight(float trooperWeight) {
-        this.trooperWeight = trooperWeight;
+        return EntityWeightClass.getClassLimit(getWeightClass(), this);
     }
 
     @Override
@@ -1830,6 +1866,138 @@ public class BattleArmor extends Infantry {
     @Override
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_BATTLEARMOR;
+    }
+    
+    public int getMaximumJumpMP() {
+        if(chassisType == CHASSIS_TYPE_QUAD) {
+            return 0;
+        }
+        int max = 2;
+        if(getMovementMode() == EntityMovementMode.INF_UMU) {
+           if(getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
+                max = 5;
+            }
+            else if(getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                max = 4;
+            }
+            else if(getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+                max = 3;
+            }
+            else {
+                max = 2;
+            }          
+        }
+        else if(getMovementMode() == EntityMovementMode.VTOL) {
+            if(getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+                max = 7;
+            }
+            else if(getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
+                max = 6;
+            }
+            else if(getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                max = 5;
+            }
+            else {
+                max = 0;
+            }
+        }
+        else {
+            if(getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) {
+                max = 3;
+            }
+        }
+        //TODO: adjust for other equipment
+        return max;
+    }
+    
+    public int getMinimumWalkMP() {
+        if(chassisType == CHASSIS_TYPE_QUAD) {
+            return 2;
+        }
+        return 1;
+    }
+    
+    public int getMaximumWalkMP() {
+        int max = 2;
+        if(getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) {
+            max = 3;
+        }
+        if(chassisType == CHASSIS_TYPE_QUAD) {
+            max += 2;
+        }
+        return max;
+    }
+    
+    public int getMaximumArmorPoints() {
+        switch(getWeightClass()) {
+        case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+            return 2;
+        case EntityWeightClass.WEIGHT_LIGHT:
+            return 6;
+        case EntityWeightClass.WEIGHT_MEDIUM:
+            return 10;
+        case EntityWeightClass.WEIGHT_HEAVY:
+            return 14;
+        case EntityWeightClass.WEIGHT_ASSAULT:
+            return 18;
+        default:
+            return 0;
+        }
+    }
+    
+    @Override
+    public void setArmorType(int armType) {
+        for (int i = 0; i < 7; i++) {
+            armorType[i] = armType;
+        }
+    }
+    
+    public int getArmCrits() {
+        if(getChassisType() == CHASSIS_TYPE_QUAD) {
+            return 0;
+        }
+        switch(getWeightClass()) {
+        case EntityWeightClass.WEIGHT_ULTRA_LIGHT:            
+        case EntityWeightClass.WEIGHT_LIGHT:
+            return 2;
+        case EntityWeightClass.WEIGHT_MEDIUM:
+        case EntityWeightClass.WEIGHT_HEAVY:
+            return 3;
+        default:
+            return 4;
+        }
+        
+    }
+    
+    public int getBodyCrits() {
+        if(getChassisType() == CHASSIS_TYPE_QUAD) {
+            switch(getWeightClass()) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                return 0;
+            case EntityWeightClass.WEIGHT_LIGHT:
+                return 5;
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                return 7;
+            case EntityWeightClass.WEIGHT_HEAVY:
+                return 9;
+            default:
+                return 11;
+            }        
+        } else {
+            switch(getWeightClass()) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                return 2;
+            case EntityWeightClass.WEIGHT_LIGHT:
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                return 4;
+            default:
+                return 6;
+            }
+        }
+    }
+    
+    public int getTotalCrits() {
+        return getArmCrits() * 2 + getBodyCrits();
     }
     
     @Override

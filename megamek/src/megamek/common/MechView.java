@@ -302,6 +302,9 @@ public class MechView {
             sIntArm.append(Messages.getString("MechView."
                     + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
         }
+        if (isBA) {
+            sIntArm.append(" ").append(EquipmentType.getBaArmorTypeName(entity.getArmorType(1)));
+        }
         sIntArm.append("<br>"); //$NON-NLS-1$
         // Walk through the entity's locations.
 

@@ -7507,6 +7507,18 @@ public class Server implements Runnable {
                     bldgEntered = game.getBoard().getBuildingAt(curPos);
                 }
 
+                // Protomechs changing levels within a building cause damage
+                if ((buildingMove & 8) == 8 && 
+                        (entity instanceof Protomech)){
+                    Building bldg = game.getBoard().getBuildingAt(curPos);
+                    Vector<Report> vBuildingReport = 
+                            damageBuilding(bldg, 1, curPos);
+                    for (Report report : vBuildingReport) {
+                        report.subject = entity.getId();
+                    }
+                    addReport(vBuildingReport);
+                }
+                
                 boolean collapsed = false;
                 if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the

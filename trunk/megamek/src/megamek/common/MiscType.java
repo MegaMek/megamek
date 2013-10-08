@@ -1379,7 +1379,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEmergencyC3M());
 
         // Start BattleArmor equipment
+        EquipmentType.addType(MiscType.createBAAdvancedArmor());
+        EquipmentType.addType(MiscType.createBAStandardPrototypeArmor());
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
+        EquipmentType.addType(MiscType.createStealthPrototype());
         EquipmentType.addType(MiscType.createBasicStealth());
         EquipmentType.addType(MiscType.createStandardStealth());
         EquipmentType.addType(MiscType.createImprovedStealth());
@@ -2842,24 +2845,80 @@ public class MiscType extends EquipmentType {
 
     // Start BattleArmor equipment
 
+    public static MiscType createBAStandardPrototypeArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.STANDARD_PROTOTYPE;
+        misc.setInternalName(BattleArmor.STANDARD_PROTOTYPE);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3050;
+        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createBAAdvancedArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.ADVANCED_ARMOR;
+        misc.setInternalName(BattleArmor.ADVANCED_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3057;
+        misc.techLevel.put(3057, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
     public static MiscType createBAFireResistantArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Fire Resistant Armor";
-        misc.setInternalName("BA-Fire Resistant Armor");
+        misc.name = BattleArmor.FIRE_RESISTANT;
+        misc.setInternalName(BattleArmor.FIRE_RESISTANT);
+        misc.addLookupName("BA-Fire Resistant Armor");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 3058;
-        misc.techLevel.put(3058, TechConstants.T_ALLOWED_ALL);
-        misc.techRating = RATING_F;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
         return misc;
     }
 
+
+    public static MiscType createStealthPrototype() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.STEALTH_PROTOTYPE;
+        misc.setInternalName(BattleArmor.STEALTH_PROTOTYPE);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3050;
+        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+
+        return misc;
+    }
+    
     public static MiscType createBasicStealth() {
         MiscType misc = new MiscType();
 

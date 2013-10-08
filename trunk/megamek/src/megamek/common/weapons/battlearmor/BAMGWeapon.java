@@ -15,31 +15,30 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  */
-public abstract class MGWeapon extends AmmoWeapon {
+public abstract class BAMGWeapon extends Weapon {
 
-    private static final long serialVersionUID = 923749421748564257L;
+    private static final long serialVersionUID = -6222214456392675786L;
 
     /**
      *
      */
-    public MGWeapon() {
+    public BAMGWeapon() {
         super();
-        ammoType = AmmoType.T_MG;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
-                .or(F_BURST_FIRE);
-        atClass = CLASS_POINT_DEFENSE;
+        ammoType = AmmoType.T_NA;
+        flags = flags.or(F_MG).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE);
     }
 
     /*
@@ -53,6 +52,6 @@ public abstract class MGWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MGHandler(toHit, waa, game, server);
+        return new BAMGHandler(toHit, waa, game, server);
     }
 }

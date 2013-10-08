@@ -835,7 +835,11 @@ public class MoveStep implements Serializable {
                             setMp(5);
                         }
                     } else {
-                        setMp(parent.isJumping() ? 0 : 1);
+                        if (entity instanceof Protomech){
+                            setMp(parent.isJumping() ? 0 : 2);
+                        } else {
+                            setMp(parent.isJumping() ? 0 : 1);
+                        }
                     }
                 }
                 break;
@@ -850,7 +854,11 @@ public class MoveStep implements Serializable {
                     if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                         setMp(0);
                     } else {
-                        setMp(parent.isJumping() ? 0 : 1);
+                        if (entity instanceof Protomech){
+                            setMp(parent.isJumping() ? 0 : 2);
+                        } else {
+                            setMp(parent.isJumping() ? 0 : 1);
+                        }
                     }
                 }
                 break;
@@ -2659,13 +2667,16 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        final int srcAlt = srcEl + srcHex.getElevation();
+        final int destAlt = elevation + destHex.getElevation();
+        
         Building bld = game.getBoard().getBuildingAt(dest);
-
+        
         if (bld != null) {
             // protomechs that are jumping can't change the level inside a
             // building,
             // they can only jump onto a building or out of it
-            if (src.equals(dest) && (entity instanceof Protomech)
+            if (src.equals(dest) && srcAlt != destAlt && (entity instanceof Protomech)
                     && (getMovementType() == EntityMovementType.MOVE_JUMP)) {
                 //System.err
                 //        .println("no jumping inside buildings to change levels");
@@ -2699,8 +2710,7 @@ public class MoveStep implements Serializable {
             }
         }
 
-        final int srcAlt = srcEl + srcHex.getElevation();
-        final int destAlt = elevation + destHex.getElevation();
+        
 
         // Can't back up across an elevation change.
         if (!(entity instanceof VTOL)                

@@ -39,6 +39,8 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3879]: Battle Armor can't operate in vacuum
 + Data: New Images and Unit file fix.
 + Bug [#3880]: Protomech and buildings 
++ BA weapon refactoring, first round - IS TechManual non-missile launchers
++ some added methods to BattleArmor for MML
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

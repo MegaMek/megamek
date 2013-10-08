@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -12,47 +12,48 @@
  *  for more details.
  */
 /*
- * Created on Oct 20, 2004
+ * Created on Sep 23, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.FlamerHandler;
+import megamek.common.weapons.FlamerHeatHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
  */
-public abstract class MGWeapon extends AmmoWeapon {
-
-    private static final long serialVersionUID = 923749421748564257L;
+public abstract class BAFlamerWeapon extends Weapon {
 
     /**
      *
      */
-    public MGWeapon() {
+    private static final long serialVersionUID = -8198014543155920036L;
+
+    public BAFlamerWeapon() {
         super();
-        ammoType = AmmoType.T_MG;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
+        flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE);
+        ammoType = AmmoType.T_NA;
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         atClass = CLASS_POINT_DEFENSE;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MGHandler(toHit, waa, game, server);
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
+                .curMode().equals("Heat"))) {
+            return new FlamerHeatHandler(toHit, waa, game, server);
+        }
+        return new FlamerHandler(toHit, waa, game, server);
     }
 }

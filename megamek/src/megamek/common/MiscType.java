@@ -8107,7 +8107,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
         misc.techLevel.put(misc.introDate, TechConstants.T_IS_EXPERIMENTAL);
-        misc.techLevel.put(3131, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3131, TechConstants.T_IS_ADVANCED);
 
         return misc;
     }

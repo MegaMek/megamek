@@ -9,14 +9,14 @@ Source:TRO 3145 DC
 Rules Level:4
 
 Mass:65
-Engine:260 XL Engine(IS)
-Structure:IS Endo-Steel
+Engine:325 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Standard Cockpit
 Gyro:Compact Gyro
 
 Heat Sinks:10 Double
-Walk MP:4
+Walk MP:5
 Jump MP:0
 
 Armor:Light Ferro-Fibrous(Inner Sphere)
@@ -33,9 +33,9 @@ RTR Armor:8
 RTC Armor:12
 
 Weapons:4
-Arrow IV, Left Torso
-ER PPC, Right Arm
 Medium Pulse Laser, Left Arm
+ER PPC, Right Arm
+Arrow IV, Center Torso
 B-Pod, Center Torso
 
 Left Arm:
@@ -44,13 +44,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLMediumPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -58,13 +58,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLERPPC
 CLERPPC
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine

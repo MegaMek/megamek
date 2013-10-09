@@ -56,12 +56,13 @@ Tracked
 </armor>
 
 <Body Equipment>
-ISSuperCharger
+Supercharger
 ISCASE
 IS Ammo LAC/5
 IS Ammo LAC/5
 ISPlasmaRifleAmmo
 ISPlasmaRifleAmmo
+IS Light Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>

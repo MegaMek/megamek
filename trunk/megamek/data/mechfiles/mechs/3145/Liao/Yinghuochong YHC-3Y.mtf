@@ -1,70 +1,68 @@
 Version:1.1
-Hollander III
-BZK-D3
+Yinghuochong
+YHC-3Y
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3118
-Source:TRO 3145 FS
+Era:3137
+Source:TRO 3145 CC
 Rules Level:3
 
 Mass:35
 Engine:210 XL Engine(IS)
-Structure:IS Endo Steel
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Standard Cockpit
-Gyro:Compact Gyro
+Gyro:XL Gyro
 
 Heat Sinks:10 Double
 Walk MP:6
-Jump MP:0
+Jump MP:8
 
-Armor:Reflective(Inner Sphere)
-LA Armor:7
-RA Armor:7
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:12
+RA Armor:12
 LT Armor:12
 RT Armor:12
-CT Armor:15
+CT Armor:16
 HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+LL Armor:16
+RL Armor:16
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
 
-Weapons:4
-Medium Laser, Left Torso
-Medium Laser, Left Torso
-ER PPC, Right Torso
-Small Laser, Head
+Weapons:2
+TAG, Right Arm
+TSEMP Cannon, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Reflective
-IS Reflective
-IS Reflective
-IS Reflective
-IS Reflective
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Reflective
-IS Reflective
-IS Reflective
-IS Reflective
-IS Reflective
+Lower Arm Actuator
+Hand Actuator
+ISTAG
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine
@@ -73,12 +71,12 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Medium Laser
-Medium Laser
-ISAngelECMSuite
-ISAngelECMSuite
-IS Endo Steel
--Empty-
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 
 Right Torso:
 Fusion Engine
@@ -87,12 +85,12 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-IS Endo Steel
--Empty-
--Empty-
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 
 Center Torso:
 Fusion Engine
@@ -100,19 +98,19 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
+Gyro
+Gyro
+Gyro
+Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-Supercharger
 
 Head:
 Life Support
 Sensors
 Cockpit
-Small Laser
+RemoteSensorDispenser
 Sensors
 Life Support
 -Empty-
@@ -127,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo Steel
-IS Endo Steel
+IS Improved Jump Jet
+IS Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo Steel
-IS Endo Steel
+IS Improved Jump Jet
+IS Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-

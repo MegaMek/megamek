@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:65
 Engine:260 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Standard Cockpit
 Gyro:Compact Gyro
@@ -20,22 +20,22 @@ Walk MP:4
 Jump MP:0
 
 Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:0
-RA Armor:0
-LT Armor:0
-RT Armor:0
-CT Armor:0
-HD Armor:0
-LL Armor:0
-RL Armor:0
-RTL Armor:0
-RTR Armor:0
-RTC Armor:0
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:30
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
 
 Weapons:3
 Medium X-Pulse Laser, Left Arm
 ER PPC, Right Arm
-Arrow IV, Left Torso
+Arrow IV, Center Torso
 
 Left Arm:
 Shoulder
@@ -43,13 +43,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISMediumXPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -58,12 +58,12 @@ Lower Arm Actuator
 ISERPPC
 ISERPPC
 ISERPPC
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 ISArrowIV
@@ -105,7 +105,7 @@ Fusion Engine
 ISArrowIV
 ISArrowIV
 ISArrowIV
-IS Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support

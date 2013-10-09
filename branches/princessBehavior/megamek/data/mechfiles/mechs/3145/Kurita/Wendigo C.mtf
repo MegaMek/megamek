@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
@@ -33,13 +33,12 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:8
 
-Weapons:6
-Improved Heavy Medium Laser, Head
-Improved Heavy Medium Laser, Right Arm
-Improved Heavy Medium Laser, Head
-Improved Heavy Medium Laser, Right Arm
-ER Small Laser, Left Torso
+Weapons:5
 Streak LRM 15, Left Arm
+ER Small Laser, Left Torso
+Improved Heavy Medium Laser, Head
+Improved Heavy Medium Laser, Head
+Improved Heavy Large Laser, Right Arm
 
 Left Arm:
 Shoulder
@@ -58,13 +57,13 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -76,8 +75,8 @@ Life Support
 CLERSmallLaser
 Clan Streak LRM 15 Ammo
 Clan Streak LRM 15 Ammo
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-
@@ -90,8 +89,8 @@ Life Support
 CLDoubleHeatSink
 CLDoubleHeatSink
 CL Super Charger
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-

@@ -9,12 +9,12 @@ Source:TRO 3145 FS
 Rules Level:4
 
 Mass:75
-Engine:255 Light Engine(IS)
+Engine:300 Light Engine(IS)
 Structure:IS Endo-Composite
 Myomer:Standard
 
-Heat Sinks:15 Double
-Walk MP:3
+Heat Sinks:17 Double
+Walk MP:4
 Jump MP:0
 
 Armor:Standard(IS/Clan)

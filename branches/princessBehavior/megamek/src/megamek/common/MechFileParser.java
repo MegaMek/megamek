@@ -93,11 +93,11 @@ public class MechFileParser {
         } else {
 
             // try zip file
-            ZipFile zFile;
             try {
-                zFile = new ZipFile(f.getAbsolutePath());
+                ZipFile zFile = new ZipFile(f.getAbsolutePath());
                 parse(zFile.getInputStream(zFile.getEntry(entryName)),
                         entryName);
+                zFile.close();
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe) {

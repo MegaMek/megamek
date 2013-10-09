@@ -88,6 +88,19 @@ public class EquipmentType {
     public static final int T_STRUCTURE_REINFORCED = 4;
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
+    
+
+    //BA armor types
+    public final static int T_ARMOR_BA_STANDARD           = 0;
+    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 1;
+    public final static int T_ARMOR_BA_STANDARD_ADVANCED  = 2;
+    public final static int T_ARMOR_BA_STEALTH_BASIC      = 3;
+    public final static int T_ARMOR_BA_STEALTH            = 4;
+    public final static int T_ARMOR_BA_STEALTH_IMP        = 5;
+    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE  = 6;
+    public final static int T_ARMOR_BA_FIRE_RESIST        = 7;
+    public final static int T_ARMOR_BA_MIMETIC            = 8;
+    public final static int T_ARMOR_BA_NUM                = 9;
 
     public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
             "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
@@ -105,6 +118,10 @@ public class EquipmentType {
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
 
+    public static final String[] baArmorNames = {"Standard", "Standard (Prototype)", "Advanced",
+                 "Stealth (Basic)", "Stealth", "Stealth (Improved)", "Stealth (Prototype)", 
+                 "Fire Resistant", "Mimetic"};
+    
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
             1600, 3200 };
@@ -599,6 +616,57 @@ public class EquipmentType {
         }
         return clan ? "Clan " + structureNames[structureType] : "IS "
                 + structureNames[structureType];
+    }
+    
+    public static String getBaArmorTypeName(int armorType) {
+        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
+            return "UNKNOWN";
+        }
+        return baArmorNames[armorType];
+    }
+
+    public static String getBaArmorTypeName(int armorType, boolean clan) {
+        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
+            return "UNKNOWN";
+        }
+        return clan ? "Clan " + armorNames[armorType] : "IS "
+                + baArmorNames[armorType];
+    }
+    
+    public static float getBaArmorWeightPerPoint(int type, boolean isClan) {        
+        switch(type) {
+        case T_ARMOR_BA_STANDARD_PROTOTYPE:
+            return 0.1f;
+        case T_ARMOR_BA_STANDARD_ADVANCED:
+            return 0.04f;
+        case T_ARMOR_BA_STEALTH:
+            if(isClan) {
+                return 0.035f;
+            }
+            return 0.06f;
+        case T_ARMOR_BA_STEALTH_BASIC:
+            if(isClan) {
+                return 0.03f;
+            }
+            return 0.055f;
+        case T_ARMOR_BA_STEALTH_IMP:
+            if(isClan) {
+                return 0.035f;
+            }
+            return 0.06f;  
+        case T_ARMOR_BA_STEALTH_PROTOTYPE:
+            return 0.1f;
+        case T_ARMOR_BA_FIRE_RESIST:
+            return 0.03f;
+        case T_ARMOR_BA_MIMETIC:
+            return 0.05f;
+        case T_ARMOR_BA_STANDARD:
+        default:
+            if(isClan) {
+                return 0.025f;
+            }
+            return 0.05f;           
+        }
     }
 
     /**

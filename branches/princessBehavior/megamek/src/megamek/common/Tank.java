@@ -91,10 +91,10 @@ public class Tank extends Entity {
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = {25, 25, 25, 25, 25, 25, 25};
 
-    private static String[] LOCATION_ABBRS = {"BD", "FR", "RS", "LS", "RR",
-                                              "TU", "TU2"};
-    private static String[] LOCATION_NAMES = {"Body", "Front", "Right",
-                                              "Left", "Rear", "Turret"};
+    private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
+            "TU", "FT" };
+    private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
+            "Left", "Rear", "Turret" };
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = {"Body", "Front",
                                                           "Right", "Left", "Rear", "Rear Turret", "Front Turret"};
@@ -3411,7 +3411,8 @@ public class Tank extends Entity {
         return m_bBackedIntoHullDown;
     }
 
-    public long getEntityType() {
+    @Override
+    public long getEntityType(){
         return Entity.ETYPE_TANK;
     }
 

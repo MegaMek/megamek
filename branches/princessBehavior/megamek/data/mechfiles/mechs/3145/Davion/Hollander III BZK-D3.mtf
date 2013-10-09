@@ -2,7 +2,6 @@ Version:1.1
 Hollander III
 BZK-D3
 
-
 Config:Biped
 TechBase:Inner Sphere
 Era:3118
@@ -21,23 +20,23 @@ Walk MP:6
 Jump MP:0
 
 Armor:Reflective(Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:10
-RT Armor:10
-CT Armor:12
+LA Armor:7
+RA Armor:7
+LT Armor:12
+RT Armor:12
+CT Armor:15
 HD Armor:9
-LL Armor:10
-RL Armor:10
+LL Armor:12
+RL Armor:12
 RTL Armor:3
 RTR Armor:3
-RTC Armor:3
+RTC Armor:4
 
 Weapons:4
-Small Laser, Head
+Medium Laser, Left Torso
+Medium Laser, Left Torso
 ER PPC, Right Torso
-Medium Laser, Left Torso
-Medium Laser, Left Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder

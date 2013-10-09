@@ -1494,6 +1494,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case QUAD_SWIM:
                 minAlt = hex.floor();
                 break;
+            case BIPED:
+            case QUAD:
+                if (this instanceof Protomech){
+                    minAlt -= Math.max(0,
+                            BasementType.getType(
+                                    hex.terrainLevel(
+                                            Terrains.BLDG_BASEMENT_TYPE)).
+                                            getDepth());
+                } else {
+                    return false;
+                }
+                break;
             default:
                 return false;
         }
@@ -1534,6 +1546,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case WIGE:
                 maxAlt = hex.surface() + 1;
+                break;
+            case BIPED:
+            case QUAD:
+                if (this instanceof Protomech){
+                    maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+                } else {
+                    return false;
+                }
                 break;
             default:
                 return false;
@@ -5958,11 +5978,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * method returns true/false, unlike the other checkStuff() methods above.
      *
      * @return 0, no eligible building; 1, exiting; 2, entering; 3, both; 4,
-     *         stepping on roof
+     *         stepping on roof, 8 changing elevations within a building 
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
                                        Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || prevPos.equals(curPos)) {
+        if ((prevPos == null) || 
+                (prevPos.equals(curPos) && !(this instanceof Protomech))) {
             return 0;
         }
         IHex curHex = game.getBoard().getHex(curPos);
@@ -6025,8 +6046,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
+        // Check for changing levels within a building
+        if (curPos.equals(prevPos) && (null != curBldg) && 
+                step.getElevation() != prevStep.getElevation() && 
+                    (step.getType() == MoveStepType.UP || 
+                     step.getType() == MoveStepType.DOWN)){
+            rv = 8;
+        }
+        
         if ((this instanceof Infantry) || (this instanceof Protomech)) {
-            if (rv != 2) {
+            if (rv != 2 && rv != 8 && rv != 10) {
                 rv = 0;
             }
         }

@@ -16,6 +16,7 @@
 
 package megamek.client;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1277,11 +1278,15 @@ public class Client implements IClientCommandHandler {
                 System.err.println("Unable to create savegames directory");
             }
             try {
-                ObjectOutputStream oos = new ObjectOutputStream(
+                
+                BufferedOutputStream fout = new BufferedOutputStream(
                         new FileOutputStream(localFile));
-                oos.writeObject(c.getObject(1));
-                oos.flush();
-                oos.close();
+                ArrayList<Integer> data = (ArrayList<Integer>)c.getObject(1);
+                for (Integer d : data){
+                    fout.write(d);
+                }
+                fout.flush();
+                fout.close();
             } catch (Exception e) {
                 System.err.println("Unable to save file: " + sFinalFile);
                 e.printStackTrace();

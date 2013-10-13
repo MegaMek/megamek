@@ -5,7 +5,7 @@ Rakshasa MDG-1Ar,3
 JagerMech III JM6-D4,4
 BattleAxe BKX-8D,5
 Falconer FLC-8R,6
-Thanatos THS-4S,5
+Thanatos TNS-4S,5
 Black Hawk-KU BHKU-O,4
 Maelstrom MTR-5K,3
 Hammerhands HMH-6D,2

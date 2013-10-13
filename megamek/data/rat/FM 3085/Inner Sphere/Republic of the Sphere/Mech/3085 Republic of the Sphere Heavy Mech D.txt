@@ -1,7 +1,7 @@
 3085 Republic of the Sphere Heavy Mech D
 Brahma BRM-5A,1
 Marauder MAD-3R,2
-Thanatos THS-4S,3
+Thanatos TNS-4S,3
 Bandersnatch BNDR-01Ar,4
 War Dog WR-DG-02FC,5
 Gallowglas GAL-2GLS,6

@@ -8,5 +8,5 @@ Flashman FLS-8K,6
 Crossbow CRS-9A,5
 Caesar CES-3S,4
 Archer ARC-7S,3
-Thanatos THS-4S,2
+Thanatos TNS-4S,2
 Maelstrom MTR-5K,1

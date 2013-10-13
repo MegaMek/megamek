@@ -9,6 +9,6 @@ Dragon Fire DGR-3F,5
 Maelstrom MTR-5K,4
 Barghest BGS-1T,3
 Verfolger VR5-R,2
-Thanatos THS-4S,1
+Thanatos TNS-4S,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

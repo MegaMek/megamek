@@ -363,8 +363,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // different
             // ways
             int hits = 1;
-            if (!(target.isAirborne())) {
+            if (!(target.isAirborne())) {                
+                int id = vPhaseReport.size();
                 hits = calcHits(vPhaseReport);
+                // We have to adjust the reports on a miss, so they line up
+                if (bMissed && id != vPhaseReport.size()){
+                    vPhaseReport.get(id-1).newlines--;
+                    vPhaseReport.get(id).indent(2);
+                    vPhaseReport.get(vPhaseReport.size()-1).newlines++;
+                }
             }
             int nCluster = calcnCluster();
 
@@ -473,7 +480,29 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         hits -= nCluster;
                     }
                 } // Handle the next cluster.
-            } // End hit target
+            } else { // We missed, but need to handle special miss cases
+                
+                // When shooting at a non-infantry unit in a building and the
+                //  shot misses, the building is damaged instead, TW pg 171
+                int dist = ae.getPosition().distance(target.getPosition());
+                if (targetInBuilding && !(entityTarget instanceof Infantry) && 
+                        dist == 1){   
+                    r = new Report(6429);
+                    r.indent(2);
+                    r.subject = ae.getId();
+                    r.newlines--;
+                    vPhaseReport.add(r);
+                    int nDamage = nDamPerHit * hits;
+                    // We want to set bSalvo to true to prevent 
+                    //  handleBuildingDamage from reporting a hit
+                    boolean savedSalvo = bSalvo;
+                    bSalvo = true;                    
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                            target.getPosition());
+                    bSalvo = savedSalvo;
+                    hits = 0;
+                }
+            }
             if (game.getOptions().booleanOption("uac_tworolls")
                     && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                             .getAmmoType() == AmmoType.T_AC_ULTRA_THB))

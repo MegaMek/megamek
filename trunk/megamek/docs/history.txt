@@ -48,6 +48,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
 + Bug [#3883]: /localsave not working
 + Bug [#3881]: When firing at a unit in an adjacent building, missed shots 
     should damage the building
++ RAT fixes
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

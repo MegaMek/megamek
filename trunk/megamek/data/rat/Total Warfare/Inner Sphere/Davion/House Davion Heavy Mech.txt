@@ -1,5 +1,5 @@
 House Davion Heavy 'Mech
-Thanatos THS-4S,1
+Thanatos TNS-4S,1
 Ostsol OTL-6D,2
 Axman AXM-1N,3
 Caesar CES-3R,4

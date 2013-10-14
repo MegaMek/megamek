@@ -16,6 +16,7 @@
 
 package megamek.server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -1108,16 +1108,20 @@ public class Server implements Runnable {
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
-        File f = new File(localFile);
         try {
-            ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(f));
-            send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[]{
-                    sFinalFile, ois.readObject(), sLocalPath}));
+            ArrayList<Integer> data = new ArrayList<Integer>();
+            BufferedInputStream fin = new BufferedInputStream(
+                    new FileInputStream(localFile));
+            int input;
+            while ((input = fin.read()) != -1){
+                data.add(input);
+            }
+            send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[] {
+                    sFinalFile, data, sLocalPath }));
             sendChat(connId, "***Server", "Savegame has been sent to you.");
-            ois.close();
+            fin.close();
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + localFile);
             e.printStackTrace();
         }
     }

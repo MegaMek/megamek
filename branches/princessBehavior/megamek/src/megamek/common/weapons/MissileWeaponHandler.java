@@ -653,8 +653,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // yeech. handle damage. . different weapons do this in very different
         // ways
         int hits = 1;
-        if (!(target.isAirborne())) {
+        if (!(target.isAirborne())) {  
+            int id = vPhaseReport.size();
             hits = calcHits(vPhaseReport);
+            // We have to adjust the reports on a miss, so they line up
+            if (bMissed && id != vPhaseReport.size()){
+                vPhaseReport.get(id-1).newlines--;
+                vPhaseReport.get(id).indent(2);
+                vPhaseReport.get(vPhaseReport.size()-1).newlines++;
+            }
         }
         int nCluster = calcnCluster();
 
@@ -692,56 +699,75 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (bMissed) {
-            return false;
-
-        } // End missed-target
-
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
-        int bldgAbsorbs = 0;
-        if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
-        }
-
-        // Make sure the player knows when his attack causes no damage.
-        if (hits == 0) {
-            r = new Report(3365);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // for each cluster of hits, do a chunk of damage
-        while (hits > 0) {
-            int nDamage;
-            // targeting a hex for igniting
-            if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                    || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-                handleIgnitionDamage(vPhaseReport, bldg, hits);
-                return false;
+        if (!bMissed){
+            // The building shields all units from a certain amount of damage.
+            // The amount is based upon the building's CF at the phase's start.
+            int bldgAbsorbs = 0;
+            if (targetInBuilding && (bldg != null)) {
+                bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-            // targeting a hex for clearing
-            if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
-                nDamage = nDamPerHit * hits;
-                handleClearDamage(vPhaseReport, bldg, nDamage);
-                return false;
+    
+            // Make sure the player knows when his attack causes no damage.
+            if (hits == 0) {
+                r = new Report(3365);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
             }
-            // Targeting a building.
-            if (target.getTargetType() == Targetable.TYPE_BUILDING) {
-                // The building takes the full brunt of the attack.
-                nDamage = nDamPerHit * hits;
+    
+            // for each cluster of hits, do a chunk of damage
+            while (hits > 0) {
+                int nDamage;
+                // targeting a hex for igniting
+                if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+                    handleIgnitionDamage(vPhaseReport, bldg, hits);
+                    return false;
+                }
+                // targeting a hex for clearing
+                if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                    nDamage = nDamPerHit * hits;
+                    handleClearDamage(vPhaseReport, bldg, nDamage);
+                    return false;
+                }
+                // Targeting a building.
+                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    // The building takes the full brunt of the attack.
+                    nDamage = nDamPerHit * hits;
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                            target.getPosition());
+                    // And we're done!
+                    return false;
+                }
+                if (entityTarget != null) {
+                    handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                            nCluster, bldgAbsorbs);
+                    server.creditKill(entityTarget, ae);
+                    hits -= nCluster;
+                }
+            } // Handle the next cluster.
+        } else { // We missed, but need to handle special miss cases
+            
+            // When shooting at a non-infantry unit in a building and the
+            //  shot misses, the building is damaged instead, TW pg 171
+            int dist = ae.getPosition().distance(target.getPosition());
+            if (targetInBuilding && !(entityTarget instanceof Infantry) && 
+                    dist == 1){   
+                r = new Report(6429);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.newlines--;
+                vPhaseReport.add(r);
+                int nDamage = nDamPerHit * hits;
+                // We want to set bSalvo to true to prevent 
+                //  handleBuildingDamage from reporting a hit
+                boolean savedSalvo = bSalvo;
+                bSalvo = true;
                 handleBuildingDamage(vPhaseReport, bldg, nDamage,
                         target.getPosition());
-                // And we're done!
-                return false;
+                bSalvo = savedSalvo;
+                hits = 0;
             }
-            if (entityTarget != null) {
-                handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, bldgAbsorbs);
-                server.creditKill(entityTarget, ae);
-                hits -= nCluster;
-            }
-        } // Handle the next cluster.
+        }
         Report.addNewline(vPhaseReport);
         return false;
     }

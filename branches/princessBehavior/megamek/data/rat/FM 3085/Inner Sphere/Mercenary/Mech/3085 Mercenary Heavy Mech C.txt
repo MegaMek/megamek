@@ -9,4 +9,4 @@ Guillotine GLT-4L,5
 Tempest TMP-3M,4
 Brahma BRM-5A,3
 Marauder MAD-3R,2
-Thanatos THS-4S,1
+Thanatos TNS-4S,1

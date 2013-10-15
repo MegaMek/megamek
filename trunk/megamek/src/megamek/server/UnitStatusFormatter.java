@@ -168,7 +168,7 @@ public abstract class UnitStatusFormatter {
         sb.append("    |").append(renderArmor(t.getArmor(Tank.LOC_LEFT)))
                 .append("/");
         if (!t.hasNoTurret()) {
-            sb.append(renderArmor(t.getArmor(Tank.LOC_TURRET))).append("\\");
+            sb.append(renderArmor(t.getArmor(t.getLocTurret()))).append("\\");
         } else {
             sb.append("  \\");
         }
@@ -176,7 +176,7 @@ public abstract class UnitStatusFormatter {
                 "|           |");
         sb.append(renderArmor(t.getInternal(Tank.LOC_LEFT))).append("/");
         if (t.hasNoTurret()) {
-            sb.append(renderArmor(t.getInternal(Tank.LOC_TURRET))).append("\\");
+            sb.append(renderArmor(t.getInternal(t.getLocTurret()))).append("\\");
         } else {
             sb.append("  \\");
         }

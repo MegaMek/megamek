@@ -72,7 +72,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -713,25 +712,25 @@ KeyListener, ItemListener, ListSelectionListener {
                 return;
             }
         }
-        
+
         // We need to nag for overheat on capital fighters
-        if (ce() != null && ce().isCapitalFighter() &&
+        if ((ce() != null) && ce().isCapitalFighter() &&
                 GUIPreferences.getInstance().getNagForOverheat()) {
             int totalheat = 0;
             for (EntityAction action : attacks){
                 if (action instanceof WeaponAttackAction){
                     Mounted weapon = ce().getEquipment(
                             ((WeaponAttackAction) action).getWeaponId());
-                    totalheat += weapon.getCurrentHeat(); 
+                    totalheat += weapon.getCurrentHeat();
                 }
             }
-            if (totalheat > ce().getHeatCapacity()) {                       
+            if (totalheat > ce().getHeatCapacity()) {
                 // comfirm this action
                 String title = Messages
                 .getString("FiringDisplay.OverheatNag.title"); //$NON-NLS-1$
                 String body = Messages
                 .getString("FiringDisplay.OverheatNag.message"); //$NON-NLS-1$
-                ConfirmDialog response = 
+                ConfirmDialog response =
                         clientgui.doYesNoBotherDialog(title, body);
                 if (!response.getShowAgain()) {
                     GUIPreferences.getInstance().setNagForOverheat(false);
@@ -741,7 +740,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 }
             }
         }
-        
+
 
         // stop further input (hopefully)
         disableButtons();
@@ -828,7 +827,7 @@ KeyListener, ItemListener, ListSelectionListener {
             return;
         }
         if ((((attacks.size() == 0) && (ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET))) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2))) {
+                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()))) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2()))) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
             attacks.add(uta);
             ready();
@@ -911,7 +910,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 }
             }
         }
-        
+
         int numFighters = 0;
         if (ce() instanceof FighterSquadron){
             numFighters = ((FighterSquadron)ce()).getNFighters();
@@ -1284,12 +1283,12 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
             clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
-        
-        if (weaponId != -1 && ce() != null){
+
+        if ((weaponId != -1) && (ce() != null)){
             Mounted m = ce().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
-        
+
         updateSearchlight();
     }
 
@@ -1551,7 +1550,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2)) && (attacks.size() == 0)
+                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2())) && (attacks.size() == 0)
                 && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
@@ -1733,12 +1732,12 @@ KeyListener, ItemListener, ListSelectionListener {
     }
 
     public void valueChanged(ListSelectionEvent event) {
-        
+
         if (event.getSource().equals(clientgui.mechD.wPan.weaponList) &&
-                clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING) {
+                (clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING)) {
             // If we aren't in the firing phase, there's no guarantee that cen
             //  is set properly, hence we can't update
-            
+
             // update target data in weapon display
             updateTarget();
         }
@@ -1850,13 +1849,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 mask[Tank.LOC_BODY] = false;
                 Tank tank = (Tank) target;
                 if (tank.hasNoTurret()) {
-                    int turretLoc = Tank.LOC_TURRET;
-                    if (target instanceof LargeSupportTank) {
-                        turretLoc = LargeSupportTank.LOC_TURRET;
-                    }
-                    if (target instanceof VTOL) {
-                        turretLoc = VTOL.LOC_TURRET;
-                    }
+                    int turretLoc = tank.getLocTurret();
                     mask[turretLoc] = false;
                 }
                 // remove non-visible sides

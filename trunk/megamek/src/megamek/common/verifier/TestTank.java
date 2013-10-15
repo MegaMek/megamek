@@ -47,8 +47,6 @@ public class TestTank extends TestEntity {
 
     private static Structure getStructure(Tank tank) {
         int type = EquipmentType.T_STRUCTURE_STANDARD;
-        int flag = 0;
-
         if (tank.getStructureType() == 1) {
             type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
         }
@@ -106,7 +104,7 @@ public class TestTank extends TestEntity {
         }
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
-            if ((tank.isSuperHeavy()?m.getLocation() == SuperHeavyTank.LOC_TURRET:m.getLocation() == Tank.LOC_TURRET) && !(m.getType() instanceof AmmoType)) {
+            if ((m.getLocation() == tank.getLocTurret()) && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }
@@ -116,7 +114,7 @@ public class TestTank extends TestEntity {
     public float getTankWeightDualTurret() {
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
-            if ((tank.isSuperHeavy()?m.getLocation() == SuperHeavyTank.LOC_TURRET_2:m.getLocation() == Tank.LOC_TURRET_2) && !(m.getType() instanceof AmmoType)) {
+            if ((m.getLocation() == tank.getLocTurret2()) && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }

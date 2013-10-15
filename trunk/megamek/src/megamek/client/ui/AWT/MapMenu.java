@@ -88,11 +88,11 @@ public class MapMenu extends PopupMenu implements ActionListener {
     }
 
     private boolean canSelectEntities() {
-        return client.isMyTurn() && (currentPanel instanceof FiringDisplay || currentPanel instanceof PhysicalDisplay || currentPanel instanceof MovementDisplay || currentPanel instanceof TargetingPhaseDisplay);
+        return client.isMyTurn() && ((currentPanel instanceof FiringDisplay) || (currentPanel instanceof PhysicalDisplay) || (currentPanel instanceof MovementDisplay) || (currentPanel instanceof TargetingPhaseDisplay));
     }
 
     private boolean canTargetEntities() {
-        return client.isMyTurn() && (currentPanel instanceof FiringDisplay || currentPanel instanceof PhysicalDisplay || currentPanel instanceof TargetingPhaseDisplay);
+        return client.isMyTurn() && ((currentPanel instanceof FiringDisplay) || (currentPanel instanceof PhysicalDisplay) || (currentPanel instanceof TargetingPhaseDisplay));
     }
 
     private void createMenu() {
@@ -108,7 +108,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             this.add(menu);
         }
 
-        if (client.isMyTurn() && myEntity != null) {
+        if (client.isMyTurn() && (myEntity != null)) {
             selectTarget();
 
             menu = createTargetMenu();
@@ -146,7 +146,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                     this.add(menu);
                 }
 
-            } else if (currentPanel instanceof FiringDisplay && client.isMyTurn()) {
+            } else if ((currentPanel instanceof FiringDisplay) && client.isMyTurn()) {
 
                 if (getItemCount() > 0) {
                     addSeparator();
@@ -166,7 +166,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
                 }
-            } else if (currentPanel instanceof PhysicalDisplay && client.isMyTurn()) {
+            } else if ((currentPanel instanceof PhysicalDisplay) && client.isMyTurn()) {
                 menu = createPhysicalMenu(false);
 
                 if (menu.getItemCount() > 0) {
@@ -580,7 +580,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                         int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
                         Mounted mounted = myEntity.getEquipment(weaponNum);
 
-                        if (mounted.getType().hasFlag(WeaponType.F_ENERGY) && mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN) {
+                        if (mounted.getType().hasFlag(WeaponType.F_ENERGY) && (mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN)) {
                             panel.fire();
                         } else {
                             panel.nextWeapon();
@@ -591,7 +591,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                         int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
                         Mounted mounted = myEntity.getEquipment(weaponNum);
 
-                        if (mounted.getType().hasFlag(WeaponType.F_BALLISTIC) && mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN) {
+                        if (mounted.getType().hasFlag(WeaponType.F_BALLISTIC) && (mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN)) {
                             panel.fire();
                         } else {
                             panel.nextWeapon();
@@ -692,7 +692,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech
+            if ((myEntity instanceof BipedMech)
                     && (!myEntity.isLocationBad(Mech.LOC_LARM)
                     || !myEntity.isLocationBad(Mech.LOC_RARM)) ) {
                 item = createPunchMenuItem();
@@ -703,7 +703,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech
+            if ((myEntity instanceof BipedMech)
                     && !myEntity.isLocationBad(Mech.LOC_LARM) && !myEntity.isLocationBad(Mech.LOC_RARM) ) {
                 item = createPushMenuItem();
 
@@ -745,7 +745,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             ToHitData grap = GrappleAttackAction.toHit(client.game, myEntity.getId(), myTarget);
             ToHitData bgrap = BreakGrappleAttackAction.toHit(client.game, myEntity.getId(), myTarget);
-            if (grap.getValue() != TargetRoll.IMPOSSIBLE || bgrap.getValue() != TargetRoll.IMPOSSIBLE) {
+            if ((grap.getValue() != TargetRoll.IMPOSSIBLE) || (bgrap.getValue() != TargetRoll.IMPOSSIBLE)) {
 
                 item = createGrappleMenuItem();
 
@@ -779,7 +779,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             menu.setLabel("Stand");
             menu.add(createStandMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand") && myEntity.getWalkMP() > 2 && myEntity.moved == EntityMovementType.MOVE_NONE) {
+            if (game.getOptions().booleanOption("tacops_careful_stand") && (myEntity.getWalkMP() > 2) && (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandMenuItem(true));
             }
 
@@ -875,25 +875,25 @@ public class MapMenu extends PopupMenu implements ActionListener {
             }
             // Can target weapons at the hex if it contains woods or building.
             // Can target physical attacks at the hex if it contains building.
-            if (currentPanel instanceof FiringDisplay || currentPanel instanceof PhysicalDisplay || currentPanel instanceof TargetingPhaseDisplay) {
+            if ((currentPanel instanceof FiringDisplay) || (currentPanel instanceof PhysicalDisplay) || (currentPanel instanceof TargetingPhaseDisplay)) {
                 IHex h = board.getHex(coords);
-                if (h != null && currentPanel instanceof FiringDisplay && !board.inSpace() && !board.inAtmosphere()) {
+                if ((h != null) && (currentPanel instanceof FiringDisplay) && !board.inSpace() && !board.inAtmosphere()) {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire") && (h.containsTerrain(Terrains.WOODS) || h.containsTerrain(Terrains.JUNGLE) || h.containsTerrain(Terrains.FIELDS) || hasMunitionType(AmmoType.M_INFERNO) || hasMunitionType(AmmoType.M_INFERNO_IV) || hasMunitionType(AmmoType.M_THUNDER_INFERNO))) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_IGNITE)));
                     }
-                } if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
+                } if ((h != null) && h.containsTerrain(Terrains.FUEL_TANK)) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
-                } if (h != null && h.containsTerrain(Terrains.BUILDING)) {
+                } if ((h != null) && h.containsTerrain(Terrains.BUILDING)) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
                 }
-                if (h != null && currentPanel instanceof FiringDisplay) {
+                if ((h != null) && (currentPanel instanceof FiringDisplay)) {
                     if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
                         menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
                     } else {
@@ -917,7 +917,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
                         }
                     }
                 }
-                if (h != null && currentPanel instanceof TargetingPhaseDisplay && !board.inSpace() && !board.inAtmosphere() && (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER))) {
+                if ((h != null) && (currentPanel instanceof TargetingPhaseDisplay) && !board.inSpace() && !board.inAtmosphere() && (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER))) {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
             }
@@ -993,7 +993,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
         }
 
         for (Mounted weapon : myEntity.getWeaponList()) {
-            if ((WeaponType) weapon.getType() instanceof ISFireExtinguisher || (WeaponType) weapon.getType() instanceof CLFireExtinguisher) {
+            if (((WeaponType) weapon.getType() instanceof ISFireExtinguisher) || ((WeaponType) weapon.getType() instanceof CLFireExtinguisher)) {
                 return true;
             }
         }
@@ -1057,7 +1057,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
             } else {
                 menu.add(createTorsoTwistMenuItem(coords));
             }
-        } else if (myEntity instanceof Tank && ((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1) {
+        } else if ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(((Tank)myEntity).getLocTurret()) > -1)) {
             menu.setLabel("Turret Twist");
             if (coords.equals(myEntity.getPosition())) {
                 menu.add(createTorsoTwistMenuItem(1));
@@ -1103,7 +1103,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
         int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = myEntity.getEquipment(weaponNum);
 
-        if (mounted != null && mounted.getType().hasModes()) {
+        if ((mounted != null) && mounted.getType().hasModes()) {
             for (int pos = 0; pos < mounted.getType().getModesCount(); pos++) {
                 menu.add(createModeMenuItem(mounted, pos));
             }
@@ -1317,7 +1317,7 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
     @Override
     public void show(Component comp, int x, int y){
-        if (client.isMyTurn() && myEntity != null) {
+        if (client.isMyTurn() && (myEntity != null)) {
             selectTarget();
         }
         super.show(comp, x, y);

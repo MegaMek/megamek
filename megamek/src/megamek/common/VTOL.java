@@ -52,6 +52,11 @@ public class VTOL extends Tank {
         return LOCATION_NAMES;
     }
 
+    @Override
+    public int getLocTurret() {
+        return LOC_TURRET;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -547,8 +552,9 @@ public class VTOL extends Tank {
         }
     }
 
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
     }
-    
+
 }

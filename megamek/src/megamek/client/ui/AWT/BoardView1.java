@@ -1956,7 +1956,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void markDeploymentHexesFor(Entity ce) {
         en_Deployer = ce;
     }
-    
+
     /**
      * Returns the entity that is currently being deployed
      */
@@ -3870,7 +3870,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
             } else {
-                if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
+                if (ge.isTurret() && ge.isTurretLocked(ge.getLocTurret())) {
                     buffer
                     .append(Messages
                             .getString("BoardView1.TurretLocked"));

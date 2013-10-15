@@ -347,9 +347,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                    boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
                             .getInstance().getMouseWheelZoomFlip())
-                            || (we.getWheelRotation() <= 0 && GUIPreferences
+                            || ((we.getWheelRotation() <= 0) && GUIPreferences
                                     .getInstance().getMouseWheelZoomFlip());
                     if (zoomIn) {
                         zoomIn();
@@ -358,9 +358,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 } else {
                     if (we.isControlDown()){
-                        boolean zoomIn = (we.getWheelRotation() > 0 && !GUIPreferences
+                        boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
                                 .getInstance().getMouseWheelZoomFlip())
-                                || (we.getWheelRotation() <= 0 && GUIPreferences
+                                || ((we.getWheelRotation() <= 0) && GUIPreferences
                                         .getInstance().getMouseWheelZoomFlip());
                         if (zoomIn) {
                             zoomOut();
@@ -1964,7 +1964,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 temp.add(entityId);
                 temp.add(-1);
                 newSpriteIds.put(temp, sprite);
-            }else{ // Add all secondary position sprites, which includes a 
+            }else{ // Add all secondary position sprites, which includes a
                 //     sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     sprite = new EntitySprite(entity, secondaryPos);
@@ -1984,7 +1984,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 temp.add(entityId);
                 temp.add(-1);
                 newIsoSpriteIds.put(temp, isoSprite);
-            }else{ // Add all secondary position sprites, which includes a 
+            }else{ // Add all secondary position sprites, which includes a
                 //     sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     isoSprite = new IsometricSprite(entity, secondaryPos);
@@ -2164,7 +2164,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         MoveStep previousStep = null;
 
         clearMovementData();
-        
+
         // Nothing to do if we don't have a MovePath
         if (md == null){
             return;
@@ -2962,7 +2962,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0) && 
+            } else if (useIsometric() && (entity.getElevation() != 0) &&
                     !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
@@ -2982,8 +2982,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             bounds = tempBounds;
             image = null;
-        }       
-        
+        }
+
         public Coords getPosition(){
             if (secondaryPos == -1){
                 return entity.getPosition();
@@ -3032,7 +3032,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         g.drawImage(shadow, p.x, p.y, this);
                     }
 
-                } else if (entity.getElevation() != 0 && 
+                } else if ((entity.getElevation() != 0) &&
                         !(entity instanceof GunEmplacement)) {
                     Image shadow = createShadowMask(tileManager.imageFor(
                             entity, entity.getFacing(), secondaryPos));
@@ -3694,7 +3694,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0) && 
+            } else if (useIsometric() && (entity.getElevation() != 0) &&
                     !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
@@ -3726,7 +3726,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (useIsometric()
                     && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
-            } else if (useIsometric() && (entity.getElevation() != 0) && 
+            } else if (useIsometric() && (entity.getElevation() != 0) &&
                     !(entity instanceof GunEmplacement)) {
                 altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
             }
@@ -4154,7 +4154,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.setColor(getStatusBarColor(percentRemaining));
                     graph.fillRect(55, 10, barLength, 3);
                 }
-                
+
                 if (game.getOptions().booleanOption("show_dmg_level")) {
                     Color damageColor = getDamageColor();
                     if (damageColor != null){
@@ -4164,7 +4164,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
-            
+
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -4292,7 +4292,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
                 }
             } else {
-                if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
+                if (ge.isTurret() && ge.isTurretLocked(ge.getLocTurret())) {
                     buffer.append(Messages.getString("BoardView1.TurretLocked"));
                     if (ge.getFirstWeapon() == -1) {
                         buffer.append(",");
@@ -4349,17 +4349,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             image = null;
             baseScaleImage = null;
         }
-        
+
         /**
-         * Refreshes this StepSprite's image to handle changes in the zoom 
+         * Refreshes this StepSprite's image to handle changes in the zoom
          * level.
          */
         public void refreshZoomLevel(){
-            
+
             if (baseScaleImage == null){
                 return;
             }
-            
+
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(
                         baseScaleImage.getSource(), new KeyAlphaFilter(

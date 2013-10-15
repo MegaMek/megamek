@@ -126,17 +126,18 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + entity.damagedJumpJets()
                         + " damaged jump jets)</font>");
             }
-            if (entity.getAllUMUCount() > 0){
+            if (entity.getAllUMUCount() > 0) {
                 // Add in Jump MP if it wasn't already printed
-                if (entity.getJumpMP() == 0){
+                if (entity.getJumpMP() == 0) {
                     sBasic.append("/0"); //$NON-NLS-1$
                 }
                 sBasic.append("/") //$NON-NLS-1$
-                .append(entity.getActiveUMUCount());
-                if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0){
-                    sBasic.append("<font color='red'> (" +
-                          (entity.getAllUMUCount() - entity.getActiveUMUCount())
-                          + " damaged UMUs)</font>");
+                        .append(entity.getActiveUMUCount());
+                if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0) {
+                    sBasic.append("<font color='red'> ("
+                            + (entity.getAllUMUCount() - entity
+                                    .getActiveUMUCount())
+                            + " damaged UMUs)</font>");
                 }
             }
         }
@@ -196,8 +197,8 @@ public class MechView {
 
         if (isMech) {
             Mech aMech = (Mech) entity;
-            sBasic.append(aMech.getHeatSinkTypeName() + "s: ")
-                    .append(aMech.heatSinks());
+            sBasic.append(aMech.getHeatSinkTypeName() + "s: ").append(
+                    aMech.heatSinks());
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
                 sBasic.append(" [") //$NON-NLS-1$
                         .append(aMech.getHeatCapacity()).append("]"); //$NON-NLS-1$
@@ -303,7 +304,8 @@ public class MechView {
                     + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
         }
         if (isBA) {
-            sIntArm.append(" ").append(EquipmentType.getBaArmorTypeName(entity.getArmorType(1)));
+            sIntArm.append(" ").append(
+                    EquipmentType.getBaArmorTypeName(entity.getArmorType(1)));
         }
         sIntArm.append("<br>"); //$NON-NLS-1$
         // Walk through the entity's locations.
@@ -322,22 +324,11 @@ public class MechView {
                     if (loc == Tank.LOC_BODY) {
                         continue;
                     }
-                    if (isVTOL) {
-                        if ((loc == VTOL.LOC_TURRET) && ((VTOL) entity).hasNoTurret()) {
-                            continue;
-                        }
+                    if ((loc == ((Tank) entity).getLocTurret())
+                            && ((Tank) entity).hasNoTurret()) {
+                        continue;
                     }
-                    else if (isLargeSupportVehicle) {
-                        if ((loc == LargeSupportTank.LOC_TURRET)
-                                && ((LargeSupportTank) entity).hasNoTurret()) {
-                            continue;
-                        }
-                    }
-                    else { // Neither VTOL nor large support? Must be a plain vee.
-                        if ((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) {
-                            continue;
-                        }
-                    }
+
                 }
                 sIntArm.append("<tr>");
                 sIntArm.append("<td>").append(entity.getLocationName(loc)); //$NON-NLS-1$
@@ -369,7 +360,8 @@ public class MechView {
                     sIntArm.append("<td>").append(entity.getLocationName(loc))
                             .append(" (rear)").append("</td>")
                             .append("<td></td>");
-                    sIntArm.append(renderArmor(entity.getArmorForReal(loc, true),
+                    sIntArm.append(renderArmor(
+                            entity.getArmorForReal(loc, true),
                             entity.getOArmor(loc, true))); //$NON-NLS-1$
                     if (entity.hasPatchworkArmor()) {
                         sIntArm.append("<td>");
@@ -555,11 +547,11 @@ public class MechView {
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (mounted.isDestroyed()) {
-            	if(mounted.isRepairable()) {
-            		sWeapons.append("<tr bgcolor='yellow'>");
-            	} else {
-            		sWeapons.append("<tr bgcolor='red'>");
-            	}
+                if (mounted.isRepairable()) {
+                    sWeapons.append("<tr bgcolor='yellow'>");
+                } else {
+                    sWeapons.append("<tr bgcolor='red'>");
+                }
             } else {
                 sWeapons.append("<tr>");
             }
@@ -686,8 +678,8 @@ public class MechView {
             if ((mounted.getLocation() == Entity.LOC_NONE)
                     || (name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
                     || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
-                    || ((name.indexOf("Heat Sink") != -1) &&//$NON-NLS-1$ 
-                            (name.indexOf("Radical") == -1))//$NON-NLS-1$
+                    || ((name.indexOf("Heat Sink") != -1) && //$NON-NLS-1$
+                    (name.indexOf("Radical") == -1))//$NON-NLS-1$
                     || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reactive") != -1) //$NON-NLS-1$

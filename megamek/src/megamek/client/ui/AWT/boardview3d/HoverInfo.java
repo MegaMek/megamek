@@ -41,7 +41,6 @@ import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Player;
-import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -101,7 +100,7 @@ class HoverInfo implements IDisplayable {
         for (int i = 0; i < info.size(); i++) {
             String s = info.elementAt(i);
             int len = s.length();
-            while (fm.stringWidth(s.substring(0, len)) > WIDTH-2*PADDING) {
+            while (fm.stringWidth(s.substring(0, len)) > (WIDTH-(2*PADDING))) {
                 len--;
             }
             if (len != s.length()) {
@@ -129,7 +128,7 @@ class HoverInfo implements IDisplayable {
         }
 
         gr.setFont(FONT);
-        int height = info.size()*fm.getHeight()+PADDING*2;
+        int height = (info.size()*fm.getHeight())+(PADDING*2);
 
         gr.setColor(new Color(Color.DARK_GRAY.getRed(), Color.DARK_GRAY.getGreen(), Color.DARK_GRAY.getBlue(), 128));
         gr.fillRect(TOP, LEFT, WIDTH+2, height);
@@ -508,7 +507,7 @@ class HoverInfo implements IDisplayable {
                         .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
             }
         } else {
-            if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
+            if (ge.isTurret() && ge.isTurretLocked(ge.getLocTurret())) {
                 buffer
                         .append(Messages
                                 .getString("BoardView1.TurretLocked"));

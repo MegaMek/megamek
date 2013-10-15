@@ -940,10 +940,10 @@ public class MapMenu extends JPopupMenu {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
                 // Check for adding TAG targeting buildings and hexes
-                if ( h != null && currentPanel instanceof TargetingPhaseDisplay && myEntity.hasTAG() && !board.inSpace()){
+                if ( (h != null) && (currentPanel instanceof TargetingPhaseDisplay) && myEntity.hasTAG() && !board.inSpace()){
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_TAG)));
                     if (h.containsTerrain(Terrains.FUEL_TANK) || h.containsTerrain(Terrains.BUILDING) || h.containsTerrain(Terrains.BRIDGE)){
-                        menu.add(TargetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG))); 
+                        menu.add(TargetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG)));
                     }
                 }
             }
@@ -1137,7 +1137,7 @@ public class MapMenu extends JPopupMenu {
             } else {
                 menu.add(createTorsoTwistJMenuItem(coords));
             }
-        } else if ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1)) {
+        } else if ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(((Tank)myEntity).getLocTurret()) > -1)) {
             menu.setText("Turret Twist");
             if (coords.equals(myEntity.getPosition())) {
                 menu.add(createTorsoTwistJMenuItem(1));

@@ -36,7 +36,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     public LaserWeapon() {
         super();
-        flags = flags.or(F_BA_WEAPON).or(F_LASER).or(F_DIRECT_FIRE);
+        flags = flags.or(F_LASER).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_NA;
 
         atClass = CLASS_LASER;

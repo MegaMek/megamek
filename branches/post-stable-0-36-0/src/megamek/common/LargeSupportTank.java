@@ -57,6 +57,16 @@ public class LargeSupportTank extends SupportTank {
         return LOCATION_NAMES;
     }
 
+    @Override
+    public int getLocTurret() {
+        return LOC_TURRET;
+    }
+
+    @Override
+    public int getLocTurret2() {
+        return LOC_TURRET_2;
+    }
+
     /**
      * Rolls up a hit location
      */
@@ -394,8 +404,9 @@ public class LargeSupportTank extends SupportTank {
         }
         return false;
     }
-    
-    
+
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_LARGE_SUPPORT_TANK;
     }

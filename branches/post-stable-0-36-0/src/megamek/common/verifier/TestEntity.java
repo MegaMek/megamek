@@ -326,6 +326,10 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_COMMERCIAL_ARMOR)
                     || mt.hasFlag(MiscType.F_INDUSTRIAL_ARMOR)
                     || mt.hasFlag(MiscType.F_HEAVY_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(MiscType.F_ANTI_PENETRATIVE_ABLATIVE)
+                    || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
+                    || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
+                    || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
                     || mt.hasFlag(MiscType.F_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {

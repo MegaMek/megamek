@@ -195,7 +195,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Used for Entities that are bigger than a single hex.  This contains the
-     * central hex plus all of the other hexes this entity occupies.  The 
+     * central hex plus all of the other hexes this entity occupies.  The
      * central hex is important for drawing multi-hex sprites.
      */
     protected Map<Integer, Coords> secondaryPositions = null;
@@ -763,7 +763,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // IDs
         for (Transporter transport : getTransports()) {
             transport.setGame(game);
-        }        
+        }
     }
 
     /**
@@ -1492,6 +1492,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case QUAD_SWIM:
                 minAlt = hex.floor();
                 break;
+            case BIPED:
+            case QUAD:
+                if (this instanceof Protomech){
+                    minAlt -= Math.max(0,
+                            BasementType.getType(
+                                    hex.terrainLevel(
+                                            Terrains.BLDG_BASEMENT_TYPE)).
+                                            getDepth());
+                } else {
+                    return false;
+                }
+                break;
             default:
                 return false;
         }
@@ -1532,6 +1544,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case WIGE:
                 maxAlt = hex.surface() + 1;
+                break;
+            case BIPED:
+            case QUAD:
+                if (this instanceof Protomech){
+                    maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+                } else {
+                    return false;
+                }
                 break;
             default:
                 return false;
@@ -4956,7 +4976,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             for (int j = 0; j < getNumberOfCriticals(i); j++) {
                 final CriticalSlot cs = getCritical(i, j);
-                if (cs != null && cs.isHit()) {
+                if ((cs != null) && cs.isHit()) {
                     cs.setDestroyed(true);
                 }
             }
@@ -5978,11 +5998,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * method returns true/false, unlike the other checkStuff() methods above.
      *
      * @return 0, no eligible building; 1, exiting; 2, entering; 3, both; 4,
-     *         stepping on roof
+     *         stepping on roof, 8 changing elevations within a building
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
             Coords curPos, Coords prevPos) {
-        if ((prevPos == null) || prevPos.equals(curPos)) {
+        if ((prevPos == null) ||
+                (prevPos.equals(curPos) && !(this instanceof Protomech))) {
             return 0;
         }
         IHex curHex = game.getBoard().getHex(curPos);
@@ -6045,8 +6066,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
+        // Check for changing levels within a building
+        if (curPos.equals(prevPos) && (null != curBldg) &&
+                (step.getElevation() != prevStep.getElevation()) &&
+                    ((step.getType() == MoveStepType.UP) ||
+                     (step.getType() == MoveStepType.DOWN))){
+            rv = 8;
+        }
+
         if ((this instanceof Infantry) || (this instanceof Protomech)) {
-            if (rv != 2) {
+            if ((rv != 2) && (rv != 8) && (rv != 10)) {
                 rv = 0;
             }
         }
@@ -6208,7 +6237,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void addTransporter(Transporter component) {
         component.setGame(game);
-        transports.add(component);        
+        transports.add(component);
     }
 
     public void removeTransporter(Transporter t) {
@@ -7766,7 +7795,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // must be active
-        if (!isActive() || (isImmobile() && !isManualShutdown() && !canUnjamRAC() && 
+        if (!isActive() || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
                 !game.getOptions().booleanOption("vehicles_can_eject"))) {
             return false;
         }
@@ -7924,8 +7953,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public boolean isEligibleForArtyAutoHitHexes() {
-        return isEligibleForTargetingPhase() && 
-                (isOffBoard() || 
+        return isEligibleForTargetingPhase() &&
+                (isOffBoard() ||
                         game.getOptions().booleanOption("on_map_predesignate"));
     }
 
@@ -8635,11 +8664,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * The weight of the armor in a specific location, rounded to the nearest
-     * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1). 
-     * Note: Unless overridden, this should <em>only</em> be called on units 
-     * with patchwork armor, as rounding behavior is not guaranteed to be 
-     * correct or even the same for others and units with a single overall 
-     * armor type have no real reason to specifically care about weight per 
+     * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1).
+     * Note: Unless overridden, this should <em>only</em> be called on units
+     * with patchwork armor, as rounding behavior is not guaranteed to be
+     * correct or even the same for others and units with a single overall
+     * armor type have no real reason to specifically care about weight per
      * location anyway.
      *
      * @param loc
@@ -12322,13 +12351,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Unknown";
         }
     }
-    
+
     public void damageSystem(int type, int slot, int hits) {
         for (int loc = 0; loc < locations(); loc++) {
             damageSystem(type, slot, loc, hits);
         }
     }
-    
+
     public void damageSystem(int type, int slot, int loc, int hits) {
         int nhits = 0;
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {

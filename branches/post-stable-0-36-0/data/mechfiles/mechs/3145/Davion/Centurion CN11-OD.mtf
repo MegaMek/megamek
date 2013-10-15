@@ -9,15 +9,15 @@ Source:TRO 3145 FS
 Rules Level:3
 
 Mass:50
-Engine:200 XL Engine(IS)
+Engine:250 XL Engine(IS)
 Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Standard Cockpit
 Gyro:Compact Gyro
 
 Heat Sinks:10 Double
-Base Chassis Heat Sinks:8
-Walk MP:4
+Base Chassis Heat Sinks:10
+Walk MP:5
 Jump MP:4
 
 Armor:Standard(Inner Sphere)
@@ -34,10 +34,10 @@ RTR Armor:6
 RTC Armor:6
 
 Weapons:4
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 ER Small Laser, Left Torso
 MML 9, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder

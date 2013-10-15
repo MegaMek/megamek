@@ -39,7 +39,7 @@ public class EntityListFile {
     /**
      * Produce a string describing this armor value. Valid output values are any
      * integer from 0 to 100, N/A, or Destroyed.
-     * 
+     *
      * @param points
      *            - the <code>int</code> value of the armor. This value may be
      *            any valid value of entity armor (including NA, DOOMED, and
@@ -64,7 +64,7 @@ public class EntityListFile {
 
     /**
      * Produce a string describing the equipment in a critical slot.
-     * 
+     *
      * @param index
      *            - the <code>String</code> index of the slot. This value should
      *            be a positive integer or "N/A".
@@ -140,7 +140,7 @@ public class EntityListFile {
     /**
      * Helper function that generates a string identifying the state of the
      * locations for an entity.
-     * 
+     *
      * @param entity
      *            - the <code>Entity</code> whose location state is needed
      */
@@ -304,7 +304,7 @@ public class EntityListFile {
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle the ammo specially.
             if ((entity instanceof Tank) || (entity instanceof Protomech)) {
-                if (entity instanceof Tank
+                if ((entity instanceof Tank)
                         && ((Tank) entity).isStabiliserHit(loc)) {
                     thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
                 }
@@ -395,7 +395,7 @@ public class EntityListFile {
      * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     * 
+     *
      * @param file
      *            - The current contents of the file will be discarded and all
      *            <code>Entity</code>s in the list will be written to the file.
@@ -579,7 +579,7 @@ public class EntityListFile {
             if (entity instanceof Tank) {
                 Tank tentity = (Tank) entity;
                 output.write(EntityListFile.getMovementString(tentity));
-                if (tentity.isTurretLocked(Tank.LOC_TURRET)) {
+                if (tentity.isTurretLocked(tentity.getLocTurret())) {
                     output.write(EntityListFile.getTurretLockedString(tentity));
                 }
                 // crits
@@ -816,7 +816,7 @@ public class EntityListFile {
      * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     * 
+     *
      * @param file
      *            - the <code>File</code> to load from.
      * @return A <code>Vector</code> containing <code>Entity</code>s loaded from

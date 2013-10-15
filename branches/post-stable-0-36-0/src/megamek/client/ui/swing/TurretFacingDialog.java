@@ -199,7 +199,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         // opposite of the shoulder the turret is mounted on
         facings.get((frontFacing + 3) % 6).setEnabled(false);
 
-        if (tank.isTurretLocked(Tank.LOC_TURRET_2)) {
+        if (tank.isTurretLocked(tank.getLocTurret2())) {
             for (JRadioButton button : facings) {
                 button.setEnabled(false);
             }

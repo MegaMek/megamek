@@ -513,7 +513,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (Exception e) {
                         entity.setDeployRound(0);
                     }
-                    
+
                     // Camo
                     entity.setCamoCategory((String) attr.get(CAMO_CATEGORY));
                     entity.setCamoFileName((String) attr.get(CAMO_FILENAME));
@@ -1012,7 +1012,7 @@ public class XMLStreamParser implements XMLResponder {
             try {
                 int turDir = Integer.parseInt(value);
                 ((Tank) entity).setSecondaryFacing(turDir);
-                ((Tank) entity).lockTurret(Tank.LOC_TURRET);
+                ((Tank) entity).lockTurret(((Tank)entity).getLocTurret());
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();
@@ -1029,7 +1029,7 @@ public class XMLStreamParser implements XMLResponder {
             try {
                 int turDir = Integer.parseInt(value);
                 ((Tank) entity).setDualTurretOffset(turDir);
-                ((Tank) entity).lockTurret(Tank.LOC_TURRET_2);
+                ((Tank) entity).lockTurret(((Tank)entity).getLocTurret2());
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();

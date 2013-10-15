@@ -16,6 +16,7 @@
 
 package megamek.server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -1112,16 +1112,20 @@ public class Server implements Runnable {
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
-        File f = new File(localFile);
         try {
-            ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(f));
+            ArrayList<Integer> data = new ArrayList<Integer>();
+            BufferedInputStream fin = new BufferedInputStream(
+                    new FileInputStream(localFile));
+            int input;
+            while ((input = fin.read()) != -1){
+                data.add(input);
+            }
             send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[] {
-                    sFinalFile, ois.readObject(), sLocalPath }));
+                    sFinalFile, data, sLocalPath }));
             sendChat(connId, "***Server", "Savegame has been sent to you.");
-            ois.close();
+            fin.close();
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + localFile);
             e.printStackTrace();
         }
     }
@@ -1351,7 +1355,7 @@ public class Server implements Runnable {
             }
             // If we removed a unit during the movement phase that hasn't moved,
             //  remove its turn.
-            if (game.getPhase() == Phase.PHASE_MOVEMENT && 
+            if ((game.getPhase() == Phase.PHASE_MOVEMENT) &&
                     entity.isSelectableThisTurn()){
                 game.removeTurnFor(entity);
                 send(createTurnVectorPacket());
@@ -3171,7 +3175,7 @@ public class Server implements Runnable {
                 } else if ((entity instanceof SmallCraft)
                         && entity.isAirborne()
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementSmallCraftTurns();                    
+                    player.incrementSmallCraftTurns();
                 } else  if (entity.isAirborne()
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementAeroTurns();
@@ -7507,6 +7511,18 @@ public class Server implements Runnable {
                     bldgEntered = game.getBoard().getBuildingAt(curPos);
                 }
 
+                // Protomechs changing levels within a building cause damage
+                if (((buildingMove & 8) == 8) &&
+                        (entity instanceof Protomech)){
+                    Building bldg = game.getBoard().getBuildingAt(curPos);
+                    Vector<Report> vBuildingReport =
+                            damageBuilding(bldg, 1, curPos);
+                    for (Report report : vBuildingReport) {
+                        report.subject = entity.getId();
+                    }
+                    addReport(vBuildingReport);
+                }
+
                 boolean collapsed = false;
                 if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the
@@ -11494,8 +11510,8 @@ public class Server implements Runnable {
                 addReport(saa.resolveAction(game));
             } else if (ea instanceof UnjamTurretAction) {
                 if (entity instanceof Tank) {
-                    ((Tank) entity).unjamTurret(Tank.LOC_TURRET);
-                    ((Tank) entity).unjamTurret(Tank.LOC_TURRET_2);
+                    ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret());
+                    ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret2());
                     Report r = new Report(3033);
                     r.addDesc(entity);
                     addReport(r);
@@ -21295,7 +21311,7 @@ public class Server implements Runnable {
                     r = new Report(6630);
                     r.subject = t.getId();
                     vDesc.add(r);
-                    t.destroyLocation(Tank.LOC_TURRET);
+                    t.destroyLocation(t.getLocTurret());
                     vDesc.addAll(destroyEntity(t, "turret blown off", true,
                             true));
                     break;
@@ -23247,7 +23263,7 @@ public class Server implements Runnable {
         // Also need to account for hull breaches on surface naval vessels which
         // are technically not "wet"
         if ((entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL)
-                || (entity.isSurfaceNaval() && (loc != Tank.LOC_TURRET))) {
+                || (entity.isSurfaceNaval() && (loc != ((Tank)entity).getLocTurret()))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
             int breachroll = 0;
@@ -24303,7 +24319,7 @@ public class Server implements Runnable {
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
-        
+
         // if falling into a bog-down hex, the entity automatically gets stuck
         if (fallHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
@@ -24337,7 +24353,7 @@ public class Server implements Runnable {
                 damage -= cluster;
             }
         }
-        
+
         if (waterDepth > 0) {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 entity.setLocationStatus(loop, ILocationExposureStatus.WET);
@@ -24350,7 +24366,7 @@ public class Server implements Runnable {
             hit.makeFallDamage(true);
             vPhaseReport.addAll(damageEntity(entity, hit, cluster));
             waterDamage -= cluster;
-        }        
+        }
 
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false,
@@ -25039,7 +25055,7 @@ public class Server implements Runnable {
                     send(p.getId(), pack);
                 }
             }
-            
+
             // In double-blind, the client may not know about the loaded units,
             //  so we need to send them.
             for (Entity eLoaded : eTarget.getLoadedUnits()){
@@ -25059,7 +25075,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-            
+
         } else {
             // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));
@@ -28190,7 +28206,7 @@ public class Server implements Runnable {
                 r.indent(1);
                 vDesc.add(r);
                 for (GunEmplacement gun : guns) {
-                    gun.lockTurret(Tank.LOC_TURRET);
+                    gun.lockTurret(gun.getLocTurret());
                 }
             } else {
                 // turret jam
@@ -28199,10 +28215,10 @@ public class Server implements Runnable {
                 r.indent(1);
                 vDesc.add(r);
                 for (GunEmplacement gun : guns) {
-                    if (gun.isTurretEverJammed(Tank.LOC_TURRET)) {
-                        gun.lockTurret(Tank.LOC_TURRET);
+                    if (gun.isTurretEverJammed(gun.getLocTurret())) {
+                        gun.lockTurret(gun.getLocTurret());
                     } else {
-                        gun.jamTurret(Tank.LOC_TURRET);
+                        gun.jamTurret(gun.getLocTurret());
                     }
                 }
             }

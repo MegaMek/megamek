@@ -60,6 +60,16 @@ public class SuperHeavyTank extends Tank {
         return LOCATION_NAMES;
     }
 
+    @Override
+    public int getLocTurret() {
+        return LOC_TURRET;
+    }
+
+    @Override
+    public int getLocTurret2() {
+        return LOC_TURRET_2;
+    }
+
     /**
      * Rolls up a hit location
      */

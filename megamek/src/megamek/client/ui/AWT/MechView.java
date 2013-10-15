@@ -254,9 +254,8 @@ public class MechView {
 
             // Skip empty sections.
             if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
-                    || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity)
-                            .hasNoTurret()) || (loc == Tank.LOC_BODY)) || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity)
-                            .hasNoTurret()) || (loc == Tank.LOC_BODY)))))) {
+                    || (isVehicle && (((loc == ((Tank) entity).getLocTurret()) && ((Tank) entity)
+                            .hasNoTurret()) || (loc == Tank.LOC_BODY)))) {
                 continue;
             }
 

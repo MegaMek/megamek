@@ -66,7 +66,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
@@ -777,7 +776,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         if ((attacks.size() == 0) && (ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2))) {
+                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2()))) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
             attacks.add(uta);
             ready();
@@ -1462,7 +1461,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2)) && (attacks.size() == 0)
+                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2())) && (attacks.size() == 0)
                 && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
@@ -1751,13 +1750,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 mask[Tank.LOC_BODY] = false;
                 Tank tank = (Tank) target;
                 if (tank.hasNoTurret()) {
-                    int turretLoc = Tank.LOC_TURRET;
-                    if (target instanceof LargeSupportTank) {
-                        turretLoc = LargeSupportTank.LOC_TURRET;
-                    }
-                    if (target instanceof VTOL) {
-                        turretLoc = VTOL.LOC_TURRET;
-                    }
+                    int turretLoc = tank.getLocTurret();
                     mask[turretLoc] = false;
                 }
                 // remove non-visible sides
@@ -1781,19 +1774,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         mask[LargeSupportTank.LOC_REAR] = false;
                     }
                     if (side == ToHitData.SIDE_REARRIGHT) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARLEFT] = false;
                     }
                     if (side == ToHitData.SIDE_REARLEFT) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;
                     }
                     if (side == ToHitData.SIDE_REAR) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;

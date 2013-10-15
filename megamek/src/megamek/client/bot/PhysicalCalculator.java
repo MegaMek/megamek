@@ -107,7 +107,7 @@ public final class PhysicalCalculator {
 
                     l_dmg = BrushOffAttackAction.getDamageFor(entity,
                             BrushOffAttackAction.LEFT);
-                    l_dmg *= 1.0 - Compute.oddsAbove(odds.getValue()) / 100.0;
+                    l_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue()) / 100.0);
                     breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                             ToHitData.SIDE_FRONT, l_dmg, l_dmg);
                     if (breach < 1.5) {
@@ -128,7 +128,7 @@ public final class PhysicalCalculator {
 
                     r_dmg = BrushOffAttackAction.getDamageFor(entity,
                             BrushOffAttackAction.RIGHT);
-                    r_dmg *= 1.0 - Compute.oddsAbove(odds.getValue()) / 100.0;
+                    r_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue()) / 100.0);
                     breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                             ToHitData.SIDE_FRONT, r_dmg, r_dmg);
                     if (breach < Math.min(breach_a, 1.5)) {
@@ -214,7 +214,7 @@ public final class PhysicalCalculator {
 
                         l_dmg = BrushOffAttackAction.getDamageFor(entity,
                                 BrushOffAttackAction.LEFT);
-                        l_dmg *= 1.0 - Compute.oddsAbove(odds.getValue()) / 100.0;
+                        l_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue()) / 100.0);
                         breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                                 ToHitData.SIDE_FRONT, l_dmg, l_dmg);
                         if (breach < 1.5) {
@@ -235,7 +235,7 @@ public final class PhysicalCalculator {
 
                         r_dmg = BrushOffAttackAction.getDamageFor(entity,
                                 BrushOffAttackAction.RIGHT);
-                        r_dmg *= 1.0 - Compute.oddsAbove(odds.getValue()) / 100.0;
+                        r_dmg *= 1.0 - (Compute.oddsAbove(odds.getValue()) / 100.0);
                         breach = punchThroughMod(entity, ToHitData.HIT_PUNCH,
                                 ToHitData.SIDE_FRONT, r_dmg, r_dmg);
                         if (breach < Math.min(breach_a, 1.5)) {
@@ -334,7 +334,7 @@ public final class PhysicalCalculator {
         if (to instanceof Mech) {
             if (!to.isProne()) {
                 location_table = ToHitData.HIT_PUNCH;
-                if (to.getElevation() == from.getElevation() + 1) {
+                if (to.getElevation() == (from.getElevation() + 1)) {
                     location_table = ToHitData.HIT_KICK;
                 }
             } else {
@@ -349,7 +349,7 @@ public final class PhysicalCalculator {
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
                     PunchAttackAction.LEFT, targetConvInfantry);
-            bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            bestDmg = (Compute.oddsAbove(odds.getValue()) / 100.0) * damage;
             // Adjust damage for targets armor
             bestType = PhysicalOption.PUNCH_LEFT;
             bestDmg *= punchThroughMod(to, location_table, target_arc, bestDmg,
@@ -361,7 +361,7 @@ public final class PhysicalCalculator {
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
                     PunchAttackAction.RIGHT, targetConvInfantry);
-            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            dmg = (Compute.oddsAbove(odds.getValue()) / 100.0) * damage;
             // Adjust damage for targets armor
             dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);
             if (dmg > bestDmg) {
@@ -379,8 +379,8 @@ public final class PhysicalCalculator {
                 && (odds_a.getValue() != TargetRoll.IMPOSSIBLE)) {
             damage = PunchAttackAction.getDamageFor(from,
                     PunchAttackAction.LEFT, targetConvInfantry);
-            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-            double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0
+            dmg = (Compute.oddsAbove(odds.getValue()) / 100.0) * damage;
+            double dmg_a = (Compute.oddsAbove(odds_a.getValue()) / 100.0)
                     * damage;
             dmg += dmg_a;
             dmg *= punchThroughMod(to, location_table, target_arc, dmg,
@@ -397,7 +397,7 @@ public final class PhysicalCalculator {
         if (to instanceof Mech) {
             location_table = ToHitData.HIT_KICK;
             if (!to.isProne()) {
-                if (to.getElevation() == from.getElevation() - 1) {
+                if (to.getElevation() == (from.getElevation() - 1)) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
             } else {
@@ -427,11 +427,11 @@ public final class PhysicalCalculator {
             // punch, or kick table
             if (to instanceof Mech) {
                 location_table = ToHitData.HIT_NORMAL;
-                if ((to.getElevation() == from.getElevation() - 1)
+                if ((to.getElevation() == (from.getElevation() - 1))
                         && !to.isProne()) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
-                if ((to.getElevation() == from.getElevation() + 1)
+                if ((to.getElevation() == (from.getElevation() + 1))
                         && !to.isProne()) {
                     location_table = ToHitData.HIT_KICK;
                 }
@@ -442,7 +442,7 @@ public final class PhysicalCalculator {
                     ToHitData.HIT_NORMAL);
             if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
                 damage = ClubAttackAction.getDamageFor(from, club, targetConvInfantry);
-                dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+                dmg = (Compute.oddsAbove(odds.getValue()) / 100.0) * damage;
                 // Adjust damage for targets armor
                 dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);
                 // Some types of clubs, such as the mace, require a piloting
@@ -470,8 +470,8 @@ public final class PhysicalCalculator {
                 // If the displacement hex is not on the map, credit damage
                 // against full target armor
                 if (!game.getBoard().contains(disp_c)) {
-                    dmg = to.getTotalArmor()
-                            * Compute.oddsAbove(odds.getValue()) / 100.0;
+                    dmg = (to.getTotalArmor()
+                            * Compute.oddsAbove(odds.getValue())) / 100.0;
                 }
                 if (game.getBoard().contains(disp_c)) {
                     // Find the elevation difference
@@ -502,7 +502,7 @@ public final class PhysicalCalculator {
                     // prone
                     if (to.getWalkMP() > 0) {
                         dmg = dmg
-                                * Math.sqrt(1.0 / to.getWalkMP()
+                                * Math.sqrt((1.0 / to.getWalkMP())
                                         + to.getJumpMP());
                     } else {
                         dmg *= Math.max(1.0, Math.sqrt(to.getJumpMP()));
@@ -532,7 +532,7 @@ public final class PhysicalCalculator {
                 // Modify damage to reflect how bad it is for target to be prone
                 if (to.getWalkMP() > 0) {
                     dmg = dmg
-                            * Math.sqrt(1.0 / to.getWalkMP() + to.getJumpMP());
+                            * Math.sqrt((1.0 / to.getWalkMP()) + to.getJumpMP());
                 } else {
                     dmg = dmg * Math.max(1.0, Math.sqrt(to.getJumpMP()));
                 }
@@ -570,7 +570,7 @@ public final class PhysicalCalculator {
      */
     private static double calculateFallingDamage(double odds, Entity ent) {
         double dmg = odds;
-        dmg *= 1.0 - Compute.oddsAbove(ent.getBasePilotingRoll().getValue()) / 100.0;
+        dmg *= 1.0 - (Compute.oddsAbove(ent.getBasePilotingRoll().getValue()) / 100.0);
         dmg *= ent.getWeight() * 0.1;
         return dmg;
     }
@@ -599,20 +599,20 @@ public final class PhysicalCalculator {
 
         damage = KickAttackAction
                 .getDamageFor(from, action, targetConvInfantry);
-        dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+        dmg = (Compute.oddsAbove(odds.getValue()) / 100.0) * damage;
         // Adjust damage for targets armor
         dmg *= punchThroughMod(to, locTable, arc, dmg, dmg);
         // Calculate self damage, due to possible fall from missing a kick
-        self_damage = calculateFallingDamage(1.0 - Compute.oddsAbove(odds
-                .getValue()) / 100.0, from);
+        self_damage = calculateFallingDamage(1.0 - (Compute.oddsAbove(odds
+                .getValue()) / 100.0), from);
         if (from.getWalkMP() > 0) {
             self_damage = self_damage
-                    * Math.sqrt(1.0 / from.getWalkMP() + from.getJumpMP());
+                    * Math.sqrt((1.0 / from.getWalkMP()) + from.getJumpMP());
         } else {
             self_damage = self_damage * Math.sqrt(from.getJumpMP());
         }
         // Add together damage values for comparison
-        dmg = dmg + coll_damage - self_damage;
+        dmg = (dmg + coll_damage) - self_damage;
         return dmg;
     }
 
@@ -759,11 +759,11 @@ public final class PhysicalCalculator {
             }
             if (!((Tank) target).hasNoTurret()) {
                 max_index++;
-                armor_values[max_index] = target.getArmor(Tank.LOC_TURRET);
+                armor_values[max_index] = target.getArmor(((Tank)target).getLocTurret());
             }
             if (!((Tank) target).hasNoDualTurret()) {
                 max_index++;
-                armor_values[max_index] = target.getArmor(Tank.LOC_TURRET_2);
+                armor_values[max_index] = target.getArmor(((Tank)target).getLocTurret2());
             }
         }
         // If the target is Battle Armor

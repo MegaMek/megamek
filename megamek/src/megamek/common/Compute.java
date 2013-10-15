@@ -2993,7 +2993,7 @@ public class Compute {
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
                 .getSecondaryFacing() : ae.getFacing();
         if ((ae instanceof Tank)
-                && (ae.getEquipment(weaponId).getLocation() == Tank.LOC_TURRET_2)) {
+                && (ae.getEquipment(weaponId).getLocation() == ((Tank)ae).getLocTurret2())) {
             facing = ((Tank) ae).getDualTurretFacing();
         }
         if (ae.getEquipment(weaponId).isMechTurretMounted()) {
@@ -4069,7 +4069,7 @@ public class Compute {
      */
     public static int getMetalInPath(Entity ae, Coords a, Coords b) {
         // If we're in space, or anything is null... get out.
-        if (ae == null || (a == null) || (b == null)) {
+        if ((ae == null) || (a == null) || (b == null)) {
             return 0;
         }
         if (ae.getGame().getBoard().inSpace()) {

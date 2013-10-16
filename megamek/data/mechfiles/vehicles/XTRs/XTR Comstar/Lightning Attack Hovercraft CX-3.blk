@@ -56,8 +56,9 @@ Hover
 </armor>
 
 <Body Equipment>
+ISSponsonTurret
 ISGuardianECMSuite
-Stealth
+IS Stealth
 </Body Equipment>
 
 <Front Equipment>
@@ -65,14 +66,12 @@ ISMediumPulseLaser
 </Front Equipment>
 
 <Right Equipment>
-ISSponsonTurret
 RL15(ST)
 RL15(ST)
 RL15(ST)
 </Right Equipment>
 
 <Left Equipment>
-ISSponsonTurret
 RL15(ST)
 RL15(ST)
 RL15(ST)

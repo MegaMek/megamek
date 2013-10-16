@@ -50,6 +50,7 @@ v0.35.44-dev (0.36.0 Release Candidate 4)
     should damage the building
 + RAT fixes
 + Bug [#3884]: Single-Turret Superheavy Tank Not Turret-Twisting
++ Data: New Images and Unit file fixes.
 
 v0.35.43 (0.36.0 Release Candidate 3)
 + Bug: Most Gladiator mechs (IS Medium, not the Executioner) did not have an 

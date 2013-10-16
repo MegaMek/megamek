@@ -16,11 +16,11 @@ Cockpit:Standard Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks:10
+Base Chassis Heat Sinks:12
 Walk MP:10
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Stealth(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -34,9 +34,9 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:3
+Improved Heavy Large Laser, Left Arm
 Improved Heavy Medium Laser, Left Torso
 Improved Heavy Medium Laser, Right Torso
-Improved Heavy Large Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -49,8 +49,8 @@ CLImprovedHeavyLargeLaser
 CLImprovedHeavyLargeLaser
 Clan Endo Steel
 Clan Endo Steel
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 
 Right Arm:
 Shoulder
@@ -62,8 +62,8 @@ CLDoubleHeatSink
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 
 Left Torso:
@@ -76,8 +76,8 @@ CLDoubleHeatSink
 CLImprovedMediumHeavyLaser
 CLImprovedMediumHeavyLaser
 Clan Endo Steel
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 
 Right Torso:
@@ -90,8 +90,8 @@ CLDoubleHeatSink
 CLImprovedMediumHeavyLaser
 CLImprovedMediumHeavyLaser
 Clan Endo Steel
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 
 Center Torso:
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-

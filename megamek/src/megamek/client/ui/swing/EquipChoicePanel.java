@@ -577,6 +577,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             private ArrayList<AmmoType> m_vTypes;
 
             private JComboBox m_choice;
+            
+            private JComboBox m_num_shots;
 
             private Mounted m_mounted;
 
@@ -603,6 +605,33 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_choice.setSelectedIndex(x);
                     }
                 }
+                
+                m_num_shots = new JComboBox();
+                int shotsPerTon = curType.getShots();
+                for (int i = 0; i < shotsPerTon; i++){
+                    m_num_shots.addItem(i);
+                }
+                m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
+                
+                m_choice.addItemListener(new ItemListener(){
+                    @Override
+                    public void itemStateChanged(ItemEvent evt) {
+                        int currShots = (Integer)m_num_shots.getSelectedItem();
+                        m_num_shots.removeAllItems();
+                        int shotsPerTon = m_vTypes.get(
+                                m_choice.getSelectedIndex()).getShots();
+                        for (int i = 0; i < shotsPerTon; i++){
+                            m_num_shots.addItem(i);
+                        }                        
+                        if (currShots <= shotsPerTon){
+                            m_num_shots.setSelectedItem(currShots);
+                        } else {
+                            m_num_shots.setSelectedItem(shotsPerTon);
+                        }
+                            
+                    }});
+                
+                
                 int loc;
                 if (m.getLocation() == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
@@ -616,7 +645,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(lLoc, GBC.std());
-                add(m_choice, GBC.eol());
+                add(m_choice, GBC.std());
+                add(m_num_shots, GBC.eol());                
                 if (clientgui.getClient().game.getOptions().booleanOption(
                         "lobby_ammo_dump")) { //$NON-NLS-1$
                     add(labDump, GBC.std());
@@ -639,6 +669,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int n = m_choice.getSelectedIndex();
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
+                m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }

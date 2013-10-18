@@ -608,7 +608,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 
                 m_num_shots = new JComboBox();
                 int shotsPerTon = curType.getShots();
-                for (int i = 0; i < shotsPerTon; i++){
+                for (int i = 0; i <= shotsPerTon; i++){
                     m_num_shots.addItem(i);
                 }
                 m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
@@ -620,7 +620,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_num_shots.removeAllItems();
                         int shotsPerTon = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
-                        for (int i = 0; i < shotsPerTon; i++){
+                        for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
                         }                        
                         if (currShots <= shotsPerTon){

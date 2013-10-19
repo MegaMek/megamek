@@ -36,7 +36,7 @@ public class CLBALBX extends Weapon {
         addLookupName("CLBALBX");
         heat = 0;
         damage = 4;
-        rackSize = 1;
+        rackSize = 4;
         shortRange = 2;
         mediumRange = 5;
         longRange = 8;

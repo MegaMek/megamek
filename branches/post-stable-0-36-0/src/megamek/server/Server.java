@@ -30304,12 +30304,13 @@ public class Server implements Runnable {
                     }
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor)
-                            || (!entity.hasPatchworkArmor() && (entity
-                                    .getBARRating(1) > 4))) {
+                            || ((entity instanceof SupportTank) && 
+                                    !entity.hasPatchworkArmor() && 
+                                    (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);
+                        hits = Compute.d6(damage);                        
                         hits *= 2;
                     } else {
                         if ((entity.getBARRating(1) < 5)

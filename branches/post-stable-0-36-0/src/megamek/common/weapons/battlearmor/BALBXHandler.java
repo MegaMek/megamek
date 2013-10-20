@@ -17,12 +17,10 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
-import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -78,8 +76,6 @@ public class BALBXHandler extends WeaponHandler implements AttackHandler {
             return ((BattleArmor) ae).getShootingStrength();
 
         }
-        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
         int missilesHit;
         int nMissilesModifier = 0;
         boolean tacopscluster = game.getOptions().booleanOption(
@@ -114,7 +110,7 @@ public class BALBXHandler extends WeaponHandler implements AttackHandler {
         }
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            missilesHit = wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength();
         } else {
 
             missilesHit = Compute.missilesHit(wtype.getRackSize()

@@ -29,7 +29,6 @@ package megamek.common.loaders;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;

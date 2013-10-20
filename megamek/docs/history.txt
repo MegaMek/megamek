@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.35.45-dev (0.36.0 Release Candidate 5)
+
 v0.35.44 (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved
 + Data: Unit Image Fixes and a couple of unit fixes.

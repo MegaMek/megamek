@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
-import megamek.client.bot.ui.AWT.BotGUI;
+import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.Player;
 import megamek.server.Server;
 
@@ -46,7 +46,7 @@ public class AddBotCommand extends ServerCommand {
             playerListStart = 2;
             if (args.length < 3){
                 server.sendServerChat(connId, "You must specify a player name.");
-                return; 
+                return;
             }
         }
 

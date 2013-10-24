@@ -154,7 +154,7 @@ public class MechTileset {
 
     /**
      * Creates new MechTileset.
-     * 
+     *
      * @deprecated Use {@link MechTileset(File)} instead.
      */
     @Deprecated
@@ -165,10 +165,10 @@ public class MechTileset {
         }
         dir = new File(dir_path);
     }
-    
+
     /**
      * Creates new MechTileset.
-     * 
+     *
      * @param dir_path Path to the tileset directory.
      */
     public MechTileset(File dir_path)
@@ -184,7 +184,7 @@ public class MechTileset {
 
         if (entry == null) {
             System.err
-                    .println("Entry is null make sure that their is a default entry for "
+                    .println("Entry is null make sure that there is a default entry for "
                             + entity.getShortNameRaw()
                             + " in both mechset.txt and wreckset.txt.  Default to "
                             + LIGHT_STRING);

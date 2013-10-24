@@ -29042,7 +29042,7 @@ public class Server implements Runnable {
                     // report safe ejection
                     r = new Report(6400);
                     r.subject = entity.getId();
-                    r.indent(5);
+                    r.indent(3);
                     vDesc.addElement(r);
                     // infantry have auto XTC gear so do pilots
                     /*
@@ -30304,13 +30304,13 @@ public class Server implements Runnable {
                     }
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor)
-                            || ((entity instanceof SupportTank) && 
-                                    !entity.hasPatchworkArmor() && 
+                            || ((entity instanceof SupportTank) &&
+                                    !entity.hasPatchworkArmor() &&
                                     (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);                        
+                        hits = Compute.d6(damage);
                         hits *= 2;
                     } else {
                         if ((entity.getBARRating(1) < 5)

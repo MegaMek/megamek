@@ -4,6 +4,7 @@ v0.35.45-dev (0.36.0 Release Candidate 5)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game
 + Bug: Adjusted Server.saveGame so that the whole XML isn't stored in memory 
     and is instead streamed to a file.
++ Change default max heap size to 1024m
 
 v0.35.44 (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved

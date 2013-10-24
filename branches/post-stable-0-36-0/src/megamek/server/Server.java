@@ -1162,13 +1162,11 @@ public class Server implements Runnable {
             }
             getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
-
-            String xml = xstream.toXML(game);
+            
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
-            gzo.write(xml.getBytes("UTF-8"));
+            xstream.toXML(game,gzo);
             gzo.close();
-            gzo.flush();
             for (GameListener listener : gameListenersClone) {
                 getGame().addGameListener(listener);
             }
@@ -29075,7 +29073,7 @@ public class Server implements Runnable {
                     // report safe ejection
                     r = new Report(6400);
                     r.subject = entity.getId();
-                    r.indent(5);
+                    r.indent(3);
                     vDesc.addElement(r);
                     // infantry have auto XTC gear so do pilots
                     /*
@@ -30337,13 +30335,13 @@ public class Server implements Runnable {
                     }
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor)
-                            || ((entity instanceof SupportTank) && 
-                                    !entity.hasPatchworkArmor() && 
+                            || ((entity instanceof SupportTank) &&
+                                    !entity.hasPatchworkArmor() &&
                                     (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);                        
+                        hits = Compute.d6(damage);
                         hits *= 2;
                     } else {
                         if ((entity.getBARRating(1) < 5)

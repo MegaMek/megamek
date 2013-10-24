@@ -30,7 +30,12 @@ v0.36.0 post-stable
     lounge goes from ~65s to ~15s.
 + Bug [#3893]: ChatLounge 'Delete All' button is very slow. 
 
-v0.35.44-dev (0.36.0 Release Candidate 4)
+v0.35.45-dev (0.36.0 Release Candidate 5)
++ Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game
++ Bug: Adjusted Server.saveGame so that the whole XML isn't stored in memory 
+    and is instead streamed to a file.
+
+v0.35.44 (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved
 + Data: Unit Image Fixes and a couple of unit fixes.
 + Bug [#3871]: Missing Entity issues with double blind and transports

@@ -28,6 +28,7 @@ v0.36.0 post-stable
 + Bug [#3618]: Updates to the code for adding multiple entities, see SF bug 
     ticket for details.  After these changes, adding 200 mechs in the chat 
     lounge goes from ~65s to ~15s.
++ Bug [#3893]: ChatLounge 'Delete All' button is very slow. 
 
 v0.35.44-dev (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved

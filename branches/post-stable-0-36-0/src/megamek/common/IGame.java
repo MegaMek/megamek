@@ -626,7 +626,11 @@ public interface IGame {
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
+    public abstract void removeEntity(int id, int condition, boolean genEvent);
+    
     public abstract void removeEntity(int id, int condition);
+    
+    public abstract void removeEntities(List<Integer> ids, int condition);
 
     /**
      * Resets this game by removing all entities.

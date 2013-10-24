@@ -1262,13 +1262,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void deleteAllUnits(Client c) {
     	ArrayList<Entity> currentUnits = c.game.getPlayerEntities(
                 c.getLocalPlayer(), false);
-
-        // Walk through the vector, deleting the entities.
-        Iterator<Entity> entities = currentUnits.iterator();
-        while (entities.hasNext()) {
-            final Entity entity = entities.next();
-            c.sendDeleteEntity(entity.getId());
-        }
+    	ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
+    	for (Entity e : currentUnits){
+    	    ids.add(e.getId());
+    	}
+    	c.sendDeleteEntities(ids);        
     }
 
     /**

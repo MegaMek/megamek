@@ -1247,6 +1247,10 @@ public class Game implements Serializable, IGame {
      * (probably due to double-blind) ignore it.
      */
     public void removeEntity(int id, int condition) {
+        removeEntity(id,condition,true);
+    }
+        
+    public void removeEntity(int id, int condition, boolean genEvent) {        
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             // This next statement has been cluttering up double-blind
@@ -1285,7 +1289,16 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
-        processGameEvent(new GameEntityRemoveEvent(this, toRemove));
+        if (genEvent){
+            processGameEvent(new GameEntityRemoveEvent(this));
+        }
+    }
+    
+    public void removeEntities(List<Integer> ids, int condition){
+        for (int i = 0; i < ids.size(); i++){
+            removeEntity(ids.get(i),condition,false);
+        }
+        processGameEvent(new GameEntityRemoveEvent(this));
     }
 
     /**

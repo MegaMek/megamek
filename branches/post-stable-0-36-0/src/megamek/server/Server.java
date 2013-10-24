@@ -25478,6 +25478,7 @@ public class Server implements Runnable {
      * the list
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
+        @SuppressWarnings("unchecked")
         final List<Entity> entities = (List<Entity>) c.getObject(0);
         ArrayList<Integer> entityIds = new ArrayList<Integer>(entities.size());
         
@@ -25940,79 +25941,83 @@ public class Server implements Runnable {
      * Deletes an entity owned by a certain player from the list
      */
     private void receiveEntityDelete(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        final Entity entity = game.getEntity(entityId);
-
-        // Only allow players to delete their *own* entities.
-        if ((entity != null) && (entity.getOwner() == getPlayer(connIndex))) {
-
-            // If we're deleting a Protomech, recalculate unit numbers.
-            if (entity instanceof Protomech) {
-
-                // How many Protomechs does the player have (include this one)?
-                int numPlayerProtos = game
-                        .getSelectedEntityCount(new EntitySelector() {
-                            private final int ownerId = entity.getOwnerId();
-
-                            public boolean accept(Entity entity) {
-                                if ((entity instanceof Protomech)
-                                        && (ownerId == entity.getOwnerId())) {
-                                    return true;
-                                }
-                                return false;
-                            }
-                        });
-
-                // According to page 54 of the BMRr, Protomechs must be
-                // deployed in full Points of five, unless "losses" have
-                // reduced the number to less that that.
-                final char oldMax = (char) (Math.ceil(numPlayerProtos / 5.0) - 1);
-                char newMax = (char) (Math.ceil((numPlayerProtos - 1) / 5.0) - 1);
-                char deletedUnitNum = entity.getUnitNumber();
-
-                // Do we have to update a Protomech from the last unit?
-                if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {
-
-                    // Yup. Find a Protomech from the last unit, and
-                    // set it's unit number to the deleted entity.
-                    Enumeration<Entity> lastUnit = game
-                            .getSelectedEntities(new EntitySelector() {
+        @SuppressWarnings("unchecked")
+        List<Integer> ids = (List<Integer>)c.getObject(0);
+        for (Integer entityId : ids){    
+            final Entity entity = game.getEntity(entityId);
+    
+            // Only allow players to delete their *own* entities.
+            if ((entity != null) && (entity.getOwner() == getPlayer(connIndex))) {
+    
+                // If we're deleting a Protomech, recalculate unit numbers.
+                if (entity instanceof Protomech) {
+    
+                    // How many Protomechs does the player have (include this one)?
+                    int numPlayerProtos = game
+                            .getSelectedEntityCount(new EntitySelector() {
                                 private final int ownerId = entity.getOwnerId();
-
-                                private final char lastUnitNum = oldMax;
-
+    
                                 public boolean accept(Entity entity) {
                                     if ((entity instanceof Protomech)
-                                            && (ownerId == entity.getOwnerId())
-                                            && (lastUnitNum == entity
-                                                    .getUnitNumber())) {
+                                            && (ownerId == entity.getOwnerId())) {
                                         return true;
                                     }
                                     return false;
                                 }
                             });
-                    Entity lastUnitMember = lastUnit.nextElement();
-                    lastUnitMember.setUnitNumber(deletedUnitNum);
-                    entityUpdate(lastUnitMember.getId());
-
-                } // End update-unit-numbetr
-
-            } // End added-Protomech
-
-            if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
-                endCurrentTurn(entity); // do this to prevent deployment
-                                        // hanging. Only do this during
-                                        // deployment.
-            } else {
-                // if a unit is removed during deployment just keep going
-                // without adjusting the turn vector.
-                game.removeTurnFor(entity);
+    
+                    // According to page 54 of the BMRr, Protomechs must be
+                    // deployed in full Points of five, unless "losses" have
+                    // reduced the number to less that that.
+                    final char oldMax = (char) (Math.ceil(numPlayerProtos / 5.0) - 1);
+                    char newMax = (char) (Math.ceil((numPlayerProtos - 1) / 5.0) - 1);
+                    char deletedUnitNum = entity.getUnitNumber();
+    
+                    // Do we have to update a Protomech from the last unit?
+                    if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {
+    
+                        // Yup. Find a Protomech from the last unit, and
+                        // set it's unit number to the deleted entity.
+                        Enumeration<Entity> lastUnit = game
+                                .getSelectedEntities(new EntitySelector() {
+                                    private final int ownerId = entity.getOwnerId();
+    
+                                    private final char lastUnitNum = oldMax;
+    
+                                    public boolean accept(Entity entity) {
+                                        if ((entity instanceof Protomech)
+                                                && (ownerId == entity.getOwnerId())
+                                                && (lastUnitNum == entity
+                                                        .getUnitNumber())) {
+                                            return true;
+                                        }
+                                        return false;
+                                    }
+                                });
+                        Entity lastUnitMember = lastUnit.nextElement();
+                        lastUnitMember.setUnitNumber(deletedUnitNum);
+                        entityUpdate(lastUnitMember.getId());
+    
+                    } // End update-unit-numbetr
+    
+                } // End added-Protomech
+    
+                if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+                    endCurrentTurn(entity); // do this to prevent deployment
+                                            // hanging. Only do this during
+                                            // deployment.
+                } else {
+                    // if a unit is removed during deployment just keep going
+                    // without adjusting the turn vector.
+                    game.removeTurnFor(entity);
+                }
+                game.removeEntity(entityId,
+                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                
             }
-            game.removeEntity(entityId,
-                    IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-            send(createRemoveEntityPacket(entityId,
-                    IEntityRemovalConditions.REMOVE_NEVER_JOINED));
         }
+        send(createRemoveEntityPacket(ids,
+                IEntityRemovalConditions.REMOVE_NEVER_JOINED));
     }
 
     /**
@@ -26388,7 +26393,25 @@ public class Server implements Runnable {
      *            <code>IllegalArgumentException</code> will be thrown.
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(int entityId, int condition) {
+    private Packet createRemoveEntityPacket(int entityId, int condition){
+        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ids.add(entityId);
+        return createRemoveEntityPacket(ids,condition);
+    }
+    
+    /**
+     * Creates a packet detailing the removal of a list of entities.
+     *
+     * @param entityIds
+     *            - the <code>int</code> ID of each entity being removed.
+     * @param condition
+     *            - the <code>int</code> condition the units were in. This value
+     *            must be one of constants in
+     *            <code>IEntityRemovalConditions</code>, or an
+     *            <code>IllegalArgumentException</code> will be thrown.
+     * @return A <code>Packet</code> to be sent to clients.
+     */
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)
@@ -26401,7 +26424,7 @@ public class Server implements Runnable {
                     + condition);
         }
         Object[] array = new Object[2];
-        array[0] = new Integer(entityId);
+        array[0] = entityIds;
         array[1] = new Integer(condition);
         return new Packet(Packet.COMMAND_ENTITY_REMOVE, array);
     }
@@ -26806,7 +26829,6 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_REMOVE:
                 receiveEntityDelete(packet, connId);
                 resetPlayersDone();
-                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS:
                 if (receiveGameOptions(packet, connId)) {

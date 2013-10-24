@@ -1162,13 +1162,11 @@ public class Server implements Runnable {
             }
             getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
-
-            String xml = xstream.toXML(game);
+            
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
-            gzo.write(xml.getBytes("UTF-8"));
+            xstream.toXML(game,gzo);
             gzo.close();
-            gzo.flush();
             for (GameListener listener : gameListenersClone) {
                 getGame().addGameListener(listener);
             }

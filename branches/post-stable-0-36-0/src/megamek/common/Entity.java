@@ -375,9 +375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean carcass = false;
 
     /**
-     * The components of this entity that can transport other entities. TODO: we
-     * should really redesign these transports to carry entity ids rather than
-     * entities for quicker connections between server and client
+     * The components of this entity that can transport other entities. 
      */
     private Vector<Transporter> transports = new Vector<Transporter>();
 

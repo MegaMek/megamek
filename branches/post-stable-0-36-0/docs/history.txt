@@ -23,6 +23,8 @@ v0.36.0 post-stable
 + Removed ImageCache maximum size
 + Bug: Board.setHex - shouldn't adust min/max elev if they are undefined
 + Bug [#3618]:  Matched input/output stream buffers to socket receive/send buffer
++ Bug: When handling a COMMAND_ENTITY_ADD packet, the server was calling 
+    transmitAllPlayerDones twice, which was causing superfluous overhead
 
 v0.35.44-dev (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved

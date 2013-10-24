@@ -26765,7 +26765,6 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_ADD:
                 receiveEntityAdd(packet, connId);
                 resetPlayersDone();
-                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_ENTITY_UPDATE:
                 receiveEntityUpdate(packet, connId);

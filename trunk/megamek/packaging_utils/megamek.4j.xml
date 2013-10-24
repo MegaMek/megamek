@@ -14,6 +14,6 @@
   <jre>
     <minVersion>1.5.0</minVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <maxHeapSize>256</maxHeapSize>
+    <maxHeapSize>1024</maxHeapSize>
   </jre>
 </launch4jConfig>

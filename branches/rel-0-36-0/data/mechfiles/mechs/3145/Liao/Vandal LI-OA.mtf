@@ -1,0 +1,153 @@
+Version:1.1
+Vandal
+LI-OA
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3142
+Source:TRO 3145 CC
+Rules Level:4
+
+Mass:65
+Engine:325 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:19
+RA Armor:19
+LT Armor:22
+RT Armor:22
+CT Armor:32
+HD Armor:8
+LL Armor:26
+RL Armor:26
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+Heavy PPC, Left Arm
+Laser AMS, Right Arm
+C3 Master Boosted with TAG, Right Arm
+SRM 4, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+PPC Capacitor
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Supercharger
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Life Support
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+SRM 4
+IS Ammo SRM-4
+ISCASEII
+Life Support
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

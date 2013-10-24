@@ -1,0 +1,154 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Typhoon
+
+</Name>
+
+<Model>
+
+TFN-3M
+
+</Model>
+
+<Tonnage>
+
+90
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+45
+
+34
+
+34
+
+23
+
+</Armor>
+
+<Nose Equipment>
+
+ISLRM15
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISLRM15
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISPPC
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISLRM15
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISPPC
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
+
+<heatsinks>
+
+28
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2473
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+

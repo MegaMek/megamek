@@ -1,0 +1,256 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Broadsword
+
+</Name>
+
+<Model>
+
+</Model>
+
+<Tonnage>
+
+1900
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+190
+
+160
+
+160
+
+120
+
+</Armor>
+
+<Nose Equipment>
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+CLMediumPulseLaser
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLERPPC
+
+CLERPPC
+
+Clan AMS
+
+Clan AMS Ammo
+
+Clan AMS Ammo
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLSmallPulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLSmallPulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+CLMediumPulseLaser
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+</Aft Equipment>
+
+<structural_integrity>
+
+9
+
+</structural_integrity>
+
+<heatsinks>
+
+79
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+4000
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+2979
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:2:2
+
+MechBay:3:2
+
+CargoBay:78:0
+
+</transporters>
+
+<escape_pod>
+
+2
+
+</escape_pod>
+
+<life_boat>
+
+2
+
+</life_boat>
+
+<crew>
+
+18
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

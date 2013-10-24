@@ -1,0 +1,164 @@
+Version:1.0
+Titan II
+TI-2PA
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3076
+Source:Jihad
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:33
+RA Armor:33
+LT Armor:27
+RT Armor:27
+CT Armor:41
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:15
+RTR Armor:15
+RTC Armor:20
+
+Weapons:17
+Plasma Rifle, Right Arm
+Medium Laser, Right Arm
+Plasma Rifle, Left Arm
+Medium Laser, Left Arm
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun Array, Right Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun Array, Left Torso
+Streak SRM 6, Left Torso
+Medium Laser, Head
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISPlasmaRifle
+ISPlasmaRifle
+Medium Laser
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISPlasmaRifle
+ISPlasmaRifle
+Medium Laser
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISStreakSRM6
+ISStreakSRM6
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+ISMGA
+IS Streak SRM 6 Ammo
+ISCASE
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+ISMGA
+BeagleActiveProbe
+BeagleActiveProbe
+IS Ammo MG - Full
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

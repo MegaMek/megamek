@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Theseus Medium Battle Armor
+</Name>
+
+<Model>
+(Support) "Killshot"
+</Model>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Armor>
+8
+</Armor>
+
+<Squad Equipment>
+ISMicroGrenadeLauncher
+ISRocketLauncher4
+ISRocketLauncher5:Body
+BABattleClaw
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3073
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+Jihad
+</source>

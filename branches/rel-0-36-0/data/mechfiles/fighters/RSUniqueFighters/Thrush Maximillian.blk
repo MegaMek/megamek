@@ -1,0 +1,68 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Thrush
+</Name>
+<Model>
+(Maximillian) 'C-1247'
+</Model>
+<Tonnage>
+25
+</Tonnage>
+<SafeThrust>
+15
+</SafeThrust>
+<Armor>
+11
+8
+8
+5
+</Armor>
+<Nose Equipment>
+ISERMediumLaser
+</Nose Equipment>
+<Left Wing Equipment>
+</Left Wing Equipment>
+<Right Wing Equipment> 
+</Right Wing Equipment>
+<Aft Equipment> 
+</Aft Equipment>
+<Transporters>
+CargoBay:1:0
+</Transporters>
+<heatsinks>
+10
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+480
+</fuel>
+<type>
+IS Level 2
+</type>
+<year>
+3067
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>

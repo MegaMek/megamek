@@ -1,0 +1,12 @@
+3085 Mercenary Heavy Mech A
+Koschei KSC-5I,1
+Black Hawk-KU BHKU-O,2
+Excalibur EXC-B2,3
+Rifleman IIC 2,4
+Gallant GLT-7-0,5
+Maelstrom MTR-5K,6
+Defiance DFN-3T,5
+Vulture,4
+Mad Cat (Timber Wolf) Prime,3
+Avatar AV1-O,2
+Helepolis HEP-4H,1

@@ -1,0 +1,343 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Naga Destroyer
+</Name>
+
+<model>
+(Caspar II Control Ship)
+</model>
+
+<Tonnage>
+540000
+</Tonnage>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<Armor>
+28
+32
+32
+32
+32
+28
+</Armor>
+
+<structural_integrity>
+68
+</structural_integrity>
+
+<heatsinks>
+1300
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3065
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+asfbay:36:3
+SmallcraftBay:6:1
+CargoBay:80817:1
+</transporters>
+
+<Nose Equipment>
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:45
+SCL1
+SCL1
+SCL1
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+Screen Launcher
+ScreenLauncher Ammo:40
+ISMobileHPG
+ISLargeNavalCommScannerSuite
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC10
+NAC10
+NAC10 Ammo:40
+SCL2
+SCL2
+SCL2
+White Shark
+White Shark Ammo:20
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NAC10
+NAC10
+NAC10 Ammo:40
+SCL2
+SCL2
+SCL2
+White Shark
+White Shark Ammo:20
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NAC10
+NAC10
+NAC10 Ammo:40
+NL35
+NL35
+NL35
+LightNPPC
+LightNPPC
+SCL3
+SCL3
+SCL3
+SCL3
+SCL3
+SCL3
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+ISAMS
+ISAMS
+ISAMS Ammo:72
+Screen Launcher
+ScreenLauncher Ammo:10
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NAC10
+NAC10
+NAC10 Ammo:40
+NL35
+NL35
+NL35
+LightNPPC
+LightNPPC
+SCL3
+SCL3
+SCL3
+SCL3
+SCL3
+SCL3
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+ISAMS
+ISAMS
+ISAMS Ammo:72
+Screen Launcher
+ScreenLauncher Ammo:10
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NL55
+NL55
+NL55
+LightNPPC
+LightNPPC
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+SCL2
+SCL2
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+NL55
+NL55
+NL55
+LightNPPC
+LightNPPC
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+SCL2
+SCL2
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+Barracuda
+Barracuda Ammo:10
+SCL1
+SCL1
+SCL1
+SCL1
+SCL1
+SCL1
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:208
+ISMML9 SRM Ammo Artemis-Capable:176
+ISAMS
+ISAMS
+ISAMS Ammo:72
+Screen Launcher
+ScreenLauncher Ammo:20
+</Aft Equipment>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+10
+</escape_pod>
+
+<life_boat>
+22
+</life_boat>
+
+<crew>
+470
+</crew>
+
+<battlearmor>
+36
+</battlearmor>
+
+<passengers>
+</passengers>
+
+<history>
+Has 3 Pressurized Repair Bays each with 75,000 Capacity and 1 Pressurized Repair Bay with a 7500 Ton capacity.  Lastly none of the Special CASPAR II equipment is coded in MM unit included for completeness
+</history>

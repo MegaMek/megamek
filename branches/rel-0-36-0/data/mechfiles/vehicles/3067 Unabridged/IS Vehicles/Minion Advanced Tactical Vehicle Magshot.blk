@@ -1,0 +1,77 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Minion Advanced Tactical Vehicle
+</Name>
+
+<Model>
+(Gauss) "Sandblaster"
+</Model>
+
+<year>
+3080
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+28
+22
+22
+16
+</armor>
+
+<Body Equipment>
+ISMagshotGR Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+20.0
+</tonnage>
+

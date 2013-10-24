@@ -1,0 +1,119 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Oo-Suzumebachi
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+170
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+131
+95
+95
+64
+</Armor>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<Nose Equipment>
+ISMRM40
+ISApollo
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISAMS
+ISAMS
+ISAMS
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISAMS
+ISAMS
+ISAMS
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<heatsinks>
+8
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+800
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3118
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<transporters>
+battlearmorbay:3:1
+cargobay:1:1
+</transporters>
+
+<crew>
+4
+</crew>
+
+<passengers>
+0
+</passengers>

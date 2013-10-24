@@ -1,0 +1,12 @@
+3085 Fronc Reaches Heavy Mech D
+Quickdraw QKD-4G,1
+Warhammer WHM-6R,2
+Archer ARC-2R,3
+Crusader CRD-3R,4
+Helios HEL-3D,5
+Ti Ts'ang TSG-9H,6
+Warhammer WHM-6R,5
+Archer ARC-2R,4
+Thunderbolt TDR-5S,3
+Ostroc OSR-4L,2
+Thunder THR-1L,1

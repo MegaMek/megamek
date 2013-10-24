@@ -1,0 +1,12 @@
+3085 Fronc Reaches Light Mech C
+Locust LCT-1V,1
+Stinger STG-3R,2
+Stinger STG-5R,3
+Stinger STG-5T,4
+Firestarter FS9-H,5
+Commando COM-2D,6
+Valkyrie VLK-QA,5
+Anubis ABS-3R,4
+Commando COM-2Dr,3
+Spider SDR-5V,2
+Javelin JVN-10N,1

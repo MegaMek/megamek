@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Light Mech D
+Wasp WSP-1A,1
+Locust LCT-1V,2
+Firestarter FS9-H,3
+Valkyrie VLK-QF,4
+Hornet HNT-171,5
+Valkyrie VLK-QA,6
+Locust LCT-3D,5
+Toro TR-A-1,4
+Javelin JVN-10N,3
+Wasp WSP-1S,2
+Spider SDR-5D,1

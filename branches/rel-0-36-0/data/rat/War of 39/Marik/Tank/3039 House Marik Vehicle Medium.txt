@@ -1,0 +1,15 @@
+3039 House Marik Vehicle Medium
+Hetzer Wheeled Assault Gun, 1
+Hetzer Wheeled Assault Gun, 2
+Hetzer Wheeled Assault Gun, 3
+Drillson Heavy Hover Tank, 4
+Maxim Heavy Hover Transport, 5
+Vedette Medium Tank, 6
+Hetzer Wheeled Assault Gun, 5
+Condor Heavy Hover Tank, 4
+Maxim Heavy Hover Transport, 3
+Drillson Heavy Hover Tank, 2
+Condor Heavy Hover Tank, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

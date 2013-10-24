@@ -1,0 +1,12 @@
+3085 Clan Wolf Medium Mech Second Line
+Hoplite C,1
+Shadow Hawk C,2
+Wyvern IIC 2,3
+Crab CRB-27b,4
+Lobo 2,5
+Sun Cobra,6
+Clint IIC,5
+Lobo,4
+Sun Cobra,3
+Hunchback IIC,2
+Griffin IIC 8,1

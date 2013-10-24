@@ -1,0 +1,12 @@
+3034 House Steiner Mech - Heavy  B
+Ostsol OTL-4F,1
+Quickdraw QKD-4G,2
+Orion ON1-K,3
+Warhammer WHM-6R,4
+Archer ARC-2S,5
+Thunderbolt TDR-5S,6
+Marauder MAD-3R,5
+Grasshopper GHR-5H,4
+Crusader CRD-3R,3
+Rifleman RFL-3N,2
+Grasshopper GHR-5N,1

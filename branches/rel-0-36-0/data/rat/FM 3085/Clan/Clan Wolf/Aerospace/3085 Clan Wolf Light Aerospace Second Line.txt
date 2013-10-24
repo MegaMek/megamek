@@ -1,0 +1,12 @@
+3085 Clan Wolf Light Aerospace Second Line
+Swift C,1
+Spad SPD-503,2
+Trident TRN-3Tb,3
+Rogue RGU-133Eb,4
+Zero ZRO-116b,5
+Zero ZRO-116b,6
+Rogue RGU-133Eb,5
+Chaeronea,4
+Swift C,3
+Sai S-4C,2
+Chaeronea 4,1

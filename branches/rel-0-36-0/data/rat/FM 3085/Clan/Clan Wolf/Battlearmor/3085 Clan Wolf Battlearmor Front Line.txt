@@ -1,0 +1,12 @@
+3085 Clan Wolf Battlearmor Front Line
+Salamander Battle Armor,1
+Clan Medium Battle Armor "Rache",2
+Undine Battle Armor (Upgrade),3
+Elemental Battle Armor [MG],4
+Elemental Battle Armor [MG],5
+Salamander Battle Armor (Anti-Personnel),6
+Gnome Battle Armor,5
+Elemental Battle Armor [MG],4
+Elemental Battle Armor [MG],3
+Elemental Battle Armor (Headhunter),2
+Elemental Battle Armor (Fire) [AP Gauss],1

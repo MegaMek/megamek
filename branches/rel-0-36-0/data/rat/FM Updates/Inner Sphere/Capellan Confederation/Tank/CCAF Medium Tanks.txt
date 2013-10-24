@@ -1,0 +1,12 @@
+CCAF Medium Vehicles 3067
+Drillson Heavy Hover Tank,1
+Light SRM Carrier,2
+Maxim Heavy Hover Transport (3052 Upgrade),3
+Hetzer Wheeled Assault Gun (LB-X),4
+Vedette Medium Tank (Light Gauss),5
+Vedette Medium Tank (Liao),6
+Hetzer Wheeled Assault Gun,5
+Regulator Hovertank,4
+Regulator Hovertank,3
+Condor Heavy Hover Tank (Liao),2
+Gladius Medium Hover Tank,1

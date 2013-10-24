@@ -1,0 +1,12 @@
+3085 Clan Wolf Battlearmor Keshik
+Clan Medium Battle Armor "Rache",1
+Undine Battle Armor (Upgrade),2
+Elemental Battle Armor [MG],3
+Elemental Battle Armor [MG],4
+Salamander Battle Armor (Anti-Personnel),5
+Gnome Battle Armor,6
+Elemental Battle Armor [MG],5
+Elemental Battle Armor [MG],4
+Elemental Battle Armor (Headhunter),3
+Elemental Battle Armor (Fire) [AP Gauss],2
+Warg Assault Battle Armor,1

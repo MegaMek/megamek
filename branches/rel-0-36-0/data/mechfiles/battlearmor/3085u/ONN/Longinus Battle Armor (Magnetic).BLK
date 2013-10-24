@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Longinus Battle Armor
+</Name>
+
+<Model>
+(Magnetic)
+</Model>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+9
+</Armor>
+
+<Squad Equipment>
+ISBAHeavyMG
+ISBAMachine Gun
+BAAPMount
+BA-Magnetic Clamp
+BABattleClaw
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3069
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+Jihad
+</source>

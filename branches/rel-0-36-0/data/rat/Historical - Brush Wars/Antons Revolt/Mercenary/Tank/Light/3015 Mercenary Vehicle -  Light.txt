@@ -1,0 +1,12 @@
+3015 Mercenary Vehicle -  Light
+Warrior Attack Helicopter H-7,1
+Saladin Assault Hover Tank,2
+J. Edgar Light Hover Tank,3
+Galleon Light Tank GAL-100,4
+Pegasus Scout Hover Tank,5
+Saracen Medium Hover Tank,6
+Striker Light Tank,5
+Scorpion Light Tank,4
+Harasser Missile Platform,3
+Karnov UR Transport,2
+Packrat LRPV PKR-T5,1

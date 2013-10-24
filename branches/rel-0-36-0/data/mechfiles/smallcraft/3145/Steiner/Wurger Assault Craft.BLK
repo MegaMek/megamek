@@ -1,0 +1,131 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Würger Assault Craft
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+160
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+119
+102
+102
+89
+</Armor>
+
+<Nose Equipment>
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISBeagleActiveProbe
+</Nose Equipment>
+
+<Left Side Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) ISAMS
+(R) ISAMS
+(R) ISAMS
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) ISAMS
+(R) ISAMS
+(R) ISAMS
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISGuardianECM
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<heatsinks>
+14
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+1200
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3099
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+CargoBay:1:1
+</transporters>
+
+<crew>
+5
+</crew>
+
+<passengers>
+0
+</passengers>

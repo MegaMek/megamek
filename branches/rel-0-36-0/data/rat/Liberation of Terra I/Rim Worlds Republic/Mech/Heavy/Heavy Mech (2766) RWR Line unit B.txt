@@ -1,0 +1,12 @@
+Heavy Mech (2766) RWR Line unit B
+Shootist ST-8A,2
+Black Knight BL-6-KNT,3
+Bombardier BMB-12D,4
+Ostroc OSR-2C,5
+Archer ARC-2R,6
+Thunderbolt TDR-5S,7
+Crusader CRD-2R,6
+Ostroc OSR-2C,5
+Warhammer WHM-6R,4
+Catapult CPLT-C1,3
+Champion CHP-1N,2

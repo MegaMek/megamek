@@ -1,0 +1,12 @@
+3085 Mercenary Assault Mech F
+Charger CGR-SB 'Challenger',1
+Victor VTR-9B,2
+Banshee BNC-3E,3
+Longbow LGB-0W,4
+Banshee BNC-3Mr,5
+Stalker STK-3F,6
+Longbow LGB-7Q,5
+Ymir BWP-X1 'Bipedal Weapons Platform',4
+Zeus ZEU-6T,3
+Victor VTR-9K,2
+Awesome AWS-8Q,1

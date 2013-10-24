@@ -1,0 +1,11 @@
+3053 Clan Ghost Bear Mech - Heavy
+Loki (Hellbringer) Prime,1
+Mad Cat (Timber Wolf) C,2
+Vulture (Mad Dog) B,3
+Vulture (Mad Dog) A,4
+Thor (Summoner) Prime,5
+Vulture (Mad Dog) Prime,11
+Thor (Summoner) A,4
+Loki (Hellbringer) B,3
+Mad Cat (Timber Wolf) C,2
+Grizzly,1

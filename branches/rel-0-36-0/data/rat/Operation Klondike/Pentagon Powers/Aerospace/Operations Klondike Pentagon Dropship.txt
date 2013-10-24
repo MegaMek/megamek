@@ -1,0 +1,12 @@
+2821 Operations Klondike Pentagon Dropship
+Fortress (2613),1
+Gazelle (2531),2
+Triumph (2593),3
+Overlord (2762),4
+Mule (Standard),5
+Union (2708),6
+Buccaneer,5
+Dictator,4
+Vulture,3
+Monarch,2
+Colossus,1

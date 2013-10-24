@@ -1,0 +1,87 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Karnov UR Gunship
+</Name>
+
+<Model>
+</Model>
+
+<year>
+3039
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+30.0
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<armor>
+6
+5
+5
+6
+2
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+Machine Gun
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+

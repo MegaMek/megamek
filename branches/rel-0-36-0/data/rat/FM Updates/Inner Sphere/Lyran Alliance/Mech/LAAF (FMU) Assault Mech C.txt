@@ -1,0 +1,12 @@
+LAAF Assault Mechs C 3067 (FMU)
+Goliath GOL-4S,1
+Salamander PPR-5T,2
+Highlander HGN-732,3
+Victor VTR-9D,4
+Stalker STK-5S,5
+Zeus ZEU-9S,6
+Banshee BNC-5S,5
+Atlas AS7-S,4
+Awesome AWS-8Q,3
+Berserker BRZ-B3,2
+Cyclops CP-11-A,1

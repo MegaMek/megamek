@@ -1,0 +1,153 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Leopard
+</Name>
+
+<Model>
+(PA)
+</Model>
+
+<Tonnage>
+1900
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+230
+180
+180
+130
+</Armor>
+
+<Nose Equipment>
+ISERPPC
+ISERPPCCapacitor
+ISERPPC
+ISERPPCCapacitor
+ISERPPC
+ISERPPCCapacitor
+ISERPPC
+ISERPPCCapacitor
+ISERPPC
+ISERPPCCapacitor
+ISLRM20
+IS Artemis IV FCS
+ISLRM20
+IS Artemis IV FCS
+ISLRM20 Ammo Artemis-capable:24
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLRM20
+IS Artemis IV FCS
+ISLRM20
+IS Artemis IV FCS
+ISLRM20 Ammo Artemis-capable:36
+ISBinaryLaser
+ISBinaryLaser
+(R) ISSmallPulseLaser
+(R) ISSmallPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISLRM20
+IS Artemis IV FCS
+ISLRM20
+IS Artemis IV FCS
+ISLRM20 Ammo Artemis-capable:36
+ISBinaryLaser
+ISBinaryLaser
+(R) ISSmallPulseLaser
+(R) ISSmallPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISBinaryLaser
+ISBinaryLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<heatsinks>
+129
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5120
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3073
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2:2
+asfbay:2:2
+infantrybay:4:0
+</transporters>
+
+<escape_pod>
+2
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+110
+</crew>
+
+<passengers>
+0
+</passengers>

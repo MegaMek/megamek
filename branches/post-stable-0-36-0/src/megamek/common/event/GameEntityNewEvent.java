@@ -14,6 +14,7 @@
 
 package megamek.common.event;
 
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Entity;
@@ -27,7 +28,7 @@ public class GameEntityNewEvent extends GameEvent {
      * 
      */
     private static final long serialVersionUID = -1223834507320730181L;
-    protected Vector<Entity> entities;
+    protected List<Entity> entities;
 
     /**
      * @param source
@@ -36,19 +37,19 @@ public class GameEntityNewEvent extends GameEvent {
     public GameEntityNewEvent(Object source, Entity entity) {
         super(source);
         entities = new Vector<Entity>();
-        entities.addElement(entity);
+        entities.add(entity);
     }
 
     /**
      * @param source
      * @param entities
      */
-    public GameEntityNewEvent(Object source, Vector<Entity> entities) {
+    public GameEntityNewEvent(Object source, List<Entity> entities) {
         super(source);
         this.entities = entities;
     }
 
-    public Vector<Entity> GetEntities() {
+    public List<Entity> GetEntities() {
         return entities;
     }
 

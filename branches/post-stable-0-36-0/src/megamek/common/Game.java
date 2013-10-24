@@ -1139,7 +1139,19 @@ public class Game implements Serializable, IGame {
         return entityIds.get(new Integer(id));
     }
 
-    public void addEntity(int id, Entity entity) {
+    public void addEntities(List<Integer> ids, List<Entity> entities){
+        assert(ids.size() == entities.size());
+        for (int i = 0; i < ids.size(); i++){
+            addEntity(ids.get(i),entities.get(i),false);
+        }
+        processGameEvent(new GameEntityNewEvent(this, entities));
+    }
+    
+    public void addEntity(int id, Entity entity){
+        addEntity(id,entity,true);
+    }
+    
+    public void addEntity(int id, Entity entity, boolean genEvent){
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1185,8 +1197,9 @@ public class Game implements Serializable, IGame {
         }
 
         assert (entities.size() == entityIds.size()) : "Add Entity failed";
-
-        processGameEvent(new GameEntityNewEvent(this, entity));
+        if (genEvent){
+            processGameEvent(new GameEntityNewEvent(this, entity));
+        }
     }
 
     public void setEntity(int id, Entity entity) {

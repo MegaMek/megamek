@@ -723,11 +723,27 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Sends an "add entity" packet
+     * Sends an "add entity" packet with only one Entity.
+     * 
+     * @param entity  The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        checkDuplicateNamesDuringAdd(entity);
-        send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
+        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        entities.add(entity);
+        sendAddEntity(entities);
+    }
+    
+    /**
+     * Sends an "add entity" packet that contains a collection of Entity 
+     * objections.
+     * 
+     * @param entities  The collection of Entity objects to add.
+     */
+    public void sendAddEntity(List<Entity> entities) {
+        for (Entity entity : entities){
+            checkDuplicateNamesDuringAdd(entity);
+        }
+        send(new Packet(Packet.COMMAND_ENTITY_ADD, entities));
     }
 
     /**
@@ -860,11 +876,11 @@ public class Client implements IClientCommandHandler {
     }
 
     protected void receiveEntityAdd(Packet packet) {
-        int entityId = packet.getIntValue(0);
-        Entity entity = (Entity) packet.getObject(1);
+        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+        List<Entity> entities = (List<Entity>) packet.getObject(1);
 
-        // Add the entity to the game.
-        game.addEntity(entityId, entity);
+        assert(entityIds.size() == entities.size());
+        game.addEntities(entityIds, entities);
     }
 
     protected void receiveEntityRemove(Packet packet) {

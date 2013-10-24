@@ -25478,136 +25478,141 @@ public class Server implements Runnable {
      * the list
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
-        final Entity entity = (Entity) c.getObject(0);
+        final List<Entity> entities = (List<Entity>) c.getObject(0);
+        ArrayList<Integer> entityIds = new ArrayList<Integer>(entities.size());
+        
+        for (final Entity entity : entities){
 
-        // Verify the entity's design
-        if (Server.entityVerifier == null) {
-            Server.entityVerifier = new EntityVerifier(new File(
-                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
-        }
-        // we can only test meks and vehicles right now
-        if ((entity instanceof Mech)
-                || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))) {
-            TestEntity testEntity = null;
-            entity.restore();
-            if (entity instanceof Mech) {
-                testEntity = new TestMech((Mech) entity,
-                        Server.entityVerifier.mechOption, null);
+            // Verify the entity's design
+            if (Server.entityVerifier == null) {
+                Server.entityVerifier = new EntityVerifier(new File(
+                        Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
             }
-            if (entity instanceof VTOL) {
-                testEntity = new TestTank((Tank) entity,
-                        Server.entityVerifier.tankOption, null);// not
-            }
-            // implemented
-            // yet.
-            if (entity instanceof Tank) {
-                testEntity = new TestTank((Tank) entity,
-                        Server.entityVerifier.tankOption, null);
-            }
-            StringBuffer sb = new StringBuffer();
-            if (testEntity.correctEntity(sb,
-                    !game.getOptions().booleanOption("is_eq_limits"))) {
-                entity.setDesignValid(true);
-            } else {
-                System.err.println(sb);
-                if (game.getOptions().booleanOption("allow_illegal_units")) {
-                    entity.setDesignValid(false);
+            // we can only test meks and vehicles right now
+            if ((entity instanceof Mech)
+                    || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))) {
+                TestEntity testEntity = null;
+                entity.restore();
+                if (entity instanceof Mech) {
+                    testEntity = new TestMech((Mech) entity,
+                            Server.entityVerifier.mechOption, null);
+                }
+                if (entity instanceof VTOL) {
+                    testEntity = new TestTank((Tank) entity,
+                            Server.entityVerifier.tankOption, null);// not
+                }
+                // implemented
+                // yet.
+                if (entity instanceof Tank) {
+                    testEntity = new TestTank((Tank) entity,
+                            Server.entityVerifier.tankOption, null);
+                }
+                StringBuffer sb = new StringBuffer();
+                if (testEntity.correctEntity(sb,
+                        !game.getOptions().booleanOption("is_eq_limits"))) {
+                    entity.setDesignValid(true);
                 } else {
-                    Player cheater = game.getPlayer(connIndex);
-                    sendServerChat("Player " + cheater.getName()
-                            + " attempted to add an illegal unit design ("
-                            + entity.getShortNameRaw()
-                            + "), the unit was rejected.");
-                    return;
+                    System.err.println(sb);
+                    if (game.getOptions().booleanOption("allow_illegal_units")) {
+                        entity.setDesignValid(false);
+                    } else {
+                        Player cheater = game.getPlayer(connIndex);
+                        sendServerChat("Player " + cheater.getName()
+                                + " attempted to add an illegal unit design ("
+                                + entity.getShortNameRaw()
+                                + "), the unit was rejected.");
+                        return;
+                    }
                 }
             }
-        }
-
-        // If we're adding a Protomech, calculate it's unit number.
-        if (entity instanceof Protomech) {
-
-            // How many Protomechs does the player already have?
-            int numPlayerProtos = game
-                    .getSelectedEntityCount(new EntitySelector() {
-                        private final int ownerId = entity.getOwnerId();
-
-                        public boolean accept(Entity entity) {
-                            if ((entity instanceof Protomech)
-                                    && (ownerId == entity.getOwnerId())) {
-                                return true;
+    
+            // If we're adding a Protomech, calculate it's unit number.
+            if (entity instanceof Protomech) {
+    
+                // How many Protomechs does the player already have?
+                int numPlayerProtos = game
+                        .getSelectedEntityCount(new EntitySelector() {
+                            private final int ownerId = entity.getOwnerId();
+    
+                            public boolean accept(Entity entity) {
+                                if ((entity instanceof Protomech)
+                                        && (ownerId == entity.getOwnerId())) {
+                                    return true;
+                                }
+                                return false;
                             }
-                            return false;
-                        }
-                    });
-
-            // According to page 54 of the BMRr, Protomechs must be
-            // deployed in full Points of five, unless circumstances have
-            // reduced the number to less that that.
-            entity.setUnitNumber((char) (numPlayerProtos / 5));
-
-        } // End added-Protomech
-
-        // Only assign an entity ID when the client hasn't.
-        if (Entity.NONE == entity.getId()) {
-            entity.setId(getFreeEntityId());
-        }
-
-        game.addEntity(entity.getId(), entity);
-
-        // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we do
-        // what we must.
-        // Its just too bad we have to loop over the entire entities array..
-        if (entity.hasC3() || entity.hasC3i()) {
-            boolean C3iSet = false;
-
-            for (Enumeration<Entity> entities = game.getEntities(); entities
-                    .hasMoreElements();) {
-                Entity e = entities.nextElement();
-
-                // C3 Checks
-                if (entity.hasC3()) {
-                    if ((entity.getC3MasterIsUUIDAsString() != null)
-                            && entity.getC3MasterIsUUIDAsString().equals(
-                                    e.getC3UUIDAsString())) {
-                        entity.setC3Master(e, false);
-                        entity.setC3MasterIsUUIDAsString(null);
-                    } else if ((e.getC3MasterIsUUIDAsString() != null)
-                            && e.getC3MasterIsUUIDAsString().equals(
-                                    entity.getC3UUIDAsString())) {
-                        e.setC3Master(entity, false);
-                        e.setC3MasterIsUUIDAsString(null);
-                        // Taharqa: we need to update the other entity for the
-                        // client
-                        // or it won't show up right. I am not sure if I like
-                        // the idea of updating other entities in this method,
-                        // but it
-                        // will work for now.
-                        entityUpdate(e.getId());
-                    }
-                }
-
-                // C3i Checks// C3i Checks
-                if (entity.hasC3i() && (C3iSet == false)) {
-                    entity.setC3NetIdSelf();
-                    int pos = 0;
-                    while (pos < Entity.MAX_C3i_NODES) {
-                        // We've found a network, join it.
-                        if ((entity.getC3iNextUUIDAsString(pos) != null)
-                                && (e.getC3UUIDAsString() != null)
-                                && entity.getC3iNextUUIDAsString(pos).equals(
+                        });
+    
+                // According to page 54 of the BMRr, Protomechs must be
+                // deployed in full Points of five, unless circumstances have
+                // reduced the number to less that that.
+                entity.setUnitNumber((char) (numPlayerProtos / 5));
+    
+            } // End added-Protomech
+    
+            // Only assign an entity ID when the client hasn't.
+            if (Entity.NONE == entity.getId()) {
+                entity.setId(getFreeEntityId());
+            }
+    
+            game.addEntity(entity.getId(), entity);
+    
+            // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we do
+            // what we must.
+            // Its just too bad we have to loop over the entire entities array..
+            if (entity.hasC3() || entity.hasC3i()) {
+                boolean C3iSet = false;
+    
+                for (Enumeration<Entity> gameEntities = game.getEntities(); 
+                        gameEntities.hasMoreElements();) {
+                    Entity e = gameEntities.nextElement();
+    
+                    // C3 Checks
+                    if (entity.hasC3()) {
+                        if ((entity.getC3MasterIsUUIDAsString() != null)
+                                && entity.getC3MasterIsUUIDAsString().equals(
                                         e.getC3UUIDAsString())) {
-                            entity.setC3NetId(e);
-                            C3iSet = true;
-                            break;
+                            entity.setC3Master(e, false);
+                            entity.setC3MasterIsUUIDAsString(null);
+                        } else if ((e.getC3MasterIsUUIDAsString() != null)
+                                && e.getC3MasterIsUUIDAsString().equals(
+                                        entity.getC3UUIDAsString())) {
+                            e.setC3Master(entity, false);
+                            e.setC3MasterIsUUIDAsString(null);
+                            // Taharqa: we need to update the other entity for the
+                            // client
+                            // or it won't show up right. I am not sure if I like
+                            // the idea of updating other entities in this method,
+                            // but it
+                            // will work for now.
+                            entityUpdate(e.getId());
                         }
-
-                        pos++;
+                    }
+    
+                    // C3i Checks// C3i Checks
+                    if (entity.hasC3i() && (C3iSet == false)) {
+                        entity.setC3NetIdSelf();
+                        int pos = 0;
+                        while (pos < Entity.MAX_C3i_NODES) {
+                            // We've found a network, join it.
+                            if ((entity.getC3iNextUUIDAsString(pos) != null)
+                                    && (e.getC3UUIDAsString() != null)
+                                    && entity.getC3iNextUUIDAsString(pos).equals(
+                                            e.getC3UUIDAsString())) {
+                                entity.setC3NetId(e);
+                                C3iSet = true;
+                                break;
+                            }
+    
+                            pos++;
+                        }
                     }
                 }
             }
+            entityIds.add(entity.getId());
         }
-
-        send(createAddEntityPacket(entity.getId()));
+        
+        send(createAddEntityPacket(entityIds));
     }
 
     /**
@@ -26339,14 +26344,22 @@ public class Server implements Runnable {
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
     }
 
+    private Packet createAddEntityPacket(int entityId) {
+        ArrayList<Integer> entityIds = new ArrayList<Integer>(1);
+        entityIds.add(entityId);
+        return createAddEntityPacket(entityIds);
+    }
     /**
      * Creates a packet detailing the addition of an entity
      */
-    private Packet createAddEntityPacket(int entityId) {
-        final Entity entity = game.getEntity(entityId);
+    private Packet createAddEntityPacket(List<Integer> entityIds) {
+        ArrayList<Entity> entities = new ArrayList<Entity>(entityIds.size());
+        for (Integer id : entityIds){
+            entities.add(game.getEntity(id));
+        }
         final Object[] data = new Object[2];
-        data[0] = new Integer(entityId);
-        data[1] = entity;
+        data[0] = entityIds;
+        data[1] = entities;
         return new Packet(Packet.COMMAND_ENTITY_ADD, data);
     }
 
@@ -26769,7 +26782,6 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_UPDATE:
                 receiveEntityUpdate(packet, connId);
                 resetPlayersDone();
-                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_ENTITY_LOAD:
                 receiveEntityLoad(packet, connId);

@@ -25,6 +25,9 @@ v0.36.0 post-stable
 + Bug [#3618]:  Matched input/output stream buffers to socket receive/send buffer
 + Bug: When handling a COMMAND_ENTITY_ADD packet, the server was calling 
     transmitAllPlayerDones twice, which was causing superfluous overhead
++ Bug [#3618]: Updates to the code for adding multiple entities, see SF bug 
+    ticket for details.  After these changes, adding 200 mechs in the chat 
+    lounge goes from ~65s to ~15s.
 
 v0.35.44-dev (0.36.0 Release Candidate 4)
 + Width and height for MechSelectorDialog and GameOptions are now saved

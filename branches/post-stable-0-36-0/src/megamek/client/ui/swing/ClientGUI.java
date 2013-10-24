@@ -1243,9 +1243,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     entity.setOwner(player);
                     if (reinforce) {
                     	entity.setDeployRound(client.game.getRoundCount()+1);
-                    }
-                    client.sendAddEntity(entity);
+                    }                    
                 }
+                client.sendAddEntity(loadedUnits);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$

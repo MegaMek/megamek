@@ -245,7 +245,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public List<Image> orthoFor(IHex hex) {
         return hexTileset.getOrtho(hex, comp);
     }
-    
+
     public Image getMinefieldSign() {
         return minefieldSign;
     }
@@ -553,6 +553,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         tracker = new MediaTracker(comp);
         mechImageList.clear();
+        mechImages.clear();
         hexTileset.reset();
     }
 

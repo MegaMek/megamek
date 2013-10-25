@@ -2688,6 +2688,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(butRemoveBot)) {
             butRemoveBot.setEnabled(false);
             Client c = getPlayerSelected();

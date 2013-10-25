@@ -1732,7 +1732,9 @@ KeyListener, ItemListener, ListSelectionListener {
     }
 
     public void valueChanged(ListSelectionEvent event) {
-
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(clientgui.mechD.wPan.weaponList) &&
                 (clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING)) {
             // If we aren't in the firing phase, there's no guarantee that cen

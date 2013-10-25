@@ -55,6 +55,10 @@ public class MechSummary implements Serializable {
     private int totalArmor;
     private int totalInternal;
     private int cockpitType;
+    private String engineName;
+    private int gyroType;
+    private String myomerName;
+    
 
     /** Stores the type of internal structure on this unit **/
     private int internalsType;
@@ -315,9 +319,9 @@ public class MechSummary implements Serializable {
         equipmentQuantities = new Vector<Integer>(mountedList.size());
         for (Mounted mnt : mountedList)
         {
-            String eqName = mnt.getType().getName();
+            String eqName = mnt.getType().getInternalName();
             int index = equipmentNames.indexOf(eqName);
-            if (index == -1){ //We aven't seen this piece of equipment before
+            if (index == -1){ //We haven't seen this piece of equipment before
                 equipmentNames.add(eqName);
                 equipmentQuantities.add(1);
             }else{ //We've seen this before, update count
@@ -387,6 +391,30 @@ public class MechSummary implements Serializable {
         return cockpitType;
     }
 
+
+    public String getEngineName() {
+        return engineName;
+    }
+
+    public void setEngineName(String engineName) {
+        this.engineName = engineName;
+    }
+
+    public int getGyroType() {
+        return gyroType;
+    }
+
+    public void setGyroType(int gyroType) {
+        this.gyroType = gyroType;
+    }
+
+    public String getMyomerName() {
+        return myomerName;
+    }
+
+    public void setMyomerName(String myomerName) {
+        this.myomerName = myomerName;
+    }
 
     @Override
     public boolean equals(Object other) {

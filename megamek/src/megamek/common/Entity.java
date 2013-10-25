@@ -375,9 +375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean carcass = false;
 
     /**
-     * The components of this entity that can transport other entities. TODO: we
-     * should really redesign these transports to carry entity ids rather than
-     * entities for quicker connections between server and client
+     * The components of this entity that can transport other entities. 
      */
     private Vector<Transporter> transports = new Vector<Transporter>();
 
@@ -585,7 +583,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // is calculated by getArmorTonnage
     protected double armorTonnage;
 
-    protected static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
+    protected static int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE = { 0, 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE_ENHANCED = { 0, 3, 3, 5, 7, 11, 13, 13, 13 };
 
     // MASCLevel is the # of turns MASC has been used previously
     protected int nMASCLevel = 0;
@@ -11606,7 +11606,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMASCTarget() {
-        return MASC_FAILURE[nMASCLevel] + 1;
+    	if (game.getOptions().booleanOption("alternate_masc_enhanced")) {
+    		return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
+    	} else if (game.getOptions().booleanOption("alternate_masc")) {
+    		return ALTERNATE_MASC_FAILURE[nMASCLevel];
+    	} else {
+    		return MASC_FAILURE[nMASCLevel];
+    	}
     }
 
     /**

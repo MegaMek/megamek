@@ -415,6 +415,25 @@ public class MechSummaryCache {
                 ms.setLevel("F");
             }
         }
+        
+        ms.setGyroType(e.getGyroType());
+        if (e.getEngine() != null){
+            ms.setEngineName(e.getEngine().getEngineName());
+        } else {
+            ms.setEngineName("None");
+        }
+            
+        if (e instanceof Mech){
+            if (((Mech)e).hasTSM()) {
+                ms.setMyomerName("Triple-Strength");
+            } else if (((Mech)e).hasIndustrialTSM()) {
+                ms.setMyomerName("Industrial Triple-Strength");
+            } else {
+                ms.setMyomerName("Standard");
+            }
+        } else {
+            ms.setMyomerName("None");
+        }
         return ms;
     }
 

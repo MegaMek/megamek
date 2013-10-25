@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -431,6 +432,16 @@ public abstract class AbstractConnection implements IConnection {
         return socket.getOutputStream();
     }
 
+    
+    protected int getSendBufferSize() throws SocketException{
+        return socket.getSendBufferSize();
+    }
+    
+    
+    protected int getReceiveBufferSize() throws SocketException{
+        return socket.getReceiveBufferSize();
+    }
+        
     /**
      * checks if there is anything to send or receive and sends or receives that
      * stuff. Should not block and will not flush the actual socket, just the

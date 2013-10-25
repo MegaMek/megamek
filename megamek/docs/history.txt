@@ -1,6 +1,34 @@
 VERSION HISTORY:
 ----------------
 v0.37.0-dev (SVN)
++ Bug: Fixed some issues with the path planner.  First, for the candidate list, 
+  I changed the ArrayList to a PriorityQueue.  There was also a bug where every 
+  256 iterations it would check to see if the current path was better than the 
+  currently saved best path and if it wasn't it would end.  This is an 
+  assumption that doesn't always hold and basically resulted in the A* 
+  path-planner halting prematurely.  If the A* path-planner didn't reach the 
+  goal, the path is finished with a straight-line planner.  Fixing this allows 
+  the A* planner to work for longer and hence find much better paths 
+  (although it's still has a maximu time limit).
++ Feature: Added engine name, gyro type and myomer name to MechSummary and set 
+  these values when the summaries are created
++ Added a tool to create a CSV of MechSummaries for all units in the data files, 
+  excluding infantry.  This was requested by Hammer for some MekHQ data work.
++ Bug [#3848]: ImageCache.get uses expensive operations
++ Patch: MaxTech Movement Modifiers & Unofficial MASC Options
++ Bug: The ImageCache max size check was using == instead of >=
++ Bug: MechSummary and AdvancedSearch were using EquipmentType.getName() instead
+    of getInternalName()
++ Enabled the MechEditorDialog for post-stable branch
++ Removed ImageCache maximum size
++ Bug: Board.setHex - shouldn't adust min/max elev if they are undefined
++ Bug [#3618]:  Matched input/output stream buffers to socket receive/send buffer
++ Bug: When handling a COMMAND_ENTITY_ADD packet, the server was calling 
+    transmitAllPlayerDones twice, which was causing superfluous overhead
++ Bug [#3618]: Updates to the code for adding multiple entities, see SF bug 
+    ticket for details.  After these changes, adding 200 mechs in the chat 
+    lounge goes from ~65s to ~15s.
++ Bug [#3893]: ChatLounge 'Delete All' button is very slow. 
 + Removed AWT and 3d interfaces, they were old and unmaintained
 + Bug: PPC capacitor has wrong explosive BV penalty
 
@@ -147,6 +175,7 @@ v0.35.42 (0.36.0 Release Candidate 2) (2013-20-09, 21:50 UTC-5)
 + Bug: Game year not taken into account for Unit Selector Dialog
 + MechEditorDialog for editing entity damage in the chat lounge - disabled for the stable
 + Bug: Timestamp mismatch code was supposed to allow a 90 second variance but was accidentally only 90ms
+
 
 v0.35.41 (0.36.0 Release Candidate 1) (2013-04-09, 00:16 UTC+2)
 + Bug: Fix to my Double Blind message fix.

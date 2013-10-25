@@ -597,10 +597,9 @@ public class Infantry extends Entity {
         double dbv;
 
         dbv = men * 1.5 * getDamageDivisor();
-        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false)
+        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
                 .getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
-                true, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false, game).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         double tmmFactor = 1 + (targetMovementModifier / 10);
         if(hasDEST()) {

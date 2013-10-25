@@ -30,8 +30,8 @@ public class GameEntityRemoveEvent extends GameEntityEvent {
      * @param source
      * @param entity
      */
-    public GameEntityRemoveEvent(Object source, Entity entity) {
-        super(source, entity);
+    public GameEntityRemoveEvent(Object source) {
+        super(source);
     }
 
 	@Override
@@ -43,4 +43,8 @@ public class GameEntityRemoveEvent extends GameEntityEvent {
 	public String getEventName() {
 		return "Entity Remove";
 	}
+	
+	public Entity getEntity() {
+        return null;
+    }
 }

@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColors;
 
 /**
  * This class defines a single server report. It holds information such as the

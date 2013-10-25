@@ -1555,8 +1555,8 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true, true);
     }
-    
-    /** 
+
+    /**
      * Returns the name of the heat sinks mounted on this 'mech.
      * @return
      */
@@ -3140,6 +3140,9 @@ public abstract class Mech extends Entity {
                 } else {
                     continue;
                 }
+            }
+            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                toSubtract = 1;
             }
 
             // don't count oneshot ammo

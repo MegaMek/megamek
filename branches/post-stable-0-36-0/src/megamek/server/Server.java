@@ -59,7 +59,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.MegaMek;
-import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -1162,7 +1162,7 @@ public class Server implements Runnable {
             }
             getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
-            
+
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
             xstream.toXML(game,gzo);

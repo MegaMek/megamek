@@ -31,6 +31,7 @@ v0.37.0-dev (SVN)
 + Bug [#3893]: ChatLounge 'Delete All' button is very slow. 
 + Removed AWT and 3d interfaces, they were old and unmaintained
 + Bug: PPC capacitor has wrong explosive BV penalty
++ Bug [#3303]: Round Report Change? (Squad vs Platoon killed)
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

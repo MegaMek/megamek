@@ -99,7 +99,7 @@
     <target name="localdev-init" depends="checkOSMac, checkOSWindows, checkOSUNIX">
 		<tstamp />
 		<delete dir="${localdir}" />
-		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>
+		<input message="Please enter version number (eg. 0.36.0):" addproperty="version"/>
 		<property name="osxdist" value="${project.name}-${version}-mac" />
 		<property name="windist" value="${project.name}-${version}-windows" />
 		<property name="nixdist" value="${project.name}-${version}" />

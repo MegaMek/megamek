@@ -33,7 +33,7 @@
 	<property name="svnbuilddir" value="${svndir}/${builddir}" />
 
 	<!-- svnroot used for svn authentification -->
-	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/trunk/megamek" />
+	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/branches/rel-0-36-0" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
 	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />
@@ -102,7 +102,7 @@
 	<target name="svndev-init" depends="checkOSMac, checkOSWindows, checkOSUNIX">
 		<tstamp />
 		<delete dir="${svndir}" />
-		<input message="Please enter version number (eg. 0.34.0):" addproperty="version" />
+		<input message="Please enter version number (eg. 0.36.0):" addproperty="version" />
 		<property name="osxdist" value="${project.name}-${version}-mac" />
 		<property name="windist" value="${project.name}-${version}-windows" />
 		<property name="nixdist" value="${project.name}-${version}" />

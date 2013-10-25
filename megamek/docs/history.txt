@@ -32,6 +32,8 @@ v0.37.0-dev (SVN)
 + Removed AWT and 3d interfaces, they were old and unmaintained
 + Bug: PPC capacitor has wrong explosive BV penalty
 + Bug [#3303]: Round Report Change? (Squad vs Platoon killed)
++ Bug [#3817]: ListSelectionModels can fire multiple ListSelectionEvent for one 
+    selection change
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

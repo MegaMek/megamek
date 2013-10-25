@@ -831,6 +831,9 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
 
     public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(lisTerrain)) {
             refreshTerrainFromList();
         }

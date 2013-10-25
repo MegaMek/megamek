@@ -1262,6 +1262,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
             // update target data in weapon display
             updateTarget();

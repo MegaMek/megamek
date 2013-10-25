@@ -120,6 +120,9 @@ public class MechGroupView extends JDialog implements ActionListener,
     }
 
     public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(entities)) {
             int selected = entities.getSelectedIndex();
             if (selected == -1) {

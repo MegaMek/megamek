@@ -526,6 +526,9 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         if (event.getSource().equals(keys)) {
             value.setText(GUIPreferences.getInstance().getString(
                     "Advanced" + keys.getSelectedValue()));

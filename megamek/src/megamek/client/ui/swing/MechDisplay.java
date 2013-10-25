@@ -2817,6 +2817,9 @@ public class MechDisplay extends JPanel {
         }
 
         public void valueChanged(ListSelectionEvent event) {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
             if (event.getSource().equals(unitList)) {
                 if (null != getSelectedEntity()) {
                     en = getSelectedEntity();

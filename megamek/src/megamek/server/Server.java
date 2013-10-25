@@ -19656,7 +19656,11 @@ public class Server implements Runnable {
                         if (isPlatoon) {
                             // Infantry have only one section, and
                             // are therefore destroyed.
-                            r.messageId = 6105;
+                            if (((Infantry)te).getSquadN() == 1){
+                                r.messageId = 6106; // Squad Killed
+                            } else { 
+                                r.messageId = 6105; // Platoon Killed
+                            }
                         } else if (isBattleArmor) {
                             r.messageId = 6110;
                         } else {

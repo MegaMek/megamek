@@ -723,11 +723,27 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Sends an "add entity" packet
+     * Sends an "add entity" packet with only one Entity.
+     * 
+     * @param entity  The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        checkDuplicateNamesDuringAdd(entity);
-        send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
+        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        entities.add(entity);
+        sendAddEntity(entities);
+    }
+    
+    /**
+     * Sends an "add entity" packet that contains a collection of Entity 
+     * objections.
+     * 
+     * @param entities  The collection of Entity objects to add.
+     */
+    public void sendAddEntity(List<Entity> entities) {
+        for (Entity entity : entities){
+            checkDuplicateNamesDuringAdd(entity);
+        }
+        send(new Packet(Packet.COMMAND_ENTITY_ADD, entities));
     }
 
     /**
@@ -771,8 +787,14 @@ public class Client implements IClientCommandHandler {
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int id) {
-        checkDuplicateNamesDuringDelete(id);
-        send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
+        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ids.add(id);
+        sendDeleteEntities(ids);
+    }
+    
+    public void sendDeleteEntities(List<Integer> ids) {
+        checkDuplicateNamesDuringDelete(ids);
+        send(new Packet(Packet.COMMAND_ENTITY_REMOVE, ids));
     }
 
     /**
@@ -860,18 +882,21 @@ public class Client implements IClientCommandHandler {
     }
 
     protected void receiveEntityAdd(Packet packet) {
-        int entityId = packet.getIntValue(0);
-        Entity entity = (Entity) packet.getObject(1);
+        @SuppressWarnings("unchecked")
+        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+        @SuppressWarnings("unchecked")
+        List<Entity> entities = (List<Entity>) packet.getObject(1);
 
-        // Add the entity to the game.
-        game.addEntity(entityId, entity);
+        assert(entityIds.size() == entities.size());
+        game.addEntities(entityIds, entities);
     }
 
     protected void receiveEntityRemove(Packet packet) {
-        int entityId = packet.getIntValue(0);
+        @SuppressWarnings("unchecked")
+        List<Integer> entityIds = (List<Integer>)packet.getObject(0);
         int condition = packet.getIntValue(1);
-        // Move the unit to its final resting place.
-        game.removeEntity(entityId, condition);
+        // Move the unit to its final resting place.        
+        game.removeEntities(entityIds, condition);
     }
 
     protected void receiveEntityVisibilityIndicator(Packet packet) {
@@ -1382,35 +1407,57 @@ public class Client implements IClientCommandHandler {
 
     /**
      * If we remove an entity, we may need to update the duplicate identifier.
-     * TODO: This function is super slow :(
      *
      * @param id
      */
-    private void checkDuplicateNamesDuringDelete(int id) {
-        Entity entity = game.getEntity(id);
-        if (entity == null) {
-            return;
+    private void checkDuplicateNamesDuringDelete(List<Integer> ids) {        
+        ArrayList<Entity> myEntities = game.getPlayerEntities(
+                game.getPlayer(local_pn), false);        
+        Hashtable<String,ArrayList<Integer>> rawNameToId = 
+                new Hashtable<String,ArrayList<Integer>>(
+                        (int)(myEntities.size()*1.26));
+        
+        for (Entity e : myEntities){
+            String rawName = e.getShortNameRaw();
+            ArrayList<Integer> namedIds = rawNameToId.get(rawName);
+            if (namedIds == null){
+                namedIds = new ArrayList<Integer>();                
+            }
+            namedIds.add(e.getId());
+            rawNameToId.put(rawName, namedIds);
         }
-        Object o = duplicateNameHash.get(entity.getShortNameRaw());
-        if (o != null) {
-            int count = ((Integer) o).intValue();
-            if (count > 1) {
-                ArrayList<Entity> myEntities = game.getPlayerEntities(
-                        game.getPlayer(local_pn), false);
-                for (int i = 0; i < myEntities.size(); i++) {
-                    Entity e = myEntities.get(i);
-                    if (e.getShortNameRaw().equals(entity.getShortNameRaw())
-                            && (e.duplicateMarker > entity.duplicateMarker)) {
+        
+        for (int id : ids)
+        {
+            Entity removedEntity = game.getEntity(id);
+            if (removedEntity == null) {
+                continue;
+            }
+            
+            String removedRawName = removedEntity.getShortNameRaw();            
+            Integer count = 
+                    duplicateNameHash.get(removedEntity.getShortNameRaw());
+            if (count != null && count > 1) {                
+                ArrayList<Integer> namedIds = rawNameToId.get(removedRawName);
+                for (Integer i : namedIds) {
+                    Entity e = game.getEntity(i);
+                    String eRawName = e.getShortNameRaw();
+                    if (eRawName.equals(removedRawName) && 
+                            (e.duplicateMarker > removedEntity.duplicateMarker)) {
                         e.duplicateMarker--;
                         e.generateShortName();
                         e.generateDisplayName();
-                        sendUpdateEntity(e);
+                        // Update the Entity, unless it's going to be deleted
+                        if (!ids.contains(e.getId())){
+                            sendUpdateEntity(e);
+                        }
                     }
                 }
-                duplicateNameHash.put(entity.getShortNameRaw(), new Integer(
+                duplicateNameHash.put(removedEntity.getShortNameRaw(), new Integer(
                         count - 1));
-            } else {
-                duplicateNameHash.remove(entity.getShortNameRaw());
+            
+            } else if (count != null){
+                duplicateNameHash.remove(removedEntity.getShortNameRaw());
             }
         }
     }

@@ -679,11 +679,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         }else if (ev.getSource().equals(btnAdd)){
             int row = tblEquipment.getSelectedRow();
             if (row >= 0){
-                String name = (String)
-                    tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
+                String internalName = (String)
+                        tblEquipment.getModel().getValueAt(
+                                tblEquipment.convertRowIndexToModel(row), 
+                                EquipmentTableModel.COL_INTERNAL_NAME);
+                String fullName = (String)
+                        tblEquipment.getValueAt(
+                                row, EquipmentTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
                     tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(name,qty));
+                filterToks.add(new EquipmentFT(internalName,fullName,qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -691,11 +696,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             }
             row = tblWeapons.getSelectedRow();
             if (row >= 0){
-                String name = (String)
-                    tblWeapons.getValueAt(row, EquipmentTableModel.COL_NAME);
+                String internalName = (String)
+                        tblWeapons.getModel().getValueAt(
+                                tblWeapons.convertRowIndexToModel(row), 
+                                WeaponsTableModel.COL_INTERNAL_NAME);
+                String fullName = (String)
+                        tblWeapons.getValueAt(
+                                row, WeaponsTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
-                    tblWeapons.getValueAt(row, EquipmentTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(name,qty));
+                    tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
+                filterToks.add(new EquipmentFT(internalName,fullName,qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -1042,9 +1052,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         private final static int COL_MED = 5;
         private final static int COL_LONG = 6;
         private final static int COL_IS_CLAN = 7;
-        private final static int COL_LEVEL = 8;
+        private final static int COL_LEVEL = 8;  
         private final static int N_COL = 9;
-
+        private final static int COL_INTERNAL_NAME = 9;
+        
+                
         private int[] qty;
 
         private Vector<WeaponType> weapons = new Vector<WeaponType>();
@@ -1134,6 +1146,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
                 return wp.getLongRange();
             case COL_LEVEL:
                 return TechConstants.getLevelName(wp.getTechLevel(gameYear));
+            case COL_INTERNAL_NAME:
+                return wp.getInternalName();
             default:
                 return "?";
             }
@@ -1166,8 +1180,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         private final static int COL_NAME = 1;
         private final static int COL_COST = 2;
         private final static int COL_IS_CLAN = 3;
-        private final static int COL_LEVEL = 4;
+        private final static int COL_LEVEL = 4;                
         private final static int N_COL = 5;
+        private final static int COL_INTERNAL_NAME = 5;
 
         private int[] qty;
         private Vector<EquipmentType> equipment = new Vector<EquipmentType>();
@@ -1241,6 +1256,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
                 return eq.getRawCost();
             case COL_LEVEL:
                 return TechConstants.getLevelName(eq.getTechLevel(gameYear));
+            case COL_INTERNAL_NAME:
+                return eq.getInternalName();
             default:
                 return "?";
             }
@@ -1316,19 +1333,21 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
      *
      */
     public class EquipmentFT extends FilterTokens{
-        public String name;
+        public String internalName;
+        public String fullName;
         public int qty;
         
-        public EquipmentFT(String n, int q){
-            name = n;
+        public EquipmentFT(String in, String fn, int q){
+            internalName = in;
+            fullName = fn;
             qty = q;
         }
         
         public String toString(){
             if (qty == 1)
-                return qty + " " + name;
+                return qty + " " + fullName;
             else
-                return qty + " " + name + "s";
+                return qty + " " + fullName + "s";
         }
     }
     

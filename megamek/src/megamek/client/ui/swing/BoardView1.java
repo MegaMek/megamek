@@ -270,7 +270,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Image, Image> scaledImageCache = new ImageCache<Image, Image>();
+    private ImageCache<Image, Image> scaledImageCache =  
+            new ImageCache<Image, Image>();
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();

@@ -580,7 +580,32 @@ public interface IGame {
      */
     public abstract Entity getEntity(int id);
 
-    public abstract void addEntity(int id, Entity entity);
+    /**
+     * Adds a collection of new Entities.  Only one GameEntityNewEvent is 
+     * created for the whole list.
+     * 
+     * @param ids  A collection of ids for each Entity to be added.
+     * @param entities  The Entity objects to be added.
+     */
+    public abstract void addEntities(List<Integer> ids, List<Entity> entities);
+    
+    /**
+     * Adds a new Entity to this Game object.
+     * 
+     * @param id        The id of the Entity to be added.
+     * @param entity    The Entity to add.
+     * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is 
+     *                  generated.
+     */
+    public abstract void addEntity(int id, Entity entity, boolean genEvent);
+    
+    /**
+     * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
+     * 
+     * @param id  The id of the Entity to be added.
+     * @param entity The Entity to add.
+     **/
+    public void addEntity(int id, Entity entity);
 
     public abstract void setEntity(int id, Entity entity);
 
@@ -601,7 +626,11 @@ public interface IGame {
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
+    public abstract void removeEntity(int id, int condition, boolean genEvent);
+    
     public abstract void removeEntity(int id, int condition);
+    
+    public abstract void removeEntities(List<Integer> ids, int condition);
 
     /**
      * Resets this game by removing all entities.

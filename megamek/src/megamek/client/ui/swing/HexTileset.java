@@ -331,13 +331,6 @@ public class HexTileset {
 
     }
 
-    /**
-     * Loads the image for this hex.
-     */
-    public void loadHexImage(IHex hex, Component comp, MediaTracker tracker) {
-
-    }
-
     public synchronized void reset() {
         hexToImageCache = new ImageCache<IHex, Image>();
         hexToImageListCache = new ImageCache<IHex, List<Image>>();

@@ -72,7 +72,7 @@ class DataStreamConnection extends AbstractConnection {
         NetworkPacket packet = null;
         if (in == null) {
             in = new DataInputStream(new BufferedInputStream(getInputStream(),
-                    1024));
+                    getReceiveBufferSize()));
             state = PacketReadState.Header;
         }
 
@@ -108,7 +108,7 @@ class DataStreamConnection extends AbstractConnection {
             throws Exception {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
-                    getOutputStream()));
+                    getOutputStream(),getSendBufferSize()));
             // out.flush(); thsi should be unnecessary?
         }
 

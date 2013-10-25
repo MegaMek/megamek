@@ -191,7 +191,7 @@ public class MechSearchFilter {
           }
           AdvancedSearchDialog.EquipmentFT ft = 
               (AdvancedSearchDialog.EquipmentFT)filterTok;
-          ExpNode newChild = new ExpNode(ft.name,ft.qty);
+          ExpNode newChild = new ExpNode(ft.internalName,ft.qty);
           currNode.children.add(newChild);
           return createFTFromTokensRecursively(toks,currNode);
           

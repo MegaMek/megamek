@@ -395,28 +395,33 @@ WindowListener, TreeSelectionListener {
 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(m_bOK)) {
+            ArrayList<Entity> entities = new ArrayList<Entity>(
+                    armyModel.getAllUnits().size());
+            Client c = null;
+            if (m_chPlayer.getSelectedIndex() > 0) {
+                String name = (String) m_chPlayer.getSelectedItem();
+                c = m_clientgui.getBots().get(name);
+            }
+            if (c == null) {
+                c = m_client;
+            }
             for (MechSummary ms : armyModel.getAllUnits()) {
                 try {
-                    Entity e = new MechFileParser(ms.getSourceFile(), ms
-                            .getEntryName()).getEntity();
-                    Client c = null;
-                    if (m_chPlayer.getSelectedIndex() > 0) {
-                        String name = (String) m_chPlayer.getSelectedItem();
-                        c = m_clientgui.getBots().get(name);
-                    }
-                    if (c == null) {
-                        c = m_client;
-                    }
+                    Entity e = new MechFileParser(ms.getSourceFile(), 
+                            ms.getEntryName()).getEntity();
+  
                     autoSetSkillsAndName(e);
                     e.setOwner(c.getLocalPlayer());
-                    c.sendAddEntity(e);
+                    entities.add(e);
                 } catch (EntityLoadingException ex) {
-                    System.out
-                    .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    System.out.println("Unable to load mech: " + //$NON-NLS-1$ 
+                            ms.getSourceFile() + ": " + ms.getEntryName() + //$NON-NLS-1$
+                            ": " + ex.getMessage()); //$NON-NLS-1$ 
                     ex.printStackTrace();
                     return;
                 }
             }
+            c.sendAddEntity(entities);
             armyModel.clearData();
             unitsModel.clearData();
             setVisible(false);

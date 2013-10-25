@@ -1243,9 +1243,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     entity.setOwner(player);
                     if (reinforce) {
                     	entity.setDeployRound(client.game.getRoundCount()+1);
-                    }
-                    client.sendAddEntity(entity);
+                    }                    
                 }
+                client.sendAddEntity(loadedUnits);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1262,13 +1262,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void deleteAllUnits(Client c) {
     	ArrayList<Entity> currentUnits = c.game.getPlayerEntities(
                 c.getLocalPlayer(), false);
-
-        // Walk through the vector, deleting the entities.
-        Iterator<Entity> entities = currentUnits.iterator();
-        while (entities.hasNext()) {
-            final Entity entity = entities.next();
-            c.sendDeleteEntity(entity.getId());
-        }
+    	ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
+    	for (Entity e : currentUnits){
+    	    ids.add(e.getId());
+    	}
+    	c.sendDeleteEntities(ids);        
     }
 
     /**

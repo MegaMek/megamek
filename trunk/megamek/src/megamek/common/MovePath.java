@@ -17,12 +17,12 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -785,7 +785,8 @@ public class MovePath implements Cloneable, Serializable {
      *            the maximum <code>int</code> number of milliseconds to take
      *            hunting for an ideal path.
      */
-    private void notSoLazyPathfinder(final Coords dest, final MoveStepType type, final int timeLimit) {
+    private void notSoLazyPathfinder(final Coords dest, final MoveStepType type, 
+            final int timeLimit) {
         final long endTime = System.currentTimeMillis() + timeLimit;
 
         MoveStepType step = type;
@@ -793,63 +794,76 @@ public class MovePath implements Cloneable, Serializable {
             step = MoveStepType.FORWARDS;
         }
 
-        final MovePathComparator mpc = new MovePathComparator(dest, step == MovePath.MoveStepType.BACKWARDS);
+        final MovePathComparator mpc = 
+                new MovePathComparator(dest, step == MoveStepType.BACKWARDS);
 
         MovePath bestPath = clone();
 
-        final HashMap<MovePath.Key, MovePath> discovered = new HashMap<MovePath.Key, MovePath>();
+        // A collection of paths we have already explored
+        final HashMap<MovePath.Key, MovePath> discovered = 
+                new HashMap<MovePath.Key, MovePath>();
         discovered.put(bestPath.getKey(), bestPath);
 
-        final ArrayList<MovePath> candidates = new ArrayList<MovePath>();
+        // A collection of hte possible next-moves
+        final PriorityQueue<MovePath> candidates = 
+                new PriorityQueue<MovePath>(110,mpc);
         candidates.add(bestPath);
 
         boolean keepLooping = getFinalCoords().distance(dest) > 1;
         int loopcount = 0;
 
+        // Keep looping while we have candidates to explore, and certain stop
+        //  conditions aren't met (time-limit, destination found, etc)
         while ((candidates.size() > 0) && keepLooping) {
-            final MovePath candidatePath = candidates.remove(0);
+            final MovePath candidatePath = candidates.poll();
             final Coords startingPos = candidatePath.getFinalCoords();
             final int startingElev = candidatePath.getFinalElevation();
 
-            if (candidatePath.getFinalCoords().distance(dest) == 1) {
+            // Check to see if we have found the destination
+            if (candidatePath.getFinalCoords().distance(dest) == 0) {
                 bestPath = candidatePath;
                 keepLooping = false;
                 break;
             }
-
-            final Iterator<MovePath> adjacent = candidatePath.getNextMoves(step == MoveStepType.BACKWARDS,
-                    step == MoveStepType.FORWARDS).iterator();
+            
+            // Get next possible steps
+            final Iterator<MovePath> adjacent = 
+                    candidatePath.getNextMoves(step == MoveStepType.BACKWARDS,
+                        step == MoveStepType.FORWARDS).iterator();
+            // Evaluate possible next steps
             while (adjacent.hasNext()) {
                 final MovePath expandedPath = adjacent.next();
 
-                if (expandedPath.getLastStep().isMovementPossible(game, startingPos, startingElev)) {
-                    final MovePath found = discovered.get(expandedPath.getKey());
-                    if ((found != null) && (mpc.compare(found, expandedPath) <= 0)) {
+                if (expandedPath.getLastStep().isMovementPossible(game,
+                        startingPos, startingElev)) {
+
+                    if (discovered.containsKey(expandedPath.getKey())){
                         continue;
                     }
-                    int index = Collections.<MovePath> binarySearch(candidates, expandedPath, mpc);
-                    if (index < 0) {
-                        index = -index - 1;
-                    }
-                    candidates.add(index, expandedPath);
+                    candidates.add(expandedPath);
                     discovered.put(expandedPath.getKey(), expandedPath);
+                    // Make sure the candidate list doesn't get too big
                     if (candidates.size() > 100) {
                         candidates.remove(candidates.size() - 1);
                     }
                 }
             }
             loopcount++;
-            if ((loopcount % 256 == 0) && keepLooping && (candidates.size() > 0)) {
-                final MovePath front = candidates.get(0);
-                if (front.getFinalCoords().distance(dest) < bestPath.getFinalCoords().distance(dest)) {
+            if ((loopcount % 256 == 0) && keepLooping
+                    && (candidates.size() > 0)) {
+                final MovePath front = candidates.peek();
+                if (front.getFinalCoords().distance(dest) < bestPath
+                        .getFinalCoords().distance(dest)) {
                     bestPath = front;
-                    keepLooping = System.currentTimeMillis() < endTime;
-                } else {
-                    keepLooping = false;
+                    if (System.currentTimeMillis() > endTime){
+                        keepLooping = false;
+                        System.out.println("Time limit reached searching " +
+                                "for path!");
+                    }
                 }
             }
         } // end while
-
+        System.out.println("iteration count: " + loopcount);
         if (getFinalCoords().distance(dest) > bestPath.getFinalCoords().distance(dest)) {
             // Make the path we found, this path.
             steps = bestPath.steps;

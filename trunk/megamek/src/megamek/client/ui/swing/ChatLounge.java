@@ -3475,14 +3475,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled(isOwner || isBot);
                     menuItem.setMnemonic(KeyEvent.VK_C);
                     popup.add(menuItem);
-                    /*
-                     * FIXME: commented out for the stable 36
+                    
                     menuItem = new JMenuItem("Edit Damage...");
                     menuItem.setActionCommand("DAMAGE");
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
-                    */
+                    
                     menuItem = new JMenuItem("Set individual camo");
                     menuItem.setActionCommand("INDI_CAMO");
                     menuItem.addActionListener(this);

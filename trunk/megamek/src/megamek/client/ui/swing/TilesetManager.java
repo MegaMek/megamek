@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.ui.ITilesetManager;
+import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
@@ -333,8 +334,17 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         loaded = false;
         IBoard board = game.getBoard();
         // pre-match all hexes with images, load hex images
-        for (int y = 0; y < board.getHeight(); y++) {
-            for (int x = 0; x < board.getWidth(); x++) {
+        int width = board.getWidth();
+        int height = board.getHeight();
+        // We want to cache as many of the images as we can, but if we have 
+        //  more images than cache size, lets not waste time
+        if (width*height > ImageCache.MAX_SIZE){
+            // Find the largest size by size square we can fit in the cache
+            int max_dim = (int)Math.sqrt(ImageCache.MAX_SIZE);
+            width = height = max_dim;
+        }
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 IHex hex = board.getHex(x, y);
                 loadHexImage(hex);
             }

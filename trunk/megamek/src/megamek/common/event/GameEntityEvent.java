@@ -32,6 +32,11 @@ public abstract class GameEntityEvent extends GameEvent {
     private static final long serialVersionUID = -2152420685366625391L;
     protected Entity entity;
 
+    public GameEntityEvent(Object source) {
+        super(source);
+        this.entity = null;
+    }
+    
     /**
      * Constructs new GameEntityEvent
      * 

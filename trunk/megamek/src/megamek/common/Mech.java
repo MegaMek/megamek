@@ -3331,8 +3331,7 @@ public abstract class Mech extends Entity {
         if (hasMPReducingHardenedArmor()) {
             runMP--;
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false)
-                .getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false, game).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -3361,8 +3360,7 @@ public abstract class Mech extends Entity {
         // use UMU for JJ, unless we have more jump MP than UMU (then we have
         // mechanical jumpboosters)
         int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false, true));
-        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true,
-                false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true, false, game).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);
 

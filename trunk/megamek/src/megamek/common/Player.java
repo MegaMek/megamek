@@ -65,7 +65,8 @@ public final class Player extends TurnOrdered {
     private int num_mf_active = 0;
     private int num_mf_inferno = 0;
 
-    //now I need to actually keep a vector of minefields because more information is needed than just the number
+    // now I need to actually keep a vector of minefields because more
+    // information is needed than just the number
 
     // hexes that are automatically hit by artillery
     private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
@@ -127,7 +128,8 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0) || (num_mf_active > 0) || (num_mf_inferno > 0);
+        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0)
+                || (num_mf_active > 0) || (num_mf_inferno > 0);
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -326,8 +328,8 @@ public final class Player extends TurnOrdered {
     public Vector<Coords> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
-    
-    public void addArtyAutoHitHex(Coords c){
+
+    public void addArtyAutoHitHex(Coords c) {
         artyAutoHitHexes.add(c);
     }
 
@@ -364,7 +366,8 @@ public final class Player extends TurnOrdered {
 
         while (survivors.hasMoreElements()) {
             Entity entity = survivors.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !entity.isTrapped()) {
+            if (entity.getOwner().equals(this) && !entity.isDestroyed()
+                    && !entity.isTrapped()) {
                 bv += entity.calculateBattleValue();
             }
         }
@@ -374,6 +377,7 @@ public final class Player extends TurnOrdered {
     /**
      * get the total BV (unmodified by force size mod) for the units of this
      * player that have fled the field
+     *
      * @return the BV
      */
     public int getFledBV() {
@@ -428,17 +432,18 @@ public final class Player extends TurnOrdered {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption("tacops_mobile_hqs")
-                        && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
-                            bonusHQ = entity.getHQIniBonus();
+                        && (entity.getHQIniBonus() > bonusHQ)) {
+                    bonusHQ = entity.getHQIniBonus();
                 }
                 if (game.getOptions().booleanOption("manei_domini")
-                        && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
-                            bonusMD = entity.getMDIniBonus();
+                        && (entity.getMDIniBonus() > bonusMD)) {
+                    bonusMD = entity.getMDIniBonus();
                 }
-                if(entity.getQuirkIniBonus() > bonusQ) {
-                    //TODO: I am assuming that the quirk initiative bonuses go to the highest,
-                    //rather than being cumulative
-                    //http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
+                if (entity.getQuirkIniBonus() > bonusQ) {
+                    // TODO: I am assuming that the quirk initiative bonuses go
+                    // to the highest,
+                    // rather than being cumulative
+                    // http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
                     bonusQ = entity.getQuirkIniBonus();
                 }
             }
@@ -447,8 +452,8 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * @return the bonus to this player's initiative rolls for
-     * the highest value initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for the highest value
+     *         initiative (i.e. the 'commander')
      */
     public int getCommandBonus() {
         int commandb = 0;
@@ -456,10 +461,8 @@ public final class Player extends TurnOrdered {
             for (Entity entity : game.getEntitiesVector()) {
                 if ((null != entity.getOwner())
                         && entity.getOwner().equals(this)
-                        && !entity.isDestroyed()
-                        && entity.isDeployed()
-                        && !entity.isOffBoard()
-                        && entity.getCrew().isActive()
+                        && !entity.isDestroyed() && entity.isDeployed()
+                        && !entity.isOffBoard() && entity.getCrew().isActive()
                         && !entity.isCaptured()
                         && !(entity instanceof MechWarrior)) {
                     if (entity.getCrew().getCommandBonus() > commandb) {
@@ -473,18 +476,18 @@ public final class Player extends TurnOrdered {
 
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
+     *
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
 
-        //a vector of unit ids
+        // a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();
-        for(Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if(((entity instanceof VTOL)
-                                || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
-                                            (!entity.isDestroyed()) &&
-                                            (entity.getElevation() > 0)) {
+                if (((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.WIGE))
+                        && (!entity.isDestroyed())
+                        && (entity.getElevation() > 0)) {
                     units.add(entity.getId());
                 }
             }

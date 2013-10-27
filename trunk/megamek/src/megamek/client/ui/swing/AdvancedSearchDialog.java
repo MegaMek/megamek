@@ -564,9 +564,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
         pack();
         setResizable(false);
-        setLocation((frame.getLocation().x + (frame.getSize().width / 2)) - (getSize().width / 2), 
-                    (frame.getLocation().y + (frame.getSize().height / 2)) - (getSize().height / 2));
-                
+        int x = Math.max(0,
+                (frame.getLocation().x + (frame.getSize().width / 2)) - 
+                (getSize().width / 2));
+        int y = Math.max(0,
+                (frame.getLocation().y + (frame.getSize().height / 2)) - 
+                (getSize().height / 2));
+        setLocation(x, y);                
     }
     
     

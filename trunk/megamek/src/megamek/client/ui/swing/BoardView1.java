@@ -2810,28 +2810,50 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = src;
         ai.targetPos = dest;
-        // Flag for whether we should use height 1 or 0.  
         // First, we check for a selected unit and use its height.  If there's
         //  no selected mech we use the mechInFirst GUIPref.
-        boolean mechInFirst;
         if (selectedEntity != null){
-            mechInFirst = selectedEntity instanceof Mech;
+            ai.attackHeight = selectedEntity.getHeight();
+            ai.attackAbsHeight = selectedEntity.absHeight() + 
+                    selectedEntity.elevationOccupied(game.getBoard().getHex(src));  
+            EntityMovementMode movementMode = selectedEntity.getMovementMode();
+            // We will have double counted elevation for VTOL and WIGE movement
+            if (movementMode == EntityMovementMode.VTOL || 
+                    movementMode == EntityMovementMode.WIGE){
+                ai.attackAbsHeight -= selectedEntity.getElevation();
+            }
         } else {
-            mechInFirst = GUIPreferences.getInstance().getMechInFirst();
+            ai.attackHeight = GUIPreferences.getInstance().getMechInFirst() ? 
+                    1 : 0;
+            ai.attackAbsHeight = 
+                    game.getBoard().getHex(src).surface() + ai.attackHeight;
         }
-        // Flag for whether we should use height 1 or 0.  
         // First, we take the tallest unit in the destination hex, if no units
-        //  are present we use the mechInSecond GUIPref.
-        boolean mechInSecond = false;
+        //  are present we use the mechInSecond GUIPref.       
         Enumeration<Entity> destEntities = game.getEntities(dest);
-        while (destEntities.hasMoreElements()){
-            mechInSecond |= (destEntities.nextElement() instanceof Mech);
+        ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
+        while (destEntities.hasMoreElements()){            
+            Entity ent = destEntities.nextElement();
+            int attAbsheight = ent.absHeight() + 
+                    ent.elevationOccupied(game.getBoard().getHex(src));
+            EntityMovementMode movementMode = ent.getMovementMode();
+            // We will have double counted elevation for VTOL and WIGE movement
+            if (movementMode == EntityMovementMode.VTOL || 
+                    movementMode == EntityMovementMode.WIGE){
+                attAbsheight -= ent.getElevation();
+            }
+            if (attAbsheight > ai.targetAbsHeight){
+                ai.targetHeight = ent.getHeight();
+                ai.targetAbsHeight = attAbsheight;
+            }
         }
-        mechInSecond |= GUIPreferences.getInstance().getMechInSecond();
-        ai.attackHeight = mechInFirst ? 1 : 0;
-        ai.targetHeight = mechInSecond ? 1 : 0;
-        ai.attackAbsHeight = game.getBoard().getHex(src).floor() + ai.attackHeight;
-        ai.targetAbsHeight = game.getBoard().getHex(dest).floor() + ai.targetHeight;
+        if (ai.targetHeight == Integer.MIN_VALUE && 
+                ai.targetAbsHeight == Integer.MIN_VALUE){
+            ai.targetHeight = GUIPreferences.getInstance().getMechInSecond() ? 
+                    1 : 0;        
+            ai.targetAbsHeight = 
+                    game.getBoard().getHex(dest).surface() + ai.targetHeight;
+        }                
         return LosEffects.calculateLos(game, ai);
     }
 

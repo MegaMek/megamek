@@ -76,6 +76,7 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -195,7 +196,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     Dimension hex_size = null;
 
-    private Font font_note = FONT_10;
+    //private Font font_note = FONT_10;
     private Font font_hexnum = FONT_10;
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
@@ -429,8 +430,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             private static final long serialVersionUID = -7302042484036200465L;
 
             public void actionPerformed(ActionEvent e) {
-                // FIXME: Doesn't work right because selected entity is not
-                // always current.
                 if (selectedEntity != null) {
                     centerOnHex(selectedEntity.getPosition());
                 }
@@ -802,6 +801,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if ((en_Deployer != null) && !useIsometric()) {
             drawDeployment(g);
         }
+        
+        // Shade hexes that don't have LOS.  This is done in darwHex for 
+        // isometric.  It needs to be done here for non-iso
+        if (!useIsometric() && 
+                GUIPreferences.getInstance().getBoolean("FovDarken")){
+            drawLos(selected != null ? selected : selectedEntity.getPosition(),g);
+        }
 
         // draw C3 links
         drawSprites(g, c3Sprites);
@@ -992,30 +998,218 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
+        IBoard board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                drawDeploymentForHex(c, g);
+                if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
+                    drawBorderForHex(c, g, Color.yellow);
+                }
             }
-        }
+        }   
+    }
+    
+    /**
+     * Darkens a hexes in the viewing area if there is no line of sight 
+     * between them and the supplied source hex.  Used in non-isometric view.
+     *  
+     * @param src   The source hex for which line of sight originates
+     * @param g     The graphics object to draw on.
+     */
+    private void drawLos(Coords src, Graphics g) {
+        Rectangle view = g.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        // loop through the hexes
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {
+                Coords c = new Coords(j + drawX, i + drawY);
+                if (game.getBoard().contains(c)){
+                    drawLos(src,c,g);
+                }
+            }
+        }   
     }
 
-    private void drawDeploymentForHex(Coords c, Graphics g) {
-        IBoard board = game.getBoard();
-        Point p = getHexLocation(c);
+    
+    /**
+     * Darkens a destination hex if there is no line of sight between it and a
+     * source hex.
+     *  
+     * @param src   The source hex for which line of sight originates
+     * @param dest  The destination hex for computing the line of sight
+     * @param g     The graphics object to draw on.
+     */
+    private void drawLos(Coords src, Coords dest, Graphics g){
+        int max_dist;
+        if (src == null || dest == null){
+            return;
+        }
+        if (selectedEntity != null){
+            max_dist = game.getPlanetaryConditions().
+                    getVisualRange(selectedEntity, false);
+        } else {
+            max_dist = 30;
+        }
+        int dist = src.distance(dest);
+        Color transparent_gray = new Color(0,0,0,100);
+        if (dist <= max_dist && !(getLosEffects(src, dest).canSee())){
+            drawHexLayer(dest, g, transparent_gray);
+        }        
+    }
 
-        if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
-            g.setColor(Color.yellow);
-            int[] xcoords = { p.x + (int) (21 * scale),
-                    p.x + (int) (62 * scale), p.x + (int) (83 * scale),
-                    p.x + (int) (83 * scale), p.x + (int) (62 * scale),
-                    p.x + (int) (21 * scale), p.x, p.x };
-            int[] ycoords = { p.y, p.y, p.y + (int) (35 * scale),
-                    p.y + (int) (36 * scale), p.y + (int) (71 * scale),
-                    p.y + (int) (71 * scale), p.y + (int) (36 * scale),
-                    p.y + (int) (35 * scale) };
+    /**
+     * Draw a layer of a solid color (alpha possible) on the hex at Coords c
+     * no padding by default
+     */
+    private void drawHexLayer(Coords c, Graphics g, Color col) {
+    	drawHexLayer(c,g,col,0);
+    }
+    
+    /**
+     * Draw an outline around the hex at Coords c
+     * no padding and a width of 1
+     */
+    private void drawHexLayer(Coords c, Graphics g, Color col, double pad) {
+        Point p = getHexLocation(c);
+        g.setColor(col);
+
+    	final double a = 0.5;
+        final double b = 0.8660254;
+        
+        double pd = pad*scale;
+        
+    	final double[] x = {0, 21*scale, 62*scale, 83*scale};
+    	final double[] y = {0, 35*scale, 36*scale, 71*scale};
+        
+        int[] xcoords = {
+    		p.x + (int)(x[1] + a*pd),
+    		p.x + (int)(x[2] - a*pd),
+    		p.x + (int)(x[3] - pd),
+    		p.x + (int)(x[3] - pd),
+    		p.x + (int)(x[2] - a*pd),
+    		p.x + (int)(x[1] + a*pd),
+    		p.x + (int)(x[0] + pd),
+    		p.x + (int)(x[0] + pd)
+        };
+        int[] ycoords = {
+    		p.y + (int)(y[0] + b*pd),
+    		p.y + (int)(y[0] + b*pd),
+    		p.y + (int)(y[1]),
+    		p.y + (int)(y[2]),
+    		p.y + (int)(y[3] - b*pd),
+    		p.y + (int)(y[3] - b*pd),
+    		p.y + (int)(y[2]),
+    		p.y + (int)(y[1])
+        };
+        g.fillPolygon(xcoords, ycoords, 8);
+    }
+    
+    /**
+     * Draw an outline around the hex at Coords c
+     * no padding and a width of 1
+     */
+    private void drawBorderForHex(Coords c, Graphics g, Color col) {
+    	drawBorderForHex(c,g,col,0);
+    }
+    
+    /**
+     * Draw an outline around the hex at Coords c
+     * padded around the border by pad and a line-width of 1
+     */
+    private void drawBorderForHex(Coords c, Graphics g, Color col, double pad) {
+    	drawBorderForHex(c,g,col,0,1);
+    }
+    
+    /**
+     * Draw a thick outline around the hex at Coords c
+     * padded around the border by pad and a line-width of linewidth
+     */
+    private void drawBorderForHex(Coords c, Graphics g, Color col, double pad, double linewidth) {
+        Point p = getHexLocation(c);
+        g.setColor(col);
+        
+    	final double a = 0.5;
+        final double b = 0.8660254;
+        
+        double pd = pad*scale;
+        
+    	final double[] x = {0., 21.*scale, 62.*scale, 83.*scale};
+    	final double[] y = {0., 35.*scale, 36.*scale, 71.*scale};
+        
+        if (linewidth < 1.5)
+        {
+	        int[] xcoords = {
+        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[3] - pd),
+        		p.x + (int)(x[3] - pd),
+        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[0] + pd),
+        		p.x + (int)(x[0] + pd)
+	        };
+	        int[] ycoords = {
+        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[1]),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[1])
+            };
             g.drawPolygon(xcoords, ycoords, 8);
+        } else {
+        	double pl = pd + linewidth*scale;
+	        int[] xcoords = {
+        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[3] - pd),
+        		p.x + (int)(x[3] - pd),
+        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[0] + pd),
+        		p.x + (int)(x[0] + pd),
+        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[1] + a*pl),
+        		p.x + (int)(x[0] + pl),
+        		p.x + (int)(x[0] + pl),
+        		p.x + (int)(x[1] + a*pl),
+        		p.x + (int)(x[2] - a*pl),
+        		p.x + (int)(x[3] - pl),
+        		p.x + (int)(x[3] - pl),
+        		p.x + (int)(x[2] - a*pl),
+        		p.x + (int)(x[1] + a*pl)
+	        };
+	        int[] ycoords = {
+        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[1]),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[1]),
+        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[0] + b*pl),
+        		p.y + (int)(y[1]),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[3] - b*pl),
+        		p.y + (int)(y[3] - b*pl),
+        		p.y + (int)(y[2]),
+        		p.y + (int)(y[1]),
+        		p.y + (int)(y[0] + b*pl),
+        		p.y + (int)(y[0] + b*pl)
+	        };
+	        
+	        g.fillPolygon(xcoords, ycoords, 18);
         }
     }
 
@@ -1293,7 +1487,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
                             if (en_Deployer != null) {
-                                drawDeploymentForHex(c, g);
+                                drawBorderForHex(c, g, Color.yellow);
                             }
                         }
                     }
@@ -1551,6 +1745,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             boardGraph.setColor(Color.black);
+        }
+        
+        // We do this here for isometric view so the layering is done properly
+        //  If we do it here without iso, the shading doesn't display properly
+        if (useIsometric() && 
+                GUIPreferences.getInstance().getBoolean("FovDarken")){
+            drawLos(selected != null ? selected : selectedEntity.getPosition(), 
+                    c, boardGraph);
         }
     }
 
@@ -2595,6 +2797,42 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Messages.getString("BoardView1.LOSTitle"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    /**
+     * Calculate the LosEffects between the given Coords.  Unit height for the
+     * source hex is determined by the selectedEntity if present otherwise the
+     * GUIPreference 'mechInFirst' is used.  Unit height for the destination hex
+     * is determined by the tallest unit present in that hex.  If no units are
+     * present, the GUIPreference 'mechInSecond' is used.  
+     */
+    protected LosEffects getLosEffects(Coords src, Coords dest) {
+        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+        ai.attackPos = src;
+        ai.targetPos = dest;
+        // Flag for whether we should use height 1 or 0.  
+        // First, we check for a selected unit and use its height.  If there's
+        //  no selected mech we use the mechInFirst GUIPref.
+        boolean mechInFirst;
+        if (selectedEntity != null){
+            mechInFirst = selectedEntity instanceof Mech;
+        } else {
+            mechInFirst = GUIPreferences.getInstance().getMechInFirst();
+        }
+        // Flag for whether we should use height 1 or 0.  
+        // First, we take the tallest unit in the destination hex, if no units
+        //  are present we use the mechInSecond GUIPref.
+        boolean mechInSecond = false;
+        Enumeration<Entity> destEntities = game.getEntities(dest);
+        while (destEntities.hasMoreElements()){
+            mechInSecond |= (destEntities.nextElement() instanceof Mech);
+        }
+        mechInSecond |= GUIPreferences.getInstance().getMechInSecond();
+        ai.attackHeight = mechInFirst ? 1 : 0;
+        ai.targetHeight = mechInSecond ? 1 : 0;
+        ai.attackAbsHeight = game.getBoard().getHex(src).floor() + ai.attackHeight;
+        ai.targetAbsHeight = game.getBoard().getHex(dest).floor() + ai.targetHeight;
+        return LosEffects.calculateLos(game, ai);
     }
 
     /**
@@ -3869,7 +4107,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // Determine if the entity has a locked turret,
                 // and if it is a gun emplacement
                 boolean turretLocked = false;
-                boolean turretJammed = false;
+                //boolean turretJammed = false;
                 int crewStunned = 0;
                 boolean ge = false;
                 if (entity instanceof Tank) {
@@ -6197,6 +6435,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
+    public synchronized void selectEntity(Entity e){
+        selectedEntity = e;
+        // If we don't do this, the selectedWeapon might not correspond to this
+        //  entity
+        selectedWeapon = null;
+    }
+    
     public synchronized void weaponSelected(MechDisplayEvent b) {
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();

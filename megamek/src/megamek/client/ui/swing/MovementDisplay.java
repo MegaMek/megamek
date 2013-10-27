@@ -1612,9 +1612,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
             if (!b.getCoords().equals(currPosition)
-                    || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
+                    || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {                
                 clientgui.getBoardView().cursor(b.getCoords());
-
                 // either turn or move
                 if (ce != null) {
                     currentMove(b.getCoords());
@@ -1624,7 +1623,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce(), cmd);
-            clientgui.getBoardView().select(b.getCoords());
+            if (!shiftheld){
+                clientgui.getBoardView().select(b.getCoords());
+            }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
 

@@ -21449,11 +21449,7 @@ public class Server implements Runnable {
                         r.subject = t.getId();
                         vDesc.add(r);
                         t.immobilize();
-                        // Don't bother to crash if we're already
-                        // destroyed otherwise.
-                        if (!(t.isDestroyed() || t.isDoomed())) {
-                            vDesc.addAll(crashVTOLorWiGE(t, true));
-                        }
+                        vDesc.addAll(crashVTOLorWiGE(t, true));
                     }
                     break;
                 case VTOL.CRIT_FLIGHT_STABILIZER:

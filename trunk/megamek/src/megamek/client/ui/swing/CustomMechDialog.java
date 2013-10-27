@@ -922,8 +922,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     }
                 }
             }
-            int dist = Math.min(Math.max(entity.getOffBoardDistance(), 17),
-                    maxDistance);
+            //int dist = Math.min(Math.max(entity.getOffBoardDistance(), 17),
+            //        maxDistance);
             Slider sl = new Slider(
                     clientgui.frame,
                     Messages.getString("CustomMechDialog.offboardDistanceTitle"),

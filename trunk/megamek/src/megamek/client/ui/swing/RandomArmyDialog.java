@@ -84,7 +84,7 @@ WindowListener, TreeSelectionListener {
     private JComboBox m_chType = new JComboBox();
 
     private JTree m_treeRAT = new JTree();
-    private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
+    //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pParameters = new JPanel();

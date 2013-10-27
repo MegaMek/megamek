@@ -4,6 +4,7 @@ v0.36.1-dev (SVN)
 + Bug: PPC capacitor has wrong explosive BV penalty
 + Bug: init bonuses from mobile hq not working correct with multiple mobile HQs
 + Bug [#3896]: Protomechs get 'stuck' in buildings
++ change default year to 3145
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

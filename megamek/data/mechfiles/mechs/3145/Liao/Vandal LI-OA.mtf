@@ -2,7 +2,7 @@ Version:1.1
 Vandal
 LI-OA
 
-Config:Biped
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3142
 Source:TRO 3145 CC
@@ -16,6 +16,7 @@ Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
 
 Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:4
 
@@ -70,6 +71,7 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
+Life Support
 Jump Jet
 Jump Jet
 Supercharger
@@ -77,22 +79,21 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-Life Support
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
+Life Support
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Jump Jet
 Jump Jet
 SRM 4
 IS Ammo SRM-4
 ISCASEII
-Life Support
--Empty-
--Empty-
--Empty-
 
 Center Torso:
 Fusion Engine

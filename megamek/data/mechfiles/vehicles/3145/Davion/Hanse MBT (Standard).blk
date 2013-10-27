@@ -56,6 +56,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+ISSponsonTurret
 Supercharger
 ISCASE
 IS Ammo LAC/5
@@ -63,6 +64,8 @@ IS Ammo LAC/5
 ISPlasmaRifleAmmo
 ISPlasmaRifleAmmo
 IS Light Machine Gun Ammo - Half
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
 </Body Equipment>
 
 <Front Equipment>
@@ -74,13 +77,11 @@ Light Auto Cannon/5
 <Right Equipment>
 Light Machine Gun(ST)
 Light Machine Gun(ST)
-ISSponsonTurret
 </Right Equipment>
 
 <Left Equipment>
 Light Machine Gun(ST)
 Light Machine Gun(ST)
-ISSponsonTurret
 </Left Equipment>
 
 <Rear Equipment>

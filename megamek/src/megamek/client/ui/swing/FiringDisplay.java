@@ -1378,7 +1378,9 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            clientgui.getBoardView().select(b.getCoords());
+            if (!shiftheld){
+                clientgui.getBoardView().select(b.getCoords());
+            }
         }
     }
 

@@ -542,7 +542,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
-        clientgui.getBoardView().select(moveto);
+        if (!shiftheld){
+            clientgui.getBoardView().select(moveto);
+        }
     }
 
     //

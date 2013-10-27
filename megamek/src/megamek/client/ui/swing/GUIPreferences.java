@@ -82,6 +82,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
+    public static final String FOV_DARKEN = "FovDarken";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -197,6 +198,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
+        store.setDefault(FOV_DARKEN,true);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -298,6 +300,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public int getGameOptionsSizeWidth(){
         return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
+    }
+    
+    public boolean getFovDarken(){
+        return store.getBoolean(FOV_DARKEN);
     }
 
     public Color getMapTextColor() {
@@ -584,6 +590,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setGameOptionsSizeWidth(int i){
         store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
+    }
+    
+    public void setFovDarken(boolean state){
+        store.setValue(FOV_DARKEN,state);
     }
 
     public void setMapZoomIndex(int zoomIndex) {

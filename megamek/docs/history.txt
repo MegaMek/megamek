@@ -35,7 +35,9 @@ v0.37.0-dev (SVN)
 + Bug [#3817]: ListSelectionModels can fire multiple ListSelectionEvent for one 
     selection change
 + Bug: init bonuses from mobile hq not working correct with multiple mobile HQs
-+ Feature [#1142] "Field of View" tool
++ Feature [#1142] "Field of View" tool (thanks Johann)
++ Bug: Added some code to prevent the AdvancedSearchDialog from opening off 
+    screen.  Also removed an unused state variable in GameOptionsDialog.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

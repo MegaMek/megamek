@@ -89,8 +89,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private JFrame currentFrame;
-
     /**
      * Initialize this dialog.
      *
@@ -99,8 +97,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      */
     private void init(JFrame frame, GameOptions options){
         this.options = options;
-        currentFrame = frame;
-
+        
         setupButtons();
         setupPassword();
         JPanel mainPanel = new JPanel(new GridBagLayout());

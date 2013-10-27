@@ -6065,7 +6065,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Check for changing levels within a building
-        if (curPos.equals(prevPos) && (null != curBldg) &&
+        if (curPos.equals(prevPos) && (curBldg != null) && (prevStep != null) &&
                 (step.getElevation() != prevStep.getElevation()) &&
                     ((step.getType() == MoveStepType.UP) ||
                      (step.getType() == MoveStepType.DOWN))){

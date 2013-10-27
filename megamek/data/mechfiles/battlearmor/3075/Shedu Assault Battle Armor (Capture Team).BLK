@@ -33,7 +33,9 @@ quad
 15
 </Armor>
 <Squad Equipment>
+ISDetachableWeaponPack
 ISBATaser:DWP
+ISDetachableWeaponPack
 ISBATaser:DWP
 ISMagshotGR
 </Squad Equipment>

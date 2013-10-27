@@ -9,4 +9,4 @@ Locust LCT-1V,5
 Wasp WSP-3A,4
 Stinger IIC 2,3
 Mongoose MON-66b,2
-Stinger IIC,1
+Stinger IIC (Standard),1

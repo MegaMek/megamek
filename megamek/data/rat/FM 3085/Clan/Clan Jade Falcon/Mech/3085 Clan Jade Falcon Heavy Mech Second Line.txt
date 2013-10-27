@@ -2,7 +2,7 @@
 Matador 2,1
 Rifleman IIC 8,2
 Rifleman C,3
-Thunderbolt IIC,4
+Thunderbolt IIC (Standard),4
 Rifleman IIC 5,5
 Thunderbolt C,6
 Warhammer C,5

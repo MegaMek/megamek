@@ -34,8 +34,8 @@ biped
 13
 </Armor>
 <Squad Equipment>
+ISDetachableWeaponPack
 ISSVSPL:DWP
-BABasicManipulator
 BABasicManipulator
 BAAPMount
 </Squad Equipment>

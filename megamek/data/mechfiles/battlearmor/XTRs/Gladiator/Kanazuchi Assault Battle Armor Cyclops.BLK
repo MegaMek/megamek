@@ -34,8 +34,6 @@ biped
 ClDetachableWeaponPack
 CLERMediumPulseLaser:DWP:Body
 BAHeavyBattleClaw
-BAHeavyBattleClaw
-BAAPMount:Body
 BAAPMount:Body
 </Squad Equipment>
 <type>

@@ -5494,7 +5494,6 @@ public class Server implements Runnable {
             // ok, now lets cycle through the entities in this spot and
             // potentially
             // damage them
-            // TODO: check for watery death
             for (Enumeration<Entity> e = game.getEntities(hitCoords); e
                     .hasMoreElements();) {
                 Entity victim = e.nextElement();
@@ -5620,7 +5619,8 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if (entity instanceof Dropship){
+            if (entity instanceof Dropship && 
+                    !h.containsTerrain(Terrains.WATER)){
                 h.setElevation(crateredElevation);
             }
             sendChangedHex(hitCoords);
@@ -5641,6 +5641,24 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(destroyEntity(entity,
                         "impossible displacement", entity instanceof Mech,
                         entity instanceof Mech));
+            }
+        }
+        
+        // Check for watery death
+        IHex h = game.getBoard().getHex(c);
+        if (h.containsTerrain(Terrains.WATER) && 
+                !entity.isDestroyed() && !entity.isDoomed()){
+            int lethalDepth;
+            if (entity instanceof Dropship){
+                lethalDepth = 2;
+            } else {
+                lethalDepth = 1;
+            }
+            
+            if (h.depth() >= lethalDepth){
+                // Oh snap... we is dead
+                vReport.addAll(destroyEntity(entity, 
+                        "crashing into deep water", true, true));
             }
         }
 

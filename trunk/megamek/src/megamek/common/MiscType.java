@@ -5039,7 +5039,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.introDate = 3050;
         misc.techLevel.put(3050, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_D, RATING_D, RATING_D };
+        misc.availRating = new int[] { RATING_F, RATING_F, RATING_D };
         misc.cost = 28500;
 
         return misc;
@@ -5064,7 +5064,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_C;
-        misc.availRating = new int[] { RATING_F, RATING_F, RATING_D };
+        misc.availRating = new int[] { RATING_E, RATING_F, RATING_D };
 
         return misc;
     }

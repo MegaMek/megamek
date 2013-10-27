@@ -54,6 +54,7 @@ public class CLSniper extends ArtilleryWeapon {
         cost = 300000;
         techRating = RATING_B;
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        introDate = 2800;
     }
 
 }

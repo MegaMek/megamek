@@ -54,6 +54,7 @@ public class ISThumper extends ArtilleryWeapon {
         cost = 187500;
         techRating = RATING_B;
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        introDate = 1950;
 
     }
 

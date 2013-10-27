@@ -33,9 +33,10 @@ quad
 15
 </Armor>
 <Squad Equipment>
+ISDetachableWeaponPack
 ISSupportPPC
 ISSupportPPC
-ISHeavyMG:DWP
+ISBAHeavyMG:DWP
 </Squad Equipment>
 <type>
 IS Level 2

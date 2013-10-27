@@ -8,7 +8,7 @@ Union (2708), 6
 Intruder (2655), 5
 Overlord (2762), 4
 Excalibur (2786), 3
-Vengeance (2782), 2
+Vengeance (2682), 2
 Achilles (2582), 1
 ##Version 1 - May 2011
 ##From RUS Files

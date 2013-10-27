@@ -57,7 +57,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         introDate = 2600;
         techLevel.put(2600, techLevel.get(3071));
         extinctDate = 2830;
-        reintroDate = 3044;
+        reintroDate = 3045;
 
     }
 

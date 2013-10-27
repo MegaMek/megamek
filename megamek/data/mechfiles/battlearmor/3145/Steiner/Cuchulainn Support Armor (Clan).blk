@@ -37,8 +37,10 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
+CLDetachableWeaponPack
 Improved Stealth
 CLERMediumPulseLaser:DWP
+BABasicManipulator
 </Squad Equipment>
 
 <source>

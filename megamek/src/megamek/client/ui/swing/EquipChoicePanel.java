@@ -510,7 +510,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         vTypes.add(atCheck);
                     }
                 }
-                if ((vTypes.size() < 2)
+                if ((vTypes.size() < 1)
                         && !client.game.getOptions().booleanOption(
                                 "lobby_ammo_dump")
                         && !client.game.getOptions()

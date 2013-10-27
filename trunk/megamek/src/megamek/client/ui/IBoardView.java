@@ -133,5 +133,11 @@ public interface IBoardView extends MechDisplayListener {
     public abstract void processBoardViewEvent(BoardViewEvent event);
 
     public abstract Image getEntireBoardImage();
+    
+    /**
+     * Sets the BoardView's currently selected entity.
+     * @param e
+     */
+    public abstract void selectEntity(Entity e);
 
 }

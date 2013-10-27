@@ -104,7 +104,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
+    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$    
+    public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken"; //$NON-NLS-1$
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -633,6 +634,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.zoomOut();
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
             GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
+        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
+            GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getBoolean("FovDarken"));
+            bv.refreshDisplayables();
         }
     }
 
@@ -1589,6 +1593,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
+        bv.selectEntity(client.game.getEntity(selectedEntityNum));
     }
 
     public RandomArmyDialog getRandomArmyDialog() {

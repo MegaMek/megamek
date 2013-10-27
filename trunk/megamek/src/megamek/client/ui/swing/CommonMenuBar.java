@@ -82,6 +82,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
     private JMenuItem toggleIsometric;
+    private JMenuItem toggleFovDarken;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -342,7 +343,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                 .getString("CommonMenuBar.viewToggleIsometric")); //$NON-NLS-1$
         toggleIsometric.addActionListener(this);
         toggleIsometric.setActionCommand(ClientGUI.VIEW_TOGGLE_ISOMETRIC);
-        menu.add(toggleIsometric);
+        menu.add(toggleIsometric);        
+        toggleFovDarken = new JMenuItem(Messages
+                .getString("CommonMenuBar.viewToggleFovDarken")); //$NON-NLS-1$
+        toggleFovDarken.addActionListener(this);
+        toggleFovDarken.setActionCommand(ClientGUI.VIEW_TOGGLE_FOV_DARKEN);
+        toggleFovDarken.setToolTipText(Messages
+                .getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
+        menu.add(toggleFovDarken);
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$

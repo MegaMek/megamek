@@ -41,6 +41,8 @@ v0.37.0-dev (SVN)
 + Bug [#3894]: Shots Assigned Not Always Present
 + Bug [#3896]: Protomechs get 'stuck' in buildings
 + Bug [#3885]: VTOLs that have their rotors blown off don't take crash damage
++ Bug [#3898]: Crashing Dropships only reduce elevation by 1, crashing Aeros 
+    reduce elevation
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

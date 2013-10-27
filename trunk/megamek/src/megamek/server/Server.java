@@ -5387,7 +5387,7 @@ public class Server implements Runnable {
 
     private boolean checkCrash(Entity entity, Coords pos, int altitude) {
 
-        // only Aeros can crach
+        // only Aeros can crash
         if (!(entity instanceof Aero)) {
             return false;
         }
@@ -5437,7 +5437,7 @@ public class Server implements Runnable {
         // checks for all of them
         ArrayList<Coords> coords = new ArrayList<Coords>();
         coords.add(c);
-        int crateredElevation = game.getBoard().getHex(c).getElevation() - 1;
+        int crateredElevation = game.getBoard().getHex(c).getElevation() - 2;
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
@@ -5620,10 +5620,10 @@ public class Server implements Runnable {
                     }
                 }
             }
-            h.setElevation(crateredElevation);
+            if (entity instanceof Dropship){
+                h.setElevation(crateredElevation);
+            }
             sendChangedHex(hitCoords);
-
-
         }
 
         // check for a stacking violation - which should only happen in the

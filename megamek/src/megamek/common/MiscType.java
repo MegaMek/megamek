@@ -2862,7 +2862,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAAdvancedArmor() {
         MiscType misc = new MiscType();
 
@@ -2880,7 +2880,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAFireResistantArmor() {
         MiscType misc = new MiscType();
 
@@ -2918,7 +2918,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBasicStealth() {
         MiscType misc = new MiscType();
 
@@ -7376,6 +7376,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISDroneExtra");
         misc.tonnage = 0;
         misc.cost = 0;
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT)
                 .or(F_AERO_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_E,
@@ -7394,6 +7395,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLDroneExtra");
         misc.tonnage = 0;
         misc.cost = 0;
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT)
                 .or(F_AERO_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_E,

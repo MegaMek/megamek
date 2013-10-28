@@ -5437,15 +5437,37 @@ public class Server implements Runnable {
         // checks for all of them
         ArrayList<Coords> coords = new ArrayList<Coords>();
         coords.add(c);
-        int crateredElevation = game.getBoard().getHex(c).getElevation() - 2;
+        IHex h = game.getBoard().getHex(c);
+        int crateredElevation;
+        boolean containsWater = false;
+        if (h.containsTerrain(Terrains.WATER)){
+            crateredElevation = Math.min(2, h.depth() + 1);
+            containsWater = true;
+        } else {
+            crateredElevation = h.getElevation() - 2; 
+        }
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
+                if (!game.getBoard().contains(c)){
+                    continue;
+                }
                 IHex adjHex = game.getBoard().getHex(adjCoords);
                 coords.add(adjCoords);
-                if (adjHex.getElevation() < crateredElevation) {
-                    crateredElevation = adjHex.getElevation();
-                }
+                if (adjHex.containsTerrain(Terrains.WATER)){
+                    if (containsWater){
+                        int newDepth = Math.min(2, adjHex.depth() + 1);
+                        if (newDepth > crateredElevation){
+                            crateredElevation = newDepth;
+                        }                    
+                    } else {
+                        crateredElevation = Math.min(2, adjHex.depth() + 1);
+                        containsWater = true;
+                    }                    
+                } else if (!containsWater && 
+                        adjHex.getElevation() < crateredElevation){                       
+                    crateredElevation = adjHex.getElevation();                                            
+                }                
             }
         }
         if (vel < 1) {
@@ -5581,7 +5603,7 @@ public class Server implements Runnable {
             }
 
             // reduce woods
-            IHex h = game.getBoard().getHex(hitCoords);
+            h = game.getBoard().getHex(hitCoords);
             if (h.containsTerrain(Terrains.WOODS)) {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.WOODS);
@@ -5619,9 +5641,16 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if (entity instanceof Dropship && 
-                    !h.containsTerrain(Terrains.WATER)){
-                h.setElevation(crateredElevation);
+            if (entity instanceof Dropship){
+                if (!containsWater){
+                    h.setElevation(crateredElevation);
+                } else {
+                    if (!h.containsTerrain(Terrains.WATER)){
+                        h.removeAllTerrains();
+                    }
+                    h.addTerrain(new 
+                            Terrain(Terrains.WATER,crateredElevation,false,0));
+                }
             }
             sendChangedHex(hitCoords);
         }
@@ -5645,7 +5674,7 @@ public class Server implements Runnable {
         }
         
         // Check for watery death
-        IHex h = game.getBoard().getHex(c);
+        h = game.getBoard().getHex(c);
         if (h.containsTerrain(Terrains.WATER) && 
                 !entity.isDestroyed() && !entity.isDoomed()){
             int lethalDepth;

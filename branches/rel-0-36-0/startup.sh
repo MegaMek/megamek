@@ -157,4 +157,4 @@ if ! test $PWD -ef $MEGAMEK_CONFPATH; then
     echo "Switching directory to $MEGAMEK_CONFPATH."
     cd $MEGAMEK_CONFPATH
 fi
-$JAVA -Xmx256m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@
+$JAVA -Xmx1024m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@

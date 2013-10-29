@@ -5496,11 +5496,15 @@ public class Server implements Runnable {
                 r.add(crash_damage);
                 vReport.add(r);
                 while (crash_damage > 0) {
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
-                            ToHitData.SIDE_FRONT);
-                    if (entity.getMovementMode() == EntityMovementMode.SPHEROID) {
-                        hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                    HitData hit;
+                    if ((entity instanceof SmallCraft) && 
+                            ((SmallCraft)entity).isSpheroid()) {
+                        hit = entity.rollHitLocation(
+                                ToHitData.HIT_SPHEROID_CRASH,
                                 ToHitData.SIDE_REAR);
+                    } else {
+                        hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                                ToHitData.SIDE_FRONT);
                     }
 
                     if (crash_damage > 10) {

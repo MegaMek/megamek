@@ -31,6 +31,7 @@ public class ToHitData extends TargetRoll {
     public static final int HIT_SWARM_CONVENTIONAL = 7;
     public static final int HIT_UNDERWATER = 8;
     public static final int HIT_SPECIAL_PROTO = 9;
+    public static final int HIT_SPHEROID_CRASH = 10;
 
     public static final int SIDE_FRONT = 0;
     public static final int SIDE_REAR = 1;

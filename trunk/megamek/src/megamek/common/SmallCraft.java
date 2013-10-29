@@ -110,7 +110,8 @@ public class SmallCraft extends Aero {
 
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
-        if (isSpheroid() && !game.getBoard().inSpace()) {
+        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && 
+                !game.getBoard().inSpace()) {
             int preroll = Compute.d6(1);
             if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
                 side = ToHitData.SIDE_FRONT;

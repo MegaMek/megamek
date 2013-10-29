@@ -50,6 +50,7 @@ v0.37.0-dev (SVN)
 + Bug [#3898]: Crashing dropships reduce elevation of water hexes instead of 
     depth
 + Bug: drone extra equipment should not take up extra item slots on tanks
++ Bug[#3901]: Light-up Deployment Hexes Everywhere! - 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

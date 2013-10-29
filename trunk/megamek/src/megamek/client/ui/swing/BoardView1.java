@@ -1478,7 +1478,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.clearRect(view.x, view.y, view.width, view.height);
             // When using isometric rendering, hexes within a given row
             // must be drawn from lowest to highest elevation.
-            final int minElev = game.getBoard().getMinElevation();
+            IBoard board = game.getBoard();
+            final int minElev = board.getMinElevation();
             for (int i = 0; i < drawHeight; i++) {
                 for (int x = minElev; x <= game.getBoard().getMaxElevation(); x++) {
                     for (int j = 0; j < drawWidth; j++) {
@@ -1486,7 +1487,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = game.getBoard().getHex(c);
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
-                            if (en_Deployer != null) {
+                            if (en_Deployer != null && board.isLegalDeployment(
+                                    c, en_Deployer.getStartingPos())) {
                                 drawBorderForHex(c, g, Color.yellow);
                             }
                         }

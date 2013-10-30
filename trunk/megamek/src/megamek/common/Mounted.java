@@ -1111,7 +1111,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 continue;
             }
 
-            Mounted m = entity.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {
@@ -1165,7 +1165,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 continue;
             }
 
-            Mounted m = entity.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
                 if (cs.isDamaged()) {

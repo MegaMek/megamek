@@ -375,7 +375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean carcass = false;
 
     /**
-     * The components of this entity that can transport other entities. 
+     * The components of this entity that can transport other entities.
      */
     private Vector<Transporter> transports = new Vector<Transporter>();
 
@@ -2835,7 +2835,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
             return null;
         }
-        Mounted m = equipmentList.get(cs.getIndex());
+        Mounted m = cs.getMount();
         return m.getType();
     }
 
@@ -3103,7 +3103,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     || (slot.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                 continue;
             }
-            Mounted mounted = getEquipment(slot.getIndex());
+            Mounted mounted = slot.getMount();
             if ((mounted.getType() instanceof WeaponType)
                     && mounted.isUsedThisRound()) {
                 return true;
@@ -9631,7 +9631,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     || (slot.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                 continue;
             }
-            Mounted m = getEquipment(slot.getIndex());
+            Mounted m = slot.getMount();
             if ((m.getLocation() == loc) && !m.isHit() && !m.isBreached()
                     && (m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_CLUB)

@@ -25,29 +25,25 @@ public class CriticalSlot implements Serializable {
     public final static int TYPE_EQUIPMENT = 1;
 
     private int type;
-    private int index;
+    private int index = -1;
     private Mounted mount;
+    private Mounted mount2;
 
-    private boolean hit; // hit
-    private boolean missing; // location destroyed
-    private boolean destroyed;
-    private boolean hittable; // false = hits rerolled
-    private boolean breached; // true = breached
+    private boolean hit = false; // hit
+    private boolean missing = false; // location destroyed
+    private boolean destroyed = false;
+    private boolean hittable = true; // false = hits rerolled
+    private boolean breached = false; // true = breached
     private boolean repairing = false; // true = currently being repaired
-    private boolean repairable = true; //true = can be repaired 
+    private boolean repairable = true; // true = can be repaired
 
     private boolean armored = false; // Armored Component Rule
 
     public CriticalSlot(int type, int index) {
-        this(type, index, true, null);
+        this(type, index, true, false);
     }
 
-    public CriticalSlot(int type, int index, boolean hittable, Mounted mount) {
-        this(type, index, hittable, mount != null?mount.isArmored():false, mount);
-    }
-
-    public CriticalSlot(int type, int index, boolean hittable, boolean armored,
-            Mounted mount) {
+    public CriticalSlot(int type, int index, boolean hittable, boolean armored) {
         this.type = type;
         this.index = index;
         this.hittable = hittable;
@@ -55,18 +51,12 @@ public class CriticalSlot implements Serializable {
         if (hittable) {
             this.armored = armored;
         }
+    }
+
+    public CriticalSlot(Mounted mount) {
+        this(TYPE_EQUIPMENT, -1, mount.getType().isHittable(), mount
+                .isArmored());
         this.mount = mount;
-    }
-
-    public CriticalSlot(int type, Mounted mount) {
-        this(type,mount,true);
-    }
-
-    public CriticalSlot(int type, Mounted mount, boolean hittable) {
-        this.type = type;
-        index = -1;
-        this.hittable = hittable;
-        setMount(mount);
     }
 
     public int getType() {
@@ -87,8 +77,9 @@ public class CriticalSlot implements Serializable {
 
     /**
      * set that this CriticalSlot was or was not hit with a crit this phase
-     * Note: stuff that was hit in a phase can still be used in that phase,
-     * if that's not desired, use setDestroyed instead
+     * Note: stuff that was hit in a phase can still be used in that phase, if
+     * that's not desired, use setDestroyed instead
+     *
      * @param hit
      * @see #setDestroyed(boolean)
      */
@@ -101,10 +92,10 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * Set this Mounted's destroyed status
-     * NOTE: only set this if this Mounted cannot be used in the current phase
-     * anymore.
-     * If it still can, use setHit instead
+     * Set this Mounted's destroyed status NOTE: only set this if this Mounted
+     * cannot be used in the current phase anymore. If it still can, use setHit
+     * instead
+     *
      * @param destroyed
      * @see #setHit(boolean)
      */
@@ -161,7 +152,7 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * Two CriticalSlots are equal if their type and index are equal
+     * Two CriticalSlots are equal if their type, index and mount are equal
      */
     @Override
     public boolean equals(Object object) {
@@ -171,11 +162,14 @@ public class CriticalSlot implements Serializable {
             return false;
         }
         CriticalSlot other = (CriticalSlot) object;
-        return (other.getType() == type) && (other.getIndex() == index);
+        return ((other.getType() == type) && (other.getIndex() == index) && (((other
+                .getMount() != null) && (mount != null) && other.getMount()
+                .equals(mount)) || ((mount == null) && (other.getMount() == null))));
     }
 
     /**
-     * @param mount the mount to set
+     * @param mount
+     *            the mount to set
      */
     public void setMount(Mounted mount) {
         this.mount = mount;
@@ -188,6 +182,21 @@ public class CriticalSlot implements Serializable {
         return mount;
     }
 
+    /**
+     * @param mount
+     *            the mount to set
+     */
+    public void setMount2(Mounted mount) {
+        mount2 = mount;
+    }
+
+    /**
+     * @return the mount
+     */
+    public Mounted getMount2() {
+        return mount2;
+    }
+
     public void setArmored(boolean armored) {
         this.armored = armored;
     }
@@ -195,11 +204,11 @@ public class CriticalSlot implements Serializable {
     public boolean isArmored() {
         return armored;
     }
-    
+
     public void setRepairable(boolean repair) {
-        this.repairable = repair;
+        repairable = repair;
     }
-    
+
     public boolean isRepairable() {
         return repairable;
     }

@@ -2509,8 +2509,7 @@ public class Tank extends Entity {
             super.addEquipment(mounted, loc, rearMounted);
         }
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true, mounted));
+        addCritical(loc, new CriticalSlot(mounted));
         if ((mounted.getType() instanceof MiscType)
                 && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
             setOriginalJumpMP(getOriginalJumpMP() + 1);

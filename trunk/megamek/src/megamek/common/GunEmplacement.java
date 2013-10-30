@@ -437,8 +437,7 @@ public class GunEmplacement extends Tank {
             throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted), true, mounted));
+        addCritical(loc, new CriticalSlot(mounted));
     }
 
     /*
@@ -499,8 +498,9 @@ public class GunEmplacement extends Tank {
 
         return ((double)totalInoperable / totalWeapons) >= 0.5;
     }
-    
-    
+
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
     }

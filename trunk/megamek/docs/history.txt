@@ -53,8 +53,12 @@ v0.37.0-dev (SVN)
 + Bug[#3901]: Light-up Deployment Hexes Everywhere! - 0.37-dev
 + Bug [#3899]: A crashing spheroid DropShip uses the Nose Hit Location Table
 + Bug [#3904]: Unit LOS Hex Darkening Bugged 0.37-dev 
-+ Feature: Changed  the JMenuItems for all of the toggles in View to JCheckBoxMenuItems
-+ Feature [#1178]: Firing Solutions Tool 
++ Feature: Changed  the JMenuItems for all of the toggles in View to
+    JCheckBoxMenuItems
++ Feature [#1178]: Firing Solutions Tool
++ SuperHeavy mechs should now be finished.
++ changed how CriticalSlots work, the int index is now used only for TYPE_SYSTEM
+     CriticalSlots, never for TYPE_EQUIPMENT ones
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

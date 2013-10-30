@@ -229,7 +229,7 @@ public class EntityListFile {
                     // Yup. If the equipment isn't a system, get it.
                     Mounted mount = null;
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
-                        mount = entity.getEquipment(slot.getIndex());
+                        mount = slot.getMount();
                     }
 
                     // Destroyed locations on Mechs that contain slots

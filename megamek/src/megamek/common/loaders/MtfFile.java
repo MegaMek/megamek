@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.common.AmmoType;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
@@ -530,19 +531,19 @@ public class MtfFile implements IMechLoader {
             }
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored, null));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Life Support")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored, null));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Sensors")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored, null));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Cockpit")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored, null));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, isArmored));
                 continue;
             } else if (critName.equalsIgnoreCase("Gyro")) {
-                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored, null));
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, isArmored));
                 continue;
             } else if ((critName.indexOf("Actuator") != -1) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
@@ -583,6 +584,15 @@ public class MtfFile implements IMechLoader {
                 facing = 2;
                 critName = critName.substring(0, critName.length() - 4).trim();
             }
+            EquipmentType etype2 = null;
+            if (critName.contains("|")) {
+                String critName2 = critName.substring(critName.indexOf("|")+1);
+                etype2 = EquipmentType.get(critName2);
+                if (etype2 == null) {
+                    etype2 = EquipmentType.get(mech.isClan()?"Clan "+critName2:"IS "+critName2);
+                }
+                critName = critName.substring(0, critName.indexOf("|"));
+            }
 
             try {
                 EquipmentType etype = EquipmentType.get(critName);
@@ -595,12 +605,10 @@ public class MtfFile implements IMechLoader {
                         Mounted m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), etype.isHittable(), isArmored, m));
+                            mech.addCritical(loc, new CriticalSlot(m));
                             continue;
                         }
-                        m = mech.addEquipment(etype, loc, rearMounted);
-                        m.setArmored(isArmored);
-                        m.setMechTurretMounted(isTurreted);
+                        m = mech.addEquipment(etype, loc, rearMounted, isArmored, isTurreted);
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType)etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
@@ -643,7 +651,21 @@ public class MtfFile implements IMechLoader {
                         m.setMechTurretMounted(isTurreted);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        Mounted mount = mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
+                        Mounted mount = null;
+                        if (etype2 == null) {
+                            mount = mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
+                        } else {
+                            if (etype instanceof AmmoType) {
+                                if (!(etype2 instanceof AmmoType) || (((AmmoType)etype).getAmmoType() != ((AmmoType)etype2).getAmmoType())) {
+                                    throw new EntityLoadingException("Can't combine ammo for different weapons in one slot");
+                                }
+                            } else {
+                                if ((!(etype instanceof MiscType) && (etype2 instanceof MiscType)) || !(etype.equals(etype2))) {
+                                    throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
+                                }
+                            }
+                            mount = mech.addEquipment(etype, etype2, loc);
+                        }
                         // vehicular grenade launchers need to have their facing
                         // set
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {

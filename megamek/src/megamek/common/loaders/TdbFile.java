@@ -658,10 +658,7 @@ public class TdbFile implements IMechLoader {
                         Mounted m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            mech.addCritical(loc, new CriticalSlot(
-                                    CriticalSlot.TYPE_EQUIPMENT, mech
-                                            .getEquipmentNum(m), etype
-                                            .isHittable(), m));
+                            mech.addCritical(loc, new CriticalSlot(m));
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);

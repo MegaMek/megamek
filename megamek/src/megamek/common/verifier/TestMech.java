@@ -222,7 +222,7 @@ public class TestMech extends TestEntity {
         return mech;
     }
 
-    public int countCriticalSlotsFromEquipInLocation(Entity entity, int eNum,
+    public int countCriticalSlotsFromEquipInLocation(Entity entity, Mounted mount,
             int location) {
         int count = 0;
         for (int slots = 0; slots < entity.getNumberOfCriticals(location); slots++) {
@@ -230,7 +230,7 @@ public class TestMech extends TestEntity {
             if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                if (slot.getIndex() == eNum) {
+                if (slot.getMount().equals(mount)) {
                     count++;
                 }
             } else {
@@ -243,52 +243,51 @@ public class TestMech extends TestEntity {
     public boolean checkMiscSpreadAllocation(Entity entity, Mounted mounted,
             StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
-        int eNum = entity.getEquipmentNum(mounted);
         if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
             if (!entity.hasWorkingMisc(MiscType.F_ECM)) {
                 buff.append("stealth armor needs ECM suite\n");
                 return false;
             }
             // stealth needs to have 2 crits in legs arm and side torso
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) != 2) {
                 buff.append("incorrect number of stealth crits in left arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_RARM) != 2) {
                 buff.append("incorrect number of stealth crits in right arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LLEG) != 2) {
                 buff.append("incorrect number of stealth crits in left leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_RLEG) != 2) {
                 buff.append("incorrect number of stealth crits in right leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mech.LOC_LT) != 2) {
                 buff.append("incorrect number of stealth crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mech.LOC_RT) != 2) {
                 buff.append("incorrect number of stealth crits in right torso\n");
                 return false;
             }
         }
         if (mt.hasFlag(MiscType.F_MOBILE_HPG)) {
-            if ((countCriticalSlotsFromEquipInLocation(entity, eNum,
+            if ((countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) > 0)
-                    || (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    || (countCriticalSlotsFromEquipInLocation(entity, mounted,
                             Mech.LOC_RARM) > 0)
-                    || (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    || (countCriticalSlotsFromEquipInLocation(entity, mounted,
                             Mech.LOC_HEAD) > 0)
-                    || (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    || (countCriticalSlotsFromEquipInLocation(entity, mounted,
                             Mech.LOC_LLEG) > 0)
-                    || (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    || (countCriticalSlotsFromEquipInLocation(entity, mounted,
                             Mech.LOC_RLEG) > 0)) {
                 buff.append("ground mobile HPG must be mounted in torso locations\n");
             }
@@ -296,7 +295,7 @@ public class TestMech extends TestEntity {
         if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             // environmental sealing needs to have 1 crit per location
             for (int locations = 0; locations < entity.locations(); locations++) {
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                         locations) != 1) {
                     buff.append("not an environmental sealing crit in each location\n");
                     return false;
@@ -307,7 +306,7 @@ public class TestMech extends TestEntity {
             // blue shield needs to have 1 crit per location, except head
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (locations != Mech.LOC_HEAD) {
-                    if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                             locations) != 1) {
                         buff.append("not a blue shield crit in each location except the head\n");
                         return false;
@@ -318,13 +317,13 @@ public class TestMech extends TestEntity {
         }
         if (mt.hasFlag(MiscType.F_PARTIAL_WING)) {
             // partial wing needs 3/4 crits in the side torsos
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != ((TechConstants.isClan(mt
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mech.LOC_LT) != ((TechConstants.isClan(mt
                     .getTechLevel(entity.getTechLevelYear()))) ? 3
                     : 4)) {
                 buff.append("incorrect number of partial wing crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != ((TechConstants.isClan(mt
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mech.LOC_RT) != ((TechConstants.isClan(mt
                     .getTechLevel(entity.getTechLevelYear()))) ? 3
                     : 4)) {
                 buff.append("incorrect number of partial wing crits in right torso\n");
@@ -336,7 +335,6 @@ public class TestMech extends TestEntity {
 
     public boolean criticalSlotsAllocated(Entity entity, Mounted mounted,
             Vector<Serializable> allocation, StringBuffer buff) {
-        int eNum = entity.getEquipmentNum(mounted);
         int location = mounted.getLocation();
         EquipmentType et = mounted.getType();
         int criticals = 0;
@@ -353,11 +351,11 @@ public class TestMech extends TestEntity {
 
         if (et.isSpreadable() && !et.getName().equals("Targeting Computer")) {
             for (int locations = 0; locations < entity.locations(); locations++) {
-                count += countCriticalSlotsFromEquipInLocation(entity, eNum,
+                count += countCriticalSlotsFromEquipInLocation(entity, mounted,
                         locations);
             }
         } else {
-            count = countCriticalSlotsFromEquipInLocation(entity, eNum,
+            count = countCriticalSlotsFromEquipInLocation(entity, mounted,
                     location);
         }
 
@@ -368,7 +366,7 @@ public class TestMech extends TestEntity {
                     continue;
                 }
 
-                secCound = countCriticalSlotsFromEquipInLocation(entity, eNum,
+                secCound = countCriticalSlotsFromEquipInLocation(entity, mounted,
                         locations);
                 if ((secCound != 0)
                         && (location == Mech.mostRestrictiveLoc(locations,
@@ -484,9 +482,6 @@ public class TestMech extends TestEntity {
         // Engine criticals
         boolean engineCorrect = true;
         int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
-        if (mech.isSuperHeavy()) {
-            requiredSideCrits = (int)Math.ceil(((double)requiredSideCrits)/2.0f);
-        }
         if ((requiredSideCrits != mech.getNumberOfCriticals(
                 CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT))
                 || (requiredSideCrits != mech.getNumberOfCriticals(
@@ -495,9 +490,6 @@ public class TestMech extends TestEntity {
             engineCorrect = false;
         }
         int requiredCTCrits = engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length;
-        if (mech.isSuperHeavy()) {
-            requiredCTCrits = (int)Math.ceil(((double)requiredCTCrits)/2.0f);
-        }
         if (requiredCTCrits != mech
                 .getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {

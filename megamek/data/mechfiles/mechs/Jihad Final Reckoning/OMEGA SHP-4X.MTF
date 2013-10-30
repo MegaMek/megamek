@@ -1,0 +1,152 @@
+Version:1.0
+"OMEGA"
+SHP-4X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3078
+Rules Level:4
+
+Mass:150
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+Gyro:Standard Gyro
+Cockpit:Superheavy Cockpit
+
+Heat Sinks:10 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Standard
+LA Armor:44
+RA Armor:44
+LT Armor:45
+RT Armor:45
+CT Armor:60
+HD Armor:12
+LL Armor:62
+RL Armor:62
+RTL Armor:19
+RTR Armor:19
+RTC Armor:20
+
+Weapons:5
+1 ISGaussRifle, Right Torso
+1 ISGaussRifle, Center Torso
+1 ISGaussRifle, Left Torso
+1 ISLBXAC10, Right Arm
+1 ISLBXAC10, Left Arm
+1 ISImprovedC3CPU, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo|ISLBXAC10 Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 CL Ammo|ISLBXAC10 CL Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo|ISGauss Ammo
+ISGauss Ammo|ISGauss Ammo
+ISCASEII
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo|ISGauss Ammo
+ISGauss Ammo|ISGauss Ammo
+ISCASEII
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo|ISGauss Ammo
+ISImprovedC3CPU
+ISCASEII
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

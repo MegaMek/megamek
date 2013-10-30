@@ -14,7 +14,7 @@
 
 package megamek.common;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -207,16 +207,16 @@ public class Infantry extends Entity {
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
-        if((null != getCrew()) 
-        		&& getCrew().getOptions().booleanOption("pl_masc") 
-        		&& (getMovementMode() == EntityMovementMode.INF_LEG 
-        			|| getMovementMode() == EntityMovementMode.INF_JUMP)) {
+        if((null != getCrew())
+        		&& getCrew().getOptions().booleanOption("pl_masc")
+        		&& ((getMovementMode() == EntityMovementMode.INF_LEG)
+        			|| (getMovementMode() == EntityMovementMode.INF_JUMP))) {
         	mp += 1;
         }
         if(hasActiveFieldArtillery()) {
             //mp of 1 at the most
             mp = Math.min(mp, 1);
-        }   
+        }
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
@@ -1410,7 +1410,7 @@ public class Infantry extends Entity {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: only "
-                        + DecimalFormat.getPercentInstance().format(
+                        + NumberFormat.getPercentInstance().format(
                                 activeTroopPercent) + " troops remaining.");
             }
             return true;
@@ -1441,7 +1441,7 @@ public class Infantry extends Entity {
         }
         return false;
     }
-    
+
     /**
      * Mounts the specified equipment in the specified location.
      */
@@ -1452,10 +1452,11 @@ public class Infantry extends Entity {
 
         //we do need to equipment slots for ammo switching of field guns and field artillery
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
+        addCritical(loc, new CriticalSlot(mounted));
 
     }
-    
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY;
     }

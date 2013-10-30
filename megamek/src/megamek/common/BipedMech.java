@@ -345,7 +345,7 @@ public class BipedMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_HAND_WEAPON) && type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
@@ -397,11 +397,7 @@ public class BipedMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
-            //sometimes this mounted is null in MML - causing problems so check
-            if(null == m) {
-            	continue;
-            }
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade()) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
@@ -454,11 +450,7 @@ public class BipedMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
-          //sometimes this mounted is null in MML - causing problems so check
-            if(null == m) {
-            	continue;
-            }
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") || ignoreMode) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 MiscType blade = (MiscType) type;
@@ -591,7 +583,7 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
@@ -661,7 +653,7 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield() && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
@@ -695,7 +687,7 @@ public class BipedMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || isShutDown() || // if
                     // he
@@ -850,8 +842,9 @@ public class BipedMech extends Mech {
             || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
-    
+
 }

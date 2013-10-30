@@ -271,19 +271,19 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     critName = critName.substring(2);
                 }
                 if (critName.indexOf("Engine") != -1) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored, null));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, armored, null));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, armored, null));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, armored, null));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, armored, null));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, armored));
                     continue;
                 }
 
@@ -325,7 +325,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             mech.setOmni(true);
         }
-        
+
         mech.setArmorTonnage(mech.getArmorWeight());
 
         return mech;

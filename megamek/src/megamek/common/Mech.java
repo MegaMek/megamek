@@ -1558,19 +1558,21 @@ public abstract class Mech extends Entity {
 
     /**
      * Returns the name of the heat sinks mounted on this 'mech.
+     *
      * @return
      */
-    public String getHeatSinkTypeName(){
-        for (Mounted m : getMisc()){
-            if (m.getType().hasFlag(MiscType.F_HEAT_SINK) ||
-                    m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
-                    m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK) ||
-                    m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)){
+    public String getHeatSinkTypeName() {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
+                    || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)
+                    || m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
                 return m.getName();
             }
         }
         return "";
     }
+
     public int getHeatCapacity(boolean includePartialWing,
             boolean includeRadicalHeatSink) {
         int capacity = 0;
@@ -2749,7 +2751,26 @@ public abstract class Mech extends Entity {
                 }
             }
         }
+    }
 
+    public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
+            int loc) throws LocationFullException {
+        Mounted mounted = new Mounted(this, etype);
+        Mounted mounted2 = new Mounted(this, etype2);
+        // check criticals for space
+        if (getEmptyCriticals(loc) < 1) {
+            throw new LocationFullException(mounted.getName() + " and "
+                    + mounted2.getName() + " do not fit in "
+                    + getLocationAbbr(loc) + " on " + getDisplayName()
+                    + "\n        free criticals in location: "
+                    + getEmptyCriticals(loc) + ", criticals needed: " + 1);
+        }
+        super.addEquipment(mounted, loc, false);
+        super.addEquipment(mounted2, loc, false);
+        CriticalSlot cs = new CriticalSlot(mounted);
+        cs.setMount2(mounted2);
+        addCritical(loc, cs);
+        return mounted;
     }
 
     /**
@@ -2805,12 +2826,9 @@ public abstract class Mech extends Entity {
         }
 
         // add criticals
-        int num = getEquipmentNum(mounted);
 
         for (int i = 0; i < slots; i++) {
-            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                    num, mounted.getType().isHittable(), mounted.isArmored(),
-                    mounted);
+            CriticalSlot cs = new CriticalSlot(mounted);
             addCritical(loc, cs);
         }
     }
@@ -3141,7 +3159,8 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             }
-            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if ((etype instanceof MiscType)
+                    && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 toSubtract = 1;
             }
 
@@ -3331,7 +3350,8 @@ public abstract class Mech extends Entity {
         if (hasMPReducingHardenedArmor()) {
             runMP--;
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false, game).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false,
+                game).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -3360,7 +3380,8 @@ public abstract class Mech extends Entity {
         // use UMU for JJ, unless we have more jump MP than UMU (then we have
         // mechanical jumpboosters)
         int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false, true));
-        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true, false, game).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true,
+                false, game).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -3987,7 +4008,7 @@ public abstract class Mech extends Entity {
 
                     if ((cs != null)
                             && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                        Mounted mount = getEquipment(cs.getIndex());
+                        Mounted mount = cs.getMount();
                         if ((mount.getType() instanceof MiscType)
                                 && ((MiscType) mount.getType())
                                         .hasFlag(MiscType.F_CLUB)
@@ -6418,7 +6439,7 @@ public abstract class Mech extends Entity {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
 
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()) {

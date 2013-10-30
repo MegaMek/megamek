@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,11 +82,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewMekDisplay;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
-    private JMenuItem toggleIsometric;
-    private JMenuItem toggleFovHighlight;
-    private JMenuItem toggleFovDarken;
+    private JCheckBoxMenuItem toggleIsometric;
+    private JCheckBoxMenuItem toggleFovHighlight;
+    private JCheckBoxMenuItem toggleFovDarken;
+    private JCheckBoxMenuItem toggleFiringSolutions;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
+    private JMenuItem viewMoveEnvelope;
     private JMenuItem viewRoundReport;
     private JMenuItem viewGameOptions;
     private JMenuItem viewClientSettings;
@@ -328,7 +331,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewUnitOverview.setMnemonic(KeyEvent.VK_U);
         viewUnitOverview.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
                 getToolkit().getMenuShortcutKeyMask()));
-        menu.add(viewUnitOverview);
+        menu.add(viewUnitOverview);        
         viewZoomIn = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewZoomIn")); //$NON-NLS-1$
         viewZoomIn.addActionListener(this);
@@ -340,23 +343,35 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewZoomOut.setActionCommand(ClientGUI.VIEW_ZOOM_OUT);
         menu.add(viewZoomOut);
         menu.addSeparator();
-        toggleIsometric = new JMenuItem(Messages
+        toggleIsometric = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.viewToggleIsometric")); //$NON-NLS-1$
         toggleIsometric.addActionListener(this);
+        toggleIsometric.setState(GUIPreferences.getInstance().getBoolean("UseIsometric")); //$NON-NLS-1$
         toggleIsometric.setActionCommand(ClientGUI.VIEW_TOGGLE_ISOMETRIC);
         menu.add(toggleIsometric);        
-        toggleFovDarken = new JMenuItem(Messages
+        toggleFovDarken = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.viewToggleFovDarken")); //$NON-NLS-1$
         toggleFovDarken.addActionListener(this);
+        toggleFovDarken.setState(GUIPreferences.getInstance().getBoolean("FovDarken")); //$NON-NLS-1$
         toggleFovDarken.setActionCommand(ClientGUI.VIEW_TOGGLE_FOV_DARKEN);
         toggleFovDarken.setToolTipText(Messages
                 .getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
         menu.add(toggleFovDarken);
-        toggleFovHighlight = new JMenuItem(Messages
+        toggleFovHighlight = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.viewToggleFovHighlight")); //$NON-NLS-1$
+        toggleFovHighlight.setState(GUIPreferences.getInstance().getBoolean("FovHighlight")); //$NON-NLS-1$
         toggleFovHighlight.addActionListener(this);
         toggleFovHighlight.setActionCommand(ClientGUI.VIEW_TOGGLE_FOV_HIGHLIGHT);
         menu.add(toggleFovHighlight);
+        toggleFiringSolutions = new JCheckBoxMenuItem(Messages
+                .getString("CommonMenuBar.viewToggleFiringSolutions")); //$NON-NLS-1$
+        toggleFiringSolutions.setToolTipText(Messages
+                .getString("CommonMenuBar.viewToggleFiringSolutionsToolTip")); //$NON-NLS-1$
+        toggleFiringSolutions.setState(GUIPreferences.getInstance().getBoolean("FiringSolutions")); //$NON-NLS-1$
+        toggleFiringSolutions.addActionListener(this);
+        toggleFiringSolutions.setActionCommand(ClientGUI.VIEW_TOGGLE_FIRING_SOLUTIONS);
+        menu.add(toggleFiringSolutions);
+        
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$

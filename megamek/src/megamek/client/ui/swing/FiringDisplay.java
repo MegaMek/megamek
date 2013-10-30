@@ -28,6 +28,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -172,7 +173,7 @@ KeyListener, ItemListener, ListSelectionListener {
     private int lastTargetID = -1;
 
     private AimedShotHandler ash;
-
+    
     /**
      * Creates and lays out a new firing phase display for the specified clientgui.getClient().
      */
@@ -322,7 +323,6 @@ KeyListener, ItemListener, ListSelectionListener {
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler();
-
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,
@@ -448,19 +448,39 @@ KeyListener, ItemListener, ListSelectionListener {
             System.err
             .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
+        
+        setFiringSolutions();        
+    }
+    
+    public void setFiringSolutions(){
+        IGame game = clientgui.getClient().game;
+        Hashtable<Integer,ToHitData> fs = new Hashtable<Integer,ToHitData>(); 
+        for (Entity target : game.getEntitiesVector()){   
+            if (target.getId() != cen){
+                LosEffects los = 
+                        LosEffects.calculateLos(game, cen, target);
+                ToHitData thd = los.losModifiers(game);
+                thd.setLocation(los.getTargetPosition());
+                thd.append(Compute.getAttackerMovementModifier(game, cen));
+                thd.append(Compute.getTargetMovementModifier(game, target.getId()));
+                thd.append(Compute.getTargetTerrainModifier(game, target));
+                fs.put(target.getId(),thd);
+            }
+        }
+        clientgui.getBoardView().setFiringSolutions(ce(),fs);
     }
 
     /**
      * Does turn start stuff
      */
-    private void beginMyTurn() {
+    private void beginMyTurn() {        
         target = null;
 
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
-
-        selectEntity(clientgui.getClient().getFirstEntityNum());
+                             
+        selectEntity(clientgui.getClient().getFirstEntityNum());                
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.

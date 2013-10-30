@@ -46,6 +46,7 @@ import java.awt.image.ImageProducer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -93,6 +94,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
@@ -240,6 +242,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // sprite for current movement
     private ArrayList<StepSprite> pathSprites = new ArrayList<StepSprite>();
+    
+    private ArrayList<FiringSolutionSprite> firingSprites = 
+            new ArrayList<FiringSolutionSprite>();
 
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
@@ -830,6 +835,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
+        // draw firing solution sprites, but only during the firing phase
+        if (game.getPhase() == Phase.PHASE_FIRING){
+            drawSprites(g, firingSprites);
+        }
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -2535,6 +2544,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
         refreshMoveVectors();
     }
+    
+    public void setFiringSolutions(Entity attacker, 
+            Hashtable<Integer,ToHitData> firingSolutions){
+        
+        clearFiringSolutionData();
+        if (firingSolutions == null){
+            return;
+        }         
+        for (ToHitData thd : firingSolutions.values()){
+            FiringSolutionSprite sprite = new 
+                    FiringSolutionSprite(thd.getValue(),thd.getLocation());
+            firingSprites.add(sprite);
+        }
+    }
+    
+    public void clearFiringSolutionData(){
+        firingSprites = new ArrayList<FiringSolutionSprite>();
+        repaint();        
+    }
 
     public void setLocalPlayer(Player p) {
         localPlayer = p;
@@ -2916,7 +2944,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         while (destEntities.hasMoreElements()){            
             Entity ent = destEntities.nextElement();
             int attAbsheight = ent.absHeight() + 
-                    ent.elevationOccupied(game.getBoard().getHex(src));
+                    ent.elevationOccupied(game.getBoard().getHex(dest));
             EntityMovementMode movementMode = ent.getMovementMode();
             // We will have double counted elevation for VTOL and WIGE movement
             if (movementMode == EntityMovementMode.VTOL || 
@@ -6127,6 +6155,138 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
          * } return tipStrings; }
          */
     }
+    
+    /**
+     * Sprite for displaying generic firing information.  This is used for 
+     */
+    private class FiringSolutionSprite extends Sprite {
+        private int toHitMod;
+        private Coords loc;
+        private Image baseScaleImage;
+
+        public FiringSolutionSprite(final int thm, Coords l) {
+            toHitMod = thm;
+            loc = l;
+            bounds = new Rectangle(getHexLocation(loc), hex_size);
+            image = null;
+            baseScaleImage = null;
+        }
+        
+        /**
+         * Refreshes this StepSprite's image to handle changes in the zoom 
+         * level.
+         */
+        public void refreshZoomLevel(){
+            
+            if (baseScaleImage == null){
+                return;
+            }
+            
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        baseScaleImage.getSource(), new KeyAlphaFilter(
+                                TRANSPARENT))));
+            }
+        }
+
+        @Override
+        public void prepare() {
+            // create image for buffer
+            Image tempImage = createImage(bounds.width, bounds.height);
+            Graphics graph = tempImage.getGraphics();
+            
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+            
+            // Draw firing information
+            Point p = getHexLocation(loc);
+            p.translate(-bounds.x, -bounds.y);                     
+            Color drawColor;
+            graph.setFont(getFiringFont());
+            
+            if (toHitMod != TargetRoll.IMPOSSIBLE && 
+                    toHitMod != TargetRoll.AUTOMATIC_FAIL){
+                int xOffset = 5;
+                int yOffset = 39;
+                FontMetrics metrics = graph.getFontMetrics();  
+                // Draw +
+                String modifier = "+";
+                graph.setColor(Color.CYAN);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                // Draw Short range mod
+                xOffset+= metrics.charWidth('+');
+                modifier = toHitMod + "";                
+                graph.setColor(Color.GREEN);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                // Draw /
+                xOffset+= metrics.charsWidth(modifier.toCharArray(), 
+                        0, modifier.length());                
+                modifier = "/";                
+                graph.setColor(Color.CYAN);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                // Draw Medium range mod
+                xOffset+= metrics.charWidth('/');
+                modifier = (toHitMod+2) + "";                
+                graph.setColor(Color.YELLOW);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                // Draw /
+                xOffset+= metrics.charsWidth(modifier.toCharArray(), 
+                        0, modifier.length());
+                modifier = "/";
+                graph.setColor(Color.CYAN);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                // Draw Short range mod
+                xOffset+= metrics.charWidth('/');
+                modifier = (toHitMod+4) + "";                
+                graph.setColor(Color.RED);
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);                             
+            } else {
+                drawColor = Color.RED;
+                graph.setColor(drawColor);
+                String modifierString = "X";
+                graph.drawString(modifierString, p.x + 35, p.y + 39);
+            }
+        
+                        
+            //graph.setColor(drawColor);
+            //graph.drawPolygon(hexPoly);
+
+            baseScaleImage = createImage(new FilteredImageSource(
+                    tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
+            // create final image
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
+        }  
+        
+        @Override
+        public Rectangle getBounds() {
+            bounds = new Rectangle(getHexLocation(loc), hex_size);
+            return bounds;
+        }
+
+        public Font getFiringFont() {
+
+            String fontName = GUIPreferences.getInstance().getString(
+                    GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
+            int fontStyle = GUIPreferences.getInstance().getInt(
+                    GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
+            int fontSize = 18;
+
+            return new Font(fontName, fontStyle, fontSize);
+        }
+    }
 
     /**
      * Determine if the tile manager's images have been loaded.
@@ -6501,6 +6661,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     void clearSprites() {
         pathSprites.clear();
+        firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
         flyOverSprites.clear();
@@ -7152,6 +7313,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         updateFontSizes();
         updateBoard();
         for (StepSprite sprite : pathSprites){
+            sprite.refreshZoomLevel();
+        }
+        for (FiringSolutionSprite sprite : firingSprites){
             sprite.refreshZoomLevel();
         }
         this.setSize(boardSize);

@@ -15,7 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,16 +27,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -67,7 +72,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JTextField tooltipDelay;
-    private JComboBox unitStartChar;
+    private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
 
@@ -80,23 +85,29 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox useAverageSkills;
     private JCheckBox generateNames;
     private JCheckBox showUnitId;
-    private JComboBox displayLocale;
+    private JComboBox<String> displayLocale;
 
     private JCheckBox showMapsheets;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
-
-    private JList keys;
+    
+    // Tactical Overlay Options
+    private JCheckBox fovInsideEnabled;
+    private JSlider fovHighlightAlpha;
+    private JCheckBox fovOutsideEnabled;
+    private JSlider fovDarkenAlpha;
+    
+    private JList<String> keys;
     private int keysIndex = 0;
     private JTextField value;
 
-    private JComboBox tileSetChoice;
+    private JComboBox<String> tileSetChoice;
     private File[] tileSets;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
-    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" }; //$NON-NLS-1$
 
     /**
      * Standard constructor. There is no default constructor for this class.
@@ -108,10 +119,19 @@ public class CommonSettingsDialog extends ClientDialog implements
         super(owner, Messages.getString("CommonSettingsDialog.title")); //$NON-NLS-1$
 
         panTabs = new JTabbedPane();
+        
         JPanel settingsPanel = getSettingsPanel();
-        JScrollPane scroll = new JScrollPane(settingsPanel);
-        panTabs.add("Main", scroll);
-        panTabs.add("Advanced", getAdvancedSettingsPanel());
+        JScrollPane settingsPane = new JScrollPane(settingsPanel);
+        panTabs.add("Main", settingsPane);
+        
+        JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
+        JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
+        panTabs.add("Tactical Overlay", tacticalOverlaySettingsPane);
+        
+        JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
+        JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
+        panTabs.add("Advanced", advancedSettingsPane);
+        
         setLayout(new BorderLayout());
         getContentPane().add(panTabs, BorderLayout.CENTER);
         getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
@@ -131,7 +151,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         // necessary. I'm not sure why the extra hardcoded 10 pixels
         // is needed, maybe it's a ms windows thing.
         setLocationAndSize(settingsPanel.getPreferredSize().width
-                + scroll.getInsets().right + 20, settingsPanel
+                + settingsPane.getInsets().right + 20, settingsPanel
                 .getPreferredSize().height);
     }
 
@@ -139,8 +159,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         // Add the dialog controls.
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 0, 20, 5));
-        JButton update = new JButton(Messages
-                .getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
+        JButton update = new JButton(Messages.getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
         update.setActionCommand(CommonSettingsDialog.UPDATE);
         update.addActionListener(this);
         buttons.add(update);
@@ -153,173 +172,182 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     private JPanel getSettingsPanel() {
-        // Lay out this dialog.
-        JPanel tempPanel = new JPanel();
-        tempPanel.setLayout(new GridLayout(0, 1));
+    	
+        ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
+        ArrayList<JComponent> row;
 
         // Add the setting controls.
-        minimapEnabled = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
-        tempPanel.add(minimapEnabled);
+        minimapEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(minimapEnabled);
+        comps.add(row);
 
-        autoEndFiring = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
-        tempPanel.add(autoEndFiring);
+        autoEndFiring = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(autoEndFiring);
+        comps.add(row);
 
-        autoDeclareSearchlight = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
-        tempPanel.add(autoDeclareSearchlight);
+        autoDeclareSearchlight = new JCheckBox(Messages.getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(autoDeclareSearchlight);
+        comps.add(row);
 
-        nagForMASC = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
-        tempPanel.add(nagForMASC);
+        nagForMASC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(nagForMASC);
+        comps.add(row);
 
-        mouseWheelZoom = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
-        tempPanel.add(mouseWheelZoom);
+        mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(mouseWheelZoom);
+        comps.add(row);
         
-        mouseWheelZoomFlip = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
-        tempPanel.add(mouseWheelZoomFlip);
+        mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(mouseWheelZoomFlip);
+        comps.add(row);
 
-        nagForPSR = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
-        tempPanel.add(nagForPSR);
+        nagForPSR = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(nagForPSR);
+        comps.add(row);
 
-        nagForNoAction = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
-        tempPanel.add(nagForNoAction);
+        nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(nagForNoAction);
+        comps.add(row);
 
-        animateMove = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
-        tempPanel.add(animateMove);
+        animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(animateMove);
+        comps.add(row);
 
-        showWrecks = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
-        tempPanel.add(showWrecks);
+        showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(showWrecks);
+        comps.add(row);
 
-        soundMute = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
-        tempPanel.add(soundMute);
+        soundMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(soundMute);
+        comps.add(row);
 
-        showMapHexPopup = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
-        tempPanel.add(showMapHexPopup);
+        showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(showMapHexPopup);
+        comps.add(row);
 
-        JPanel panSetting;
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.tooltipDelay"))); //$NON-NLS-1$
         tooltipDelay = new JTextField(4);
-        panSetting.add(tooltipDelay);
+        JLabel tooltipDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(tooltipDelayLabel);
+        row.add(tooltipDelay);
+        comps.add(row);
 
-        tempPanel.add(panSetting);
-
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        unitStartChar = new JComboBox();
+        JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")); //$NON-NLS-1$
+        unitStartChar = new JComboBox<String>();
         // Add option for "A, B, C, D..."
         unitStartChar.addItem("\u0041, \u0042, \u0043, \u0044..."); //$NON-NLS-1$
         // Add option for "ALPHA, BETA, GAMMA, DELTA..."
         unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394..."); //$NON-NLS-1$
         // Add option for "alpha, beta, gamma, delta..."
         unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); //$NON-NLS-1$
-        panSetting.add(unitStartChar);
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.protoMechUnitCodes"))); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(unitStartCharLabel);
+        row.add(unitStartChar);
+        comps.add(row);
 
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.pathFiderTimeLimit"))); //$NON-NLS-1$
+        JLabel maxPathfinderTimeLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
         maxPathfinderTime = new JTextField(5);
-        panSetting.add(maxPathfinderTime);
-        tempPanel.add(panSetting);
+        row = new ArrayList<JComponent>();
+        row.add(maxPathfinderTimeLabel);
+        row.add(maxPathfinderTime);
+        comps.add(row);
 
-        getFocus = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
-        tempPanel.add(getFocus);
-        tempPanel.add(panSetting);
+        getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(getFocus);
+        comps.add(row);
 
         // player-specific settings
-        defaultAutoejectDisabled = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
+        defaultAutoejectDisabled = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
         defaultAutoejectDisabled.addItemListener(this);
-        tempPanel.add(defaultAutoejectDisabled);
+        row = new ArrayList<JComponent>();
+        row.add(defaultAutoejectDisabled);
+        comps.add(row);
 
-        useAverageSkills = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.useAverageSkills")); //$NON-NLS-1$
+        useAverageSkills = new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills")); //$NON-NLS-1$
         useAverageSkills.addItemListener(this);
-        tempPanel.add(useAverageSkills);
+        row = new ArrayList<JComponent>();
+        row.add(useAverageSkills);
+        comps.add(row);
 
-        generateNames = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.generateNames")); //$NON-NLS-1$
+        generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames")); //$NON-NLS-1$
         generateNames.addItemListener(this);
-        tempPanel.add(generateNames);
+        row = new ArrayList<JComponent>();
+        row.add(generateNames);
+        comps.add(row);
         
-        showUnitId = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
+        showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
-        tempPanel.add(showUnitId);
+        row = new ArrayList<JComponent>();
+        row.add(showUnitId);
+        comps.add(row);
 
         // client-side gameLog settings
-        keepGameLog = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
+        keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
         keepGameLog.addItemListener(this);
-        tempPanel.add(keepGameLog);
+        row = new ArrayList<JComponent>();
+        row.add(keepGameLog);
+        comps.add(row);
 
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.logFileName"))); //$NON-NLS-1$
+        JLabel gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName")); //$NON-NLS-1$
         gameLogFilename = new JTextField(15);
-        panSetting.add(gameLogFilename);
-        tempPanel.add(panSetting);
+        row = new ArrayList<JComponent>();
+        row.add(gameLogFilenameLabel);
+        row.add(gameLogFilename);
+        comps.add(row);
 
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.tileset"))); //$NON-NLS-1$
-        tileSetChoice = new JComboBox();
-        panSetting.add(tileSetChoice);
-        tempPanel.add(panSetting);
+        JLabel tileSetChoiceLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset")); //$NON-NLS-1$
+        tileSetChoice = new JComboBox<String>(); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(tileSetChoiceLabel);
+        row.add(tileSetChoice);
+        comps.add(row);
 
-        /*
-         * panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-         * panSetting.add( new
-         * JLabel(Messages.getString("CommonSettingsDialog.logFileMaxSize")) );
-         * //$NON-NLS-1$ gameLogMaxSize = new JTextField(5); panSetting.add(
-         * gameLogMaxSize ); tempPanel.add( panSetting );
-         */
-
-        stampFilenames = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
+        stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
         stampFilenames.addItemListener(this);
-        tempPanel.add(stampFilenames);
+        row = new ArrayList<JComponent>();
+        row.add(stampFilenames);
+        comps.add(row);
 
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.stampFormat"))); //$NON-NLS-1$
+        JLabel stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat")); //$NON-NLS-1$
         stampFormat = new JTextField(15);
-        panSetting.add(stampFormat);
-        tempPanel.add(panSetting);
+        stampFormat.setMaximumSize(new Dimension(15*13,40));
+        row = new ArrayList<JComponent>();
+        row.add(stampFormatLabel);
+        row.add(stampFormat);
+        comps.add(row);
 
         // displayLocale settings
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages
-                .getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
+        JLabel displayLocaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale")); //$NON-NLS-1$
         // displayLocale = new JTextField(8);
-        displayLocale = new JComboBox();
-        displayLocale.addItem(Messages
-                .getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
-        displayLocale.addItem(Messages
-                .getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
-        displayLocale.addItem(Messages
-                .getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
-        panSetting.add(displayLocale);
-        tempPanel.add(panSetting);
+        displayLocale = new JComboBox<String>();
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(displayLocaleLabel);
+        row.add(displayLocale);
+        comps.add(row);
 
         // showMapsheets setting
-        showMapsheets = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
-        tempPanel.add(showMapsheets);
-        return tempPanel;
+        showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(showMapsheets);
+        comps.add(row);
+        
+        return this.createSettingsPanel(comps);
     }
 
     /**
@@ -401,6 +429,11 @@ public class CommonSettingsDialog extends ClientDialog implements
                 tileSetChoice.setSelectedIndex(i);
             }
         }
+        
+        fovInsideEnabled.setSelected(gs.getFovHighlight());
+        fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
+        fovOutsideEnabled.setSelected(gs.getFovDarken());
+        fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -461,6 +494,12 @@ public class CommonSettingsDialog extends ClientDialog implements
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
         }
+        
+        // Tactical Overlay Settings
+        gs.setFovHighlight(fovInsideEnabled.isSelected());
+        gs.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
+        gs.setFovDarken(fovOutsideEnabled.isSelected());
+        gs.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
 
         setVisible(false);
     }
@@ -505,6 +544,64 @@ public class CommonSettingsDialog extends ClientDialog implements
                 value.getText());
     }
 
+    private JPanel getTacticalOverlaySettingsPanel() {
+        
+        ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
+        ArrayList<JComponent> row;
+        
+        fovInsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(fovInsideEnabled);
+        comps.add(row);
+
+        fovHighlightAlpha = new JSlider();
+        fovHighlightAlpha.setMajorTickSpacing(20);
+        fovHighlightAlpha.setMinorTickSpacing(5);
+        fovHighlightAlpha.setPaintTicks(true);
+        fovHighlightAlpha.setPaintLabels(true);
+        fovHighlightAlpha.setMaximumSize(new Dimension(700, 100));
+        JLabel highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(fovHighlightAlpha);
+        row.add(highlightAlphaLabel);
+        comps.add(row);
+        
+        fovOutsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(fovOutsideEnabled);
+        comps.add(row);
+
+        fovDarkenAlpha = new JSlider();
+        fovDarkenAlpha.setMajorTickSpacing(20);
+        fovDarkenAlpha.setMinorTickSpacing(5);
+        fovDarkenAlpha.setPaintTicks(true);
+        fovDarkenAlpha.setPaintLabels(true);
+        fovDarkenAlpha.setMaximumSize(new Dimension(700, 100));
+        JLabel darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(fovDarkenAlpha);
+        row.add(darkenAlphaLabel);
+        comps.add(row);
+        
+        return this.createSettingsPanel(comps);
+    }
+    
+    private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        for (ArrayList<JComponent> cs : comps) {
+        	JPanel subPanel = new JPanel();
+            subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.X_AXIS));
+        	for (JComponent c : cs) {
+        		subPanel.add(c);
+        	}
+        	subPanel.add(Box.createHorizontalGlue());
+        	panel.add(subPanel);
+        }
+        panel.add(Box.createVerticalGlue());
+        return panel;
+    }
+
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
@@ -513,7 +610,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (int i = 0; i < s.length; i++) {
             s[i] = s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length());
         }
-        keys = new JList(s);
+        keys = new JList<String>(s);
         keys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         keys.addListSelectionListener(this);
         p.add(keys);

@@ -170,9 +170,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
             0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f };
 
-    // Initial zoom index
-    public int zoomIndex = 7;
-
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
             .getIsometricEnabled();
@@ -181,6 +178,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
+    
+    // Initial zoom index
+    public int zoomIndex = BASE_ZOOM_INDEX;
 
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
@@ -801,13 +801,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if ((en_Deployer != null) && !useIsometric()) {
             drawDeployment(g);
         }
-        
-        // Shade hexes that don't have LOS.  This is done in darwHex for 
-        // isometric.  It needs to be done here for non-iso
-        if (!useIsometric() && 
-                GUIPreferences.getInstance().getBoolean("FovDarken")){
-            drawLos(selected != null ? selected : selectedEntity.getPosition(),g);
-        }
 
         // draw C3 links
         drawSprites(g, c3Sprites);
@@ -1004,7 +997,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
-                    drawBorderForHex(c, g, Color.yellow);
+                    drawHexBorder(getHexLocation(c), g, Color.yellow);
                 }
             }
         }   
@@ -1016,7 +1009,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *  
      * @param src   The source hex for which line of sight originates
      * @param g     The graphics object to draw on.
-     */
+     * /
     private void drawLos(Coords src, Graphics g) {
         Rectangle view = g.getClipBounds();
         // only update visible hexes
@@ -1045,7 +1038,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param src   The source hex for which line of sight originates
      * @param dest  The destination hex for computing the line of sight
      * @param g     The graphics object to draw on.
-     */
+     * /
     private void drawLos(Coords src, Coords dest, Graphics g){
         int max_dist;
         if (src == null || dest == null){
@@ -1060,153 +1053,192 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int dist = src.distance(dest);
         Color transparent_gray = new Color(0,0,0,100);
         if (dist <= max_dist && !(getLosEffects(src, dest).canSee())){
-            drawHexLayer(dest, g, transparent_gray);
+            drawHexLayer(new Point(dest.x,dest.y), g, transparent_gray);
         }        
     }
+    */
 
     /**
-     * Draw a layer of a solid color (alpha possible) on the hex at Coords c
+     * Draw a layer of a solid color (alpha possible) on the hex at Point p
      * no padding by default
      */
-    private void drawHexLayer(Coords c, Graphics g, Color col) {
-    	drawHexLayer(c,g,col,0);
+    private void drawHexLayer(Point p, Graphics g, Color col) {
+    	drawHexLayer(p,g,col,0);
     }
-    
     /**
-     * Draw an outline around the hex at Coords c
-     * no padding and a width of 1
+     * Draw a layer of a solid color (alpha possible) on the hex at Point p
+     * with some padding around the border
      */
-    private void drawHexLayer(Coords c, Graphics g, Color col, double pad) {
-        Point p = getHexLocation(c);
+    private void drawHexLayer(Point p, Graphics g, Color col, double pad) {
+        g.setColor(col);
+        
+    	final double[] x = {0, 21.*scale, 62.*scale, 83.*scale};
+    	final double[] y = {0, 35.*scale, 36.*scale, 71.*scale};
         g.setColor(col);
 
-    	final double a = 0.5;
-        final double b = 0.8660254;
-        
-        double pd = pad*scale;
-        
-    	final double[] x = {0, 21*scale, 62*scale, 83*scale};
-    	final double[] y = {0, 35*scale, 36*scale, 71*scale};
-        
-        int[] xcoords = {
-    		p.x + (int)(x[1] + a*pd),
-    		p.x + (int)(x[2] - a*pd),
-    		p.x + (int)(x[3] - pd),
-    		p.x + (int)(x[3] - pd),
-    		p.x + (int)(x[2] - a*pd),
-    		p.x + (int)(x[1] + a*pd),
-    		p.x + (int)(x[0] + pd),
-    		p.x + (int)(x[0] + pd)
-        };
-        int[] ycoords = {
-    		p.y + (int)(y[0] + b*pd),
-    		p.y + (int)(y[0] + b*pd),
-    		p.y + (int)(y[1]),
-    		p.y + (int)(y[2]),
-    		p.y + (int)(y[3] - b*pd),
-    		p.y + (int)(y[3] - b*pd),
-    		p.y + (int)(y[2]),
-    		p.y + (int)(y[1])
-        };
-        g.fillPolygon(xcoords, ycoords, 8);
+    	if (pad > 0.1)
+    	{
+        	final double cos60 = 0.5;
+            final double cos30 = 0.8660254;
+            
+            final double pd = pad*scale;
+	        final double a = cos60*pad*scale;
+	        final double b = cos30*pad*scale;
+	        
+	        int[] xcoords = {
+	    		p.x + (int)(x[1] + a),
+	    		p.x + (int)(x[2] - a),
+	    		p.x + (int)(x[3] - pd),
+	    		p.x + (int)(x[3] - pd),
+	    		p.x + (int)(x[2] - a),
+	    		p.x + (int)(x[1] + a),
+	    		p.x + (int)(x[0] + pd),
+	    		p.x + (int)(x[0] + pd)
+	        };
+	        int[] ycoords = {
+	    		p.y + (int)(y[0] + b),
+	    		p.y + (int)(y[0] + b),
+	    		p.y + (int)(y[1]),
+	    		p.y + (int)(y[2]),
+	    		p.y + (int)(y[3] - b),
+	    		p.y + (int)(y[3] - b),
+	    		p.y + (int)(y[2]),
+	    		p.y + (int)(y[1])
+	        };
+	        
+	        g.fillPolygon(xcoords, ycoords, 8);
+	        
+    	} else {
+    		
+	        int[] xcoords = {
+	    		p.x + (int)(x[1]),
+	    		p.x + (int)(x[2]),
+	    		p.x + (int)(x[3]),
+	    		p.x + (int)(x[3]),
+	    		p.x + (int)(x[2]),
+	    		p.x + (int)(x[1]),
+	    		p.x + (int)(x[0]),
+	    		p.x + (int)(x[0])
+	        };
+	        int[] ycoords = {
+	    		p.y + (int)(y[0]),
+	    		p.y + (int)(y[0]),
+	    		p.y + (int)(y[1]),
+	    		p.y + (int)(y[2]),
+	    		p.y + (int)(y[3]),
+	    		p.y + (int)(y[3]),
+	    		p.y + (int)(y[2]),
+	    		p.y + (int)(y[1])
+	        };
+	        
+	        g.fillPolygon(xcoords, ycoords, 8);
+    	}
     }
     
     /**
-     * Draw an outline around the hex at Coords c
+     * Draw an outline around the hex at Point p
      * no padding and a width of 1
      */
-    private void drawBorderForHex(Coords c, Graphics g, Color col) {
-    	drawBorderForHex(c,g,col,0);
+    private void drawHexBorder(Point p, Graphics g, Color col) {
+    	drawHexBorder(p,g,col,0);
     }
     
     /**
-     * Draw an outline around the hex at Coords c
+     * Draw an outline around the hex at Point p
      * padded around the border by pad and a line-width of 1
      */
-    private void drawBorderForHex(Coords c, Graphics g, Color col, double pad) {
-    	drawBorderForHex(c,g,col,0,1);
+    private void drawHexBorder(Point p, Graphics g, Color col, double pad) {
+    	drawHexBorder(p,g,col,pad,1);
     }
     
     /**
      * Draw a thick outline around the hex at Coords c
      * padded around the border by pad and a line-width of linewidth
      */
-    private void drawBorderForHex(Coords c, Graphics g, Color col, double pad, double linewidth) {
-        Point p = getHexLocation(c);
+    private void drawHexBorder(Point p, Graphics g, Color col, double pad, double linewidth) {
+
         g.setColor(col);
+
+    	final double[] x = {0, 21.*scale, 62.*scale, 83.*scale};
+    	final double[] y = {0, 35.*scale, 36.*scale, 71.*scale};
+
+    	final double cos60 = 0.5;
+        final double cos30 = 0.8660254;
         
-    	final double a = 0.5;
-        final double b = 0.8660254;
+        final double pd = pad*scale;
+        final double a = cos60*pd;
+        final double b = cos30*pd;
         
-        double pd = pad*scale;
-        
-    	final double[] x = {0., 21.*scale, 62.*scale, 83.*scale};
-    	final double[] y = {0., 35.*scale, 36.*scale, 71.*scale};
-        
-        if (linewidth < 1.5)
-        {
+        if (linewidth < 1.5) {
+        	
 	        int[] xcoords = {
-        		p.x + (int)(x[1] + a*pd),
-        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[1] + a),
+        		p.x + (int)(x[2] - a),
         		p.x + (int)(x[3] - pd),
         		p.x + (int)(x[3] - pd),
-        		p.x + (int)(x[2] - a*pd),
-        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[2] - a),
+        		p.x + (int)(x[1] + a),
         		p.x + (int)(x[0] + pd),
         		p.x + (int)(x[0] + pd)
 	        };
 	        int[] ycoords = {
-        		p.y + (int)(y[0] + b*pd),
-        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[0] + b),
+        		p.y + (int)(y[0] + b),
         		p.y + (int)(y[1]),
         		p.y + (int)(y[2]),
-        		p.y + (int)(y[3] - b*pd),
-        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[3] - b),
+        		p.y + (int)(y[3] - b),
         		p.y + (int)(y[2]),
         		p.y + (int)(y[1])
             };
-            g.drawPolygon(xcoords, ycoords, 8);
+	        
+	        g.drawPolygon(xcoords, ycoords, 8);
+	        
         } else {
-        	double pl = pd + linewidth*scale;
+
+            final double pl = pad*scale + linewidth*scale;
+            final double c = cos60*pl;
+            final double d = cos30*pl;
+        	
 	        int[] xcoords = {
-        		p.x + (int)(x[1] + a*pd),
-        		p.x + (int)(x[2] - a*pd),
+        		p.x + (int)(x[1] + a),
+        		p.x + (int)(x[2] - a),
         		p.x + (int)(x[3] - pd),
         		p.x + (int)(x[3] - pd),
-        		p.x + (int)(x[2] - a*pd),
-        		p.x + (int)(x[1] + a*pd),
+        		p.x + (int)(x[2] - a),
+        		p.x + (int)(x[1] + a),
         		p.x + (int)(x[0] + pd),
         		p.x + (int)(x[0] + pd),
-        		p.x + (int)(x[1] + a*pd),
-        		p.x + (int)(x[1] + a*pl),
+        		p.x + (int)(x[1] + a),
+        		p.x + (int)(x[1] + c),
         		p.x + (int)(x[0] + pl),
         		p.x + (int)(x[0] + pl),
-        		p.x + (int)(x[1] + a*pl),
-        		p.x + (int)(x[2] - a*pl),
+        		p.x + (int)(x[1] + c),
+        		p.x + (int)(x[2] - c),
         		p.x + (int)(x[3] - pl),
         		p.x + (int)(x[3] - pl),
-        		p.x + (int)(x[2] - a*pl),
-        		p.x + (int)(x[1] + a*pl)
+        		p.x + (int)(x[2] - c),
+        		p.x + (int)(x[1] + c)
 	        };
 	        int[] ycoords = {
-        		p.y + (int)(y[0] + b*pd),
-        		p.y + (int)(y[0] + b*pd),
+        		p.y + (int)(y[0] + b),
+        		p.y + (int)(y[0] + b),
         		p.y + (int)(y[1]),
         		p.y + (int)(y[2]),
-        		p.y + (int)(y[3] - b*pd),
-        		p.y + (int)(y[3] - b*pd),
+        		p.y + (int)(y[3] - b),
+        		p.y + (int)(y[3] - b),
         		p.y + (int)(y[2]),
         		p.y + (int)(y[1]),
-        		p.y + (int)(y[0] + b*pd),
-        		p.y + (int)(y[0] + b*pl),
+        		p.y + (int)(y[0] + b),
+        		p.y + (int)(y[0] + d),
         		p.y + (int)(y[1]),
         		p.y + (int)(y[2]),
-        		p.y + (int)(y[3] - b*pl),
-        		p.y + (int)(y[3] - b*pl),
+        		p.y + (int)(y[3] - d),
+        		p.y + (int)(y[3] - d),
         		p.y + (int)(y[2]),
         		p.y + (int)(y[1]),
-        		p.y + (int)(y[0] + b*pl),
-        		p.y + (int)(y[0] + b*pl)
+        		p.y + (int)(y[0] + d),
+        		p.y + (int)(y[0] + d)
 	        };
 	        
 	        g.fillPolygon(xcoords, ycoords, 18);
@@ -1489,7 +1521,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             drawHex(c, g);
                             if (en_Deployer != null && board.isLegalDeployment(
                                     c, en_Deployer.getStartingPos())) {
-                                drawBorderForHex(c, g, Color.yellow);
+                                drawHexBorder(getHexLocation(c), g, Color.yellow);
                             }
                         }
                     }
@@ -1701,6 +1733,61 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.drawLine(x1, y1, x2, y2);
         }
 
+        Coords src;
+        if (selected != null){
+            src = selected;
+        } else if (selectedEntity != null){
+            src = selectedEntity.getPosition();
+        } else {
+            src = null;
+        }
+        if (src != null) {
+            Point p = new Point(drawX,drawY);
+            GUIPreferences gs = GUIPreferences.getInstance();
+			boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
+			boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
+			
+			if (darken || highlight) {
+				
+				final int pad = 0;
+				final int lw = 7;
+			
+				final int highlight_alpha = gs.getInt(GUIPreferences.FOV_HIGHLIGHT_ALPHA);
+				final Color cols[] = {
+					new Color(150, 150,  40, highlight_alpha),
+					new Color( 40, 150,  40, highlight_alpha),
+					new Color(150,  40,  40, highlight_alpha),
+					new Color(150,  95, 150, highlight_alpha),
+					new Color( 40,  40, 150, highlight_alpha)
+				};
+				
+				final int max_dist = 30;
+		        final int d[] = {4,7,10,13,max_dist};
+				
+				final Color transparent_gray = new Color(0,0,0,gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA));
+				final Color selected_color = new Color(50,80,150,70);
+		
+				int dist = src.distance(c);
+				
+				if (dist == 0) {
+					drawHexBorder(p, boardGraph, selected_color, pad, lw);
+				} else if (dist < max_dist) {
+					if (!getLosEffects(src, c).canSee()) {
+						if (darken) {
+							drawHexLayer(p, boardGraph, transparent_gray);
+						}
+					} else if (highlight) {
+						for (int k=0; k<cols.length; k++) {
+							if (dist < d[k]) {
+								drawHexLayer(p, boardGraph, cols[k]);
+								break;
+							}
+						}
+					}
+				}
+		    }
+        }
+
         // draw mapsheet borders
         if (GUIPreferences.getInstance().getShowMapsheets()) {
             boardGraph.setColor(GUIPreferences.getInstance().getColor(
@@ -1747,14 +1834,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             boardGraph.setColor(Color.black);
-        }
-        
-        // We do this here for isometric view so the layering is done properly
-        //  If we do it here without iso, the shading doesn't display properly
-        if (useIsometric() && 
-                GUIPreferences.getInstance().getBoolean("FovDarken")){
-            drawLos(selected != null ? selected : selectedEntity.getPosition(), 
-                    c, boardGraph);
         }
     }
 
@@ -6102,7 +6181,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *            The selected to set.
      */
     public void setSelected(Coords selected) {
-        this.selected = selected;
+    	if (this.selected != selected) {
+            this.selected = selected;
+            
+            // force a repaint of the board
+            boardGraph = null;
+            this.updateBoard();
+    	}
     }
 
     /**
@@ -6646,6 +6731,44 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } // End have-choices
 
         // Return the chosen unit.
+        return choice;
+    }
+
+    /**
+     * Return the highest Entity from the entities at the given coords.
+     *
+     * @param pos
+     *            - the <code>Coords</code> containing targets.
+     */
+    private Entity getHighestEntity(Coords pos) {
+    	
+        // there may be no entity at this position
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration<Entity> choices = game.getEntities(pos);
+
+        // Convert the choices into a List of targets.
+        Vector<Entity> entities = new Vector<Entity>();
+        while (choices.hasMoreElements()) {
+            entities.addElement(choices.nextElement());
+        }
+
+        // Do we have a single choice?
+        if (entities.size() == 1) {
+            // Return that choice.
+            choice = entities.elementAt(0);
+        } else {
+        	int max_height = 0;
+        	for (Entity e : entities) {
+        		int h = e.getHeight();
+        		if (h > max_height) {
+        			choice = e;
+        			max_height = h;
+        		}
+        	}
+        }
+        
         return choice;
     }
 

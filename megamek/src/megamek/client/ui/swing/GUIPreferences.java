@@ -37,7 +37,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * reason these options were made this way is that GUI options have a way of
      * quickly multiplying and we need a quick and dirty way of adding them
      * without having to code too many new lines. In addition, keeping them
-     * seperated in the settings dialog shields new users from unecessary
+     * separated in the settings dialog shields new users from unnecessary
      * complication.
      */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
@@ -71,6 +71,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITOVERVIEW_SELECTED_COLOR = "AdvancedUnitOverviewSelectedColor";    
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
     /* --End advanced settings-- */
+    
+//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR0 = "AdvancedFovHighlightColor0";
+//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR1 = "AdvancedFovHighlightColor1";
+//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR2 = "AdvancedFovHighlightColor2";
+//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR3 = "AdvancedFovHighlightColor3";
+//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR4 = "AdvancedFovHighlightColor4";
 
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
@@ -82,7 +88,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
+    public static final String FOV_HIGHLIGHT = "FovHighlight";
+    public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
+    public static final String FOV_HIGHLIGHT_DISTANCES = "FovHighlightDistances";
     public static final String FOV_DARKEN = "FovDarken";
+    public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -198,7 +208,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
+        store.setDefault(FOV_HIGHLIGHT,false);
+        store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
         store.setDefault(FOV_DARKEN,true);
+        store.setDefault(FOV_DARKEN_ALPHA, 100);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -301,9 +314,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getGameOptionsSizeWidth(){
         return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
     }
+ 
+    public boolean getFovHighlight() {
+        return store.getBoolean(FOV_HIGHLIGHT);
+    }
+
+    public int getFovHighlightAlpha() {
+        return store.getInt(FOV_HIGHLIGHT_ALPHA);
+    }
     
-    public boolean getFovDarken(){
+    public boolean getFovDarken() {
         return store.getBoolean(FOV_DARKEN);
+    }
+
+    public int getFovDarkenAlpha() {
+        return store.getInt(FOV_DARKEN_ALPHA);
     }
 
     public Color getMapTextColor() {
@@ -591,10 +616,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setGameOptionsSizeWidth(int i){
         store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
     }
+
+    public void setFovHighlight(boolean state){
+        store.setValue(FOV_HIGHLIGHT,state);
+    }
+
+	public void setFovHighlightAlpha(int i) {
+		store.setValue(FOV_HIGHLIGHT_ALPHA,i);
+	}
     
     public void setFovDarken(boolean state){
         store.setValue(FOV_DARKEN,state);
     }
+
+	public void setFovDarkenAlpha(int i) {
+		store.setValue(FOV_DARKEN_ALPHA,i);
+	}
 
     public void setMapZoomIndex(int zoomIndex) {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);

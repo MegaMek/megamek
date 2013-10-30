@@ -35,7 +35,7 @@ v0.37.0-dev (SVN)
 + Bug [#3817]: ListSelectionModels can fire multiple ListSelectionEvent for one 
     selection change
 + Bug: init bonuses from mobile hq not working correct with multiple mobile HQs
-+ Feature [#1142] "Field of View" tool (thanks Johann)
++ Feature [#1142]: "Field of View" tool (thanks Johann)
 + Bug: Added some code to prevent the AdvancedSearchDialog from opening off 
     screen.  Also removed an unused state variable in GameOptionsDialog.
 + Bug [#3894]: Shots Assigned Not Always Present

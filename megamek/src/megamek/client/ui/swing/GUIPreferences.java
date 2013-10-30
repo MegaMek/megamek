@@ -88,6 +88,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
+    public static final String FIRING_SOLUTIONS = "FiringSolutions";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
     public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
     public static final String FOV_HIGHLIGHT_DISTANCES = "FovHighlightDistances";
@@ -208,6 +209,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
+        store.setDefault(FIRING_SOLUTIONS,true);
         store.setDefault(FOV_HIGHLIGHT,false);
         store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
         store.setDefault(FOV_DARKEN,true);
@@ -315,6 +317,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
     }
  
+    public boolean getFiringSolutions() {
+        return store.getBoolean(FIRING_SOLUTIONS);
+    }
+    
     public boolean getFovHighlight() {
         return store.getBoolean(FOV_HIGHLIGHT);
     }
@@ -615,6 +621,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setGameOptionsSizeWidth(int i){
         store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
+    }
+    
+    public void setFiringSolutions(boolean state){
+        store.setValue(FIRING_SOLUTIONS,state);
     }
 
     public void setFovHighlight(boolean state){

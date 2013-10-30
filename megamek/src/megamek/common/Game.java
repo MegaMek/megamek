@@ -1781,6 +1781,26 @@ public class Game implements Serializable, IGame {
         }
         return output;
     }
+    
+    /**
+     * Get the entities for the player.
+     *
+     * @param player - the <code>Player</code> whose entities are required.
+     * @param hide - should fighters loaded into squadrons be excluded from this list?
+     * @return a <code>Vector</code> of <code>Entity</code>s.
+     */
+    public ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide){
+        ArrayList<Integer> output = new ArrayList<Integer>();
+        for (Entity entity : entities) {
+            if (entity.isPartOfFighterSquadron() && hide) {
+                continue;
+            }
+            if (player.equals(entity.getOwner())) {
+                output.add(entity.getId());
+            }
+        }
+        return output;
+    }
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't

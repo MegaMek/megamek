@@ -47,6 +47,8 @@ public class ToHitData extends TargetRoll {
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
     private int margineOfSuccess = 0;
+    
+    private Coords location;
 
     /**
      * Indicates if the primary cover is damagable.
@@ -209,6 +211,14 @@ public class ToHitData extends TargetRoll {
 
     public void setMoS(int moS) {
         margineOfSuccess = moS;
+    }
+    
+    public void setLocation(Coords l){
+        location = l;
+    }
+    
+    public Coords getLocation(){
+        return location;
     }
 
     public void setDamagableCoverTypePrimary(int damagableCoverType) {

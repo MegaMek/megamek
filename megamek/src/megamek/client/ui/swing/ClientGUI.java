@@ -107,6 +107,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$    
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight"; //$NON-NLS-1$
+    public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -636,11 +637,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
             GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_HIGHLIGHT)) {
-            GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getBoolean("FovHighlight"));
-            bv.refreshDisplayables();
+            GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getFovHighlight());
+            bv.refreshDisplayables();                              
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
-            GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getBoolean("FovDarken"));
+            GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
             bv.refreshDisplayables();
+        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FIRING_SOLUTIONS)) {
+            GUIPreferences.getInstance().setFiringSolutions(!GUIPreferences.getInstance().getFiringSolutions());
+            if (!GUIPreferences.getInstance().getFiringSolutions()){
+                bv.clearFiringSolutionData();
+            } else {
+                if (curPanel instanceof FiringDisplay){
+                    ((FiringDisplay) curPanel).setFiringSolutions();
+                }
+            }
+            bv.refreshDisplayables();             
         }
     }
 

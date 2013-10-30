@@ -18,14 +18,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.KeyListener;
+import java.util.Hashtable;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayListener;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.actions.AttackAction;
 
 public interface IBoardView extends MechDisplayListener {
@@ -42,6 +45,9 @@ public interface IBoardView extends MechDisplayListener {
     
     public void drawMovementData(Entity ce, MovePath cmd);
     public void clearMovementData();
+    public void setFiringSolutions(Entity attacker, 
+            Hashtable<Integer,ToHitData> firingSolutions);
+    public void clearFiringSolutionData();
     public boolean isMovingUnits();
 
     public void addDisplayable(IDisplayable d);

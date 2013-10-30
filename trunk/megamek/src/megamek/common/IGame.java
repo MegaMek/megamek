@@ -816,6 +816,15 @@ public interface IGame {
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
     public abstract ArrayList<Entity> getPlayerEntities(Player player, boolean hide);
+    
+    /**
+     * Get the entities for the player.
+     *
+     * @param player - the <code>Player</code> whose entities are required.
+     * @param hide - should fighters loaded into squadrons be excluded from this list?
+     * @return a <code>Vector</code> of <code>Entity</code>s.
+     */
+    public abstract ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide);
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't

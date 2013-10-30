@@ -95,6 +95,7 @@ public class LosEffects {
     int targetCover = COVER_NONE; // that means partial cover
     int attackerCover = COVER_NONE; // ditto
     Building thruBldg = null;
+    Coords targetLoc;
     /**
      * Indicates if the primary cover is damagable.
      */
@@ -146,6 +147,11 @@ public class LosEffects {
     int minimumWaterDepth = -1;
     boolean arcedShot = false;
 
+    
+    public Coords getTargetPosition() {
+        return targetLoc;
+    }
+    
     public int getMinimumWaterDepth() {
         return minimumWaterDepth;
     }
@@ -327,7 +333,7 @@ public class LosEffects {
     }
 
     public static LosEffects calculateLos(IGame game, int attackerId,
-            Targetable target, boolean spotting) {
+            Targetable target, boolean spotting) {        
         //we need an extra step here, because units with secondary position can calculate LoS
         //from hexes other than that returned from getPosition()
         final Entity ae = game.getEntity(attackerId);
@@ -363,6 +369,7 @@ public class LosEffects {
                 }
             }
         }
+        bestLos.targetLoc = target.getPosition();
         return bestLos;
     }
     
@@ -377,6 +384,7 @@ public class LosEffects {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;
+            los.targetLoc = target.getPosition();
             return los;
         }
 
@@ -386,6 +394,7 @@ public class LosEffects {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             los.hasLoS = false;
+            los.targetLoc = target.getPosition();
             return los;
         }
 
@@ -489,6 +498,7 @@ public class LosEffects {
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         
+        finalLoS.targetLoc = target.getPosition();
         return finalLoS;
     }
 
@@ -497,6 +507,7 @@ public class LosEffects {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.hasLoS = false;
+            los.targetLoc = ai.targetPos;
             return los;
         }
         if ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater
@@ -505,6 +516,7 @@ public class LosEffects {
             los.blocked = true;
             los.hasLoS = false;
             los.blockedByWater = true;
+            los.targetLoc = ai.targetPos;
             return los;
         }
 
@@ -513,6 +525,7 @@ public class LosEffects {
             los.blocked = true;
             los.deadZone = true;
             los.hasLoS = false;
+            los.targetLoc = ai.targetPos;
             return los;
         }
 
@@ -531,6 +544,8 @@ public class LosEffects {
                            ((finalLoS.lightWoods + finalLoS.lightSmoke)
                              + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
                              + (finalLoS.ultraWoods * 3) < 3);
+        
+        finalLoS.targetLoc = ai.targetPos;
         return finalLoS;
     }
 

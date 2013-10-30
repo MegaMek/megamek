@@ -2618,7 +2618,7 @@ public class Aero extends Entity {
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
+        addCritical(loc, new CriticalSlot(mounted));
     }
 
     /**
@@ -3102,8 +3102,8 @@ public class Aero extends Entity {
         // add the space bomb attack
         // TODO: I don't know where else to put this (where do infantry attacks
         // get added)
-        if (game.getOptions().booleanOption("stratops_space_bomb") && 
-                loadedABomb && game.getBoard().inSpace() && 
+        if (game.getOptions().booleanOption("stratops_space_bomb") &&
+                loadedABomb && game.getBoard().inSpace() &&
                 (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
@@ -3112,7 +3112,7 @@ public class Aero extends Entity {
             }
         }
         if (loadedABomb && !game.getBoard().inSpace() &&
-                getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+                (getBombs(AmmoType.F_GROUND_BOMB).size() > 0)) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
@@ -3974,10 +3974,11 @@ public class Aero extends Entity {
         return 0;
     }
 
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO;
     }
-    
+
     public boolean isInASquadron(){
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
     }

@@ -22319,7 +22319,7 @@ public class Server implements Runnable {
         // Handle critical hits on equipment slots.
         else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
             cs.setHit(true);
-            Mounted mounted = en.getEquipment(cs.getIndex());
+            Mounted mounted = cs.getMount();
             EquipmentType eqType = mounted.getType();
             boolean hitBefore = mounted.isHit();
 

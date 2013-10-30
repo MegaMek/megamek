@@ -692,7 +692,7 @@ implements IMechLoader
                             if (equipment.isSpreadable()) {
                                 Mounted m = spreadEquipment.get(equipment);
                                 if (m != null) {
-                                    CriticalSlot criticalSlot = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), equipment.isHittable(), m);
+                                    CriticalSlot criticalSlot = new CriticalSlot(m);
                                     mech.addCritical(location, criticalSlot);
 
                                 } else {

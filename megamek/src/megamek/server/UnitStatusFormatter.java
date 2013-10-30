@@ -37,46 +37,43 @@ public abstract class UnitStatusFormatter {
      */
     public static String format(Entity e) {
         StringBuffer sb = new StringBuffer(2048);
-        sb
-                .append(
-                        "=============================================================")
+        sb.append(
+                "=============================================================")
                 .append(CommonConstants.NL);
         sb.append(formatHeader(e));
-        sb.append("--- Armor: ").append(e.getTotalArmor()).append("/").append(
-                e.getTotalOArmor()).append(
-                "-------------------------------------------").append(
-                CommonConstants.NL);
+        sb.append("--- Armor: ").append(e.getTotalArmor()).append("/")
+                .append(e.getTotalOArmor())
+                .append("-------------------------------------------")
+                .append(CommonConstants.NL);
         sb.append("--- Internal: ").append(e.getTotalInternal()).append("/")
-                .append(e.getTotalOInternal()).append(
-                        "----------------------------------------").append(
-                        CommonConstants.NL);
+                .append(e.getTotalOInternal())
+                .append("----------------------------------------")
+                .append(CommonConstants.NL);
         sb.append(formatArmor(e));
         if ((e instanceof Mech) || (e instanceof Protomech)) {
-            sb
-                    .append(
-                            "-------------------------------------------------------------")
+            sb.append(
+                    "-------------------------------------------------------------")
                     .append(CommonConstants.NL);
             sb.append(formatCrits(e));
         }
-        sb
-                .append(
-                        "-------------------------------------------------------------")
+        sb.append(
+                "-------------------------------------------------------------")
                 .append(CommonConstants.NL);
         sb.append(formatAmmo(e));
-        sb
-                .append(
-                        "=============================================================")
+        sb.append(
+                "=============================================================")
                 .append(CommonConstants.NL);
         return sb.toString();
     }
 
     private static String formatHeader(Entity e) {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("Model: ").append(e.getChassis()).append(" - ").append(
-                e.getModel()).append(CommonConstants.NL);
+        sb.append("Model: ").append(e.getChassis()).append(" - ")
+                .append(e.getModel()).append(CommonConstants.NL);
         sb.append("Pilot: ").append(e.getCrew().getName());
         sb.append(" (").append(e.getCrew().getGunnery()).append("/");
-        sb.append(e.getCrew().getPiloting()).append(")").append(CommonConstants.NL);
+        sb.append(e.getCrew().getPiloting()).append(")")
+                .append(CommonConstants.NL);
         if (e.isCaptured()) {
             sb.append("  *** CAPTURED BY THE ENEMY ***");
             sb.append(CommonConstants.NL);
@@ -88,8 +85,8 @@ public abstract class UnitStatusFormatter {
         StringBuffer sb = new StringBuffer(1024);
         for (Mounted ammo : e.getAmmo()) {
             sb.append(ammo.getName());
-            sb.append(": ").append(ammo.getBaseShotsLeft()).append(
-                    CommonConstants.NL);
+            sb.append(": ").append(ammo.getBaseShotsLeft())
+                    .append(CommonConstants.NL);
         }
         return sb.toString();
     }
@@ -122,9 +119,8 @@ public abstract class UnitStatusFormatter {
                         sb.append(Protomech.systemNames[cs.getIndex()]);
                     }
                 } else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                    Mounted m = e.getEquipment(cs.getIndex());
-                    sb
-                            .append(cs.isHit() ? "*" : "").append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    Mounted m = cs.getMount();
+                    sb.append(cs.isHit() ? "*" : "").append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
             }
             sb.append(CommonConstants.NL);
@@ -151,19 +147,19 @@ public abstract class UnitStatusFormatter {
 
     private static String formatArmorTank(Tank t) {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("      ARMOR               INTERNAL").append(
-                CommonConstants.NL).append(
-                "    __________           __________").append(
-                CommonConstants.NL).append(
-                "    |\\      /|           |\\      /|").append(
-                CommonConstants.NL);
+        sb.append("      ARMOR               INTERNAL")
+                .append(CommonConstants.NL)
+                .append("    __________           __________")
+                .append(CommonConstants.NL)
+                .append("    |\\      /|           |\\      /|")
+                .append(CommonConstants.NL);
         // front
         sb.append("    | \\ ").append(renderArmor(t.getArmor(Tank.LOC_FRONT)))
                 .append(" / |           | \\ ");
         sb.append(renderArmor(t.getInternal(Tank.LOC_FRONT))).append(" / |")
-                .append(CommonConstants.NL).append(
-                        "    |  \\__/  |           |  \\__/  |").append(
-                        CommonConstants.NL);
+                .append(CommonConstants.NL)
+                .append("    |  \\__/  |           |  \\__/  |")
+                .append(CommonConstants.NL);
         // left, turret and right
         sb.append("    |").append(renderArmor(t.getArmor(Tank.LOC_LEFT)))
                 .append("/");
@@ -176,21 +172,22 @@ public abstract class UnitStatusFormatter {
                 "|           |");
         sb.append(renderArmor(t.getInternal(Tank.LOC_LEFT))).append("/");
         if (t.hasNoTurret()) {
-            sb.append(renderArmor(t.getInternal(t.getLocTurret()))).append("\\");
+            sb.append(renderArmor(t.getInternal(t.getLocTurret())))
+                    .append("\\");
         } else {
             sb.append("  \\");
         }
         sb.append(renderArmor(t.getInternal(Tank.LOC_RIGHT))).append("|")
                 .append(CommonConstants.NL);
         // rear
-        sb.append("    | /____\\ |           | /____\\ |").append(
-                CommonConstants.NL).append("    | / ").append(
-                renderArmor(t.getArmor(Tank.LOC_REAR))).append(
-                " \\ |           | / ");
+        sb.append("    | /____\\ |           | /____\\ |")
+                .append(CommonConstants.NL).append("    | / ")
+                .append(renderArmor(t.getArmor(Tank.LOC_REAR)))
+                .append(" \\ |           | / ");
         sb.append(renderArmor(t.getInternal(Tank.LOC_REAR))).append(" \\ |")
-                .append(CommonConstants.NL).append(
-                        "    |/______\\|           |/______\\|").append(
-                        CommonConstants.NL);
+                .append(CommonConstants.NL)
+                .append("    |/______\\|           |/______\\|")
+                .append(CommonConstants.NL);
 
         sb.append(CommonConstants.NL);
         return sb.toString();
@@ -202,9 +199,9 @@ public abstract class UnitStatusFormatter {
         sb.append(CommonConstants.NL);
         if (m.getWeight() < 70) {
             // head
-            sb.append("         (").append(
-                    renderArmor(m.getArmor(Mech.LOC_HEAD))).append(
-                    ")                 (**)                  (");
+            sb.append("         (")
+                    .append(renderArmor(m.getArmor(Mech.LOC_HEAD)))
+                    .append(")                 (**)                  (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append(")");
             sb.append(CommonConstants.NL);
             // torsos
@@ -230,22 +227,21 @@ public abstract class UnitStatusFormatter {
             sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
             sb.append(CommonConstants.NL);
             // legs
-            sb
-                    .append("       /  /\\  \\               /  \\                /  /\\  \\");
+            sb.append("       /  /\\  \\               /  \\                /  /\\  \\");
             sb.append(CommonConstants.NL);
             sb.append("      (").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append("/  \\").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append(")             /    \\              (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
             sb.append("/  \\")
-                    .append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append(
-                            ")");
+                    .append(renderArmor(m.getInternal(Mech.LOC_RLEG)))
+                    .append(")");
             sb.append(CommonConstants.NL);
         } else {
             // head
-            sb.append("      .../").append(
-                    renderArmor(m.getArmor(Mech.LOC_HEAD))).append(
-                    "\\...           .../**\\...            .../");
+            sb.append("      .../")
+                    .append(renderArmor(m.getArmor(Mech.LOC_HEAD)))
+                    .append("\\...           .../**\\...            .../");
             sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD)))
                     .append("\\...");
             sb.append(CommonConstants.NL);
@@ -273,16 +269,15 @@ public abstract class UnitStatusFormatter {
             sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
             sb.append(CommonConstants.NL);
             // legs
-            sb
-                    .append("       /  /\\  \\             /      \\              /  /\\  \\");
+            sb.append("       /  /\\  \\             /      \\              /  /\\  \\");
             sb.append(CommonConstants.NL);
             sb.append("      /").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append(".\\/.").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append("\\           /        \\            /");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
             sb.append(".\\/.")
-                    .append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append(
-                            "\\");
+                    .append(renderArmor(m.getInternal(Mech.LOC_RLEG)))
+                    .append("\\");
             sb.append(CommonConstants.NL);
         }
         sb.append(CommonConstants.NL);
@@ -299,9 +294,9 @@ public abstract class UnitStatusFormatter {
     private static String formatArmorBattleArmor(BattleArmor b) {
         StringBuffer sb = new StringBuffer(32);
         for (int i = 1; i < b.locations(); i++) {
-            sb.append("Trooper ").append(i).append(": ").append(
-                    renderArmor(b.getArmor(i))).append(" / ").append(
-                    renderArmor(b.getInternal(i)));
+            sb.append("Trooper ").append(i).append(": ")
+                    .append(renderArmor(b.getArmor(i))).append(" / ")
+                    .append(renderArmor(b.getInternal(i)));
             sb.append(CommonConstants.NL);
         }
         return sb.toString();
@@ -341,14 +336,17 @@ public abstract class UnitStatusFormatter {
         if (!m.isQuad()) {
             sb.append("      (").append(
                     renderArmor(m.getArmor(Protomech.LOC_LARM), 1));
-            sb.append(" /").append(renderArmor(m.getArmor(Protomech.LOC_TORSO)))
-                    .append(" \\").append(
-                            renderArmor(m.getArmor(Protomech.LOC_RARM)));
+            sb.append(" /")
+                    .append(renderArmor(m.getArmor(Protomech.LOC_TORSO)))
+                    .append(" \\")
+                    .append(renderArmor(m.getArmor(Protomech.LOC_RARM)));
             sb.append(")            (");
-            sb.append(renderArmor(m.getInternal(Protomech.LOC_LARM), 1)).append(
-                    " /").append(renderArmor(m.getInternal(Protomech.LOC_TORSO)))
+            sb.append(renderArmor(m.getInternal(Protomech.LOC_LARM), 1))
+                    .append(" /")
+                    .append(renderArmor(m.getInternal(Protomech.LOC_TORSO)))
                     .append(" \\");
-            sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM))).append(")");
+            sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM))).append(
+                    ")");
             sb.append(CommonConstants.NL);
         }
 
@@ -367,13 +365,14 @@ public abstract class UnitStatusFormatter {
 
     private static String formatArmorGunEmplacement(GunEmplacement ge) {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("            ----------").append(CommonConstants.NL).append(
-                "           |          |").append(CommonConstants.NL).append(
-                "  CF       |    ").append(
-                renderArmor(ge.getArmor(GunEmplacement.LOC_GUNS))).append(
-                "    |").append(CommonConstants.NL).append(
-                "           |          |").append(CommonConstants.NL).append(
-                "         -----------------").append(CommonConstants.NL);
+        sb.append("            ----------").append(CommonConstants.NL)
+                .append("           |          |").append(CommonConstants.NL)
+                .append("  CF       |    ")
+                .append(renderArmor(ge.getArmor(GunEmplacement.LOC_GUNS)))
+                .append("    |").append(CommonConstants.NL)
+                .append("           |          |").append(CommonConstants.NL)
+                .append("         -----------------")
+                .append(CommonConstants.NL);
         return sb.toString();
     }
 

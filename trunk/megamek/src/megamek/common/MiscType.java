@@ -1595,6 +1595,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
+        misc.tankslots = 0;
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
                 EquipmentType.RATING_A, EquipmentType.RATING_A };
@@ -1615,6 +1616,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
+        misc.tankslots = 0;
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
                 EquipmentType.RATING_A, EquipmentType.RATING_A };
@@ -6688,6 +6690,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ClanDuneBuggy");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
@@ -7151,6 +7154,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
+        misc.tankslots = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_C };
@@ -7168,6 +7172,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
+        misc.tankslots = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_C };
@@ -7961,6 +7966,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Prop";
         misc.setInternalName("PropChassisMod");
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
                 .or(F_PROP);
         return misc;
@@ -7971,6 +7977,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Ultra-Light";
         misc.setInternalName("UltraLightChassisMod");
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
         return misc;

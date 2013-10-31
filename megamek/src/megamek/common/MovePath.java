@@ -863,7 +863,7 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
         } // end while
-        System.out.println("iteration count: " + loopcount);
+        //System.out.println("iteration count: " + loopcount);
         if (getFinalCoords().distance(dest) > bestPath.getFinalCoords().distance(dest)) {
             // Make the path we found, this path.
             steps = bestPath.steps;
@@ -1099,6 +1099,9 @@ public class MovePath implements Cloneable, Serializable {
             if (first.isJumping()) {
                 return 0;
             }
+            if (first.getFinalCoords().equals(destination)){
+                return 0;
+            }
             int firstFacing = Math.abs((first.getFinalCoords().direction(destination) + (backward ? 3 : 0)) % 6
                     - first.getFinalFacing());
             if (firstFacing > 3) {
@@ -1106,6 +1109,9 @@ public class MovePath implements Cloneable, Serializable {
             }
             if (first.canShift()) {
                 firstFacing = Math.max(0, firstFacing - 1);
+            }
+            if (first.getFinalCoords().degree(destination) % 60 != 0){
+                firstFacing++;
             }
             return firstFacing;
         }

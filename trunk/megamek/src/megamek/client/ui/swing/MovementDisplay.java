@@ -4366,15 +4366,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
             shiftheld = false;
-            if (clientgui.getClient().isMyTurn()
-                    && (clientgui.getBoardView().getLastCursor() != null)
-                    && !clientgui.getBoardView().getLastCursor()
-                            .equals(clientgui.getBoardView().getSelected())) {
-                // switch to movement
-                clientgui.bv.clearMovementData();
-                currentMove(clientgui.getBoardView().getLastCursor());
-                clientgui.bv.drawMovementData(ce(), cmd);
-            }
         }
     }
 

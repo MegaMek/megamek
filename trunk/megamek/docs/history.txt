@@ -22,7 +22,8 @@ v0.37.0-dev (SVN)
 + Enabled the MechEditorDialog for post-stable branch
 + Removed ImageCache maximum size
 + Bug: Board.setHex - shouldn't adust min/max elev if they are undefined
-+ Bug [#3618]:  Matched input/output stream buffers to socket receive/send buffer
++ Bug [#3618]:  Matched input/output stream buffers to socket receive/send 
+    buffer
 + Bug: When handling a COMMAND_ENTITY_ADD packet, the server was calling 
     transmitAllPlayerDones twice, which was causing superfluous overhead
 + Bug [#3618]: Updates to the code for adding multiple entities, see SF bug 
@@ -59,6 +60,8 @@ v0.37.0-dev (SVN)
 + SuperHeavy mechs should now be finished.
 + changed how CriticalSlots work, the int index is now used only for TYPE_SYSTEM
      CriticalSlots, never for TYPE_EQUIPMENT ones
++ Bug [#3905]: Shift-Clicking to turn during movement draws another step when 
+    shift is released
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

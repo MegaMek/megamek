@@ -1400,7 +1400,7 @@ public class Compute {
 
             int buddyRange = Compute.effectiveDistance(game, friend, target,
                     false);
-            if (buddyRange < c3range) {
+            if ((buddyRange < c3range) && Compute.canSee(game, friend, target)) {
                 c3range = buddyRange;
                 c3spotter = friend;
             }
@@ -1440,8 +1440,8 @@ public class Compute {
             boolean added = false;
             // but everyone in the C3i network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
-                if (Compute.effectiveDistance(game, network.get(pos), target,
-                        false) >= buddyRange) {
+                if ((Compute.effectiveDistance(game, network.get(pos), target,
+                        false) >= buddyRange) && Compute.canSee(game, friend, target)) {
                     network.add(pos, friend);
                     added = true;
                     break;

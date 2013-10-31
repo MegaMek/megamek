@@ -63,6 +63,7 @@ v0.37.0-dev (SVN)
 + Bug [#3905]: Shift-Clicking to turn during movement draws another step when 
     shift is released
 + Errata change: C3 requires LOS
++ Bug [#3907]: The MM A* heuristic is inadmissible
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

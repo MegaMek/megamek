@@ -461,6 +461,7 @@ KeyListener, ItemListener, ListSelectionListener {
                         LosEffects.calculateLos(game, cen, target);
                 ToHitData thd = los.losModifiers(game);
                 thd.setLocation(los.getTargetPosition());
+                thd.setRange(ce().getPosition().distance(los.getTargetPosition()));
                 thd.append(Compute.getAttackerMovementModifier(game, cen));
                 thd.append(Compute.getTargetMovementModifier(game, target.getId()));
                 thd.append(Compute.getTargetTerrainModifier(game, target));

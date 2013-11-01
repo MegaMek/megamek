@@ -187,7 +187,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255,0,255));
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
-        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "grey");
+        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
         
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");

@@ -16,6 +16,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -29,6 +30,7 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -245,6 +247,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     private ArrayList<FiringSolutionSprite> firingSprites = 
             new ArrayList<FiringSolutionSprite>();
+    
+    private ArrayList<MovementEnvelopeSprite> moveEnvSprites = 
+            new ArrayList<MovementEnvelopeSprite>();
 
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
@@ -781,9 +786,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     scrollpane.getViewport().getViewPosition().x, scrollpane
                             .getViewport().getViewPosition().y, this);
         }
+        
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
+        }
+        
+        if (game.getPhase() == Phase.PHASE_MOVEMENT && !useIsometric()){
+            drawSprites(g, moveEnvSprites);
         }
 
         // Minefield signs all over the place!
@@ -835,6 +845,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
+        
         // draw firing solution sprites, but only during the firing phase
         if (game.getPhase() == Phase.PHASE_FIRING){
             drawSprites(g, firingSprites);
@@ -888,6 +899,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ArrayList<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
+        }
+    }
+    
+    private synchronized void drawMovementEnvelopeSpritesForHex(Coords c, Graphics g,
+            ArrayList<MovementEnvelopeSprite> spriteArrayList) {
+        Rectangle view = g.getClipBounds();
+        for (MovementEnvelopeSprite sprite : spriteArrayList) {
+            Coords cp = sprite.getPosition();
+            if (cp.equals(c) && view.intersects(sprite.getBounds())
+                    && !sprite.hidden) {
+                if (!sprite.isReady()) {
+                    sprite.prepare();
+                }
+                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                        this, false);
+            }
         }
     }
 
@@ -1528,6 +1555,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = game.getBoard().getHex(c);
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g);
+                            drawMovementEnvelopeSpritesForHex(c,g,moveEnvSprites);
                             if (en_Deployer != null && board.isLegalDeployment(
                                     c, en_Deployer.getStartingPos())) {
                                 drawHexBorder(getHexLocation(c), g, Color.yellow);
@@ -1541,7 +1569,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (hex != null) {
                         drawOrthograph(c, g);
                         drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
-                        drawIsometricSpritesForHex(c, g, isometricSprites);
+                        drawIsometricSpritesForHex(c, g, isometricSprites);                        
                     }
                 }
             }
@@ -2560,8 +2588,50 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
     
     public void clearFiringSolutionData(){
-        firingSprites = new ArrayList<FiringSolutionSprite>();
+        firingSprites.clear();
         repaint();        
+    }
+    
+    public void setMovementEnvelope(Hashtable<Coords,Integer> mvEnvData, 
+            int walk, int run, int jump, int gear){
+        clearMovementEnvelope();
+        
+        if (mvEnvData == null){
+            return;
+        }
+        
+        GUIPreferences guip = GUIPreferences.getInstance();
+        for (Coords loc : mvEnvData.keySet()){
+            Color spriteColor = null;
+            if (gear == MovementDisplay.GEAR_JUMP){
+                if (mvEnvData.get(loc) <= jump){
+                    spriteColor = 
+                            guip.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                }
+            } else {
+                if (mvEnvData.get(loc) <= walk){
+                    spriteColor = 
+                            guip.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                } else if (mvEnvData.get(loc) <= run){
+                    spriteColor = 
+                            guip.getColor(GUIPreferences.ADVANCED_MOVE_RUN_COLOR);
+                } else {
+                    spriteColor = 
+                            guip.getColor(GUIPreferences.ADVANCED_MOVE_SPRINT_COLOR);
+                }
+            }
+            if (spriteColor != null){
+                MovementEnvelopeSprite mvSprite = 
+                        new MovementEnvelopeSprite(spriteColor,loc);
+                moveEnvSprites.add(mvSprite);
+            }
+        }
+        
+    }
+    
+    public void clearMovementEnvelope(){
+        moveEnvSprites.clear();
+        repaint();
     }
 
     public void setLocalPlayer(Player p) {
@@ -6286,6 +6356,59 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             return new Font(fontName, fontStyle, fontSize);
         }
+    }
+    
+    /**
+     * Sprite for displaying information about where a unit can move to. 
+     */
+    private class MovementEnvelopeSprite extends Sprite {
+
+        Color drawColor;
+        Coords loc;
+        
+        public MovementEnvelopeSprite(Color c, Coords l){
+            drawColor = c;
+            loc = l;
+        }
+        
+        @Override
+        public void prepare() {
+            // create image for buffer
+            Image tempImage = createImage(bounds.width, bounds.height);
+            Graphics graph = tempImage.getGraphics();
+
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+            // draw attack poly
+            graph.setColor(drawColor);
+            Stroke st = ((Graphics2D)graph).getStroke();
+            ((Graphics2D)graph).setStroke(new BasicStroke(2));
+            graph.drawPolygon(hexPoly);
+            ((Graphics2D)graph).setStroke(st);
+
+            // create final image
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
+        }  
+        
+        @Override
+        public Rectangle getBounds() {
+            bounds = new Rectangle(getHexLocation(loc), hex_size);
+            return bounds;
+        }
+        
+        public Coords getPosition(){
+            return loc;
+        }
+        
     }
 
     /**

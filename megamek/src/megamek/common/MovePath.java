@@ -1147,4 +1147,17 @@ public class MovePath implements Cloneable, Serializable {
     public void setCareful(boolean b) {
         careful = b;
     }
+    
+    public int countMp(boolean jumping){
+        int mp = 0;
+        for (MoveStep step : steps){
+            if (jumping && step.getType() != MoveStepType.TURN_LEFT && 
+                    step.getType() != MoveStepType.TURN_RIGHT){
+                mp += step.getMp();
+            } else if (!jumping) {
+                mp += step.getMp();
+            }
+        }
+        return mp;
+    }
 }

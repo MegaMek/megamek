@@ -59,6 +59,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MOVE_FONT_SIZE = "AdvancedMoveFontSize";
     public static final String ADVANCED_MOVE_FONT_STYLE = "AdvancedMoveFontStyle";
     public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
+    public static final String ADVANCED_FIRE_SOLN_CANSEE_COLOR = "AdvancedFireSolnCanSeeColor";
+    public static final String ADVANCED_FIRE_SOLN_NOSEE_COLOR = "AdvancedFireSolnNoSeeColor";    
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
@@ -184,6 +186,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
         setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255,0,255));
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
+        setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
+        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "grey");
         
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");

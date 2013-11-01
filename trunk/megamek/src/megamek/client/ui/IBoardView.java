@@ -25,7 +25,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayListener;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -47,7 +46,10 @@ public interface IBoardView extends MechDisplayListener {
     public void clearMovementData();
     public void setFiringSolutions(Entity attacker, 
             Hashtable<Integer,ToHitData> firingSolutions);
+    public void setMovementEnvelope(Hashtable<Coords,Integer> mvEnvData, 
+            int walk, int run, int jump, int gear);
     public void clearFiringSolutionData();
+    public void clearMovementEnvelope();
     public boolean isMovingUnits();
 
     public void addDisplayable(IDisplayable d);

@@ -1784,7 +1784,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 			boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
 			boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
 			
-			if (darken || highlight) {
+			if ((darken || highlight) && 
+			        game.getPhase() == Phase.PHASE_MOVEMENT) {
 				
 				final int pad = 0;
 				final int lw = 7;

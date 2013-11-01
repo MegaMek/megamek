@@ -29,8 +29,11 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         bv = 488;
         name = "TSEMP Cannon";
         setInternalName(name);
+        this.addLookupName("ISTSEMP");
         introDate = 3085;
         techLevel.put(3109,TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
         tonnage = 6;
         criticals  = 5;
     }

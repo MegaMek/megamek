@@ -34,6 +34,7 @@ public class ISLargeReengineeredLaser extends ReengineeredLaserWeapon {
         name = "Large Re-engineered Laser";
         setInternalName(name);
         addLookupName("ISLargeReengineeredLaser");
+        addLookupName("ISLargeRELaser");
         heat = 10;
         damage = 9;
         shortRange = 5;
@@ -51,5 +52,8 @@ public class ISLargeReengineeredLaser extends ReengineeredLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
+        introDate = 3130;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

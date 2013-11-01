@@ -32,8 +32,11 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
         bv = 98;
         name = "TSEMP One-Shot";
         setInternalName(name);
+        this.addLookupName("ISTSEMPOS");
         introDate = 3095;
         techLevel.put(3100,TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
         tonnage = 4;
         criticals = 3;
     }

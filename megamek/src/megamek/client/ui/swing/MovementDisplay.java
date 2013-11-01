@@ -23,6 +23,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -53,6 +55,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.EntitySelector;
 import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -155,6 +158,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_THRUST = "MoveThrust"; //$NON-NLS-1$
     public static final String MOVE_YAW = "MoveYaw"; //$NON-NLS-1$
     public static final String MOVE_END_OVER = "MoveEndOver"; //$NON-NLS-1$
+    
+    public static final String MOVE_ENVELOPE = "MoveEnvelope";
 
     // buttons
     private JPanel panButtons;
@@ -1246,6 +1251,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateLoadButtons();
             butDone.setEnabled(true);
         }
+        
+        clientgui.bv.clearMovementEnvelope();
     }
 
     private void removeLastStep() {
@@ -3683,6 +3690,78 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    
+    public void computeMovementEnvelope(){
+        Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
+        MovePath mp = new MovePath(clientgui.getClient().game,ce());
+        mvEnvData.put(ce().getPosition(), mp);
+        computeMovementEnvelope(mvEnvData,ce().getPosition());
+        Hashtable<Coords,Integer> mvEnvMP = new Hashtable<Coords,Integer>((int)(mvEnvData.size() * 1.25 + 1));
+        for (Coords c : mvEnvData.keySet()){
+            mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
+        }
+        clientgui.bv.setMovementEnvelope(mvEnvMP,
+                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);        
+    }
+    
+    public void computeMovementEnvelope(Hashtable<Coords,MovePath> mvEnvData, 
+            Coords loc){
+        // Determine the maximum MP we can spend
+        int maxMP;
+        if (gear == GEAR_JUMP){
+            maxMP = ce().getJumpMP();
+        } else if (gear == GEAR_BACKUP){
+            maxMP = ce().getWalkMP();
+        } else {
+            if (clientgui.getClient().game.getOptions().
+                    booleanOption("tacops_sprint")){
+                maxMP = ce().getSprintMP();    
+            } else {
+                maxMP = ce().getRunMP();   
+            }            
+        }
+        
+        MovePath mp = mvEnvData.get(loc);
+        if (mp == null){
+            System.out.println("Error computing movement envelope: " +
+            		"no move path for given location!");
+            return;
+        }
+        
+        boolean jumping = gear == GEAR_JUMP;
+        if (mp.countMp(jumping) >= maxMP){
+            return;
+        }
+            
+        MoveStepType stepType = (gear == GEAR_BACKUP) ?
+                MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
+        HashSet<Coords> nextSteps = new HashSet<Coords>();
+        IBoard board = clientgui.getClient().game.getBoard();
+        for (int i =0 ; i < 6; i++){
+            Coords c = loc.translated(i);
+            if (!board.contains(c)){
+                continue;
+            }
+            MovePath newPath = mp.clone();
+            newPath.findPathTo(c, stepType);
+            MovePath storedPath = mvEnvData.get(c);
+            if (storedPath == null){
+                if (newPath.countMp(jumping) <= maxMP){
+                    mvEnvData.put(c, newPath);
+                    nextSteps.add(c);                    
+                }
+            } else if (storedPath.countMp(jumping) > newPath.countMp(jumping)){
+                mvEnvData.put(c, newPath);
+                computeMovementEnvelope(mvEnvData,c);
+            }
+        }
+        
+        for (Coords c : nextSteps){
+            computeMovementEnvelope(mvEnvData,c);
+        }
+        
+    }
+    
     //
     // ActionListener
     //
@@ -4202,6 +4281,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     ready();
                 }
             }
+        } else if (ev.getActionCommand().equals(MOVE_ENVELOPE)){
+            computeMovementEnvelope();            
         }
         updateProneButtons();
         updateRACButton();

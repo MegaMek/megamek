@@ -65,6 +65,7 @@ v0.37.0-dev (SVN)
 + Errata change: C3 requires LOS
 + Bug [#3907]: The MM A* heuristic is inadmissible, which leads to planning 
     sub-optimal paths
++ Feature [#1143]: 'Movement Envelope'
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

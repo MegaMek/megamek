@@ -86,9 +86,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JCheckBoxMenuItem toggleFovHighlight;
     private JCheckBoxMenuItem toggleFovDarken;
     private JCheckBoxMenuItem toggleFiringSolutions;
+    private JMenuItem viewMovementEnvelope;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
-    private JMenuItem viewMoveEnvelope;
     private JMenuItem viewRoundReport;
     private JMenuItem viewGameOptions;
     private JMenuItem viewClientSettings;
@@ -371,7 +371,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         toggleFiringSolutions.addActionListener(this);
         toggleFiringSolutions.setActionCommand(ClientGUI.VIEW_TOGGLE_FIRING_SOLUTIONS);
         menu.add(toggleFiringSolutions);
-        
+        viewMovementEnvelope = new JMenuItem(Messages
+                .getString("CommonMenuBar.movementEnvelope")); //$NON-NLS-1$
+        viewMovementEnvelope.addActionListener(this);
+        viewMovementEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_ENV);
+        viewMovementEnvelope.setMnemonic(KeyEvent.VK_Q);
+        viewMovementEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+                getToolkit().getMenuShortcutKeyMask()));
+        menu.add(viewMovementEnvelope);
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$
@@ -391,7 +398,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                 .getString("CommonMenuBar.viewClientSettings")); //$NON-NLS-1$
         viewClientSettings.setActionCommand("viewClientSettings"); //$NON-NLS-1$
         viewClientSettings.addActionListener(this);
-        menu.add(viewClientSettings);
+        menu.add(viewClientSettings);        
         viewLOSSetting = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewLOSSetting")); //$NON-NLS-1$
         viewLOSSetting.addActionListener(this);

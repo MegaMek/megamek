@@ -33,6 +33,7 @@ public class ISMediumReengineeredLaser extends ReengineeredLaserWeapon {
         name = "Medium Re-engineered Laser";
         setInternalName(name);
         addLookupName("ISMediumReengineeredLaser");
+        addLookupName("ISMediumRELaser");
         heat = 7;
         damage = 6;
         shortRange = 3;
@@ -49,5 +50,8 @@ public class ISMediumReengineeredLaser extends ReengineeredLaserWeapon {
         cost = 10000;
         shortAV = 6;
         maxRange = RANGE_SHORT;
+        introDate = 3130;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

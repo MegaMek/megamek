@@ -28,6 +28,7 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         name = "Small Re-engineered Laser";
         setInternalName(name);
         addLookupName("ISSmallReengineeredLaser");
+        addLookupName("ISSmallRELaser");
         heat = 5;
         damage = 4;
         shortRange = 1;
@@ -46,5 +47,8 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
+        introDate = 3130;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

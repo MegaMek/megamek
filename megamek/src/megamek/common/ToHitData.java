@@ -49,6 +49,8 @@ public class ToHitData extends TargetRoll {
     private int margineOfSuccess = 0;
     
     private Coords location;
+    
+    private int range;
 
     /**
      * Indicates if the primary cover is damagable.
@@ -219,6 +221,14 @@ public class ToHitData extends TargetRoll {
     
     public Coords getLocation(){
         return location;
+    }
+    
+    public void setRange(int r){
+        range = r;
+    }
+    
+    public int getRange(){
+        return range;
     }
 
     public void setDamagableCoverTypePrimary(int damagableCoverType) {

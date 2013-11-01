@@ -21,11 +21,11 @@ Primitive
 </Model>
 
 <year>
-2440
+2300
 </year>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <tonnage>
@@ -57,17 +57,17 @@ Tracked
 
 <Body Equipment>
 Advanced Fire Control
-IS Ammo LRM-15 Primitive
-IS Ammo LRM-15 Primitive
-IS Ammo LRM-15 Primitive
-IS Ammo LRM-15 Primitive
-IS Ammo LRM-15 Primitive
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
 </Body Equipment>
 
 <Front Equipment>
-LRM 15p
-LRM 15p
-LRM 15p
+ISLRM15
+ISLRM15
+ISLRM15
 </Front Equipment>
 
 <Right Equipment>

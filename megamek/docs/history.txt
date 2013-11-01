@@ -66,6 +66,8 @@ v0.37.0-dev (SVN)
 + Bug [#3907]: The MM A* heuristic is inadmissible, which leads to planning 
     sub-optimal paths
 + Feature [#1143]: 'Movement Envelope'
++ Data: Unit fixes and new Images.
++ Feature [#1176]: adding lookup names
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

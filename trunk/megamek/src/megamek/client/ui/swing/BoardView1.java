@@ -2583,7 +2583,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }         
         for (ToHitData thd : firingSolutions.values()){
             FiringSolutionSprite sprite = new 
-                    FiringSolutionSprite(thd.getValue(),thd.getLocation());
+                    FiringSolutionSprite(thd.getValue(), thd.getRange(), 
+                            thd.getLocation());
             firingSprites.add(sprite);
         }
     }
@@ -6231,13 +6232,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Sprite for displaying generic firing information.  This is used for 
      */
     private class FiringSolutionSprite extends Sprite {
-        private int toHitMod;
+        private int toHitMod, range;
         private Coords loc;
         private Image baseScaleImage;
 
-        public FiringSolutionSprite(final int thm, Coords l) {
+        public FiringSolutionSprite(final int thm, final int r, final Coords l){
             toHitMod = thm;
             loc = l;
+            range = r;
             bounds = new Rectangle(getHexLocation(loc), hex_size);
             image = null;
             baseScaleImage = null;
@@ -6277,48 +6279,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // Draw firing information
             Point p = getHexLocation(loc);
             p.translate(-bounds.x, -bounds.y);                     
-            Color drawColor;
             graph.setFont(getFiringFont());
             
             if (toHitMod != TargetRoll.IMPOSSIBLE && 
                     toHitMod != TargetRoll.AUTOMATIC_FAIL){
-                int xOffset = 5;
-                int yOffset = 39;
+                int xOffset = 25;
+                int yOffset = 30;
                 FontMetrics metrics = graph.getFontMetrics();  
-                // Draw +
-                String modifier = "+";
-                graph.setColor(Color.CYAN);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
-                // Draw Short range mod
-                xOffset+= metrics.charWidth('+');
-                modifier = toHitMod + "";                
-                graph.setColor(Color.GREEN);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
-                // Draw /
-                xOffset+= metrics.charsWidth(modifier.toCharArray(), 
-                        0, modifier.length());                
-                modifier = "/";                
-                graph.setColor(Color.CYAN);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
-                // Draw Medium range mod
-                xOffset+= metrics.charWidth('/');
-                modifier = (toHitMod+2) + "";                
-                graph.setColor(Color.YELLOW);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
-                // Draw /
-                xOffset+= metrics.charsWidth(modifier.toCharArray(), 
-                        0, modifier.length());
-                modifier = "/";
-                graph.setColor(Color.CYAN);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
-                // Draw Short range mod
-                xOffset+= metrics.charWidth('/');
-                modifier = (toHitMod+4) + "";                
-                graph.setColor(Color.RED);
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);                             
+                // Draw to-hit modifier
+                
+                String modifier;
+                if (toHitMod >= 0){
+                    modifier = "+" + toHitMod;
+                } else {
+                    modifier = "-" + toHitMod;
+                }
+                graph.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);             
+                yOffset+= metrics.getHeight();                
+                // Draw range
+                modifier = "rng: " + range;    
+                xOffset = 13;
+                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);                                  
             } else {
-                drawColor = Color.RED;
-                graph.setColor(drawColor);
+                graph.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR));
                 String modifierString = "X";
                 graph.drawString(modifierString, p.x + 35, p.y + 39);
             }
@@ -6353,7 +6339,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
             int fontStyle = GUIPreferences.getInstance().getInt(
                     GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
-            int fontSize = 18;
+            int fontSize = 16;
 
             return new Font(fontName, fontStyle, fontSize);
         }

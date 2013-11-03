@@ -166,9 +166,9 @@ public class Crew implements Serializable {
     public String getNickname() {
         return nickname;
     }
-    
+
     /** The size of this crew.
-     * 
+     *
      * @return the number of crew members.
      */
     public int getSize() {
@@ -220,13 +220,13 @@ public class Crew implements Serializable {
     }
 
     /** Accessor method to set the crew size.
-     * 
+     *
      * @param newSize The new size of this crew.
      */
     public void setSize(int newSize) {
         size = newSize;
     }
-    
+
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
     }
@@ -594,8 +594,12 @@ public class Crew implements Serializable {
      *            the piloting skill of the pilot
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
+    public static double getBVSkillMultiplier(int gunnery, int piloting) {
+        return getBVSkillMultiplier(gunnery, piloting, null);
+    }
+
     public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
-        if (game != null && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
+        if ((game != null) && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
             return alternateBvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
         }
         return bvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];

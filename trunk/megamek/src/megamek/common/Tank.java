@@ -1806,7 +1806,16 @@ public class Tank extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        double finalBV = dbv + obv;
+        double finalBV;
+        if (useGeometricMeanBV()) {
+            finalBV = 2 * Math.sqrt(obv * dbv);
+            if (finalBV == 0) {
+                finalBV = dbv + obv;
+            }
+        } else {
+            finalBV = dbv + obv;
+        }
+        double totalBV = finalBV;
 
         if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
@@ -1816,7 +1825,7 @@ public class Tank extends Entity {
             bvText.append("Total BV * Drone Operating System Modifier");
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append(obv + dbv);
+            bvText.append(totalBV);
             bvText.append(" * ");
             bvText.append("0.95");
             bvText.append(endColumn);

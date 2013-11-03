@@ -267,7 +267,15 @@ public class GunEmplacement extends Tank {
 
         // structure modifier
         obv *= 0.44;
-        double finalBV = dbv + obv;
+        double finalBV;
+        if (useGeometricMeanBV()) {
+            finalBV = 2 * Math.sqrt(obv * dbv);
+            if (finalBV == 0) {
+                finalBV = obv + dbv;
+            }
+        } else {
+            finalBV = obv + dbv;
+        }
         double xbv = 0.0;
         if (!ignoreC3 && (game != null)) {
             xbv += getExtraC3BV((int)Math.round(finalBV));

@@ -1339,7 +1339,15 @@ public class Protomech extends Entity {
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
+        int finalBV;
+        if (useGeometricMeanBV()) {
+            finalBV = (int)Math.round(2 * Math.sqrt(obv * dbv) + xbv);
+            if (finalBV == 0) {
+                finalBV = (int)Math.round(dbv + obv);
+            }
+        } else {
+            finalBV = (int) Math.round(dbv + obv + xbv);
+        }
 
         // and then factor in pilot
         double pilotFactor = 1;

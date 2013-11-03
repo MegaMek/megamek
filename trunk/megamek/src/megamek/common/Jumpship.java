@@ -721,7 +721,15 @@ public class Jumpship extends Aero {
 
         obv = weaponBV * speedFactor;
 
-        double finalBV = dbv + obv;
+        double finalBV;
+        if (useGeometricMeanBV()) {
+            finalBV = 2 * Math.sqrt(obv * dbv);
+            if (finalBV == 0) {
+                finalBV = dbv + obv;
+            }
+        } else {
+            finalBV = dbv + obv;
+        }
 
         // we get extra bv from some stuff
         double xbv = 0.0;

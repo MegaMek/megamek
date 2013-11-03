@@ -68,7 +68,7 @@ v0.37.0-dev (SVN)
 + Feature [#1143]: 'Movement Envelope'
 + Data: Unit fixes and new Images.
 + Feature [#1176]: adding lookup names
-
++ Feature [#1182] Alternate Pilot BV Mod
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

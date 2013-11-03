@@ -93,7 +93,19 @@ public class Crew implements Serializable {
             { 1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77 },
             { 1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72 },
             { 1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68 },
-            { 1.28, 1.19, 1.1, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 }, };
+            { 1.28, 1.19, 1.1, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 },
+        };
+    private static double[][] alternateBvMod = new double[][] {
+        { 2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59 },
+        { 2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44 },
+        { 2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25 },
+        { 1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06 },
+        { 1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85 },
+        { 1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77 },
+        { 1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72 },
+        { 1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68 },
+        { 1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 },
+    };
 
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
@@ -529,9 +541,10 @@ public class Crew implements Serializable {
 
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
+     * @param game
      */
-    public double getBVSkillMultiplier() {
-        return getBVSkillMultiplier(true);
+    public double getBVSkillMultiplier(IGame game) {
+        return getBVSkillMultiplier(true, game);
     }
 
     /**
@@ -540,13 +553,14 @@ public class Crew implements Serializable {
      * @param usePiloting
      *            whether or not to use the default value non-anti-mech
      *            infantry/BA should not use the anti-mech skill
+     * @param game
      */
-    public double getBVSkillMultiplier(boolean usePiloting) {
+    public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
         int pilotVal = piloting;
         if (!usePiloting) {
             pilotVal = 5;
         }
-        return getBVImplantMultiplier() * getBVSkillMultiplier(gunnery, pilotVal);
+        return getBVImplantMultiplier() * getBVSkillMultiplier(gunnery, pilotVal, game);
     }
 
     public double getBVImplantMultiplier() {
@@ -580,7 +594,12 @@ public class Crew implements Serializable {
      *            the piloting skill of the pilot
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
-    public static double getBVSkillMultiplier(int gunnery, int piloting) {
+    public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
+        if (game != null && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
+            System.out.println("Using alternate BV Mods.");
+            return alternateBvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
+        }
+        System.out.println("Using standard BV Mods.");
         return bvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
     }
 

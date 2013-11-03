@@ -1135,15 +1135,32 @@ public class Dropship extends SmallCraft {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Offensive BV + Defensive BV");
+        if (useGeometricMeanBV()) {
+            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
+        } else {
+            bvText.append("Offensive BV + Defensive BV");
+        }
         bvText.append(endColumn);
         bvText.append(startColumn);
 
-        double finalBV = dbv + obv;
+        double finalBV;
+        if (useGeometricMeanBV()) {
+            finalBV = 2 * Math.sqrt(obv * dbv);
+            if (finalBV == 0) {
+                finalBV = dbv + obv;
+            }
+            bvText.append("2 * sqrt(");
+            bvText.append(obv);
+            bvText.append(" + ");
+            bvText.append(dbv);
+            bvText.append(")");
+        } else {
+            finalBV = dbv + obv;
+            bvText.append(dbv);
+            bvText.append(" + ");
+            bvText.append(obv);
+        }
 
-        bvText.append(dbv);
-        bvText.append(" + ");
-        bvText.append(obv);
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(" = ");

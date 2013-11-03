@@ -653,7 +653,15 @@ public class Infantry extends Entity {
             }
         }
         obv = wbv * speedFactor;
-        int bv = (int) Math.round(obv + dbv);
+        int bv;
+        if (useGeometricMeanBV()) {
+            bv = (int)Math.round(2 * Math.sqrt(obv * dbv));
+            if (bv == 0) {
+                bv = (int)Math.round(dbv + obv);
+            }
+        } else {
+            bv = (int) Math.round(obv + dbv);
+        }
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {

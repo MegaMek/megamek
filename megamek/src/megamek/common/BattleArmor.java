@@ -927,7 +927,18 @@ public class BattleArmor extends Infantry {
             double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;
-            squadBV += dBV;
+
+            double soldierBV;
+            if (useGeometricMeanBV()) {
+                soldierBV = 2 * Math.sqrt(oBV * dBV);
+                if (soldierBV == 0) {
+                    soldierBV = oBV + dBV;
+                }
+            } else {
+                soldierBV = oBV + dBV;
+            }
+
+            squadBV += soldierBV;
 
             /*if (i == 1) {
                 System.out.println(getChassis()+getModel());
@@ -935,7 +946,6 @@ public class BattleArmor extends Infantry {
                 System.out.println(oBV);
                 System.out.println((oBV+dBV));
             }*/
-            squadBV += oBV;
         }
         // we have now added all troopers, divide by current strength to then
         // multiply by the unit size mod

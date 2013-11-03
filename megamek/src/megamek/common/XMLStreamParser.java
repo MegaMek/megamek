@@ -686,7 +686,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if ((gunVal < 0) || (gunVal > 7)) {
+                    if ((gunVal < 0) || (gunVal > 8)) {
                         warning.append("Found invalid gunnery value: ")
                                 .append(gunnery).append(".\n");
                         return;
@@ -699,7 +699,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if ((pilotVal < 0) || (pilotVal > 7)) {
+                    if ((pilotVal < 0) || (pilotVal > 8)) {
                         warning.append("Found invalid piloting value: ")
                                 .append(piloting).append(".\n");
                         return;
@@ -1559,7 +1559,7 @@ public class XMLStreamParser implements XMLResponder {
                     } else {
 
                         // Nope, we've got equipment. Get this slot's mounted.
-                        Mounted mounted = entity.getEquipment(slot.getIndex());
+                        Mounted mounted = slot.getMount();
 
                         // Reset transient values.
                         mounted.restore();

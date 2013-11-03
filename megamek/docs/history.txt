@@ -70,6 +70,7 @@ v0.37.0-dev (SVN)
 + Feature [#1176]: adding lookup names
 + Feature [#1182] Alternate Pilot BV Mod
 + Bug [#3906]: Careful Stand/Getting Up Bug 0.37-dev
++ Feature [#1184] Calculate BV by Geometric Mean
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

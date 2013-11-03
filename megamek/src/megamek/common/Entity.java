@@ -5212,6 +5212,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public abstract int calculateBattleValue();
 
+    public boolean useGeometricMeanBV() {
+        return (game != null) && game.getOptions().booleanOption("geometric_mean_bv");
+    }
+
     /**
      * Calculates the battle value of this mech. If the parameter is true, then
      * the battle value for c3 will be added whether the mech is currently part

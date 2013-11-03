@@ -9486,7 +9486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Method taht determines if this Entity passed over another entity during
      * its current path
-     * @param e
+     * @param t
      * @return
      */
     public boolean passedOver(Targetable t){

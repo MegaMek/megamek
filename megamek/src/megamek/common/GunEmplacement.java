@@ -278,7 +278,7 @@ public class GunEmplacement extends Tank {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier(game);
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);

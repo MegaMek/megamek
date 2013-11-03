@@ -657,7 +657,7 @@ public class Infantry extends Entity {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek());
+            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek(), game);
         }
         return (int) Math.round((bv) * pilotFactor);
 

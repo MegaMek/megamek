@@ -4752,7 +4752,8 @@ public class Server implements Runnable {
                     entity.mpUsed += 2;
                     nextAltitude = curAltitude;
                 } else {
-                    addReport(doEntityFallsInto(entity, curPos, nextPos,
+                    addReport(doEntityFallsInto(entity, entity.getElevation(), 
+                            curPos, nextPos,
                             entity.getBasePilotingRoll(step.getMovementType()), true));
                     addReport(doEntityDisplacementMinefieldCheck(entity,
                             curPos, nextPos, nextElevation));
@@ -6842,7 +6843,8 @@ public class Server implements Runnable {
                     entity.addPilotingModifierForTerrain(roll, curPos);
                     roll.append(new PilotingRollData(entity.getId(),
                             2 * leapDistance, "leaping (leg damage)"));
-                    if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos,
+                    if (0 < doSkillCheckWhileMoving(entity, lastElevation, 
+                            lastPos, curPos,
                             roll, false)) {
                         // do leg damage
                         addReport(damageEntity(entity, new HitData(
@@ -6871,10 +6873,11 @@ public class Server implements Runnable {
                     entity.addPilotingModifierForTerrain(roll, curPos);
                     roll.append(new PilotingRollData(entity.getId(),
                             leapDistance, "leaping (fall)"));
-                    if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos,
-                            roll, false)) {
+                    if (0 < doSkillCheckWhileMoving(entity, lastElevation, 
+                            lastPos, curPos, roll, false)) {
                         entity.setElevation(lastElevation);
-                        addReport(doEntityFallsInto(entity, lastPos, curPos,
+                        addReport(doEntityFallsInto(entity, lastElevation, 
+                                lastPos, curPos,
                                 entity.getBasePilotingRoll(overallMoveType),
                                 false));
                     }
@@ -6889,11 +6892,11 @@ public class Server implements Runnable {
                 // Have an entity-meaningful PSR message.
                 boolean psrFailed = true;
                 if (entity instanceof Mech) {
-                    psrFailed = (0 < doSkillCheckWhileMoving(entity, lastPos,
-                            lastPos, rollTarget, true));
+                    psrFailed = (0 < doSkillCheckWhileMoving(entity, 
+                            lastElevation, lastPos, lastPos, rollTarget, true));
                 } else {
-                    psrFailed = (0 < doSkillCheckWhileMoving(entity, lastPos,
-                            lastPos, rollTarget, false));
+                    psrFailed = (0 < doSkillCheckWhileMoving(entity, 
+                            lastElevation, lastPos, lastPos, rollTarget, false));
                 }
                 // Does the entity skid?
                 if (psrFailed) {
@@ -6954,8 +6957,8 @@ public class Server implements Runnable {
                         overallMoveType, prevStep, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    int moF = doSkillCheckWhileMoving(entity, lastPos, curPos,
-                            rollTarget, false);
+                    int moF = doSkillCheckWhileMoving(entity, lastElevation, 
+                            lastPos, curPos, rollTarget, false);
                     if (moF > 0) {
                         // maximum distance is hexes moved / 2
                         int sideslipDistance = Math.min(moF, distance - 1);
@@ -6999,8 +7002,8 @@ public class Server implements Runnable {
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
-                        true);
+                doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, 
+                        rollTarget, true);
             }
 
             // check if we are using reckless movement
@@ -7008,11 +7011,11 @@ public class Server implements Runnable {
                     curPos, prevHex);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (entity instanceof Mech) {
-                    doSkillCheckWhileMoving(entity, lastPos, curPos,
-                            rollTarget, true);
+                    doSkillCheckWhileMoving(entity, lastElevation, lastPos, 
+                            curPos, rollTarget, true);
                 } else if (entity instanceof Tank) {
-                    if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos,
-                            rollTarget, false)) {
+                    if (0 < doSkillCheckWhileMoving(entity, lastElevation, 
+                            lastPos, curPos, rollTarget, false)) {
                         // assume VTOLs in flight are always in clear terrain
                         if ((0 == curHex.terrainsPresent())
                                 || (step.getElevation() > 0)) {
@@ -7078,8 +7081,8 @@ public class Server implements Runnable {
             rollTarget = entity.checkBogDown(step, curHex, lastPos, curPos,
                     lastElevation, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos,
-                        rollTarget, false)) {
+                if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos, 
+                        curPos, rollTarget, false)) {
                     entity.setStuck(true);
                     entity.setCanUnstickByJumping(true);
                     r = new Report(2081);
@@ -7239,8 +7242,8 @@ public class Server implements Runnable {
                 }
 
                 // Now do the skill check.
-                doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
-                        true);
+                doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos, 
+                        rollTarget, true);
 
                 // Swarming infantry platoons may drown.
                 if (curHex.terrainLevel(Terrains.WATER) > 1) {
@@ -7525,20 +7528,22 @@ public class Server implements Runnable {
                             .getBasePilotingRoll(overallMoveType);
                     psr.addModifier(0,
                             "moving backwards over an elevation change");
-                    doSkillCheckWhileMoving(entity, curPos, curPos, psr, true);
+                    doSkillCheckWhileMoving(entity, entity.getElevation(), 
+                            curPos, curPos, psr, true);
                 } else if (entity instanceof Mech) {
                     PilotingRollData psr = entity
                             .getBasePilotingRoll(overallMoveType);
                     psr.addModifier(0,
                             "moving backwards over an elevation change");
-                    doSkillCheckWhileMoving(entity, lastPos, lastPos, psr, true);
+                    doSkillCheckWhileMoving(entity, lastElevation, lastPos, 
+                            lastPos, psr, true);
                 } else if (entity instanceof Tank) {
                     PilotingRollData psr = entity
                             .getBasePilotingRoll(overallMoveType);
                     psr.addModifier(0,
                             "moving backwards over an elevation change");
-                    if (doSkillCheckWhileMoving(entity, curPos, lastPos, psr,
-                            false) < 0) {
+                    if (doSkillCheckWhileMoving(entity, entity.getElevation(), 
+                            curPos, lastPos, psr, false) < 0) {
                         curPos = lastPos;
                     }
                 }
@@ -7995,10 +8000,10 @@ public class Server implements Runnable {
             }
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
-                vPhaseReport.addAll(doEntityFallsInto(entity,
-                        md.getJumpPathHighestPoint(), curPos,
-                        entity.getBasePilotingRoll(overallMoveType), false,
-                        entity.getJumpMP()));
+                vPhaseReport.addAll(doEntityFallsInto(entity, 
+                        entity.getElevation(),md.getJumpPathHighestPoint(), 
+                        curPos, entity.getBasePilotingRoll(overallMoveType), 
+                        false, entity.getJumpMP()));
             }
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
@@ -8106,7 +8111,8 @@ public class Server implements Runnable {
                             .getBogDownModifier(entity.getMovementMode(),
                                     entity instanceof LargeSupportTank),
                             "avoid bogging down"));
-                    if (0 < doSkillCheckWhileMoving(entity, curPos, curPos,
+                    if (0 < doSkillCheckWhileMoving(entity, 
+                            entity.getElevation(), curPos, curPos,
                             roll, false)) {
                         entity.setStuck(true);
                         r = new Report(2081);
@@ -10375,6 +10381,11 @@ public class Server implements Runnable {
      *
      * @param entity
      *            - the <code>Entity</code> that must roll.
+     * @param entityElevation
+     *            The elevation of the supplied Entity above the surface of the
+     *            src hex.  This is necessary as the state of the Entity may 
+     *            represent the elevation of the entity about the surface of the
+     *            dest hex.  
      * @param src
      *            - the <code>Coords</code> the entity is moving from.
      * @param dest
@@ -10389,7 +10400,8 @@ public class Server implements Runnable {
      * @return Margin of Failure if the pilot fails the skill check, 0 if they
      *         pass.
      */
-    private int doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest,
+    private int doSkillCheckWhileMoving(Entity entity, int entityElevation, 
+            Coords src, Coords dest,
             PilotingRollData roll, boolean isFallRoll) {
         boolean fallsInPlace;
 
@@ -10426,7 +10438,8 @@ public class Server implements Runnable {
             if (isFallRoll) {
                 r.choose(false);
                 addReport(r);
-                addReport(doEntityFallsInto(entity, fallsInPlace ? dest : src,
+                addReport(doEntityFallsInto(entity, entityElevation, 
+                        fallsInPlace ? dest : src,
                         fallsInPlace ? src : dest, roll, true));
             } else {
                 r.messageId = 2190;
@@ -10467,7 +10480,8 @@ public class Server implements Runnable {
      */
     private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
             PilotingRollData roll, boolean causeAffa) {
-        return doEntityFallsInto( entity, src, src, roll, causeAffa);
+        return doEntityFallsInto( entity, entity.getElevation(), src, src, 
+                roll, causeAffa);
     }
 
     /**
@@ -10480,6 +10494,11 @@ public class Server implements Runnable {
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
+     * @param entitySrcElevation
+     *            The elevation of the supplied Entity above the surface of the
+     *            src hex.  This is necessary as the state of the Entity may 
+     *            represent the elevation of the entity about the surface of the
+     *            dest hex.  
      * @param src
      *            The <code>Coords</code> of the source hex.
      * @param dest
@@ -10491,9 +10510,11 @@ public class Server implements Runnable {
      *            The <code>boolean</code> value wether this fall should be able
      *            to cause an accidental fall from above
      */
-    private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
+    private Vector<Report> doEntityFallsInto(Entity entity, 
+            int entitySrcElevation, Coords src,
             Coords dest, PilotingRollData roll, boolean causeAffa) {
-        return doEntityFallsInto(entity, src, dest, roll, causeAffa, 0);
+        return doEntityFallsInto(entity, entitySrcElevation, src, dest, roll, 
+                causeAffa, 0);
     }
 
     /**
@@ -10506,6 +10527,11 @@ public class Server implements Runnable {
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
+     * @param entitySrcElevation
+     *            The elevation of the supplied Entity above the surface of the
+     *            src hex.  This is necessary as the state of the Entity may 
+     *            represent the elevation of the entity about the surface of the
+     *            dest hex.           
      * @param src
      *            The <code>Coords</code> of the source hex.
      * @param dest
@@ -10519,13 +10545,14 @@ public class Server implements Runnable {
      * @param fallReduction
      *            An integer value to reduce the fall distance by
      */
-    private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
+    private Vector<Report> doEntityFallsInto(Entity entity, 
+            int entitySrcElevation, Coords src,
             Coords dest, PilotingRollData roll, boolean causeAffa,
             int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
-        final int srcHeightAboveFloor = entity.getElevation()
+        final int srcHeightAboveFloor = entitySrcElevation
                 + srcHex.depth(true);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()
@@ -10673,7 +10700,8 @@ public class Server implements Runnable {
             Coords targetDest = Compute.getValidDisplacement(game,
                     entity.getId(), dest, direction);
             if (targetDest != null) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, src, targetDest,
+                vPhaseReport.addAll(doEntityFallsInto(entity, 
+                        entitySrcElevation, src, targetDest,
                         new PilotingRollData(entity.getId(),
                                 TargetRoll.IMPOSSIBLE, "pushed off a cliff"),
                         false));
@@ -10761,7 +10789,8 @@ public class Server implements Runnable {
                 roll = entity.getBasePilotingRoll();
             }
             if (!(entity.isAirborneVTOLorWIGE())) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll, true));
+                vPhaseReport.addAll(doEntityFallsInto(entity, 
+                        entity.getElevation(), src, dest, roll, true));
             } else {
                 entity.setPosition(dest);
             }
@@ -15710,7 +15739,7 @@ public class Server implements Runnable {
             r = new Report(4215);
             r.subject = ae.getId();
             addReport(r);
-            addReport(doEntityFallsInto(ae, ae.getPosition(),
+            addReport(doEntityFallsInto(ae, ae.getElevation(), ae.getPosition(),
                     daa.getTargetPos(), ae.getBasePilotingRoll(), true));
             return;
         }
@@ -17799,7 +17828,8 @@ public class Server implements Runnable {
             r.add(base.getDesc()); // international issue
             vPhaseReport.add(r);
             if (moving) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base, true));
+                vPhaseReport.addAll(doEntityFallsInto(entity, 
+                        entity.getElevation(), src, dest, base, true));
             } else if ((entity instanceof Mech)
                     && game.getOptions().booleanOption(
                             "tacops_falling_expanded")
@@ -17847,8 +17877,8 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 vPhaseReport.add(r);
                 if (moving) {
-                    vPhaseReport.addAll(doEntityFallsInto(entity, src, dest,
-                            roll, true));
+                    vPhaseReport.addAll(doEntityFallsInto(entity, 
+                            entity.getElevation(), src, dest, roll, true));
                 } else {
                     if ((entity instanceof Mech)
                             && game.getOptions().booleanOption(
@@ -17881,8 +17911,8 @@ public class Server implements Runnable {
                 r.choose(false);
                 vPhaseReport.add(r);
                 if (moving) {
-                    vPhaseReport.addAll(doEntityFallsInto(entity, src, dest,
-                            roll, true));
+                    vPhaseReport.addAll(doEntityFallsInto(entity, 
+                            entity.getElevation(), src, dest, roll, true));
                 } else {
                     if ((entity instanceof Mech)
                             && game.getOptions().booleanOption(
@@ -27291,7 +27321,8 @@ public class Server implements Runnable {
                     distance, why, overallMoveType);
 
             // Did the entity make the roll?
-            if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
+            if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(), 
+                    lastPos, curPos, psr, false)) {
 
                 // Divide the building's current CF by 10, round up.
                 int damage = (int) Math.floor(bldg.getDamageFromScale()
@@ -29636,7 +29667,7 @@ public class Server implements Runnable {
                         && !(isHoverOrWiGE && (e.getRunMP() >= 0))
                         && (e.getMovementMode() != EntityMovementMode.INF_UMU)
                         && !e.hasUMU()) {
-                    vPhaseReport.addAll(doEntityFallsInto(e, c, c,
+                    vPhaseReport.addAll(doEntityFallsInto(e, c,
                             new PilotingRollData(TargetRoll.AUTOMATIC_FAIL), true));
                 }
             }

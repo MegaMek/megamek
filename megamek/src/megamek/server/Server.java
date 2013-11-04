@@ -4753,7 +4753,7 @@ public class Server implements Runnable {
                     nextAltitude = curAltitude;
                 } else {
                     addReport(doEntityFallsInto(entity, curPos, nextPos,
-                            entity.getBasePilotingRoll(step.getMovementType())));
+                            entity.getBasePilotingRoll(step.getMovementType()), true));
                     addReport(doEntityDisplacementMinefieldCheck(entity,
                             curPos, nextPos, nextElevation));
                     // Stay in the current hex and stop skidding.
@@ -10366,7 +10366,7 @@ public class Server implements Runnable {
         r.choose(true);
         addReport(r);
         entity.setPosition(curPos);
-        addReport(doEntityFallsInto(entity, curPos, curPos, roll, false));
+        addReport(doEntityFallsInto(entity, curPos, roll, false));
         return true;
     }
 
@@ -10427,7 +10427,7 @@ public class Server implements Runnable {
                 r.choose(false);
                 addReport(r);
                 addReport(doEntityFallsInto(entity, fallsInPlace ? dest : src,
-                        fallsInPlace ? src : dest, roll));
+                        fallsInPlace ? src : dest, roll, true));
             } else {
                 r.messageId = 2190;
                 r.choose(false);
@@ -10443,10 +10443,14 @@ public class Server implements Runnable {
         addReport(r);
         return 0;
     }
-
+    
     /**
-     * The entity falls into the hex specified. Check for any conflicts and
-     * resolve them. Deal damage to faller.
+     * Process a fall when the source and destination hexes are the same. 
+     * Depending on the elevations of the hexes, the Entity could land in the 
+     * source or destination hexes.  Check for any conflicts and resolve them. 
+     * Deal damage to faller.  Note: the elevation of the entity is used to 
+     * determine fall distance, so it is important to ensure the Entity's 
+     * elevation is correct.
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
@@ -10457,15 +10461,22 @@ public class Server implements Runnable {
      * @param roll
      *            The <code>PilotingRollData</code> to be used for PSRs induced
      *            by the falling.
+     * @param causeAffa
+     *            The <code>boolean</code> value wether this fall should be able
+     *            to cause an accidental fall from above
      */
     private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
-            Coords dest, PilotingRollData roll) {
-        return doEntityFallsInto(entity, src, dest, roll, true);
+            PilotingRollData roll, boolean causeAffa) {
+        return doEntityFallsInto( entity, src, src, roll, causeAffa);
     }
 
     /**
-     * The entity falls into the hex specified. Check for any conflicts and
-     * resolve them. Deal damage to faller.
+     * Process a fall when moving from the source hex to the destination hex. 
+     * Depending on the elevations of the hexes, the Entity could land in the 
+     * source or destination hexes.  Check for any conflicts and resolve them. 
+     * Deal damage to faller.  Note: the elevation of the entity is used to 
+     * determine fall distance, so it is important to ensure the Entity's 
+     * elevation is correct.
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
@@ -10486,8 +10497,12 @@ public class Server implements Runnable {
     }
 
     /**
-     * The entity falls into the hex specified. Check for any conflicts and
-     * resolve them. Deal damage to faller.
+     * Process a fall when moving from the source hex to the destination hex. 
+     * Depending on the elevations of the hexes, the Entity could land in the 
+     * source or destination hexes.  Check for any conflicts and resolve them. 
+     * Deal damage to faller.  Note: the elevation of the entity is used to 
+     * determine fall distance, so it is important to ensure the Entity's 
+     * elevation is correct.
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
@@ -10512,9 +10527,9 @@ public class Server implements Runnable {
         final IHex destHex = game.getBoard().getHex(dest);
         final int srcHeightAboveFloor = entity.getElevation()
                 + srcHex.depth(true);
-        int fallElevation = Math.max(0, (srcHex.floor() + srcHeightAboveFloor)
+        int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()
-                        : destHex.floor()) - fallReduction);
+                        : destHex.floor())) - fallReduction;
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
         }
@@ -10523,6 +10538,7 @@ public class Server implements Runnable {
                 fallElevation = destHex.depth(true);
             }
         }
+        
 
         int direction;
         if (src.equals(dest)) {
@@ -10745,7 +10761,7 @@ public class Server implements Runnable {
                 roll = entity.getBasePilotingRoll();
             }
             if (!(entity.isAirborneVTOLorWIGE())) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
+                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll, true));
             } else {
                 entity.setPosition(dest);
             }
@@ -15695,7 +15711,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             addReport(r);
             addReport(doEntityFallsInto(ae, ae.getPosition(),
-                    daa.getTargetPos(), ae.getBasePilotingRoll()));
+                    daa.getTargetPos(), ae.getBasePilotingRoll(), true));
             return;
         }
 
@@ -17783,7 +17799,7 @@ public class Server implements Runnable {
             r.add(base.getDesc()); // international issue
             vPhaseReport.add(r);
             if (moving) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base));
+                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, base, true));
             } else if ((entity instanceof Mech)
                     && game.getOptions().booleanOption(
                             "tacops_falling_expanded")
@@ -17832,7 +17848,7 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 if (moving) {
                     vPhaseReport.addAll(doEntityFallsInto(entity, src, dest,
-                            roll));
+                            roll, true));
                 } else {
                     if ((entity instanceof Mech)
                             && game.getOptions().booleanOption(
@@ -17866,7 +17882,7 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 if (moving) {
                     vPhaseReport.addAll(doEntityFallsInto(entity, src, dest,
-                            roll));
+                            roll, true));
                 } else {
                     if ((entity instanceof Mech)
                             && game.getOptions().booleanOption(
@@ -27909,7 +27925,7 @@ public class Server implements Runnable {
                         psr.addModifier(1, "20+ damage");
                     }
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
-                            coords, psr));
+                            psr, true));
                 }
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
@@ -29621,7 +29637,7 @@ public class Server implements Runnable {
                         && (e.getMovementMode() != EntityMovementMode.INF_UMU)
                         && !e.hasUMU()) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c, c,
-                            new PilotingRollData(TargetRoll.AUTOMATIC_FAIL)));
+                            new PilotingRollData(TargetRoll.AUTOMATIC_FAIL), true));
                 }
             }
         }
@@ -30068,7 +30084,7 @@ public class Server implements Runnable {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
                 addReport(damageEntity(entity, hit, 1));
             } else {
-                addReport(doEntityFallsInto(entity, c, c, psr, true));
+                addReport(doEntityFallsInto(entity, c, psr, true));
             }
         }
         // set entity to expected elevation

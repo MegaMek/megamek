@@ -455,16 +455,15 @@ KeyListener, ItemListener, ListSelectionListener {
     public void setFiringSolutions(){
         IGame game = clientgui.getClient().game;
         Hashtable<Integer,ToHitData> fs = new Hashtable<Integer,ToHitData>(); 
-        for (Entity target : game.getEntitiesVector()){   
-            if (target.getId() != cen){
-                LosEffects los = 
-                        LosEffects.calculateLos(game, cen, target);
-                ToHitData thd = los.losModifiers(game);
-                thd.setLocation(los.getTargetPosition());
-                thd.setRange(ce().getPosition().distance(los.getTargetPosition()));
-                thd.append(Compute.getAttackerMovementModifier(game, cen));
-                thd.append(Compute.getTargetMovementModifier(game, target.getId()));
-                thd.append(Compute.getTargetTerrainModifier(game, target));
+        for (Entity target : game.getEntitiesVector()){
+            int ownerId = ce().getOwnerId();
+            boolean friendlyFire = game.getOptions().
+                    booleanOption("friendly_fire"); //$NON-NLS-1$
+            if (target.getId() != cen && 
+                    (friendlyFire || target.getOwnerId() != ownerId)){
+                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(ce().getPosition().distance(target.getPosition()));               
                 fs.put(target.getId(),thd);
             }
         }

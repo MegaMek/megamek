@@ -1168,10 +1168,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         toHit.append(AbstractAttackAction.nightModifiers(game, target, atype,
                 ae, true));
 
+        TargetRoll weatherToHitMods = new TargetRoll();
+        
         // weather mods (not in space)
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
         if ((weatherMod != 0) && !game.getBoard().inSpace()) {
-            toHit.addModifier(weatherMod, game.getPlanetaryConditions()
+            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions()
                     .getWeatherCurrentName());
         }
 
@@ -1180,35 +1182,35 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if (windCond == PlanetaryConditions.WI_MOD_GALE) {
                 if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    toHit.addModifier(1, PlanetaryConditions
+                    weatherToHitMods.addModifier(1, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STRONG_GALE) {
                 if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    toHit.addModifier(1, PlanetaryConditions
+                    weatherToHitMods.addModifier(1, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    toHit.addModifier(2, PlanetaryConditions
+                    weatherToHitMods.addModifier(2, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STORM) {
                 if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    toHit.addModifier(2, PlanetaryConditions
+                    weatherToHitMods.addModifier(2, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    toHit.addModifier(3, PlanetaryConditions
+                    weatherToHitMods.addModifier(3, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_TORNADO_F13) {
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    toHit.addModifier(2, PlanetaryConditions
+                    weatherToHitMods.addModifier(2, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 } else {
-                    toHit.addModifier(3, PlanetaryConditions
+                    weatherToHitMods.addModifier(3, PlanetaryConditions
                             .getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_TORNADO_F4) {
-                toHit.addModifier(3,
+                weatherToHitMods.addModifier(3,
                         PlanetaryConditions.getWindDisplayableName(windCond));
             }
         }
@@ -1217,7 +1219,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (wtype.hasFlag(WeaponType.F_ENERGY)
                 && !game.getBoard().inSpace()
                 && (game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)) {
-            toHit.addModifier(1, "heavy fog");
+            weatherToHitMods.addModifier(1, "heavy fog");
         }
 
         // blowing sand mods
@@ -1225,9 +1227,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !game.getBoard().inSpace()
                 && game.getPlanetaryConditions().isSandBlowing()
                 && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {
-            toHit.addModifier(1, "blowing sand");
+            weatherToHitMods.addModifier(1, "blowing sand");
         }
 
+        if(weatherToHitMods.getValue() > 0) {
+            if(ae.getCrew() != null && ae.getCrew().getOptions().booleanOption("weathered")) {
+                weatherToHitMods.addModifier(-1, "weathered");
+            }
+            toHit.append(weatherToHitMods);
+        }
+        
+        
         // gravity mods (not in space)
         if (!game.getBoard().inSpace()) {
             int mod = (int) Math.ceil(Math.abs((game.getPlanetaryConditions()

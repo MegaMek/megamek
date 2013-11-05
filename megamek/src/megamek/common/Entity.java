@@ -2635,6 +2635,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (mtHeat && (heat >= 48)) {
             mod++;
         }
+        if(mod > 0 && getCrew() != null && getCrew().getOptions().booleanOption("some_like_it_hot")) {
+            mod--;
+        }
+        
         return mod;
     }
 

@@ -40,6 +40,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
+import megamek.common.TripodMech;
 import megamek.common.WeaponType;
 
 /**
@@ -73,7 +74,7 @@ public class MtfFile implements IMechLoader {
     String baseChassieHeatSinks = "base chassis heat sinks:-1";
 
     String armorType;
-    String[] armorValues = new String[11];
+    String[] armorValues = new String[12];
 
     String weaponCount;
     String[] weaponData;
@@ -89,7 +90,7 @@ public class MtfFile implements IMechLoader {
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     public static final int locationOrder[] =
-        { Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG };
+        { Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG };
     public static final int rearLocationOrder[] =
         { Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT };
 
@@ -112,7 +113,7 @@ public class MtfFile implements IMechLoader {
             name = r.readLine();
             model = r.readLine();
 
-            critData = new String[8][12];
+            critData = new String[9][12];
 
             readCrits(r);
 
@@ -209,6 +210,8 @@ public class MtfFile implements IMechLoader {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
                 mech = new LandAirMech(iGyroType, iCockpitType);
+            } else if (chassisConfig.indexOf("Tripod") != -1) {
+                mech = new TripodMech(iGyroType, iCockpitType);
             } else {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
@@ -386,6 +389,9 @@ public class MtfFile implements IMechLoader {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
             for (int x = 0; x < locationOrder.length; x++) {
+                if ((locationOrder[x] == Mech.LOC_CLEG) && !(mech instanceof TripodMech)) {
+                    continue;
+                }
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     boolean clan = false;
@@ -761,6 +767,10 @@ public class MtfFile implements IMechLoader {
             return Mech.LOC_RLEG;
         }
 
+        if (location.trim().equalsIgnoreCase("Center Leg:")) {
+            return Mech.LOC_CLEG;
+        }
+
         if (location.trim().equalsIgnoreCase("Left Torso:")) {
             return Mech.LOC_LT;
         }
@@ -803,11 +813,11 @@ public class MtfFile implements IMechLoader {
         } else if (location.trim().toLowerCase().startsWith("rtr armor:")) {
             loc = Mech.LOC_RT;
             rear = true;
-        }
-
-        else if (location.trim().toLowerCase().startsWith("rtc armor:")) {
+        } else if (location.trim().toLowerCase().startsWith("rtc armor:")) {
             loc = Mech.LOC_CT;
             rear = true;
+        } else if (location.trim().toLowerCase().startsWith("cl armor:")) {
+            loc = Mech.LOC_CLEG;
         }
 
         if (!rear) {
@@ -830,7 +840,7 @@ public class MtfFile implements IMechLoader {
 
     private boolean isValidLocation(String location) {
 
-        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Left Leg:") || location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Front Left Leg:") || location.trim().equalsIgnoreCase("Front Right Leg:") || location.trim().equalsIgnoreCase("Rear Left Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:") || location.trim().equalsIgnoreCase("Left Torso:") || location.trim().equalsIgnoreCase("Right Torso:") || location.trim().equalsIgnoreCase("Center Torso:") || location.trim().equalsIgnoreCase("Head:")) {
+        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Left Leg:") || location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Center Leg:")|| location.trim().equalsIgnoreCase("Front Left Leg:") || location.trim().equalsIgnoreCase("Front Right Leg:") || location.trim().equalsIgnoreCase("Rear Left Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:") || location.trim().equalsIgnoreCase("Left Torso:") || location.trim().equalsIgnoreCase("Right Torso:") || location.trim().equalsIgnoreCase("Center Torso:") || location.trim().equalsIgnoreCase("Head:")) {
             return true;
         }
 
@@ -905,7 +915,7 @@ public class MtfFile implements IMechLoader {
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("base chassie heat sinks:")) {
+        if (line.trim().toLowerCase().startsWith("base chassis heat sinks:")) {
             baseChassieHeatSinks = line;
             return true;
         }

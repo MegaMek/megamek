@@ -50,8 +50,6 @@ public abstract class Mech extends Entity {
      */
     private static final long serialVersionUID = -1929593228891136561L;
 
-    public static final int NUM_MECH_LOCATIONS = 8;
-
     // system designators for critical hits
     public static final int SYSTEM_LIFE_SUPPORT = 0;
 
@@ -101,6 +99,9 @@ public abstract class Mech extends Entity {
 
     public static final int LOC_LLEG = 7;
 
+    // center leg, for tripods
+    public static final int LOC_CLEG = 8;
+
     // cockpit status
     public static final int COCKPIT_OFF = 0;
 
@@ -148,16 +149,18 @@ public abstract class Mech extends Entity {
 
     public static final int COCKPIT_SUPERHEAVY_TRIPOD = 9;
 
+    public static final int COCKPIT_TRIPOD = 10;
+
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
-            "Superheavy Tripod Cockpit" };
+            "Superheavy Tripod Cockpit", "Tripod Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod" };
+            "Superheavy Tripod" , "Tripod" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -442,7 +445,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int locations() {
-        return NUM_MECH_LOCATIONS;
+        return 8;
     }
 
     /*
@@ -536,7 +539,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean hasHipCrit() {
-        for (int loc = 0; loc < NUM_MECH_LOCATIONS; loc++) {
+        for (int loc = 0; loc < locations(); loc++) {
             if (legHasHipCrit(loc)) {
                 return true;
             }
@@ -2537,6 +2540,7 @@ public abstract class Mech extends Entity {
         switch (hit.getLocation()) {
             case LOC_RT:
             case LOC_LT:
+            case LOC_CLEG:
                 return new HitData(LOC_CT, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
                         hit.isFromFront(), hit.getGeneralDamageType(),
@@ -5776,6 +5780,8 @@ public abstract class Mech extends Entity {
             sb.append("Biped");
         } else if (this instanceof QuadMech) {
             sb.append("Quad");
+        } else if (this instanceof TripodMech) {
+            sb.append("Tripod");
         }
 
         if (isOmni()) {
@@ -5878,6 +5884,9 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         for (int element : MtfFile.locationOrder) {
+            if ((element == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
+                continue;
+            }
             sb.append(getLocationAbbr(element)).append(" Armor:");
             if (hasPatchworkArmor()) {
                 sb.append(
@@ -5906,6 +5915,9 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         for (int l : MtfFile.locationOrder) {
+            if ((l == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
+                continue;
+            }
             String locationName = getLocationName(l);
             sb.append(locationName + ":");
             sb.append(newLine);

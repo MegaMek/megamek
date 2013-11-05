@@ -124,10 +124,16 @@ public class TechConstants {
         }
 
         // If the entity is experimental and mixed, allow all but unofficial
+        // if it's advanced and mixed, allow all but unofficial and experimental
         // if it's unofficial and mixed, allow everything
         if (mixed) {
             if (((entityTechlevel == T_IS_EXPERIMENTAL) || (entityTechlevel == T_CLAN_EXPERIMENTAL))
                     && ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))) {
+                return true;
+            }
+            if (((entityTechlevel == T_IS_ADVANCED) || (entityTechlevel == T_CLAN_ADVANCED))
+                    && ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))
+                    && ((equipmentTechlevel != T_IS_EXPERIMENTAL) && (equipmentTechlevel != T_CLAN_EXPERIMENTAL))) {
                 return true;
             }
             if ((entityTechlevel == T_IS_UNOFFICIAL)

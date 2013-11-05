@@ -145,7 +145,7 @@ public class TestMech extends TestEntity {
             weight = 5.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
             weight = 5.0f;
-        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
+        } else if ((mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY) || (mech.getCockpitType() == Mech.COCKPIT_TRIPOD)) {
             weight = 4.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             weight = 5.0f;

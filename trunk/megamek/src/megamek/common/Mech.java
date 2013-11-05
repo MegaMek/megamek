@@ -5964,35 +5964,43 @@ public abstract class Mech extends Entity {
                 return getRawSystemName(index) + armoredText;
             }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            Mounted m = getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
+            StringBuilder toReturn = new StringBuilder();
             if (m.isRearMounted()) {
-                return m.getType().getInternalName() + " (R)" + armoredText;
+                toReturn.append(m.getType().getInternalName()).append(" (R)").append(armoredText);
             }
             if (m.isMechTurretMounted()) {
-                return m.getType().getInternalName() + " (T)" + armoredText;
+                toReturn.append(m.getType().getInternalName()).append(" (T)").append(armoredText);
             }
             if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
                 switch (m.getFacing()) {
                     case 1:
-                        return m.getType().getInternalName() + " (FR)"
-                                + armoredText;
+                        toReturn.append(m.getType().getInternalName()).append(" (FR)").append(
+                                armoredText);
                     case 2:
-                        return m.getType().getInternalName() + " (RR)"
-                                + armoredText;
+                        toReturn.append(m.getType().getInternalName()).append(" (RR)").append(
+                                armoredText);
                         // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        return m.getType().getInternalName() + " (RL)"
-                                + armoredText;
+                        toReturn.append(m.getType().getInternalName()).append(" (RL)").append(
+                                armoredText);
                     case 5:
-                        return m.getType().getInternalName() + " (FL)"
-                                + armoredText;
+                        toReturn.append(m.getType().getInternalName()).append(" (FL)").append(
+                                armoredText);
                     default:
                         break;
                 }
             }
-            return m.getType().getInternalName() + armoredText;
+            toReturn.append(m.getType().getInternalName()).append(armoredText);
+            // superheavy mechs can have two heatsinks or ammo bin in one slot
+            // they can't be armored or rear or turret mounted or VGLs, so we
+            // just need the internalname
+            if (cs.getMount2() != null) {
+                toReturn.append("|").append(cs.getMount2().getType().getInternalName());
+            }
+            return toReturn.toString();
         } else {
             return "?" + index;
         }

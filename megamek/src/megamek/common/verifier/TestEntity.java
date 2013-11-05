@@ -35,6 +35,7 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.TripodMech;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 
@@ -714,7 +715,8 @@ public abstract class TestEntity implements TestEntityOption {
         boolean hasHarjelII = false;
         boolean hasHarjelIII = false;
         for (Mounted m : getEntity().getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_VOIDSIG) && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+            if (m.getType().hasFlag(MiscType.F_VOIDSIG)
+                    && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
                 illegal = true;
                 buff.append("void signature system needs ECM suite");
             }
@@ -898,6 +900,13 @@ public abstract class TestEntity implements TestEntityOption {
                                 && (m.getLocation() != Mech.LOC_RLEG)
                                 && (m.getLocation() != Mech.LOC_LARM) && (m
                                     .getLocation() != Mech.LOC_RARM))) {
+                            buff.append("A-Pod must be mounted in leg\n");
+                            illegal = true;
+                        }
+                    } else if (mech instanceof TripodMech) {
+                        if ((m.getLocation() != Mech.LOC_LLEG)
+                                && (m.getLocation() != Mech.LOC_RLEG)
+                                && (m.getLocation() != Mech.LOC_CLEG)) {
                             buff.append("A-Pod must be mounted in leg\n");
                             illegal = true;
                         }
@@ -1295,35 +1304,47 @@ class Structure {
     public static float getWeightStructure(int structureType, float weight,
             float roundWeight, boolean isSuperHeavy,
             EntityMovementMode movementmode) {
+        float multiplier = 1.0f;
+        if (movementmode == EntityMovementMode.TRIPOD) {
+            multiplier = 1.1f;
+        }
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
-            return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
+                    roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
-            return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
+                    roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_REINFORCED) {
-            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
+                    roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_COMPOSITE) {
-            return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
+                    roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             if (isSuperHeavy) {
-                return TestEntity.ceilMaxHalf(weight / 2.5f, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 2.5f) * multiplier,
+                        roundWeight);
             } else {
-                return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
+                        roundWeight);
             }
 
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
             if (isSuperHeavy) {
-                return TestEntity
-                        .ceilMaxHalf((weight / 10.0f) * 1.5f, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * 1.5f
+                        * multiplier, roundWeight);
             } else {
-                return TestEntity
-                        .ceilMaxHalf((weight / 10.0f) * 0.75f, roundWeight);
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * 0.75f
+                        * multiplier, roundWeight);
             }
         }
         if (isSuperHeavy
                 && ((movementmode != EntityMovementMode.NAVAL) && (movementmode != EntityMovementMode.SUBMARINE))) {
-            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
+                    roundWeight);
         } else {
-            return TestEntity.ceilMaxHalf(weight / 10.0f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier,
+                    roundWeight);
         }
     }
 

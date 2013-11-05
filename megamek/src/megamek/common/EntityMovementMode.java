@@ -21,6 +21,7 @@ public enum EntityMovementMode {
 
     NONE ("none", "building"), // Future expansion. Turrets?
     BIPED ("biped"),
+    TRIPOD ("tripod"),
     QUAD ("quad"),
     TRACKED ("tracked"),
     WHEELED ("wheeled"),
@@ -66,7 +67,7 @@ public enum EntityMovementMode {
         }
         return NONE;
     }
-    
+
     public static EntityMovementMode type(String token)
     {
         return EntityMovementMode.valueOf(token);

@@ -1,8 +1,7 @@
-/*
+/**
  * MegaMek -
- *  Copyright (C) 2000-2002
+ *  Copyright (C) 2013
  *    Ben Mazur (bmazur@sev.org)
- *    Cord Awtry (kipsta@bs-interactive.com)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -270,13 +269,18 @@ public class TripodMech extends Mech {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        int[] locsToCheck = new int[2];
+        int[] locsToCheck = new int[3];
 
         locsToCheck[0] = Mech.LOC_RLEG;
         locsToCheck[1] = Mech.LOC_LLEG;
+        locsToCheck[2] = Mech.LOC_CLEG;
 
         if (hasFunctionalLegAES()) {
             roll.addModifier(-2, "AES bonus");
+        }
+
+        if (countBadLegs() == 0) {
+            roll.addModifier(-1, "tripod bonus");
         }
 
         for (int i = 0; i < locsToCheck.length; i++) {
@@ -827,10 +831,12 @@ public class TripodMech extends Mech {
     public boolean hasFunctionalLegAES() {
         boolean rightLeg = false;
         boolean leftLeg = false;
+        boolean centerLeg = false;
 
         for (Mounted mounted : getMisc()) {
             if ((mounted.getLocation() == Mech.LOC_LLEG)
-                    || (mounted.getLocation() == Mech.LOC_RLEG)) {
+                    || (mounted.getLocation() == Mech.LOC_RLEG)
+                    || (mounted.getLocation() == Mech.LOC_CLEG)) {
                 if (((MiscType) mounted.getType())
                         .hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                         && !mounted.isDestroyed()
@@ -838,8 +844,10 @@ public class TripodMech extends Mech {
                         && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mech.LOC_LLEG) {
                         leftLeg = true;
-                    } else {
+                    } else if (mounted.getLocation() == Mech.LOC_RLEG){
                         rightLeg = true;
+                    } else {
+                        centerLeg = true;
                     }
                 }// AES is destroyed their for it cannot be used.
                 else if (((MiscType) mounted.getType())
@@ -849,7 +857,7 @@ public class TripodMech extends Mech {
             }
         }
 
-        return rightLeg && leftLeg;
+        return rightLeg && leftLeg && centerLeg;
     }
 
     @Override

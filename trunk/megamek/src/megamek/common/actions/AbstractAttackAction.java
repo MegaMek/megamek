@@ -210,6 +210,10 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                     toHit.addModifier(heatBonus, "target excess heat at night");
                 }
             }
+            
+            if(toHit.getValue() > 0 && null != attacker.getCrew() && attacker.getCrew().getOptions().booleanOption("blind_fighter")) {
+                toHit.addModifier(-1, "blind fighter");
+            }
 
         return toHit;
     }

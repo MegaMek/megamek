@@ -76,6 +76,7 @@ v0.37.0-dev (SVN)
 + Feature [#1178]: Updated firing solutions to use a more complete set of to-hit
     modifiers
 + three new unofficial pilot options
++ Bug: Mech#getMTF not working
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

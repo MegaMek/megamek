@@ -24133,7 +24133,7 @@ public class Server implements Runnable {
                 }
                 Mounted mounted = entity.getEquipment(entity.getCritical(j, k)
                         .getIndex());
-                if (!(mounted.getType() instanceof AmmoType)) {
+                if ((mounted == null) || (!(mounted.getType() instanceof AmmoType))) {
                     continue;
                 }
                 AmmoType atype = (AmmoType) mounted.getType();

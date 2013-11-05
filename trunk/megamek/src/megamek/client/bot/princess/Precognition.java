@@ -138,7 +138,7 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Makes sure path_enumerator has up to date information about other units
+     * Makes sure pathEnumerator has up to date information about other units
      * locations call this right before making a move. automatically pauses.
      */
     public void insureUpToDate() {
@@ -156,8 +156,8 @@ public class Precognition implements Runnable {
                 if (((!path_enumerator.last_known_location.containsKey(e.getId()))
                         || (!path_enumerator.last_known_location.get(e.getId()).equals(new CoordFacingCombo(e))))) {
                     // System.err.println("entity "+e.getDisplayName()+" not where I left it");
-                    // if(path_enumerator.last_known_location.containsKey(e.getId()))
-                    // System.err.println("  I thought it was at "+path_enumerator.last_known_location.get(e.getId()).coords+" but its actually at "+e.getPosition());
+                    // if(pathEnumerator.last_known_location.containsKey(e.getId()))
+                    // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(e.getId()).coords+" but its actually at "+e.getPosition());
                     // else
                     // System.err.println("  I had no idea where it was");
                     dirtifyUnit(e.getId());

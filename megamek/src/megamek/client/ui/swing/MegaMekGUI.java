@@ -63,6 +63,7 @@ import megamek.common.IGame;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -666,7 +667,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
-                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, Princess.LogLevel.ERROR); //$NON-NLS-1$
+                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, LogLevel.ERROR); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect
@@ -772,7 +773,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize game
         BotConfigDialog bcd = new BotConfigDialog(frame);
         bcd.setVisible(true);
-        if (bcd.dialog_aborted) {
+        if (bcd.dialogAborted) {
             return; //user didn't click 'ok', add no bot
         }
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);

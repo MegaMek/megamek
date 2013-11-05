@@ -7946,4 +7946,11 @@ public abstract class Mech extends Entity {
     public long getEntityType() {
         return Entity.ETYPE_MECH;
     }
+
+    @Override
+    public boolean isEjectionPossible() {
+        return (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
+                && getCrew().isActive()
+                && !hasQuirk("no_eject");
+    }
 }

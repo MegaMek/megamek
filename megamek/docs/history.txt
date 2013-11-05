@@ -77,6 +77,9 @@ v0.37.0-dev (SVN)
     modifiers
 + three new unofficial pilot options
 + Bug: Mech#getMTF not working
++ Modified Princess options on Bot Config dialog to allow adjustments of all princess behavior settings.
++ Added help button for new princess config options.
++ Multiple princess configs can be saved and different princess instances can use different configurations.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

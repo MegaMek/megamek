@@ -1,0 +1,178 @@
+Version:1.0
+Ares 
+ARS-V1 Zeus
+
+Config:Tripod OmniMech
+TechBase:Mixed (IS Chassis)
+Era:3145
+Rules Level:3
+
+Mass:135
+Engine:270 Engine
+Structure:Endo-Composite
+Myomer:Standard
+Gyro:Standard Gyro
+Cockpit:Superheavy Tripod Cockpit
+
+Heat Sinks:21 Double
+Base Chassis Heat Sinks:10
+Walk MP:2
+Jump MP:0
+
+Armor:Standard
+LA Armor:41
+RA Armor:41
+LT Armor:40
+RT Armor:40
+CT Armor:60
+HD Armor:12
+LL Armor:56
+RL Armor:56
+CL Armor:56
+RTL Armor:16
+RTR Armor:16
+RTC Armor:22
+
+Weapons:15
+CLStreakSRM6, Right Arm
+CLStreakSRM6, Right Arm
+CLStreakSRM6, Right Arm
+CLERPPC, Left Arm
+CLERPPC, Left Arm
+CLERMediumLaser, Right Torso
+CLERMediumLaser, Left Torso
+CLERSmallLaser, Right Torso
+CLERSmallLaser, Left Torso
+CLERSmallLaser, Center Torso
+ISLRM5, Right Torso
+ISLRM5, Left Torso
+ISSRM2, Right Torso
+ISSRM2, Left Torso
+ISSRM2, Center Torso
+
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERPPC
+CLERPPC
+Endo-Composite
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo|CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo|CLStreakSRM6 Ammo
+ISCASEII
+Endo-Composite
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISSRM2 Ammo
+ISCASEII
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISLRM5 Ammo
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSRM2
+CLERSmallLaser
+Targeting Computer
+Targeting Computer
+Endo-Composite
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

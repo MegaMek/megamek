@@ -118,6 +118,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final long ETYPE_VTOL = 1L << 24;
     public static final long ETYPE_SUPPORT_VTOL = 1L << 25;
 
+    public static final long ETYPE_TRIPOD_MECH = 1L << 26;
+
 
 
 
@@ -572,6 +574,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int BATTLEFORCEMEDIUMRANGE = 4;
     public static final int BATTLEFORCELONGRANGE = 16;
     public static final int BATTLEFORCEEXTREMERANGE = 24;
+
 
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;

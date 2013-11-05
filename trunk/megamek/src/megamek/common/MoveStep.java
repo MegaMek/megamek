@@ -143,7 +143,7 @@ public class MoveStep implements Serializable {
      * Flag that indicates that this step's position is the end of a path.
      */
     private boolean isEndPos = true;
-    
+
     /**
      * A collection of buildings that are crushed during this move step.  This
      * is used for landed Aerodyne Dropships and Mobile Structures.
@@ -617,7 +617,7 @@ public class MoveStep implements Serializable {
                 }
             }
         } else {
-            calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
+            calcMovementCostFor(game, prev);
         }
 
         // check for water
@@ -653,7 +653,7 @@ public class MoveStep implements Serializable {
             heat = 5;
             totalHeat += 5;
         }
-        
+
         // Checks for landed dropships collapsing buildings
         if ((entity instanceof Dropship) && !entity.isAirborne()){
             ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
@@ -668,7 +668,7 @@ public class MoveStep implements Serializable {
                     // This is dangerous!
                     danger = true;
                 }
-            }                
+            }
         }
 
     }
@@ -775,8 +775,8 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMech)) {
                     setMp(getMp());
-                } else if (parent.isJumping() && 
-                        entity.getJumpType() == Mech.JUMP_BOOSTER){
+                } else if (parent.isJumping() &&
+                        (entity.getJumpType() == Mech.JUMP_BOOSTER)){
                     setMp(1);
                 } else {
                     setMp(getMp() + 1); // +1 for side step
@@ -793,9 +793,9 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMech)) {
                     setMp(getMp());
-                } else if (parent.isJumping() && 
-                        entity.getJumpType() == Mech.JUMP_BOOSTER){
-                    setMp(1);                    
+                } else if (parent.isJumping() &&
+                        (entity.getJumpType() == Mech.JUMP_BOOSTER)){
+                    setMp(1);
                 } else {
                     setMp(getMp() + 1); // +1 for side step
                 }
@@ -1697,7 +1697,7 @@ public class MoveStep implements Serializable {
 
         // Crushing buildings creates rubble, and Dropships can't drive on
         //  rubble, so they get stuck
-        if (entity instanceof Dropship && 
+        if ((entity instanceof Dropship) &&
                 !prev.getCrushedBuildingLocs().isEmpty()){
             return;
         }
@@ -2108,35 +2108,35 @@ public class MoveStep implements Serializable {
                         .abs(parent.getEntity().getElevation() - getElevation()) == 1))
                 && (movementType != EntityMovementType.MOVE_JUMP)) {
             movementType = EntityMovementType.MOVE_WALK;
-        }        
-        
+        }
+
         // Free facing changes are legal
         if (((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT))
                 && (getMp() == 0)) {
             movementType = prev.movementType;
         }
-        
+
         // Mechanical Jump Boosters don't allow facing changes
-        if (parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER &&
-                (stepType == MoveStepType.TURN_LEFT || 
-                 stepType == MoveStepType.TURN_RIGHT)){
-            movementType = EntityMovementType.MOVE_ILLEGAL;                        
-        }    
-        
+        if (parent.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER) &&
+                ((stepType == MoveStepType.TURN_LEFT) ||
+                 (stepType == MoveStepType.TURN_RIGHT))){
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
+
         // We need to ensure the jump is in a straight-line (can't steer)
-        if (parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER  &&
-                parent.length() > 2){
+        if (parent.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)  &&
+                (parent.length() > 2)){
             Coords firstPos = parent.getStep(0).getPosition();
             Coords secondPos = parent.getStep(1).getPosition();
             Coords currPos = getPosition();
             double tolerance = .00001;
             double initialDir = firstPos.radian(secondPos);
             double currentDir = firstPos.radian(currPos);
-            if (currentDir > initialDir+tolerance || 
-                    currentDir < initialDir-tolerance){
-                movementType = EntityMovementType.MOVE_ILLEGAL;   
+            if ((currentDir > (initialDir+tolerance)) ||
+                    (currentDir < (initialDir-tolerance))){
+                movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            
+
         }
 
         // going prone from hull down is legal and costs 0
@@ -2442,7 +2442,9 @@ public class MoveStep implements Serializable {
     /**
      * Amount of movement points required to move from start to dest
      */
-    protected void calcMovementCostFor(IGame game, Coords prev, int prevEl) {
+    protected void calcMovementCostFor(IGame game, MoveStep prevStep) {
+        final Coords prev = prevStep.getPosition();
+        final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = parent.getEntity()
                 .getMovementMode();
         final IHex srcHex = game.getBoard().getHex(prev);
@@ -2453,12 +2455,20 @@ public class MoveStep implements Serializable {
                 && ((Infantry) parent.getEntity()).isMechanized();
         final boolean isProto = parent.getEntity() instanceof Protomech;
         final boolean isMech = parent.getEntity() instanceof Mech;
+        final boolean isWorkingTripod = (parent.getEntity() instanceof TripodMech) && (((Mech)parent.getEntity()).countBadLegs() < 1);
         int nSrcEl = srcHex.getElevation() + prevEl;
         int nDestEl = destHex.getElevation() + elevation;
 
         mp = 1;
         // jumping always costs 1
         if (parent.isJumping()) {
+            return;
+        }
+
+        // tripods with all their legs only pay for their first facing change
+        if (isWorkingTripod && ((type == MoveStepType.TURN_LEFT) || ((type == MoveStepType.TURN_RIGHT)
+                && ((prevStep.type == MoveStepType.TURN_LEFT) || (prevStep.type == MoveStepType.TURN_RIGHT))))) {
+            mp = 0;
             return;
         }
 
@@ -2632,7 +2642,7 @@ public class MoveStep implements Serializable {
         if ((entity instanceof Tank)
                 && !entity.getCrew().isUnconscious()
                 && ((type == MoveStepType.UNJAM_RAC)
-                        || (type == MoveStepType.EJECT) 
+                        || (type == MoveStepType.EJECT)
                         || (type == MoveStepType.SEARCHLIGHT))) {
             return true;
         }
@@ -2669,14 +2679,14 @@ public class MoveStep implements Serializable {
 
         final int srcAlt = srcEl + srcHex.getElevation();
         final int destAlt = elevation + destHex.getElevation();
-        
+
         Building bld = game.getBoard().getBuildingAt(dest);
-        
+
         if (bld != null) {
             // protomechs that are jumping can't change the level inside a
             // building,
             // they can only jump onto a building or out of it
-            if (src.equals(dest) && srcAlt != destAlt && (entity instanceof Protomech)
+            if (src.equals(dest) && (srcAlt != destAlt) && (entity instanceof Protomech)
                     && (getMovementType() == EntityMovementType.MOVE_JUMP)) {
                 //System.err
                 //        .println("no jumping inside buildings to change levels");
@@ -2710,12 +2720,12 @@ public class MoveStep implements Serializable {
             }
         }
 
-        
+
 
         // Can't back up across an elevation change.
-        if (!(entity instanceof VTOL)                
+        if (!(entity instanceof VTOL)
                 && isThisStepBackwards()
-                && !(parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)
+                && !(parent.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                 && (((destAlt != srcAlt) && !game.getOptions().booleanOption(
                         "tacops_walk_backwards")) || (game.getOptions()
                         .booleanOption("tacops_walk_backwards") && (Math
@@ -2823,7 +2833,7 @@ public class MoveStep implements Serializable {
         if (((type == MoveStepType.BACKWARDS)
                 || (type == MoveStepType.LATERAL_LEFT_BACKWARDS) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                 && (destAlt != srcAlt) && !(entity instanceof VTOL) &&
-                !(parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)) {
+                !(parent.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
             if (game.getOptions().booleanOption("tacops_walk_backwards")
                     && (Math.abs(destAlt - srcAlt) > 1)) {
                 return false;
@@ -2933,9 +2943,9 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
-        
+
         // We need extra checking for dropships, due to secondary positions
-        if (entity instanceof Dropship && !entity.isAirborne() && 
+        if ((entity instanceof Dropship) && !entity.isAirborne() &&
                 isPavementStep() && entity.isLocationProhibited(dest)){
             for (int dir = 0; dir < 6; dir++){
                 Coords secondaryCoords = dest.translated(dir);

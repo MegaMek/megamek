@@ -916,35 +916,6 @@ public abstract class Mech extends Entity {
      * return false; }
      */
 
-    /**
-     * Returns this entity's walking/cruising mp, factored for heat, extreme
-     * temperatures, and gravity.
-     */
-    @Override
-    public int getWalkMP(boolean gravity, boolean ignorehat,
-            boolean ignoremodulararmor) {
-        int j = getOriginalWalkMP();
-        j = Math.max(0, j - getCargoMpReduction());
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            }
-        }
-
-        if (!ignoremodulararmor && hasModularArmor()) {
-            j--;
-        }
-
-        if (gravity) {
-            j = applyGravityEffectsOnMP(j);
-        }
-
-        return j;
-
-    }
-
     /*
      * (non-Javadoc)
      *

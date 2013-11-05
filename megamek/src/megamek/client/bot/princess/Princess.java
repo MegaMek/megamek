@@ -13,15 +13,13 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -35,68 +33,103 @@ import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
+import megamek.common.MoveStep;
+import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.Logger;
+import megamek.common.util.StringUtil;
 
 public class Princess extends BotClient {
 
+    private static final Logger logger = new Logger();
+
     private boolean initialized = false;
-    public boolean verbose_errorlog;
-    public LogLevel verbosity; // controls how many messages are sent to chat
 
-    public String properties_file_name;
-
-    PathSearcher path_searcher;
-    BasicPathRanker path_ranker;
-    FireControl fire_control;
-
-    double move_evaluation_time_estimate;
-    Precognition precognition;
-    Thread precognition_thread;
-    // PathEnumerator path_enumerator;
-
-    // ----Global Parameters-----
-    public double aggression;
-
-    // ----These have to do with the goals or victiory conditions for the
-    // bot----
-    /*
-     * A list of hexes in which the bot wants to destroy buildings
-     */
-    public ArrayList<Coords> strategic_targets = new ArrayList<Coords>();
-    /*
-     * Should the rules for forced withdrawal be implemented
-     */
-    public boolean forced_withdrawal = true;
-    /*
-     * Which direction should the bot flee. Defaults to North.
-     */
-    private BasicPathRanker.HomeEdge homeEdge = null;
-    /*
-     * Should the bot be running away
-     */
-    public boolean should_flee = false;
-    /*
-     * Must the bot flee, even if not crippled?
-     */
-    public boolean must_flee = false;
-
-    // ---------------------------------------------------------------------------
-
-    protected ChatProcessor chatp = new ChatProcessor();
+    private PathSearcher pathSearcher;
+    private BasicPathRanker pathRanker;
+    private FireControl fireControl;
+    private BehaviorSettings behaviorSettings;
+    private double moveEvaluationTimeEstimate = 0;
+    private Precognition precognition;
+    private Set<Coords> strategicTargets = new HashSet<Coords>();
+    private boolean flee = false;
+    protected ChatProcessor chatProcessor = new ChatProcessor();
+    private boolean mustFlee = false;
 
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
-        // default properties file
-        properties_file_name = "mmconf/princess_bot.properties";
-        verbose_errorlog = true;
-        this.verbosity = verbosity;
+        logger.setVerbosity(verbosity);
+        setBehaviorSettings(BehaviorSettingsFactory.getInstance(logger).DEFAULT_BEHAVIOR);
+    }
+
+    public BasicPathRanker getPathRanker() {
+        return pathRanker;
+    }
+
+    public boolean shouldFlee() {
+        return flee;
+    }
+
+    public boolean isMustFlee() {
+        return mustFlee;
+    }
+
+    public void setMustFlee(boolean mustFlee) {
+        this.mustFlee = mustFlee;
+    }
+
+    protected Precognition getPrecognition() {
+        return precognition;
+    }
+
+    public void setShouldFlee(boolean shouldFlee, String reason) {
+        log(getClass(), "setShouldFlee(boolean, String)", LogLevel.INFO, "Setting Should Flee " + shouldFlee +
+                                                                         " because: " + reason);
+        flee = shouldFlee;
+    }
+
+    public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
+        log(getClass(), "setBehaviorSettings(BehaviorSettings)", LogLevel.INFO, "New behavior settings for " +
+                                                                                getName() + "\n" +
+                                                                                behaviorSettings.toLog());
+        this.behaviorSettings = behaviorSettings;
+        strategicTargets.clear();
+        setShouldFlee(behaviorSettings.shouldAutoFlee(), "Configured to auto flee.");
+        if (shouldFlee()) {
+            return;
+        }
+
+        for (String targetCoords : behaviorSettings.getStrategicTargets()) {
+            if (!StringUtil.isPositiveInteger(targetCoords) || (targetCoords.length() != 4)) {
+                continue;
+            }
+            String x = targetCoords.substring(0, 2);
+            String y = targetCoords.replaceFirst(x, "");
+            Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
+            strategicTargets.add(coords);
+        }
+    }
+
+    public FireControl getFireControl() {
+        return fireControl;
+    }
+
+    public BehaviorSettings getBehaviorSettings() {
+        return behaviorSettings;
+    }
+
+    public Set<Coords> getStrategicTargets() {
+        return strategicTargets;
     }
 
     @Override
@@ -124,46 +157,43 @@ public class Princess extends BotClient {
         try {
 
             // get the first unit
-            int entNum = game.getFirstDeployableEntityNum();
-            if (verbosity.getLevel() > LogLevel.WARNING.getLevel()) {
-                sendChat("deploying unit " + getEntity(entNum).getChassis());
+            int entityNum = game.getFirstDeployableEntityNum();
+            if (logger.getVerbosity().getLevel() > LogLevel.WARNING.getLevel()) {
+                sendChat("deploying unit " + getEntity(entityNum).getChassis());
             }
-            // on the list to be deployed
-            // get a set of all the
-            Coords[] cStart = getStartingCoordsArray();
-            if (cStart.length == 0) {
+
+            // on the list to be deployed get a set of all the
+            Coords[] startingCoords = getStartingCoordsArray();
+            if (startingCoords.length == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
                         "No valid locations to deploy "
-                                + getEntity(entNum).getDisplayName());
+                                + getEntity(entityNum).getDisplayName());
             }
             // get the coordinates I can deploy on
-            Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
-            if (cDeploy == null) {
+            Coords deployCoords = getCoordsAround(getEntity(entityNum), startingCoords);
+            if (deployCoords == null) {
                 log(getClass(),
                         METHOD_NAME,
                         LogLevel.ERROR,
                         "getCoordsAround gave no location for "
-                                + getEntity(entNum).getChassis());
+                                + getEntity(entityNum).getChassis());
             }
-            // first coordinate that is legal to put this unit on now find some
-            // sort
-            // of reasonable facing. If there are deployed enemies, face them
-            int decent_facing = -1;
+            // first coordinate that is legal to put this unit on now find some sort of reasonable facing. If there
+            // are deployed enemies, face them
+            int decentFacing = -1;
             for (Entity e : getEnemyEntities()) {
                 if (e.isDeployed() && (!e.isOffBoard())) {
-                    decent_facing = cDeploy.direction(e.getPosition());
+                    decentFacing = deployCoords.direction(e.getPosition());
                     break;
                 }
             }
-            // if I haven't found a decent facing, then at least face towards
-            // the
-            // center of the board
-            if (decent_facing == -1) {
+            // if I haven't found a decent facing, then at least face towards the center of the board
+            if (decentFacing == -1) {
                 Coords center = new Coords(game.getBoard().getWidth() / 2, game
                         .getBoard().getHeight() / 2);
-                decent_facing = cDeploy.direction(center);
+                decentFacing = deployCoords.direction(center);
             }
-            deploy(entNum, cDeploy, decent_facing, 0);
+            deploy(entityNum, deployCoords, decentFacing, 0);
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -179,14 +209,13 @@ public class Princess extends BotClient {
             // entity that can
             // act this turn
             // make sure weapons are loaded
-            fire_control.loadAmmo(shooter, game);
-            FireControl.FiringPlan plan = fire_control.getBestFiringPlan(
+            fireControl.loadAmmo(shooter, game);
+            FireControl.FiringPlan plan = fireControl.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
                 log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
-                sendAttackData(shooter.getId(),
-                        plan.getEntityActionVector(game));
+                sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
 
             } else {
                 sendAttackData(shooter.getId(), null);
@@ -244,8 +273,7 @@ public class Princess extends BotClient {
                     if ((e.getPosition() == null) || e.isOffBoard()) {
                         continue;
                     }
-                    double dist = BasicPathRanker.distanceToClosestEnemy(e,
-                            e.getPosition(), game);
+                    double dist = pathRanker.distanceToClosestEnemy(e, e.getPosition(), game);
                     if ((moving_entity == null) || (dist > furthest_dist)) {
                         moving_entity = e;
                         furthest_dist = dist;
@@ -284,7 +312,7 @@ public class Princess extends BotClient {
                     }
                     FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
-                    fire_control.calculateUtility(right_punch);
+                    fireControl.calculateUtility(right_punch);
                     if (right_punch.utility > 0) {
                         if ((best_attack == null)
                                 || (right_punch.utility > best_attack.utility)) {
@@ -293,7 +321,7 @@ public class Princess extends BotClient {
                     }
                     FireControl.PhysicalInfo left_punch = new FireControl.PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
-                    fire_control.calculateUtility(left_punch);
+                    fireControl.calculateUtility(left_punch);
                     if (left_punch.utility > 0) {
                         if ((best_attack == null)
                                 || (left_punch.utility > best_attack.utility)) {
@@ -342,88 +370,168 @@ public class Princess extends BotClient {
         }
     }
 
+    private boolean wantsToFlee(Entity entity) {
+        if (shouldFlee() || isMustFlee()) {
+            return true;
+        }
+        return entity.isCrippled() && behaviorSettings.isForcedWithdrawal();
+    }
+
+    private boolean isFleeing(Entity entity) {
+        if (entity.isImmobile()) {
+            return false;
+        }
+
+        return wantsToFlee(entity);
+    }
+
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean mustFleeBoard(Entity entity) {
+        if (!isFleeing(entity)) {
+            return false;
+        }
+        if (!entity.canFlee()) {
+            return false;
+        }
+        if (pathRanker.distanceToHomeEdge(entity.getPosition(), getHomeEdge(), game) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isImmobilized(Entity mover) {
+        final String METHOD_NAME = "isImmobilized(Entity, MovePath)";
+        if (mover.isImmobile() && !mover.isShutDown()) {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, "Is truly immobile.");
+            return true;
+        }
+        if (!(mover instanceof Mech)) {
+            return false;
+        }
+
+        Mech mech = (Mech)mover;
+        if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
+            return false;
+        }
+
+        MovePath movePath = new MovePath(game, mover);
+
+        // For a normal fall-shame setting (index 5), our threshold should be a 10+ piloting roll.
+        int threshold;
+        switch (behaviorSettings.getFallShameIndex()) {
+            case 10:
+                threshold = 7;
+                break;
+            case 9:
+                threshold = 8;
+                break;
+            case 8:
+            case 7:
+                threshold = 9;
+                break;
+            case 6:
+                threshold = 10;
+                break;
+            case 5:
+                threshold = 11;
+                break;
+            case 4:
+            case 3:
+                threshold = 12;
+                break;
+            default:
+                threshold = 13; // Actually impossible.
+        }
+
+        // If we're prone, see if we have a chance of getting up.
+        if (mech.isProne()) {
+            if (mech.cannotStandUpFromHullDown()) {
+                log(getClass(), METHOD_NAME, LogLevel.INFO, "Cannot stand up.");
+                return true;
+            }
+
+            MovePath.MoveStepType type = (game.getOptions().booleanOption("tacops_careful_stand") ?
+                    MovePath.MoveStepType.CAREFUL_STAND :
+                    MovePath.MoveStepType.GET_UP);
+            MoveStep getUp = new MoveStep(movePath, type);
+
+            // If our odds to get up are equal to or worse than the threshold, consider ourselves immobile.
+            PilotingRollData target = mech.checkGetUp(getUp);
+            log(getClass(), METHOD_NAME, LogLevel.INFO,
+                    "Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
+            return (target.getValue() >= threshold);
+        }
+
+        // How likely are we to get unstuck.
+        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
+        MoveStep walk = new MoveStep(movePath, type);
+        IHex hex = getBoard().getHex(mech.getPosition());
+        PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
+                hex.getElevation(), false);
+        log(getClass(), METHOD_NAME, LogLevel.INFO,
+                "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
+        return (target.getValue() >= threshold);
+    }
+
+    protected ArrayList<MovePath> getMovePaths(Entity entity) {
+        return getPrecognition().getPathEnumerator().unit_paths.get(entity.getId());
+    }
+
+    protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths){
+        return getPathRanker().rankPaths(paths, getGame());
+    }
+
     @Override
     protected MovePath continueMovementFor(Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-            // figure out who moved last, and who's move lists need to be
-            // updated
+            // figure out who moved last, and who's move lists need to be updated
 
             // moves this entity during movement phase
-            log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName()
-                    + " (ID " + entity.getId() + ")");
-            precognition.insureUpToDate();
+            log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
+            getPrecognition().insureUpToDate();
 
-            if (((entity.isCrippled() && forced_withdrawal) || must_flee || should_flee)
-                    && !entity.isImmobile()) {
-                String msg = entity.getDisplayName()
-                        + (should_flee ? " is retreating"
-                                : must_flee ? "is forced to withdraw": " is crippled and withdrawing");
+            if (wantsToFlee(entity)) {
+                String msg = entity.getDisplayName();
+                if (entity.isCrippled()) {
+                    msg += " is crippled and withdrawing.";
+                } else if (shouldFlee()) {
+                    msg += " is retreating.";
+                } else if (mustFlee) {
+                    msg += " is forced to withdraw.";
+                }
                 log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
+
+                // If this entity must withdraw, is on its home edge and is able to flee the board, do so.
+                if (mustFleeBoard(entity)) {
+                    MovePath mp = new MovePath(game, entity);
+                    mp.addStep(MovePath.MoveStepType.FLEE);
+                    return mp;
+                }
+
+                // If we want to flee, but cannot, eject the crew.
+                if (isImmobilized(entity) && entity.isEjectionPossible()) {
+                    msg = entity.getDisplayName() + " is immobile.  Abandoning unit.";
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+                    sendChat(msg);
+                    MovePath mp = new MovePath(game, entity);
+                    mp.addStep(MovePath.MoveStepType.EJECT);
+                    return mp;
+                }
             }
 
-            // If this entity must withdraw, is on its home edge and is able to
-            // flee the board, do so.
-            if (((entity.isCrippled() && forced_withdrawal) || must_flee || should_flee)
-                    && entity.canFlee()
-                    && (BasicPathRanker.distanceToHomeEdge(
-                            entity.getPosition(), getHomeEdge(), game) <= 0)) {
-                MovePath mp = new MovePath(game, entity);
-                mp.addStep(MovePath.MoveStepType.FLEE);
-                return mp;
-            }
-
-            boolean ejectionPossible = ((entity instanceof Mech) || (entity instanceof Tank))
-                    && entity.getCrew().isActive()
-                    && !entity.hasQuirk("no_eject");
-            if (entity instanceof Mech) {
-                ejectionPossible &= (((Mech) entity).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED);
-            }
-            if (entity instanceof Tank) {
-                ejectionPossible &= game.getOptions().booleanOption(
-                        "vehicles_can_eject");
-            }
-
-            // If this entity is immobile as well as crippled, eject the
-            // pilot/crew if possible.
-            // Do the same if entity's chance to get up is 0
-            // Do the same if forced withdrawal is activated and this entity's
-            // chance to get up is < 15%
-            MovePath getUpMovePath = new MovePath(game, entity);
-            MovePath.MoveStepType getUpStepType = game.getOptions()
-                    .booleanOption("tacops_careful_stand") ? MovePath.MoveStepType.CAREFUL_STAND
-                    : MovePath.MoveStepType.GET_UP;
-            getUpMovePath.addStep(getUpStepType);
-            if ((entity.isImmobile()
-                    || entity.isPermanentlyImmobilized()
-                    || (entity.isProne() && (PathRanker
-                            .getMovePathSuccessProbability(getUpMovePath) <= 0.025)) || (entity
-                    .isProne() && forced_withdrawal && (PathRanker
-                    .getMovePathSuccessProbability(getUpMovePath) <= 0.15)))
-                    && entity.isCrippled() && ejectionPossible) {
-                String msg = entity.getDisplayName()
-                        + " is immobile.  Abandoning unit.";
-                log(getClass(), METHOD_NAME, msg);
-                sendChat(msg);
-                MovePath mp = new MovePath(game, entity);
-                mp.addStep(MovePath.MoveStepType.EJECT);
-                return mp;
-            }
-
-            // precognition.path_enumerator.debugPrintContents();
-
-            ArrayList<MovePath> paths = precognition.getPathEnumerator().unit_paths.get(entity.getId());
+            ArrayList<MovePath> paths = getPrecognition().getPathEnumerator().unit_paths.get(entity.getId());
 
             if (paths == null) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
                         "No valid paths found.");
                 return new MovePath(game, entity);
             }
-            double this_time_estimate = (paths.size() * move_evaluation_time_estimate) / 1e3;
-            if (verbosity.getLevel() > LogLevel.WARNING.getLevel()) {
+            double this_time_estimate = (paths.size() * moveEvaluationTimeEstimate) / 1e3;
+            if (logger.getVerbosity().getLevel() > LogLevel.WARNING.getLevel()) {
                 String timeestimate = "unknown.";
                 if (this_time_estimate != 0) {
                     timeestimate = Integer.toString((int) this_time_estimate)
@@ -436,25 +544,19 @@ public class Princess extends BotClient {
                 sendChat(message);
             }
             long start_time = System.currentTimeMillis();
-            path_ranker.initUnitTurn(entity, game);
-            ArrayList<RankedPath> rankedpaths = path_ranker.rankPaths(paths,
-                    game);
+            getPathRanker().initUnitTurn(entity, getGame());
+            ArrayList<RankedPath> rankedpaths = rankPaths(paths);
             long stop_time = System.currentTimeMillis();
             // update path evaluation time estimate
-            double updated_estimate = ((double) (stop_time - start_time))
-                    / ((double) paths.size());
-            if (move_evaluation_time_estimate == 0) {
-                move_evaluation_time_estimate = updated_estimate;
+            double updated_estimate = ((double) (stop_time - start_time)) / ((double) paths.size());
+            if (moveEvaluationTimeEstimate == 0) {
+                moveEvaluationTimeEstimate = updated_estimate;
             }
-            move_evaluation_time_estimate = 0.5 * (updated_estimate + move_evaluation_time_estimate);
+            moveEvaluationTimeEstimate = 0.5 * (updated_estimate + moveEvaluationTimeEstimate);
             if (rankedpaths.size() == 0) {
                 return new MovePath(game, entity);
             }
-            log(getClass(),
-                    METHOD_NAME,
-                    "Path ranking took "
-                            + Long.toString(stop_time - start_time)
-                            + " milliseconds");
+            log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - start_time) + " millis");
             precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME,
@@ -478,7 +580,7 @@ public class Princess extends BotClient {
             // values-----
             Vector<Entity> ents = game.getEntitiesVector();
             for (Entity ent : ents) {
-                String errors = fire_control.checkAllGuesses(ent, game);
+                String errors = fireControl.checkAllGuesses(ent, game);
                 if (errors != null) {
                     log(getClass(), METHOD_NAME, LogLevel.ERROR, errors);
                 }
@@ -496,14 +598,14 @@ public class Princess extends BotClient {
 
         try {
             // reset strategic targets
-            fire_control.additional_targets = new ArrayList<Targetable>();
-            for (Coords strategic_target : strategic_targets) {
+            fireControl.additional_targets = new ArrayList<Targetable>();
+            for (Coords strategic_target : strategicTargets) {
                 if (game.getBoard().getBuildingAt(strategic_target) == null) {
                     sendChat("No building to target in Hex "
                             + strategic_target.toFriendlyString()
                             + ", ignoring.");
                 } else {
-                    fire_control.additional_targets.add(new BuildingTarget(
+                    fireControl.additional_targets.add(new BuildingTarget(
                             strategic_target, game.getBoard(), false));
                     sendChat("Building in Hex "
                             + strategic_target.toFriendlyString()
@@ -526,8 +628,8 @@ public class Princess extends BotClient {
                         if ((entity instanceof GunEmplacement)
                                 && entity.getOwner()
                                         .isEnemyOf(getLocalPlayer())
-                                && (fire_control.additional_targets.indexOf(bt) == -1)) {
-                            fire_control.additional_targets.add(bt);
+                                && (fireControl.additional_targets.indexOf(bt) == -1)) {
+                            fireControl.additional_targets.add(bt);
                             sendChat("Building in Hex "
                                     + coords.toFriendlyString()
                                     + " designated target due to Gun Emplacement.");
@@ -540,6 +642,10 @@ public class Princess extends BotClient {
         }
     }
 
+    protected IGame getGame() {
+        return game;
+    }
+
     @Override
     public void initialize() {
         final String METHOD_NAME = "initialize()";
@@ -549,36 +655,37 @@ public class Princess extends BotClient {
             if (initialized) {
                 return; // no need to initialize twice
             }
-            Properties configfile = new Properties();
-            try {
-                configfile.load(new FileInputStream(properties_file_name));
-                log(getClass(), METHOD_NAME, "Loading behavior from "
-                        + properties_file_name);
-            } catch (FileNotFoundException e) {
-                log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                        "Princess config file not found!");
-                log(getClass(), METHOD_NAME, e);
-            } catch (IOException e) {
-                log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                        "IO Error in Princess config file!");
-                log(getClass(), METHOD_NAME, e);
-            }
-            path_searcher = new PathSearcher(this);
-            path_ranker = new BasicPathRanker(configfile, this);
-            path_ranker.hyper_aggression = 0.1 * Math
-                    .pow(10.0, aggression / 50);
-            path_ranker.botbase = this;
-            path_searcher.ranker = path_ranker;
-            fire_control = new FireControl(this);
-            path_ranker.firecontrol = fire_control;
+            PathSearcher pathSearcher = new PathSearcher(this);
+            pathRanker = new BasicPathRanker(this);
+            pathSearcher.ranker = pathRanker;
+            fireControl = new FireControl(this);
+            pathRanker.setFireControl(fireControl);
             precognition = new Precognition(this);
-            precognition.setGame(game);
-            path_ranker.path_enumerator = precognition.getPathEnumerator();
+            precognition.setGame(getGame());
+            pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
-            precognition_thread = new Thread(precognition,
-                    "Princess-precognition");
-            precognition_thread.start();
-            // precognition.pause();
+            Thread precognitionThread = new Thread(precognition, "Princess-precognition");
+            precognitionThread.start();
+
+            // Pick up any turrets and add their buildings to the strategic targets list.
+            Enumeration<Building> buildings = getGame().getBoard().getBuildings();
+            while (buildings.hasMoreElements()) {
+                Building bldg = buildings.nextElement();
+                Enumeration<Coords> bldgCoords = bldg.getCoords();
+                while (bldgCoords.hasMoreElements()) {
+                    Coords coords = bldgCoords.nextElement();
+                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements();) {
+                        Entity entity = i.nextElement();
+                        if (entity instanceof GunEmplacement && entity.getOwner().isEnemyOf(getLocalPlayer())
+                                && !strategicTargets.contains(coords)) {
+                            strategicTargets.add(coords);
+                            sendChat("Building in Hex " + coords.toFriendlyString() +
+                                    " designated target due to Gun Emplacement.");
+                        }
+                    }
+                }
+            }
+
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } finally {
@@ -625,7 +732,7 @@ public class Princess extends BotClient {
                         sendChat(command);
                     }
 
-                    chatp.processChat(ge, this);
+                    chatProcessor.processChat(ge, this);
                     return;
                 } else {
                     nameTo = secondToken;
@@ -637,7 +744,7 @@ public class Princess extends BotClient {
             }
 
             if ((nameTo == null) || (message == null) || (getLocalPlayer() == null)) {
-                chatp.processChat(ge, this);
+                chatProcessor.processChat(ge, this);
                 return;
             }
 
@@ -648,83 +755,26 @@ public class Princess extends BotClient {
                     sendChat(getLocalPlayer().getName()
                             + " received flee order. Running away to "
                             + getHomeEdge().toString() + " edge !");
-                    should_flee = true;
+                    setShouldFlee(true, "Received flee order.");
+
                 } else if (message.equalsIgnoreCase("reset")) {
-                    log(getClass(), METHOD_NAME,
-                            " reseting parameters from properties file");
-                    sendChat(getLocalPlayer().getName()
-                            + " reseting parameters from properties file");
-                    path_ranker.resetParametersFromProperties();
-                    should_flee = false;
+                    log(getClass(), METHOD_NAME, " reseting parameters from properties file");
+                    sendChat(getLocalPlayer().getName() + " reseting parameters from properties file");
+                    BehaviorSettingsFactory.getInstance().init(true);
+                    setBehaviorSettings(BehaviorSettingsFactory.getInstance()
+                                                               .getBehavior(behaviorSettings.getDescription()));
                 }
             }
 
-            chatp.processChat(ge, this);
+            chatProcessor.processChat(ge, this);
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
     }
 
-    public enum LogLevel {
-        ERROR(0), WARNING(1), DEBUG(2);
-
-        private int level;
-
-        LogLevel(int level) {
-            this.level = level;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public static String[] getLogLevelNames() {
-            List<String> out = new ArrayList<String>();
-            for (LogLevel l : values()) {
-                out.add(l.toString());
-            }
-            return out.toArray(new String[] {});
-        }
-
-        public static Integer[] getLogLevels() {
-            List<Integer> out = new ArrayList<Integer>();
-            for (LogLevel l : values()) {
-                out.add(l.getLevel());
-            }
-            return out.toArray(new Integer[] {});
-        }
-
-        public static LogLevel getLogLevel(String levelName) {
-            for (LogLevel l : values()) {
-                if (l.toString().equals(levelName)) {
-                    return l;
-                }
-            }
-            return ERROR;
-        }
-
-        public static LogLevel getLogLevel(int level) {
-            for (LogLevel l : values()) {
-                if (l.getLevel() == level) {
-                    return l;
-                }
-            }
-            return ERROR;
-        }
-    }
-
     public void log(Class<?> callingClass, String methodName, LogLevel level,
             String msg) {
-        if (level.getLevel() > verbosity.getLevel()) {
-            return;
-        }
-        StringBuilder out = new StringBuilder(DateFormat.getDateTimeInstance()
-                .format(new Date()));
-        out.append(" ").append(callingClass.getName());
-        out.append(".").append(methodName);
-        out.append(" [").append(level.toString()).append("]");
-        out.append(" ").append(msg);
-        System.out.println(out);
+        logger.log(callingClass, methodName, level, msg);
     }
 
     public void log(Class<?> callingClass, String methodName, String msg) {
@@ -733,17 +783,7 @@ public class Princess extends BotClient {
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
             Throwable t) {
-        if (t == null) {
-            return;
-        }
-        if (level.getLevel() > verbosity.getLevel()) {
-            return;
-        }
-        StringBuilder msg = new StringBuilder(t.getMessage());
-        for (StackTraceElement e : t.getStackTrace()) {
-            msg.append("\n").append(e.toString());
-        }
-        log(callingClass, methodName, level, t);
+        logger.log(callingClass, methodName, level, t);
     }
 
     public void log(Class<?> callingClass, String methodName, Throwable t) {
@@ -758,19 +798,16 @@ public class Princess extends BotClient {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 
-    public BasicPathRanker.HomeEdge getHomeEdge() {
-        if (homeEdge == null) {
-            homeEdge = BasicPathRanker.getDefaultHomeEdge();
-        }
-        return homeEdge;
+    public HomeEdge getHomeEdge() {
+        return getBehaviorSettings().getHomeEdge();
     }
 
-    public void setHomeEdge(BasicPathRanker.HomeEdge homeEdge) {
+    public void setHomeEdge(HomeEdge homeEdge) {
         if (homeEdge == null) {
             log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
                 new IllegalArgumentException("Home Edge is required!"));
-            homeEdge = BasicPathRanker.getDefaultHomeEdge();
+            return;
         }
-        this.homeEdge = homeEdge;
+        getBehaviorSettings().setHomeEdge(homeEdge);
     }
 }

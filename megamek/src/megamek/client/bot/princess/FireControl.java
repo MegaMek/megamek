@@ -52,6 +52,7 @@ import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.logging.LogLevel;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -691,7 +692,7 @@ public class FireControl {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                prob_to_hit = Compute.oddsAbove(to_hit.getValue());
+                prob_to_hit = Compute.oddsAbove(to_hit.getValue()) / 100.0;
                 expected_damage_on_hit = max_damage;
                 // now guess how many critical hits will be done
                 expected_criticals = 0;
@@ -1461,12 +1462,12 @@ public class FireControl {
         FiringPlan myplan = new FiringPlan();
         if (shooter.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      Princess.LogLevel.ERROR, "Shooter's position is NULL!");
+                      LogLevel.ERROR, "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      Princess.LogLevel.ERROR, "Target's position is NULL!");
+                      LogLevel.ERROR, "Target's position is NULL!");
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
@@ -1510,13 +1511,13 @@ public class FireControl {
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                       "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      Princess.LogLevel.ERROR, "Shooter's position is NULL!");
+                      LogLevel.ERROR, "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(),
                       "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      Princess.LogLevel.ERROR, "Target's position is NULL!");
+                      LogLevel.ERROR, "Target's position is NULL!");
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
@@ -1554,13 +1555,13 @@ public class FireControl {
         FiringPlan myplan = new FiringPlan();
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", Princess.LogLevel.ERROR,
+                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
                       "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", Princess.LogLevel.ERROR,
+                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
                       "Target's position is NULL!");
             return myplan;
         }

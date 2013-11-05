@@ -10,6 +10,7 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.Player;
+import megamek.common.logging.LogLevel;
 import megamek.server.Server;
 
 /**
@@ -73,7 +74,7 @@ public class AddBotCommand extends ServerCommand {
         if (target.isGhost()) {
             BotClient c = null;
             if ("Princess".equalsIgnoreCase(botName)) {
-                c = new Princess(target.getName(), server.getHost(), server.getPort(), Princess.LogLevel.ERROR);
+                c = new Princess(target.getName(), server.getHost(), server.getPort(), LogLevel.ERROR);
             } else if ("TestBot".equalsIgnoreCase(botName)) {
                 c = new TestBot(target.getName(), server.getHost(), server.getPort());
             } else {

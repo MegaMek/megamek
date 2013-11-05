@@ -2427,7 +2427,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butAddBot)) {
             BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
             bcd.setVisible(true);
-            if (bcd.dialog_aborted) {
+            if (bcd.dialogAborted) {
                 return; // user didn't click 'ok', add no bot
             }
             if (clientgui.getBots().containsKey(bcd.getBotName())) {

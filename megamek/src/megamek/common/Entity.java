@@ -12387,4 +12387,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
+    // Most units cannot eject.
+    // ToDo Look up ejection rules for ASF.
+    public boolean isEjectionPossible() {
+        return false;
+    }
 }

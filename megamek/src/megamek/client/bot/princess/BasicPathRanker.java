@@ -16,7 +16,6 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -36,133 +35,74 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.logging.LogLevel;
 
 /**
  * A very basic pathranker
  */
 public class BasicPathRanker extends PathRanker {
 
-    FireControl firecontrol;
-    PathEnumerator path_enumerator;
-    private static Princess owner;
+    private FireControl fireControl;
+    private PathEnumerator pathEnumerator;
+    private Princess owner;
+    private BehaviorSettings behaviorSettings;
 
-    double fall_shame; // how many extra damage points will a fall effectively
-    // make me lose
-    //double blind_optimism; // unmoved units that can do damage to me -might-
-    // move away (<1) or might move to a better position
-    // (>1)
-    //double enemy_underestimation; // unmoved units will likely move out of my
-    // way (<1)
-    double foolish_bravery; // how many of my armor points am I willing to
-    // sacrifice to do one armor point worth of damage
-    double hyper_aggression; // how much is it worth to me to get all up in the
-    // face of an enemy
-//    double herd_mentality; // how much is it worth to me to stay near my buddies
+    // the best damage enemies could expect were I not here. Used to determine whether they will target me.
+    private TreeMap<Integer, Double> bestDamageByEnemies;
 
-    //Fleeing the board
-    double self_preservation; //how closely will I follow the forced withdrawal rules.
-
-    Properties properties = null;
-
-    static HomeEdge defaultHomeEdge = HomeEdge.NORTH;
-
-    TreeMap<Integer, Double> best_damage_by_enemies; // the best damage enemies
-    // could expect were I not
-    // here. Used to determine
-    // whether they will target
-    // me.
-
-    public BasicPathRanker(Properties props, Princess owningPrincess) {
+    public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
-        // Replaced by call to resetParametersFromProperties()
-        /*
-        // give some default values for tunable parameters
-        fall_shame = 10.0;
-//        blind_optimism = 0.9;
-  //      enemy_underestimation = 0.5;
-        foolish_bravery = 3.0;
-        //hyper_aggression = 0.05;
-        hyper_aggression = 10.0;
-        //herd_mentality = 0.01;
-        self_preservation = 30.0;
-
-        fall_shame = Double.valueOf(props.getProperty("fall_shame"));
-    //    blind_optimism = Double.valueOf(props.getProperty("blind_optimism"));
-      //  enemy_underestimation = Double.valueOf(props
-        //        .getProperty("enemy_underestimation"));
-        foolish_bravery = Double.valueOf(props.getProperty("foolish_bravery"));
-        //hyper_aggression = Double
-//                .valueOf(props.getProperty("hyper_aggression"));
-        //herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
-
-        self_preservation = Double.valueOf(props.getProperty("self_preservation"));
-        */
-        best_damage_by_enemies = new TreeMap<Integer, Double>();
-
-        defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
+        final String METHOD_NAME = "BasicPathRanker(Princess)";
+        bestDamageByEnemies = new TreeMap<Integer, Double>();
         owner = owningPrincess;
-        properties = props;
-
-        resetParametersFromProperties();
+        behaviorSettings = owner.getBehaviorSettings();
+        if (behaviorSettings == null) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Behavior Settings not Loaded!");
+            return;
+        }
+        owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + behaviorSettings.getDescription() + " behavior");
     }
 
-    public double getFall_shame() {
-		return fall_shame;
-	}
-
-	public void setFall_shame(double fall_shame) {
-		this.fall_shame = fall_shame;
-	}
-
-	public double getFoolish_bravery() {
-		return foolish_bravery;
-	}
-
-	public void setFoolish_bravery(double foolish_bravery) {
-		this.foolish_bravery = foolish_bravery;
-	}
-
-	public double getHyper_aggression() {
-		return hyper_aggression;
-	}
-
-	public void setHyper_aggression(double hyper_aggression) {
-		this.hyper_aggression = hyper_aggression;
-	}
-
-	public double getSelf_preservation() {
-		return self_preservation;
-	}
-
-	public void setSelf_preservation(double self_preservation) {
-		this.self_preservation = self_preservation;
-	}
-
-	public static HomeEdge getDefaultHomeEdge() {
-        return defaultHomeEdge;
+    public FireControl getFireControl() {
+        return fireControl;
     }
 
-	public void resetParametersFromProperties () {
-    	// give some default values for tunable parameters
-        fall_shame = 10.0;
-        foolish_bravery = 3.0;
-        hyper_aggression = 10.0;
-        self_preservation = 30.0;
-
-        fall_shame = Double.valueOf(properties.getProperty("fall_shame"));
-        foolish_bravery = Double.valueOf(properties.getProperty("foolish_bravery"));
-        hyper_aggression = Double.valueOf(properties.getProperty("hyper_aggression"));
-        self_preservation = Double.valueOf(properties.getProperty("self_preservation"));
+    public PathEnumerator getPathEnumerator() {
+        return pathEnumerator;
     }
 
-    class EntityEvaluationResponse {
+    public void setFireControl(FireControl fireControl) {
+        this.fireControl = fireControl;
+    }
+
+    public void setPathEnumerator(PathEnumerator pathEnumerator) {
+        this.pathEnumerator = pathEnumerator;
+    }
+
+    private class EntityEvaluationResponse {
+        private double estimatedEnemyDamage;
+        private double myEstimatedDamage;
+
         public EntityEvaluationResponse() {
-            damage_enemy_can_do=0;
-            damage_i_can_do=0;
+            estimatedEnemyDamage =0;
+            myEstimatedDamage =0;
         }
 
-        public double damage_enemy_can_do;
-        public double damage_i_can_do;
+        private double getEstimatedEnemyDamage() {
+            return estimatedEnemyDamage;
+        }
+
+        private void setEstimatedEnemyDamage(double estimatedEnemyDamage) {
+            this.estimatedEnemyDamage = estimatedEnemyDamage;
+        }
+
+        private double getMyEstimatedDamage() {
+            return myEstimatedDamage;
+        }
+
+        private void setMyEstimatedDamage(double myEstimatedDamage) {
+            this.myEstimatedDamage = myEstimatedDamage;
+        }
     }
 
     /**
@@ -187,8 +127,8 @@ public class BasicPathRanker extends PathRanker {
             Coords behind=mycoords.translated((myfacing+3)%6);
             Coords leftflank=mycoords.translated((myfacing+2)%6);
             Coords rightflank=mycoords.translated((myfacing+4)%6);
-            HashSet<CoordFacingCombo> enemy_facing_set=path_enumerator.unit_potential_locations.get(e.getId());
-            Coords closest=path_enumerator.unit_movable_areas.get(e.getId()).getClosestCoordsTo(mycoords);
+            HashSet<CoordFacingCombo> enemy_facing_set= pathEnumerator.unit_potential_locations.get(e.getId());
+            Coords closest= pathEnumerator.unit_movable_areas.get(e.getId()).getClosestCoordsTo(mycoords);
             int range=closest.distance(mycoords);
             //I would prefer if the enemy must end its move in my line of fire
             //if so, I can guess that I may do some damage to it
@@ -203,12 +143,12 @@ public class BasicPathRanker extends PathRanker {
                 leftbounds=new HexLine(behind,(myfacing+1)%6);
                 rightbounds=new HexLine(behind,(myfacing+5)%6);
             }
-            if((leftbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))>0) &&
-               (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))<0)) {
-                ret.damage_i_can_do+=firecontrol.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;
+            if((leftbounds.judgeArea(pathEnumerator.unit_movable_areas.get(e.getId()))>0) &&
+               (rightbounds.judgeArea(pathEnumerator.unit_movable_areas.get(e.getId()))<0)) {
+                ret.myEstimatedDamage += fireControl.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;
             }
             //in general if an enemy can end its position in range, it can hit me
-            ret.damage_enemy_can_do+=firecontrol.getMaxDamageAtRange(e,range)*damage_discount;
+            ret.estimatedEnemyDamage += fireControl.getMaxDamageAtRange(e,range)*damage_discount;
             //It is especially embarassing if the enemy can move behind or flank me and then kick me
             if(enemy_facing_set!=null) {
             if(enemy_facing_set.contains(new CoordFacingCombo(behind,myfacing))||
@@ -220,10 +160,10 @@ public class BasicPathRanker extends PathRanker {
                enemy_facing_set.contains(new CoordFacingCombo(rightflank,myfacing))||
                enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+1)%6))||
                enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+2)%6))) {
-                ret.damage_enemy_can_do+=Math.ceil(e.getWeight() / 5.0)*damage_discount;
+                ret.estimatedEnemyDamage +=Math.ceil(e.getWeight() / 5.0)*damage_discount;
             }
             } else {
-                owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING, "warning, no facing set for "+e.getDisplayName());
+                owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "warning, no facing set for "+e.getDisplayName());
             }
             return ret;
         } finally {
@@ -269,10 +209,10 @@ public class BasicPathRanker extends PathRanker {
             if (finalCoords != null) {
                 Building b = game.getBoard().getBuildingAt(finalCoords);
                 if ((b != null) && (pathCopy.isJumping() || (b.getBasement(finalCoords).getValue() > BasementType.NONE.getValue()))) {
-                    owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
+                    owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
                             "Final hex is on top of a building...");
                     if (b.getCurrentCF(finalCoords) < pathCopy.getEntity().getWeight()) {
-                        owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
+                        owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
                                 "\tthat cannot hold my weight.");
                         return -1000;
                     }
@@ -287,7 +227,7 @@ public class BasicPathRanker extends PathRanker {
             // Lets assume that I will fall if I fail. What's my expected damage
             // (and embarrassment) from that?
             int fall_damage = (int) (p.getEntity().getWeight() / 10);
-            double expected_fall_damage = (fall_damage + fall_shame)
+            double expected_fall_damage = (fall_damage + behaviorSettings.getFallShameValue())
                     * (1.0 - successProbability);
 
             // look at all of my enemies
@@ -301,7 +241,7 @@ public class BasicPathRanker extends PathRanker {
                 }
                 if((!e.isSelectableThisTurn())||e.isImmobile()) { //For units that have already moved
                     // How much damage can they do to me?
-                    double their_damage_potential = firecontrol
+                    double their_damage_potential = fireControl
                             .guessBestFiringPlanUnderHeatWithTwists(e, null,
                                     p.getEntity(), new EntityState(p),
                                     (e.getHeatCapacity() - e.heat) + 5, game)
@@ -318,9 +258,9 @@ public class BasicPathRanker extends PathRanker {
                     // How much damage can I do to them?
                     FiringPlan my_firing_plan;
                     if(p.getEntity() instanceof Aero) {
-                        my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
+                        my_firing_plan = fireControl.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
                     } else {
-                        my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+                        my_firing_plan = fireControl.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
                     }
                     double my_damage_potential = my_firing_plan.utility;
                     // If I can kick them and probably hit, I probably will
@@ -337,7 +277,7 @@ public class BasicPathRanker extends PathRanker {
 
                     // If this enemy is likely to fire at me, include that in the damage
                     // I will likely take
-                    if (best_damage_by_enemies.get(e.getId()) < their_damage_potential) {
+                    if (bestDamageByEnemies.get(e.getId()) < their_damage_potential) {
                         expected_damage_taken += their_damage_potential;
                     }
                     // If this enemy is likely my target, use my damage to them as the
@@ -348,19 +288,19 @@ public class BasicPathRanker extends PathRanker {
                 } else { //for units that have moved this round
                     //I would prefer not to have the unit be able to move directly behind or flank me
                     EntityEvaluationResponse resp=evaluateUnmovedEnemy(e,p,game);
-                    if(resp.damage_i_can_do>maximum_damage_done) {
-                        maximum_damage_done=resp.damage_i_can_do;
+                    if(resp.myEstimatedDamage >maximum_damage_done) {
+                        maximum_damage_done=resp.myEstimatedDamage;
                     }
-                    expected_damage_taken+=resp.damage_enemy_can_do;
+                    expected_damage_taken+=resp.estimatedEnemyDamage;
                 }
             }
             // Include damage I can do to strategic targets
-            for(int i=0;i<botbase.fire_control.additional_targets.size();i++) {
-                Targetable t=botbase.fire_control.additional_targets.get(i);
+            for(int i=0;i<botbase.getFireControl().additional_targets.size();i++) {
+                Targetable t=botbase.getFireControl().additional_targets.get(i);
                 if (t.getPosition() == null) {
                     continue; // Skip targets not actually on the board.
                 }
-                FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
+                FiringPlan my_firing_plan = fireControl.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
                 double my_damage_potential = my_firing_plan.utility;
                 if(my_damage_potential>maximum_damage_done) {
                     maximum_damage_done = my_damage_potential;
@@ -386,7 +326,7 @@ public class BasicPathRanker extends PathRanker {
             maximum_damage_done += maximum_physical_damage;
 
             double utility = (successProbability
-                    * ((maximum_damage_done * foolish_bravery) - expected_damage_taken))
+                    * ((maximum_damage_done * behaviorSettings.getBraveryValue()) - expected_damage_taken))
                     - expected_fall_damage;
 
             if(p.getEntity() instanceof Aero) {
@@ -394,24 +334,24 @@ public class BasicPathRanker extends PathRanker {
             } else {
                 //ground unit specific things
                 double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
-                utility -= dist_to_enemy * hyper_aggression;
+                utility -= dist_to_enemy * behaviorSettings.getHyperAggressionValue();
 
     //            double dist_to_friend = distanceToClosestFriend(p, game);
       //          utility -= dist_to_friend * herd_mentality;
             }
 
             //Should I be trying to withdraw?
-            if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
-                    ||(botbase.should_flee)) {
+            if(((p.getEntity().isCrippled())&&(behaviorSettings.isForcedWithdrawal()))
+                    ||(botbase.shouldFlee())) {
                 int new_distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.getHomeEdge(), game);
                 int current_distance_to_edge = distanceToHomeEdge(p.getEntity().getPosition(), botbase.getHomeEdge(), game);
                 int delta_distance_to_edge = current_distance_to_edge - new_distance_to_edge;
 
                 if (delta_distance_to_edge > 0) {
                 	//if it's small enough, the unit should do more of a fighting withdrawal
-                	utility+=self_preservation*delta_distance_to_edge;
+                	utility+= behaviorSettings.getSelfPreservationValue() * delta_distance_to_edge;
                 } else {
-                	utility-=(self_preservation*100);
+                	utility-=(behaviorSettings.getSelfPreservationValue() * 100);
                 }
             }
 
@@ -432,13 +372,13 @@ public class BasicPathRanker extends PathRanker {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            best_damage_by_enemies.clear();
+            bestDamageByEnemies.clear();
             ArrayList<Entity> enemies = getEnemies(unit, game);
             ArrayList<Entity> friends = getFriends(unit, game);
             for (Entity e : enemies) {
                 double max_damage = 0;
                 for (Entity f : friends) {
-                    double damage = firecontrol
+                    double damage = fireControl
                             .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
                                     null, (e.getHeatCapacity() - e.heat) + 5, game)
                                     .getExpectedDamage();
@@ -447,7 +387,7 @@ public class BasicPathRanker extends PathRanker {
                     }
 
                 }
-                best_damage_by_enemies.put(e.getId(), max_damage);
+                bestDamageByEnemies.put(e.getId(), max_damage);
             }
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
@@ -479,7 +419,7 @@ public class BasicPathRanker extends PathRanker {
      * @param position Coords from which the closest enemy is found
      * @param game IGame that we're playing
      */
-    static public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
@@ -498,7 +438,7 @@ public class BasicPathRanker extends PathRanker {
      * Gives the distance to the closest edge
      *
      */
-    static public int distanceToClosestEdge(Coords position, IGame game) {
+    public int distanceToClosestEdge(Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
@@ -576,7 +516,7 @@ public class BasicPathRanker extends PathRanker {
      * @param game
      * @return The distance to the unit's home edge.
      */
-    public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
     	final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
@@ -605,7 +545,7 @@ public class BasicPathRanker extends PathRanker {
 	        		break;
 	        	}
 	        	default : {
-	        		owner.log(BasicPathRanker.class, METHOD_NAME, Princess.LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+	        		owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
 	        		distance = position.y;
 	        	}
 	        }
@@ -616,34 +556,5 @@ public class BasicPathRanker extends PathRanker {
         } finally {
             owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
-    }
-
-    /**
-     * Enum denoting the available home edges for a bot.
-     */
-     public enum HomeEdge {
-         NORTH(0),
-         SOUTH(1),
-         WEST(2),
-         EAST(3);
-
-         private int index;
-
-         HomeEdge(int index) {
-            this.index = index;
-         }
-
-         public int getIndex() {
-            return index;
-         }
-
-         public static HomeEdge getHomeEdge(int index) {
-            for (HomeEdge he : values()) {
-                if (he.getIndex() == index) {
-                    return he;
-                }
-            }
-            return null;
-         }
     }
 }

@@ -165,4 +165,40 @@ public class StringUtil {
 
         return text;
     } //public static String makeXmlSafe(String text)
+
+    /**
+     * Returns TRUE if the passed string is a valid number.
+     *
+     * @param number The {@link String} to be evaluated.
+     * @return TRUE if the value can be parsed to a {@link Double} without throwing a {@link NumberFormatException}.
+     */
+    public static boolean isNumeric(String number) {
+        if (isNullOrEmpty(number)) {
+            return false;
+        }
+        try {
+            Double.parseDouble(number);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        } //catch (NumberFormatException ex)
+    }
+
+    /**
+     * Returns TRUE if the passed string is a positive integer value.
+     *
+     * @param number The {@link String} to be evaluated.
+     * @return TRUE if the value can be parsed to an {@link Integer} without throwing a {@link NumberFormatException}
+     *         and the parsed value is greater than or equal to zero.
+     */
+    public static boolean isPositiveInteger(String number) {
+        if (isNullOrEmpty(number)) {
+            return false;
+        }
+        try {
+            return Integer.parseInt(number) >= 0;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
 }

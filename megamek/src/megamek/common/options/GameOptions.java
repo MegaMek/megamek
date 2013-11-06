@@ -87,6 +87,8 @@ public class GameOptions extends AbstractOptions {
         addOption(victory, "bv_ratio_percent", 300); //$NON-NLS-1$
         addOption(victory, "use_game_turn_limit", false); //$NON-NLS-1$
         addOption(victory, "game_turn_limit", 10); //$NON-NLS-1$
+        addOption(victory, "use_kill_count", false); //$NON-NLS-1$
+        addOption(victory, "game_kill_count", 4); //$NON-NLS-1$
         addOption(victory, "commander_killed", false); //$NON-NLS-1$
 
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$

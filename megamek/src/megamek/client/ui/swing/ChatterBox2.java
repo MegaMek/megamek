@@ -285,7 +285,15 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             resize(p, size);
             return true;
         }
-        return false;
+        
+        int xMin = DIST_SIDE;
+        int xMax = xMin + width;
+        int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset;
+        int yMax = yMin + height;
+
+        boolean mouseOver = (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
+                && (p.y < yMax);
+        return mouseOver;
     }
 
     public boolean isBeingDragged() {

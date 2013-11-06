@@ -120,7 +120,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
-        if (GUIPreferences.getInstance().getTooltipDismissDelay() > 0)
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0)
         {
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());

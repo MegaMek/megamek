@@ -86,6 +86,7 @@ v0.37.0-dev (SVN)
 + lateral shifts, reduced cost facing changes and PSR bonuses for tripods
 + Bug [#3711]: Tooltip dismiss delay is low for some look and feels: 
     client options now has a tooltip dismiss delay setting
++ Bug: ChatterBox2 mousewheel hit detection was bugged
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

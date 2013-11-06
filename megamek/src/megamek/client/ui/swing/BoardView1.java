@@ -347,7 +347,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             .getViewport().getSize().getHeight());
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
-                    if (disp.isMouseOver(mousePoint, drawDimension)) {
+                    // we need to adjust the point, because it should be against 
+                    //the displayable dimension
+                    Point dispPoint = new Point();
+                    dispPoint.setLocation(mousePoint.x + getBounds().x, 
+                            mousePoint.y + getBounds().y);
+                    if (disp.isMouseOver(dispPoint, drawDimension)) {
                         ChatterBox2 cb2 = (ChatterBox2) disp;
                         if (we.getWheelRotation() > 0) {
                             cb2.scrollDown();

@@ -120,6 +120,11 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() > 0)
+        {
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
+        }
         frame = new JFrame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             @Override

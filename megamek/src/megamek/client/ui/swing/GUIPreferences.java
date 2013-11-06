@@ -148,6 +148,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_BING_FILENAME = "SoundBingFilename";
     public static final String SOUND_MUTE = "SoundMute";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
+    public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String WINDOW_POS_X = "WindowPosX";
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
@@ -266,6 +267,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_WRECKS, true);
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
         store.setDefault(TOOLTIP_DELAY, 1000);
+        store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
@@ -554,6 +556,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getTooltipDelay() {
         return store.getInt(TOOLTIP_DELAY);
     }
+    
+    public int getTooltipDismissDelay() {
+        return store.getInt(TOOLTIP_DISMISS_DELAY);
+    }
 
     public int getWindowPosX() {
         return store.getInt(WINDOW_POS_X);
@@ -830,6 +836,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTooltipDelay(int i) {
         store.setValue(TOOLTIP_DELAY, i);
+        ToolTipManager.sharedInstance().setInitialDelay(i);
+    }
+    
+    public void setTooltipDismissDelay(int i) {
+        store.setValue(TOOLTIP_DISMISS_DELAY, i);
         ToolTipManager.sharedInstance().setInitialDelay(i);
     }
 

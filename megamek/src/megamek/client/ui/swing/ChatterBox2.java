@@ -671,17 +671,15 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-        if (ke.isAltDown()) {
-            return;
-        }
         if (ke.isControlDown() && (ke.getKeyCode() == KeyEvent.VK_V)) {
-            Transferable content = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            boolean hasTransferableText =
-              (content != null) && content.isDataFlavorSupported(DataFlavor.stringFlavor)
-            ;
+            Transferable content = Toolkit.getDefaultToolkit().
+                    getSystemClipboard().getContents(null);
+            boolean hasTransferableText = (content != null) && 
+                    content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
-                    addChatMessage((String)content.getTransferData(DataFlavor.stringFlavor));
+                    addChatMessage((String)content.getTransferData(
+                            DataFlavor.stringFlavor));
                   }
                   catch (UnsupportedFlavorException ex){
                     //highly unlikely since we are using a standard DataFlavor
@@ -692,7 +690,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                       System.out.println(ex);
                       ex.printStackTrace();
                   }
-            }
+            }            
+            return;
+        }
+        
+        if (ke.isAltDown() || ke.isControlDown()) {
+            return;
         }
 
         switch (ke.getKeyCode()) {
@@ -733,8 +736,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             case KeyEvent.VK_INSERT:
             case KeyEvent.VK_DELETE:
                 return;
-        }
-
+        }      
+        
         if ((isDown() || isSliding()) && (ke.getKeyCode() != KeyEvent.VK_ENTER)
                 && (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE)
                 && (ke.getKeyCode() != KeyEvent.VK_ESCAPE)) {

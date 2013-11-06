@@ -106,7 +106,7 @@
         </jar>
     </target>
 
-    <target name="run" depends="compile">
+    <target name="run" depends="compile" description="Runs Megamek">
         <echo message="Running MegaMek from build directory: ${builddir}"/>
         <java classname="megamek.MegaMek" fork="true">
             <classpath>
@@ -119,25 +119,8 @@
         </java>
     </target>
 
-    <target name="run3d" depends="compile">
-        <echo message="Running MegaMek in 3D-Mode from build directory: ${builddir}"/>
-        <java classname="megamek.MegaMek" fork="true">
-            <arg line="-log off -gui swing"/>
-            <classpath>
-                <pathelement path="${basedir}"/>
-                <pathelement path="${builddir}"/>
-                <pathelement path="${basedir}/src/"/>
-                <pathelement path="${basedir}/l10n/"/>
-                <fileset dir="${libdir}" includes="*.jar"/>
-            </classpath>
-            <jvmarg value="-Dmegamek.client.ui.AWT.boardView=megamek.client.ui.AWT.boardview3d.BoardView3D"/>
-            <jvmarg value="-Dmegamek.client.ui.AWT.boardview3d.view=0"/>
-            <jvmarg value="-Xmx512M"/>
-        </java>
-    </target>
-
     <!-- generates MegaMek API Doc in ${apidocdir} -->
-    <target name="apidoc">
+    <target name="apidoc" description="Generate javadocs for Megamek">
         <mkdir dir="${apidocdir}"/>
         <javadoc classpath="${basedir}" destdir="${apidocdir}" package="yes" packagenames="megamek.*"
                  sourcepath="${srcdir}" windowtitle="MegaMek API"/>
@@ -161,9 +144,9 @@
         </delete>
     </target>
 
-    <target depends="clean, compile, jar" name="all"/>
+    <target depends="clean, compile, jar" name="all" description="Clean, compile and build a jar"/>
 
-    <target name="compileTests" depends="compile" unless="skip.tests">
+    <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
         <delete dir="${dir.build.test}"/>
         <mkdir dir="${dir.build.test}"/>
         <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
@@ -171,7 +154,7 @@
         </javac>
     </target>
 
-    <target depends="compileTests" name="unit.test">
+    <target depends="compileTests" name="unit.test" description="Execute unit tests">
         <delete dir="${dir.build.teststaging}"/>
         <delete dir="${dir.build.testreport}"/>
         <mkdir dir="${dir.build.teststaging}"/>

@@ -45,6 +45,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -72,6 +73,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JTextField tooltipDelay;
+    private JTextField tooltipDismissDelay;
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
@@ -243,6 +245,15 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDelayLabel);
         row.add(tooltipDelay);
         comps.add(row);
+        
+        tooltipDismissDelay = new JTextField(4);
+        tooltipDismissDelay.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
+        JLabel tooltipDismissDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDismissDelay")); //$NON-NLS-1$
+        tooltipDismissDelayLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
+        row = new ArrayList<JComponent>();
+        row.add(tooltipDismissDelayLabel);
+        row.add(tooltipDismissDelay);
+        comps.add(row);
 
         JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")); //$NON-NLS-1$
         unitStartChar = new JComboBox<String>();
@@ -370,6 +381,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         soundMute.setSelected(gs.getSoundMute());
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
+        tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
         
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
         mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
@@ -464,6 +476,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
+        gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
 
@@ -501,6 +514,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setFovDarken(fovOutsideEnabled.isSelected());
         gs.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
 
+        ToolTipManager.sharedInstance().setInitialDelay(
+                GUIPreferences.getInstance().getTooltipDelay());
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() > 0)
+        {
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
+        }
+        
         setVisible(false);
     }
 

@@ -78,7 +78,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private static final int SLIDING_SPEED = 5;
     private static final int MIN_SLIDE_OFFSET = 0;
 
-    private static final int DIST_BOTTOM = 5;
+    private static final int DIST_BOTTOM = 0;
     private static final int DIST_SIDE = 5;
 
     private static final long MAX_IDLE_TIME = 10000;
@@ -87,6 +87,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private int width = 400;
     private int max_nbr_rows = 7;
 
+    private boolean isHit = false;
     private boolean resizing = false;
     private boolean scrolling = false;
     private boolean increasedChatScroll = false;
@@ -172,6 +173,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             lockOpen = false;
             return true;
         }
+        
+        if (isHit){
+            isHit = false;
+            return true;
+        }            
         return false;
     }
 
@@ -329,6 +335,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 || (y > (yOffset + height))) {
             return false;
         }
+        isHit = true;
         // Hide button
         if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18))) {
 
@@ -391,7 +398,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             bv.refreshDisplayables();
             return true;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -640,7 +647,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private void computeScrollBarHeight() {
         if (messages.size() <= max_nbr_rows) {
             scrollBarHeight = getMaxScrollbarHeight();
-            scrollBarStep = 0;
+            scrollBarStep = 1;
         } else {
             scrollBarHeight = Math
                     .max(3, (int) (((float) max_nbr_rows / messages

@@ -44,6 +44,12 @@ public class NoodleVictory implements Victory, Serializable {
             victories.add(new BVRatioVictory(game.getOptions().intOption(
             "bv_ratio_percent")));
         }
+        
+        // Kill count victory condition
+        if (game.getOptions().booleanOption("use_kill_count")) {
+            victories.add(new KillCountVictory(game.getOptions().intOption(
+            "game_kill_count")));
+        }
 
         // Commander killed victory condition
         if (game.getOptions().booleanOption("commander_killed")) {

@@ -92,6 +92,7 @@ v0.37.0-dev (SVN)
 + Bug: Potential infinite loop with ChatterBox2 and scrolling
 + Bug: Updated displayables to consume mouse drags
 + Made it so the ChatterBox2 doesn't add characters when control is pressed
++ Feature [#1174]: Specific Number of 'Mechs Victory Condition
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

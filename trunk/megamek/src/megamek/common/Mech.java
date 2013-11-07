@@ -4564,6 +4564,9 @@ public abstract class Mech extends Entity {
                 || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+            cockpitMod = 1.1;
+            finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
         }
@@ -7042,7 +7045,7 @@ public abstract class Mech extends Entity {
     }
 
     public double getGyroMultiplier() {
-        if (getGyroType() == GYRO_HEAVY_DUTY) {
+        if ((getGyroType() == GYRO_HEAVY_DUTY)) {
             return 1.0;
         }
         return 0.5;

@@ -2,11 +2,11 @@ package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 
 import megamek.common.Configuration;
 
@@ -20,6 +20,12 @@ public class MegamekButton extends JButton {
 	
 	public MegamekButton(String text){
 		super(text);
+		setBorder(new MegamekButtonBorder(-1,-1,-1,-1));
+		loadIcon();
+	}
+	
+	public MegamekButton(){
+		super();
 		setBorder(new MegamekButtonBorder(-1,-1,-1,-1));
 		loadIcon();
 	}
@@ -46,9 +52,16 @@ public class MegamekButton extends JButton {
 						backgroundIcon.getImageObserver());
 			}
 		}
-		Graphics2D g2 = (Graphics2D) g.create();
-		g2.setColor(new Color(245,245,245));
-		g2.drawString(getText(), 20, getHeight() / 2 + 5);
+		
+		JLabel textLabel = new JLabel(getText());
+		textLabel.setSize(getPreferredSize());
+		textLabel.setForeground(new Color(250,250,250));
+		int x = Math.max(0, (int)(getWidth()/2.0 + 0.5) - 
+				(int)(textLabel.getWidth()/2.0 + 0.5));
+		int y = Math.max(0, (int)(getHeight()/2.0 + 0.5) - 
+				(int)(textLabel.getHeight()/2.0 + 0.5));
+		Graphics g2 = g.create(x,y,getWidth()-x,getHeight()-y);
+		textLabel.paint(g2);
 		g2.dispose();
 	 }
 	 

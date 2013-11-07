@@ -22,7 +22,6 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -30,6 +29,7 @@ import javax.swing.KeyStroke;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.GameBoardChangeEvent;
@@ -64,7 +64,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
 
-    protected JButton butDone;
+    protected MegamekButton butDone;
 
     protected ClientGUI clientgui;
     
@@ -76,13 +76,12 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                     new File(Configuration.widgetsDir(),
                     "tile.gif").toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
-            backgroundIcon.setImageObserver(this);
         } catch (Exception e){
             
         }
         
         setBorder(new MegamekBorder(-1,-1,-1,-1));
-        butDone = new JButton();
+        butDone = new MegamekButton();
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;

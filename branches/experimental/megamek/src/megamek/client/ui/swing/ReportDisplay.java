@@ -35,6 +35,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
@@ -57,7 +58,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public ReportDisplay(ClientGUI clientgui) {
-        butDone = new JButton();
+        butDone = new MegamekButton();
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;

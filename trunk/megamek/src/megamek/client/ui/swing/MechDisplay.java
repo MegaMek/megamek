@@ -1206,10 +1206,15 @@ public class MechDisplay extends JPanel {
             // update pointer to weapons
             entity = en;
 
+            // Check Game Options for max external heat
+            int max_ext_heat = game.getOptions().intOption("max_external_heat"); 
+            if( max_ext_heat < 0) {
+                max_ext_heat = 15; // Standard value specified in TW p.159
+            }
+            
             int currentHeatBuildup = (en.heat // heat from last round
                     + en.getEngineCritHeat() // heat engine crits will add
-                    + Math.min(15, en.heatFromExternal) // heat from external
-            // sources
+                    + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
                     + en.heatBuildup // heat we're building up this round
                     )
                     - Math.min(9, en.coolFromExternal); // cooling from external

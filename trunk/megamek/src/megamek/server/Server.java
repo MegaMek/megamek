@@ -16127,7 +16127,13 @@ public class Server implements Runnable {
                 }
 
                 // Add heat from external sources to the heat buildup
-                entity.heatBuildup += Math.min(15, entity.heatFromExternal);
+                int max_ext_heat = game.getOptions().intOption(
+                        "max_external_heat"); // Check Game Options
+                if (max_ext_heat < 0) {
+                    max_ext_heat = 15; // standard value specified in TW p.159
+                }
+                entity.heatBuildup += Math.min(max_ext_heat,
+                        entity.heatFromExternal);
                 entity.heatFromExternal = 0;
                 // remove heat we cooled down
                 entity.heatBuildup -= Math.min(9, entity.coolFromExternal);

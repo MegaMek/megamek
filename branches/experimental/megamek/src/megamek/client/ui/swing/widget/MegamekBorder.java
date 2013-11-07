@@ -12,8 +12,8 @@ import megamek.common.Configuration;
 
 public class MegamekBorder extends EmptyBorder {
 
-    ImageIcon tl_corner, tr_corner, bl_corner, br_corner;
-    ImageIcon left_line, top_line, right_line, bottom_line;
+    protected ImageIcon tl_corner, tr_corner, bl_corner, br_corner;
+    protected ImageIcon left_line, top_line, right_line, bottom_line;
     /**
      * 
      */

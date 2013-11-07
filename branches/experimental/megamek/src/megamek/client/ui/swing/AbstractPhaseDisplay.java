@@ -15,7 +15,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.Graphics;
-import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -75,7 +74,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
         try {
             java.net.URI imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_bg.png").toURI();
+                    "tile.gif").toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
             backgroundIcon.setImageObserver(this);
         } catch (Exception e){

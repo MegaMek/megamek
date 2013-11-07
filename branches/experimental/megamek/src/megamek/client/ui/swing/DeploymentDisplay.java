@@ -18,11 +18,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -32,11 +34,13 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -67,13 +71,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     // buttons
     private JPanel panButtons;
-    private JButton butNext;
-    private JButton butTurn;
-    private JButton butLoad;
-    private JButton butUnload;
-    private JButton butRemove;
-    private JButton butAssaultDrop;
-    private JButton butDock;
+    private MegamekButton butNext;
+    private MegamekButton butTurn;
+    private MegamekButton butLoad;
+    private MegamekButton butUnload;
+    private MegamekButton butRemove;
+    private MegamekButton butAssaultDrop;
+    private MegamekButton butDock;
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
     private boolean turnMode = false;
@@ -83,13 +87,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * Creates and lays out a new deployment phase display for the specified
      * client.
      */
-    public DeploymentDisplay(ClientGUI clientgui) {        
+    public DeploymentDisplay(ClientGUI clientgui) {      	
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
         setupStatusBar(Messages
                 .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
-        butTurn = new JButton(Messages.getString("DeploymentDisplay.Turn")); //$NON-NLS-1$
+        butTurn = new MegamekButton(Messages.getString("DeploymentDisplay.Turn")); //$NON-NLS-1$
         butTurn.addActionListener(this);
         butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
@@ -103,28 +107,28 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // butSpace3 = new JButton(".");
         // butSpace3.setEnabled(false);
 
-        butLoad = new JButton(Messages.getString("DeploymentDisplay.Load")); //$NON-NLS-1$
+        butLoad = new MegamekButton(Messages.getString("DeploymentDisplay.Load")); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butLoad.setActionCommand(DEPLOY_LOAD);
         butLoad.setEnabled(false);
-        butUnload = new JButton(Messages.getString("DeploymentDisplay.Unload")); //$NON-NLS-1$
+        butUnload = new MegamekButton(Messages.getString("DeploymentDisplay.Unload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
         butUnload.setActionCommand(DEPLOY_UNLOAD);
         butUnload.setEnabled(false);
-        butNext = new JButton(Messages.getString("DeploymentDisplay.NextUnit")); //$NON-NLS-1$
+        butNext = new MegamekButton(Messages.getString("DeploymentDisplay.NextUnit")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
-        butRemove = new JButton(Messages.getString("DeploymentDisplay.Remove")); //$NON-NLS-1$
+        butRemove = new MegamekButton(Messages.getString("DeploymentDisplay.Remove")); //$NON-NLS-1$
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
         setRemoveEnabled(true);
-        butAssaultDrop = new JButton(Messages
+        butAssaultDrop = new MegamekButton(Messages
                 .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
         butAssaultDrop.addActionListener(this);
         butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);
         butAssaultDrop.setEnabled(false);
-        butDock = new JButton(Messages
+        butDock = new MegamekButton(Messages
                 .getString("DeploymentDisplay.Dock"));  //$NON-NLS-1$
         butDock.addActionListener(this);
         butDock.setActionCommand(DEPLOY_DOCK);

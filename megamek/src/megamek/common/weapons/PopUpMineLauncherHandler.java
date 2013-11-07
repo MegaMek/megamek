@@ -45,6 +45,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
+        sSalvoType = " mine(s) ";
     }
 
     /*
@@ -68,7 +69,6 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             hits = Compute.missilesHit(hits);
         }
         bSalvo = true;
-        String sSalvoType = " mine(s) ";
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(hits);

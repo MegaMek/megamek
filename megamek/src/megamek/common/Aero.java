@@ -463,12 +463,20 @@ public class Aero extends Entity {
     }
 
     public void autoSetCapArmor() {
-        capitalArmor_orig = (int) Math.round(getTotalOArmor() / 10.0);
-        capitalArmor = (int) Math.round(getTotalArmor() / 10.0);
+        double divisor = 10.0;
+        if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+            divisor = 1.0;
+        }
+        capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
+        capitalArmor = (int) Math.round(getTotalArmor() / divisor);
     }
 
     public void autoSetFatalThresh() {
-        fatalThresh = Math.max(2, (int) Math.ceil(capitalArmor / 4.0));
+        int baseThresh = 2;
+        if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+            baseThresh = 20;
+        }
+        fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
     }
 
     public void initializeSI(int val) {
@@ -642,6 +650,7 @@ public class Aero extends Entity {
         // if using variable damage thresholds then autoset them
         if (game.getOptions().booleanOption("variable_damage_thresh")) {
             autoSetThresh();
+            autoSetFatalThresh();
         }
 
         // if they are out of control due to heat, then apply this and reset
@@ -2463,6 +2472,17 @@ public class Aero extends Entity {
     }
 
     public int getThresh(int loc) {
+        if(isCapitalFighter()) {
+            if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+                if (game.getOptions().booleanOption("variable_damage_thresh")) {
+                    return (int)Math.round(getCapArmor() / 40.0)+1;
+                } else {
+                    return (int)Math.round(getCap0Armor() / 40.0)+1;
+                } 
+            } else {
+                return 2;
+            }
+        }
         return damThresh[loc];
     }
 

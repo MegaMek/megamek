@@ -151,7 +151,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             Report r = new Report(3325);
             r.subject = subjectId;
             r.add(shotsHit);
-            r.add(" shot(s) ");
+            r.add(sSalvoType);
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             vPhaseReport.addElement(r);

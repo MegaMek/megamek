@@ -2326,6 +2326,33 @@ public class Server implements Runnable {
                 }
                 entity.setLoadedKeepers(v);
             }
+            
+            if(game.getOptions().booleanOption("aero_sanity") && entity instanceof Aero) {
+                Aero a = (Aero)entity;
+                if(entity.isCapitalScale()) {
+                    int currentSI = a.getSI() * 20;
+                    a.initializeSI(a.get0SI() * 20);
+                    a.setSI(currentSI);  
+                    if(entity.isCapitalFighter()) {
+                        a.autoSetCapArmor();
+                        a.autoSetFatalThresh();
+                    } else {
+                        //all armor and SI is going to be at standard scale, so we need to adjust
+                        for(int loc = 0; loc < entity.locations(); loc++) {
+                            if(entity.getArmor(loc) > 0) {
+                                int currentArmor = entity.getArmor(loc) * 10;
+                                entity.initializeArmor(entity.getOArmor(loc) * 10, loc);
+                                entity.setArmor(currentArmor, loc);
+                                       
+                            }
+                        }
+                    } 
+                } else {
+                    int currentSI = a.getSI() * 2;
+                    a.initializeSI(a.get0SI() * 2);
+                    a.setSI(currentSI);  
+                }
+            }
 
             entityUpdate(entity.getId());
         }
@@ -15331,10 +15358,10 @@ public class Server implements Runnable {
         }
 
         // are they capital scale?
-        if (te.isCapitalScale()) {
+        if (te.isCapitalScale() && !game.getOptions().booleanOption("aero_sanity")) {
             damage = (int) Math.floor(damage / 10.0);
         }
-        if (ae.isCapitalScale()) {
+        if (ae.isCapitalScale() && !game.getOptions().booleanOption("aero_sanity")) {
             damageTaken = (int) Math.floor(damageTaken / 10.0);
         }
 
@@ -18371,10 +18398,13 @@ public class Server implements Runnable {
             }
             Aero ship = (Aero) en;
             int damage = ship.getCurrentDamage();
+            double divisor = 2.0;
+            if(game.getOptions().booleanOption("aero_sanity")) {
+                divisor = 20.0;
+            }
             if (damage >= ship.getFatalThresh()) {
                 int roll = Compute.d6(2)
-                        + (int) Math
-                                .floor((damage - ship.getFatalThresh()) / 2.0);
+                        + (int) Math.floor((damage - ship.getFatalThresh()) / divisor);
                 if (roll > 9) {
                     vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
                 }
@@ -18618,7 +18648,7 @@ public class Server implements Runnable {
         // get the relevant damage for damage thresholding
         int threshDamage = damage;
         // weapon groups only get the damage of one weapon
-        if (hit.getSingleAV() > -1) {
+        if (hit.getSingleAV() > -1 && !game.getOptions().booleanOption("aero_sanity")) {
             threshDamage = hit.getSingleAV();
         }
 
@@ -18626,11 +18656,11 @@ public class Server implements Runnable {
         boolean isCapital = hit.isCapital();
 
         // check capital/standard damage
-        if (isCapital && !te.isCapitalScale()) {
+        if (isCapital && (!te.isCapitalScale() || game.getOptions().booleanOption("aero_sanity"))) {
             damage = 10 * damage;
             threshDamage = 10 * threshDamage;
         }
-        if (!isCapital && te.isCapitalScale()) {
+        if (!isCapital && te.isCapitalScale() && !game.getOptions().booleanOption("aero_sanity")) {
             damage = (int) Math.round(damage / 10.0);
             threshDamage = (int) Math.round(threshDamage / 10.0);
         }
@@ -18978,13 +19008,7 @@ public class Server implements Runnable {
             if (te instanceof Aero) {
                 // chance of a critical if damage greater than threshold
                 Aero a = (Aero) te;
-                if ((threshDamage > a.getThresh(hit.getLocation()))
-                        && !te.isCapitalFighter()) {
-                    critThresh = true;
-                    a.setCritThresh(true);
-                }
-
-                if ((threshDamage >= 2) && te.isCapitalFighter()) {
+                if ((threshDamage > a.getThresh(hit.getLocation()))) {
                     critThresh = true;
                     a.setCritThresh(true);
                 }
@@ -19549,7 +19573,7 @@ public class Server implements Runnable {
 
                     // divide damage in half
                     // do not divide by half if it is an ammo exposion
-                    if (!ammoExplosion && !nukeS2S) {
+                    if (!ammoExplosion && !nukeS2S && !game.getOptions().booleanOption("aero_sanity")) {
                         damage /= 2;
                     }
 

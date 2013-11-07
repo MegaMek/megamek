@@ -94,6 +94,7 @@ v0.37.0-dev (SVN)
 + Made it so the ChatterBox2 doesn't add characters when control is pressed
 + Feature [#1174]: Specific Number of 'Mechs Victory Condition
 + Feature [#1120]: Allow users to set the maximum amount of external heat
++ Princess bot help button not working
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

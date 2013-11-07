@@ -48,10 +48,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    String sSalvoType = " missile(s) ";
     boolean amsEnganged = false;
     int nSalvoBonus = 0;
     boolean advancedAMS = false;
+
 
     /**
      * @param t
@@ -64,6 +64,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
         advancedAMS = g.getOptions().booleanOption("tacops_ams");
+        sSalvoType = " missile(s) ";
     }
 
     /*
@@ -652,51 +653,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // yeech. handle damage. . different weapons do this in very different
         // ways
-        int hits = 1;
-        if (!(target.isAirborne())) {  
-            int id = vPhaseReport.size();
-            hits = calcHits(vPhaseReport);
-            // We have to adjust the reports on a miss, so they line up
-            if (bMissed && id != vPhaseReport.size()){
-                vPhaseReport.get(id-1).newlines--;
-                vPhaseReport.get(id).indent(2);
-                vPhaseReport.get(vPhaseReport.size()-1).newlines++;
-            }
-        }
         int nCluster = calcnCluster();
-
-        // Now I need to adjust this for attacks on aeros because they use
-        // attack values and different rules
+        int id = vPhaseReport.size();
+        int hits = calcHits(vPhaseReport);           
         if (target.isAirborne() || game.getBoard().inSpace()) {
-            // this will work differently for cluster and non-cluster weapons,
-            // and differently for capital fighter/fighter squadrons
-            nCluster = calcnClusterAero(entityTarget);
-            if (ae.isCapitalFighter()) {
-                bSalvo = false;
-                if (nweapons > 1) {
-                    nweaponsHit = Compute.missilesHit(nweapons,
-                            ((Aero) ae).getClusterMods());
-                    r = new Report(3325);
-                    r.subject = subjectId;
-                    r.add(nweaponsHit);
-                    r.add(" weapon(s) ");
-                    r.add(" ");
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
-                }
-                nDamPerHit = attackValue * nweaponsHit;
-                hits = 1;
-                nCluster = 1;
-            } else if (nCluster > 1) {
-                bSalvo = true;
-                nDamPerHit = 1;
-                hits = attackValue;
-            } else {
-                bSalvo = false;
-                nDamPerHit = attackValue;
-                hits = 1;
-                nCluster = 1;
+            //if we added a line to the phase report for calc hits, remove it now
+            while(vPhaseReport.size() > id) {
+                vPhaseReport.removeElementAt(vPhaseReport.size()-1);
             }
+            int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
+            hits = aeroResults[0];
+            nCluster = aeroResults[1];
+        }
+        
+        // We have to adjust the reports on a miss, so they line up
+        if (bMissed && id != vPhaseReport.size()){
+            vPhaseReport.get(id-1).newlines--;
+            vPhaseReport.get(id).indent(2);
+            vPhaseReport.get(vPhaseReport.size()-1).newlines++;
         }
 
         if (!bMissed){

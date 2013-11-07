@@ -88,6 +88,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nweaponsHit; // for capital fighters/fighter squadrons
     protected boolean secondShot = false;
     protected int numRapidFireHits;
+    protected String sSalvoType = " shots(s) ";
+
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -201,6 +203,100 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return 5;
         } else {
             return 1;
+        }
+    }
+    
+    protected int[] calcAeroDamage(Entity entityTarget, Vector<Report> vPhaseReport) {
+        // Now I need to adjust this for attacks on aeros because they use
+        // attack values and different rules
+        // this will work differently for cluster and non-cluster
+        // weapons, and differently for capital fighter/fighter
+        // squadrons
+        if(game.getOptions().booleanOption("aero_sanity")) {
+            //everything will use the normal hits and clusters for hits weapon unless 
+            //we have a squadron or capital scale entity
+            int reportSize = vPhaseReport.size();
+            int hits = calcHits(vPhaseReport);
+            int nCluster = calcnCluster();
+            if (ae.isCapitalFighter()) {
+                Vector<Report> throwAwayReport = new Vector<Report>();
+                //for capital scale fighters, each non-cluster weapon hits a different location
+                bSalvo = true;
+                hits = 1;
+                if (nweapons > 1) {
+                    if(allShotsHit()) {
+                        nweaponsHit = nweapons;
+                    } else {
+                        nweaponsHit = Compute.missilesHit(nweapons,
+                                ((Aero) ae).getClusterMods());
+                    }
+                    if(usesClusterTable()) {
+                        //remove the last reports because they showed the number of shots that hit
+                        while(vPhaseReport.size() > reportSize) {
+                            vPhaseReport.remove(vPhaseReport.size()-1);
+                        }
+                        //nDamPerHit = 1;
+                        hits = 0;
+                        for(int i = 0; i < nweaponsHit; i++) {
+                            hits += calcHits(throwAwayReport);
+                        }
+                        Report r = new Report(3325);
+                        r.subject = subjectId;
+                        r.add(hits);
+                        r.add(sSalvoType);
+                        r.add(toHit.getTableDesc());
+                        r.newlines = 0;
+                        vPhaseReport.add(r);
+                    } else {
+                        nCluster = 1;
+                        Report r = new Report(3325);
+                        r.subject = subjectId;
+                        r.add(nweaponsHit);
+                        r.add(" weapon(s) ");
+                        r.add(" ");
+                        r.newlines = 0;
+                        hits = nweaponsHit;
+                        vPhaseReport.add(r);
+                    }                 
+                }
+            }
+            int[] results = new int[2];
+            results[0] = hits;
+            results[1] = nCluster;
+            return results;
+        } else {  
+            int hits = 1;
+            int nCluster = calcnClusterAero(entityTarget);
+            if (ae.isCapitalFighter()) {
+                bSalvo = false;
+                if (nweapons > 1) {
+                    nweaponsHit = Compute.missilesHit(nweapons,
+                            ((Aero) ae).getClusterMods());
+                    Report r = new Report(3325);
+                    r.subject = subjectId;
+                    r.add(nweaponsHit);
+                    r.add(" weapon(s) ");
+                    r.add(" ");
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                }
+                nDamPerHit = attackValue * nweaponsHit;
+                hits = 1;
+                nCluster = 1;
+            } else if (nCluster > 1) {
+                bSalvo = true;
+                nDamPerHit = 1;
+                hits = attackValue;
+            } else {
+                bSalvo = false;
+                nDamPerHit = attackValue;
+                hits = 1;
+                nCluster = 1;
+            }
+            int[] results = new int[2];
+            results[0] = hits;
+            results[1] = nCluster;
+            return results;
         }
     }
 
@@ -362,52 +458,24 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // yeech. handle damage. . different weapons do this in very
             // different
             // ways
-            int hits = 1;
-            if (!(target.isAirborne())) {                
-                int id = vPhaseReport.size();
-                hits = calcHits(vPhaseReport);
-                // We have to adjust the reports on a miss, so they line up
-                if (bMissed && id != vPhaseReport.size()){
-                    vPhaseReport.get(id-1).newlines--;
-                    vPhaseReport.get(id).indent(2);
-                    vPhaseReport.get(vPhaseReport.size()-1).newlines++;
-                }
-            }
             int nCluster = calcnCluster();
-
-            // Now I need to adjust this for attacks on aeros because they use
-            // attack values and different rules
+            int id = vPhaseReport.size();
+            int hits = calcHits(vPhaseReport);           
             if (target.isAirborne() || game.getBoard().inSpace()) {
-                // this will work differently for cluster and non-cluster
-                // weapons, and differently for capital fighter/fighter
-                // squadrons
-                nCluster = calcnClusterAero(entityTarget);
-                if (ae.isCapitalFighter()) {
-                    bSalvo = false;
-                    if (nweapons > 1) {
-                        nweaponsHit = Compute.missilesHit(nweapons,
-                                ((Aero) ae).getClusterMods());
-                        r = new Report(3325);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        r.add(" weapon(s) ");
-                        r.add(" ");
-                        r.newlines = 0;
-                        vPhaseReport.add(r);
-                    }
-                    nDamPerHit = attackValue * nweaponsHit;
-                    hits = 1;
-                    nCluster = 1;
-                } else if (nCluster > 1) {
-                    bSalvo = true;
-                    nDamPerHit = 1;
-                    hits = attackValue;
-                } else {
-                    bSalvo = false;
-                    nDamPerHit = attackValue;
-                    hits = 1;
-                    nCluster = 1;
+                //if we added a line to the phase report for calc hits, remove it now
+                while(vPhaseReport.size() > id) {
+                    vPhaseReport.removeElementAt(vPhaseReport.size()-1);
                 }
+                int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
+                hits = aeroResults[0];
+                nCluster = aeroResults[1];
+            }
+            
+            // We have to adjust the reports on a miss, so they line up
+            if (bMissed && id != vPhaseReport.size()){
+                vPhaseReport.get(id-1).newlines--;
+                vPhaseReport.get(id).indent(2);
+                vPhaseReport.get(vPhaseReport.size()-1).newlines++;
             }
 
             if (!bMissed) {
@@ -993,6 +1061,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) || (target
                 .getTargetType() == Targetable.TYPE_BUILDING)) && (nRange <= 1))
                 || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
+            return true;
+        }
+        if(game.getOptions().booleanOption("aero_sanity") 
+                && target.getTargetType() == Targetable.TYPE_ENTITY
+                && ((Entity)target).isCapitalScale() && !((Entity)target).isCapitalFighter()) {
             return true;
         }
         return false;

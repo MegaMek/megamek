@@ -45,7 +45,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      */
     public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-
+        sSalvoType = " projectiles ";
     }
 
     /*
@@ -129,7 +129,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(nHits);
-        r.add(" projectiles ");
+        r.add(sSalvoType);
         r.newlines = 0;
         r.add(toHit.getTableDesc());
         vPhaseReport.addElement(r);

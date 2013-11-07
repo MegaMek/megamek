@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,6 +35,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener {
 
     private static final long serialVersionUID = 639696875125581395L;
+    
+    protected static final int TRANSPARENT = 0xFFFF00FF;
+    
     // displays
     private JLabel labStatus;
     protected JPanel panStatus;
@@ -54,7 +58,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 }
             }
         });
-
     }
 
     /**
@@ -67,8 +70,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     protected void setupStatusBar(String defStatus) {
         panStatus = new JPanel();
-
+        panStatus.setOpaque(false);
         labStatus = new JLabel(defStatus, SwingConstants.CENTER);
+        labStatus.setForeground(Color.yellow);
+        labStatus.setOpaque(false);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();

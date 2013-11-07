@@ -18,6 +18,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GraphicsConfiguration;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -68,6 +70,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -944,7 +947,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(this);
+                component = new DeploymentDisplay(this);                
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);

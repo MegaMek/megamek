@@ -14,11 +14,15 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Graphics;
+import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -26,6 +30,8 @@ import javax.swing.KeyStroke;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
@@ -62,8 +68,21 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
     protected JButton butDone;
 
     protected ClientGUI clientgui;
+    
+    ImageIcon backgroundIcon;
 
     protected AbstractPhaseDisplay() {
+        try {
+            java.net.URI imgURL = 
+                    new File(Configuration.widgetsDir(),
+                    "monitor_bg.png").toURI();
+            backgroundIcon = new ImageIcon(imgURL.toURL());
+            backgroundIcon.setImageObserver(this);
+        } catch (Exception e){
+            
+        }
+        
+        setBorder(new MegamekBorder(-1,-1,-1,-1));
         butDone = new JButton();
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
@@ -93,6 +112,19 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 }
             }
         });
+    }
+    
+    protected void paintComponent(Graphics g) {
+        int w = getWidth();
+        int h = getHeight();
+        int iW = backgroundIcon.getIconWidth();
+        int iH = backgroundIcon.getIconHeight();
+        for (int x = 0; x < w; x+=iW){
+            for (int y = 0; y < h; y+=iH){
+                g.drawImage(backgroundIcon.getImage(), x, y, 
+                        backgroundIcon.getImageObserver());
+            }
+        }
     }
 
     /**

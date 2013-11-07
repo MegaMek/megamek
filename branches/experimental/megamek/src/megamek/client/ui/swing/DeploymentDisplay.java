@@ -83,7 +83,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * Creates and lays out a new deployment phase display for the specified
      * client.
      */
-    public DeploymentDisplay(ClientGUI clientgui) {
+    public DeploymentDisplay(ClientGUI clientgui) {        
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
@@ -135,6 +135,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // layout button grid
         panButtons = new JPanel();
+        //panButtons.setBackground(new Color(TRANSPARENT));
+        panButtons.setOpaque(false);
         panButtons.setLayout(new GridBagLayout());
         panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill(GridBagConstraints.BOTH));
         panButtons.add(butTurn, GBC.std().gridx(1).gridy(0).fill(GridBagConstraints.BOTH));

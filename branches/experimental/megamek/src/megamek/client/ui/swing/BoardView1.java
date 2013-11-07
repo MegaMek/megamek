@@ -85,6 +85,7 @@ import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
+import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.common.Aero;
 import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
@@ -7339,6 +7340,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this);
+        scrollpane.setBorder(new MegamekBorder(-1,-1,-1,-1));
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
         // IDisplayables that are drawn in fixed positions in the viewport

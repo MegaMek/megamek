@@ -1,6 +1,0 @@
-3085 Clan Nova Cat Battlearmor Keshik
-Clan Medium Battle Armor "Rabid",15
-Elemental Battle Armor [MG],15
-Thunderbird Battle Armor [AP Gauss],3
-Thunderbird Battle Armor [AP Gauss],2
-Gnome Battle Armor,1

@@ -1,0 +1,12 @@
+3030 House Marik Aerospace - Medium
+Transit TR-11,1
+Transit TR-10,2
+Hellcat HCT-213,3
+Lightning LTN-G15,4
+Lightning LTN-G15,5
+Stingray F-90,6
+Stingray F-90,5
+Corsair CSR-V12M 'Regulus',4
+Stingray F-90,3
+Corsair CSR-V12M 'Regulus',2
+Lucifer LCF-R15,1

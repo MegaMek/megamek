@@ -1,0 +1,155 @@
+Version:1.0
+Wellington
+WEL-4T-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:5
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:22
+RT Armor:22
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:10
+1 ISMediumPulseLaser, Right Arm
+1 ISHVAC2, Right Arm, Ammo:30
+1 ISERLargeLaser, Left Arm
+1 ISAngelECM, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISCaselessAC10, Right Torso, , Ammo:30
+1 ISC3SlaveUnit, Left Torso
+1 ISTBolt20, Left Torso, Ammo:6
+1 ISAntiMissileSystem, Center Torso, Ammo:12
+1 ISMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
+ISMediumPulseLaser
+ISAngelECM
+ISAngelECM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumPulseLaser
+ISHVAC2
+ISHVAC2
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISC3SlaveUnit
+ISTBolt20
+ISTBolt20
+ISTBolt20
+ISTBolt20
+ISTBolt20
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISCaselessAC10
+ISCaselessAC10
+ISCaselessAC10
+ISCaselessAC10
+ISCaselessAC10
+ISCaselessAC10
+ISAMS Ammo
+ISHVAC2 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAntiMissileSystem
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISTBolt20 Ammo
+ISTBolt20 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISCaselessAC10 Ammo
+ISCaselessAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

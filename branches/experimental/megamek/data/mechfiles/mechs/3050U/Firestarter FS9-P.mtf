@@ -1,0 +1,155 @@
+Version:1.0
+Firestarter
+FS9-P
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3064
+Rules Level:2
+
+Mass:35
+Engine:210 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:9
+LL Armor:10
+RL Armor:10
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:10
+Flamer, Right Arm
+Medium Laser, Right Arm
+Flamer, Left Arm
+Medium Laser, Left Arm
+Rocket Launcher 15, Right Torso
+Rocket Launcher 15, Right Torso
+Rocket Launcher 10, Left Torso
+Rocket Launcher 10, Left Torso
+Rocket Launcher 10, Center Torso
+Rocket Launcher 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Flamer
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Flamer
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+RL10
+RL10
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+RL15
+RL15
+RL15
+RL15
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+RL10
+RL10
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

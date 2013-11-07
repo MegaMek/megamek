@@ -1,0 +1,14 @@
+Clan Wolf Medium 'Mech
+Arctic Wolf,1
+Fenris (Ice Ferret) H,2
+Ryoken (Stormcrow) Prime,3
+Black Hawk (Nova) Prime,4
+Phantom C,5
+Fenris (Ice Ferret) Prime,6
+Pouncer Prime,5
+Phantom Prime,4
+Pouncer D,3
+Phantom H,2
+Lobo,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

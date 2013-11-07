@@ -1,0 +1,149 @@
+Version:1.0
+Firefly
+FFL-4D
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:2
+
+Mass:30
+Engine:150 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Single
+Walk MP:5
+Jump MP:4
+
+Armor:Ferro-Fibrous
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:8
+LL Armor:14
+RL Armor:14
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
+
+Weapons:5
+1 ISAntiMissileSystem, Left Arm, Ammo:12
+1 ISERMediumLaser, Right Torso
+1 ISLRM5, Right Torso, Ammo:24
+1 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISAntiMissileSystem
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Heat Sink
+ISERMediumLaser
+ISAMS Ammo
+ISLRM5 Ammo Artemis-capable
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Heat Sink
+ISERMediumLaser
+ISLRM5
+ISArtemisIV
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

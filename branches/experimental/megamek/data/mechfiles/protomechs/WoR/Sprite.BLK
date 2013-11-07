@@ -1,0 +1,81 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Sprite
+</Name>
+<Model>
+</Model>
+
+<Tonnage>
+15
+</Tonnage>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<jumpingMP>
+5
+</jumpingMP>
+
+<Armor>
+4
+30
+6
+6
+14
+</Armor>
+
+
+<Left Arm Equipment>
+CLLRM5
+CLLRM5 Ammo (12)
+</Left Arm Equipment>
+
+<Right Arm Equipment>
+CLLRM5
+CLLRM5 Ammo (12)
+</Right Arm Equipment>
+
+<Torso Equipment>
+CLLRM5
+CLLRM5
+CLLRM5 Ammo (24)
+</Torso Equipment>
+
+<type>
+Clan Level 3
+</type>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<source>
+WoR
+</source>

@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Combat Engineer
+</Name>
+
+<Model>
+Royal Engineers, 1st Lyran Royal Guards RCT
+</Model>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Gunther MP-20
+</Primary>
+
+<armordivisor>
+2.0
+</armordivisor>
+
+<history>
+Is considered to be Combat Engineers and demolitions troops.  They have Trench/Fieldwork Equipment. These abilities are not coded in MM.  Unit included for completeness.
+</history>
+

@@ -1,0 +1,155 @@
+Version:1.0
+Templar
+TLR1-OU
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3078
+Source:Jihad
+Rules Level:4
+
+Mass:85
+Engine:340 XL Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:13
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:28
+RA Armor:28
+LT Armor:26
+RT Armor:26
+CT Armor:44
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:7
+LRT 10, Left Arm
+LRT 10, Left Arm
+Large Pulse Laser, Right Arm
+SRT 6, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+LRT 10
+LRT 10
+LRT 10
+LRT 10
+IS HarJel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLargePulseLaser
+ISLargePulseLaser
+SRT 6
+SRT 6
+ISMediumPulseLaser
+IS HarJel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISUMU
+ISUMU
+ISC3SlaveUnit
+IS HarJel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISUMU
+ISUMU
+IS Ammo LRTorpedo-10
+IS Ammo LRTorpedo-10
+IS Ammo SRTorpedo-6
+IS HarJel
+ISCASE
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\TRO3067_Templar.jpg

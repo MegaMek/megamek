@@ -1,0 +1,14 @@
+Periphery Light 'Mech
+Night Hawk NTK-2Q, 1
+Thorn THE-S, 2
+Anubis ABS-3L, 3
+Panther PNT-9R, 4
+Jenner JR7-D, 5
+Mongoose MON-67, 6
+Firestarter FS9-H, 5
+Javelin JVN-10N, 4
+Stinger STG-3R, 3
+Hammer HMR-3M, 2
+Brigand LDT-1, 1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

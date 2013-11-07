@@ -1,0 +1,154 @@
+Version:1.0
+Pouncer
+C
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3050
+Source:Clan Invasion
+Rules Level:2
+
+Mass:40
+Engine:240 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:9
+Walk MP:6
+Jump MP:5
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:11
+RT Armor:11
+CT Armor:12
+HD Armor:9
+LL Armor:13
+RL Armor:13
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+Ultra AC/10, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
+CLERMediumLaser
+CLERSmallLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLERSmallLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLERSmallLaser
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

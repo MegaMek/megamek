@@ -1,0 +1,111 @@
+#############################################################################
+# Tables adapted from the Xotl FACTION ASSIGNMENT & RARITY TABLES           #
+#   Original tables can be found here:                                      #
+#     http://www.classicbattletech.com/forums/index.php/topic,1219.0.html   #
+#   As noted in the original files, these are fan works and should not be   #
+#   taken as official in any way.                                           #
+#                                                                           #
+# Adaptation performed by Deric Page (aka Netzilla on                       #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   Xotl tables, please contact me by PM on the forums or via email:        #
+#     deric.page@usa.net.                                                   #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * The original Xotl tables use a d1,000 to randomly determine the unit.   #
+#   For the adaptation I simply use the frequency of the entry as the       #
+#   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
+#   receives a base Weight of 100.                                          #
+# * The original Xotl tables include a chance for a faction to field the    #
+#   units of another faction. Unfortunately, MegaMek will not recognize a   #
+#   call to a different RAT file.  In order to facilitate this              #
+#   functionality, I include the salvaged/isorla faction's mechs.  However, #
+#   in oder to preserve unit ratios as much as possible, I weight the main  #
+#   faction's list higher.  In general, the faction allocations values 1-50 #
+#   as salvage.  This is 5% of the available possibilities.  If a faction   #
+#   salvages from 2 other lists, they tend to be split evenly (25 entries   #
+#   each or 2.5%).  So, in this case, I multiply salvage faction's weights  #
+#   by the approrpiate percentage and add them to the main faction list.  I #
+#   then multiply all the weights by 10 (rounding to the nearest integer)   #
+#   to turn the table into a d10,000 roll and drop any weights that end up  #
+#   less than 1.                                                            #
+#############################################################################
+DiamondShark3050MediumMechs_A
+Shadow Hawk SHD-2D,80
+Centurion CN9-AH,10
+Phoenix Hawk PXH-1D,40
+Kintaro KTO-18,20
+Whitworth WTH-1S,10
+Hermes II HER-4K "Hermes III",10
+Trebuchet TBT-7K,10
+Phoenix Hawk PXH-1K,70
+Shadow Hawk SHD-2K,50
+Wolverine WVR-6K,30
+Clint CLNT-1-2R,10
+Cicada CDA-3C,10
+Vindicator VND-1AA "Avenging Angel",10
+Vindicator VND-1R,280
+Sentinel STN-3K,30
+Sentinel STN-3KB,10
+Sentinel STN-3KA,10
+Hatchetman HCT-3F,60
+Enforcer ENF-4R,240
+Centurion CN9-AL,30
+Griffin GRF-1S,40
+Vulcan VL-2T,60
+Cicada CDA-2A,90
+Assassin ASN-21,90
+Clint CLNT-2-3T,40
+Hermes II HER-2S,180
+Hermes II HER-2M "Mercury",10
+Vulcan VL-5T,50
+Centurion CN9-A,180
+Blackjack BJ-1,260
+Whitworth WTH-1,150
+Trebuchet TBT-5S,40
+Wyvern WVE-6N,90
+Scorpion SCP-1N,50
+Phoenix Hawk PXH-1,740
+Hunchback HBK-4G,300
+Shadow Hawk SHD-2H,330
+Hunchback HBK-4H,40
+Hunchback HBK-4N,40
+Wolverine WVR-6R,370
+Hunchback HBK-4P,40
+Crab CRB-20,90
+Hunchback HBK-4J,40
+Dervish DV-6M,210
+Trebuchet TBT-5N,190
+Griffin GRF-1N,570
+Gladiator GLD-3R,20
+Gladiator GLD-4R,250
+Wolverine WVR-6M,110
+Cronus CNS-3M,250
+Ryoken (Stormcrow) C,40
+Nobori-nin (Huntsman) A,10
+Nobori-nin (Huntsman) Prime,30
+Nobori-nin (Huntsman) B,10
+Nobori-nin (Huntsman) C,10
+Battle Cobra A,40
+Battle Cobra Prime,110
+Battle Cobra B,50
+Shadow Cat Prime,130
+Shadow Cat A,70
+Shadow Cat B,70
+Dragonfly (Viper) Prime,410
+Black Hawk (Nova) D,30
+Fenris (Ice Ferret) B,450
+Black Hawk (Nova) C,20
+Black Hawk (Nova) B,60
+Fenris (Ice Ferret) D,450
+Fenris (Ice Ferret) Prime,720
+Hunchback IIC,790
+Dragonfly (Viper) D,490
+Dragonfly (Viper) B,300
+Ryoken (Stormcrow) D,1290
+Dragonfly (Viper) A,490
+Ryoken (Stormcrow) Prime,880
+Ryoken (Stormcrow) B,1290
+Ryoken (Stormcrow) A,1370
+Black Hawk (Nova) A,600
+Black Hawk (Nova) Prime,880

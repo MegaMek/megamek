@@ -1,0 +1,216 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Princess Luxury Liner
+
+</Name>
+
+<Tonnage>
+
+11800
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+87
+
+75
+
+75
+
+71
+
+</Armor>
+
+<Nose Equipment>
+
+ISLargeLaser
+
+ISMachine Gun
+
+ISMachine Gun
+
+ISMG Ammo (100)
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISMediumLaser
+
+ISMachine Gun
+
+ISMachine Gun
+
+ISMG Ammo (100)
+
+(R) ISMediumLaser
+
+(R) ISMachine Gun
+
+(R) ISMachine Gun
+
+(R) ISMG Ammo (100)
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISMediumLaser
+
+ISMachine Gun
+
+ISMachine Gun
+
+ISMG Ammo (100)
+
+(R) ISMediumLaser
+
+(R) ISMachine Gun
+
+(R) ISMachine Gun
+
+(R) ISMG Ammo (100)
+
+</Right Side Equipment>
+
+<Aft Equipment>
+
+ISMediumLaser
+
+ISMachine Gun
+
+ISMachine Gun
+
+ISMG Ammo (100)
+
+</Aft Equipment>
+
+<structural_integrity>
+
+5
+
+</structural_integrity>
+
+<heatsinks>
+
+60
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+25500
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2657
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+<transporters>
+
+SmallCraftBay:4:2
+
+CargoBay:955:4
+
+CargoBay:463:1
+
+PoolDeck:1400:1
+
+EarthDeck:950:1
+
+PumpsAndCirculationEquipment:50.5:1
+
+</transporters>
+
+<escape_pod>
+
+15
+
+</escape_pod>
+
+<life_boat>
+
+35
+
+</life_boat>
+
+<crew>
+
+181
+
+</crew>
+
+<passengers>
+
+200
+
+</passengers>

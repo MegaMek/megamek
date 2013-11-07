@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Dropship
+</UnitType>
+<Name>
+Titan
+</Name>
+<Model>
+(Monitor)
+</Model>
+<Tonnage>
+12000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+350
+345
+345
+342
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:40
+CLLRM20
+Artemis V
+CLLRM20
+Artemis V
+CLLRM20
+Artemis V
+CLLRM20 Ammo (Clan) Artemis V-capable:60
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+ClanMobileHPG
+<Left Side Equipment>
+CLLRM20
+Artemis V
+CLLRM20
+Artemis V
+CLLRM20 Ammo (Clan) Artemis V-capable:60
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+Clan Laser AMS
+Clan Laser AMS
+</Left Side Equipment>
+
+<Right Side Equipment>
+CLLRM20
+Artemis V
+CLLRM20
+Artemis V
+CLLRM20 Ammo (Clan) Artemis V-capable:60
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+Clan Laser AMS
+Clan Laser AMS
+</Right Side Equipment>
+
+<Aft Equipment>
+CLLRM20
+Artemis V
+CLLRM20 Ammo (Clan) Artemis V-capable:60
+CLERLargeLaser
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Laser AMS
+Clan Laser AMS
+</Aft Equipment>
+
+<structural_integrity>
+18
+</structural_integrity>
+<heatsinks>
+195
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+5400
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+3075
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:10:5
+CargoBay:1881:2
+</transporters>
+<escape_pod>
+4
+</escape_pod>
+<life_boat>
+4
+</life_boat>
+<crew>
+58
+</crew>
+<passengers>
+0
+</passengers>

@@ -1,0 +1,12 @@
+3085 Raven Alliance Heavy Tank Keshik
+Ishtar Heavy Fire Support Tank (Original),1
+Ishtar Heavy Fire Support Tank (Original),2
+Oro Heavy Tank,3
+Nuberu Anti Aircraft Tank 2 "Numantia",4
+Po Heavy Tank,5
+Oro Heavy Tank (HAG),6
+Nuberu Anti Aircraft Tank (Standard),5
+Rommel Tank,4
+Oro Heavy Tank (HAG),3
+Oro Heavy Tank,2
+Athena Combat Vehicle,1

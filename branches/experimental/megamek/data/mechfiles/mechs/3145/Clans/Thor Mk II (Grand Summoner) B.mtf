@@ -1,0 +1,156 @@
+Version:1.0
+Thor Mk II (Grand Summoner)
+B
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3118
+Source:TRO 3145 Clan
+Rules Level:2
+
+Mass:70
+Engine:350 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:14 Double
+Base Chassis Heat Sinks:14
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:31
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:8
+ER Small Laser, Right Torso
+ER Small Laser, Center Torso
+LRM 5, Right Torso
+LRM 5, Left Torso
+LRM 15, Right Arm
+LRM 15, Left Arm
+ATM 9, Left Torso
+ATM 6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM6
+CLATM6
+CLATM6
+CLLRM5
+Clan Ammo ATM-6
+Clan Ammo ATM-6
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+CLLRM5
+Clan Ammo LRM-5
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

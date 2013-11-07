@@ -1,0 +1,12 @@
+3085 Clan Wolf Medium Aerospace Second Line
+Corsair CSR-V12b,1
+Gotha GTHA-500b,2
+Lightning LTN-G15b,3
+Ammon,4
+Hellcat II HCT-213C,5
+Ironsides IRN-SD1b,6
+Tyre,5
+Gotha GTHA-500b,4
+Ammon,3
+Tyre,2
+Ammon,1

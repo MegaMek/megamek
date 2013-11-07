@@ -1,0 +1,12 @@
+LAAF Medium Mechs A 3067 (FMU)
+Hollander II BZK-F7,1
+Cobra CBR-02,2
+Blitzkrieg BTZ-3F,3
+Clint CLNT-2-3U,4
+Firestarter FS9-O,5
+Hatchetman HCT-5S,6
+Nightsky NGS-5S,5
+Chimera CMA-1S,4
+Lynx LNX-9Q,3
+Bushwacker BSW-S2,2
+Starslayer STY-3C,1

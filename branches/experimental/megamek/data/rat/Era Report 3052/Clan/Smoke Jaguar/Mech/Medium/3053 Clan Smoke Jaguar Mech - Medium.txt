@@ -1,0 +1,12 @@
+3053 Clan Smoke Jaguar Mech - Medium
+Grendel (Mongrel) D,1
+Black Hawk (Nova) C,2
+Fenris (Ice Ferret) B,3
+Dragonfly (Viper) A,4
+Ryoken (Stormcrow) Prime,5
+Ryoken (Stormcrow) Prime,6
+Ryoken (Stormcrow) Prime,5
+Black Hawk (Nova) A,4
+Fenris (Ice Ferret) B,3
+Ryoken (Stormcrow) C,2
+Shadow Hawk IIC,1

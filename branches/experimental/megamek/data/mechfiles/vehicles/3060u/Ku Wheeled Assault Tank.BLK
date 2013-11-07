@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Ku Wheeled Assault Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+2842
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+30
+29
+29
+26
+20
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLStreakSRM4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERLargeLaser
+CLERSmallLaser
+CLUltraAC10
+</Turret Equipment>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

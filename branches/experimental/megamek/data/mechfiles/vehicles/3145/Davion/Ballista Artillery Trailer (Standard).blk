@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Ballista Artillery Trailer
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3100
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+4
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+30
+30
+30
+30
+32
+</armor>
+
+<Body Equipment>
+IS Hardened
+ISC3SlaveUnit
+Communications Equipment (4 ton)
+ISGuardianECMSuite
+ISCASE
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+IS Light Machine Gun Ammo - Full
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISAntiMissileSystem
+Light Machine Gun
+Light Machine Gun
+ISSponsonTurret
+</Right Equipment>
+
+<Left Equipment>
+ISAntiMissileSystem
+Light Machine Gun
+Light Machine Gun
+ISSponsonTurret
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+ISAntiMissileSystem
+Light Machine Gun
+Light Machine Gun
+</Rear Equipment>
+
+<Turret Equipment>
+ISAntiMissileSystem
+ISERMediumLaser
+ISERMediumLaser
+ISArrowIV
+ISArrowIV
+</Turret Equipment>
+
+<source>
+TRO 3145 FS
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+
+<history>
+Trailers are not coded in MM. Unit included for completeness
+</history>
+

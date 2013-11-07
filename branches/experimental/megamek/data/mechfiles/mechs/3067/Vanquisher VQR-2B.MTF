@@ -1,0 +1,151 @@
+Version:1.0
+Vanquisher
+VQR-2B
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:6
+2 ISUltraAC5, Right Arm, Ammo:120
+2 ISUltraAC5, Left Arm
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Left Torso
+1 ISImprovedC3CPU, Center Torso
+1 ISERMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+
+Left Torso:
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISERMediumLaser
+ISCASE
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Right Torso:
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISUltraAC5 Ammo
+ISERMediumLaser
+ISCASE
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedC3CPU
+ISImprovedC3CPU
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

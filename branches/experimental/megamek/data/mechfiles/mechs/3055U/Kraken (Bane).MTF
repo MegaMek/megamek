@@ -1,0 +1,161 @@
+Version:1.0
+Kraken (Bane)
+
+
+Config:Biped
+TechBase:Clan
+Era:2827
+Source:Succession Wars
+Rules Level:2
+
+Mass:100
+Engine:300 XL (Clan) Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:13
+
+Weapons:14
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMG
+CLMG
+CLMG
+CLMG
+Clan Machine Gun Ammo - Half
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

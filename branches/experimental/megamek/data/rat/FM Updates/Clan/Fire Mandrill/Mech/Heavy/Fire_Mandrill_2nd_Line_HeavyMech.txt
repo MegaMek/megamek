@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Heavy Mechs (Fire Mandrill),
+Viper (Black Python),1
+Bombardier BMB-12D,2
+Flashman FLS-8K,3
+Thresher,4
+Rifleman IIC,5
+Rifleman IIC,6
+Lancelot LNC25-01,5
+Lancelot LNC25-01,4
+Exterminator EXT-4D,3
+Rifleman IIC,2
+Thresher,1

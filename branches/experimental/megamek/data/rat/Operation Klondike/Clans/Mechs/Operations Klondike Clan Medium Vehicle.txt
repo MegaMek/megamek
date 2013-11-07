@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Medium Vehicle
+Kanga Medium Hovertank,1
+Zephyr Hovertank (Royal),2
+Thor Artillery Vehicle,3
+Chaparral Missile Artillery Tank,4
+Turhan Urban Combat Vehicle (Standard),5
+Zephyr Hovertank,6
+Goblin Medium Tank,5
+Maxim Heavy Hover Transport,4
+Kanga Medium Hovertank,3
+Zephyr Hovertank,2
+Chaparral Missile Artillery Tank,1

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Princess Bot Documentation</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Deric Page">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGED" CONTENT="20131104;21423580">
+	<STYLE TYPE="text/css">
+	<!--
+		H2.cjk { font-family: "SimSun" }
+		H2.ctl { font-family: "Mangal" }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H1><A NAME="mozTocId157777"></A>Princess Bot Documentation</H1>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in"><A NAME="mozToc"></A><!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6--><A HREF="#mozTocId157777">Princess
+	Bot Documentation</A> 
+	</P>
+	<UL>
+		<LI><P STYLE="margin-bottom: 0in"><A HREF="#mozTocId899214">Who is
+		Princess Bot?</A> 
+		</P>
+		<LI><P STYLE="margin-bottom: 0in"><A HREF="#mozTocId432957">Princess
+		Bot Configuration</A> 
+		</P>
+		<LI><P STYLE="margin-bottom: 0in"><A HREF="#mozTocId149056">Chat
+		Commands</A> 
+		</P>
+		<LI><P><A HREF="#mozTocId779311">Replacing an Absent Player with
+		the Princess Bot</A> 
+		</P>
+	</UL>
+</UL>
+<H2 CLASS="western"><A NAME="mozTocId899214"></A>Who is Princess Bot?</H2>
+<P>The TestBot was originally written several years ago as an example
+of how to create an AI for MegaMek.&nbsp; As such, it&rsquo;s not
+terribly sophisticated, but it can provide a decent fight when
+commanding a handful of Introductory Tech units.&nbsp; It does
+odd/silly things with some higher tech units.&nbsp; Also, when
+commanding more than a half-dozen units, it slows down exponentially
+when attempting to determine which unit to move next.&nbsp; You can
+get more details about the TestBot in the ai-readme.txt
+document.<BR><BR>The Princess Bot was written many years after in an
+attempt to create an AI that would process quicker even if it were
+slightly dimmer. Princess offers a few advantages over TestBot.&nbsp;
+First, Princess is still being maintained, though not by the original
+author.&nbsp; Princess is actually faster at determining which unit
+to move next, however, she is slower at moving fast units (VTOLs &amp;
+Hovercraft especially).&nbsp; She is able to operate AeroSpace units
+on the ground map, which TestBot cannot, but it takes a long time for
+her to crunch the numbers and she still can&rsquo;t handle anything
+on the space maps.&nbsp; Also, she&rsquo;s not very competent with
+Infantry, which she seriously undervalues.&nbsp; One of the biggest
+advantages of Princess, however, is that her behavior can be modified
+in a number of ways, which you&rsquo;ll see throughout this document.</P>
+<H2 CLASS="western"><A NAME="mozTocId432957"></A>Princess Bot
+Configuration</H2>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=2 CELLSPACING=2>
+	<TR VALIGN=TOP>
+		<TD WIDTH=20%>
+			<P ALIGN=LEFT><IMG SRC="princessConfigDialog.jpg" NAME="graphics1" ALIGN=BOTTOM WIDTH=278 HEIGHT=694 BORDER=0></P>
+		</TD>
+		<TD>
+			<P>The Princess Bot has a number of settings to play
+			with.<BR><BR><B>Behavior</B> - There are 4 behaviors
+			pre-configured with Princess:</P>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in"><I>DEFAULT</I> - Basic
+				&quot;balanced&quot; settings. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in"><I>BERSERK</I> - Highly
+				aggressive.&nbsp; Princess will ignore danger to herself and will
+				not run away under any circumstances. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in"><I>COWARDLY</I> - Really
+				doesn't want to get shot. 
+				</P>
+				<LI><P><I>ESCAPE</I> - Not quite as fearful as <I>cowardly</I>
+				but she will try to escape from her home board edge ASAP. 
+				</P>
+			</UL>
+			<P><B>Verbosity</B> - Used to set the level of logging Princess
+			will use.&nbsp; DEBUG mode is <I>very</I> verbose.&nbsp; It is
+			recommended you only use it when trying to debug something
+			specific.</P>
+			<P><B>Forced Withdrawal</B>&nbsp; - Used to make the Princess
+			follow the Forced Withdrawal rules outlined in Total Warfare.</P>
+			<P><B>Immediate Withdrawal</B> - Used to make Princess send her
+			units to her home edge from the start of the game, regardless of
+			damage level. This can be handy for <I>Chase</I> <SPAN STYLE="font-style: normal">and
+			</SPAN><I>Breakthrough</I> <SPAN STYLE="font-style: normal">scenarios.</SPAN></P>
+			<P><B>Auto Flee Board</B> - (Only available when <I>Immediate
+			Withdrawal</I> is in effect.) If this is checked, Princess will
+			issue the Flee command as soon as her units reach her home edge,
+			regardless of damage level.</P>
+			<P><B>Home Edge</B> - Defines which edge Princess will attempt to
+			flee across when Forced Withdrawal is in effect.</P>
+			<P><B>Aggression</B> - This determines how much Princess wants to
+			close with her enemies.&nbsp; Lower settings will cause her to try
+			to keep her distance more, while higher settings will have her get
+			right up in her enemies' faces.</P>
+			<P><B>Bravery</B> - This determines how much return fire Princess
+			is willing to risk in order to do damage to the enemy.</P>
+			<P><B>Herding</B> - The higher this value, the more Princess will
+			try to keep her units together.</P>
+			<P><B>Piloting Caution</B> - This determines how willing Princess
+			is to fail a piloting roll and fall on her face when attempting
+			various maneuvers.&nbsp; Higher settings means that Princess will
+			risk fewer piloting rolls.&nbsp; Note, this also affects how
+			willing she is to use MASC or try to move through or on buildings.</P>
+			<P><B>Self Preservation</B> - This determines how quickly Princess
+			will flee once Forced Withdrawal takes effect.&nbsp; At lower
+			levels, she will attempt more of a fighting withdrawal, while at
+			higher levels she should run straight for her home edge.</P>
+			<P><B>Strategic Targets</B> - This allows you to provide Princess
+			with a list of hex coordinates to move to and attack.&nbsp; If a
+			building exists in the target hex, then she will attempt to
+			destroy that building.</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H2 CLASS="western"><A NAME="mozTocId149056"></A><A NAME="Chat_Commands"></A>
+Chat Commands</H2>
+<P>Coming soon.</P>
+<H2 CLASS="western"><A NAME="mozTocId779311"></A>Replacing an Absent
+Player with the Princess Bot</H2>
+<P>If a player has become disconnected (the word &quot;<I>(ghost)</I>&quot;
+appears next to their name, you can replace that player with a bot.&nbsp;
+To use Princess as the replacement, issue the following command in
+the chat window:</P>
+<P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;playerName&gt;</I></P>
+<P>Princess will use her <I>default</I> configuration settings.  This
+will be expanded in future releases.</P>
+</BODY>
+</HTML>

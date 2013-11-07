@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Medium Mechs (Wolf)
+Hunchback IIC,1
+Fenris (Ice Ferret) D,2
+Pouncer Prime,3
+Fenris (Ice Ferret) A,4
+Ryoken (Stormcrow) Prime,5
+Fenris (Ice Ferret) Prime,6
+Fenris (Ice Ferret) B,5
+Fenris (Ice Ferret) C,4
+Phantom Prime,3
+Black Hawk (Nova) Prime,2
+Dragonfly (Viper) A,1

@@ -1,0 +1,81 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Mobile Long Tom
+</Name>
+
+<Model>
+(Ammo Carriage)
+</Model>
+
+<year>
+2602
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+8
+</engine_type>
+
+<armor>
+16
+16
+16
+16
+</armor>
+
+<Body Equipment>
+ISLongTomAmmo
+ISLongTomAmmo
+ISLongTomAmmo
+ISLongTomAmmo
+ISLongTomAmmo
+</Body Equipment>
+
+<Front Equipment>
+Hitch
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<source>
+Star League
+</source>
+
+<tonnage>
+10.0
+</tonnage>
+
+##Errata here - http://bg.battletech.com/forums/index.php/topic,3797.msg799558.html#msg799558
+

@@ -1,0 +1,12 @@
+Clan Blood Spirits ProtoMech 3067 (FMU)
+Harpy 2,1
+Satyr,2
+Roc,3
+Roc 3,4
+Gorgon 3,5
+Roc 2,6
+Satyr 2,5
+Minotaur,4
+Centaur 2,3
+Centaur 3,2
+Hydra,1

@@ -1,0 +1,5 @@
+3062 Clan Jade Falcon - Medium Vehicle
+Ku Wheeled Assault Tank,8
+Ares Medium Tank,22
+Hachiman Fire Support Tank 'Huey',14
+Epona Pursuit Tank Prime,4

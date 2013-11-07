@@ -1,0 +1,12 @@
+3030 House Liao Vehicle - Light
+Warrior Attack Helicopter H-7,1
+Pegasus Scout Hover Tank,2
+Galleon Light Tank GAL-100,3
+Saladin Assault Hover Tank,4
+Galleon Light Tank GAL-100,5
+Hunter Light Support Tank,6
+Warrior Attack Helicopter H-7,5
+Scimitar Medium Hover Tank,4
+Scorpion Light Tank,3
+Scorpion Light Tank,2
+Saracen Medium Hover Tank,1

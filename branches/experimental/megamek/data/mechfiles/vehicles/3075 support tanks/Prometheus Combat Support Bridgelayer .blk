@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Prometheus Combat Support Bridgelayer
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+2471
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:5.0
+cargobay:5:1
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+40
+40
+40
+34
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<Body Equipment>
+Advanced Fire Control
+Armored Chassis
+IS Ammo LRM-15
+</Body Equipment>
+
+<Front Equipment>
+LRM 15
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+HeavyBridgeLayer
+</Right Equipment>
+
+<Left Equipment>
+HeavyBridgeLayer
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+RS 3075U
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Medium Mechs (Wolf),
+Hunchback IIC,1
+Hellhound (Conjurer),2
+Griffin IIC,3
+Crab CRB-27,4
+Sentinel STN-3L,5
+Griffin IIC,6
+Wyvern WVE-5N,5
+Shadow Hawk IIC,4
+Shadow Hawk IIC,3
+Hunchback IIC,2
+Fenris (Ice Ferret) Prime,1

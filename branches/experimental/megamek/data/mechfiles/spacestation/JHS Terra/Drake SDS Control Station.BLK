@@ -1,0 +1,218 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Drake SDS Control Station
+</Name>
+
+<Tonnage>
+12000
+</Tonnage>
+
+<Armor>
+18
+18
+18
+18
+18
+18
+</Armor>
+
+<Nose Equipment>
+ISLargeNavalCommScannerSuite
+Swordfish
+Swordfish Ammo:20
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAMS
+ISAMS
+ISAMS Ammo:48
+Screen Launcher
+ScreenLauncher Ammo:20
+</Nose Equipment>
+
+<Front Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+Screen Launcher
+ScreenLauncher Ammo:20
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+Screen Launcher
+ScreenLauncher Ammo:20 
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISMML9
+ISArtemisIV
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable:78
+ISMML9 SRM Ammo Artemis-Capable:66
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISAMS
+ISAMS
+ISAMS Ammo:48
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3071
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+12
+</armor_type>
+
+<transporters>
+SmallCraftBay:4:2
+CargoBay:3820.5:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+15
+</life_boat>
+
+<crew>
+118
+</crew>
+
+<passengers>
+1
+</passengers>
+
+<battlearmor>
+12
+</battlearmor>
+
+<history>
+Has 1 Unpressurized Repair Bays each with 5,000 Capacity.  Lastly none of the Special CASPAR II equipment is coded in MM unit included for completeness.
+</history>

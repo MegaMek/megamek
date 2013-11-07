@@ -1,0 +1,12 @@
+Light Vehicle (2766) RWR
+Cobra Transport VTOL,2
+Beagle Hover Scout,3
+Ignis Infantry Support Tank,4
+Hipparch Cavalry Tank,5
+Nightshade ECM VTOL,6
+J. Edgar Light Hover Tank,7
+Lightning Attack Hovercraft,6
+Cyrano Gunship,5
+Ripper Infantry Transport,4
+Lightning Attack Hovercraft,3
+Gabriel Reconnaissance Hovercraft,2

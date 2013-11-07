@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Constable Pacification Suit
+</Name>
+
+<Model>
+(LMG)
+</Model>
+
+<year>
+3092
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Squad Equipment>
+CLBALightMG:Body
+CLHeavyGL
+CLHeavyGL
+BACuttingTorch
+BABattleClaw
+</Squad Equipment>
+
+<source>
+TRO 3145 Clans
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+

@@ -1,0 +1,152 @@
+Version:1.0
+JagerMech
+JM8-HK-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:2
+
+Mass:65
+Engine:260 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:35
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:7
+1 ISERPPC, Right Arm
+1 ISAC2, Right Arm, Ammo:45
+1 ISERPPC, Left Arm
+1 ISAC2, Left Arm
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+ISAC2
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+ISAC2
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumLaser
+ISAC2 Ammo
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

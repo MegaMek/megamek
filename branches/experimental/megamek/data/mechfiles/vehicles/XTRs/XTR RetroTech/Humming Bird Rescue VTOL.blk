@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportVTOL
+</UnitType>
+
+<Name>
+Humming Bird VTOL
+</Name>
+
+<Model>
+(Rescue)
+</Model>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<fuel>
+</fuel>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+9
+8
+8
+4
+2
+</armor>
+
+<barrating>
+5
+</barrating>
+
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+BloodhoundActiveProbe
+Searchlight
+</Front Equipment>
+
+<Right Equipment>
+Lift Hoist
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<transporters>
+cargobay:2.5:1
+</transporters>
+
+<source>
+XTR RetroTech
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

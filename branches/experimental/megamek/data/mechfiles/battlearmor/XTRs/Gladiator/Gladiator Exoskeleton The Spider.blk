@@ -1,0 +1,80 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gladiator Exoskeleton
+</Name>
+
+<Model>
+"The Spider"
+</Model>
+
+<year>
+3076
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Squad Equipment>
+BA-Magnetic Clamp
+BABattleClawVibro
+BAArmoredGlove
+ISMechanicalJumpBooster
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTR Gladiators
+</source>
+
+<chassis>
+Biped
+</chassis>
+
+<jumpingMP>
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+

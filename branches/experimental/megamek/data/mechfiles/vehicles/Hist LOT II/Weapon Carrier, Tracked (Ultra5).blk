@@ -1,0 +1,89 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Weapon Carrier(Tracked)
+</Name>
+
+<Model>
+(Ultra/5)
+</Model>
+
+<year>
+2775
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+35
+35
+35
+11
+</armor>
+
+<Body Equipment>
+LRM 5
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+IS Ammo LRM-5
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+Hist LOT II
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

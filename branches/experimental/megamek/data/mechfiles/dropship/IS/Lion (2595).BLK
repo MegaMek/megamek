@@ -1,0 +1,398 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Lion
+
+</Name>
+
+<Model>
+
+(2595)
+
+</Model>
+
+<Tonnage>
+
+7300
+
+</Tonnage>
+
+<SafeThrust>
+
+4
+
+</SafeThrust>
+
+<Armor>
+
+220
+
+191
+
+191
+
+166
+
+</Armor>
+
+<Nose Equipment>
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+(R) ISLRM15
+
+(R) ISLRM15 
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLargeLaser
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISSRM6
+
+(R) ISSRM6
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+(R) ISLRM15
+
+(R) ISLRM15 
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLRM15 Ammo
+
+(R) ISLargeLaser
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISSRM6
+
+(R) ISSRM6
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLRM15
+
+ISLRM15 
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISSRM6
+
+ISSRM6
+
+ISSRM6 Ammo
+
+ISSRM6 Ammo
+
+ISSRM6 Ammo
+
+ISSRM6 Ammo
+
+</Aft Equipment>
+
+<structural_integrity>
+
+14
+
+</structural_integrity>
+
+<heatsinks>
+
+113
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+6300
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2595
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:8:2
+
+LightvehicleBay:12:2
+
+CargoBay:2425:1
+
+</transporters>
+
+<escape_pod>
+
+10
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+125
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

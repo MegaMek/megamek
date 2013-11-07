@@ -1,0 +1,150 @@
+Version:1.0
+Grasshopper
+GHR-5J
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3049
+Rules Level:2
+
+Mass:70
+Engine:280 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:22 Single
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:10
+RTR Armor:10
+RTC Armor:13
+
+Weapons:5
+1 ISERLargeLaser, Center Torso
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISStreakSRM2, Head, Ammo:100
+1 ISAntiMissileSystem, Right Torso, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+ISAMS Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+ISAntiMissileSystem
+ISStreakSRM2 Ammo
+ISStreakSRM2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISStreakSRM2
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

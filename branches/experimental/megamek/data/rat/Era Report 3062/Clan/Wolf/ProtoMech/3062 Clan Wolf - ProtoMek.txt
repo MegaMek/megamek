@@ -1,0 +1,12 @@
+3062 Clan Wolf - ProtoMek
+Minotaur 2,1
+Gorgon,2
+Centaur 2,3
+Siren,4
+Satyr,5
+Harpy,6
+Centaur,5
+Hydra,4
+Roc,3
+Gorgon 2,2
+Minotaur,1

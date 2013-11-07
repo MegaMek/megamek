@@ -1,0 +1,12 @@
+3085 Clan Wolf Medium Aerospace Keshik
+Ironsides IRN-SD1b,1
+Tyre,2
+Gotha GTHA-500b,3
+Ammon,4
+Tyre,5
+Ammon,6
+Jagatai Prime,5
+Jagatai Prime,4
+Turk Prime,3
+Visigoth Prime,2
+Ammon,1

@@ -1,0 +1,15 @@
+3039 House Liao Mech - Assault C
+Atlas AS7-D, 1
+Goliath GOL-1H, 2
+Banshee BNC-3M, 3
+Awesome AWS-8Q, 4
+Charger CGR-1A1, 5
+Victor VTR-9B, 6
+Stalker STK-3F, 5
+Cyclops CP-10-Z, 4
+Awesome AWS-8V, 3
+BattleMaster BLR-1G, 2
+Atlas AS7-D, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

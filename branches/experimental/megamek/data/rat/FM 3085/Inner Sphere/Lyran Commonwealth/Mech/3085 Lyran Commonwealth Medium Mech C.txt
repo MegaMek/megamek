@@ -1,0 +1,12 @@
+3085 Lyran Commonwealth Medium Mech C
+Phoenix Hawk PXH-3S,1
+Clint CLNT-6S,2
+Hatchetman HCT-6S,3
+Scorpion SCP-12S,4
+Uziel UZL-3S,5
+Starslayer STY-3Dr,6
+Cobra CBR-02,5
+Nightsky NGS-6T,4
+Blitzkrieg BTZ-3F,3
+Griffin GRF-6S,2
+Eisenfaust EFT-7X,1

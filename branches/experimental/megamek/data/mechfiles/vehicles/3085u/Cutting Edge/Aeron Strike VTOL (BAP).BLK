@@ -1,0 +1,76 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Aeron Strike VTOL
+</Name>
+
+<Model>
+(BAP)
+</Model>
+
+<Tonnage>
+25
+</Tonnage>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+18
+16
+16
+17
+2
+</Armor>
+
+<Front Equipment>
+ISERLargeLaser
+</Front Equipment>
+
+<Body Equipment>
+ISGuardianECMSuite
+ISBeagleActiveProbe
+Cargo (0.5 tons)
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3084
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+VTOL
+</motion_type>

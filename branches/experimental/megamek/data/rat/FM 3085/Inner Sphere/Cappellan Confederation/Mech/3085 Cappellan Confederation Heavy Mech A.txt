@@ -1,0 +1,12 @@
+3085 Capellan Confederation Heavy Mech A
+Warhammer WHM-4L,1
+Lao Hu LHU-3C,2
+Thunder THR-3L,3
+Cataphract CTF-4L,4
+Crusader CRD-8L,5
+Black Hawk-KU BHKU-O,6
+Catapult CPLT-C5,5
+Warhammer WHM-5L,4
+Rifleman IIC 8,3
+Avatar AV1-O,2
+Thunder THR-C4,1

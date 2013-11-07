@@ -1,0 +1,153 @@
+Version:1.1
+Slagmaiden
+SLG-X
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3076
+Rules Level:4
+
+Mass:55
+Engine:330 XL Engine(IS)
+Structure:IS Composite
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:14 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:23
+HD Armor:8
+LL Armor:24
+RL Armor:24
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:5
+Heavy Large Laser, Right Arm
+ER Flamer, Right Arm
+ER Flamer, Right Arm
+Streak SRM 2, Left Torso
+Streak SRM 2, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeShield
+ISLargeShield
+ISLargeShield
+ISLargeShield
+ISLargeShield
+ISLargeShield
+ISLargeShield
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+ISLaserInsulator
+ER Flamer
+ER Flamer
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM2
+IS Streak SRM 2 Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISStreakSRM2
+Supercharger
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

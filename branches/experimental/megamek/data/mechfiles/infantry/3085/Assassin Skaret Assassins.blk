@@ -1,0 +1,52 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Skåret Assassins
+</Name>
+<Model>
+JàrnFòlk
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+1
+</squadn>
+<Primary>
+InfantryBoltActionSniperRifle
+</Primary>
+<Secondary>
+InfantryClaymorePistol
+</Secondary>
+<secondn>
+1
+</secondn>
+<sneakcamo>
+</sneakcamo>
+<sneakir>
+</sneakir>
+<sneakecm>
+</sneakecm>
+<type>
+IS Level 3
+</type>
+<year>
+2800
+</year>
+<era>
+Succession Wars
+</era>
+<motion_type>
+leg
+</motion_type>
+<antimek>
+</antimek>

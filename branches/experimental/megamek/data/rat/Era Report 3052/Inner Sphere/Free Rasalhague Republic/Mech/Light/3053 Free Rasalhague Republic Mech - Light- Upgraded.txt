@@ -1,0 +1,12 @@
+3053 Free Rasalhague Republic Mech - Light- Upgraded
+Commando COM-2D,1
+Spider SDR-7M,2
+Locust LCT-3M,3
+Panther PNT-10K,4
+Jenner JR7-K,5
+Panther PNT-C,6
+Jenner JR7-C,5
+Wasp WSP-3M,4
+Spider SDR-7M,3
+Panther PNT-10K,2
+Mongoose MON-68,1

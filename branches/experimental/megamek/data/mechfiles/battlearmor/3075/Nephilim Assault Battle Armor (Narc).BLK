@@ -1,0 +1,85 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Nephilim Assault Battle Armor
+</Name>
+<Model>
+(Narc)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+16
+</Armor>
+<Squad Equipment>
+ISDetachableWeaponPack
+ISRocketLauncher2:Body
+ISSupportPPC:DWP
+BAHeavyBattleClaw
+Mimetic Armor
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+ISCompact Narc
+BACompactNarc Ammo
+BACompactNarc Ammo
+</Trooper 6 Equipment>
+
+<type>
+IS Level 3
+</type>
+<year>
+3075
+</year>
+<motion_type>
+leg
+</motion_type>

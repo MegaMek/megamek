@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Planetlifter
+</Name>
+
+<Model>
+Tactical Support
+</Model>
+
+<Tonnage>
+50
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+22
+7
+7
+12
+</Armor>
+
+<Nose Equipment>
+ISAngelECM
+ISLookDownRadar
+ISTankCockpitCommandConsole
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISArrowIVSystem
+ISArrowIV Ammo
+ISArrowIV Ammo
+</Aft Equipment>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3072
+</year>
+
+<source>
+TRO:Prototypes
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<vstol>
+1
+</vstol>

@@ -1,0 +1,149 @@
+Version:1.0
+Mosquito
+MOS-1K-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:3
+
+Mass:15
+Engine:135 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Single
+Walk MP:9
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:2
+RA Armor:2
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:5
+LL Armor:5
+RL Armor:5
+RTL Armor:1
+RTR Armor:1
+RTC Armor:1
+
+Weapons:4
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISSmallLaser, Center Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMASC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallLaser
+Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

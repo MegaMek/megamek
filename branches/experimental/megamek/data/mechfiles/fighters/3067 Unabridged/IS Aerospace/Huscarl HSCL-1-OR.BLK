@@ -1,0 +1,142 @@
+
+<BlockVersion>
+
+2
+
+</BlockVersion>
+
+<Version>
+
+1
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Huscarl
+
+</Name>
+
+<Model>
+
+HSCL-1-OR
+
+</Model>
+
+<Tonnage>
+
+75
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+70
+
+59
+
+59
+
+52
+
+</Armor>
+
+<Nose Equipment>
+Clan Ultra AC/20
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Clan LRM-20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Clan LRM-20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLPlasmaCannon
+</Aft Equipment>
+
+<heatsinks>
+
+14
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+Mixed (IS Chassis) Experimental
+
+</type>
+
+<year>
+
+3079
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

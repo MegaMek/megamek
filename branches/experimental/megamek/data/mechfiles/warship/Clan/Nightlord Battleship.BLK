@@ -1,0 +1,200 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Nightlord Battleship
+</Name>
+<Tonnage>
+1200000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+350
+320
+320
+290
+290
+298
+</Armor>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+NAC25
+NAC25
+NAC25 Ammo:36
+NL55
+MediumNPPC
+MediumNGauss
+MediumNGauss Ammo:30
+</Nose Equipment>
+<Front Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+NAC10
+NAC10 Ammo:19
+NAC25
+NAC25 Ammo:19
+NL35
+NL45
+NL55
+MediumNGauss
+MediumNGauss Ammo:30
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+NAC10
+NAC10 Ammo:19
+NAC25
+NAC25 Ammo:19
+NL35
+NL45
+NL55
+MediumNGauss
+MediumNGauss Ammo:30
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+NAC10
+NAC10 Ammo:19
+NAC40
+NAC40 Ammo:38
+(B) NAC10
+NAC10 Ammo:19
+NAC40
+NAC40 Ammo:38
+NL35
+NL45
+MediumNPPC
+MediumNGauss
+MediumNGauss Ammo:30
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+NAC10
+NAC10 Ammo:19
+NAC40
+NAC40 Ammo:38
+(B) NAC10
+NAC10 Ammo:19
+NAC40
+NAC40 Ammo:38
+NL35
+NL45
+MediumNPPC
+MediumNGauss
+MediumNGauss Ammo:30
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+NAC10
+NAC10 Ammo:19
+NAC25
+NAC25 Ammo:19
+NL35
+NL45
+NL55
+MediumNGauss
+MediumNGauss Ammo:30
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+NAC10
+NAC10 Ammo:19
+NAC25
+NAC25 Ammo:19
+NL35
+NL45
+NL55
+MediumNGauss
+MediumNGauss Ammo:30
+</Aft Right Side Equipment>
+<Aft Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+NAC25
+NAC25
+NAC25 Ammo:36
+NL55
+MediumNPPC
+MediumNGauss
+MediumNGauss Ammo:30
+</Aft Equipment>
+<structural_integrity>
+85
+</structural_integrity>
+<heatsinks>
+2702
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+5000
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+2932
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:20:4
+MechBay:100:3
+CargoBay:174104:0
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+160
+</escape_pod>
+<life_boat>
+0
+</life_boat>
+<crew>
+1573
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

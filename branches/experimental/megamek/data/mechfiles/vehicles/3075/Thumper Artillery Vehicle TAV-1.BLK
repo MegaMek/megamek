@@ -1,0 +1,88 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Thumper Artillery Vehicle
+</Name>
+
+<Model>
+TAV-1
+</Model>
+
+<year>
+3072
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+64
+42
+42
+28
+</armor>
+
+<Body Equipment>
+ISThumperAmmo
+ISThumperAmmo
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+ISThumper
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+Machine Gun
+</Rear Equipment>
+
+<armor_type>
+0
+</armor_type>

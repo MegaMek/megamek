@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Caravan Heavy Transport
+</Name>
+
+<Tonnage>
+200
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+48
+48
+48
+48
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+464
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2346
+</year>
+
+<source>
+XTR Prim III
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<barrating>
+6
+</barrating>
+
+<transporters>
+cargobay:60:4
+</transporters>

@@ -1,0 +1,74 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Striker Light Tank
+</Name>
+
+<Model>
+"Wet Striker"
+</Model>
+
+<year>
+3070
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 4
+</type>
+
+<tonnage>
+35.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+6
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor>
+20
+18
+18
+18
+15
+15
+</armor>
+
+<Body Equipment>
+ISLimitedAmphibiousChassis
+IS Ammo SRM-6
+</Body Equipment>
+
+<Front Turret Equipment>
+RL10
+RL10
+RL10
+RL10
+</Front Turret Equipment>
+
+<Rear Turret Equipment>
+SRM 6
+</Rear Turret Equipment>

@@ -140,8 +140,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
-        addOption(advancedRules, "geometric_mean_bv", false);
-        addOption(advancedRules, "alternate_pilot_bv_mod", false);
+        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$
+        addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_ams", false); //$NON-NLS-1$
@@ -186,12 +186,13 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
-        addOption(advancedCombat, "increased_ac_dmg", false);
-        addOption(advancedCombat, "increased_iserll_range", false);
-        addOption(advancedCombat, "unjam_uac", false);
-        addOption(advancedCombat, "uac_tworolls", false);
-        addOption(advancedCombat, "clubs_punch", false);
-        addOption(advancedCombat, "on_map_predesignate", false);
+        addOption(advancedCombat, "increased_ac_dmg", false); //$NON-NLS-1$
+        addOption(advancedCombat, "increased_iserll_range", false); //$NON-NLS-1$
+        addOption(advancedCombat, "unjam_uac", false); //$NON-NLS-1$
+        addOption(advancedCombat, "uac_tworolls", false); //$NON-NLS-1$
+        addOption(advancedCombat, "clubs_punch", false); //$NON-NLS-1$
+        addOption(advancedCombat, "on_map_predesignate", false); //$NON-NLS-1$
+        addOption(advancedCombat, "max_external_heat", 15); //$NON-NLS-1$
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
@@ -261,8 +262,8 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
-        addOption(initiative, "front_load_initiative", false);
-        addOption(initiative, "initiative_streak_compensation", false);
+        addOption(initiative, "front_load_initiative", false); //$NON-NLS-1$
+        addOption(initiative, "initiative_streak_compensation", false); //$NON-NLS-1$
 
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
         addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$

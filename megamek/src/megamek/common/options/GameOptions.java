@@ -241,6 +241,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, "stratops_space_bomb", false); //$NON-NLS-1$
         addOption(advAeroRules, "variable_damage_thresh", false); //$NON-NLS-1$
         addOption(advAeroRules, "at2_nukes", false); //$NON-NLS-1$
+        addOption(advAeroRules, "aero_sanity", false); //$NON-NLS-1$
         addOption(advAeroRules, "ind_weapons_grounded_dropper", false); //$NON-NLS-1$
         addOption(advAeroRules, "return_flyover", false); //$NON-NLS-1$
         addOption(advAeroRules, "aa_move_mod", false); //$NON-NLS-1$

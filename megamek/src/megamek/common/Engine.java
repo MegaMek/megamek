@@ -572,9 +572,11 @@ public class Engine implements Serializable {
         if (sideCrits >= 6) {
             return 0.25; // IS XXL
         } else if (sideCrits >= 3) {
-            return 0.5; // IS XL, clan XXL
+            return 0.5; // IS XL, clan XXL, superheavy IS XXL, superheavy IS large XXL
         } else if (sideCrits >= 2) {
-            return 0.75; // IS light, clan XL
+            return 0.75; // IS light, clan XL, superheavy clan XXL, superheavy clan large XXL
+        } else if (sideCrits >= 1) {
+            return 0.825; // superheavy IS Light, superheavy clan XL
         } else {
             return 1; // standard, compact, ice, fuel cell, fission
         }

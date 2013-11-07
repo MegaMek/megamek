@@ -95,7 +95,7 @@ v0.37.0-dev (SVN)
 + Feature [#1174]: Specific Number of 'Mechs Victory Condition
 + Feature [#1120]: Allow users to set the maximum amount of external heat
 + Princess bot help button not working
-
++ Superheavy BV fixes
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

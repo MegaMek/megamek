@@ -421,10 +421,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // Do this stuff first, because some weapon's miss report reference
         // the
         // amount of shots fired and stuff.
-        nDamPerHit = calcDamagePerHit();
         addHeat();
-
-        attackValue = calcAttackValue();
 
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report

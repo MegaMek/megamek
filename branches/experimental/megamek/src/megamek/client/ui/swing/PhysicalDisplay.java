@@ -163,7 +163,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
 
         butDone.setText("<html><b>"+Messages.getString(
-        		"PhysicalDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
+        		"PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
         
         setupButtonPanel();

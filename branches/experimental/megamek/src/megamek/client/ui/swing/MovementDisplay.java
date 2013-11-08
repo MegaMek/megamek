@@ -20,7 +20,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -29,12 +28,9 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -86,8 +82,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 
-public class MovementDisplay extends StatusBarPhaseDisplay implements
-        KeyListener {
+public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      *
      */
@@ -119,7 +114,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      *
      */
     public static enum Command {
-        MOVE_NEXT("moveNext", CMD_ALL), //$NON-NLS-1$
+        MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$        
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
         MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK), //$NON-NLS-1$
@@ -185,7 +180,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED), //$NON-NLS-1$
         // Move envelope
         MOVE_ENVELOPE("MoveEnvelope", CMD_NONE), 
-        MOVE_MORE("MoveMore", CMD_ALL);
+        MOVE_MORE("MoveMore", CMD_NONE);
         
         /**
          * The command text.
@@ -249,14 +244,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         
     }
-    
-    private static final int NUM_BUTTON_LAYOUTS = 4;
 
     // buttons
-    private JPanel panButtons;
     private Hashtable<Command,MegamekButton> buttons;
-
-    private int buttonLayout;
 
     // let's keep track of what we're moving, too
     private int cen = Entity.NONE; // current entity number
@@ -286,6 +276,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * clientgui.getClient().
      */
     public MovementDisplay(ClientGUI clientgui) {
+    	super();
+    	
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
         gear = MovementDisplay.GEAR_LAND;
@@ -306,15 +298,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
             buttons.put(cmd,newButton);
-        }       
+        }        
                 
         butDone.setText("<html><b>" + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        // layout button grid
-        panButtons = new JPanel();
-        panButtons.setOpaque(false);
-        buttonLayout = 0;
         setupButtonPanel();
 
         // layout screen
@@ -335,12 +323,37 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         addKeyListener(this);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        comp.addKeyListener(this);
+    /**
+     * Return the button list: we need to determine what unit type is selected
+     * and then get a button list appropriate for that unit.
+     */
+    protected ArrayList<MegamekButton> getButtonList(){
+    	int flag;
+    	
+    	final Entity ce = ce();
+    	flag = CMD_MECH;
+        if (ce != null) {
+            if (ce instanceof Infantry) {
+            	flag = CMD_INF;
+            } else if (ce instanceof VTOL) {
+            	flag = CMD_VTOL;
+            } else if (ce instanceof Tank) {
+            	flag = CMD_TANK;
+            } else if (ce instanceof Aero) {
+                if (ce.isAirborne() && 
+                        clientgui.getClient().game.useVectorMove()) {
+                	flag = CMD_AERO_VECTORED;
+                } else if (ce.isAirborne() && 
+                        !clientgui.getClient().game.useVectorMove()) {
+                	flag = CMD_AERO;
+                } else {
+                	flag = CMD_TANK;
+                }
+            }
+        }
+        return getButtonList(flag);
     }
+    
     
     private ArrayList<MegamekButton> getButtonList(int flag){
         
@@ -353,87 +366,34 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
         
+        int i = 0;
         for (Command cmd : Command.values(flag,opts,forwardIni)){
+        	if (i % buttonsPerGroup == 0){
+        		buttonList.add(getBtn(Command.MOVE_NEXT));
+        		i++;
+        	}
+        	
             buttonList.add(buttons.get(cmd));
+            i++;
+            
+            if ((i+1) % buttonsPerGroup == 0){
+        		buttonList.add(getBtn(Command.MOVE_MORE));
+        		i++;
+        	}
         }
-        return buttonList;
-    }
-
-    private void setupButtonPanel() {
-        panButtons.removeAll();
-        panButtons.setLayout(new GridBagLayout());
-
-        // choose button order based on entity type
-        ArrayList<MegamekButton> buttonList = null;
-        final Entity ce = ce();
-        if (ce != null) {
-            if (ce instanceof Infantry) {
-                buttonList = getButtonList(CMD_INF);
-            } else if (ce instanceof VTOL) {
-                buttonList = getButtonList(CMD_VTOL);
-            } else if (ce instanceof Tank) {
-                buttonList = getButtonList(CMD_TANK);
-            } else if (ce instanceof Aero) {
-                if (ce.isAirborne() && 
-                        clientgui.getClient().game.useVectorMove()) {
-                    buttonList = getButtonList(CMD_AERO_VECTORED);
-                } else if (ce.isAirborne() && 
-                        !clientgui.getClient().game.useVectorMove()) {
-                    buttonList = getButtonList(CMD_AERO);
-                } else {
-                    buttonList = getButtonList(CMD_TANK);
-                }
-            }
+        if (!buttonList.get(i-1).getActionCommand().
+        		equals(Command.MOVE_MORE.getCmd())){
+	        while ((i+1) % buttonsPerGroup != 0){
+	        	buttonList.add(null);
+	        	i++;	        	
+	        }
+	        buttonList.add(getBtn(Command.MOVE_MORE));
         }
-        if (buttonList == null){
-            buttonList = getButtonList(CMD_MECH);
-        }
-        buttonList.remove(getBtn(Command.MOVE_NEXT));
         
-        // should this layout be skipped? (if nothing enabled)
-        boolean ok = false;
-        while (!ok && (buttonLayout != 0)) {
-            for (int i = buttonLayout * 8; (i < ((buttonLayout + 1) * 8))
-                    && (i < buttonList.size()); i++) {
-                if (buttonList.get(i).isEnabled()) {
-                    ok = true;
-                    break;
-                }
-            }
-            if (!ok) {
-                // skip as nothing was enabled
-                buttonLayout++;
-                if ((buttonLayout * 8) >= buttonList.size()) {
-                    buttonLayout = 0;
-                }
-            }
-        }
-        int x = 0;
-        int y = 0;
-        panButtons.add(getBtn(Command.MOVE_NEXT), GBC.std().gridx(x).gridy(y).fill());
-
-        x++;
-        for (int i = buttonLayout * 8; (i < ((buttonLayout + 1) * 8))
-                && (i < buttonList.size()); i++) {
-            if (x == 5) {
-                y++;
-                x = 0;
-            }
-            
-            panButtons.add(buttonList.get(i), GBC.std().gridx(x).gridy(y)
-                    .fill());
-            
-            x++;
-        }
-        if (x == 5) {
-            y++;
-            x = 0;
-        }
-        panButtons.add(buttons.get(Command.MOVE_MORE), GBC.std().gridx(4).gridy(1).fill());
-        panButtons.add(butDone, GBC.std().gridx(5).gridy(0).gridheight(2)
-                .fill());
-        panButtons.validate();
-        panButtons.repaint();
+        
+        numButtonGroups = 
+        		(int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
+        return buttonList;
     }
 
     /**
@@ -3337,8 +3297,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(Command.MOVE_CANCEL.getCmd())) {
             clear();
         } else if (ev.getSource().equals(getBtn(Command.MOVE_MORE))) {
-            buttonLayout++;
-            buttonLayout %= NUM_BUTTON_LAYOUTS;
+        	currentButtonGroup++;
+        	currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(Command.MOVE_UNJAM.getCmd())) {
             if ((gear == MovementDisplay.GEAR_JUMP)

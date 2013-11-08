@@ -24,12 +24,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -59,31 +56,29 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     // Action command names
     public static enum Command {
-    DEPLOY_NEXT("deployNext"),
-    DEPLOY_TURN("deployTurn"),    
-    DEPLOY_LOAD("deployLoad"),
-    DEPLOY_UNLOAD("deployUnload"),
-    DEPLOY_REMOVE("deployRemove"),
-    DEPLOY_ASSAULTDROP("assaultDrop"),
-    DEPLOY_DOCK("deployDock");  
+	    DEPLOY_NEXT("deployNext"),
+	    DEPLOY_TURN("deployTurn"),    
+	    DEPLOY_LOAD("deployLoad"),
+	    DEPLOY_UNLOAD("deployUnload"),
+	    DEPLOY_REMOVE("deployRemove"),
+	    DEPLOY_ASSAULTDROP("assaultDrop"),
+	    DEPLOY_DOCK("deployDock");  
     
-    String cmd;
-    private Command(String c){
-    cmd = c;
-    }
-    
-    public String getCmd(){
-    return cmd;
-    }
-    
-    public String toString(){
-    return cmd;
-    }
+	    String cmd;
+	    private Command(String c){
+	    	cmd = c;
+	    }
+	    
+	    public String getCmd(){
+	    	return cmd;
+	    }
+	    
+	    public String toString(){
+	    	return cmd;
+	    }
     }
 
-    // buttons
-    private JPanel panButtons;
-    private Hashtable<Command,MegamekButton> buttons;
+    protected Hashtable<Command,MegamekButton> buttons;
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
@@ -101,40 +96,23 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages
                 .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         
-        buttons = new Hashtable<Command,MegamekButton>(
-        (int)(Command.values().length * 1.25 + 0.5));
-        for (Command cmd : Command.values()){
-        String title = 
-        Messages.getString("DeploymentDisplay." + cmd.getCmd());
-        MegamekButton newButton = new MegamekButton(title);
-        newButton.addActionListener(this);
-        newButton.setActionCommand(cmd.getCmd());
-        newButton.setEnabled(false);
-        buttons.put(cmd,newButton);
-        }       
+		buttons = new Hashtable<Command, MegamekButton>(
+				(int) (Command.values().length * 1.25 + 0.5));
+		for (Command cmd : Command.values()) {
+			String title = Messages.getString("DeploymentDisplay."
+					+ cmd.getCmd());
+			MegamekButton newButton = new MegamekButton(title);
+			newButton.addActionListener(this);
+			newButton.setActionCommand(cmd.getCmd());
+			newButton.setEnabled(false);
+			buttons.put(cmd, newButton);
+		}  		
+		numButtonGroups = buttons.size() / buttonsPerGroup;
 
         butDone.setText("<html><b>"+Messages.getString("DeploymentDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        // layout button grid
-        panButtons = new JPanel();        
-        panButtons.setOpaque(false);
-        
-        panButtons.setLayout(new GridBagLayout());
-        
-        int x,y,buttonsPerRow;
-        buttonsPerRow = 5; x = y = 0;
-        for (Command cmd : Command.values()){
-        panButtons.add(buttons.get(cmd), 
-        GBC.std().gridx(x).gridy(y).fill(GridBagConstraints.BOTH));
-        x++;
-        if (x >= buttonsPerRow){
-        x = 0;
-        y++;
-        }
-        }
-        
-        panButtons.add(butDone, GBC.std().gridx(6).gridy(0).gridheight(2).fill(GridBagConstraints.BOTH));
+        setupButtonPanel();
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -154,11 +132,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
     }
-
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+    
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        for (Command cmd : Command.values()){
+            buttonList.add(buttons.get(cmd));
+        }
+        return buttonList;
     }
 
     /**

@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -252,14 +253,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        comp.addKeyListener(this);
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        return buttonList;
     }
 
-    private void setupButtonPanel() {
+    protected void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(1, 5));
 

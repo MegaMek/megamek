@@ -99,4 +99,8 @@ public class MegamekButton extends JButton {
 		g2.dispose();
 	 }
 	 
+	 public String toString(){
+		 return getActionCommand();
+	 }
+	 
 }

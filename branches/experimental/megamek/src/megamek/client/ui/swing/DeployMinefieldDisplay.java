@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.DeploymentDisplay.Command;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -190,10 +192,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         addBag(panStatus, gridbag, c);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        return buttonList;
     }
 
     /**

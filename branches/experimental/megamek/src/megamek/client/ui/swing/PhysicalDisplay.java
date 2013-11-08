@@ -38,6 +38,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -276,13 +277,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         addBag(panStatus, gridbag, c);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        return buttonList;
     }
 
-    private void setupButtonPanel() {
+    protected void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridBagLayout());
 

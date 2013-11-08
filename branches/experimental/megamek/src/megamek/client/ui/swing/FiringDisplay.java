@@ -47,6 +47,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -325,14 +326,12 @@ KeyListener, ItemListener, ListSelectionListener {
         ash = new AimedShotHandler();
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        comp.addKeyListener(this);
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        return buttonList;
     }
 
-    private void setupButtonPanel() {
+    protected void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridBagLayout());
 

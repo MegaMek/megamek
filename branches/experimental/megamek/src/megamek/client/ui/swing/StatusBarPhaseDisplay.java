@@ -21,6 +21,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -30,9 +32,19 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
+import megamek.client.ui.GBC;
+import megamek.client.ui.swing.widget.MegamekButton;
 
+/**
+ * This is a parent class for the button display for each phase.  Every phase 
+ * has a panel of control buttons along with a done button.  This class formats
+ * the button panel, the done button, and a status display area. 
+ * 
+ * Control buttons are grouped and the groups can be cycled through.
+ *
+ */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener {
+        implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 639696875125581395L;
     
@@ -41,10 +53,22 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     // displays
     private JLabel labStatus;
     protected JPanel panStatus;
+    protected JPanel panButtons;  
+    
+    // Variables that determine the layout of the button panel
+    // Keeps track of which group of buttons we are displaying
+    protected int currentButtonGroup = 0;
+    // How many different button groups there are, needs to be computed in a 
+    //   child class
+    protected int numButtonGroups;
+    // How any buttons are in each group
+    protected int buttonsPerGroup = 10;
+    protected int buttonsPerRow = 5;
+    
 
     protected StatusBarPhaseDisplay() {
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
-        "clearButton");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        		KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
 
         getActionMap().put("clearButton", new AbstractAction() {
             private static final long serialVersionUID = -7781405756822535409L;
@@ -58,13 +82,96 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 }
             }
         });
+        
+        panButtons = new JPanel();        
+        panButtons.setOpaque(false);
+        panButtons.setLayout(new GridBagLayout());
+    }
+    
+    
+    /**
+     * This method will return the list of buttons that should be displayed.
+     * @return
+     */
+    protected abstract ArrayList<MegamekButton> getButtonList();
+
+    
+    /**
+     * Adds buttons to the button panel.  The buttons to be added are retrieved
+     * with the <code>getButtonList()<code> method.  The number of buttons to
+     * display is defined in <code>buttonsPerGroup</code> and which group of
+     * buttons will be displayed is set by <code>currentButtonGroup</code>.
+     */
+    protected void setupButtonPanel() {
+        panButtons.removeAll();
+        panButtons.setLayout(new GridBagLayout());
+
+        ArrayList<MegamekButton> buttonList = getButtonList();
+                
+        // We may skip the current button group if all of its buttons are 
+        //  disabled
+        boolean ok = false;
+        while (!ok && (currentButtonGroup != 0)) {
+            for (int i = currentButtonGroup * buttonsPerGroup; 
+            		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                    	&& (i < buttonList.size()); i++) {
+                if (buttonList.get(i) != null && buttonList.get(i).isEnabled()){
+                    ok = true;
+                    break;
+                }
+            }
+            if (!ok) {
+                // skip as nothing was enabled
+            	currentButtonGroup++;
+                if ((currentButtonGroup * buttonsPerGroup) >= 
+                		buttonList.size()) {
+                	currentButtonGroup = 0;
+                }
+            }
+        }
+        int x = 0;
+        int y = 0;
+
+        for (int i = currentButtonGroup * buttonsPerGroup; 
+        		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                	&& (i < buttonList.size()); i++, x++) {
+            if (x == buttonsPerRow) {
+                y++;
+                x = 0;
+            }           
+            if (buttonList.get(i) != null){
+	            panButtons.add(buttonList.get(i), GBC.std().gridx(x).gridy(y)
+	                    .fill());              
+            }
+        }
+        if (x == buttonsPerRow) {
+            y++;
+            x = 0;
+        }
+        
+        //Add the Done button
+        int numRows = buttonsPerGroup/buttonsPerRow;
+        panButtons.add(butDone, GBC.std().
+        		gridx(buttonsPerRow).gridy(0).gridheight(numRows).fill());
+        
+        panButtons.validate();
+        panButtons.repaint();
+    }
+    
+    protected void addBag(JComponent comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
+        gridbag.setConstraints(comp, c);
+        add(comp);
+        comp.addKeyListener(this);
     }
 
+    
     /**
      * clears the actions of this phase
      */
     public abstract void clear();
 
+    
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
      */
@@ -97,4 +204,16 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
         return false;
     }
+    
+	@Override
+	public void keyPressed(KeyEvent evt) {	
+	}
+
+	@Override
+	public void keyReleased(KeyEvent evt) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent evt) {			
+	}
 }

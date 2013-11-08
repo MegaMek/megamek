@@ -3547,6 +3547,10 @@ public abstract class Mech extends Entity {
         } else {
             bvText.append(getRunHeat());
         }
+        if (hasStealth()) {
+            bvText.append(" - 10");
+        }
+
         bvText.append(endColumn);
         bvText.append(startColumn);
 

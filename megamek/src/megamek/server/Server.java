@@ -24120,11 +24120,11 @@ public class Server implements Runnable {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
-        if (en.getCrew().getOptions().booleanOption("pain_resistance")) {
+        if(en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation())) {
             pilotDamage = 1;
         }
-        if (en.getCrew().getOptions().booleanOption("iron_man")) {
-            pilotDamage = 1;
+        if (en.getCrew().getOptions().booleanOption("pain_resistance") || en.getCrew().getOptions().booleanOption("iron_man")) {
+            pilotDamage -= 1;
         }
         // tanks only take pilot damage when using BVDNI or VDNI
         if ((en instanceof Tank)

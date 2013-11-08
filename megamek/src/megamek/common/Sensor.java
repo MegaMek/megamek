@@ -129,8 +129,8 @@ public class Sensor implements Serializable {
         if(los.isBlockedByHill() 
                 && (type != TYPE_MEK_SEISMIC) 
                 && (type != TYPE_VEE_SEISMIC)
-                && (type != TYPE_MEK_MAGSCAN) 
-                && (type != TYPE_VEE_MAGSCAN)
+                && (type != TYPE_MEK_MAGSCAN || game.getOptions().booleanOption("magscan_nohills")) 
+                && (type != TYPE_VEE_MAGSCAN || game.getOptions().booleanOption("magscan_nohills"))
                 && !isBAP()) {
             return 0;
         }

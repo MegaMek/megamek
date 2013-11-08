@@ -2483,10 +2483,12 @@ public class MoveStep implements Serializable {
 
         // check for fog
         if ((game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_LIGHT)
-                && !game.getBoard().inSpace() && parent.isCareful()) {
+                && !game.getBoard().inSpace() && parent.isCareful()
+                && !game.getOptions().booleanOption("no_night_move_pen")) {
             mp += 1;
         } else if ((game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)
-                && !game.getBoard().inSpace() && parent.isCareful()) {
+                && !game.getBoard().inSpace() && parent.isCareful()
+                && !game.getOptions().booleanOption("no_night_move_pen")) {
             mp += 2;
         }
 
@@ -2495,13 +2497,16 @@ public class MoveStep implements Serializable {
         // the table on p. 36 of TacOps
         // TODO: waiting to hear whether searchlights affect this
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_FULL_MOON)
-                && !game.getBoard().inSpace() && parent.isCareful()) {
+                && !game.getBoard().inSpace() && parent.isCareful()
+                && !game.getOptions().booleanOption("no_night_move_pen")) {
             mp += 1;
         } else if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
-                && !game.getBoard().inSpace() && parent.isCareful()) {
+                && !game.getBoard().inSpace() && parent.isCareful()
+                && !game.getOptions().booleanOption("no_night_move_pen")) {
             mp += 2;
         } else if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)
-                && !game.getBoard().inSpace() && parent.isCareful()) {
+                && !game.getBoard().inSpace() && parent.isCareful()
+                && !game.getOptions().booleanOption("no_night_move_pen")) {
             mp += 3;
         }
 

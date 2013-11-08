@@ -153,7 +153,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         buttons = new Hashtable<Command, MegamekButton>(
 				(int) (Command.values().length * 1.25 + 0.5));
 		for (Command cmd : Command.values()) {
-			String title = Messages.getString("SelectArtyAutoHitHexDisplay."
+			String title = Messages.getString("TargetingPhaseDisplay."
 					+ cmd.getCmd());
 			MegamekButton newButton = new MegamekButton(title);
 			newButton.addActionListener(this);
@@ -217,6 +217,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     protected ArrayList<MegamekButton> getButtonList(){                
     	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
         for (Command cmd : Command.values()){
+        	if (cmd == Command.FIRE_CANCEL){
+        		continue;
+        	}
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;

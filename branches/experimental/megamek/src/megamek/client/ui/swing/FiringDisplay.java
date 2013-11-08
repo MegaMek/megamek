@@ -189,7 +189,7 @@ KeyListener, ItemListener, ListSelectionListener {
         		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
         
 		butDone.setText("<html><b>"+Messages.getString(
-        		"FiringDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
+        		"FiringDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 		
         setupButtonPanel();
@@ -226,7 +226,8 @@ KeyListener, ItemListener, ListSelectionListener {
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>(); 
         int i = 0;
         for (Command cmd : Command.values()){
-        	if (cmd == Command.FIRE_NEXT || cmd == Command.FIRE_MORE){
+        	if (cmd == Command.FIRE_NEXT || cmd == Command.FIRE_MORE || 
+        			cmd == Command.FIRE_CANCEL){
         		continue;
         	}
         	if (i % buttonsPerGroup == 0){

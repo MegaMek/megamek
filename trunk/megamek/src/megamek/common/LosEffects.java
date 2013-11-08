@@ -523,6 +523,7 @@ public class LosEffects {
         if(game.getOptions().booleanOption("tacops_dead_zones") && isDeadZone(game, ai)) {
             LosEffects los = new LosEffects();
             los.blocked = true;
+            los.blockedByHill = true;
             los.deadZone = true;
             los.hasLoS = false;
             los.targetLoc = ai.targetPos;

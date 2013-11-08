@@ -107,6 +107,10 @@ v0.37.0-dev (SVN)
 + unofficial option: CASE/CASEII reduces pilot damage on ammo explosion
 + Bug: ammo reduced twice in weapon bays using aero sanity rules
 + better mechdisplay when using aero sanity rules for squadrons and capital-class vessels
++ SPA: sandblaster (AToW)
++ SPA: cluster hitter (AToW) and cluster master (unofficial)
++ SPA: sensor geek (unofficial), all weather (unofficial)
++ WeaponHandler#getClusterModifier replaces all the duplicate code in calcNHits for various handlers
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

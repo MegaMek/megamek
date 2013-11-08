@@ -49,7 +49,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      */
     private static final long serialVersionUID = -4801130911083653548L;
     boolean amsEnganged = false;
-    int nSalvoBonus = 0;
     boolean advancedAMS = false;
 
 
@@ -99,25 +98,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         int missilesHit;
-        int nMissilesModifier = nSalvoBonus;
-        boolean tacopscluster = game.getOptions().booleanOption(
-                "tacops_clusterhitpen");
-
-        int[] ranges = wtype.getRanges(weapon);
-        if (tacopscluster) {
-            if (nRange <= 1) {
-                nMissilesModifier += 1;
-            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
-                nMissilesModifier += 0;
-            } else {
-                nMissilesModifier -= 1;
-            }
-        }
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > ranges[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
+        int nMissilesModifier = getClusterModifiers(true);
 
         boolean bMekTankStealthActive = false;
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
@@ -224,17 +205,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     nMissilesModifier += 2;
                 }
             }
-        }
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
         }
 
         // add AMS mods

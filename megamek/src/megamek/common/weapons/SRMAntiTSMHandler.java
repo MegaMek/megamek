@@ -66,35 +66,8 @@ public class SRMAntiTSMHandler extends SRMHandler {
             return 1;
         }
         int missilesHit;
-        int nMissilesModifier = nSalvoBonus;
-        boolean tacopscluster = game.getOptions().booleanOption(
-                "tacops_clusterhitpen");
-        if (tacopscluster) {
-            if (nRange <= 1) {
-                nMissilesModifier += 1;
-            } else if (nRange <= wtype.getMediumRange()) {
-                nMissilesModifier += 0;
-            } else {
-                nMissilesModifier -= 1;
-            }
-        }
-
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
-
+        int nMissilesModifier = getClusterModifiers(true);
+      
         // Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {

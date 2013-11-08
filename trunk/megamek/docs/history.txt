@@ -97,6 +97,7 @@ v0.37.0-dev (SVN)
 + Princess bot help button not working
 + Superheavy BV fixes
 + aerospace sanity mod unofficial option (see docs/aero_sanity_mod.txt for details)
++ added visual range limits to LoS shading in BoardView1
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

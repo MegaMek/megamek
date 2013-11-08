@@ -1812,10 +1812,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 		
 				int dist = src.distance(c);
 				
+				int visualRange = 30;
+                LosEffects los = getLosEffects(src, c);
+				if(null != selectedEntity) {
+				    //TODO: how do we make adjustments for spotlights?
+				    visualRange = Compute.getVisualRange(game, selectedEntity, los, false);
+				}
+				
 				if (dist == 0) {
 					drawHexBorder(p, boardGraph, selected_color, pad, lw);
 				} else if (dist < max_dist) {
-					if (!getLosEffects(src, c).canSee()) {
+					if (!los.canSee() || dist > visualRange) {
 						if (darken) {
 							drawHexLayer(p, boardGraph, transparent_gray);
 						}
@@ -1826,7 +1833,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 								break;
 							}
 						}
-					}
+					}				
 				}
 		    }
         }

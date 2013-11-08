@@ -3302,14 +3302,8 @@ public class Compute {
         }
 
         // check visual range based on planetary conditions
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
-                teSpotlight);
-
-        // smoke in los
-        visualRange -= LosEffects.calculateLos(game, ae.getId(), target)
-                .getLightSmoke();
-        visualRange -= (2 * LosEffects.calculateLos(game, ae.getId(), target)
-                .getHeavySmoke());
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), target);
+        int visualRange = getVisualRange(game, ae, los, teSpotlight);
 
         // check for camo and null sig on the target
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -3334,6 +3328,14 @@ public class Compute {
         distance += 2 * target.getAltitude();
         return distance <= visualRange;
 
+    }
+    
+    public static int getVisualRange(IGame game, Entity ae, LosEffects los, boolean teSpotlight) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
+        visualRange -= los.getLightSmoke();
+        visualRange -= 2*los.getHeavySmoke();
+        visualRange = Math.max(1, visualRange);
+        return visualRange;
     }
 
     /**
@@ -3479,7 +3481,7 @@ public class Compute {
         return range;
 
     }
-
+    
     public static int targetSideTable(Coords inPosition, Targetable target) {
         return target.sideTable(inPosition);
     }

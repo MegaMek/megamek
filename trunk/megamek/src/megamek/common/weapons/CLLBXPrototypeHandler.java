@@ -65,7 +65,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
         }
 
         int shotsHit;
-        int nHitsModifier = 0;
+        int nHitsModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
@@ -74,35 +74,6 @@ public class CLLBXPrototypeHandler extends LBXHandler {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
         } else {
-            // TacOps Cluster Hit Penalties p. 83
-            boolean tacopscluster = game.getOptions().booleanOption(
-                    "tacops_clusterhitpen");
-            if (tacopscluster) {
-                if (nRange <= 1) {
-                    nHitsModifier += 1;
-                } else if (nRange <= wtype.getMediumRange()) {
-                    nHitsModifier += 0;
-                } else {
-                    nHitsModifier -= 1;
-                }
-            }
-            if (game.getOptions().booleanOption("tacops_range")
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-                nHitsModifier -= 2;
-            }
-
-            if (bGlancing) {
-                nHitsModifier -= 4;
-            }
-
-            if (bDirect) {
-                nHitsModifier += (toHit.getMoS() / 3) * 2;
-            }
-
-            if (game.getPlanetaryConditions().hasEMI()) {
-                nHitsModifier -= 2;
-            }
-
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;
 

@@ -89,6 +89,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean secondShot = false;
     protected int numRapidFireHits;
     protected String sSalvoType = " shots(s) ";
+    int nSalvoBonus = 0;
 
 
     /**
@@ -1329,5 +1330,60 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     .println("WeaponHandler.restore: could not restore equipment type \""
                             + typeName + "\"");
         }
+    }
+    
+    protected int getClusterModifiers(boolean clusterRangePenalty) {
+        int nMissilesModifier = nSalvoBonus;
+        
+        int[] ranges = wtype.getRanges(weapon);
+        if (clusterRangePenalty && game.getOptions().booleanOption("tacops_clusterhitpen")) {
+            if (nRange <= 1) {
+                nMissilesModifier += 1;
+            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
+                nMissilesModifier += 0;
+            } else {
+                nMissilesModifier -= 1;
+            }
+        }
+        
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > ranges[RangeType.RANGE_LONG])) {
+            nMissilesModifier -= 2;
+        }
+        
+        if (bGlancing) {
+            nMissilesModifier -= 4;
+        }
+
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
+        }
+
+        if (game.getPlanetaryConditions().hasEMI()) {
+            nMissilesModifier -= 2;
+        }
+        
+        if(null != ae.getCrew()) {
+            if(ae.getCrew().getOptions().booleanOption("sandblaster")
+                    && ae.getCrew().getOptions().stringOption("weapon_specialist")
+                    .equals(wtype.getName())) {
+                if(nRange > ranges[RangeType.RANGE_MEDIUM]) {
+                    nMissilesModifier += 2;
+                }
+                else if(nRange > ranges[RangeType.RANGE_SHORT]) {
+                    nMissilesModifier += 3;
+                }
+                else {
+                    nMissilesModifier += 4;
+                }
+            }
+            else if(ae.getCrew().getOptions().booleanOption("cluster_master")) {
+                nMissilesModifier += 2;
+            }
+            else if(ae.getCrew().getOptions().booleanOption("cluster_hitter")) {
+                nMissilesModifier += 1;
+            }
+        }
+        return nMissilesModifier;
     }
 }

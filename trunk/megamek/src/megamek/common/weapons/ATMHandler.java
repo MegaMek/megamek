@@ -203,12 +203,6 @@ public class ATMHandler extends MissileWeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         int missilesHit;
-        int nMissilesModifier = nSalvoBonus;
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
 
         boolean bMekTankStealthActive = false;
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
@@ -216,6 +210,9 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
+        
+        int nMissilesModifier = getClusterModifiers(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE);
+        
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
@@ -288,18 +285,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 }
             }
         }
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
-
+        
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 

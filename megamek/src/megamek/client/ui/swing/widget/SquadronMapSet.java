@@ -132,9 +132,14 @@ public class SquadronMapSet implements DisplayMapSet{
             Aero fighter = fs.getFighter(i);
             int armor = fighter.getCapArmor();
             int armorO = fighter.getCap0Armor();
+            armorVLabel[i].setValue(Integer.toString(armor));
+
+            if(fighter.getGame().getOptions().booleanOption("aero_sanity")) {
+                armor = (int)Math.ceil(armor/10.0);
+                armorO = (int)Math.ceil(armorO/10.0);
+            }
             
             drawArmorImage(armorImage[i], armor, armorO);
-            armorVLabel[i].setValue(Integer.toString(armor));
             drawCrits(avCritImage[i], fighter.getAvionicsHits());
             drawCrits(engineCritImage[i], fighter.getEngineHits());
             drawCrits(fcsCritImage[i], fighter.getFCSHits());

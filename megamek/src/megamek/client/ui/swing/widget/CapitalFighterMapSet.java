@@ -95,9 +95,14 @@ public class CapitalFighterMapSet implements DisplayMapSet{
         
         int armor = t.getCapArmor();
         int armorO = t.getCap0Armor();
+        armorVLabel.setValue(Integer.toString(armor));
+
+        if(t.getGame().getOptions().booleanOption("aero_sanity")) {
+            armor = (int)Math.ceil(armor/10.0);
+            armorO = (int)Math.ceil(armorO/10.0);
+        }
         
         drawArmorImage(armorImage, armor, armorO);
-        armorVLabel.setValue(Integer.toString(armor));
         drawCrits(avCritImage, t.getAvionicsHits());
         drawCrits(engineCritImage, t.getEngineHits());
         drawCrits(fcsCritImage, t.getFCSHits());

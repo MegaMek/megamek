@@ -126,6 +126,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
         addOption(advancedRules, "inclusive_sensor_range", false); //$NON-NLS-1$
+        addOption(advancedRules, "magscan_nohills", false); //$NON-NLS-1$
         addOption(advancedRules, "woods_burn_down", false); //$NON-NLS-1$
         addOption(advancedRules, "woods_burn_down_amount", 5); //$NON-NLS-1$
         addOption(advancedRules, "no_ignite_clear", false); //$NON-NLS-1$
@@ -193,6 +194,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "clubs_punch", false); //$NON-NLS-1$
         addOption(advancedCombat, "on_map_predesignate", false); //$NON-NLS-1$
         addOption(advancedCombat, "max_external_heat", 15); //$NON-NLS-1$
+        addOption(advancedCombat, "case_pilot_damage", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
@@ -220,6 +222,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "falls_end_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
+        addOption(advancedGroundMovement, "no_night_move_pen", false); //$NON-NLS-1$
+
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$

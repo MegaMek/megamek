@@ -1809,16 +1809,39 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 		        final int d[] = {4,7,10,13,max_dist};
 				
 				final Color transparent_gray = new Color(0,0,0,gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA));
+                final Color transparent_light_gray = new Color(0,0,0,gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA)/2);
 				final Color selected_color = new Color(50,80,150,70);
 		
 				int dist = src.distance(c);
 				
+				int visualRange = 30;
+				int minSensorRange = 0;
+				int maxSensorRange = 0;			
+                LosEffects los = getLosEffects(src, c);
+				if(null != selectedEntity) {
+				    //TODO: how do we make adjustments for target spotlights illuminating intervening terrain?
+				    visualRange = Compute.getVisualRange(game, selectedEntity, los, false);
+				    int bracket = Compute.getSensorRangeBracket(selectedEntity, null);
+			        int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
+
+			        maxSensorRange = bracket * range;
+			        minSensorRange = Math.max((bracket - 1) * range, 0);
+			        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+			            minSensorRange = 0;
+			        }
+				}
+				
 				if (dist == 0) {
 					drawHexBorder(p, boardGraph, selected_color, pad, lw);
 				} else if (dist < max_dist) {
-					if (!getLosEffects(src, c).canSee()) {
+					if (!los.canSee() || dist > visualRange) {					    
 						if (darken) {
-							drawHexLayer(p, boardGraph, transparent_gray);
+						    if(game.getOptions().booleanOption("tacops_sensors")
+						            && dist >= minSensorRange && dist <= maxSensorRange) {
+	                              drawHexLayer(p, boardGraph, transparent_light_gray);
+						    } else {
+						        drawHexLayer(p, boardGraph, transparent_gray);
+						    }
 						}
 					} else if (highlight) {
 						for (int k=0; k<cols.length; k++) {
@@ -1827,7 +1850,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 								break;
 							}
 						}
-					}
+					}				
 				}
 		    }
         }

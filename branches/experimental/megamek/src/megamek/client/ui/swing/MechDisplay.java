@@ -77,6 +77,7 @@ import megamek.client.ui.swing.widget.SpheroidMapSet;
 import megamek.client.ui.swing.widget.SquadronMapSet;
 import megamek.client.ui.swing.widget.SuperHeavyTankMapSet;
 import megamek.client.ui.swing.widget.TankMapSet;
+import megamek.client.ui.swing.widget.TripodMechMapSet;
 import megamek.client.ui.swing.widget.VTOLMapSet;
 import megamek.client.ui.swing.widget.WarshipMapSet;
 import megamek.common.Aero;
@@ -110,6 +111,7 @@ import megamek.common.SmallCraft;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.Terrains;
+import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
@@ -421,6 +423,7 @@ public class MechDisplay extends JPanel {
         private ProtomechMapSet proto;
         private VTOLMapSet vtol;
         private QuadMapSet quad;
+        private TripodMechMapSet tripod;
         private GunEmplacementMapSet gunEmplacement;
         private ArmlessMechMapSet armless;
         private LargeSupportTankMapSet largeSupportTank;
@@ -469,6 +472,7 @@ public class MechDisplay extends JPanel {
             proto = new ProtomechMapSet(this);
             vtol = new VTOLMapSet(this);
             quad = new QuadMapSet(this);
+            tripod = new TripodMechMapSet(this);
             gunEmplacement = new GunEmplacementMapSet(this);
             armless = new ArmlessMechMapSet(this);
             largeSupportTank = new LargeSupportTankMapSet(this);
@@ -506,6 +510,12 @@ public class MechDisplay extends JPanel {
             removeAll();
             if (en instanceof QuadMech) {
                 ams = quad;
+                minLeftMargin = minMechLeftMargin;
+                minTopMargin = minMechTopMargin;
+                minBottomMargin = minMechBottomMargin;
+                minRightMargin = minMechRightMargin;
+            } else if (en instanceof TripodMech) {
+                ams = tripod;
                 minLeftMargin = minMechLeftMargin;
                 minTopMargin = minMechTopMargin;
                 minBottomMargin = minMechBottomMargin;
@@ -1207,11 +1217,11 @@ public class MechDisplay extends JPanel {
             entity = en;
 
             // Check Game Options for max external heat
-            int max_ext_heat = game.getOptions().intOption("max_external_heat"); 
+            int max_ext_heat = game.getOptions().intOption("max_external_heat");
             if( max_ext_heat < 0) {
                 max_ext_heat = 15; // Standard value specified in TW p.159
             }
-            
+
             int currentHeatBuildup = (en.heat // heat from last round
                     + en.getEngineCritHeat() // heat engine crits will add
                     + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources

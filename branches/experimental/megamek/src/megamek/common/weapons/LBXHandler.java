@@ -48,6 +48,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     public LBXHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        sSalvoType =" pellet(s) ";
     }
 
     /*
@@ -153,7 +154,7 @@ public class LBXHandler extends AmmoWeaponHandler {
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
-        r.add(" pellet(s) ");
+        r.add(sSalvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);

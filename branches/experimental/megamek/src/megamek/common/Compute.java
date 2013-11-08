@@ -3302,14 +3302,8 @@ public class Compute {
         }
 
         // check visual range based on planetary conditions
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
-                teSpotlight);
-
-        // smoke in los
-        visualRange -= LosEffects.calculateLos(game, ae.getId(), target)
-                .getLightSmoke();
-        visualRange -= (2 * LosEffects.calculateLos(game, ae.getId(), target)
-                .getHeavySmoke());
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), target);
+        int visualRange = getVisualRange(game, ae, los, teSpotlight);
 
         // check for camo and null sig on the target
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -3334,6 +3328,14 @@ public class Compute {
         distance += 2 * target.getAltitude();
         return distance <= visualRange;
 
+    }
+    
+    public static int getVisualRange(IGame game, Entity ae, LosEffects los, boolean teSpotlight) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
+        visualRange -= los.getLightSmoke();
+        visualRange -= 2*los.getHeavySmoke();
+        visualRange = Math.max(1, visualRange);
+        return visualRange;
     }
 
     /**
@@ -3383,17 +3385,24 @@ public class Compute {
                 || Compute.inSensorRange(game, ae, target);
     }
 
-    private static int getSensorRangeBracket(Entity ae, Targetable target) {
+    /**
+     * gets the sensor range bracket when detecting a particular type of target.
+     * target may be null here, which gives you the bracket without target entity modifiers
+     */
+    public static int getSensorRangeBracket(Entity ae, Targetable target) {
 
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {
             return 0;
         }
         // only works for entities
-        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            return 0;
+        Entity te = null;
+        if (null!= target) {
+            if(target.getTargetType() != Targetable.TYPE_ENTITY) {
+                return 0;
+            }
+            te = (Entity) target;           
         }
-        Entity te = (Entity) target;
 
         // if this sensor is an active probe and it is critted, then no can see
         if (sensor.isBAP() && !ae.hasBAP(false)) {
@@ -3401,13 +3410,15 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        check += sensor.getModsForStealth(te);
+        if(null != te) {
+            check += sensor.getModsForStealth(te);
+            // Metal Content...
+            if (ae.getGame().getOptions().booleanOption("metal_content")) {
+                check += sensor.getModForMetalContent(ae, te);
+            }
+        }
         // ECM bubbles
         check += sensor.getModForECM(ae);
-        // Metal Content...
-        if (ae.getGame().getOptions().booleanOption("metal_content")) {
-            check += sensor.getModForMetalContent(ae, te);
-        }
 
         return Compute.getSensorBracket(check);
     }
@@ -3431,21 +3442,33 @@ public class Compute {
     }
 
     /**
-     * Checks whether the target is within sensor range of the current entity
+     * gets the size of the sensor range bracket when detecting a particular type of target
      */
     private static int getSensorRangeByBracket(IGame game, Entity ae,
             Targetable target) {
+        return getSensorRangeByBracket(game, ae, target, LosEffects.calculateLos(game, ae.getId(), target));
+    }
+    
+    /**
+     * gets the size of the sensor range bracket when detecting a particular type of target.
+     * target may be null here, which gives you the range without target entity modifiers
+     */
+    public static int getSensorRangeByBracket(IGame game, Entity ae,
+            Targetable target, LosEffects los) {
 
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {
             return 0;
         }
         // only works for entities
-        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            return 0;
+        Entity te = null;
+        if (null!= target) {
+            if(target.getTargetType() != Targetable.TYPE_ENTITY) {
+                return 0;
+            }
+            te = (Entity) target;           
         }
-        Entity te = (Entity) target;
-
+        
         // if this sensor is an active probe and it is critted, then no can see
         if (sensor.isBAP() && !ae.hasBAP(false)) {
             return 0;
@@ -3453,8 +3476,7 @@ public class Compute {
 
         // if we are crossing water then only magscan will work unless we are a
         // naval vessel
-        if (LosEffects.calculateLos(game, ae.getId(), target)
-                .isBlockedByWater()
+        if (null != te && los.isBlockedByWater()
                 && (sensor.getType() != Sensor.TYPE_MEK_MAGSCAN)
                 && (sensor.getType() != Sensor.TYPE_VEE_MAGSCAN)
                 && (ae.getMovementMode() != EntityMovementMode.HYDROFOIL)
@@ -3466,11 +3488,12 @@ public class Compute {
         int range = sensor.getRangeByBracket();
 
         // adjust the range based on LOS and planetary conditions
-        range = sensor.adjustRange(range, game,
-                LosEffects.calculateLos(game, ae.getId(), target));
+        range = sensor.adjustRange(range, game, los);
 
         // now adjust for anything about the target entity (size, heat, etc)
-        range = sensor.entityAdjustments(range, te, game);
+        if(null != te) {
+            range = sensor.entityAdjustments(range, te, game);
+        }
 
         if (range < 0) {
             range = 0;
@@ -3479,7 +3502,7 @@ public class Compute {
         return range;
 
     }
-
+    
     public static int targetSideTable(Coords inPosition, Targetable target) {
         return target.sideTable(inPosition);
     }

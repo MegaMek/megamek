@@ -35,7 +35,7 @@ public class ISSnubNosePPC extends PPCWeapon {
     public ISSnubNosePPC() {
         super();
 
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         name = "Snub-Nose PPC";
         setInternalName("ISSNPPC");
         addLookupName("ISSnubNosedPPC");
@@ -62,11 +62,11 @@ public class ISSnubNosePPC extends PPCWeapon {
         medAV = 8;
         // with a capacitor
         explosive = true;
-        introDate = 2874;
-        techLevel.put(2874, techLevel.get(3071));
+        introDate = 2784;
+        techLevel.put(2784,TechConstants.T_IS_EXPERIMENTAL);
         extinctDate = 2790;
         reintroduced = 3067;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        availRating = new int[] { RATING_E, RATING_X, RATING_E };
         techRating = RATING_E;
     }
 

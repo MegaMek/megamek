@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -123,20 +124,23 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
+        if(game.getOptions().booleanOption("aero_sanity")) {
+            return handleAeroSanity(phase, vPhaseReport);
+        }
+
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
 
         if ((((null == entityTarget) || entityTarget.isAirborne()) 
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
-                      &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                      &&  target.getTargetType() != Targetable.TYPE_BUILDING))
+                &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
                 || game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
 
         // then we have a ground target, so we need to handle it in a special
         // way
-
         insertAttacks(phase, vPhaseReport);
 
         final boolean targetInBuilding = Compute.isInBuilding(game,
@@ -145,7 +149,7 @@ public class BayWeaponHandler extends WeaponHandler {
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
         }
-        
+
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
@@ -278,7 +282,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     target.getPosition());
             return false;
         }
-        
+
         Report.addNewline(vPhaseReport);
         // loop through weapons in bay and do damage
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
@@ -317,6 +321,177 @@ public class BayWeaponHandler extends WeaponHandler {
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         } // Handle the next weapon in the vay
+        Report.addNewline(vPhaseReport);
+        return false;
+    }
+
+    public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        if (!cares(phase)) {
+            return true;
+        }
+
+        insertAttacks(phase, vPhaseReport);
+
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                : null;
+        final boolean targetInBuilding = Compute.isInBuilding(game,
+                entityTarget);
+
+        if (entityTarget != null) {
+            ae.setLastTarget(entityTarget.getId());
+        }
+        // Which building takes the damage?
+        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        // Report weapon attack and its to-hit value.
+        Report r = new Report(3115);
+        r.indent();
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(wtype.getName());
+        if (entityTarget != null) {
+            r.addDesc(entityTarget);
+        } else {
+            r.messageId = 3120;
+            r.add(target.getDisplayName(), true);
+        }
+        vPhaseReport.addElement(r);
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            r = new Report(3135);
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+            return false;
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+            r = new Report(3140);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            r = new Report(3145);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+        } else {
+            // roll to hit
+            r = new Report(3150);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getValue());
+            vPhaseReport.addElement(r);
+        }
+
+        // dice have been rolled, thanks
+        r = new Report(3155);
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(roll);
+        vPhaseReport.addElement(r);
+
+        // do we hit?
+        bMissed = roll < toHit.getValue();
+
+        // are we a glancing hit?
+        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+            if (roll == toHit.getValue()) {
+                bGlancing = true;
+                r = new Report(3186);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                bGlancing = false;
+            }
+        } else {
+            bGlancing = false;
+        }
+
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+
+        // Do this stuff first, because some weapon's miss report reference
+        // the
+        // amount of shots fired and stuff.
+        nDamPerHit = calcDamagePerHit();
+        addHeat();
+
+        attackValue = calcAttackValue();
+
+        // Any necessary PSRs, jam checks, etc.
+        // If this boolean is true, don't report
+        // the miss later, as we already reported
+        // it in doChecks
+        boolean missReported = doChecks(vPhaseReport);
+        if (missReported) {
+            bMissed = true;
+        }
+
+        // Do we need some sort of special resolution (minefields,
+        // artillery,
+        if (specialResolution(vPhaseReport, entityTarget)) {
+            return false;
+        }
+
+        // We have to adjust the reports on a miss, so they line up
+        if (bMissed){
+            reportMiss(vPhaseReport);
+            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                    vPhaseReport)) {
+                return false;
+            }
+        }
+
+        Report.addNewline(vPhaseReport);
+        toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+        int replaceReport;
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted m = ae.getEquipment(wId);
+            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                WeaponType bayWType = ((WeaponType) m.getType());
+                if(bayWType instanceof Weapon) {
+                    replaceReport = vPhaseReport.size();
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
+                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
+                    bayWHandler.setAnnouncedEntityFiring(false);
+                    bayWHandler.handle(phase, vPhaseReport);
+                    if(vPhaseReport.size() > replaceReport) {
+                        //fix the reporting - is there a better way to do this
+                        if(vPhaseReport.size() > replaceReport) {
+                            Report currentReport = vPhaseReport.get(replaceReport);
+                            while(null != currentReport) {
+                                vPhaseReport.remove(replaceReport);
+                                if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
+                                    currentReport = null;
+                                } else {
+                                    currentReport = vPhaseReport.get(replaceReport);
+                                }
+                            }
+                            r = new Report(3115);
+                            r.indent(2);
+                            r.newlines = 1;
+                            r.subject = subjectId;
+                            r.add(bayWType.getName());
+                            if (entityTarget != null) {
+                                r.addDesc(entityTarget);
+                            } else {
+                                r.messageId = 3120;
+                                r.add(target.getDisplayName(), true);
+                            }
+                            vPhaseReport.add(replaceReport, r);
+                        }
+                    }
+                }
+            }
+        } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
     }

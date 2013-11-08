@@ -105,11 +105,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_GROUND = CMD_MECH | CMD_TANK| CMD_VTOL | CMD_INF;
     public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | 
-    		CMD_INF | CMD_AERO ;
+            CMD_INF | CMD_AERO ;
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | 
-    		CMD_AERO | CMD_AERO_VECTORED;    
+            CMD_AERO | CMD_AERO_VECTORED;    
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | 
-    		CMD_AERO | CMD_AERO_VECTORED;  
+            CMD_AERO | CMD_AERO_VECTORED;  
     
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -119,7 +119,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      *
      */
     public static enum Command {
-    	MOVE_NEXT("moveNext", CMD_ALL), //$NON-NLS-1$
+        MOVE_NEXT("moveNext", CMD_ALL), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$        
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
         MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK), //$NON-NLS-1$
@@ -147,11 +147,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         MOVE_DIG_IN("moveDigIn", CMD_INF), //$NON-NLS-1$
         MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_MODE_MECH("moveModeMech", CMD_MECH), //$NON-NLS-1$
-        MOVE_MODE_AIRMECH("moveModeAirmech", CMD_MECH), //$NON-NLS-1$
-        MOVE_MODE_AIRCRAFT("moveModeAircraft", CMD_MECH), //$NON-NLS-1$
+        MOVE_MODE_MECH("moveModeMech", CMD_NONE), //$NON-NLS-1$
+        MOVE_MODE_AIRMECH("moveModeAirmech", CMD_NONE), //$NON-NLS-1$
+        MOVE_MODE_AIRCRAFT("moveModeAircraft", CMD_NONE), //$NON-NLS-1$
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_CAREFUL_STAND("moveCarefulStand", CMD_MECH), //$NON-NLS-1$
+        MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_SHUTDOWN("moveShutDown",CMD_NON_INF), //$NON-NLS-1$
         MOVE_STARTUP("moveStartup",CMD_NON_INF), //$NON-NLS-1$
@@ -185,69 +185,69 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED), //$NON-NLS-1$
         // Move envelope
         MOVE_ENVELOPE("MoveEnvelope", CMD_NONE), 
-    	MOVE_MORE("MoveMore", CMD_ALL);
-    	
-    	/**
-    	 * The command text.
-    	 */
-    	String cmd;
-    	
-    	/** 
-    	 * Flag that determines what unit types can use a command.
-    	 */
-    	public final int flag; 
-    	
-    	private Command(String c, int f){
-    		cmd = c;
-    		flag = f;
-    	}
-    	
-    	public String getCmd(){
-    		return cmd;
-    	}
-    	    	
-    	public String toString(){
-    		return cmd;
-    	}
-    	
-    	/**
-    	 * Return a list of valid commands for the given parameters.
-    	 * @param f 			The unit flag to specify what unit type the 
-    	 * 						commands are for.
-    	 * @param opts			A GameOptions reference for checking game 
-    	 * 						options
-    	 * @param forwardIni	A flag to see if we can pass the turn to a 
-    	 * 						teammate
-    	 * @return				An array of valid commands for the given 
-    	 * 						parameters
-    	 */
-    	public static Command[] values(int f, GameOptions opts, 
-    			boolean forwardIni){
-    		ArrayList<Command> flaggedCmds = new ArrayList<Command>();
-    		for (Command cmd : Command.values()){
-    			// Check for movements that with disabled game options
-				if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
-						&& !opts.booleanOption("manual_shutdown")) {
-					continue;
-				}
-				if (cmd == MOVE_SELF_DESTRUCT
-						&& !opts.booleanOption("tacops_self_destruct")) {
-					continue;
-				}
-				
-				if (cmd == MOVE_FORWARD_INI && !forwardIni){
-					continue;
-				}
-    	        
-				// Check unit type flag
-    			if ((cmd.flag & f) == f){
-    				flaggedCmds.add(cmd);
-    			}
-    		}
-    		return flaggedCmds.toArray(new Command[0]);
-    	}
-    	
-    	
+        MOVE_MORE("MoveMore", CMD_ALL);
+        
+        /**
+         * The command text.
+         */
+        String cmd;
+        
+        /** 
+         * Flag that determines what unit types can use a command.
+         */
+        public final int flag; 
+        
+        private Command(String c, int f){
+            cmd = c;
+            flag = f;
+        }
+        
+        public String getCmd(){
+            return cmd;
+        }
+                
+        public String toString(){
+            return cmd;
+        }
+        
+        /**
+         * Return a list of valid commands for the given parameters.
+         * @param f             The unit flag to specify what unit type the 
+         *                          commands are for.
+         * @param opts          A GameOptions reference for checking game 
+         *                          options
+         * @param forwardIni    A flag to see if we can pass the turn to a 
+         *                          teammate
+         * @return              An array of valid commands for the given 
+         *                         parameters
+         */
+        public static Command[] values(int f, GameOptions opts, 
+                boolean forwardIni){
+            ArrayList<Command> flaggedCmds = new ArrayList<Command>();
+            for (Command cmd : Command.values()){
+                // Check for movements that with disabled game options
+                if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
+                        && !opts.booleanOption("manual_shutdown")) {
+                    continue;
+                }
+                if (cmd == MOVE_SELF_DESTRUCT
+                        && !opts.booleanOption("tacops_self_destruct")) {
+                    continue;
+                }
+                
+                if (cmd == MOVE_FORWARD_INI && !forwardIni){
+                    continue;
+                }
+                
+                // Check unit type flag
+                if ((cmd.flag & f) == f){
+                    flaggedCmds.add(cmd);
+                }
+            }
+            return flaggedCmds.toArray(new Command[0]);
+        }
+        
+        
     }
     
     private static final int NUM_BUTTON_LAYOUTS = 4;
@@ -297,15 +297,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         // Create all of the buttons
         buttons = new Hashtable<Command,MegamekButton>(
-        		(int)(Command.values().length * 1.25 + 0.5));
+                (int)(Command.values().length * 1.25 + 0.5));
         for (Command cmd : Command.values()){
-        	String title = 
-        			Messages.getString("MovementDisplay." + cmd.getCmd());
-        	MegamekButton newButton = new MegamekButton(title);
-        	newButton.addActionListener(this);
-        	newButton.setActionCommand(cmd.getCmd());
-        	newButton.setEnabled(false);
-        	buttons.put(cmd,newButton);
+            String title = 
+                    Messages.getString("MovementDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title);
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd,newButton);
         }       
                 
         butDone.setText("<html><b>" + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
@@ -343,20 +343,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
     
     private ArrayList<MegamekButton> getButtonList(int flag){
-    	
-    	boolean forwardIni = 
-    			(clientgui.getClient().game.getTeamForPlayer(
-    					clientgui.getClient().getLocalPlayer()) != null)
+        
+        boolean forwardIni = 
+                (clientgui.getClient().game.getTeamForPlayer(
+                        clientgui.getClient().getLocalPlayer()) != null)
                 && (clientgui.getClient().game.getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1);
-    	GameOptions opts = clientgui.getClient().game.getOptions();
-    	
-    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
-    	
-    	for (Command cmd : Command.values(flag,opts,forwardIni)){
-    		buttonList.add(buttons.get(cmd));
-    	}
-    	return buttonList;
+        GameOptions opts = clientgui.getClient().game.getOptions();
+        
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
+        
+        for (Command cmd : Command.values(flag,opts,forwardIni)){
+            buttonList.add(buttons.get(cmd));
+        }
+        return buttonList;
     }
 
     private void setupButtonPanel() {
@@ -368,25 +368,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         final Entity ce = ce();
         if (ce != null) {
             if (ce instanceof Infantry) {
-            	buttonList = getButtonList(CMD_INF);
+                buttonList = getButtonList(CMD_INF);
             } else if (ce instanceof VTOL) {
-            	buttonList = getButtonList(CMD_VTOL);
+                buttonList = getButtonList(CMD_VTOL);
             } else if (ce instanceof Tank) {
-            	buttonList = getButtonList(CMD_TANK);
+                buttonList = getButtonList(CMD_TANK);
             } else if (ce instanceof Aero) {
                 if (ce.isAirborne() && 
-                		clientgui.getClient().game.useVectorMove()) {
-                	buttonList = getButtonList(CMD_AERO_VECTORED);
+                        clientgui.getClient().game.useVectorMove()) {
+                    buttonList = getButtonList(CMD_AERO_VECTORED);
                 } else if (ce.isAirborne() && 
-                		!clientgui.getClient().game.useVectorMove()) {
-                	buttonList = getButtonList(CMD_AERO);
+                        !clientgui.getClient().game.useVectorMove()) {
+                    buttonList = getButtonList(CMD_AERO);
                 } else {
-                	buttonList = getButtonList(CMD_TANK);
+                    buttonList = getButtonList(CMD_TANK);
                 }
             }
         }
         if (buttonList == null){
-        	buttonList = getButtonList(CMD_MECH);
+            buttonList = getButtonList(CMD_MECH);
         }
         buttonList.remove(getBtn(Command.MOVE_NEXT));
         
@@ -475,10 +475,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
 
     private MegamekButton getBtn(Command c){
-    	return buttons.get(c);
+        return buttons.get(c);
     }
     private boolean isEnabled(Command c){
-    	return buttons.get(c).isEnabled();
+        return buttons.get(c).isEnabled();
     }
     
     /**
@@ -519,16 +519,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 || (ce.getMovementMode() == EntityMovementMode.VTOL)
                 || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-        	getBtn(Command.MOVE_CLIMB_MODE).setEnabled(false);
+            getBtn(Command.MOVE_CLIMB_MODE).setEnabled(false);
         } else {
-        	getBtn(Command.MOVE_CLIMB_MODE).setEnabled(true);
+            getBtn(Command.MOVE_CLIMB_MODE).setEnabled(true);
         }
         if (ce instanceof Infantry) {
-        	getBtn(Command.MOVE_DIG_IN).setEnabled(true);
-        	getBtn(Command.MOVE_FORTIFY).setEnabled(true);
+            getBtn(Command.MOVE_DIG_IN).setEnabled(true);
+            getBtn(Command.MOVE_FORTIFY).setEnabled(true);
         } else {
-        	getBtn(Command.MOVE_DIG_IN).setEnabled(false);
-        	getBtn(Command.MOVE_FORTIFY).setEnabled(false);
+            getBtn(Command.MOVE_DIG_IN).setEnabled(false);
+            getBtn(Command.MOVE_FORTIFY).setEnabled(false);
         }
         updateTurnButton();
 
@@ -548,11 +548,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateShutdownButton();
 
         if (ce instanceof Aero) {
-        	getBtn(Command.MOVE_THRUST).setEnabled(true);
-        	getBtn(Command.MOVE_YAW).setEnabled(true);
-        	getBtn(Command.MOVE_END_OVER).setEnabled(true);
-        	getBtn(Command.MOVE_TURN_LEFT).setEnabled(true);
-        	getBtn(Command.MOVE_TURN_RIGHT).setEnabled(true);
+            getBtn(Command.MOVE_THRUST).setEnabled(true);
+            getBtn(Command.MOVE_YAW).setEnabled(true);
+            getBtn(Command.MOVE_END_OVER).setEnabled(true);
+            getBtn(Command.MOVE_TURN_LEFT).setEnabled(true);
+            getBtn(Command.MOVE_TURN_RIGHT).setEnabled(true);
             setEvadeAeroEnabled(true);
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
@@ -578,16 +578,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         if (isInfantry
                 && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
-        	getBtn(Command.MOVE_FORTIFY).setEnabled(true);
+            getBtn(Command.MOVE_FORTIFY).setEnabled(true);
         } else {
-        	getBtn(Command.MOVE_FORTIFY).setEnabled(false);
+            getBtn(Command.MOVE_FORTIFY).setEnabled(false);
         }
         if (isInfantry
                 && clientgui.getClient().game.getOptions().booleanOption(
                         "tacops_dig_in")) {
-        	getBtn(Command.MOVE_DIG_IN).setEnabled(true);
+            getBtn(Command.MOVE_DIG_IN).setEnabled(true);
         } else {
-        	getBtn(Command.MOVE_DIG_IN).setEnabled(false);
+            getBtn(Command.MOVE_DIG_IN).setEnabled(false);
         }
         getBtn(Command.MOVE_SHAKE_OFF).setEnabled((ce instanceof Tank)
                 && (ce.getSwarmAttackerId() != Entity.NONE));
@@ -2116,34 +2116,34 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         
         if (!(ce instanceof Infantry)) {
-	        Vector<Integer> bayChoices = new Vector<Integer>();
-	        for (Transporter t : choice.getTransports()) {
-	        	if (t.canLoad(ce) && t instanceof Bay) {
-	        		bayChoices.add(((Bay) t).getBayNumber());
-	        	}
-	        }
-	        String[] retVal = new String[bayChoices.size()];
-	        int i = 0;
-	        for (Integer bn : bayChoices) {
-	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
-	        }
-	        if (bayChoices.size() > 1) {
-	        	String bayString = (String) JOptionPane.showInputDialog(
-	        				clientgui,
-	        				Messages
-	        						.getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
-	        						Messages
-	                                .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
-	                        JOptionPane.QUESTION_MESSAGE, null,
-	                        retVal, null);
-	        	ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(ce); 
-	        } else {
-	        	ce.setTargetBay(-1); // Safety set!
-	        }
+            Vector<Integer> bayChoices = new Vector<Integer>();
+            for (Transporter t : choice.getTransports()) {
+                if (t.canLoad(ce) && t instanceof Bay) {
+                    bayChoices.add(((Bay) t).getBayNumber());
+                }
+            }
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
+            }
+            if (bayChoices.size() > 1) {
+                String bayString = (String) JOptionPane.showInputDialog(
+                            clientgui,
+                            Messages
+                                    .getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
+                                    Messages
+                                    .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            retVal, null);
+                ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                // We need to update the entity here so that the server knows about our target bay
+                clientgui.getClient().sendUpdateEntity(ce); 
+            } else {
+                ce.setTargetBay(-1); // Safety set!
+            }
         } else {
-        	ce.setTargetBay(-1); // Safety set!
+            ce.setTargetBay(-1); // Safety set!
         }
 
         // Return the chosen unit.
@@ -2192,34 +2192,34 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         
         if (!(choice instanceof Infantry)) {
-	        Vector<Integer> bayChoices = new Vector<Integer>();
-	        for (Transporter t : ce().getTransports()) {
+            Vector<Integer> bayChoices = new Vector<Integer>();
+            for (Transporter t : ce().getTransports()) {
                 if (t.canLoad(choice) && t instanceof Bay) {
                     bayChoices.add(((Bay) t).getBayNumber());
                 }
             }
-	        String[] retVal = new String[bayChoices.size()];
-	        int i = 0;
-	        for (Integer bn : bayChoices) {
-	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
-	        }
-	        if (bayChoices.size() > 1) {
-	        	String bayString = (String) JOptionPane.showInputDialog(
-	        				clientgui,
-	        				Messages
-	        						.getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-	        						Messages
-	                                .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
-	                        JOptionPane.QUESTION_MESSAGE, null,
-	                        retVal, null);
-	        	choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(choice); 
-	        } else {
-	        	choice.setTargetBay(-1); // Safety set!
-	        }
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
+            }
+            if (bayChoices.size() > 1) {
+                String bayString = (String) JOptionPane.showInputDialog(
+                            clientgui,
+                            Messages
+                                    .getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                                    Messages
+                                    .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            retVal, null);
+                choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                // We need to update the entity here so that the server knows about our target bay
+                clientgui.getClient().sendUpdateEntity(choice); 
+            } else {
+                choice.setTargetBay(-1); // Safety set!
+            }
         } else {
-        	choice.setTargetBay(-1); // Safety set!
+            choice.setTargetBay(-1); // Safety set!
         }
 
         // Return the chosen unit.
@@ -2360,11 +2360,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     if (clientgui.getClient().game.useVectorMove()) {
                         if (Compute.sameVectors(cmd.getFinalVectors(),
                                 oa.getVectors())) {
-                        	if (ce instanceof Dropship) {
-                        		setDockEnabled(true);
-                        	} else {
-                        		setRecoverEnabled(true);
-                        	}
+                            if (ce instanceof Dropship) {
+                                setDockEnabled(true);
+                            } else {
+                                setRecoverEnabled(true);
+                            }
                             isGood = true;
 
                             // We can stop looking now.
@@ -2372,11 +2372,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         }
                     } else if (cmd.getFinalVelocity() == oa
                             .getCurrentVelocity()) {
-                    	if (ce instanceof Dropship) {
-                    		setDockEnabled(true);
-                    	} else {
-                    		setRecoverEnabled(true);
-                    	}
+                        if (ce instanceof Dropship) {
+                            setDockEnabled(true);
+                        } else {
+                            setRecoverEnabled(true);
+                        }
                         isGood = true;
 
                         // We can stop looking now.
@@ -2611,9 +2611,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             int collarNum = 1;
             Vector<Entity> currentDropships = new Vector<Entity>();
             for (DockingCollar collar : ce.getDockingCollars()) {
-            	currentDropships = collar.getLaunchableUnits();
-            	Vector<Integer> collarChoices = new Vector<Integer>();
-            	if (currentDropships.size() > 0) {
+                currentDropships = collar.getLaunchableUnits();
+                Vector<Integer> collarChoices = new Vector<Integer>();
+                if (currentDropships.size() > 0) {
                     String[] names = new String[currentDropships.size()];
                     String question = Messages
                             .getString(
@@ -2629,14 +2629,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             clientgui.frame,
                             Messages.getString(
                                     "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
-                                    		collar.getType(), collarNum }), question,
+                                            collar.getType(), collarNum }), question,
                             names);
                     while (!doIt) {
                         choiceDialog = new ChoiceDialog(
                                 clientgui.frame,
                                 Messages.getString(
                                         "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
-                                        		collar.getType(), collarNum }),
+                                                collar.getType(), collarNum }),
                                 question, names);
                         choiceDialog.setVisible(true);
                         if (choiceDialog.getChoices().length > (1)) {
@@ -2665,7 +2665,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         }
                     }
                 }
-            	collarNum++;
+                collarNum++;
                 i++;
             }
         }// End have-choices
@@ -2963,10 +2963,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (a.isSpheroid()
                     || clientgui.getClient().game.getPlanetaryConditions()
                             .isVacuum()) {
-            	getBtn(Command.MOVE_ACC).setEnabled(false);
-            	getBtn(Command.MOVE_DEC).setEnabled(false);
-            	getBtn(Command.MOVE_ACCN).setEnabled(false);
-            	getBtn(Command.MOVE_DECN).setEnabled(false);
+                getBtn(Command.MOVE_ACC).setEnabled(false);
+                getBtn(Command.MOVE_DEC).setEnabled(false);
+                getBtn(Command.MOVE_ACCN).setEnabled(false);
+                getBtn(Command.MOVE_DECN).setEnabled(false);
             }
         }
         return;
@@ -3063,7 +3063,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             //int[] bombsDumped = 
-    		dumpBombsDialog.getChoices();
+            dumpBombsDialog.getChoices();
             // first make a control roll
             PilotingRollData psr = ce().getBasePilotingRoll(overallMoveType);
             int ctrlroll = Compute.d6(2);
@@ -3084,7 +3084,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clientgui.doAlertDialog(title, body);
                 // failed the roll, so dump all bombs
                 //bombsDumped = 
-        		a.getBombLoadout();
+                a.getBombLoadout();
             } else {
                 // avoided damage
                 r.choose(true);
@@ -3271,7 +3271,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         MovePath mp = mvEnvData.get(loc);
         if (mp == null){
             System.out.println("Error computing movement envelope: " +
-            		"no move path for given location!");
+                    "no move path for given location!");
             return;
         }
         
@@ -3724,7 +3724,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(Command.MOVE_RECOVER.getCmd()) || 
-        		ev.getActionCommand().equals(Command.MOVE_DOCK.getCmd())) {
+                ev.getActionCommand().equals(Command.MOVE_DOCK.getCmd())) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
@@ -3733,7 +3733,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.drawMovementData(ce, cmd);
             }
             if (ev.getActionCommand().equals(Command.MOVE_DOCK.getCmd())) {
-            	cmd.getLastStep().setDocking(true);
+                cmd.getLastStep().setDocking(true);
             }
         } else if (ev.getActionCommand().equals(Command.MOVE_DROP.getCmd())) {
             TreeMap<Integer, Vector<Integer>> dropped = getDroppedUnits();
@@ -4046,12 +4046,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void setTurnEnabled(boolean enabled) {
-    	buttons.get(Command.MOVE_TURN).setEnabled(enabled);
+        buttons.get(Command.MOVE_TURN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnEnabled(enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_NEXT).setEnabled(enabled);
+        getBtn(Command.MOVE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveNextEnabled(enabled);
     }
 
@@ -4059,90 +4059,90 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // forward initiative can only be done if Teams have an initiative!
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "team_initiative")) {
-        	getBtn(Command.MOVE_FORWARD_INI).setEnabled(enabled);
+            getBtn(Command.MOVE_FORWARD_INI).setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
         } else { // turn them off regardless what is said!
-        	getBtn(Command.MOVE_FORWARD_INI).setEnabled(false);
+            getBtn(Command.MOVE_FORWARD_INI).setEnabled(false);
             clientgui.getMenuBar().setMoveForwardIniEnabled(false);
         }
     }
 
     private void setLayMineEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_LAY_MINE).setEnabled(enabled);
+        getBtn(Command.MOVE_LAY_MINE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLayMineEnabled(enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_LOAD).setEnabled(enabled);
+        getBtn(Command.MOVE_LOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLoadEnabled(enabled);
     }
 
     private void setMountEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_MOUNT).setEnabled(enabled);
+        getBtn(Command.MOVE_MOUNT).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_UNLOAD).setEnabled(enabled);
+        getBtn(Command.MOVE_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnloadEnabled(enabled);
     }
 
     private void setJumpEnabled(boolean enabled) {
-    	buttons.get(Command.MOVE_JUMP).setEnabled(enabled);
+        buttons.get(Command.MOVE_JUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {
-    	buttons.get(Command.MOVE_SWIM).setEnabled(enabled);
+        buttons.get(Command.MOVE_SWIM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveSwimEnabled(enabled);
     }
 
     private void setBackUpEnabled(boolean enabled) {
-    	buttons.get(Command.MOVE_BACK_UP).setEnabled(enabled);
+        buttons.get(Command.MOVE_BACK_UP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveBackUpEnabled(enabled);
     }
 
     private void setChargeEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_CHARGE).setEnabled(enabled);
+        getBtn(Command.MOVE_CHARGE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveChargeEnabled(enabled);
     }
 
     private void setDFAEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DFA).setEnabled(enabled);
+        getBtn(Command.MOVE_DFA).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDFAEnabled(enabled);
     }
 
     private void setGoProneEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_GO_PRONE).setEnabled(enabled);
+        getBtn(Command.MOVE_GO_PRONE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveGoProneEnabled(enabled);
     }
 
     private void setFleeEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_FLEE).setEnabled(enabled);
+        getBtn(Command.MOVE_FLEE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
     }
 
     private void setFlyOffEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_FLY_OFF).setEnabled(enabled);
+        getBtn(Command.MOVE_FLY_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);
     }
 
     private void setEjectEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_EJECT).setEnabled(enabled);
+        getBtn(Command.MOVE_EJECT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEjectEnabled(enabled);
     }
 
     private void setUnjamEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_UNJAM).setEnabled(enabled);
+        getBtn(Command.MOVE_UNJAM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnjamEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled, boolean state) {
         if (state) {
-        	getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
+            getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
                     .getString("MovementDisplay.butSearchlightOff")); //$NON-NLS-1$
         } else {
-        	getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
+            getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
                     .getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
         }
         getBtn(Command.MOVE_SEARCHLIGHT).setEnabled(enabled);
@@ -4150,172 +4150,172 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void setHullDownEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_HULL_DOWN).setEnabled(enabled);
+        getBtn(Command.MOVE_HULL_DOWN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveHullDownEnabled(enabled);
     }
 
     private void setClearEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_CLEAR).setEnabled(enabled);
+        getBtn(Command.MOVE_CLEAR).setEnabled(enabled);
         clientgui.getMenuBar().setMoveClearEnabled(enabled);
     }
 
     private void setGetUpEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_GET_UP).setEnabled(enabled);
+        getBtn(Command.MOVE_GET_UP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveGetUpEnabled(enabled);
     }
 
     private void setRaiseEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_RAISE_ELEVATION).setEnabled(enabled);
+        getBtn(Command.MOVE_RAISE_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRaiseEnabled(enabled);
     }
 
     private void setLowerEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_LOWER_ELEVATION).setEnabled(enabled);
+        getBtn(Command.MOVE_LOWER_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLowerEnabled(enabled);
     }
 
     private void setRecklessEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_RECKLESS).setEnabled(enabled);
+        getBtn(Command.MOVE_RECKLESS).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecklessEnabled(enabled);
     }
 
     private void setAccEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_ACC).setEnabled(enabled);
+        getBtn(Command.MOVE_ACC).setEnabled(enabled);
         clientgui.getMenuBar().setMoveAccEnabled(enabled);
     }
 
     private void setDecEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DEC).setEnabled(enabled);
+        getBtn(Command.MOVE_DEC).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDecEnabled(enabled);
     }
 
     private void setAccNEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_ACCN).setEnabled(enabled);
+        getBtn(Command.MOVE_ACCN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveAccNEnabled(enabled);
     }
 
     private void setDecNEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DECN).setEnabled(enabled);
+        getBtn(Command.MOVE_DECN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDecNEnabled(enabled);
     }
 
     private void setEvadeEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_EVADE).setEnabled(enabled);
+        getBtn(Command.MOVE_EVADE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
     }
 
     private void setShutdownEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_SHUTDOWN).setEnabled(enabled);
+        getBtn(Command.MOVE_SHUTDOWN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveShutdownEnabled(enabled);
     }
 
     private void setStartupEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_STARTUP).setEnabled(enabled);
+        getBtn(Command.MOVE_STARTUP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveStartupEnabled(enabled);
     }
 
     private void setSelfDestructEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_SELF_DESTRUCT).setEnabled(enabled);
+        getBtn(Command.MOVE_SELF_DESTRUCT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveSelfDestructEnabled(enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_EVADE_AERO).setEnabled(enabled);
+        getBtn(Command.MOVE_EVADE_AERO).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeAeroEnabled(enabled);
     }
 
     private void setRollEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_ROLL).setEnabled(enabled);
+        getBtn(Command.MOVE_ROLL).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRollEnabled(enabled);
     }
 
     private void setLaunchEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_LAUNCH).setEnabled(enabled);
+        getBtn(Command.MOVE_LAUNCH).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
     }
 
     private void setDockEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DOCK).setEnabled(enabled);
+        getBtn(Command.MOVE_DOCK).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
     }
 
     private void setRecoverEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_RECOVER).setEnabled(enabled);
+        getBtn(Command.MOVE_RECOVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
     }
 
     private void setDropEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DROP).setEnabled(enabled);
+        getBtn(Command.MOVE_DROP).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveDropEnabled(enabled);
     }
 
     private void setJoinEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_JOIN).setEnabled(enabled);
+        getBtn(Command.MOVE_JOIN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJoinEnabled(enabled);
     }
 
     private void setDumpEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_DUMP).setEnabled(enabled);
+        getBtn(Command.MOVE_DUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDumpEnabled(enabled);
     }
 
     private void setRamEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_RAM).setEnabled(enabled);
+        getBtn(Command.MOVE_RAM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRamEnabled(enabled);
     }
 
     private void setHoverEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_HOVER).setEnabled(enabled);
+        getBtn(Command.MOVE_HOVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveHoverEnabled(enabled);
     }
 
     private void setTakeOffEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_TAKE_OFF).setEnabled(enabled);
+        getBtn(Command.MOVE_TAKE_OFF).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveTakeOffEnabled(enabled);
     }
 
     private void setVTakeOffEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_VERT_TAKE_OFF).setEnabled(enabled);
+        getBtn(Command.MOVE_VERT_TAKE_OFF).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
     }
 
     private void setLandEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_LAND).setEnabled(enabled);
+        getBtn(Command.MOVE_LAND).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveLandEnabled(enabled);
     }
 
     private void setVLandEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_VERT_LAND).setEnabled(enabled);
+        getBtn(Command.MOVE_VERT_LAND).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveVLandEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_MANEUVER).setEnabled(enabled);
+        getBtn(Command.MOVE_MANEUVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveManeuverEnabled(enabled);
     }
 
     private void setTurnLeftEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_TURN_LEFT).setEnabled(enabled);
+        getBtn(Command.MOVE_TURN_LEFT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnLeftEnabled(enabled);
     }
 
     private void setTurnRightEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_TURN_RIGHT).setEnabled(enabled);
+        getBtn(Command.MOVE_TURN_RIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnRightEnabled(enabled);
     }
 
     private void setThrustEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_THRUST).setEnabled(enabled);
+        getBtn(Command.MOVE_THRUST).setEnabled(enabled);
         clientgui.getMenuBar().setMoveThrustEnabled(enabled);
     }
 
     private void setYawEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_YAW).setEnabled(enabled);
+        getBtn(Command.MOVE_YAW).setEnabled(enabled);
         clientgui.getMenuBar().setMoveYawEnabled(enabled);
     }
 
     private void setEndOverEnabled(boolean enabled) {
-    	getBtn(Command.MOVE_END_OVER).setEnabled(enabled);
+        getBtn(Command.MOVE_END_OVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
     }
 

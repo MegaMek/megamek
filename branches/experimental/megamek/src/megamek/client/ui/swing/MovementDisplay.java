@@ -388,9 +388,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 	        	i++;	        	
 	        }
 	        buttonList.add(getBtn(Command.MOVE_MORE));
-        }
-        
-        
+        }              
         numButtonGroups = 
         		(int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
         return buttonList;

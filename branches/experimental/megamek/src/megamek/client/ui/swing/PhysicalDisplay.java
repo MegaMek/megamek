@@ -24,17 +24,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
@@ -82,52 +80,48 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      *
      */
     private static final long serialVersionUID = -3274750006768636001L;
-
-    public static final String PHYSICAL_PUNCH = "punch"; //$NON-NLS-1$
-    public static final String PHYSICAL_KICK = "kick"; //$NON-NLS-1$
-    public static final String PHYSICAL_CLUB = "club"; //$NON-NLS-1$
-    public static final String PHYSICAL_BRUSH_OFF = "brushOff"; //$NON-NLS-1$
-    public static final String PHYSICAL_THRASH = "thrash"; //$NON-NLS-1$
-    public static final String PHYSICAL_DODGE = "dodge"; //$NON-NLS-1$
-    public static final String PHYSICAL_PUSH = "push"; //$NON-NLS-1$
-    public static final String PHYSICAL_TRIP = "trip"; //$NON-NLS-1$
-    public static final String PHYSICAL_GRAPPLE = "grapple"; //$NON-NLS-1$
-    public static final String PHYSICAL_JUMPJET = "jumpjet"; //$NON-NLS-1$
-    public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
-    public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
-    public static final String PHYSICAL_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
-    public static final String PHYSICAL_EXPLOSIVES = "explosives"; //$NON-NLS-1$
-    public static final String PHYSICAL_VIBRO = "vibro"; //$NON-NLS-1$s
-
-    private static final int NUM_BUTTON_LAYOUTS = 2;
+    
+    /**
+     * This enumeration lists all of the possible ActionCommands that can be
+     * carried out during the physical phase.  Each command has a string for the
+     * command plus a flag that determines what unit type it is appropriate for.
+     * @author walczak
+     *
+     */
+    public static enum Command {
+    	PHYSICAL_NEXT("next"),
+    	PHYSICAL_PUNCH("punch"),
+    	PHYSICAL_KICK("kick"),    
+    	PHYSICAL_CLUB("club"),
+    	PHYSICAL_BRUSH_OFF("brushOff"),
+    	PHYSICAL_THRASH("thrash"),
+    	PHYSICAL_DODGE("dodge"),
+    	PHYSICAL_PUSH("push"),
+    	PHYSICAL_TRIP("trip"),
+    	PHYSICAL_GRAPPLE("grapple"),
+    	PHYSICAL_JUMPJET("jumpjet"),    	
+    	PHYSICAL_PROTO("protoPhysical"),
+    	PHYSICAL_SEARCHLIGHT("fireSearchlight"),
+    	PHYSICAL_EXPLOSIVES("explosives"),
+    	PHYSICAL_VIBRO("vibro"),
+    	PHYSICAL_MORE("more");	    	
+    
+	    String cmd;
+	    private Command(String c){
+	    	cmd = c;
+	    }
+	    
+	    public String getCmd(){
+	    	return cmd;
+	    }
+	    
+	    public String toString(){
+	    	return cmd;
+	    }
+    }
 
     // buttons
-    private JComponent panButtons;
-
-    private JButton butPunch;
-    private JButton butKick;
-    private JButton butPush;
-    private JButton butTrip;
-    private JButton butGrapple;
-    private JButton butJumpJet;
-    private JButton butClub;
-    private JButton butBrush;
-    private JButton butThrash;
-    private JButton butDodge;
-    private JButton butProto;
-    private JButton butExplosives;
-    private JButton butVibro;
-
-    private JButton butNext;
-    private JButton butMore;
-
-    private JButton butSpace;
-    private JButton butSpace2;
-    private JButton butSpace3;
-    private JButton butSpace4;
-    private JButton butSearchlight;
-
-    private int buttonLayout;
+    protected Hashtable<Command,MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -143,117 +137,35 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public PhysicalDisplay(ClientGUI clientgui) {
+    	super();
+    	
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
-
-        attacks = new Vector<EntityAction>();
-
         setupStatusBar(Messages
                 .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
+               
+        attacks = new Vector<EntityAction>();
 
-        butSpace = new JButton(""); //$NON-NLS-1$
-        butSpace.setEnabled(false);
-        butSpace.setVisible(false);
-        butSpace2 = new JButton(""); //$NON-NLS-1$
-        butSpace2.setEnabled(false);
-        butSpace2.setVisible(false);
-        butSpace3 = new JButton(""); //$NON-NLS-1$
-        butSpace3.setEnabled(false);
-        butSpace3.setVisible(false);
-        butSpace4 = new JButton(""); //$NON-NLS-1$
-        butSpace4.setEnabled(false);
-        butSpace4.setVisible(false);
+        buttons = new Hashtable<Command, MegamekButton>(
+				(int) (Command.values().length * 1.25 + 0.5));
+		for (Command cmd : Command.values()) {
+			String title = Messages.getString("PhysicalDisplay."
+					+ cmd.getCmd());
+			MegamekButton newButton = new MegamekButton(title);
+			newButton.addActionListener(this);
+			newButton.setActionCommand(cmd.getCmd());
+			newButton.setEnabled(false);
+			buttons.put(cmd, newButton);
+		}  		
+		numButtonGroups = 
+        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
 
-        butPunch = new JButton(Messages.getString("PhysicalDisplay.Punch")); //$NON-NLS-1$
-        butPunch.addActionListener(this);
-        butPunch.setEnabled(false);
-        butPunch.setActionCommand(PHYSICAL_PUNCH);
-
-        butKick = new JButton(Messages.getString("PhysicalDisplay.Kick")); //$NON-NLS-1$
-        butKick.addActionListener(this);
-        butKick.setEnabled(false);
-        butKick.setActionCommand(PHYSICAL_KICK);
-
-        butPush = new JButton(Messages.getString("PhysicalDisplay.Push")); //$NON-NLS-1$
-        butPush.addActionListener(this);
-        butPush.setEnabled(false);
-        butPush.setActionCommand(PHYSICAL_PUSH);
-
-        butTrip = new JButton(Messages.getString("PhysicalDisplay.Trip")); //$NON-NLS-1$
-        butTrip.addActionListener(this);
-        butTrip.setEnabled(false);
-        butTrip.setActionCommand(PHYSICAL_TRIP);
-
-        butGrapple = new JButton(Messages.getString("PhysicalDisplay.Grapple")); //$NON-NLS-1$
-        butGrapple.addActionListener(this);
-        butGrapple.setEnabled(false);
-        butGrapple.setActionCommand(PHYSICAL_GRAPPLE);
-
-        butJumpJet = new JButton(Messages.getString("PhysicalDisplay.JumpJet")); //$NON-NLS-1$
-        butJumpJet.addActionListener(this);
-        butJumpJet.setEnabled(false);
-        butJumpJet.setActionCommand(PHYSICAL_JUMPJET);
-
-        butClub = new JButton(Messages.getString("PhysicalDisplay.Club")); //$NON-NLS-1$
-        butClub.addActionListener(this);
-        butClub.setEnabled(false);
-        butClub.setActionCommand(PHYSICAL_CLUB);
-
-        butBrush = new JButton(Messages.getString("PhysicalDisplay.BrushOff")); //$NON-NLS-1$
-        butBrush.addActionListener(this);
-        butBrush.setEnabled(false);
-        butBrush.setActionCommand(PHYSICAL_BRUSH_OFF);
-
-        butThrash = new JButton(Messages.getString("PhysicalDisplay.Trash")); //$NON-NLS-1$
-        butThrash.addActionListener(this);
-        butThrash.setEnabled(false);
-        butThrash.setActionCommand(PHYSICAL_THRASH);
-
-        butDodge = new JButton(Messages.getString("PhysicalDisplay.Dodge")); //$NON-NLS-1$
-        butDodge.addActionListener(this);
-        butDodge.setEnabled(false);
-        butDodge.setActionCommand(PHYSICAL_DODGE);
-
-        butProto = new JButton(Messages
-                .getString("PhysicalDisplay.ProtoPhysical")); //$NON-NLS-1$
-        butProto.addActionListener(this);
-        butProto.setEnabled(false);
-        butProto.setActionCommand(PHYSICAL_PROTO);
-
-        butVibro = new JButton(Messages.getString("PhysicalDisplay.Vibro")); //$NON-NLS-1$
-        butVibro.addActionListener(this);
-        butVibro.setEnabled(false);
-        butVibro.setActionCommand(PHYSICAL_VIBRO);
-
-        butExplosives = new JButton(Messages
-                .getString("PhysicalDisplay.Explosives")); //$NON-NLS-1$
-        butExplosives.addActionListener(this);
-        butExplosives.setEnabled(false);
-        butExplosives.setActionCommand(PHYSICAL_EXPLOSIVES);
-
-        butDone.setText("<html><b>"+Messages.getString("PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString(
+        		"PhysicalDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
-
-        butNext = new JButton(Messages.getString("PhysicalDisplay.NextUnit")); //$NON-NLS-1$
-        butNext.addActionListener(this);
-        butNext.setEnabled(false);
-        butNext.setActionCommand(PHYSICAL_NEXT);
-
-        butMore = new JButton(Messages.getString("PhysicalDisplay.More")); //$NON-NLS-1$
-        butMore.addActionListener(this);
-        butMore.setEnabled(false);
-
-        butSearchlight = new JButton(Messages
-                .getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
-        butSearchlight.addActionListener(this);
-        butSearchlight.setActionCommand(PHYSICAL_SEARCHLIGHT);
-        butSearchlight.setEnabled(false);
-
-        // layout button grid
-        panButtons = new JPanel();
-        buttonLayout = 0;
+        
         setupButtonPanel();
 
         // layout screen
@@ -278,44 +190,37 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
-        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>(); 
+        int i = 0;
+        for (Command cmd : Command.values()){
+        	if (cmd == Command.PHYSICAL_NEXT || cmd == Command.PHYSICAL_MORE){
+        		continue;
+        	}
+        	if (i % buttonsPerGroup == 0){
+        		buttonList.add(buttons.get(Command.PHYSICAL_NEXT));
+        		i++;
+        	}
+        	
+            buttonList.add(buttons.get(cmd));
+            i++;
+            
+            if ((i+1) % buttonsPerGroup == 0){
+        		buttonList.add(buttons.get(Command.PHYSICAL_MORE));
+        		i++;
+        	}
+        }
+        if (!buttonList.get(i-1).getActionCommand().
+        		equals(Command.PHYSICAL_MORE.getCmd())){
+	        while ((i+1) % buttonsPerGroup != 0){
+	        	buttonList.add(null);
+	        	i++;	        	
+	        }
+	        buttonList.add(buttons.get(Command.PHYSICAL_MORE));
+        }
         return buttonList;
     }
 
-    protected void setupButtonPanel() {
-        panButtons.removeAll();
-        panButtons.setLayout(new GridBagLayout());
-
-        switch (buttonLayout) {
-        case 0:
-            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
-            panButtons.add(butPunch, GBC.std().gridx(1).gridy(0).fill());
-            panButtons.add(butKick, GBC.std().gridx(2).gridy(0).fill());
-            panButtons.add(butPush, GBC.std().gridx(3).gridy(0).fill());
-            panButtons.add(butClub, GBC.std().gridx(4).gridy(0).fill());
-            panButtons.add(butBrush, GBC.std().gridx(0).gridy(1).fill());
-            panButtons.add(butThrash, GBC.std().gridx(1).gridy(1).fill());
-            panButtons.add(butJumpJet, GBC.std().gridx(3).gridy(1).fill());
-            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
-            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
-            break;
-        case 1:
-            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
-            panButtons.add(butDodge, GBC.std().gridx(1).gridy(0).fill());
-            panButtons.add(butTrip, GBC.std().gridx(2).gridy(0).fill());
-            panButtons.add(butGrapple, GBC.std().gridx(3).gridy(0).fill());
-            panButtons.add(butSearchlight, GBC.std().gridx(4).gridy(0).fill());
-            panButtons.add(butExplosives, GBC.std().gridx(0).gridy(1).fill());
-            panButtons.add(butVibro, GBC.std().gridx(1).gridy(1).fill());
-            panButtons.add(butProto, GBC.std().gridx(2).gridy(1).fill());
-            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
-            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
-            break;
-        }
-        panButtons.validate();
-        panButtons.repaint();
-    }
-
+    
     /**
      * Selects an entity, by number, for movement.
      */
@@ -371,7 +276,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clubLabel == null) {
             clubLabel = Messages.getString("PhysicalDisplay.Club"); //$NON-NLS-1$
         }
-        butClub.setText(clubLabel);
+        buttons.get(Command.PHYSICAL_CLUB).setText(clubLabel);
 
         if ((entity instanceof Mech)
                 && !entity.isProne()
@@ -398,7 +303,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             setNextEnabled(true);
             butDone.setEnabled(true);
-            butMore.setEnabled(true);
+            buttons.get(Command.PHYSICAL_MORE).setEnabled(true);
         }
         clientgui.getBoardView().select(null);
     }
@@ -1591,43 +1496,39 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             // odd...
             return;
         }
-        if (ev.getActionCommand().equals(PHYSICAL_PUNCH)) {
+        if (ev.getActionCommand().equals(Command.PHYSICAL_PUNCH.getCmd())) {
             punch();
-        } else if (ev.getActionCommand().equals(PHYSICAL_KICK)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_KICK.getCmd())) {
             kick();
-        } else if (ev.getActionCommand().equals(PHYSICAL_PUSH)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_PUSH.getCmd())) {
             push();
-        } else if (ev.getActionCommand().equals(PHYSICAL_TRIP)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_TRIP.getCmd())) {
             trip();
-        } else if (ev.getActionCommand().equals(PHYSICAL_GRAPPLE)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_GRAPPLE.getCmd())) {
             doGrapple();
-        } else if (ev.getActionCommand().equals(PHYSICAL_JUMPJET)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_JUMPJET.getCmd())) {
             jumpjetatt();
-        } else if (ev.getActionCommand().equals(PHYSICAL_CLUB)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_CLUB.getCmd())) {
             club();
-        } else if (ev.getActionCommand().equals(PHYSICAL_BRUSH_OFF)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_BRUSH_OFF.getCmd())) {
             brush();
-        } else if (ev.getActionCommand().equals(PHYSICAL_THRASH)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_THRASH.getCmd())) {
             thrash();
-        } else if (ev.getActionCommand().equals(PHYSICAL_DODGE)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_DODGE.getCmd())) {
             dodge();
-        } else if (ev.getActionCommand().equals(PHYSICAL_PROTO)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_PROTO.getCmd())) {
             proto();
-        } else if (ev.getActionCommand().equals(PHYSICAL_EXPLOSIVES)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_EXPLOSIVES.getCmd())) {
             explosives();
-        } else if (ev.getActionCommand().equals(PHYSICAL_VIBRO)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_VIBRO.getCmd())) {
             vibroclawatt();
-        } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(PHYSICAL_SEARCHLIGHT)) {
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_SEARCHLIGHT.getCmd())) {
             doSearchlight();
-        } else if (ev.getSource() == butMore) {
-            buttonLayout++;
-
-            if (buttonLayout >= NUM_BUTTON_LAYOUTS) {
-                buttonLayout = 0;
-            }
-
+        } else if (ev.getActionCommand().equals(Command.PHYSICAL_MORE.getCmd())) {
+        	currentButtonGroup++;
+        	currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
         }
     }
@@ -1664,74 +1565,74 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     }
 
     public void setThrashEnabled(boolean enabled) {
-        butThrash.setEnabled(enabled);
+        buttons.get(Command.PHYSICAL_THRASH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalThrashEnabled(enabled);
     }
 
     public void setPunchEnabled(boolean enabled) {
-        butPunch.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_PUNCH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPunchEnabled(enabled);
     }
 
     public void setKickEnabled(boolean enabled) {
-        butKick.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_KICK).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalKickEnabled(enabled);
     }
 
     public void setPushEnabled(boolean enabled) {
-        butPush.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_PUSH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPushEnabled(enabled);
     }
 
     public void setTripEnabled(boolean enabled) {
-        butTrip.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_TRIP).setEnabled(enabled);
     }
 
     public void setGrappleEnabled(boolean enabled) {
-        butGrapple.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_GRAPPLE).setEnabled(enabled);
     }
 
     public void setJumpJetEnabled(boolean enabled) {
-        butJumpJet.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_JUMPJET).setEnabled(enabled);
     }
 
     public void setClubEnabled(boolean enabled) {
-        butClub.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_CLUB).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalClubEnabled(enabled);
     }
 
     public void setBrushOffEnabled(boolean enabled) {
-        butBrush.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_BRUSH_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalBrushOffEnabled(enabled);
     }
 
     public void setDodgeEnabled(boolean enabled) {
-        butDodge.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_DODGE).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
     }
 
     public void setProtoEnabled(boolean enabled) {
-        butProto.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_PROTO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
     }
 
     public void setVibroEnabled(boolean enabled) {
-        butVibro.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_VIBRO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalVibroEnabled(enabled);
     }
 
     public void setExplosivesEnabled(boolean enabled) {
-        butExplosives.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
         // clientgui.getMenuBar().setExplosivesEnabled(enabled);
     }
 
     public void setNextEnabled(boolean enabled) {
-        butNext.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalNextEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
-        butSearchlight.setEnabled(enabled);
+    	buttons.get(Command.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 

@@ -54,7 +54,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     private static final long serialVersionUID = -430925219438520710L;
 
-    // Action command names
+    /**
+     * This enumeration lists all of the possible ActionCommands that can be
+     * carried out during the deployment phase.  Each command has a string for the
+     * command plus a flag that determines what unit type it is appropriate for.
+     * @author walczak
+     *
+     */
     public static enum Command {
 	    DEPLOY_NEXT("deployNext"),
 	    DEPLOY_TURN("deployTurn"),    
@@ -107,7 +113,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 			newButton.setEnabled(false);
 			buttons.put(cmd, newButton);
 		}  		
-		numButtonGroups = buttons.size() / buttonsPerGroup;
+		numButtonGroups = 
+        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
 
         butDone.setText("<html><b>"+Messages.getString("DeploymentDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);

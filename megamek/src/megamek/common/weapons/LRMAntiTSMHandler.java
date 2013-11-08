@@ -68,29 +68,13 @@ public class LRMAntiTSMHandler extends LRMHandler {
             return 1;
         }
         int missilesHit;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
-
+        
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {

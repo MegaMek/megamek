@@ -61,14 +61,9 @@ public class PrototypeLBXHandler extends LBXHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
+        int shotMod = getClusterModifiers(true);
 
-        int shotMod = -1;
-        if (bGlancing) {
-            shotMod -= 4;
-        }
-        if (game.getPlanetaryConditions().hasEMI()) {
-            shotMod -= 2;
-        }
+        shotMod -= 1;
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize(), shotMod);
 

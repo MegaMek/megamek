@@ -377,26 +377,10 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         int missilesHit;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = getClusterModifiers(false);
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles

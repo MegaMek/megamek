@@ -5484,13 +5484,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0) && !game.getBoard().inSpace()) {
+        if ((weatherMod != 0) && !game.getBoard().inSpace() 
+                && (null == crew || !crew.getOptions().booleanOption("allweather"))) {
             roll.addModifier(weatherMod, conditions.getWeatherCurrentName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace()) {
+        if ((windMod != 0) && !game.getBoard().inSpace()               
+                && (null == crew || !crew.getOptions().booleanOption("allweather"))) {
             roll.addModifier(windMod, conditions.getWindCurrentName());
         }
 

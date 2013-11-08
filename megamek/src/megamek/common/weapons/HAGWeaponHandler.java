@@ -93,31 +93,10 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             return 1;
         }
         int nHits;
-        int nHitsModifier = 0;
+        int nHitsModifier = getClusterModifiers(true);
         if (nRange <= wtype.getShortRange()) {
             nHitsModifier += 2;
         } else if (nRange > wtype.getMediumRange()) {
-            nHitsModifier -= 2;
-        }
-
-        boolean tacopscluster = game.getOptions().booleanOption(
-                "tacops_clusterhitpen");
-        if (tacopscluster) {
-            if (nRange <= 1) {
-                nHitsModifier += 1;
-            } else if (nRange <= wtype.getMediumRange()) {
-                nHitsModifier += 0;
-            } else {
-                nHitsModifier -= 1;
-            }
-        }
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nHitsModifier -= 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
             nHitsModifier -= 2;
         }
 

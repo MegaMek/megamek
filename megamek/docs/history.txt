@@ -112,6 +112,7 @@ v0.37.0-dev (SVN)
 + SPA: sensor geek (unofficial), all weather (unofficial)
 + WeaponHandler#getClusterModifier replaces all the duplicate code in calcNHits for various handlers
 + SPA: melee master (AToW)
++ Bug: Command line verifier broken for 'Mechs (NPE in TestEntity.printLocations()).
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

@@ -103,20 +103,20 @@ KeyListener, ItemListener, ListSelectionListener {
      */
     public static enum Command {
     	FIRE_NEXT("fireNext"),
-    	FIRE_FIND_CLUB("fireFindClub"),
-    	FIRE_FIRE("fireFire"),
-    	FIRE_MODE("fireMode"),
-    	FIRE_FLIP_ARMS("fireFlipArms"),
-    	FIRE_MORE("fireMore"),    	
-    	FIRE_NEXT_TARG("fireNextTarg"),
-    	FIRE_SKIP("fireSkip"),
-    	FIRE_SPOT("fireSpot"),
     	FIRE_TWIST("fireTwist"),
-    	FIRE_CANCEL("fireCancel"),
+    	FIRE_FIRE("fireFire"),
+    	FIRE_SKIP("fireSkip"),    	
+    	FIRE_NEXT_TARG("fireNextTarg"),    	
+    	FIRE_MODE("fireMode"),
+    	FIRE_SPOT("fireSpot"),
+    	FIRE_FLIP_ARMS("fireFlipArms"),    	
+    	FIRE_FIND_CLUB("fireFindClub"),    	
     	FIRE_SEARCHLIGHT("fireSearchlight"),
     	FIRE_CLEAR_TURRET("fireClearTurret"),
     	FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
-    	FIRE_CALLED("fireCalled");    	
+    	FIRE_CALLED("fireCalled"),
+    	FIRE_CANCEL("fireCancel"),
+    	FIRE_MORE("fireMore");    	
     
 	    String cmd;
 	    private Command(String c){

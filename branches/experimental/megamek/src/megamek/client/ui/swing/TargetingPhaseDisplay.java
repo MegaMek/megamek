@@ -89,14 +89,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public static enum Command {
     	FIRE_NEXT("fireNext"),
-    	FIRE_FIRE("fireFire"),
-    	FIRE_MODE("fireMode"),
-    	FIRE_FLIP_ARMS("fireFlipArms"),    	
-    	FIRE_NEXT_TARG("fireNextTarg"),
-    	FIRE_SKIP("fireSkip"),
     	FIRE_TWIST("fireTwist"),
-    	FIRE_CANCEL("fireCancel"),
-    	FIRE_SEARCHLIGHT("fireSearchlight");    
+    	FIRE_FIRE("fireFire"),
+    	FIRE_SKIP("fireSkip"),
+    	FIRE_NEXT_TARG("fireNextTarg"),
+    	FIRE_MODE("fireMode"),
+    	FIRE_FLIP_ARMS("fireFlipArms"),    	    	    	    	
+    	FIRE_SEARCHLIGHT("fireSearchlight"),
+    	FIRE_CANCEL("fireCancel");
     
 	    String cmd;
 	    private Command(String c){

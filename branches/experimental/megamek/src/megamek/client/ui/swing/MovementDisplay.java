@@ -115,12 +115,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     public static enum Command {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
-        MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$        
-        MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK), //$NON-NLS-1$
-        MOVE_BACK_UP("moveBackUp",CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
+        MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$   
+        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK), //$NON-NLS-1$                
+        MOVE_BACK_UP("moveBackUp",CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$        
         MOVE_GET_UP("moveGetUp", CMD_MECH), //$NON-NLS-1$
+        MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
         MOVE_CHARGE("moveCharge", CMD_MECH | CMD_TANK), //$NON-NLS-1$
         MOVE_DFA("moveDFA", CMD_MECH), //$NON-NLS-1$
         MOVE_GO_PRONE("moveGoProne", CMD_MECH), //$NON-NLS-1$

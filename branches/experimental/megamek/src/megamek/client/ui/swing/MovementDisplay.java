@@ -14,9 +14,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -179,8 +176,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_YAW("MoveYaw", CMD_AERO_VECTORED), //$NON-NLS-1$
         MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED), //$NON-NLS-1$
         // Move envelope
-        MOVE_ENVELOPE("MoveEnvelope", CMD_NONE), 
-        MOVE_MORE("MoveMore", CMD_NONE);
+        MOVE_ENVELOPE("MoveEnvelope", CMD_NONE),  //$NON-NLS-1$
+        MOVE_MORE("MoveMore", CMD_NONE); //$NON-NLS-1$
         
         /**
          * The command text.
@@ -305,22 +302,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
 
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-        c.insets = new Insets(1, 1, 1, 1);
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
+        layoutScreen();
     }
 
     /**

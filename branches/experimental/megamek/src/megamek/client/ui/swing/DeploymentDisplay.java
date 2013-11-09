@@ -13,9 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
@@ -121,23 +118,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
 
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
+        layoutScreen();
     }
     
     protected ArrayList<MegamekButton> getButtonList(){                

@@ -95,6 +95,28 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     protected abstract ArrayList<MegamekButton> getButtonList();
 
+    /**
+     * Adds the buttons and status bar to the panel.    
+     */
+    protected void layoutScreen(){
+    	GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.insets = new Insets(1, 1, 1, 1);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        addBag(panButtons, gridbag, c);
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
+    	
+    }
     
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved

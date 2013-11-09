@@ -15,9 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -194,23 +191,7 @@ KeyListener, ItemListener, ListSelectionListener {
 		
         setupButtonPanel();
 
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.BOTH;
-        addBag(panButtons, gridbag, c);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
+        layoutScreen();
 
         clientgui.bv.addKeyListener(this);
         addKeyListener(this);

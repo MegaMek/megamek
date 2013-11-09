@@ -14,9 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
@@ -72,8 +69,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     // buttons
     protected Hashtable<Command,MegamekButton> buttons;
-
-    // is the shift key held?
+    
     private boolean deployM = false;
     private boolean deployC = false;
     private boolean deployV = false;
@@ -91,9 +87,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         clientgui.getClient().game.addGameListener(this);
-
-        // Listener is added in the ClientGUI#switchPanel
-        // clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages
                 .getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
@@ -114,30 +107,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 		numButtonGroups = 
         		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
         
+		butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
+        butDone.setEnabled(false);
+		
         setupButtonPanel();
         
-        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
-        butDone.setEnabled(false);
-
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
+        layoutScreen();
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                

@@ -12542,10 +12542,14 @@ public class Server implements Runnable {
 
     /**
      * Removes any actions in the attack queue beyond the first by the specified
-     * entity.
+     * entity, unless that entity has melee master in which case it allows two attacks.
      */
     private void removeDuplicateAttacks(int entityId) {
-        boolean attacked = false;
+        int allowed = 1;
+        Entity en = game.getEntity(entityId);
+        if(null != en) {
+            allowed = en.getAllowedPhysicalAttacks();
+        }
         Vector<EntityAction> toKeep = new Vector<EntityAction>(/*
                                                                 * game.actionsSize
                                                                 * ()
@@ -12556,10 +12560,10 @@ public class Server implements Runnable {
             EntityAction action = i.nextElement();
             if (action.getEntityId() != entityId) {
                 toKeep.addElement(action);
-            } else if (!attacked) {
+            } else if (allowed > 0) {
                 toKeep.addElement(action);
                 if (!(action instanceof SearchlightAttackAction)) {
-                    attacked = true;
+                    allowed--;
                 }
             } else {
                 System.err

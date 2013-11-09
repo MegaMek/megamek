@@ -8,6 +8,7 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
 
@@ -78,8 +79,8 @@ public class MegamekButton extends JButton {
 			}
 		}
 		
-		JLabel textLabel = new JLabel(getText());
-		textLabel.setSize(getPreferredSize());
+		JLabel textLabel = new JLabel(getText(),SwingConstants.CENTER);
+		textLabel.setSize(getSize());
 		if (this.isEnabled()){
 			if (getMousePosition(true) != null){
 				textLabel.setForeground(new Color(255,255,0));
@@ -89,14 +90,7 @@ public class MegamekButton extends JButton {
 		} else {
 			textLabel.setForeground(new Color(128,128,128));
 		}
-		
-		int x = Math.max(0, (int)(getWidth()/2.0 + 0.5) - 
-				(int)(textLabel.getWidth()/2.0 + 0.5));
-		int y = Math.max(0, (int)(getHeight()/2.0 + 0.5) - 
-				(int)(textLabel.getHeight()/2.0 + 0.5));
-		Graphics g2 = g.create(x,y,getWidth()-x,getHeight()-y);
-		textLabel.paint(g2);
-		g2.dispose();
+		textLabel.paint(g);
 	 }
 	 
 	 public String toString(){

@@ -110,9 +110,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 		butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 		
-        setupButtonPanel();
-        
         layoutScreen();
+        
+        setupButtonPanel();
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
@@ -464,46 +464,41 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setConventionalEnabled(int nbr) {
-        buttons.get(Command.DEPLOY_MINE_CONV)
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_CONV).setText(Messages.getString(
+        		"DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), 
+        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_COM)
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_COM).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
     	buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_VIBRA)
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_VIBRA).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
     	buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     private void setActiveEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_ACTIVE)
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonActive", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
     	buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployActiveEnabled(nbr);
     }
 
     private void setInfernoEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_INFERNO)
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonInferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_INFERNO).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
     	buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployInfernoEnabled(nbr);
     }

@@ -116,9 +116,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         butDone.setText("<html><b>"+Messages.getString("DeploymentDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        setupButtonPanel();
-
+        
         layoutScreen();
+        
+        setupButtonPanel();        
     }
     
     protected ArrayList<MegamekButton> getButtonList(){                

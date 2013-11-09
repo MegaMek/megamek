@@ -163,9 +163,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         		"PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
         
-        setupButtonPanel();
-
         layoutScreen();
+        
+        setupButtonPanel();
+        
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
@@ -369,7 +370,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (attacks.size() > 0) {
             attacks.removeAllElements();
         }
-        clientgui.mechD.wPan.displayMech(ce());
+        if (ce() != null){
+        	clientgui.mechD.wPan.displayMech(ce());
+        }
         updateTarget();
 
         Entity entity = clientgui.getClient().game.getEntity(cen);

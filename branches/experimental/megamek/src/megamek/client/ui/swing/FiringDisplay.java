@@ -190,9 +190,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         		"FiringDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 		
-        setupButtonPanel();
-
         layoutScreen();
+        
+        setupButtonPanel();
 
         clientgui.bv.addKeyListener(this);
         addKeyListener(this);
@@ -325,8 +325,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     public void setFiringSolutions() {
         IGame game = clientgui.getClient().game;
-        Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
-        for (Entity target : game.getEntitiesVector()) {
+        if (!GUIPreferences.getInstance().getFiringSolutions()){
+        	return;
+        }
+        Hashtable<Integer,ToHitData> fs = new Hashtable<Integer,ToHitData>(); 
+        for (Entity target : game.getEntitiesVector()){
             int ownerId = ce().getOwnerId();
             boolean friendlyFire = game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$

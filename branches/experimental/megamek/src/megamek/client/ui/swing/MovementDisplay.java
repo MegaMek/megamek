@@ -300,9 +300,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setText("<html><b>" + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        setupButtonPanel();
-
         layoutScreen();
+        
+        setupButtonPanel();
     }
 
     /**

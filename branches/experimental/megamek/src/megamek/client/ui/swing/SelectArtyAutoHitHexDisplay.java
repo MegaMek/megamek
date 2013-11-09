@@ -98,14 +98,14 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 		}  		
 		numButtonGroups = 
         		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
-        
-        setupButtonPanel();
-
-        butDone.setText(Messages
+		
+		butDone.setText(Messages
                 .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
-
-        layoutScreen();
+		
+		layoutScreen();
+		
+        setupButtonPanel();
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
@@ -286,10 +286,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setArtyEnabled(int nbr) {
-        buttons.get(Command.SET_HIT_HEX)
-                .setText(Messages
-                        .getString(
-                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.SET_HIT_HEX).setText(Messages.getString(
+        		"SelectArtyAutoHitHexDisplay." +Command.SET_HIT_HEX.getCmd(), 
+        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         buttons.get(Command.SET_HIT_HEX).setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

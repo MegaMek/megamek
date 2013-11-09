@@ -53,14 +53,15 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-        GameListener, Distractable {
+public abstract class AbstractPhaseDisplay extends JPanel implements 
+		BoardViewListener, GameListener, Distractable {
 
     /**
      *
      */
     private static final long serialVersionUID = 4421205210788230341L;
 
+    public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
 
@@ -90,13 +91,17 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || 
+                		(clientgui.getClient().game.getTurn() == null)) {
                     ready();
                 }
             }
         });
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,InputEvent.CTRL_DOWN_MASK),
-        "doneButton");
+        
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+        								InputEvent.CTRL_DOWN_MASK),
+        								"doneButton");
 
         getActionMap().put("doneButton", new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -105,7 +110,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || 
+                		(clientgui.getClient().game.getTurn() == null)) {
                     ready();
                 }
             }

@@ -164,9 +164,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        setupButtonPanel();
-
         layoutScreen();
+        
+        setupButtonPanel();
     }
 
     /**
@@ -313,6 +313,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             butDone.setEnabled(true);
             clientgui.getBoardView().select(null);
         }
+        setupButtonPanel();
     }
 
     /**

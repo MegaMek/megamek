@@ -17,6 +17,7 @@ package megamek.client.ui.swing;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,7 +34,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
-import megamek.client.ui.GBC;
 import megamek.client.ui.swing.widget.MegamekButton;
 
 /**
@@ -83,8 +84,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
         });
         
-        panButtons = new JPanel();        
-        panButtons.setOpaque(false);
+        panButtons = new JPanel();      
+        panButtons.setOpaque(false);        
         panButtons.setLayout(new GridBagLayout());
     }
     
@@ -103,19 +104,14 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
         c.weightx = 1.0;
         c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-    	
+        
+        c.gridy = 0;
+        addBag(panButtons, gridbag, c);
+        c.gridy = 1;
+        addBag(panStatus, gridbag, c);    	
     }
     
     /**
@@ -127,7 +123,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridBagLayout());
-
+        
+        int numRows = buttonsPerGroup/buttonsPerRow;
+        
+        JPanel subPanel = new JPanel();
+        subPanel.setOpaque(false);
+        subPanel.setLayout(new GridLayout(numRows,buttonsPerRow));
         ArrayList<MegamekButton> buttonList = getButtonList();
                 
         // We may skip the current button group if all of its buttons are 
@@ -151,33 +152,40 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 }
             }
         }
-        int x = 0;
-        int y = 0;
-
-        for (int i = currentButtonGroup * buttonsPerGroup; 
+        int i = 0;
+        for (i = currentButtonGroup * buttonsPerGroup; 
         		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                	&& (i < buttonList.size()); i++, x++) {
-            if (x == buttonsPerRow) {
-                y++;
-                x = 0;
-            }           
+                	&& (i < buttonList.size()); i++) {        
             if (buttonList.get(i) != null){
-	            panButtons.add(buttonList.get(i), GBC.std().gridx(x).gridy(y)
-	                    .fill());              
+            	subPanel.add(buttonList.get(i));              
+            } else {
+            	subPanel.add(Box.createHorizontalGlue());
             }
+        }           
+        while ( i < ((currentButtonGroup + 1) * buttonsPerGroup)){
+        	subPanel.add(Box.createHorizontalGlue());
+        	i++;
         }
-        if (x == buttonsPerRow) {
-            y++;
-            x = 0;
-        }
+           
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.WEST;
         
-        //Add the Done button
-        int numRows = buttonsPerGroup/buttonsPerRow;
-        panButtons.add(butDone, GBC.std().
-        		gridx(buttonsPerRow).gridy(0).gridheight(numRows).fill());
+        c.gridx = c.gridy = 0;
+        c.weightx = 1;        
+        panButtons.add(subPanel,c);
         
+        c.anchor = GridBagConstraints.EAST;
+        c.gridx = 1;
+        c.weightx = 0;
+        c.gridx = 1;
+        panButtons.add(butDone,c);        
+        butDone.setSize(DONE_BUTTON_WIDTH,butDone.getHeight());
+    	butDone.setPreferredSize(butDone.getSize());
+    	butDone.setMinimumSize(butDone.getSize());
+    	
         panButtons.validate();
-        panButtons.repaint();
+        panButtons.repaint();   
     }
     
     protected void addBag(JComponent comp, GridBagLayout gridbag,

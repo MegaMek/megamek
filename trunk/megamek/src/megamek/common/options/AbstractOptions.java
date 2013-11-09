@@ -66,7 +66,12 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     }
 
     public boolean booleanOption(String name) {
-        return getOption(name).booleanValue();
+        IOption opt = getOption(name);
+        if (opt == null){
+            return false; 
+        } else {
+            return opt.booleanValue();
+        }
     }
 
     public int intOption(String name) {

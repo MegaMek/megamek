@@ -446,7 +446,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
-
+    
     /**
      * Called when the current entity is done with physical attacks.
      */
@@ -469,7 +469,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 return;
             }
         }
-
         disableButtons();
         clientgui.getClient().sendAttackData(cen, attacks);
         attacks.removeAllElements();
@@ -565,16 +564,37 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.BOTH, leftBladeExtend,
                         rightBladeExtend));
+                if(null != ce().getCrew() && ce().getCrew().getOptions().booleanOption("melee_master")) {
+                    //hit 'em again!
+                    attacks.addElement(new PunchAttackAction(cen, target
+                            .getTargetType(), target.getTargetId(),
+                            PunchAttackAction.BOTH, leftBladeExtend,
+                            rightBladeExtend));
+                }
             } else if (leftArm.getValue() < rightArm.getValue()) {
                 attacks.addElement(new PunchAttackAction(cen, target
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.LEFT, leftBladeExtend,
                         rightBladeExtend));
+                if(null != ce().getCrew() && ce().getCrew().getOptions().booleanOption("melee_master")) {
+                    //hit 'em again!
+                    attacks.addElement(new PunchAttackAction(cen, target
+                            .getTargetType(), target.getTargetId(),
+                            PunchAttackAction.LEFT, leftBladeExtend,
+                            rightBladeExtend));
+                }
             } else {
                 attacks.addElement(new PunchAttackAction(cen, target
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.RIGHT, leftBladeExtend,
                         rightBladeExtend));
+                if(null != ce().getCrew() && ce().getCrew().getOptions().booleanOption("melee_master")) {
+                    //hit 'em again!
+                    attacks.addElement(new PunchAttackAction(cen, target
+                            .getTargetType(), target.getTargetId(),
+                            PunchAttackAction.RIGHT, leftBladeExtend,
+                            rightBladeExtend));
+                }
             }
             ready();
         }
@@ -667,6 +687,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
             attacks.addElement(new KickAttackAction(cen,
                     target.getTargetType(), target.getTargetId(), attackSide));
+            if(null != ce().getCrew() && ce().getCrew().getOptions().booleanOption("melee_master")) {
+                //hit 'em again!
+                attacks.addElement(new KickAttackAction(cen,
+                        target.getTargetType(), target.getTargetId(), attackSide));
+            }
             ready();
         }
     }
@@ -951,6 +976,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             attacks.addElement(new ClubAttackAction(cen,
                     target.getTargetType(), target.getTargetId(), club, ash
                             .getAimTable()));
+            if(null != ce().getCrew() && ce().getCrew().getOptions().booleanOption("melee_master")) {
+                //hit 'em again!
+                attacks.addElement(new ClubAttackAction(cen,
+                        target.getTargetType(), target.getTargetId(), club, ash
+                                .getAimTable()));
+            }
             ready();
         }
     }

@@ -12397,4 +12397,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isEjectionPossible() {
         return false;
     }
+    
+    public int getAllowedPhysicalAttacks() {
+        if(null != crew && crew.getOptions().booleanOption("melee_master")) {
+            return 2;
+        }
+        return 1;
+    }
 }

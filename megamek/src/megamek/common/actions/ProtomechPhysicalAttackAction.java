@@ -69,6 +69,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
+        if(null != entity.getCrew() && entity.getCrew().getOptions().booleanOption("melee_master")) {
+            toReturn *= 2;
+        }
         return toReturn;
     }
 

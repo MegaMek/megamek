@@ -2090,6 +2090,13 @@ public class MechDisplay extends JPanel {
                 avExt = (int) changes[3];
                 maxr = (int) changes[4];
             }
+            
+            if(entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+                avShort *= 10;
+                avMed *= 10;
+                avLong *= 10;
+                avExt *= 10;
+            }
 
             // set default values in case if statement stops
             wShortAVR.setText("---"); //$NON-NLS-1$
@@ -2302,6 +2309,13 @@ public class MechDisplay extends JPanel {
             avLong = mult * avLong;
             avExt = mult * avExt;
 
+            if(entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+                avShort *= 10;
+                avMed *= 10;
+                avLong *= 10;
+                avExt *= 10;
+            }
+            
             wHeatR.setText(Integer.toString(heat));
             wShortAVR.setText(Integer.toString((int) Math.ceil(avShort)));
             if (isCapital) {

@@ -98,27 +98,14 @@ public class StreakHandler extends MissileWeaponHandler {
         if (bMissed) {
             return 0;
         }
-        int nMissilesModifier = nSalvoBonus;
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
+        int nMissilesModifier = getClusterModifiers(true);
 
         int missilesHit;
-        int amsMod = getAMSHitsMod(vPhaseReport) + nMissilesModifier;
+        int amsMod = getAMSHitsMod(vPhaseReport);
         if (amsMod == 0 && allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod+nMissilesModifier,
                     weapon.isHotLoaded(), allShotsHit(), advancedAMS
                             && amsEnganged);
             if (amsMod != 0) {

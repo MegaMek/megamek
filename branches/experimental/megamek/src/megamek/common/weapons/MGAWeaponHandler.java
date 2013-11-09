@@ -89,10 +89,8 @@ public class MGAWeaponHandler extends MGHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
-        int nMod = 0;
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMod -= 2;
-        }
+        int nMod = getClusterModifiers(true);
+
         switch (howManyShots) {
             case 1:
                 shotsHit = 1;

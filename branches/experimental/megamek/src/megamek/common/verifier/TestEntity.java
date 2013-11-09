@@ -490,10 +490,9 @@ public abstract class TestEntity implements TestEntityOption {
                         buff.append("\n");
                     }
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
-                    Mounted m = getEntity().getEquipment(slot.getIndex());
-
+                    EquipmentType e = getEntity().getEquipmentType(slot);
                     buff.append(Integer.toString(j) + ". "
-                            + m.getType().getInternalName());
+                            + e.getInternalName());
                     buff.append("\n");
                 }
             }

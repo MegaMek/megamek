@@ -85,7 +85,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
-KeyListener, ItemListener, ListSelectionListener {
+        KeyListener, ItemListener, ListSelectionListener {
     /**
      *
      */
@@ -153,9 +153,10 @@ KeyListener, ItemListener, ListSelectionListener {
     private int lastTargetID = -1;
 
     private AimedShotHandler ash;
-    
+
     /**
-     * Creates and lays out a new firing phase display for the specified clientgui.getClient().
+     * Creates and lays out a new firing phase display for the specified
+     * clientgui.getClient().
      */
     public FiringDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
@@ -257,10 +258,11 @@ KeyListener, ItemListener, ListSelectionListener {
             if (ce().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
-                for (int nextId = clientgui.getClient().getNextEntityNum(en); nextId != en; nextId = clientgui.getClient()
-                .getNextEntityNum(nextId)) {
+                for (int nextId = clientgui.getClient().getNextEntityNum(en); nextId != en; nextId = clientgui
+                        .getClient().getNextEntityNum(nextId)) {
 
-                    if (clientgui.getClient().game.getEntity(nextId).getPosition() != null) {
+                    if (clientgui.getClient().game.getEntity(nextId)
+                            .getPosition() != null) {
                         cen = nextId;
                         break;
                     }
@@ -270,8 +272,8 @@ KeyListener, ItemListener, ListSelectionListener {
                 // We were *supposed* to have found an on-board entity.
                 if (ce().getPosition() == null) {
                     System.err
-                    .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                            en);
+                            .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
+                                    en);
                     return;
                 }
 
@@ -307,55 +309,57 @@ KeyListener, ItemListener, ListSelectionListener {
             setTwistEnabled(ce().canChangeSecondaryFacing()
                     && ce().getCrew().isActive());
 
-            setFindClubEnabled(FindClubAction.canMechFindClub(clientgui.getClient().game, en));
+            setFindClubEnabled(FindClubAction.canMechFindClub(
+                    clientgui.getClient().game, en));
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
             updateClearTurret();
             updateClearWeaponJam();
         } else {
             System.err
-            .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
-        
-        setFiringSolutions();        
+
+        setFiringSolutions();
     }
-    
-    public void setFiringSolutions(){
+
+    public void setFiringSolutions() {
         IGame game = clientgui.getClient().game;
-        Hashtable<Integer,ToHitData> fs = new Hashtable<Integer,ToHitData>(); 
-        for (Entity target : game.getEntitiesVector()){
+        Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
+        for (Entity target : game.getEntitiesVector()) {
             int ownerId = ce().getOwnerId();
-            boolean friendlyFire = game.getOptions().
-                    booleanOption("friendly_fire"); //$NON-NLS-1$
-            if (target.getId() != cen && 
-                    (friendlyFire || target.getOwnerId() != ownerId)){
+            boolean friendlyFire = game.getOptions().booleanOption(
+                    "friendly_fire"); //$NON-NLS-1$
+            if ((target.getId() != cen)
+                    && (friendlyFire || (target.getOwnerId() != ownerId))
+                    && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
-                thd.setRange(ce().getPosition().distance(target.getPosition()));               
-                fs.put(target.getId(),thd);
+                thd.setRange(ce().getPosition().distance(target.getPosition()));
+                fs.put(target.getId(), thd);
             }
         }
-        clientgui.getBoardView().setFiringSolutions(ce(),fs);
+        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**
      * Does turn start stuff
      */
-    private void beginMyTurn() {        
+    private void beginMyTurn() {
         target = null;
 
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
-                             
-        selectEntity(clientgui.getClient().getFirstEntityNum());                
+
+        selectEntity(clientgui.getClient().getFirstEntityNum());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (ce() != null)) {
             disableButtons();
-            TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui
-                    .getFrame(), ce());
+            TriggerAPPodDialog dialog = new TriggerAPPodDialog(
+                    clientgui.getFrame(), ce());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<TriggerAPPodAction> actions = dialog.getActions();
@@ -378,7 +382,8 @@ KeyListener, ItemListener, ListSelectionListener {
             setNextEnabled(true);
             butDone.setEnabled(true);
             buttons.get(Command.FIRE_MORE).setEnabled(true);
-            setFireCalledEnabled(clientgui.getClient().game.getOptions().booleanOption("tacops_called_shots"));
+            setFireCalledEnabled(clientgui.getClient().game.getOptions()
+                    .booleanOption("tacops_called_shots"));
             clientgui.getBoardView().select(null);
         }
     }
@@ -388,7 +393,8 @@ KeyListener, ItemListener, ListSelectionListener {
      */
     private void endMyTurn() {
         // end my turn, then.
-        Entity next = clientgui.getClient().game.getNextEntity(clientgui.getClient().game.getTurnIndex());
+        Entity next = clientgui.getClient().game.getNextEntity(clientgui
+                .getClient().game.getTurnIndex());
         if ((clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_FIRING)
                 && (next != null) && (ce() != null)
                 && (next.getOwnerId() != ce().getOwnerId())) {
@@ -454,14 +460,14 @@ KeyListener, ItemListener, ListSelectionListener {
         // notify the player
         if (m.canInstantSwitch(nMode)) {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName(true) })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName(true) })); //$NON-NLS-1$
         } else {
             clientgui
-            .systemMessage(Messages
-                    .getString(
-                            "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName(true) })); //$NON-NLS-1$
+                    .systemMessage(Messages
+                            .getString(
+                                    "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName(true) })); //$NON-NLS-1$
         }
 
         updateTarget();
@@ -589,9 +595,9 @@ KeyListener, ItemListener, ListSelectionListener {
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             String title = Messages
-            .getString("FiringDisplay.DontFireDialog.title"); //$NON-NLS-1$
+                    .getString("FiringDisplay.DontFireDialog.title"); //$NON-NLS-1$
             String body = Messages
-            .getString("FiringDisplay.DontFireDialog.message"); //$NON-NLS-1$
+                    .getString("FiringDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
@@ -602,11 +608,11 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         // We need to nag for overheat on capital fighters
-        if ((ce() != null) && ce().isCapitalFighter() &&
-                GUIPreferences.getInstance().getNagForOverheat()) {
+        if ((ce() != null) && ce().isCapitalFighter()
+                && GUIPreferences.getInstance().getNagForOverheat()) {
             int totalheat = 0;
-            for (EntityAction action : attacks){
-                if (action instanceof WeaponAttackAction){
+            for (EntityAction action : attacks) {
+                if (action instanceof WeaponAttackAction) {
                     Mounted weapon = ce().getEquipment(
                             ((WeaponAttackAction) action).getWeaponId());
                     totalheat += weapon.getCurrentHeat();
@@ -615,11 +621,11 @@ KeyListener, ItemListener, ListSelectionListener {
             if (totalheat > ce().getHeatCapacity()) {
                 // comfirm this action
                 String title = Messages
-                .getString("FiringDisplay.OverheatNag.title"); //$NON-NLS-1$
+                        .getString("FiringDisplay.OverheatNag.title"); //$NON-NLS-1$
                 String body = Messages
-                .getString("FiringDisplay.OverheatNag.message"); //$NON-NLS-1$
-                ConfirmDialog response =
-                        clientgui.doYesNoBotherDialog(title, body);
+                        .getString("FiringDisplay.OverheatNag.message"); //$NON-NLS-1$
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title,
+                        body);
                 if (!response.getShowAgain()) {
                     GUIPreferences.getInstance().setNagForOverheat(false);
                 }
@@ -628,7 +634,6 @@ KeyListener, ItemListener, ListSelectionListener {
                 }
             }
         }
-
 
         // stop further input (hopefully)
         disableButtons();
@@ -650,9 +655,9 @@ KeyListener, ItemListener, ListSelectionListener {
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                 if (curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                            .getEntityId(), waa.getTargetType(), waa
-                            .getTargetId(), waa.getWeaponId());
+                    WeaponAttackAction waa2 = new WeaponAttackAction(
+                            waa.getEntityId(), waa.getTargetType(),
+                            waa.getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -677,9 +682,9 @@ KeyListener, ItemListener, ListSelectionListener {
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
                 if (!curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                            .getEntityId(), waa.getTargetType(), waa
-                            .getTargetId(), waa.getWeaponId());
+                    WeaponAttackAction waa2 = new WeaponAttackAction(
+                            waa.getEntityId(), waa.getTargetType(),
+                            waa.getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -714,8 +719,9 @@ KeyListener, ItemListener, ListSelectionListener {
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        if ((((attacks.size() == 0) && (ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()))) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2()))) {
+        if ((((attacks.size() == 0) && (ce() instanceof Tank) && (((Tank) ce())
+                .isTurretJammed(((Tank) ce()).getLocTurret()))) || ((Tank) ce())
+                .isTurretJammed(((Tank) ce()).getLocTurret2()))) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
             attacks.add(uta);
             ready();
@@ -731,12 +737,10 @@ KeyListener, ItemListener, ListSelectionListener {
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
         }
-        String input = (String)JOptionPane.showInputDialog(clientgui,
+        String input = (String) JOptionPane.showInputDialog(clientgui,
                 Messages.getString("FiringDisplay.ClearWeaponJam.question"), //$NON-NLS-1$
-                Messages
-                .getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
-                        JOptionPane.QUESTION_MESSAGE, null,
-                names,null);
+                Messages.getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
+                JOptionPane.QUESTION_MESSAGE, null, names, null);
 
         if (input != null) {
             for (int loop = 0; loop < names.length; loop++) {
@@ -758,16 +762,17 @@ KeyListener, ItemListener, ListSelectionListener {
         // validate
         if ((ce() == null) || (target == null)) {
             throw new IllegalArgumentException(
-            "current searchlight parameters are invalid"); //$NON-NLS-1$
+                    "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(clientgui.getClient().game, cen, target, null)) {
+        if (!SearchlightAttackAction.isPossible(clientgui.getClient().game,
+                cen, target, null)) {
             return;
         }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
-                .getTargetType(), target.getTargetId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen,
+                target.getTargetType(), target.getTargetId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -785,14 +790,16 @@ KeyListener, ItemListener, ListSelectionListener {
             return payload;
         }
         int[] loadout = ce().getBombLoadout();
-        //this part is ugly, but we need to find any other bombing attacks by this
-        //entity in the attack list and subtract those payloads from the loadout
+        // this part is ugly, but we need to find any other bombing attacks by
+        // this
+        // entity in the attack list and subtract those payloads from the
+        // loadout
         for (EntityAction o : attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
-                if(waa.getEntityId() == ce().getId()) {
+                if (waa.getEntityId() == ce().getId()) {
                     int[] priorLoad = waa.getBombPayload();
-                    for(int i = 0; i < priorLoad.length; i++) {
+                    for (int i = 0; i < priorLoad.length; i++) {
                         loadout[i] = loadout[i] - priorLoad[i];
                     }
                 }
@@ -800,12 +807,11 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         int numFighters = 0;
-        if (ce() instanceof FighterSquadron){
-            numFighters = ((FighterSquadron)ce()).getNFighters();
+        if (ce() instanceof FighterSquadron) {
+            numFighters = ((FighterSquadron) ce()).getNFighters();
         }
-        BombPayloadDialog bombsDialog = new BombPayloadDialog(
-                clientgui.frame, Messages
-                .getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
+        BombPayloadDialog bombsDialog = new BombPayloadDialog(clientgui.frame,
+                Messages.getString("FiringDisplay.BombNumberDialog.title"), //$NON-NLS-1$
                 loadout, isSpace, false, limit, numFighters);
         bombsDialog.setVisible(true);
         if (bombsDialog.getAnswer()) {
@@ -827,7 +833,7 @@ KeyListener, ItemListener, ListSelectionListener {
         if ((ce() == null) || (target == null) || (mounted == null)
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException(
-            "current fire parameters are invalid"); //$NON-NLS-1$
+                    "current fire parameters are invalid"); //$NON-NLS-1$
         }
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
@@ -843,19 +849,20 @@ KeyListener, ItemListener, ListSelectionListener {
             if ((lastAction != null)
                     && (lastAction instanceof WeaponAttackAction)) {
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
-                Targetable oldTarget = oldWaa.getTarget(clientgui.getClient().game);
+                Targetable oldTarget = oldWaa
+                        .getTarget(clientgui.getClient().game);
                 if (!oldTarget.equals(target)) {
                     boolean oldInFront = Compute.isInArc(ce().getPosition(),
-                            ce().getSecondaryFacing(), oldTarget,
-                            ce().getForwardArc());
+                            ce().getSecondaryFacing(), oldTarget, ce()
+                                    .getForwardArc());
                     boolean curInFront = Compute.isInArc(ce().getPosition(),
-                            ce().getSecondaryFacing(), target,
-                            ce().getForwardArc());
+                            ce().getSecondaryFacing(), target, ce()
+                                    .getForwardArc());
                     if (!oldInFront && curInFront) {
                         String title = Messages
-                        .getString("FiringDisplay.SecondaryTargetToHitChange.title"); //$NON-NLS-1$
+                                .getString("FiringDisplay.SecondaryTargetToHitChange.title"); //$NON-NLS-1$
                         String body = Messages
-                        .getString("FiringDisplay.SecondaryTargetToHitChange.message"); //$NON-NLS-1$
+                                .getString("FiringDisplay.SecondaryTargetToHitChange.message"); //$NON-NLS-1$
                         if (!clientgui.doYesNoDialog(title, body)) {
                             return;
                         }
@@ -865,27 +872,28 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight() && ce().isUsingSpotlight()) {
+        if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
+                && ce().isUsingSpotlight()) {
             doSearchlight();
         }
 
         WeaponAttackAction waa;
         if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-            waa = new WeaponAttackAction(cen, target.getTargetType(), target
-                    .getTargetId(), weaponNum);
+            waa = new WeaponAttackAction(cen, target.getTargetType(),
+                    target.getTargetId(), weaponNum);
         } else {
-            waa = new ArtilleryAttackAction(cen, target.getTargetType(), target
-                    .getTargetId(), weaponNum, clientgui.getClient().game);
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                    target.getTargetId(), weaponNum, clientgui.getClient().game);
         }
 
-        //check for a bomb payload dialog
+        // check for a bomb payload dialog
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
             int[] payload = getBombPayload(true, -1);
             waa.setBombPayload(payload);
-        } else if(mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+        } else if (mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             int[] payload = getBombPayload(false, -1);
             waa.setBombPayload(payload);
-        } else if(mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+        } else if (mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             // if the user cancels, then return
             int[] payload = getBombPayload(false, 2);
             waa.setBombPayload(payload);
@@ -898,8 +906,8 @@ KeyListener, ItemListener, ListSelectionListener {
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && ((ammoType
                     .getAmmoType() == AmmoType.T_LRM) || (ammoType
-                            .getAmmoType() == AmmoType.T_MML)))
-                            || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
+                    .getAmmoType() == AmmoType.T_MML)))
+                    || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);
                 vsd.setVisible(true);
@@ -963,7 +971,7 @@ KeyListener, ItemListener, ListSelectionListener {
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        if(weaponId == -1) {
+        if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {
             Mounted m = ce().getEquipment(weaponId);
@@ -983,7 +991,7 @@ KeyListener, ItemListener, ListSelectionListener {
         // comfirm this action
         String title = Messages.getString("FiringDisplay.FindClubDialog.title"); //$NON-NLS-1$
         String body = Messages
-        .getString("FiringDisplay.FindClubDialog.message"); //$NON-NLS-1$
+                .getString("FiringDisplay.FindClubDialog.message"); //$NON-NLS-1$
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
@@ -1003,17 +1011,17 @@ KeyListener, ItemListener, ListSelectionListener {
         }
         if (ce().isINarcedWith(INarcPod.HAYWIRE)) {
             String title = Messages
-            .getString("FiringDisplay.CantSpotDialog.title"); //$NON-NLS-1$
+                    .getString("FiringDisplay.CantSpotDialog.title"); //$NON-NLS-1$
             String body = Messages
-            .getString("FiringDisplay.CantSpotDialog.message"); //$NON-NLS-1$
+                    .getString("FiringDisplay.CantSpotDialog.message"); //$NON-NLS-1$
             clientgui.doAlertDialog(title, body);
             return;
         }
         // comfirm this action
         String title = Messages
-        .getString("FiringDisplay.SpotForInderectDialog.title"); //$NON-NLS-1$
+                .getString("FiringDisplay.SpotForInderectDialog.title"); //$NON-NLS-1$
         String body = Messages
-        .getString("FiringDisplay.SpotForInderectDialog.message"); //$NON-NLS-1$
+                .getString("FiringDisplay.SpotForInderectDialog.message"); //$NON-NLS-1$
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
@@ -1107,8 +1115,11 @@ KeyListener, ItemListener, ListSelectionListener {
         setFireEnabled(false);
 
         // allow spotting
-        if ((ce() != null) && ce().canSpot() && (target != null)
-                && clientgui.getClient().game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
+        if ((ce() != null)
+                && ce().canSpot()
+                && (target != null)
+                && clientgui.getClient().game.getOptions().booleanOption(
+                        "indirect_fire")) { //$NON-NLS-1$)
             setSpotEnabled(true);
         }
 
@@ -1120,29 +1131,31 @@ KeyListener, ItemListener, ListSelectionListener {
             if (ash.inAimingMode()) {
                 Mounted weapon = ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation()
-                && ash.allowAimedShotWith(weapon);
+                        && ash.allowAimedShotWith(weapon);
                 ash.setEnableAll(aiming);
                 if (aiming) {
-                    toHit = WeaponAttackAction.toHit(clientgui.getClient().game, cen, target,
-                            weaponId, ash.getAimingAt(), ash.getAimingMode());
+                    toHit = WeaponAttackAction.toHit(
+                            clientgui.getClient().game, cen, target, weaponId,
+                            ash.getAimingAt(), ash.getAimingMode());
                     clientgui.mechD.wPan.wTargetR.setText(target
                             .getDisplayName()
                             + " (" + ash.getAimingLocation() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
-                    toHit = WeaponAttackAction.toHit(clientgui.getClient().game, cen, target,
-                            weaponId, Entity.LOC_NONE,
-                            IAimingModes.AIM_MODE_NONE);
+                    toHit = WeaponAttackAction.toHit(
+                            clientgui.getClient().game, cen, target, weaponId,
+                            Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                     clientgui.mechD.wPan.wTargetR.setText(target
                             .getDisplayName());
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
-                toHit = WeaponAttackAction.toHit(clientgui.getClient().game, cen, target,
-                        weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                toHit = WeaponAttackAction.toHit(clientgui.getClient().game,
+                        cen, target, weaponId, Entity.LOC_NONE,
+                        IAimingModes.AIM_MODE_NONE);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
             clientgui.mechD.wPan.wRangeR
-            .setText("" + Compute.effectiveDistance(clientgui.getClient().game, ce(), target)); //$NON-NLS-1$
+                    .setText("" + Compute.effectiveDistance(clientgui.getClient().game, ce(), target)); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
@@ -1172,7 +1185,7 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
 
-        if ((weaponId != -1) && (ce() != null)){
+        if ((weaponId != -1) && (ce() != null)) {
             Mounted m = ce().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
@@ -1266,7 +1279,7 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!shiftheld){
+            if (!shiftheld) {
                 clientgui.getBoardView().select(b.getCoords());
             }
         }
@@ -1280,8 +1293,8 @@ KeyListener, ItemListener, ListSelectionListener {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && (b.getCoords() != null) && (ce() != null)
-                && !b.getCoords().equals(ce().getPosition())) {
+        if (clientgui.getClient().isMyTurn() && (b.getCoords() != null)
+                && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             // HACK : sometimes we don't show the target choice window
             Targetable targ = null;
             if (showTargetChoice) {
@@ -1366,7 +1379,8 @@ KeyListener, ItemListener, ListSelectionListener {
                 clientgui.getGameOptionsDialog().setEditable(false);
             }
             // Display the game options dialog.
-            clientgui.getGameOptionsDialog().update(clientgui.getClient().game.getOptions());
+            clientgui.getGameOptionsDialog().update(
+                    clientgui.getClient().game.getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getActionCommand().equals(Command.FIRE_FIRE.getCmd())) {
             fire();
@@ -1434,13 +1448,16 @@ KeyListener, ItemListener, ListSelectionListener {
                 && (target != null)
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(clientgui.getClient().game, cen, target,
-                        null) && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));
+                && SearchlightAttackAction.isPossible(
+                        clientgui.getClient().game, cen, target, null)
+                && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));
     }
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret()) || ((Tank) ce()).isTurretJammed(((Tank)ce()).getLocTurret2())) && (attacks.size() == 0)
+                && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret()) || ((Tank) ce())
+                        .isTurretJammed(((Tank) ce()).getLocTurret2()))
+                && (attacks.size() == 0)
                 && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
@@ -1609,7 +1626,8 @@ KeyListener, ItemListener, ListSelectionListener {
 
         Entity e = clientgui.getClient().game.getEntity(b.getEntityId());
         if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().getMyTurn().isValidEntity(e, clientgui.getClient().game)) {
+            if (clientgui.getClient().getMyTurn()
+                    .isValidEntity(e, clientgui.getClient().game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1625,10 +1643,10 @@ KeyListener, ItemListener, ListSelectionListener {
         if (event.getValueIsAdjusting()) {
             return;
         }
-        if (event.getSource().equals(clientgui.mechD.wPan.weaponList) &&
-                (clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING)) {
+        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)
+                && (clientgui.getClient().game.getPhase() == Phase.PHASE_FIRING)) {
             // If we aren't in the firing phase, there's no guarantee that cen
-            //  is set properly, hence we can't update
+            // is set properly, hence we can't update
 
             // update target data in weapon display
             updateTarget();
@@ -1659,7 +1677,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 String[] options;
                 boolean[] enabled;
 
-                if(target instanceof GunEmplacement) {
+                if (target instanceof GunEmplacement) {
                     return;
                 }
                 if (target instanceof Entity) {
@@ -1679,14 +1697,11 @@ KeyListener, ItemListener, ListSelectionListener {
                     if (target instanceof LargeSupportTank) {
                         if (side == ToHitData.SIDE_FRONTLEFT) {
                             aimingAt = LargeSupportTank.LOC_FRONTLEFT;
-                        }
-                        else if (side == ToHitData.SIDE_FRONTRIGHT) {
+                        } else if (side == ToHitData.SIDE_FRONTRIGHT) {
                             aimingAt = LargeSupportTank.LOC_FRONTRIGHT;
-                        }
-                        else if (side == ToHitData.SIDE_REARRIGHT) {
+                        } else if (side == ToHitData.SIDE_REARRIGHT) {
                             aimingAt = LargeSupportTank.LOC_REARRIGHT;
-                        }
-                        else if (side == ToHitData.SIDE_REARLEFT) {
+                        } else if (side == ToHitData.SIDE_REARLEFT) {
                             aimingAt = LargeSupportTank.LOC_REARLEFT;
                         }
                     }
@@ -1697,7 +1712,9 @@ KeyListener, ItemListener, ListSelectionListener {
                         aimingAt = Tank.LOC_RIGHT;
                     }
                     if (side == ToHitData.SIDE_REAR) {
-                       aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : target instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:Tank.LOC_REAR;
+                        aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR
+                                : target instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                                        : Tank.LOC_REAR;
                     }
                     if (side == ToHitData.SIDE_FRONT) {
                         aimingAt = Tank.LOC_FRONT;
@@ -1711,14 +1728,10 @@ KeyListener, ItemListener, ListSelectionListener {
                     return;
                 }
 
-
-
                 asd = new AimedShotDialog(
                         clientgui.frame,
-                        Messages
-                        .getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
-                        Messages
-                        .getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
+                        Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
+                        Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
                         options, enabled, aimingAt, this, this);
 
                 asd.setVisible(true);
@@ -1949,8 +1962,10 @@ KeyListener, ItemListener, ListSelectionListener {
             boolean allowAim;
 
             // TC against a mech
-            allowAim = ((target != null) && (ce() != null) && ce().hasAimModeTargComp() && ((target instanceof Mech)
-                    || (target instanceof Tank) || (target instanceof BattleArmor) || (target instanceof Protomech)));
+            allowAim = ((target != null) && (ce() != null)
+                    && ce().hasAimModeTargComp() && ((target instanceof Mech)
+                    || (target instanceof Tank)
+                    || (target instanceof BattleArmor) || (target instanceof Protomech)));
             if (allowAim) {
                 aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
                 return;
@@ -2023,8 +2038,8 @@ KeyListener, ItemListener, ListSelectionListener {
      */
     private Targetable chooseTarget(Coords pos) {
 
-        boolean friendlyFire = clientgui.getClient().game.getOptions().booleanOption(
-        "friendly_fire"); //$NON-NLS-1$
+        boolean friendlyFire = clientgui.getClient().game.getOptions()
+                .booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Enumeration<Entity> choices;
@@ -2046,10 +2061,11 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         // Is there a building in the hex?
-        Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(pos);
+        Building bldg = clientgui.getClient().game.getBoard()
+                .getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, clientgui.getClient().game.getBoard(),
-                    false));
+            targets.add(new BuildingTarget(pos, clientgui.getClient().game
+                    .getBoard(), false));
         }
 
         // Do we have a single choice?
@@ -2062,13 +2078,14 @@ KeyListener, ItemListener, ListSelectionListener {
 
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
-            String input = (String)JOptionPane.showInputDialog(clientgui,
-                    Messages
-                    .getString(
-                            "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$                            JOptionPane.QUESTION_MESSAGE, null,
-                    Messages
-                    .getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
-                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets),null);
+            String input = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages.getString(
+                                    "FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$                            JOptionPane.QUESTION_MESSAGE, null,
+                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(targets), null);
             choice = SharedUtility.getTargetPicked(targets, input);
         } // End have-choices
 

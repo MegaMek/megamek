@@ -3410,6 +3410,9 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
+        if(null != ae.getCrew() && ae.getCrew().getOptions().booleanOption("sensor_geek")) {
+            check -= 2;
+        }
         if(null != te) {
             check += sensor.getModsForStealth(te);
             // Metal Content...

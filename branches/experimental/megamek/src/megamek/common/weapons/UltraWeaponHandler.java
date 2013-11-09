@@ -112,36 +112,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         }
 
         int shotsHit;
-        int nMod = 0;
-        if (bGlancing) {
-            nMod -= 4;
-        }
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMod -= 2;
-        }
-
-        if (bDirect) {
-            nMod += (toHit.getMoS() / 3) * 2;
-        }
-
-        boolean tacopscluster = game.getOptions().booleanOption(
-                "tacops_clusterhitpen");
-
-        int[] ranges = wtype.getRanges(weapon);
-        if (tacopscluster) {
-            if (nRange <= 1) {
-                nMod += 1;
-            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
-                nMod += 0;
-            } else {
-                nMod -= 1;
-            }
-        }
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > ranges[RangeType.RANGE_LONG])) {
-            nMod -= 2;
-        }
+        int nMod = getClusterModifiers(true);
 
         shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
                 howManyShots, nMod);

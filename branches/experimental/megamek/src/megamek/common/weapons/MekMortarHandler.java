@@ -63,22 +63,11 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
                 || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
         int missilesHit;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = getClusterModifiers(true);
 
         if (targetHex) {
             missilesHit = wtype.getRackSize();
         } else {
-            if (game.getOptions().booleanOption("tacops_range")
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-                nMissilesModifier -= 2;
-            }
-
-            if (bGlancing) {
-                nMissilesModifier -= 4;
-            } else if (bDirect) {
-                nMissilesModifier += (toHit.getMoS() / 3) * 2;
-            }
-
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
                     nMissilesModifier);
         }

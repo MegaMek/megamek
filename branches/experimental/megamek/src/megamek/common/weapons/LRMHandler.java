@@ -132,12 +132,7 @@ public class LRMHandler extends MissileWeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         int missilesHit;
-        int nMissilesModifier = nSalvoBonus;
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            nMissilesModifier -= 2;
-        }
+        int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
@@ -239,18 +234,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 }
             }
         }
-        if (bGlancing) {
-            nMissilesModifier -= 4;
-        }
-
-        if (bDirect) {
-            nMissilesModifier += (toHit.getMoS() / 3) * 2;
-        }
-
-        if (game.getPlanetaryConditions().hasEMI()) {
-            nMissilesModifier -= 2;
-        }
-
+        
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 

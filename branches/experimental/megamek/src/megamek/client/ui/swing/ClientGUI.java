@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -289,6 +290,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else {
             frame.setSize(800, 600);
         }
+        frame.setMinimumSize(new Dimension(640,480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();

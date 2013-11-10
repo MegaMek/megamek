@@ -3,6 +3,7 @@ package megamek.client.ui.swing.widget;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -10,6 +11,14 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.common.Configuration;
 
+/**
+ * A Border that has an image for each corner as well as an image for the line
+ * inbetween each corner.  The image for the line between two corners will be 
+ * tiled if it is not large enough to fill the whole space.
+ * 
+ * @author walczak
+ *
+ */
 public class MegamekBorder extends EmptyBorder {
 
     protected ImageIcon tl_corner, tr_corner, bl_corner, br_corner;
@@ -75,26 +84,59 @@ public class MegamekBorder extends EmptyBorder {
                     		skin.bottom_line).toURI();
             bottom_line = new ImageIcon(imgURL.toURL()); 
         } catch (Exception e){
-        
-        }
+        	System.out.println("Error: loading icons for " +
+        			"a MegamekBorder!");
+        	System.out.println("Error: " + e.getMessage());
+        }      
     }
     
     
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, 
+    		int height) {
         g.translate(x, y);
-
-        int tileW = tl_corner.getIconWidth();
-        int tileH = tl_corner.getIconHeight();
         
-        paintCorner(c, g, 0, 0, tl_corner);
-        paintCorner(c, g, 0, height-tileH, bl_corner);
-        paintCorner(c, g, width-tileW, 0, tr_corner);        
-        paintCorner(c, g, width-tileW, height-tileH, br_corner);
-     
-        paintEdge(c, g, tileW, 0, width - 2*tileW, tileH, top_line);
-        paintEdge(c, g, 0, tileH, tileW, height-2*tileH, left_line);        
-        paintEdge(c, g, tileW, height-tileH, width-2*tileW, tileH, bottom_line);       
-        paintEdge(c, g, width-tileW, tileH, tileW, height-2*tileH, right_line);        
+        if (tl_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, 0, 0, tl_corner);
+        }
+        if (bl_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, 0, height - bl_corner.getIconHeight(), bl_corner);
+        }
+        if (tr_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, width-tr_corner.getIconWidth(), 0, tr_corner);
+    	}
+        if (br_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        paintCorner(c, g, width-br_corner.getIconWidth(), 
+        		height-br_corner.getIconHeight(), br_corner);
+        }
+        
+        if (top_line.getImageLoadStatus() == MediaTracker.COMPLETE){
+	        paintEdge(c, g, tl_corner.getIconWidth(), 0, 
+	        		width - 
+	        			(tl_corner.getIconWidth() + tr_corner.getIconWidth()), 
+	        		top_line.getIconHeight(), top_line);
+        }
+        if (left_line.getImageLoadStatus() == MediaTracker.COMPLETE){
+	        paintEdge(c, g, 0, tl_corner.getIconHeight(), 
+	        		left_line.getIconWidth(), 
+	        		height - 
+	        			(tl_corner.getIconHeight() + bl_corner.getIconHeight()), 
+	        		left_line);
+        }
+        if (bottom_line.getImageLoadStatus() == MediaTracker.COMPLETE){
+	        paintEdge(c, g, bl_corner.getIconWidth(), 
+	        		height - bottom_line.getIconHeight(), 
+	        		width - 
+	        			(bl_corner.getIconWidth() + br_corner.getIconWidth()), 
+	        		bottom_line.getIconHeight(), bottom_line);
+        }
+        if (right_line.getImageLoadStatus() == MediaTracker.COMPLETE){
+	        paintEdge(c, g, width-right_line.getIconWidth(), 
+	        		tr_corner.getIconHeight(), right_line.getIconWidth(), 
+	        		height - 
+	        			(tr_corner.getIconHeight() + br_corner.getIconHeight()), 
+	        		right_line); 
+        }
+        
     
         g.translate(-x, -y);
     }
@@ -129,14 +171,16 @@ public class MegamekBorder extends EmptyBorder {
     public Insets getBorderInsets() {
         return computeInsets(new Insets(0,0,0,0));
     }
-
-    /* should be protected once api changes area allowed */
+    
     private Insets computeInsets(Insets insets) {
-
-        insets.top = tl_corner.getIconHeight();
-        insets.right = tl_corner.getIconWidth();
-        insets.bottom = tl_corner.getIconHeight();
-        insets.left = tl_corner.getIconWidth();
+        insets.top = Math.min(tl_corner.getIconHeight(),
+        		Math.min(top_line.getIconHeight(),tr_corner.getIconHeight()));
+        insets.right = Math.min(tr_corner.getIconWidth(),
+        		Math.min(right_line.getIconWidth(),br_corner.getIconWidth()));
+        insets.bottom = Math.min(bl_corner.getIconHeight(),
+        		Math.min(bottom_line.getIconHeight(),br_corner.getIconHeight()));
+        insets.left = Math.min(tl_corner.getIconWidth(),
+        		Math.min(left_line.getIconWidth(),bl_corner.getIconWidth()));
 
         return insets;
     }

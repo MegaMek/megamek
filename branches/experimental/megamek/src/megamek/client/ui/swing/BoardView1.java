@@ -7363,7 +7363,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this);
-        scrollpane.setBorder(new MegamekBorder(-1,-1,-1,-1));
+        scrollpane.setBorder(new MegamekBorder("BoardView1"));
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
         // IDisplayables that are drawn in fixed positions in the viewport

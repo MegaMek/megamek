@@ -1,6 +1,7 @@
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -22,6 +23,7 @@ public class MegamekButton extends JButton {
 	protected ImageIcon backgroundPressedIcon;
 	
 	boolean isPressed = false;
+	boolean isMousedOver = false;
 	
 	public MegamekButton(String text, String component){
 		super(text);
@@ -59,13 +61,16 @@ public class MegamekButton extends JButton {
 	        } catch (Exception e) {
 	        	System.out.println("Error: loading background icons for " +
 	        			"a Megamekbutton!");
+	        	System.out.println("Error: " + e.getMessage());
 	        }
 	 }
 	 
 	 protected void processMouseEvent(MouseEvent e){
 		if (e.getID() == MouseEvent.MOUSE_EXITED){
+			isMousedOver = false;
 			repaint();
-			e.consume();
+		} else if (e.getID() == MouseEvent.MOUSE_ENTERED) {
+			isMousedOver = true;
 		} else if (e.getID() == MouseEvent.MOUSE_PRESSED) {
 			isPressed = true;
 		} else if (e.getID() == MouseEvent.MOUSE_RELEASED) {
@@ -96,7 +101,12 @@ public class MegamekButton extends JButton {
 		JLabel textLabel = new JLabel(getText(),SwingConstants.CENTER);
 		textLabel.setSize(getSize());
 		if (this.isEnabled()){
-			if (getMousePosition(true) != null){
+			if (isMousedOver){
+				Font font = textLabel.getFont();
+				// same font but bold
+				Font boldFont = new Font(font.getFontName(), Font.BOLD, 
+						font.getSize()+2);
+				textLabel.setFont(boldFont);
 				textLabel.setForeground(new Color(255,255,0));
 			} else {
 				textLabel.setForeground(new Color(250,250,250));

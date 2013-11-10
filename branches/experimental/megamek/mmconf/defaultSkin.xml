@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  This is the default skin for Megamek 
+  
+  New skins can be created by specifying UI_Element tags 
+
+  The defaultElement UI_Element specifies the default border to be used by UI 
+    components
+
+  The defaultButton UI_Element specifies the default border and background 
+    images to use for Megamek buttons.  The first image is the base default 
+   image and the second image is the pressed image 
+ 
+  NOTE: All locations should be in data/images/widgets  
+-->
+<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+
+      <!-- Defines default borders used in Megamek -->
+      <UI_Element>
+        <name>defaultElement</name>
+        <!-- Specification of border images -->
+        <border>
+          <!-- Corner images -->
+          <corner_top_left>monitor_top_left.png</corner_top_left>
+          <corner_top_right>monitor_top_right.png</corner_top_right>
+          <corner_bottom_left>monitor_bottom_left.png</corner_bottom_left>
+          <corner_bottom_right>monitor_bottom_right.png</corner_bottom_right>
+          <!-- Border lines: these images will be tiled -->
+          <line_top>monitor_top_line.png</line_top>
+          <line_right>monitor_right_line.png</line_right>    
+          <line_left>monitor_left_line.png</line_left>    
+          <line_bottom>monitor_bottom_line.png</line_bottom>   
+        </border>
+    </UI_Element>
+
+    <!-- Defines default buttons -->
+    <UI_Element>
+      <name>defaultButton</name>
+      <!-- Specification of border images -->
+      <border>
+        <corner_top_left>button_top_left.png</corner_top_left>
+        <corner_top_right>button_top_right.png</corner_top_right>
+        <corner_bottom_left>button_bottom_left.png</corner_bottom_left>
+        <corner_bottom_right>button_bottom_right.png</corner_bottom_right>
+        <!-- Border lines: these images will be tiled -->
+        <line_top>button_top_line.png</line_top>
+        <line_right>button_right_line.png</line_right>    
+        <line_left>button_left_line.png</line_left>    
+        <line_bottom>button_bottom_line.png</line_bottom>   
+      </border>
+      <!-- Specification of background image -->
+      <background_image>monitor_bg.png</background_image>
+      <background_image>monitor_bg_pressed.png</background_image>
+  </UI_Element>
+
+</skin>

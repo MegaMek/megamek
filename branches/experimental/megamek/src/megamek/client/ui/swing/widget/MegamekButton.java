@@ -23,30 +23,42 @@ public class MegamekButton extends JButton {
 	
 	boolean isPressed = false;
 	
+	public MegamekButton(String text, String component){
+		super(text);
+		setBorder(new MegamekBorder(component));
+		loadIcon(SkinXMLHandler.getSkin(component));
+	}
+	
 	public MegamekButton(String text){
 		super(text);
-		setBorder(new MegamekButtonBorder(-1,-1,-1,-1));
-		loadIcon();
+		setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
+		loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
 	}
 	
 	public MegamekButton(){
 		super();
-		setBorder(new MegamekButtonBorder(-1,-1,-1,-1));
-		loadIcon();
+		setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
+		loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
 	}
 	
-	 public void loadIcon(){
+	 public void loadIcon(SkinSpecification spec){
 	        try {
+	        	if (spec.backgrounds.size() <2){
+	        		System.out.println("Error: skin specificaiont for a " +
+	        				"Megamek Button does not contain at least " +
+	        				"2 background images!");
+	        	}
 	            java.net.URI imgURL = 
 	                    new File(Configuration.widgetsDir(),
-	                    "monitor_bg.png").toURI();
+	                    		spec.backgrounds.get(0)).toURI();
 	            backgroundIcon = new ImageIcon(imgURL.toURL());
 	            imgURL = 
 	                    new File(Configuration.widgetsDir(),
-	                    "monitor_bg_pressed.png").toURI();
+	                    		spec.backgrounds.get(1)).toURI();
 	            backgroundPressedIcon = new ImageIcon(imgURL.toURL());
 	        } catch (Exception e) {
-	        	
+	        	System.out.println("Error: loading background icons for " +
+	        			"a Megamekbutton!");
 	        }
 	 }
 	 
@@ -65,13 +77,15 @@ public class MegamekButton extends JButton {
 	 protected void paintComponent(Graphics g){
 		int w = getWidth();
 		int h = getHeight();
-		int iW = backgroundIcon.getIconWidth();
-		int iH = backgroundIcon.getIconHeight();
+		int iW = isPressed ? backgroundPressedIcon.getIconWidth() : 
+			backgroundIcon.getIconWidth();
+		int iH = isPressed ? backgroundPressedIcon.getIconHeight() : 
+			backgroundIcon.getIconHeight();
 		for (int x = 0; x < w; x += iW) {
 			for (int y = 0; y < h; y += iH) {
 				if (isPressed){
 					g.drawImage(backgroundPressedIcon.getImage(), x, y,
-							backgroundIcon.getImageObserver());
+							backgroundPressedIcon.getImageObserver());
 				} else {
 					g.drawImage(backgroundIcon.getImage(), x, y,
 							backgroundIcon.getImageObserver());

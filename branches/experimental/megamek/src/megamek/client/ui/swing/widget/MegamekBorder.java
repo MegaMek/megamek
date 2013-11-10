@@ -21,48 +21,58 @@ public class MegamekBorder extends EmptyBorder {
     
     public MegamekBorder(Insets i){
         super(i);
-        loadIcons();
+        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
     }
     
     public MegamekBorder(int top, int left, int bottom, int right){
         super(top,left,bottom,right);
-        loadIcons();        
+        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));        
     }
     
-    public void loadIcons(){
+    public MegamekBorder(){
+    	super(0,0,0,0);
+    	loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
+    }
+    
+    public MegamekBorder(String component){
+    	super(0,0,0,0);
+    	loadIcons(SkinXMLHandler.getSkin(component));
+    }
+    
+    public void loadIcons(SkinSpecification skin){
         try {
             java.net.URI imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_top_left.png").toURI();
+                    		skin.tl_corner).toURI();
             tl_corner = new ImageIcon(imgURL.toURL());
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_top_right.png").toURI();
+                    		skin.tr_corner).toURI();
             tr_corner = new ImageIcon(imgURL.toURL());
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_bottom_left.png").toURI();
+                    		skin.bl_corner).toURI();
             bl_corner = new ImageIcon(imgURL.toURL());
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_bottom_right.png").toURI();
+                    		skin.br_corner).toURI();
             br_corner = new ImageIcon(imgURL.toURL());
             
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_left_line.png").toURI();
+                    		skin.left_line).toURI();
             left_line = new ImageIcon(imgURL.toURL());
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_right_line.png").toURI();
+                    		skin.right_line).toURI();
             right_line = new ImageIcon(imgURL.toURL()); 
             imgURL = 
                     new File(Configuration.widgetsDir(),
-                    "monitor_top_line.png").toURI();
+                    		skin.top_line).toURI();
             top_line = new ImageIcon(imgURL.toURL()); 
             imgURL =
                     new File(Configuration.widgetsDir(),
-                    "monitor_bottom_line.png").toURI();
+                    		skin.bottom_line).toURI();
             bottom_line = new ImageIcon(imgURL.toURL()); 
         } catch (Exception e){
         

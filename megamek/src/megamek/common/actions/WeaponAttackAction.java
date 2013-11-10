@@ -1046,7 +1046,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Has the pilot the appropriate gunnery skill?
         if (ae.getCrew().getOptions().booleanOption("gunnery_laser")
                 && wtype.hasFlag(WeaponType.F_ENERGY)) {
-            toHit.addModifier(-1, "Gunnery/Laser");
+            toHit.addModifier(-1, "Gunnery/Energy");
         }
 
         if (ae.getCrew().getOptions().booleanOption("gunnery_ballistic")

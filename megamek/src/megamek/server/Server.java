@@ -24398,7 +24398,7 @@ public class Server implements Runnable {
 
         // If the waterDepth is larger than the fall height,
         // we fell underwater
-        if (waterDepth >= height) {
+        if (waterDepth > height) {
             damage = 0;
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (height + 1)) / 2;
         }

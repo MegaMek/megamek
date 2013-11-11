@@ -53,7 +53,15 @@ public class KillCountVictory implements Victory, Serializable {
             Entity wreck = wreckedEnum.nextElement();
             Entity killer = game.getEntity(wreck.getKillerId());
             
+            if (killer == null){
+                continue;
+            }            
+            
             int team = killer.getOwner().getTeam();
+            // Friendly fire doesn't count
+            if (team == wreck.getOwner().getTeam()){
+                continue;
+            }
             if (team != Player.TEAM_NONE){
                 Integer kills = killsTeam.get(team);
                 if (kills == null){
@@ -63,7 +71,11 @@ public class KillCountVictory implements Victory, Serializable {
                 }
                 killsTeam.put(team, kills);
             } else {
-                Integer player = team;
+                Integer player = killer.getOwner().getId();
+                // Friendly fire doesn't count
+                if (wreck.getOwner().getId() == player){
+                    continue;
+                }
                 Integer kills = killsPlayer.get(player);
                 if (kills == null){
                     kills = 1;

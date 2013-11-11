@@ -2167,6 +2167,18 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
+        // Mechs with no arms and a missing leg cannot attempt to stand 
+        if ((stepType == MoveStepType.GET_UP || 
+                stepType == MoveStepType.CAREFUL_STAND) && 
+            (entity instanceof Mech) && 
+             entity.isLocationBad(Mech.LOC_LARM) && 
+             entity.isLocationBad(Mech.LOC_RARM) && 
+                (entity.isLocationBad(Mech.LOC_RLEG) || 
+                 entity.isLocationBad(Mech.LOC_LLEG))){
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+        
         // Mechs with 1 MP are allowed to get up, except
         // if they've used that 1MP up already
         if ((MoveStepType.GET_UP == stepType) && (1 == entity.getRunMP())

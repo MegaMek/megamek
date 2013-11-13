@@ -104,7 +104,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             attackerHeight--;
         }
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();        
+                + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                 : Mech.LOC_LARM;
@@ -153,7 +153,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // check elevation
         if (target.isAirborneVTOLorWIGE()) {
-            if ((targetElevation - attackerElevation > 2) || (targetElevation - attackerElevation < 1)) {
+            if (((targetElevation - attackerElevation) > 2) || ((targetElevation - attackerElevation) < 1)) {
                 return "Target elevation not in range";
             }
         } else if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
@@ -219,7 +219,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
             }
         }
-        
+
         // Check facing if the Mek is not prone.
         else if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
                 target, armArc)) {
@@ -254,7 +254,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.
         // Damn if you do damned if you dont. --Torren.
-        final boolean hasClaws = ((BipedMech) ae).hasClaw(armLoc);
+        final boolean hasClaws = ((Mech) ae).hasClaw(armLoc);
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc) && !hasClaws) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
@@ -276,8 +276,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
             }
         }
-        
-        //What to do with grounded dropships? Awaiting rules clarification, but 
+
+        //What to do with grounded dropships? Awaiting rules clarification, but
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_PUNCH, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_PUNCH is handled
@@ -288,7 +288,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         		toHit.setHitTable(ToHitData.HIT_PUNCH);
         	}
         }
-        
+
         // factor in target side
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 

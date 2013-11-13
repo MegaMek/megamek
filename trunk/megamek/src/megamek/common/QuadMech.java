@@ -374,7 +374,7 @@ public class QuadMech extends Mech {
 
     @Override
     protected double getLegActuatorCost() {
-        return weight * 150 * 4 + weight * 80 * 4 + weight * 120 * 4;
+        return (weight * 150 * 4) + (weight * 80 * 4) + (weight * 120 * 4);
     }
 
     @Override
@@ -747,54 +747,54 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && 
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) &&
                 ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
             return true;
         }
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && 
-                    ((location == Mech.LOC_LARM) || 
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
+                    ((location == Mech.LOC_LARM) ||
                      (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && 
-                    ((location == Mech.LOC_RARM) || 
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
+                    ((location == Mech.LOC_RARM) ||
                      (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_RIGHT) != 0) && 
-                    ((location == Mech.LOC_LARM) || 
+            if (((cover & LosEffects.COVER_RIGHT) != 0) &&
+                    ((location == Mech.LOC_LARM) ||
                      (location == Mech.LOC_LT) ||
                      (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LEFT) != 0) && 
-                    ((location == Mech.LOC_RARM) || 
+            if (((cover & LosEffects.COVER_LEFT) != 0) &&
+                    ((location == Mech.LOC_RARM) ||
                      (location == Mech.LOC_RT) ||
                      (location == Mech.LOC_RLEG))) {
                 return true;
             }
         } else {
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && 
-                    ((location == Mech.LOC_LARM) || 
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
+                    ((location == Mech.LOC_LARM) ||
                      (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && 
-                    ((location == Mech.LOC_RARM) || 
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
+                    ((location == Mech.LOC_RARM) ||
                      (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LEFT) != 0) && 
-                    ((location == Mech.LOC_LARM) || 
+            if (((cover & LosEffects.COVER_LEFT) != 0) &&
+                    ((location == Mech.LOC_LARM) ||
                      (location == Mech.LOC_LT) ||
                      (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_RIGHT) != 0) && 
-                    ((location == Mech.LOC_RARM) || 
+            if (((cover & LosEffects.COVER_RIGHT) != 0) &&
+                    ((location == Mech.LOC_RARM) ||
                      (location == Mech.LOC_RT) ||
                      (location == Mech.LOC_RLEG))) {
                 return true;
@@ -880,8 +880,17 @@ public class QuadMech extends Mech {
             || (armorType[LOC_LARM] == EquipmentType.T_ARMOR_HARDENED)
             || (armorType[LOC_RARM] == EquipmentType.T_ARMOR_HARDENED);
     }
-    
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_QUAD_MECH;
+    }
+
+    /**
+     * quad mechs can't have claws
+     */
+    @Override
+    public boolean hasClaw(int location) {
+        return false;
     }
 }

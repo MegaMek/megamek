@@ -325,36 +325,6 @@ public class BipedMech extends Mech {
     }
 
     /**
-     * Check to see if a Biped mech has a claw in one of its arms
-     *
-     * @param location
-     *            (LOC_RARM or LOC_LARM)
-     * @return True/False
-     */
-    public boolean hasClaw(int location) {
-        // only arms have claws.
-        if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
-            return false;
-        }
-        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = getCritical(location, slot);
-
-            if (cs == null) {
-                continue;
-            }
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
-                continue;
-            }
-            Mounted m = cs.getMount();
-            EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_HAND_WEAPON) && type.hasSubType(MiscType.S_CLAW)) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
-            }
-        }
-        return false;
-    }
-
-    /**
      * Checks to see if this bipmech has any vibro blades on them.
      *
      * @return boolean <code>true</code> if the mech has vibroblades

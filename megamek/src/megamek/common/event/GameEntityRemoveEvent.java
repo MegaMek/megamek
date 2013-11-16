@@ -22,7 +22,7 @@ import megamek.common.Entity;
 public class GameEntityRemoveEvent extends GameEntityEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4694809256962666172L;
 
@@ -30,21 +30,18 @@ public class GameEntityRemoveEvent extends GameEntityEvent {
      * @param source
      * @param entity
      */
-    public GameEntityRemoveEvent(Object source) {
+    public GameEntityRemoveEvent(Object source, Entity entity) {
         super(source);
+        this.entity = entity;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameEntityRemove(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEntityRemove(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Entity Remove";
-	}
-	
-	public Entity getEntity() {
-        return null;
+    @Override
+    public String getEventName() {
+        return "Entity Remove";
     }
 }

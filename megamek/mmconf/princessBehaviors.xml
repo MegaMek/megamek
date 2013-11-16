@@ -53,7 +53,7 @@
     <strategicTargets/>
   </behavior>
   <behavior>
-    <name>- DEFAULT -</name>
+    <name>DEFAULT</name>
     <homeEdge>0</homeEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>

@@ -245,7 +245,7 @@ public class CEntity {
     }
 
     public void reset() {
-        entity = tb.game.getEntity(entity.getId()); // fresh entity
+        entity = tb.getGame().getEntity(entity.getId()); // fresh entity
         for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
             Arrays.fill(damages[a], 0);
         }
@@ -260,7 +260,7 @@ public class CEntity {
     }
 
     public void refresh() {
-        entity = tb.game.getEntity(entity.getId());
+        entity = tb.getGame().getEntity(entity.getId());
         if (justMoved()) {
             for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
                 Arrays.fill(damages[a], 0);
@@ -281,8 +281,8 @@ public class CEntity {
      */
 
     public void characterize() {
-        entity = tb.game.getEntity(entity.getId());
-        current = new MoveOption(tb.game, this);
+        entity = tb.getGame().getEntity(entity.getId());
+        current = new MoveOption(tb.getGame(), this);
         bv = entity.calculateBattleValue();
 
         // Make a guess as to whether MASC should be turned on or off
@@ -334,10 +334,10 @@ public class CEntity {
 
             // Include heat for standing in a fire
             if (entity.getPosition() != null) {
-                if (tb.game.getBoard().getHex(entity.getPosition()) != null) {
-                    if (tb.game.getBoard().getHex(entity.getPosition())
+                if (tb.getGame().getBoard().getHex(entity.getPosition()) != null) {
+                    if (tb.getGame().getBoard().getHex(entity.getPosition())
                             .containsTerrain(Terrains.FIRE)
-                            && (tb.game.getBoard().getHex(entity.getPosition())
+                            && (tb.getGame().getBoard().getHex(entity.getPosition())
                                     .getFireTurn() > 0)) {
                         heat += 5;
                     }
@@ -345,7 +345,7 @@ public class CEntity {
             }
 
             // Include heat from ambient temperature
-            heat += tb.game.getPlanetaryConditions().getTemperatureDifference(
+            heat += tb.getGame().getPlanetaryConditions().getTemperatureDifference(
                     50, -30);
         }
 

@@ -68,7 +68,7 @@ public interface IGame {
         PHASE_SET_ARTYAUTOHITHEXES;
 
         /**
-         * @param phase_deployment2
+         * @param otherPhase
          * @return
          */
         public boolean isDuringOrAfter(Phase otherPhase) {
@@ -76,7 +76,7 @@ public interface IGame {
         }
 
         /**
-         * @param phase_offboard2
+         * @param otherPhase
          * @return
          */
         public boolean isBefore(Phase otherPhase) {
@@ -279,7 +279,7 @@ public interface IGame {
     /**
      * Return a players team Note: may return null if player has no team
      */
-    public abstract Team getTeamForPlayer(Player p);
+    public abstract Team getTeamForPlayer(IPlayer p);
 
     /**
      * Set up the teams vector. Each player on a team (Team 1 .. Team X) is
@@ -291,12 +291,12 @@ public interface IGame {
     /**
      * Return an enumeration of player in the game
      */
-    public abstract Enumeration<Player> getPlayers();
+    public abstract Enumeration<IPlayer> getPlayers();
 
     /**
      * Return the players vector
      */
-    public abstract Vector<Player> getPlayersVector();
+    public abstract Vector<IPlayer> getPlayersVector();
 
     /**
      * Return the current number of active players in the game.
@@ -306,48 +306,54 @@ public interface IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public abstract Player getPlayer(int id);
+    public abstract IPlayer getPlayer(int id);
 
-    public abstract void addPlayer(int id, Player player);
+    public abstract void addPlayer(int id, IPlayer player);
 
-    public abstract void setPlayer(int id, Player player);
+    public abstract void setPlayer(int id, IPlayer player);
 
     public abstract void removePlayer(int id);
 
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
+     * @param player
      */
-    public abstract int getEntitiesOwnedBy(Player player);
+    public abstract int getEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status.
+     * @param player
      */
-    public abstract int getAllEntitiesOwnedBy(Player player);
+    public abstract int getAllEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed entityes owned by the player
+     * @param player
      */
-    public abstract int getLiveEntitiesOwnedBy(Player player);
+    public abstract int getLiveEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed deployed entities owned by the
      * player. Ignore offboard units and captured Mek pilots.
+     * @param player
      */
-    public abstract int getLiveDeployedEntitiesOwnedBy(Player player);
+    public abstract int getLiveDeployedEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed deployed entities owned by the
      * player. Ignore offboard units and captured Mek pilots.
+     * @param player
      */
-    public abstract int getLiveCommandersOwnedBy(Player player);
+    public abstract int getLiveCommandersOwnedBy(IPlayer player);
 
     /**
      * Returns true if the player has a valid unit with the Tactical Genius
      * pilot special ability.
+     * @param player
      */
-    public abstract boolean hasTacticalGenius(Player player);
+    public abstract boolean hasTacticalGenius(IPlayer player);
 
     /**
      * Get a vector of entity objects that are "acceptable" to attack with this
@@ -809,20 +815,22 @@ public interface IGame {
     /**
      * Get the entities for the player.
      *
-     * @param player - the <code>Player</code> whose entities are required.
-     * @param hide - should fighters loaded into squadrons be excluded from this list?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
-     */
-    public abstract ArrayList<Entity> getPlayerEntities(Player player, boolean hide);
-
-    /**
-     * Get the entities for the player.
      *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public abstract ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide);
+    public abstract ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide);
+
+    /**
+     * Get the entities for the player.
+     *
+     *
+     * @param player - the <code>Player</code> whose entities are required.
+     * @param hide - should fighters loaded into squadrons be excluded from this list?
+     * @return a <code>Vector</code> of <code>Entity</code>s.
+     */
+    public abstract ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't
@@ -1140,8 +1148,9 @@ public interface IGame {
     /**
      * Returns true if the specified player is either the victor, or is on the
      * winning team. Best to call during PHASE_VICTORY.
+     * @param player
      */
-    public abstract boolean isPlayerVictor(Player player);
+    public abstract boolean isPlayerVictor(IPlayer player);
 
     /**
      * Shortcut to isPlayerVictor(Player player)

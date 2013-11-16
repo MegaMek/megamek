@@ -407,7 +407,7 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for ids.
          */
         public UnloadStrandedTurn(int[] ids) {
-            super(Player.PLAYER_NONE);
+            super(IPlayer.PLAYER_NONE);
 
             // Validate input.
             if (null == ids) {
@@ -435,7 +435,7 @@ public class GameTurn implements Serializable {
          *                entities.
          */
         public UnloadStrandedTurn(Enumeration<Entity> entities) {
-            super(Player.PLAYER_NONE);
+            super(IPlayer.PLAYER_NONE);
 
             // Validate input.
             if (null == entities) {

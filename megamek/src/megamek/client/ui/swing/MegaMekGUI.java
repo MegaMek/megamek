@@ -60,6 +60,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
@@ -338,7 +339,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port, hd.register, hd.register?hd.metaserver:"");
+            server = new Server(hd.serverPass, hd.port, hd.register, hd.register ? hd.metaserver : "");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
                     + hd.port);
@@ -384,7 +385,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             @Override
             public boolean accept(File dir) {
                 return ((dir.getName() != null) && (dir.getName().endsWith(
-                        ".sav") || dir.getName().endsWith(".sav.gz")|| dir.isDirectory())); //$NON-NLS-1$
+                        ".sav") || dir.getName().endsWith(".sav.gz") || dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
@@ -662,7 +663,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
-                c.game.addGameListener(new BotGUI(c));
+                c.getGame().addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
@@ -673,7 +674,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
                 BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, LogLevel.ERROR); //$NON-NLS-1$
-                c.game.addGameListener(new BotGUI(c));
+                c.getGame().addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
@@ -684,9 +685,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<Player> pE = server.getGame().getPlayers();
+            Enumeration<IPlayer> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                Player tmpP = pE.nextElement();
+                IPlayer tmpP = pE.nextElement();
                 if (tmpP.getName().equals(sd.localName)) {
                     tmpP.setObserver(true);
                 }
@@ -782,7 +783,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             return; //user didn't click 'ok', add no bot
         }
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);
-        client.game.addGameListener(new BotGUI((BotClient) client));
+        client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         if (!client.connect()) {
@@ -802,7 +803,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
+                        GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.getContentPane().add(comp);
     }

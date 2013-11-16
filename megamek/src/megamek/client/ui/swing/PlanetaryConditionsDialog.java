@@ -157,7 +157,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         super(client.frame, Messages
                 .getString("PlanetaryConditionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
-        init(client.frame, client.getClient().game.getPlanetaryConditions());
+        init(client.frame, client.getClient().getGame().getPlanetaryConditions());
     }
 
     public PlanetaryConditionsDialog(JFrame frame, PlanetaryConditions conditions) {

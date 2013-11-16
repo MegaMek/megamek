@@ -6,7 +6,7 @@ package megamek.server.commands;
 import java.util.Enumeration;
 
 import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -29,7 +29,7 @@ public class ListEntitiesCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-    	Player p = server.getGame().getPlayer(connId);
+    	IPlayer p = server.getGame().getPlayer(connId);
     	if(null == p) {
     		return;
     	}

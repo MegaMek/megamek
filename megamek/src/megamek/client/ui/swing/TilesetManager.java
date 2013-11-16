@@ -49,9 +49,9 @@ import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.Minefield;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -452,11 +452,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *         will be <code>null</code> if the player has selected no camo
      *         pattern or if there was an error loading it.
      */
-    public Image getPlayerCamo(Player player) {
+    public Image getPlayerCamo(IPlayer player) {
 
         // Return a null if the player has selected no camo file.
         if ((null == player.getCamoCategory())
-                || Player.NO_CAMO.equals(player.getCamoCategory())) {
+                || player.NO_CAMO.equals(player.getCamoCategory())) {
             return null;
         }
 
@@ -466,7 +466,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
             // Translate the root camo directory name.
             String category = player.getCamoCategory();
-            if (Player.ROOT_CAMO.equals(category)) {
+            if (player.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
             camo = (Image) camos.getItem(category, player.getCamoFileName());
@@ -489,7 +489,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // Return a null if the player has selected no camo file.
         if ((null == entity.getCamoCategory())
-                || Player.NO_CAMO.equals(entity.getCamoCategory())) {
+                || IPlayer.NO_CAMO.equals(entity.getCamoCategory())) {
             return null;
         }
 
@@ -499,7 +499,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
             // Translate the root camo directory name.
             String category = entity.getCamoCategory();
-            if (Player.ROOT_CAMO.equals(category)) {
+            if (IPlayer.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
             camo = (Image) camos.getItem(category, entity.getCamoFileName());
@@ -517,7 +517,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image base = mechTileset.imageFor(entity, comp, secondaryPos);
         Image wreck = wreckTileset.imageFor(entity, comp, secondaryPos);
 
-        Player player = entity.getOwner();
+        IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
         Image camo = null;

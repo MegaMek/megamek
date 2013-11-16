@@ -124,7 +124,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     public ChatterBox2(ClientGUI client, IBoardView boardview) {
         this.client = client.getClient();
-        client.getClient().game.addGameListener(new GameListenerAdapter() {
+        client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 addChatMessage(e.getMessage());

@@ -175,7 +175,7 @@ public class MiniMap extends JPanel {
     }
 
     public MiniMap(Container d, ClientGUI c, IBoardView bview) throws IOException {
-        this(d, c.getClient().game, bview);
+        this(d, c.getClient().getGame(), bview);
         clientgui = c;
 
         // this may come in useful later...

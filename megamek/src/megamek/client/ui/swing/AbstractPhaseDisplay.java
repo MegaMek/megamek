@@ -73,7 +73,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
@@ -88,7 +88,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().game.getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }

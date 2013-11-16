@@ -21,7 +21,7 @@ package megamek.client.bot.princess;
  * @since: 8/31/13 1:10 PM
  */
 public class BehaviorSettingsTestConstants {
-    public static final String GOOD_BEHAVIOR_NAME = "- default -";
+    public static final String GOOD_BEHAVIOR_NAME = "DEFAULT";
     public static final HomeEdge GOOD_HOME_EDGE = HomeEdge.NORTH;
     public static final boolean GOOD_FORCED_WITHDRAWAL = true;
     public static final boolean GOOD_GO_HOME = false;

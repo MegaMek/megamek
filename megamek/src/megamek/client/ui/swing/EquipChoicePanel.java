@@ -150,7 +150,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().game.getOptions().booleanOption(
+            if (clientgui.getClient().getGame().getOptions().booleanOption(
                     "conditional_ejection")
                     && hasEjectSeat) { //$NON-NLS-1$
                 add(labCondEjectAmmo, GBC.std());
@@ -184,7 +184,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         // set up Santa Annas if using nukes
         if (((entity instanceof Dropship) || (entity instanceof Jumpship))
-                && clientgui.getClient().game.getOptions().booleanOption(
+                && clientgui.getClient().getGame().getOptions().booleanOption(
                         "at2_nukes")) {
             setupSantaAnna();
             add(panSantaAnna,
@@ -199,7 +199,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         // Set up rapidfire mg
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_burst")) { //$NON-NLS-1$
             setupRapidfireMGs();
             add(panRapidfireMGs,
@@ -214,7 +214,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         // Set up searchlight
-        if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
+        if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSpotlight());
@@ -284,9 +284,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3
                     .getSelectedIndex()]);
-            int entC3nodeCount = client.game.getC3SubNetworkMembers(entity)
+            int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity)
                     .size();
-            int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
+            int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen)
                     .size();
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
                 entity.setC3Master(chosen, true);
@@ -314,8 +314,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        m_bombs = new BombChoicePanel((Aero) entity, client.game.getOptions().booleanOption("at2_nukes"),
-                client.game.getOptions().booleanOption("allow_advanced_ammo"));
+        m_bombs = new BombChoicePanel((Aero) entity, client.getGame().getOptions().booleanOption("at2_nukes"),
+                client.getGame().getOptions().booleanOption("allow_advanced_ammo"));
         panBombs.add(m_bombs, GBC.std());
     }
 
@@ -359,7 +359,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             // Santa Annas?
-            if (clientgui.getClient().game.getOptions().booleanOption(
+            if (clientgui.getClient().getGame().getOptions().booleanOption(
                     "at2_nukes")
                     && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
                             .getAmmoType() == AmmoType.T_AR10) && at
@@ -415,7 +415,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!clientgui.getClient().game.getOptions().booleanOption(
+                if (!clientgui.getClient().getGame().getOptions().booleanOption(
                         "is_eq_limits") //$NON-NLS-1$
                         && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
                         && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
@@ -423,9 +423,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
 
                 // Possibly allow advanced/experimental ammos, possibly not.
-                if (clientgui.getClient().game.getOptions().booleanOption(
+                if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "allow_advanced_ammo")) {
-                    if (!clientgui.getClient().game.getOptions().booleanOption(
+                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
                             "is_eq_limits")) {
                         if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity
                                 .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
@@ -460,7 +460,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     // to be combined to other munition types.
                     long muniType = atCheck.getMunitionType();
                     muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                    if (!clientgui.getClient().game.getOptions().booleanOption(
+                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
                             "clan_ignore_eq_limits") //$NON-NLS-1$
                             && entity.isClan()
                             && ((muniType == AmmoType.M_SEMIGUIDED)
@@ -478,7 +478,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         bTechMatch = false;
                     }
 
-                    if (!clientgui.getClient().game.getOptions().booleanOption(
+                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
                             "minefields") && //$NON-NLS-1$
                             AmmoType.canDeliverMinefield(atCheck)) {
                         continue;
@@ -511,9 +511,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }
                 }
                 if ((vTypes.size() < 1)
-                        && !client.game.getOptions().booleanOption(
+                        && !client.getGame().getOptions().booleanOption(
                                 "lobby_ammo_dump")
-                        && !client.game.getOptions()
+                        && !client.getGame().getOptions()
                                 .booleanOption("tacops_hotload")) { //$NON-NLS-1$
                     continue;
                 }
@@ -647,17 +647,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(lLoc, GBC.std());
                 add(m_choice, GBC.std());
                 add(m_num_shots, GBC.eol());                
-                if (clientgui.getClient().game.getOptions().booleanOption(
+                if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "lobby_ammo_dump")) { //$NON-NLS-1$
                     add(labDump, GBC.std());
                     add(chDump, GBC.eol());
-                    if (clientgui.getClient().game.getOptions().booleanOption(
+                    if (clientgui.getClient().getGame().getOptions().booleanOption(
                             "tacops_hotload")
                             && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                         add(labHotLoad, GBC.std());
                         add(chHotLoad, GBC.eol());
                     }
-                } else if (clientgui.getClient().game.getOptions().booleanOption(
+                } else if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "tacops_hotload")
                         && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
@@ -673,7 +673,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }
-                if (clientgui.getClient().game.getOptions().booleanOption(
+                if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "tacops_hotload")) {
                     if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                         m_mounted.setHotLoad(chHotLoad.isSelected());
@@ -949,7 +949,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         private void refreshC3() {
             choC3.removeAllItems();
             int listIndex = 0;
-            entityCorrespondance = new int[client.game.getNoOfEntities() + 2];
+            entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
 
             if (entity.hasC3i()) {
                 choC3.addItem(Messages

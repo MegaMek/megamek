@@ -119,6 +119,7 @@ v0.37.0-dev (SVN)
 + Bug [#2945]: Standing up with missing arms and leg
 + Bug: Zero-level falls on dry land only do half damage
 + Bug [#3918]: ClassCastException with Tripod punches
++ Bug [#3919]: Alert messages for exiting/entering from Building hexes
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

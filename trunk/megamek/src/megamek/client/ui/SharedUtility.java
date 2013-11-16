@@ -262,13 +262,13 @@ public class SharedUtility {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
-            if ((buildingMove > 0) && !(entity instanceof Protomech)) {
+            if ((buildingMove > 1) && !(entity instanceof Protomech)) {
 
                 // Get the building being entered.
                 Building bldg = null;
                 String reason ="entering";
-                if ((buildingMove & 1) == 1) {
-                    bldg = game.getBoard().getBuildingAt(lastPos);
+                if ((buildingMove & 2) == 2) {
+                    bldg = game.getBoard().getBuildingAt(curPos);
                 }
 
                 if (bldg != null) {

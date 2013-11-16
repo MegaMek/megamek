@@ -2903,6 +2903,7 @@ public class MoveStep implements Serializable {
             if (Compute.isEnemyIn(game, entity, src, false,
                     entity instanceof Mech, getElevation())
                     && !src.equals(entity.getPosition())
+                    && !src.equals(dest)
                     && (type != MoveStepType.TURN_LEFT)
                     && (type != MoveStepType.TURN_RIGHT)
                     && (type != MoveStepType.UNLOAD)

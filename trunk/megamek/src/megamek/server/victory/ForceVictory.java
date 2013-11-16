@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * implementation of player-agreed victory
@@ -38,13 +38,13 @@ public class ForceVictory implements Victory, Serializable {
             return new SimpleNoResult();
         int victoryPlayerId = game.getVictoryPlayerId();
         int victoryTeam = game.getVictoryTeam();
-        Vector<Player> players = game.getPlayersVector();
+        Vector<IPlayer> players = game.getPlayersVector();
         boolean forceVictory = true;
 
         // Individual victory.
-        if (victoryPlayerId != Player.PLAYER_NONE) {
+        if (victoryPlayerId != IPlayer.PLAYER_NONE) {
             for (int i = 0; i < players.size(); i++) {
-                Player player = players.elementAt(i);
+                IPlayer player = players.elementAt(i);
 
                 if (player.getId() != victoryPlayerId && !player.isObserver()) {
                     if (!player.admitsDefeat()) {
@@ -55,9 +55,9 @@ public class ForceVictory implements Victory, Serializable {
             }
         }
         // Team victory.
-        if (victoryTeam != Player.TEAM_NONE) {
+        if (victoryTeam != IPlayer.TEAM_NONE) {
             for (int i = 0; i < players.size(); i++) {
-                Player player = players.elementAt(i);
+                IPlayer player = players.elementAt(i);
 
                 if (player.getTeam() != victoryTeam && !player.isObserver()) {
                     if (!player.admitsDefeat()) {

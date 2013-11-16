@@ -53,7 +53,7 @@ public class Minefield implements Serializable, Cloneable {
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
-    private int playerId = Player.PLAYER_NONE;
+    private int playerId = IPlayer.PLAYER_NONE;
     //private int damage = 0;
     //private int secondaryDamage = 0;
     private int density = 5;

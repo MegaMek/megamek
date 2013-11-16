@@ -26,7 +26,7 @@ import megamek.client.event.MechDisplayListener;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.ToHitData;
 import megamek.common.actions.AttackAction;
 
@@ -59,8 +59,8 @@ public interface IBoardView extends MechDisplayListener {
 
     public ITilesetManager getTilesetManager();
 
-    public Player getLocalPlayer();
-    public void setLocalPlayer(Player localPlayer);
+    public IPlayer getLocalPlayer();
+    public void setLocalPlayer(IPlayer localPlayer);
 
     public void zoomIn();
     public void zoomOut();

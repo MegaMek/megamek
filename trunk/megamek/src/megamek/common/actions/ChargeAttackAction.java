@@ -34,12 +34,12 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -116,8 +116,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             if (!skid
                     && (target.getTargetType() == Targetable.TYPE_ENTITY)
                     && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target)
-                            .getOwner().getTeam() != Player.TEAM_NONE)
-                            && (ae.getOwner().getTeam() != Player.TEAM_NONE) && (ae
+                            .getOwner().getTeam() != IPlayer.TEAM_NONE)
+                            && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE) && (ae
                             .getOwner().getTeam() == ((Entity) target)
                             .getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,

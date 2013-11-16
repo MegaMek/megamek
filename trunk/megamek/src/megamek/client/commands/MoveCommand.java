@@ -75,7 +75,7 @@ public class MoveCommand extends ClientCommand {
                         cen = Entity.NONE;
                         return "Not an entity ID or valid number.";
                     }
-                    cmd = new MovePath(client.game, ce());
+                    cmd = new MovePath(getClient().getGame(), ce());
 
                     return "Entity " + ce().toString()
                             + " selected for movement.";
@@ -126,7 +126,7 @@ public class MoveCommand extends ClientCommand {
                     return "Trying to get up but the mech is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()
-                            && client.game.getOptions().booleanOption("tacops_careful_stand")) {
+                            && getClient().getGame().getOptions().booleanOption("tacops_careful_stand")) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mech will try to stand up. this requieres a piloting roll.";
                     }
@@ -208,7 +208,7 @@ public class MoveCommand extends ClientCommand {
             else if (ce().getMovementMode() == EntityMovementMode.QUAD_SWIM)
                 ce().setMovementMode(EntityMovementMode.QUAD);
 
-            cmd = new MovePath(client.game, ce());
+            cmd = new MovePath(getClient().getGame(), ce());
         } else {
             cmd = null;
         }
@@ -223,15 +223,15 @@ public class MoveCommand extends ClientCommand {
         md.clipToPossible();
 
         if (ce().hasUMU()) {
-            client.sendUpdateEntity(ce());
+            getClient().sendUpdateEntity(ce());
         }
-        client.moveEntity(cen, md);
+        getClient().moveEntity(cen, md);
     }
 
     /**
      * Returns the current Entity.
      */
     public Entity ce() {
-        return client.game.getEntity(cen);
+        return getClient().getGame().getEntity(cen);
     }
 }

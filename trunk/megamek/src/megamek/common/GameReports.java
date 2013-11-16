@@ -15,6 +15,8 @@
 package megamek.common;
 
 
+import megamek.common.logging.Logger;
+
 import java.io.Serializable;
 import java.util.Vector;
 
@@ -60,8 +62,9 @@ public class GameReports implements Serializable {
         if (round <= reports.size()) {
             return reports.elementAt(round - 1);
         }
-        System.err
-                .println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
+        Exception badRound = new RuntimeException(
+                "ERROR: GameReports.get() was asked for reports of a round [" + round + "] which it does not posses.");
+        new Logger().log(getClass(), "get(int)", badRound);
         return null;
     }
 

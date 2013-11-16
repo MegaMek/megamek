@@ -259,11 +259,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     public MovementDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        clientgui.getClient().game.addGameListener(this);
+        clientgui.getClient().getGame().addGameListener(this);
         gear = MovementDisplay.GEAR_LAND;
         shiftheld = false;
         clientgui.getBoardView().addBoardViewListener(this);
-        clientgui.getClient().game.setupTeams();
+        clientgui.getClient().getGame().setupTeams();
         setupStatusBar(Messages
                 .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         butClear = new JButton(Messages.getString("MovementDisplay.butClear")); //$NON-NLS-1$
@@ -622,12 +622,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butSearchlight);
         buttonsMech.add(butHullDown);
         buttonsMech.add(butEvade);
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             buttonsMech.add(butShutdown);
             buttonsMech.add(butStartup);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_self_destruct")) {
             buttonsMech.add(butSelfDestruct);
         }
@@ -638,9 +638,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient()
+        if ((clientgui.getClient().getGame().getTeamForPlayer(clientgui.getClient()
                 .getLocalPlayer()) != null)
-                && (clientgui.getClient().game.getTeamForPlayer(
+                && (clientgui.getClient().getGame().getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
             buttonsMech.add(butForwardIni);
         }
@@ -668,18 +668,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butLower);
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
-        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient()
+        if ((clientgui.getClient().getGame().getTeamForPlayer(clientgui.getClient()
                 .getLocalPlayer()) != null)
-                && (clientgui.getClient().game.getTeamForPlayer(
+                && (clientgui.getClient().getGame().getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
             buttonsTank.add(butForwardIni);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             buttonsTank.add(butShutdown);
             buttonsTank.add(butStartup);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_self_destruct")) {
             buttonsTank.add(butSelfDestruct);
         }
@@ -700,18 +700,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
-        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient()
+        if ((clientgui.getClient().getGame().getTeamForPlayer(clientgui.getClient()
                 .getLocalPlayer()) != null)
-                && (clientgui.getClient().game.getTeamForPlayer(
+                && (clientgui.getClient().getGame().getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
             buttonsVtol.add(butForwardIni);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             buttonsVtol.add(butShutdown);
             buttonsVtol.add(butStartup);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_self_destruct")) {
             buttonsVtol.add(butSelfDestruct);
         }
@@ -733,15 +733,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
-        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient()
+        if ((clientgui.getClient().getGame().getTeamForPlayer(clientgui.getClient()
                 .getLocalPlayer()) != null)
-                && (clientgui.getClient().game.getTeamForPlayer(
+                && (clientgui.getClient().getGame().getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
             buttonsInf.add(butForwardIni);
         }
 
         buttonsAero = new ArrayList<JButton>(24);
-        if (!clientgui.getClient().game.useVectorMove()) {
+        if (!clientgui.getClient().getGame().useVectorMove()) {
             buttonsAero.add(butWalk);
             buttonsAero.add(butAcc);
             buttonsAero.add(butDec);
@@ -787,18 +787,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butLand);
             buttonsAero.add(butVLand);
         }
-        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient()
+        if ((clientgui.getClient().getGame().getTeamForPlayer(clientgui.getClient()
                 .getLocalPlayer()) != null)
-                && (clientgui.getClient().game.getTeamForPlayer(
+                && (clientgui.getClient().getGame().getTeamForPlayer(
                         clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
             buttonsAero.add(butForwardIni);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             buttonsAero.add(butShutdown);
             buttonsAero.add(butStartup);
         }
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_self_destruct")) {
             buttonsAero.add(butSelfDestruct);
         }
@@ -913,7 +913,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Selects an entity, by number, for movement.
      */
     public synchronized void selectEntity(int en) {
-        final Entity ce = clientgui.getClient().game.getEntity(en);
+        final Entity ce = clientgui.getClient().getGame().getEntity(en);
 
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
@@ -962,7 +962,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setRamEnabled(ce.canRam());
 
         if (isInfantry) {
-            if (clientgui.getClient().game.containsMinefield(ce.getPosition())) {
+            if (clientgui.getClient().getGame().containsMinefield(ce.getPosition())) {
                 setClearEnabled(true);
             } else {
                 setClearEnabled(false);
@@ -1014,9 +1014,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setEvadeAeroEnabled(true);
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
-            if ((((Aero) ce).isSpheroid() || clientgui.getClient().game
+            if ((((Aero) ce).isSpheroid() || clientgui.getClient().getGame()
                     .getPlanetaryConditions().isVacuum())
-                    && !clientgui.getClient().game.getBoard().inSpace()) {
+                    && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
         }
@@ -1041,7 +1041,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             butFortify.setEnabled(false);
         }
         if (isInfantry
-                && clientgui.getClient().game.getOptions().booleanOption(
+                && clientgui.getClient().getGame().getOptions().booleanOption(
                         "tacops_dig_in")) {
             butDigIn.setEnabled(true);
         } else {
@@ -1052,7 +1052,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "vehicles_can_eject")) { //$NON-NLS-1$
             setEjectEnabled((!isInfantry)
                     && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED))
@@ -1102,9 +1102,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // end my turn, then.
         disableButtons();
-        Entity next = clientgui.getClient().game.getNextEntity(clientgui
-                .getClient().game.getTurnIndex());
-        if ((IGame.Phase.PHASE_MOVEMENT == clientgui.getClient().game
+        Entity next = clientgui.getClient().getGame().getNextEntity(clientgui
+                .getClient().getGame().getTurnIndex());
+        if ((IGame.Phase.PHASE_MOVEMENT == clientgui.getClient().getGame()
                 .getPhase())
                 && (null != next)
                 && (null != ce)
@@ -1204,7 +1204,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         // create new current and considered paths
-        cmd = new MovePath(clientgui.getClient().game, ce);
+        cmd = new MovePath(clientgui.getClient().getGame(), ce);
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
@@ -1426,7 +1426,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // check to see if spheroids will drop an elevation
         if ((ce() instanceof Aero) && ((Aero) ce()).isSpheroid()
-                && !clientgui.getClient().game.getBoard().inSpace()
+                && !clientgui.getClient().getGame().getBoard().inSpace()
                 && ((Aero) ce()).isAirborne() && (cmd.getFinalNDown() == 0)
                 && (cmd.getMpUsed() == 0) && !cmd.contains(MoveStepType.VLAND)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
@@ -1445,7 +1445,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (ce().isAirborne() && (ce() instanceof Aero)) {
-            if (!clientgui.getClient().game.useVectorMove()
+            if (!clientgui.getClient().getGame().useVectorMove()
                     && !((Aero) ce()).isOutControlTotal()) {
                 // check for underuse of velocity
                 boolean unusedVelocity = false;
@@ -1509,7 +1509,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Returns the current entity.
      */
     private synchronized Entity ce() {
-        return clientgui.getClient().game.getEntity(cen);
+        return clientgui.getClient().getGame().getEntity(cen);
     }
 
     /**
@@ -1600,7 +1600,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // don't make a movement path for aeros if advanced movement is on
         boolean nopath = (ce instanceof Aero)
-                && clientgui.getClient().game.useVectorMove();
+                && clientgui.getClient().getGame().useVectorMove();
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
@@ -1663,7 +1663,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // check if it's a valid ram
                 // First I need to add moves to the path if advanced
                 if ((ce instanceof Aero)
-                        && clientgui.getClient().game.useVectorMove()) {
+                        && clientgui.getClient().getGame().useVectorMove()) {
                     cmd.clipToPossible();
                     // cmd = addSteps(cmd, ce, clientgui.getClient());
                 }
@@ -1672,7 +1672,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
                 ToHitData toHit = new RamAttackAction(cen,
                         target.getTargetType(), target.getTargetId(),
-                        target.getPosition()).toHit(clientgui.getClient().game,
+                        target.getPosition()).toHit(clientgui.getClient().getGame(),
                         cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
 
@@ -1730,7 +1730,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // check if it's a valid charge
                 ToHitData toHit = new ChargeAttackAction(cen,
                         target.getTargetType(), target.getTargetId(),
-                        target.getPosition()).toHit(clientgui.getClient().game,
+                        target.getPosition()).toHit(clientgui.getClient().getGame(),
                         cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
@@ -1741,12 +1741,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 .getDamageTakenBy(
                                         ce,
                                         te,
-                                        clientgui.getClient().game.getOptions()
+                                        clientgui.getClient().getGame().getOptions()
                                                 .booleanOption(
                                                         "tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                             || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
-                        Building bldg = clientgui.getClient().game.getBoard()
+                        Building bldg = clientgui.getClient().getGame().getBoard()
                                 .getBuildingAt(moveto);
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
                                 bldg, moveto);
@@ -1769,7 +1769,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                                                     .getDamageFor(
                                                                             ce,
                                                                             clientgui
-                                                                                    .getClient().game
+                                                                                    .getClient().getGame()
                                                                                     .getOptions()
                                                                                     .booleanOption(
                                                                                             "tacops_charge_damage"),
@@ -1804,7 +1804,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
                 // check if it's a valid DFA
                 ToHitData toHit = DfaAttackAction.toHit(
-                        clientgui.getClient().game, cen, target, cmd);
+                        clientgui.getClient().getGame(), cen, target, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if (clientgui
@@ -1900,9 +1900,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     // So that vehicle can move and go hull-down, we have to
                     // check if it's moved into a fortified position
                     if (cmd.getLastStep() != null) {
-                        boolean hullDownEnabled = clientgui.getClient().game
+                        boolean hullDownEnabled = clientgui.getClient().getGame()
                                 .getOptions().booleanOption("tacops_hull_down");
-                        IHex occupiedHex = clientgui.getClient().game
+                        IHex occupiedHex = clientgui.getClient().getGame()
                                 .getBoard().getHex(
                                         cmd.getLastStep().getPosition());
                         boolean fortifiedHex = occupiedHex
@@ -2019,7 +2019,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         // only allow landing on the ground map not atmosphere or space map
-        if (!clientgui.getClient().game.getBoard().onGround()) {
+        if (!clientgui.getClient().getGame().getBoard().onGround()) {
             return;
         }
 
@@ -2044,7 +2044,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setRollEnabled(true);
 
-        if (!clientgui.getClient().game.getBoard().inSpace()) {
+        if (!clientgui.getClient().getGame().getBoard().inSpace()) {
             setRollEnabled(false);
         }
 
@@ -2072,7 +2072,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().game.getBoard().inSpace()) {
+        if (clientgui.getClient().getGame().getBoard().inSpace()) {
             return;
         }
 
@@ -2187,12 +2187,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         // if in atmosphere, limit acceleration to 2x safe thrust
-        if (!clientgui.getClient().game.getBoard().inSpace()
+        if (!clientgui.getClient().getGame().getBoard().inSpace()
                 && (vel == (2 * a.getWalkMP()))) {
             setAccEnabled(false);
         }
         // velocity next will get halved before next turn so allow up to 4 times
-        if (!clientgui.getClient().game.getBoard().inSpace()
+        if (!clientgui.getClient().getGame().getBoard().inSpace()
                 && (veln == (4 * a.getWalkMP()))) {
             setAccNEnabled(false);
         }
@@ -2244,14 +2244,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         // for spheroids in atmosphere we just need to check being on the edge
-        if (a.isSpheroid() && !clientgui.getClient().game.getBoard().inSpace()) {
+        if (a.isSpheroid() && !clientgui.getClient().getGame().getBoard().inSpace()) {
             setFlyOffEnabled((position != null)
                     && (a.getWalkMP() > 0)
                     && ((position.x == 0)
-                            || (position.x == (clientgui.getClient().game
+                            || (position.x == (clientgui.getClient().getGame()
                                     .getBoard().getWidth() - 1))
                             || (position.y == 0) || (position.y == (clientgui
-                            .getClient().game.getBoard().getHeight() - 1))));
+                            .getClient().getGame().getBoard().getHeight() - 1))));
             return;
         }
 
@@ -2263,15 +2263,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         boolean evenx = (position.x % 2) == 0;
         if ((velocityLeft > 0)
                 && (((position.x == 0) && ((facing == 5) || (facing == 4)))
-                        || ((position.x == (clientgui.getClient().game
+                        || ((position.x == (clientgui.getClient().getGame()
                                 .getBoard().getWidth() - 1)) && ((facing == 1) || (facing == 2)))
                         || ((position.y == 0)
                                 && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
                         || ((position.y == 0) && (facing == 0))
-                        || ((position.y == (clientgui.getClient().game
+                        || ((position.y == (clientgui.getClient().getGame()
                                 .getBoard().getHeight() - 1))
                                 && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == (clientgui
-                        .getClient().game.getBoard().getHeight() - 1)) && (facing == 3)))) {
+                        .getClient().getGame().getBoard().getHeight() - 1)) && (facing == 3)))) {
             setFlyOffEnabled(true);
         } else {
             setFlyOffEnabled(false);
@@ -2323,7 +2323,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_evade")) {
             return;
         }
@@ -2344,7 +2344,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             return;
         }
@@ -2364,7 +2364,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().getGame().getOptions().booleanOption(
                 "manual_shutdown")) {
             return;
         }
@@ -2384,7 +2384,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (!clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().getGame().getOptions().booleanOption(
                 "tacops_self_destruct")) {
             return;
         }
@@ -2420,7 +2420,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().game.getBoard().inSpace()) {
+        if (clientgui.getClient().getGame().getBoard().inSpace()) {
             return;
         }
 
@@ -2475,7 +2475,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (!ce.isAirborne()
                 && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
                 && (Compute.getMountableUnits(ce, pos, elev,
-                        clientgui.getClient().game).size() > 0)) {
+                        clientgui.getClient().getGame()).size() > 0)) {
             setMountEnabled(true);
         }
 
@@ -2504,7 +2504,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else {
             // Check the other entities in the current hex for friendly units.
             Entity other = null;
-            Enumeration<Entity> entities = clientgui.getClient().game
+            Enumeration<Entity> entities = clientgui.getClient().getGame()
                     .getEntities(ce.getPosition());
             boolean isGood = false;
             while (entities.hasMoreElements()) {
@@ -2539,13 +2539,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             pos = cmd.getFinalCoords();
             elev = cmd.getFinalElevation();
         }
-        IHex hex = clientgui.getClient().game.getBoard().getHex(pos);
+        IHex hex = clientgui.getClient().getGame().getBoard().getHex(pos);
         if (null != hex) {
             elev += hex.getElevation();
         }
 
         ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos,
-                elev, clientgui.getClient().game);
+                elev, clientgui.getClient().getGame());
 
         // Handle error condition.
         if (mountableUnits.size() == 0) {
@@ -2612,7 +2612,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         Entity choice = null;
         
         Vector<Entity> choices = new Vector<Entity>();
-        Enumeration<Entity> entities = clientgui.getClient().game
+        Enumeration<Entity> entities = clientgui.getClient().getGame()
                 .getEntities(ce().getPosition());
         Entity other;
         while (entities.hasMoreElements()) {
@@ -2731,7 +2731,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (null != cmd) {
             pos = cmd.getFinalCoords();
         }
-        int elev = clientgui.getClient().game.getBoard().getHex(pos)
+        int elev = clientgui.getClient().getGame().getBoard().getHex(pos)
                 .getElevation()
                 + ce.getElevation();
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
@@ -2741,7 +2741,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // ok now we need to go through the ring and identify available
         // Positions
         ring = Compute.getAcceptableUnloadPositions(ring, unloaded,
-                clientgui.getClient().game, elev);
+                clientgui.getClient().getGame(), elev);
         if (ring.size() < 1) {
             String title = Messages
                     .getString("MovementDisplay.NoPlaceToUnload.title"); //$NON-NLS-1$
@@ -2794,13 +2794,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // of its move
         if (ce instanceof Aero) {
             Coords loadeePos = cmd.getFinalCoords();
-            if (clientgui.getClient().game.useVectorMove()) {
+            if (clientgui.getClient().getGame().useVectorMove()) {
                 // not where you are, but where you will be
                 loadeePos = Compute.getFinalPosition(ce.getPosition(),
                         cmd.getFinalVectors());
             }
             Entity other = null;
-            Enumeration<Entity> entities = clientgui.getClient().game
+            Enumeration<Entity> entities = clientgui.getClient().getGame()
                     .getEntities(loadeePos);
             boolean isGood = false;
             while (entities.hasMoreElements()) {
@@ -2815,7 +2815,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     // now lets check velocity
                     // depends on movement rules
                     Aero oa = (Aero) other;
-                    if (clientgui.getClient().game.useVectorMove()) {
+                    if (clientgui.getClient().getGame().useVectorMove()) {
                         if (Compute.sameVectors(cmd.getFinalVectors(),
                                 oa.getVectors())) {
                         	if (ce instanceof Dropship) {
@@ -2858,7 +2858,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private synchronized void updateJoinButton() {
 
-        if (!clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().getGame().getOptions().booleanOption(
                 "stratops_capital_fighter")) {
             return;
         }
@@ -2873,13 +2873,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         Coords loadeePos = cmd.getFinalCoords();
-        if (clientgui.getClient().game.useVectorMove()) {
+        if (clientgui.getClient().getGame().useVectorMove()) {
             // not where you are, but where you will be
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
         Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().game
+        Enumeration<Entity> entities = clientgui.getClient().getGame()
                 .getEntities(loadeePos);
         boolean isGood = false;
         while (entities.hasMoreElements()) {
@@ -2894,7 +2894,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // now lets check velocity
                 // depends on movement rules
                 Aero oa = (Aero) other;
-                if (clientgui.getClient().game.useVectorMove()) {
+                if (clientgui.getClient().getGame().useVectorMove()) {
                     // can you do equality with vectors?
                     if (Compute.sameVectors(cmd.getFinalVectors(),
                             oa.getVectors())) {
@@ -3208,13 +3208,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // collect all possible choices
         Coords loadeePos = cmd.getFinalCoords();
-        if (clientgui.getClient().game.useVectorMove()) {
+        if (clientgui.getClient().getGame().useVectorMove()) {
             // not where you are, but where you will be
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
         Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().game
+        Enumeration<Entity> entities = clientgui.getClient().getGame()
                 .getEntities(loadeePos);
         while (entities.hasMoreElements()) {
             other = entities.nextElement();
@@ -3229,7 +3229,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // now lets check velocity
                 // depends on movement rules
                 Aero oa = (Aero) other;
-                if (clientgui.getClient().game.useVectorMove()) {
+                if (clientgui.getClient().getGame().useVectorMove()) {
                     if (Compute.sameVectors(cmd.getFinalVectors(),
                             oa.getVectors())) {
                         choices.add(other);
@@ -3296,13 +3296,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // collect all possible choices
         Coords loadeePos = cmd.getFinalCoords();
-        if (clientgui.getClient().game.useVectorMove()) {
+        if (clientgui.getClient().getGame().useVectorMove()) {
             // not where you are, but where you will be
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
         Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().game
+        Enumeration<Entity> entities = clientgui.getClient().getGame()
                 .getEntities(loadeePos);
         while (entities.hasMoreElements()) {
             other = entities.nextElement();
@@ -3317,7 +3317,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // now lets check velocity
                 // depends on movement rules
                 Aero oa = (Aero) other;
-                if (clientgui.getClient().game.useVectorMove()) {
+                if (clientgui.getClient().getGame().useVectorMove()) {
                     if (Compute.sameVectors(cmd.getFinalVectors(),
                             oa.getVectors())) {
                         choices.add(other);
@@ -3417,9 +3417,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         Aero a = (Aero) ce;
-        if (!clientgui.getClient().game.getBoard().inSpace()) {
+        if (!clientgui.getClient().getGame().getBoard().inSpace()) {
             if (a.isSpheroid()
-                    || clientgui.getClient().game.getPlanetaryConditions()
+                    || clientgui.getClient().getGame().getPlanetaryConditions()
                             .isVacuum()) {
                 butAcc.setEnabled(false);
                 butDec.setEnabled(false);
@@ -3443,7 +3443,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration<Entity> choices = clientgui.getClient().game
+        Enumeration<Entity> choices = clientgui.getClient().getGame()
                 .getEntities(pos);
 
         // Convert the choices into a List of targets.
@@ -3456,10 +3456,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         // Is there a building in the hex?
-        Building bldg = clientgui.getClient().game.getBoard()
+        Building bldg = clientgui.getClient().getGame().getBoard()
                 .getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, clientgui.getClient().game
+            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
                     .getBoard(), false));
         }
 
@@ -3608,7 +3608,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // If we are on a ground map, slide slip works slightly
                 // differently
                 // See Total Warfare pg 85
-                if (clientgui.getClient().game.getBoard().getType() == Board.T_GROUND) {
+                if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
                         cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
                     }
@@ -3623,7 +3623,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 // If we are on a ground map, slide slip works slightly
                 // differently
                 // See Total Warfare pg 85
-                if (clientgui.getClient().game.getBoard().getType() == Board.T_GROUND) {
+                if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
                         cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
                     }
@@ -3651,7 +3651,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             // ignore
             return;
         }
@@ -3666,7 +3666,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         } else {
             if ((e.getPlayer() == null)
-                    && (clientgui.getClient().game.getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
+                    && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
                 setStatusBarText(Messages
                         .getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
@@ -3684,10 +3684,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
             endMyTurn();
         }
-        if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             setStatusBarText(Messages
                     .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
@@ -3696,7 +3696,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     
     public void computeMovementEnvelope(){
         Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
-        MovePath mp = new MovePath(clientgui.getClient().game,ce());
+        MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
         mvEnvData.put(ce().getPosition(), mp);
         computeMovementEnvelope(mvEnvData,ce().getPosition());
         Hashtable<Coords,Integer> mvEnvMP = new Hashtable<Coords,Integer>((int)(mvEnvData.size() * 1.25 + 1));
@@ -3716,7 +3716,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (gear == GEAR_BACKUP){
             maxMP = ce().getWalkMP();
         } else {
-            if (clientgui.getClient().game.getOptions().
+            if (clientgui.getClient().getGame().getOptions().
                     booleanOption("tacops_sprint")){
                 maxMP = ce().getSprintMP();    
             } else {
@@ -3739,7 +3739,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         MoveStepType stepType = (gear == GEAR_BACKUP) ?
                 MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         HashSet<Coords> nextSteps = new HashSet<Coords>();
-        IBoard board = clientgui.getClient().game.getBoard();
+        IBoard board = clientgui.getClient().getGame().getBoard();
         for (int i =0 ; i < 6; i++){
             Coords c = loc.translated(i);
             if (!board.contains(c)){
@@ -3849,7 +3849,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             gear = MovementDisplay.GEAR_BACKUP;
         } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {
             clear();
-            if (!clientgui.getClient().game.containsMinefield(ce.getPosition())) {
+            if (!clientgui.getClient().getGame().containsMinefield(ce.getPosition())) {
                 clientgui.doAlertDialog(Messages
                         .getString("MovementDisplay.CantClearMinefield"), //$NON-NLS-1$
                         Messages.getString("MovementDisplay.NoMinefield")); //$NON-NLS-1$
@@ -3869,7 +3869,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
              */
 
             // need to choose a mine
-            List<Minefield> mfs = clientgui.getClient().game.getMinefields(ce
+            List<Minefield> mfs = clientgui.getClient().getGame().getMinefields(ce
                     .getPosition());
             String[] choices = new String[mfs.size()];
             for (int loop = 0; loop < choices.length; loop++) {
@@ -3928,7 +3928,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clear();
             }
 
-            if (clientgui.getClient().game.getOptions().booleanOption(
+            if (clientgui.getClient().getGame().getOptions().booleanOption(
                     "tacops_careful_stand")
                     && (ce.getWalkMP() > 2)) {
                 ConfirmDialog response = clientgui
@@ -3979,7 +3979,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         .doYesNoDialog(
                                 Messages.getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             // clear();
-            if (clientgui.getClient().game.getOptions().booleanOption(
+            if (clientgui.getClient().getGame().getOptions().booleanOption(
                     "return_flyover")
                     && clientgui
                             .doYesNoDialog(
@@ -4050,7 +4050,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     && (null != cmd.getLastStep())
                     && (cmd.getLastStep().getNDown() == 1)
                     && (cmd.getLastStep().getVelocity() < 12)
-                    && !(((Aero) ce).isSpheroid() || clientgui.getClient().game
+                    && !(((Aero) ce).isSpheroid() || clientgui.getClient().getGame()
                             .getPlanetaryConditions().isVacuum())) {
                 cmd.addStep(MoveStepType.ACC, true);
             }
@@ -4158,10 +4158,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 pos = last.getPosition();
                 distance = last.getDistance();
             }
-            int ceil = clientgui.getClient().game.getBoard().getHex(pos)
+            int ceil = clientgui.getClient().getGame().getBoard().getHex(pos)
                     .ceiling();
             choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(),
-                    distance, clientgui.getClient().game, cmd);
+                    distance, clientgui.getClient().getGame(), cmd);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
             if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {
@@ -4345,8 +4345,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // TODO : get a better interface to "game" and "turn"
         Enumeration<Entity> entities = clientgui.getClient()
                 .getSelectedEntities(new EntitySelector() {
-                    private final IGame game = clientgui.getClient().game;
-                    private final GameTurn turn = clientgui.getClient().game
+                    private final IGame game = clientgui.getClient().getGame();
+                    private final GameTurn turn = clientgui.getClient().getGame()
                             .getTurn();
                     private final int ownerId = clientgui.getClient()
                             .getLocalPlayer().getId();
@@ -4478,13 +4478,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        Entity e = clientgui.getClient().game.getEntity(b.getEntityId());
+        Entity e = clientgui.getClient().getGame().getEntity(b.getEntityId());
         if (null == e) {
             return;
         }
         if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().game.getTurn().isValidEntity(e,
-                    clientgui.getClient().game)) {
+            if (clientgui.getClient().getGame().getTurn().isValidEntity(e,
+                    clientgui.getClient().getGame())) {
                 selectEntity(e.getId());
             }
         } else {
@@ -4513,7 +4513,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private void setForwardIniEnabled(boolean enabled) {
         // forward initiative can only be done if Teams have an initiative!
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "team_initiative")) {
             butForwardIni.setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
@@ -4779,7 +4779,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        clientgui.getClient().game.removeGameListener(this);
+        clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 

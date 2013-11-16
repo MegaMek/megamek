@@ -97,13 +97,13 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Sensor;
@@ -159,7 +159,7 @@ public class MechDisplay extends JPanel {
         displayP.add("movement", mPan); //$NON-NLS-1$
         pPan = new PilotPanel();
         displayP.add("pilot", pPan); //$NON-NLS-1$
-        aPan = new ArmorPanel(clientgui.getClient().game);
+        aPan = new ArmorPanel(clientgui.getClient().getGame());
         displayP.add("armor", aPan); //$NON-NLS-1$
         wPan = new WeaponPanel();
         displayP.add("weapons", wPan); //$NON-NLS-1$
@@ -1211,7 +1211,7 @@ public class MechDisplay extends JPanel {
         public void displayMech(Entity en) {
 
             // Grab a copy of the game.
-            IGame game = clientgui.getClient().game;
+            IGame game = clientgui.getClient().getGame();
 
             // update pointer to weapons
             entity = en;
@@ -1813,7 +1813,7 @@ public class MechDisplay extends JPanel {
                 wDamR.setText(damage.toString());
             } else if (wtype.hasFlag(WeaponType.F_ENERGY)
                     && wtype.hasModes()
-                    && clientgui.getClient().game.getOptions().booleanOption(
+                    && clientgui.getClient().getGame().getOptions().booleanOption(
                             "tacops_energy_weapons")) {
                 if (mounted.hasChargedCapacitor() != 0) {
                     if (mounted.hasChargedCapacitor() == 1) {
@@ -2793,7 +2793,7 @@ public class MechDisplay extends JPanel {
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING)) {
+                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_FIRING)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
                             return;
@@ -2801,7 +2801,7 @@ public class MechDisplay extends JPanel {
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
+                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
                             return;
@@ -2810,7 +2810,7 @@ public class MechDisplay extends JPanel {
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType())
                                         .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                             clientgui
                                     .systemMessage(Messages
                                             .getString(
@@ -2843,7 +2843,7 @@ public class MechDisplay extends JPanel {
                                                     "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
                         } else {
                             if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
-                                    .getClient().game.getPhase()) {
+                                    .getClient().getGame().getPhase()) {
                                 clientgui
                                         .systemMessage(Messages
                                                 .getString(
@@ -3072,13 +3072,13 @@ public class MechDisplay extends JPanel {
                         && bOwner
                         && (m.getType() instanceof AmmoType)
                         && !m.getType().hasInstantModeSwitch()
-                        && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT)
+                        && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                        && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (clientgui.getClient().game.getOptions().intOption(
-                                "dumping_from_round") <= clientgui.getClient().game
+                        && (clientgui.getClient().getGame().getOptions().intOption(
+                                "dumping_from_round") <= clientgui.getClient().getGame()
                                 .getRoundCount()) && !carryingBAsOnBack
                         && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
@@ -3099,7 +3099,7 @@ public class MechDisplay extends JPanel {
                     }// if the maxtech eccm option is not set then the ECM
                      // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !clientgui.getClient().game.getOptions()
+                            && !clientgui.getClient().getGame().getOptions()
                                     .booleanOption("tacops_eccm")) {
                         ((DefaultComboBoxModel) m_chMode.getModel())
                                 .removeAllElements();
@@ -3423,16 +3423,16 @@ public class MechDisplay extends JPanel {
             // Walk through the list of teams. There
             // can't be more teams than players.
             StringBuffer buff;
-            Enumeration<Player> loop = clientgui.getClient().game.getPlayers();
+            Enumeration<IPlayer> loop = clientgui.getClient().getGame().getPlayers();
             while (loop.hasMoreElements()) {
-                Player player = loop.nextElement();
+                IPlayer player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(
                             Messages.getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append(']');
+                            .append(player.teamNames[team]).append(']');
                     ((DefaultListModel) narcList.getModel()).addElement(buff
                             .toString());
                 }
@@ -3441,7 +3441,7 @@ public class MechDisplay extends JPanel {
                             Messages.getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(Player.teamNames[team]).append("] ")//$NON-NLS-1$
+                            .append(player.teamNames[team]).append("] ")//$NON-NLS-1$
                             .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
                             .append('.');
                     ((DefaultListModel) narcList.getModel()).addElement(buff
@@ -3609,7 +3609,7 @@ public class MechDisplay extends JPanel {
                     hasTSM = true;
                 }
 
-                if (clientgui.getClient().game.getOptions().booleanOption(
+                if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "tacops_heat")) {
                     mtHeat = true;
                 }
@@ -3662,7 +3662,7 @@ public class MechDisplay extends JPanel {
 
         public void itemStateChanged(ItemEvent ev) {
             if (ev.getItemSelectable() == chSensors) {
-                Entity en = clientgui.getClient().game.getEntity(myMechId);
+                Entity en = clientgui.getClient().getGame().getEntity(myMechId);
                 en.setNextSensor(en.getSensors().elementAt(
                         chSensors.getSelectedIndex()));
                 refreshSensorChoices(en);
@@ -3671,7 +3671,7 @@ public class MechDisplay extends JPanel {
                                 .getString(
                                         "MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", en.getSensors().elementAt(chSensors.getSelectedIndex()).getDisplayName() }));//$NON-NLS-1$
                 clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().game.getEntity(myMechId));
+                        clientgui.getClient().getGame().getEntity(myMechId));
             }
         }
 
@@ -3681,7 +3681,7 @@ public class MechDisplay extends JPanel {
                         Messages.getString("MechDisplay.changeSinks"),
                         Messages.getString("MechDisplay.changeSinks"), sinks,
                         0,
-                        ((Mech) clientgui.getClient().game.getEntity(myMechId))
+                        ((Mech) clientgui.getClient().getGame().getEntity(myMechId))
                                 .getNumberOfSinks());
                 if (!prompt.showDialog()) {
                     return;
@@ -3689,11 +3689,11 @@ public class MechDisplay extends JPanel {
                 clientgui.menuBar.actionPerformed(ae);
                 int helper = prompt.getValue();
 
-                ((Mech) clientgui.getClient().game.getEntity(myMechId))
+                ((Mech) clientgui.getClient().getGame().getEntity(myMechId))
                         .setActiveSinksNextRound(helper);
                 clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().game.getEntity(myMechId));
-                displayMech(clientgui.getClient().game.getEntity(myMechId));
+                        clientgui.getClient().getGame().getEntity(myMechId));
+                displayMech(clientgui.getClient().getGame().getEntity(myMechId));
             }
         }
     }

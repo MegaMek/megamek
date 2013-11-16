@@ -20,6 +20,7 @@ import java.util.Hashtable;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.Report;
 
@@ -111,7 +112,7 @@ public class KillCountVictory implements Victory, Serializable {
                 r.add("Team " + highestKillsId);
                 vr.addTeamScore(highestKillsId, 1.0);                
             } else {
-                Player winner = game.getPlayer(highestKillsId);
+                IPlayer winner = game.getPlayer(highestKillsId);
                 r.add(winner.getName());
                 vr.addPlayerScore(winner.getId(), 1.0);
             }

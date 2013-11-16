@@ -142,7 +142,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         setSize(width,height);
         setLocationRelativeTo(cl.frame);
         asd = new AdvancedSearchDialog(cl.frame,
-                client.game.getOptions().intOption("year"));
+                client.getGame().getOptions().intOption("year"));
     }
 
     private void initComponents() {
@@ -466,7 +466,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                     if (/* Weight */
                             ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
                             /*Canon*/
-                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) &&
+                            (!client.getGame().getOptions().booleanOption("canon_only") || mech.isCanon()) &&
                             /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
                                 || (nType == mech.getType())
@@ -491,7 +491,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                             && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
                             && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))
-                            && !(mech.getYear() > client.game.getOptions().intOption("year"))) {
+                            && !(mech.getYear() > client.getGame().getOptions().intOption("year"))) {
                         if(txtFilter.getText().length() > 0) {
                             String text = txtFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());

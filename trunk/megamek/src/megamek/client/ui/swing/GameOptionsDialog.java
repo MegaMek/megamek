@@ -138,7 +138,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     public GameOptionsDialog(ClientGUI client) {
         super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
-        init(client.frame, client.getClient().game.getOptions());
+        init(client.frame, client.getClient().getGame().getOptions());
     }
 
     /**
@@ -568,7 +568,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         }
         if (option.getName().equals("ba_grab_bars")) {
             if (client != null){
-                for (Enumeration<Entity> e = client.getClient().game.getEntities(); e.hasMoreElements();) {
+                for (Enumeration<Entity> e = client.getClient().getGame().getEntities(); e.hasMoreElements();) {
                     Entity ent = e.nextElement();
                     if (ent instanceof Mech) {
                         ((Mech) ent).setBAGrabBars();

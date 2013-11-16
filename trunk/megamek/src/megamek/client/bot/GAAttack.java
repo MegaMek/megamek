@@ -46,7 +46,7 @@ public class GAAttack extends GA {
         super(attack.size() + 1, population, .7, .05, generations, .4);
         this.attack = attack;
         this.attacker = attacker;
-        game = tb.game;
+        game = tb.getGame();
         target_array = new ArrayList<Entity>(game.getEntitiesVector());
         ArrayList<Integer> temp = new ArrayList<Integer>();
         for (int i = 0; i < target_array.size(); i++) {

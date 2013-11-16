@@ -361,13 +361,13 @@ public class Ruler extends JDialog implements BoardViewListener {
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
         ToHitData thd;
         if (flip) {
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(client.getGame(),
                     buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(client.game);
+                            cboIsMech2.isSelected())).losModifiers(client.getGame());
         } else {
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(client.getGame(),
                     buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(client.game);
+                            cboIsMech1.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -375,13 +375,13 @@ public class Ruler extends JDialog implements BoardViewListener {
         toHit1 += thd.getDesc();
 
         if (flip) {
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(client.getGame(),
                     buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(client.game);
+                            cboIsMech1.isSelected())).losModifiers(client.getGame());
         } else {
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(client.getGame(),
                     buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(client.game);
+                            cboIsMech2.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -415,8 +415,8 @@ public class Ruler extends JDialog implements BoardViewListener {
         ai.targetHeight = h2;
         ai.attackerIsMech = attackerIsMech;
         ai.targetIsMech = targetIsMech;
-        ai.attackAbsHeight = client.game.getBoard().getHex(c1).floor() + h1;
-        ai.targetAbsHeight = client.game.getBoard().getHex(c2).floor() + h2;
+        ai.attackAbsHeight = client.getGame().getBoard().getHex(c1).floor() + h1;
+        ai.targetAbsHeight = client.getGame().getBoard().getHex(c2).floor() + h2;
         return ai;
     }
 

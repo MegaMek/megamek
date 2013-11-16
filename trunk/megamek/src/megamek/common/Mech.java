@@ -4311,13 +4311,13 @@ public abstract class Mech extends Entity {
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                     || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = getOwner();
+                IPlayer tmpP = getOwner();
 
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != Player.TEAM_NONE)
+                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
                             && (game != null)) {
                         for (Enumeration<Team> e = game.getTeams(); e
                                 .hasMoreElements();) {

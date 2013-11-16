@@ -20,7 +20,7 @@
 
 package megamek.server.commands;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -31,10 +31,26 @@ import megamek.server.Server;
  */
 public class DefeatCommand extends ServerCommand {
 
-    /** Creates new DefeatCommand */
+    public static final String commandName = "defeat";
+    public static final String helpText = "Acknowledges another players victory command.  Usage: /defeat";
+    public static final String restrictedResponse = "Observers are restricted from declaring defeat.";
+    public static final String admitsDefeat = " admits defeat.";
+    public static final String wantsDefeat = " wants to admit defeat - type /victory to accept the surrender at the " +
+                                             "end of the turn.";
+    public static final String note = "note you need to type /defeat again after your opponent declares victory";
+
+    /**
+     * Creates new DefeatCommand
+     */
     public DefeatCommand(Server server) {
-        super(server, "defeat",
-                "Acknowledges another players victory command.  Usage: /defeat");
+        super(server, commandName, helpText);    }
+
+    public static String getAdmitsDefeat(String playerName) {
+        return playerName + admitsDefeat;
+    }
+
+    public static String getWantsDefeat(String playerName) {
+        return playerName + wantsDefeat;
     }
 
     /**
@@ -43,18 +59,17 @@ public class DefeatCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId,
-                    "Observers are restricted from declaring defeat.");
+            server.sendServerChat(connId, restrictedResponse);
             return;
         }
 
-        Player player = server.getPlayer(connId);
+        IPlayer player = server.getPlayer(connId);
         if (server.getGame().isForceVictory()) {
-            server.sendServerChat(player.getName() + " admits defeat.");
+            server.sendServerChat(getAdmitsDefeat(player.getName()));
             player.setAdmitsDefeat(true);
         } else {
-            server.sendServerChat(player.getName() + " wants to admit defeat - type /victory to accept the surrender at the end of the turn.");
-            server.sendServerChat(connId, "note you need to type /defeat again after your opponent declares victory");
+            server.sendServerChat(getWantsDefeat(player.getName()));
+            server.sendServerChat(connId, note);
         }
     }
 }

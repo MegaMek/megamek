@@ -29,7 +29,7 @@ import javax.swing.JList;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 public class PlayerListDialog extends JDialog implements ActionListener {
     /**
@@ -80,8 +80,8 @@ public class PlayerListDialog extends JDialog implements ActionListener {
      */
     public static void refreshPlayerList(JList playerList, Client client) {
         ((DefaultListModel) playerList.getModel()).removeAllElements();
-        for (Enumeration<Player> e = client.getPlayers(); e.hasMoreElements();) {
-            final Player player = e.nextElement();
+        for (Enumeration<IPlayer> e = client.getPlayers(); e.hasMoreElements();) {
+            final IPlayer player = e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$

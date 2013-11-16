@@ -80,7 +80,7 @@ public class MapMenu extends JPopupMenu {
 
     public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
         this.coords = coords;
-        game = client.game;
+        game = client.getGame();
         currentPanel = panel;
         board = client.getBoard();
         this.client = client;
@@ -236,7 +236,7 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createChargeMenuItem() {
         JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butCharge"));
 
-        if (!client.game.getEntities(coords).hasMoreElements()) {
+        if (!client.getGame().getEntities(coords).hasMoreElements()) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MOVE_CHARGE);
@@ -253,7 +253,7 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createDFAJMenuItem() {
         JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butDfa"));
 
-        if (!client.game.getEntities(coords).hasMoreElements()) {
+        if (!client.getGame().getEntities(coords).hasMoreElements()) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MOVE_DFA);
@@ -315,9 +315,9 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration<Entity> i = client.game.getEntities(coords, canTargetEntities()); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = client.getGame().getEntities(coords, canTargetEntities()); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
-                if (client.getMyTurn().isValidEntity(entity, client.game)) {
+                if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
             }
@@ -328,7 +328,7 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
-        for (Enumeration<Entity> i = client.game.getEntities(coords, true); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = client.getGame().getEntities(coords, true); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             menu.add(viewJMenuItem(entity));
         }
@@ -783,8 +783,8 @@ public class MapMenu extends JPopupMenu {
                 }
             }
 
-            ToHitData grap = GrappleAttackAction.toHit(client.game, myEntity.getId(), myTarget);
-            ToHitData bgrap = BreakGrappleAttackAction.toHit(client.game, myEntity.getId(), myTarget);
+            ToHitData grap = GrappleAttackAction.toHit(client.getGame(), myEntity.getId(), myTarget);
+            ToHitData bgrap = BreakGrappleAttackAction.toHit(client.getGame(), myEntity.getId(), myTarget);
             if ((grap.getValue() != TargetRoll.IMPOSSIBLE) || (bgrap.getValue() != TargetRoll.IMPOSSIBLE)) {
 
                 item = createGrappleJMenuItem();
@@ -794,7 +794,7 @@ public class MapMenu extends JPopupMenu {
                 }
             }
             if (myTarget != null) {
-                ToHitData vibro = BAVibroClawAttackAction.toHit(client.game, myEntity.getId(), myTarget);
+                ToHitData vibro = BAVibroClawAttackAction.toHit(client.getGame(), myEntity.getId(), myTarget);
                 if (vibro.getValue() != TargetRoll.IMPOSSIBLE) {
                     item = createVibroClawMenuItem();
                     if (item != null) {
@@ -905,7 +905,7 @@ public class MapMenu extends JPopupMenu {
 
         // add target options
         if (canTargetEntities()) {
-            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = client.getGame().getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 menu.add(TargetMenuItem(entity));
             }
@@ -915,17 +915,17 @@ public class MapMenu extends JPopupMenu {
                 IHex h = board.getHex(coords);
                 if ((h != null) && (currentPanel instanceof FiringDisplay) && !board.inSpace() && !board.inAtmosphere()) {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR)));
-                    if (client.game.getOptions().booleanOption("tacops_start_fire") && (h.containsTerrain(Terrains.WOODS) || h.containsTerrain(Terrains.JUNGLE) || h.containsTerrain(Terrains.FIELDS) || hasMunitionType(AmmoType.M_INFERNO) || hasMunitionType(AmmoType.M_INFERNO_IV) || hasMunitionType(AmmoType.M_THUNDER_INFERNO))) { //$NON-NLS-1$
+                    if (client.getGame().getOptions().booleanOption("tacops_start_fire") && (h.containsTerrain(Terrains.WOODS) || h.containsTerrain(Terrains.JUNGLE) || h.containsTerrain(Terrains.FIELDS) || hasMunitionType(AmmoType.M_INFERNO) || hasMunitionType(AmmoType.M_INFERNO_IV) || hasMunitionType(AmmoType.M_THUNDER_INFERNO))) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_IGNITE)));
                     }
                 } if ((h != null) && h.containsTerrain(Terrains.FUEL_TANK)) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
-                    if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
+                    if (client.getGame().getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
                 } if ((h != null) && (h.containsTerrain(Terrains.BUILDING) || h.containsTerrain(Terrains.BRIDGE))) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
-                    if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
+                    if (client.getGame().getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
                 }
@@ -952,7 +952,7 @@ public class MapMenu extends JPopupMenu {
                         if (hasAmmoType(AmmoType.T_ARROW_IV) || hasAmmoType(AmmoType.T_SNIPER) || hasAmmoType(AmmoType.T_CRUISE_MISSILE) || hasAmmoType(AmmoType.T_ALAMO) || hasAmmoType(AmmoType.T_KILLER_WHALE) || hasAmmoType(AmmoType.T_LONG_TOM) || hasAmmoType(AmmoType.T_THUMPER)) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                         }
-                        if (client.game.getOptions().booleanOption("tacops_start_fire") && h.containsTerrain(Terrains.FIRE) && hasFireExtinguisher()) {
+                        if (client.getGame().getOptions().booleanOption("tacops_start_fire") && h.containsTerrain(Terrains.FIRE) && hasFireExtinguisher()) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                         }
                     }

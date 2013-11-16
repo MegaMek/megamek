@@ -1,5 +1,12 @@
 VERSION HISTORY:
 ----------------
+v0.37.0-exp (SVN)
++ Feature: Allowing UI components to be customized (skins)
++ Bug: readme path was wrong in MegamekGUI
++ Bug: Exception when saving client options with a tooltip dismiss delay <0
++ Feature: Added a skinning help menu item and a corresponding help file
+
+
 v0.37.0-dev (SVN)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 
   I changed the ArrayList to a PriorityQueue.  There was also a bug where every 

@@ -38,6 +38,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -86,6 +88,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.logging.Logger;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
@@ -119,7 +122,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private String helpFileName = "docs/readme.txt"; //$NON-NLS-1$
+    private String helpFileName = 
+    		Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
 
     // keep me
     ChatterBox cb;
@@ -516,6 +520,29 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // Show the help dialog.
         help.setVisible(true);
     }
+    
+    private void showSkinningHowTo(){
+        try {
+            // Get the correct help file.
+            StringBuilder helpPath = new StringBuilder("file:///");
+            helpPath.append(System.getProperty("user.dir"));
+            if (!helpPath.toString().endsWith(File.separator)) {
+                helpPath.append(File.separator);
+            }
+            helpPath.append(Messages.getString("ClientGUI.skinningHelpPath"));
+            URL helpUrl = new URL(helpPath.toString());
+
+            // Launch the help dialog.
+            HelpDialog helpDialog = new HelpDialog(
+            		Messages.getString("ClientGUI.skinningHelpPath.title"), 
+            		helpUrl);
+            helpDialog.setVisible(true);
+        } catch (MalformedURLException e) {
+        	JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
+        			JOptionPane.ERROR_MESSAGE);
+            new Logger().log(getClass(), "showSkinningHowTo", e);
+        }
+    }
 
     /**
      * Called when the user selects the "View->Client Settings" menu item.
@@ -590,6 +617,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showAbout();
+        }
+        if ("helpSkinning".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            showSkinningHowTo();
         }
         if ("helpContents".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showHelp();

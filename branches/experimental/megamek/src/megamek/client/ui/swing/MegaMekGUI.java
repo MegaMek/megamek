@@ -30,6 +30,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -44,7 +46,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
@@ -64,6 +65,7 @@ import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.logging.LogLevel;
+import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -104,17 +106,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         // this should also help to make MegaMek look more system-specific
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e){
+        	System.err.println("Error setting look and feel!");
             e.printStackTrace();
         }
 
@@ -522,7 +515,6 @@ public class MegaMekGUI implements IMegaMekGUI {
 
             @Override
             public String getDescription() {
-                // TODO Auto-generated method stub
                 return "MegaMek Scenario Files";
             }
 
@@ -825,10 +817,32 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     void showHelp() {
         if (help == null) {
-            help = showHelp(frame, "readme"); //$NON-NLS-1$
+            help = showHelp(frame, 
+            		Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
         }
         // Show the help dialog.
         help.setVisible(true);
+    }
+    
+    private void showSkinningHowTo(){
+        try {
+            // Get the correct help file.
+            StringBuilder helpPath = new StringBuilder("file:///");
+            helpPath.append(System.getProperty("user.dir"));
+            if (!helpPath.toString().endsWith(File.separator)) {
+                helpPath.append(File.separator);
+            }
+            helpPath.append(Messages.getString("ClientGUI.skinningHelpPath"));
+            URL helpUrl = new URL(helpPath.toString());
+
+            // Launch the help dialog.
+            HelpDialog helpDialog = new HelpDialog(
+            		Messages.getString("ClientGUI.skinningHelpPath.title"), 
+            		helpUrl);
+            helpDialog.setVisible(true);
+        } catch (MalformedURLException e) {
+            new Logger().log(getClass(), "showSkinningHowTo", e);
+        }
     }
 
     /**
@@ -839,7 +853,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         File helpfile = new File(filename + '-'
                 + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
         if (!helpfile.exists()) {
-            helpfile = new File(filename + ".txt"); //$NON-NLS-1$
+            helpfile = new File(filename); //$NON-NLS-1$
         }
         return new CommonHelpDialog(frame, helpfile);
     }
@@ -939,6 +953,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             if ("helpContents".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showHelp();
             }
+            if ("helpSkinning".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
+            	showSkinningHowTo();
+            }            
             if ("viewClientSettings".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showSettings();
             }

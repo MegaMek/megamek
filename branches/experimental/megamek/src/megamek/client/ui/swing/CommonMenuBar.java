@@ -675,6 +675,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         item.addActionListener(this);
         item.setActionCommand("helpContents"); //$NON-NLS-1$
         menu.add(item);
+        item = new JMenuItem(Messages.getString("CommonMenuBar.helpSkinning")); //$NON-NLS-1$
+        item.addActionListener(this);
+        item.setActionCommand("helpSkinning"); //$NON-NLS-1$
+        menu.add(item);        
         menu.addSeparator();
         item = new JMenuItem(Messages.getString("CommonMenuBar.helpAbout")); //$NON-NLS-1$
         item.setActionCommand("helpAbout"); //$NON-NLS-1$

@@ -841,7 +841,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setTooltipDismissDelay(int i) {
         store.setValue(TOOLTIP_DISMISS_DELAY, i);
-        ToolTipManager.sharedInstance().setInitialDelay(i);
+        if (i > 0){
+        	ToolTipManager.sharedInstance().setInitialDelay(i);
+        }
     }
 
     public void setWindowPosX(int i) {

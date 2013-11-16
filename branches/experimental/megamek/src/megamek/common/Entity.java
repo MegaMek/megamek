@@ -2638,10 +2638,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (mtHeat && (heat >= 48)) {
             mod++;
         }
-        if(mod > 0 && getCrew() != null && getCrew().getOptions().booleanOption("some_like_it_hot")) {
+        if((mod > 0) && (getCrew() != null) && getCrew().getOptions().booleanOption("some_like_it_hot")) {
             mod--;
         }
-        
+
         return mod;
     }
 
@@ -5484,15 +5484,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0) && !game.getBoard().inSpace() 
-                && (null == crew || !crew.getOptions().booleanOption("allweather"))) {
+        if ((weatherMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption("allweather"))) {
             roll.addModifier(weatherMod, conditions.getWeatherCurrentName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace()               
-                && (null == crew || !crew.getOptions().booleanOption("allweather"))) {
+        if ((windMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption("allweather"))) {
             roll.addModifier(windMod, conditions.getWindCurrentName());
         }
 
@@ -12314,6 +12314,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Landair Mech";
         } else if (typeId == ETYPE_QUAD_MECH){
             return "Quad Mech";
+        } else if (typeId == ETYPE_TRIPOD_MECH){
+            return "Tripod Mech";
         } else if (typeId == ETYPE_ARMLESS_MECH){
             return "Armless Mech";
         } else if (typeId == ETYPE_AERO){
@@ -12349,7 +12351,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (typeId == ETYPE_GUN_EMPLACEMENT){
             return "Gun Emplacement";
         } else if (typeId == ETYPE_SUPER_HEAVY_TANK){
-            return "Superheavy  Tank";
+            return "Superheavy Tank";
         } else if (typeId == ETYPE_SUPPORT_TANK){
             return "Support Tank";
         } else if (typeId == ETYPE_LARGE_SUPPORT_TANK){
@@ -12397,9 +12399,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isEjectionPossible() {
         return false;
     }
-    
+
     public int getAllowedPhysicalAttacks() {
-        if(null != crew && crew.getOptions().booleanOption("melee_master")) {
+        if((null != crew) && crew.getOptions().booleanOption("melee_master")) {
             return 2;
         }
         return 1;

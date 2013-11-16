@@ -4,7 +4,7 @@
 package megamek.server.commands;
 
 import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -31,7 +31,7 @@ public class TraitorCommand extends ServerCommand {
             int eid = Integer.parseInt(args[1]);
             Entity ent = server.getGame().getEntity(eid);
             int pid = Integer.parseInt(args[2]);
-            Player player = server.getGame().getPlayer(pid);
+            IPlayer player = server.getGame().getPlayer(pid);
             if(null == ent) {
             	server.sendServerChat(connId, "No such entity");
             }

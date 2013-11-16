@@ -20,7 +20,7 @@ import megamek.client.Client;
  * @author dirk
  */
 public abstract class ClientCommand {
-    protected Client client;
+    private Client client;
 
     private String name;
     private String helpText;
@@ -30,6 +30,10 @@ public abstract class ClientCommand {
         this.client = client;
         this.name = name;
         this.helpText = helpText;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     /**

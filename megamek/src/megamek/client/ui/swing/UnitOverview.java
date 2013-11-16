@@ -104,7 +104,7 @@ public class UnitOverview implements IDisplayable {
         computeUnitsPerPage(clipBounds.getSize());
 
         graph.setFont(FONT);
-        ArrayList<Entity> v = clientgui.getClient().game
+        ArrayList<Entity> v = clientgui.getClient().getGame()
                 .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = new int[v.size()];
 
@@ -145,7 +145,7 @@ public class UnitOverview implements IDisplayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
-            IGame game = clientgui.getClient().game;
+            IGame game = clientgui.getClient().getGame();
             if (game.getTurn() != null && game.getTurn().isValidEntity(e,game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
@@ -464,7 +464,7 @@ public class UnitOverview implements IDisplayable {
                     Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
-                    - clientgui.getClient().game.getRoundCount();
+                    - clientgui.getClient().getGame().getRoundCount();
             if (roundsLeft > 0) {
                 printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
             }

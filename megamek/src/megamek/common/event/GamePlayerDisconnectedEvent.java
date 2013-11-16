@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when some Player disconnected
@@ -30,7 +30,7 @@ public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GamePlayerDisconnectedEvent(Object source, Player player) {
+    public GamePlayerDisconnectedEvent(Object source, IPlayer player) {
         super(source, player);
     }
 

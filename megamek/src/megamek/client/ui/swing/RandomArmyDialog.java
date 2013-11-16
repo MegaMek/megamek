@@ -152,7 +152,7 @@ WindowListener, TreeSelectionListener {
         rug = RandomUnitGenerator.getInstance();
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
-                m_client.game.getOptions().intOption("year"));
+                m_client.getGame().getOptions().intOption("year"));
         // set defaults
         m_tMechs.setText("4");
         m_tBVmin.setText("5800");
@@ -162,7 +162,7 @@ WindowListener, TreeSelectionListener {
         m_tMinYear.setText("2500");
         m_tMaxYear.setText("3100");
         m_tInfantry.setText("0");
-        m_chkCanon.setSelected(m_client.game.getOptions().booleanOption(
+        m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
         "canon_only"));
         updateTechChoice(true);
 
@@ -527,7 +527,7 @@ WindowListener, TreeSelectionListener {
     }
 
     private void updateTechChoice(boolean force) {
-        boolean maxTechOption = m_client.game.getOptions().booleanOption(
+        boolean maxTechOption = m_client.getGame().getOptions().booleanOption(
         "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);

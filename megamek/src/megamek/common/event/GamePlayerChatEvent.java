@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when chat message received
@@ -32,7 +32,7 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
      * @param player
      * @param message
      */
-    public GamePlayerChatEvent(Object source, Player player, String message) {
+    public GamePlayerChatEvent(Object source, IPlayer player, String message) {
         super(source, player);
         this.message = message;
     }

@@ -61,21 +61,21 @@ public class RulerCommand extends ClientCommand {
                 }
             }
 
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(getClient().getGame(),
                     LosEffects.buildAttackInfo(start, end, elev1, elev2,
-                            client.getBoard().getHex(start).floor(),
-                            client.getBoard().getHex(end).floor())).losModifiers(
-                    client.game);
+                            getClient().getBoard().getHex(start).floor(),
+                            getClient().getBoard().getHex(end).floor())).losModifiers(
+                    getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
             }
             toHit1 += thd.getDesc();
 
-            thd = LosEffects.calculateLos(client.game,
+            thd = LosEffects.calculateLos(getClient().getGame(),
                     LosEffects.buildAttackInfo(end, start, elev2, elev1,
-                            client.getBoard().getHex(end).floor(),
-                            client.getBoard().getHex(start).floor())).losModifiers(
-                    client.game);
+                            getClient().getBoard().getHex(end).floor(),
+                            getClient().getBoard().getHex(start).floor())).losModifiers(
+                    getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
             }

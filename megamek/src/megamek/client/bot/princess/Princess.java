@@ -13,12 +13,9 @@
  */
 package megamek.client.bot.princess;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -41,7 +38,6 @@ import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
-import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
@@ -61,7 +57,7 @@ public class Princess extends BotClient {
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private Precognition precognition;
-    private Set<Coords> strategicTargets = new HashSet<Coords>();
+    private final Set<Coords> strategicTargets = new HashSet<Coords>();
     private boolean flee = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
     private boolean mustFlee = false;
@@ -70,6 +66,10 @@ public class Princess extends BotClient {
         super(name, host, port);
         logger.setVerbosity(verbosity);
         setBehaviorSettings(BehaviorSettingsFactory.getInstance(logger).DEFAULT_BEHAVIOR);
+    }
+
+    public LogLevel getVerbosity() {
+        return logger.getVerbosity();
     }
 
     public BasicPathRanker getPathRanker() {
@@ -103,7 +103,7 @@ public class Princess extends BotClient {
                                                                                 getName() + "\n" +
                                                                                 behaviorSettings.toLog());
         this.behaviorSettings = behaviorSettings;
-        strategicTargets.clear();
+        getStrategicTargets().clear();
         setShouldFlee(behaviorSettings.shouldAutoFlee(), "Configured to auto flee.");
         if (shouldFlee()) {
             return;
@@ -116,7 +116,7 @@ public class Princess extends BotClient {
             String x = targetCoords.substring(0, 2);
             String y = targetCoords.replaceFirst(x, "");
             Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
-            strategicTargets.add(coords);
+            getStrategicTargets().add(coords);
         }
     }
 
@@ -599,7 +599,7 @@ public class Princess extends BotClient {
         try {
             // reset strategic targets
             fireControl.additional_targets = new ArrayList<Targetable>();
-            for (Coords strategic_target : strategicTargets) {
+            for (Coords strategic_target : getStrategicTargets()) {
                 if (game.getBoard().getBuildingAt(strategic_target) == null) {
                     sendChat("No building to target in Hex "
                             + strategic_target.toFriendlyString()
@@ -642,7 +642,7 @@ public class Princess extends BotClient {
         }
     }
 
-    protected IGame getGame() {
+    public IGame getGame() {
         return game;
     }
 
@@ -677,8 +677,8 @@ public class Princess extends BotClient {
                     for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements();) {
                         Entity entity = i.nextElement();
                         if (entity instanceof GunEmplacement && entity.getOwner().isEnemyOf(getLocalPlayer())
-                                && !strategicTargets.contains(coords)) {
-                            strategicTargets.add(coords);
+                                && !getStrategicTargets().contains(coords)) {
+                            getStrategicTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +
                                     " designated target due to Gun Emplacement.");
                         }

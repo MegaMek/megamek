@@ -22,7 +22,7 @@ package megamek.server.commands;
 
 import java.util.Enumeration;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 /**
@@ -78,9 +78,9 @@ public abstract class ServerCommand {
             return false; // Just in case something funky happens
 
         if (server.getPlayer(connId).isObserver()) {
-            for (Enumeration<Player> e = server.getGame().getPlayers(); e
+            for (Enumeration<IPlayer> e = server.getGame().getPlayers(); e
                     .hasMoreElements();) {
-                Player p = e.nextElement();
+                IPlayer p = e.nextElement();
 
                 if (!p.isObserver() && !p.isGhost()) {
                     // There are non-Observer, non-Ghosts in the game, so

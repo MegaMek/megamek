@@ -79,7 +79,6 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -98,6 +97,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -109,7 +109,6 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
@@ -271,7 +270,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     Polygon[] movementPolys;
 
     // the player who owns this BoardView's client
-    private Player localPlayer = null;
+    private IPlayer localPlayer = null;
 
     // should we mark deployment hexes for an entity?
     private Entity en_Deployer = null;
@@ -2664,11 +2663,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
     }
 
-    public void setLocalPlayer(Player p) {
+    public void setLocalPlayer(IPlayer p) {
         localPlayer = p;
     }
 
-    public Player getLocalPlayer() {
+    public IPlayer getLocalPlayer() {
         return localPlayer;
     }
 

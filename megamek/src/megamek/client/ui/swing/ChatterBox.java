@@ -66,7 +66,7 @@ public class ChatterBox implements KeyListener {
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
-        client.game.addGameListener(new GameListenerAdapter() {
+        client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage());

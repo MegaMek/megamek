@@ -13,7 +13,7 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * quick implementation of a Victory.Result
@@ -21,9 +21,9 @@ import megamek.common.Player;
 public class SimpleResult extends VictoryResult implements Victory.Result {
     public SimpleResult(boolean win, int player, int team) {
         super(win);
-        if (player != Player.PLAYER_NONE)
+        if (player != IPlayer.PLAYER_NONE)
             addPlayerScore(player, 1.0);
-        if (team != Player.TEAM_NONE)
+        if (team != IPlayer.TEAM_NONE)
             addTeamScore(team, 1.0);
     }
 }

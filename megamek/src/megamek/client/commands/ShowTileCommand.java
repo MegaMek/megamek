@@ -40,15 +40,15 @@ public class ShowTileCommand extends ClientCommand {
             IHex hex;
 
             do {
-                hex = client.game.getBoard().getHex(coord);
+                hex = getClient().getGame().getBoard().getHex(coord);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.x + 1) + ", "
                             + (coord.y + 1) + ") : " + hex.toString();
 
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
-                    if (!client.game.getOptions().booleanOption("double_blind")) {
-                        Enumeration<Entity> entList = client.game
+                    if (!getClient().getGame().getOptions().booleanOption("double_blind")) {
+                        Enumeration<Entity> entList = getClient().getGame()
                                 .getEntities(coord);
                         if (entList.hasMoreElements()) {
                             str = str + "; Contains entities: "

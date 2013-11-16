@@ -34,7 +34,7 @@ import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Minefield;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Terrains;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -73,7 +73,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private boolean deployI = false;
     private boolean remove = false;
 
-    private Player p;
+    private IPlayer p;
     private Vector<Minefield> deployedMinefields = new Vector<Minefield>();
 
     /**
@@ -82,7 +82,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      */
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        clientgui.getClient().game.addGameListener(this);
+        clientgui.getClient().getGame().addGameListener(this);
 
         // Listener is added in the ClientGUI#switchPanel
         // clientgui.getBoardView().addBoardViewListener(this);
@@ -240,22 +240,22 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     private void deployMinefield(Coords coords) {
-        if (!clientgui.getClient().game.getBoard().contains(coords)) {
+        if (!clientgui.getClient().getGame().getBoard().contains(coords)) {
             return;
         }
 
         // check if this is a water hex
         boolean sea = false;
-        IHex hex = clientgui.getClient().game.getBoard().getHex(coords);
+        IHex hex = clientgui.getClient().getGame().getBoard().getHex(coords);
         if (hex.containsTerrain(Terrains.WATER)) {
             sea = true;
         }
 
         if (remove) {
-            if (!clientgui.getClient().game.containsMinefield(coords)) {
+            if (!clientgui.getClient().getGame().containsMinefield(coords)) {
                 return;
             }
-            Enumeration<?> mfs = clientgui.getClient().game.getMinefields(coords).elements();
+            Enumeration<?> mfs = clientgui.getClient().getGame().getMinefields(coords).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
@@ -278,12 +278,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             }
 
             for (Minefield mf : mfRemoved) {
-                clientgui.getClient().game.removeMinefield(mf);
+                clientgui.getClient().getGame().removeMinefield(mf);
             }
         } else {
             // first check that there is not already a mine of this type
             // deployed
-            Enumeration<?> mfs = clientgui.getClient().game.getMinefields(coords).elements();
+            Enumeration<?> mfs = clientgui.getClient().getGame().getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
                 if ((deployM && (mf.getType() == Minefield.TYPE_CONVENTIONAL))
@@ -360,7 +360,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             } else {
                 return;
             }
-            clientgui.getClient().game.addMinefield(mf);
+            clientgui.getClient().getGame().addMinefield(mf);
             deployedMinefields.addElement(mf);
             clientgui.bv.refreshDisplayables();
         }
@@ -459,10 +459,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)) {
+                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)) {
             endMyTurn();
         }
-        if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
+        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
             setStatusBarText(Messages
                     .getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
@@ -591,7 +591,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        clientgui.getClient().game.removeGameListener(this);
+        clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 

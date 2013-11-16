@@ -33,12 +33,12 @@ public class ShowEntityCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         // is this nessesary to prevent cheating?
-        if (client.game.getOptions().booleanOption("double_blind")) {
+        if (getClient().getGame().getOptions().booleanOption("double_blind")) {
             return "Sorry, this command is disabled during double blind.";
         }
         if (args.length == 1) {
             String list = "List of all entities.\n";
-            Enumeration<Entity> entities = client.getEntities();
+            Enumeration<Entity> entities = getClient().getEntities();
             while (entities.hasMoreElements()) {
                 Entity ent = entities.nextElement();
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
@@ -48,7 +48,7 @@ public class ShowEntityCommand extends ClientCommand {
         }
         try {
             int id = Integer.parseInt(args[1]);
-            Entity ent = client.getEntity(id);
+            Entity ent = getClient().getEntity(id);
 
             if (ent != null) {
                 if (args.length > 2) {

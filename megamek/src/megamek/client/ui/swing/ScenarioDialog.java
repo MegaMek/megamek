@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.common.IPlayer;
 import megamek.common.Player;
 
 /**
@@ -60,7 +61,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
         for (int x = 0; x < pa.length; x++) {
-            final Player curPlayer = m_players[x];
+            final IPlayer curPlayer = m_players[x];
             curPlayer.setColorIndex(x);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
             m_typeChoices[x] = new JComboBox();

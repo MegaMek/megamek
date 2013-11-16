@@ -81,8 +81,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
             
         }
         
-        setBorder(new MegamekBorder(-1,-1,-1,-1));
-        butDone = new MegamekButton();
+        setBorder(new MegamekBorder("PhaseDisplayBorder"));
+        butDone = new MegamekButton("","PhaseDisplayDoneButton");
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;

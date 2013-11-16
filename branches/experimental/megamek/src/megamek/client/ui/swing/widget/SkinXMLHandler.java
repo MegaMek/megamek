@@ -130,13 +130,17 @@ public class SkinXMLHandler {
         }    
 	}
 	
+	public static SkinSpecification getSkin(String component){
+		return getSkin(component,false);
+	}
+	
 	/**
 	 * Get a <code>SkinSpecification</code> for a given component.
 	 * 
 	 * @param component  The name of the component to get skin info for.
 	 * @return           
 	 */
-	public static SkinSpecification getSkin(String component){
+	public static SkinSpecification getSkin(String component, boolean isBtn){
 		if (skinSpecs == null ){
 			try {
 				initSkinXMLHandler();
@@ -149,7 +153,11 @@ public class SkinXMLHandler {
 		
 		SkinSpecification spec = skinSpecs.get(component);
 		if (spec == null){
-			spec = skinSpecs.get(defaultUIElement);
+			if (isBtn){
+				spec = skinSpecs.get(defaultButton);
+			} else {
+				spec = skinSpecs.get(defaultUIElement);
+			}
 		}
 		return spec;
 	}

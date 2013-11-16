@@ -90,7 +90,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 		for (Command cmd : Command.values()) {
 			String title = Messages.getString("SelectArtyAutoHitHexDisplay."
 					+ cmd.getCmd());
-			MegamekButton newButton = new MegamekButton(title);
+			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
 			newButton.addActionListener(this);
 			newButton.setActionCommand(cmd.getCmd());
 			newButton.setEnabled(false);

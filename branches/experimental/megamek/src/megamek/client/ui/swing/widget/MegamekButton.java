@@ -27,8 +27,8 @@ public class MegamekButton extends JButton {
 	
 	public MegamekButton(String text, String component){
 		super(text);
-		setBorder(new MegamekBorder(component));
-		loadIcon(SkinXMLHandler.getSkin(component));
+		setBorder(new MegamekBorder(SkinXMLHandler.getSkin(component,true)));
+		loadIcon(SkinXMLHandler.getSkin(component,true));
 	}
 	
 	public MegamekButton(String text){
@@ -46,7 +46,7 @@ public class MegamekButton extends JButton {
 	 public void loadIcon(SkinSpecification spec){
 	        try {
 	        	if (spec.backgrounds.size() <2){
-	        		System.out.println("Error: skin specificaiont for a " +
+	        		System.out.println("Error: skin specification for a " +
 	        				"Megamek Button does not contain at least " +
 	        				"2 background images!");
 	        	}

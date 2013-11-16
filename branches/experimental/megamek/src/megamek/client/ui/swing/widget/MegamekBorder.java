@@ -43,6 +43,11 @@ public class MegamekBorder extends EmptyBorder {
     	loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
     }
     
+    public MegamekBorder(SkinSpecification spec){
+    	super(0,0,0,0);
+    	loadIcons(spec);
+    }
+    
     public MegamekBorder(String component){
     	super(0,0,0,0);
     	loadIcons(SkinXMLHandler.getSkin(component));

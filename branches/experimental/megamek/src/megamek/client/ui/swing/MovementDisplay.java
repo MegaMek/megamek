@@ -135,7 +135,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_LAY_MINE("moveLayMine", CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_HULL_DOWN("moveHullDown", CMD_MECH | CMD_TANK), //$NON-NLS-1$
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
-        MOVE_SWIM("moveSwim", CMD_MECH | CMD_INF), //$NON-NLS-1$
+        MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_DIG_IN("moveDigIn", CMD_INF), //$NON-NLS-1$
         MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$

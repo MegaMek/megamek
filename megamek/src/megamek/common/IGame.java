@@ -581,27 +581,27 @@ public interface IGame {
     public abstract Entity getEntity(int id);
 
     /**
-     * Adds a collection of new Entities.  Only one GameEntityNewEvent is 
+     * Adds a collection of new Entities.  Only one GameEntityNewEvent is
      * created for the whole list.
-     * 
+     *
      * @param ids  A collection of ids for each Entity to be added.
      * @param entities  The Entity objects to be added.
      */
     public abstract void addEntities(List<Integer> ids, List<Entity> entities);
-    
+
     /**
      * Adds a new Entity to this Game object.
-     * 
+     *
      * @param id        The id of the Entity to be added.
      * @param entity    The Entity to add.
-     * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is 
+     * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is
      *                  generated.
      */
     public abstract void addEntity(int id, Entity entity, boolean genEvent);
-    
+
     /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
-     * 
+     *
      * @param id  The id of the Entity to be added.
      * @param entity The Entity to add.
      **/
@@ -626,10 +626,8 @@ public interface IGame {
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
-    public abstract void removeEntity(int id, int condition, boolean genEvent);
-    
     public abstract void removeEntity(int id, int condition);
-    
+
     public abstract void removeEntities(List<Integer> ids, int condition);
 
     /**
@@ -683,7 +681,7 @@ public interface IGame {
      * Returns a Vector of the gun emplacements at the given coordinates.
      */
     public abstract Vector<GunEmplacement> getGunEmplacements(Coords c);
-    
+
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
@@ -770,7 +768,7 @@ public interface IGame {
     /**
      * Returns the next selectable entity that can act this turn, or null if
      * none can.
-     * 
+     *
      * @param start
      *            the index number to start at (not an Entity Id)
      */
@@ -780,7 +778,7 @@ public interface IGame {
      * Returns the next selectable entity ID that can act this turn, or null if
      * none can.
      *
-     * @param start the index number to start at (and index into the entities 
+     * @param start the index number to start at (and index into the entities
      *                  collection)
      */
     public abstract int getNextEntityNum(int start);
@@ -816,7 +814,7 @@ public interface IGame {
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
     public abstract ArrayList<Entity> getPlayerEntities(Player player, boolean hide);
-    
+
     /**
      * Get the entities for the player.
      *
@@ -1264,17 +1262,17 @@ public interface IGame {
      */
     public abstract void clearTagInfoShots(Entity ae, Coords tc);
 
-    
+
     /**
      * Computes whether two coordinates are considered to be on the same mapsheet
-     * 
+     *
      * @param c1 The first coordinate
      * @param c2 The second coordinate
      * @return True if both coordinates are on the same mapsheet, else false
      */
     public boolean isOnSameSheet(Coords c1, Coords c2);
-    
-    
+
+
     /**
      * Reset tag information
      */

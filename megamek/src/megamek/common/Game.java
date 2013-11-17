@@ -74,10 +74,10 @@ public class Game implements Serializable, IGame {
     /** Track entities removed from the game (probably by death) */
     Vector<Entity> vOutOfGame = new Vector<Entity>();
 
-    private Vector<Player> players = new Vector<Player>();
+    private Vector<IPlayer> players = new Vector<IPlayer>();
     private Vector<Team> teams = new Vector<Team>(); // DES
 
-    private Hashtable<Integer, Player> playerIds = new Hashtable<Integer, Player>();
+    private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
 
     /** have the entities been deployed? */
     private boolean deploymentComplete = false;
@@ -277,9 +277,9 @@ public class Game implements Serializable, IGame {
         minefields.clear();
         vibrabombs.removeAllElements();
 
-        Enumeration<Player> iter = getPlayers();
+        Enumeration<IPlayer> iter = getPlayers();
         while (iter.hasMoreElements()) {
-            Player player = iter.nextElement();
+            IPlayer player = iter.nextElement();
             player.removeMinefields();
         }
     }
@@ -339,10 +339,10 @@ public class Game implements Serializable, IGame {
     /**
      * Return a players team Note: may return null if player has no team
      */
-    public Team getTeamForPlayer(Player p) {
+    public Team getTeamForPlayer(IPlayer p) {
         for (Team team : teams) {
-            for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements();) {
-                final Player player = j.nextElement();
+            for (Enumeration<IPlayer> j = team.getPlayers(); j.hasMoreElements();) {
+                final IPlayer player = j.nextElement();
                 if (p == player) {
                     return team;
                 }
@@ -363,21 +363,21 @@ public class Game implements Serializable, IGame {
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Enumeration<Player> i = getPlayers(); i.hasMoreElements();) {
-            final Player player = i.nextElement();
-            if (!useTeamInit || (player.getTeam() == Player.TEAM_NONE)) {
-                Team new_team = new Team(Player.TEAM_NONE);
+        for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements();) {
+            final IPlayer player = i.nextElement();
+            if (!useTeamInit || (player.getTeam() == IPlayer.TEAM_NONE)) {
+                Team new_team = new Team(IPlayer.TEAM_NONE);
                 new_team.addPlayer(player);
                 initTeams.addElement(new_team);
             }
         }
 
         if (useTeamInit) {
-            // Now, go through all the teams, and add the apropriate player
-            for (int t = Player.TEAM_NONE + 1; t < Player.MAX_TEAMS; t++) {
+            // Now, go through all the teams, and add the appropriate player
+            for (int t = IPlayer.TEAM_NONE + 1; t < IPlayer.MAX_TEAMS; t++) {
                 Team new_team = null;
-                for (Enumeration<Player> i = getPlayers(); i.hasMoreElements();) {
-                    final Player player = i.nextElement();
+                for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements();) {
+                    final IPlayer player = i.nextElement();
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);
@@ -397,14 +397,14 @@ public class Game implements Serializable, IGame {
     /**
      * Return an enumeration of player in the game
      */
-    public Enumeration<Player> getPlayers() {
+    public Enumeration<IPlayer> getPlayers() {
         return players.elements();
     }
 
     /**
      * Return the players vector
      */
-    public Vector<Player> getPlayersVector() {
+    public Vector<IPlayer> getPlayersVector() {
         return players;
     }
 
@@ -418,34 +418,34 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public Player getPlayer(int id) {
-        if (Player.PLAYER_NONE == id) {
+    public IPlayer getPlayer(int id) {
+        if (IPlayer.PLAYER_NONE == id) {
             return null;
         }
         return playerIds.get(new Integer(id));
     }
 
-    public void addPlayer(int id, Player player) {
+    public void addPlayer(int id, IPlayer player) {
         player.setGame(this);
         players.addElement(player);
         playerIds.put(new Integer(id), player);
         updatePlayer(player);
     }
 
-    public void setPlayer(int id, Player player) {
-        final Player oldPlayer = getPlayer(id);
+    public void setPlayer(int id, IPlayer player) {
+        final IPlayer oldPlayer = getPlayer(id);
         player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
         playerIds.put(new Integer(id), player);
         updatePlayer(player);
     }
 
-    protected void updatePlayer(Player player) {
+    protected void updatePlayer(IPlayer player) {
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
     public void removePlayer(int id) {
-        Player playerToRemove = getPlayer(id);
+        IPlayer playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
         playerIds.remove(new Integer(id));
         processGameEvent(new GamePlayerChangeEvent(this, playerToRemove));
@@ -455,7 +455,7 @@ public class Game implements Serializable, IGame {
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
      */
-    public int getEntitiesOwnedBy(Player player) {
+    public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player)) {
@@ -469,7 +469,7 @@ public class Game implements Serializable, IGame {
      * Returns the number of entities owned by the player, regardless of their
      * status.
      */
-    public int getAllEntitiesOwnedBy(Player player) {
+    public int getAllEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player)) {
@@ -487,7 +487,7 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the number of non-destroyed entityes owned by the player
      */
-    public int getLiveEntitiesOwnedBy(Player player) {
+    public int getLiveEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()) {
@@ -502,7 +502,7 @@ public class Game implements Serializable, IGame {
      * including entities not yet deployed. Ignore offboard units and captured
      * Mek pilots.
      */
-    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+    public int getLiveDeployedEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
@@ -517,7 +517,7 @@ public class Game implements Serializable, IGame {
      * Returns the number of non-destroyed deployed entities owned by the
      * player. Ignore offboard units and captured Mek pilots.
      */
-    public int getLiveCommandersOwnedBy(Player player) {
+    public int getLiveCommandersOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
@@ -533,7 +533,7 @@ public class Game implements Serializable, IGame {
      * Returns true if the player has a valid unit with the Tactical Genius
      * pilot special ability.
      */
-    public boolean hasTacticalGenius(Player player) {
+    public boolean hasTacticalGenius(IPlayer player) {
         for (Entity entity : entities) {
             if (entity.getCrew().getOptions().booleanOption("tactical_genius")
                     && entity.getOwner().equals(player)
@@ -1329,9 +1329,9 @@ public class Game implements Serializable, IGame {
     }
 
     private void removeArtyAutoHitHexes() {
-        Enumeration<Player> iter = getPlayers();
+        Enumeration<IPlayer> iter = getPlayers();
         while (iter.hasMoreElements()) {
-            Player player = iter.nextElement();
+            IPlayer player = iter.nextElement();
             player.removeArtyAutoHitHexes();
         }
     }
@@ -1340,9 +1340,9 @@ public class Game implements Serializable, IGame {
 //        minefields.clear();
 //        vibrabombs.removeAllElements();
 //
-//        Enumeration<Player> iter = getPlayers();
+//        Enumeration<IPlayer> iter = getPlayers();
 //        while (iter.hasMoreElements()) {
-//            Player player = iter.nextElement();
+//            IPlayer player = iter.nextElement();
 //            player.removeMinefields();
 //        }
 //    }
@@ -1763,7 +1763,7 @@ public class Game implements Serializable, IGame {
      *            - should fighters loaded into squadrons be excluded?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Entity> getPlayerEntities(Player player, boolean hide) {
+    public ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide) {
         ArrayList<Entity> output = new ArrayList<Entity>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
@@ -1783,7 +1783,7 @@ public class Game implements Serializable, IGame {
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide){
+    public ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide){
         ArrayList<Integer> output = new ArrayList<Integer>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
@@ -1834,7 +1834,7 @@ public class Game implements Serializable, IGame {
      * Returns the number of remaining selectable infantry owned by a player.
      */
     public int getInfantryLeft(int playerId) {
-        Player player = getPlayer(playerId);
+        IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -1852,7 +1852,7 @@ public class Game implements Serializable, IGame {
      * Returns the number of remaining selectable Protomechs owned by a player.
      */
     public int getProtomechsLeft(int playerId) {
-        Player player = getPlayer(playerId);
+        IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -1875,7 +1875,7 @@ public class Game implements Serializable, IGame {
      *         turn
      */
     public int getVehiclesLeft(int playerId) {
-        Player player = getPlayer(playerId);
+        IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -2509,8 +2509,8 @@ public class Game implements Serializable, IGame {
      * Returns true if the specified player is either the victor, or is on the
      * winning team. Best to call during PHASE_VICTORY.
      */
-    public boolean isPlayerVictor(Player player) {
-        if (player.getTeam() == Player.TEAM_NONE) {
+    public boolean isPlayerVictor(IPlayer player) {
+        if (player.getTeam() == IPlayer.TEAM_NONE) {
             return player.getId() == victoryPlayerId;
         }
         return player.getTeam() == victoryTeam;

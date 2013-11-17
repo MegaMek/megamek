@@ -35,7 +35,7 @@ import java.util.List;
  * @since 11/9/13 8:41 AM
  */
 public class AddBotUtil {
-    private final List<String> results = new ArrayList<>();
+    private final List<String> results = new ArrayList<String>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
                                        "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +

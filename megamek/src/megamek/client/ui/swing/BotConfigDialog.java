@@ -161,7 +161,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
     private JSlider buildSlider(String minMsgProperty, String maxMsgProperty, String toolTip, String title) {
         JSlider thisSlider = new JSlider(SwingConstants.HORIZONTAL,0, 10, 5);
-        Hashtable<Integer, JLabel> sliderLabels = new Hashtable<>(3);
+        Hashtable<Integer, JLabel> sliderLabels = new Hashtable<Integer,JLabel>(3);
         sliderLabels.put(0, buildSliderLabel("0 - " + minMsgProperty));
         sliderLabels.put(10, buildSliderLabel("10 - "  + maxMsgProperty));
         sliderLabels.put(5, buildSliderLabel("5"));

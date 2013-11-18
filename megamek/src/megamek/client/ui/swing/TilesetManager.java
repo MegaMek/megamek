@@ -456,7 +456,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // Return a null if the player has selected no camo file.
         if ((null == player.getCamoCategory())
-                || player.NO_CAMO.equals(player.getCamoCategory())) {
+                || IPlayer.NO_CAMO.equals(player.getCamoCategory())) {
             return null;
         }
 
@@ -466,7 +466,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
             // Translate the root camo directory name.
             String category = player.getCamoCategory();
-            if (player.ROOT_CAMO.equals(category)) {
+            if (IPlayer.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
             camo = (Image) camos.getItem(category, player.getCamoFileName());

@@ -23,22 +23,22 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public interface IPlayer extends ITurnOrdered {
-    int PLAYER_NONE = -1;
-    int TEAM_NONE = 0;
-    String[] colorNames = {"Blue", "Yellow", "Red",
+    public static final int PLAYER_NONE = -1;
+    public static final int TEAM_NONE = 0;
+    public static final String[] colorNames = {"Blue", "Yellow", "Red",
                            "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
                            "Purple"};
-    String[] teamNames = {"No Team", "Team 1", "Team 2",
+    public static final String[] teamNames = {"No Team", "Team 1", "Team 2",
                           "Team 3", "Team 4", "Team 5"};
-    int MAX_TEAMS = teamNames.length;
+    public static final int MAX_TEAMS = teamNames.length;
     /**
      * The "no camo" category.
      */
-    String NO_CAMO = "-- No Camo --";
+    public static final String NO_CAMO = "-- No Camo --";
     /**
      * The category for camos in the root directory.
      */
-    String ROOT_CAMO = "-- General --";
+    public static final String ROOT_CAMO = "-- General --";
 
     Vector<Minefield> getMinefields();
 

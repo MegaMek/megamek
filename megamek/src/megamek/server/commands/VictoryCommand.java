@@ -83,7 +83,7 @@ public class VictoryCommand extends ServerCommand {
          * server.sendServerChat(player.getName() + " cancels the force
          * victory."); server.cancelVictory(); return; }
          */// okay, declare force victory
-        if (player.getTeam() == player.TEAM_NONE) {
+        if (player.getTeam() == IPlayer.TEAM_NONE) {
             server.sendServerChat(getDeclareIndividual(player.getName()));
         } else {
             server.sendServerChat(getDeclareTeam(player.getName()));

@@ -3432,7 +3432,7 @@ public class MechDisplay extends JPanel {
                             Messages.getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(player.teamNames[team]).append(']');
+                            .append(IPlayer.teamNames[team]).append(']');
                     ((DefaultListModel) narcList.getModel()).addElement(buff
                             .toString());
                 }
@@ -3441,7 +3441,7 @@ public class MechDisplay extends JPanel {
                             Messages.getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
                     buff.append(player.getName());
                     buff.append(" [")//$NON-NLS-1$
-                            .append(player.teamNames[team]).append("] ")//$NON-NLS-1$
+                            .append(IPlayer.teamNames[team]).append("] ")//$NON-NLS-1$
                             .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
                             .append('.');
                     ((DefaultListModel) narcList.getModel()).addElement(buff

@@ -50,9 +50,9 @@ public class LastManStandingVictory implements Victory, Serializable {
             playersAlive++;
             lastPlayer = player;
             // check team
-            if (team == player.TEAM_NONE) {
+            if (team == IPlayer.TEAM_NONE) {
                 unteamedAlive = true;
-            } else if (lastTeam == player.TEAM_NONE) {
+            } else if (lastTeam == IPlayer.TEAM_NONE) {
                 // possibly only one team alive
                 oneTeamAlive = true;
                 lastTeam = team;

@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -126,6 +127,7 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Tech"));
     private JLabel m_labUnits = new JLabel(Messages
             .getString("RandomArmyDialog.Unit"));
+    private JLabel m_ratStatus;
 
     private JTextField m_tBVmin = new JTextField(6);
     private JTextField m_tBVmax = new JTextField(6);
@@ -150,6 +152,14 @@ WindowListener, TreeSelectionListener {
         m_clientgui = cl;
         m_client = cl.getClient();
         rug = RandomUnitGenerator.getInstance();
+        rug.registerListener(this);
+        if (rug.isInitialized()){
+            m_ratStatus = new JLabel(Messages
+                    .getString("RandomArmyDialog.ratStatusDoneLoading"));            
+        } else {
+            m_ratStatus = new JLabel(Messages
+                    .getString("RandomArmyDialog.ratStatusLoading"));
+        }
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption("year"));
@@ -285,6 +295,17 @@ WindowListener, TreeSelectionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.insets = new Insets(0,10,0,0);
+        m_pRAT.add(m_ratStatus,c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -476,6 +497,10 @@ WindowListener, TreeSelectionListener {
             }finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
+        } else if (ev.getSource().equals(rug)) {
+            m_ratStatus.setText(Messages
+                    .getString("RandomArmyDialog.ratStatusDoneLoading"));
+            updateRATs();
         }
     }
 

@@ -22840,6 +22840,13 @@ public class Server implements Runnable {
         if (en.hasQuirk("prototype")) {
             critMod += 2;
         }
+        
+        // Apply modifiers for Anti-penetrative ablation armor
+        if (en.getArmor(loc) > 0 && 
+                en.getArmorType(loc) == 
+                    EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION){
+            critMod -= 2;
+        }
 
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage);

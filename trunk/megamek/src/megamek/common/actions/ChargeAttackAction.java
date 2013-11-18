@@ -388,7 +388,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // let's just check this
         if (!md.contains(MoveStepType.CHARGE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Charge action not found in movment path");
+                    "Charge action not found in movement path");
         }
 
         // no jumping
@@ -470,16 +470,16 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      * delta_distance is correct.
      */
     public static int getDamageFor(Entity entity) {
-        return getDamageFor(entity, entity, false, 0, entity.delta_distance);
+        return ChargeAttackAction.getDamageFor(entity, entity, false, 0, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, boolean tacops, int hexesMoved) {
-        return getDamageFor(entity, entity, tacops, 0, hexesMoved);
+        return ChargeAttackAction.getDamageFor(entity, entity, tacops, 0, hexesMoved);
     }
 
     public static int getDamageFor(Entity entity, Entity target,
             boolean tacops, int mos) {
-        return getDamageFor(entity, target, tacops, mos, entity.delta_distance);
+        return ChargeAttackAction.getDamageFor(entity, target, tacops, mos, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, Entity target,
@@ -510,12 +510,12 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {
-        return getDamageTakenBy(entity, target, false, 0);
+        return ChargeAttackAction.getDamageTakenBy(entity, target, false, 0);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,
             boolean tacops) {
-        return getDamageTakenBy(entity, target, tacops, entity.delta_distance);
+        return ChargeAttackAction.getDamageTakenBy(entity, target, tacops, entity.delta_distance);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,

@@ -23,7 +23,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.HitData;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -59,7 +59,7 @@ public class FlamerHeatHandler extends WeaponHandler {
         if ((entityTarget instanceof Mech)
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());
 
@@ -71,13 +71,33 @@ public class FlamerHeatHandler extends WeaponHandler {
                         hits, nCluster, bldgAbsorbs);
                 return;
             }
-            Report r = new Report(3400);
+            Report r = new Report(3405);
+            r.subject = subjectId;
+            r.add(toHit.getTableDesc());
+            r.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.addElement(r);
+            
+            r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(2);
-            r.choose(true);
+            if (entityTarget.getArmor(hit) > 0 && 
+                    ((entityTarget.getArmorType(hit.getLocation()) == 
+                        EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
+                     (entityTarget.getArmorType(hit.getLocation()) == 
+                        EquipmentType.T_ARMOR_REFLECTIVE))){
+                entityTarget.heatFromExternal += 1;
+                r.add(1);
+                r.choose(true);
+                r.messageId=3406;
+                r.add(2);
+                r.add(EquipmentType.armorNames
+                        [entityTarget.getArmorType(hit.getLocation())]);
+            } else {
+                entityTarget.heatFromExternal += 2;
+                r.add(2);
+                r.choose(true);
+            }                        
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += 2;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);

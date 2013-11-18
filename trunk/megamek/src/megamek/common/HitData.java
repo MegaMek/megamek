@@ -30,6 +30,7 @@ public class HitData {
     public static final int DAMAGE_BALLISTIC = -5;
     public static final int DAMAGE_ARMOR_PIERCING = -6;
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
+    public static final int DAMAGE_IGNORES_DMG_REDUCTION = -8;
 
     private int location;
     private boolean rear;

@@ -20,6 +20,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mech;
@@ -80,10 +81,32 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                 Report r = new Report(3400);
                 r.subject = subjectId;
                 r.indent(2);
-                r.add(extraHeat);
-                r.choose(true);
-                vPhaseReport.addElement(r);
-                entityTarget.heatFromExternal += extraHeat;
+                if (entityTarget.getArmor(hit) > 0 &&                        
+                        (entityTarget.getArmorType(hit.getLocation()) == 
+                           EquipmentType.T_ARMOR_REFLECTIVE)){
+                   entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
+                   r.messageId=3406;
+                   r.add(Math.max(1, extraHeat/2));
+                   r.choose(true);
+                   r.add(extraHeat);
+                   r.add(EquipmentType.armorNames
+                           [entityTarget.getArmorType(hit.getLocation())]);
+                } else if (entityTarget.getArmor(hit) > 0 &&  
+                       (entityTarget.getArmorType(hit.getLocation()) == 
+                           EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
+                    entityTarget.heatFromExternal += extraHeat/2;
+                    r.messageId=3406;
+                    r.add(extraHeat/2);
+                    r.choose(true);
+                    r.add(extraHeat);
+                    r.add(EquipmentType.armorNames
+                            [entityTarget.getArmorType(hit.getLocation())]);
+                } else {
+                    entityTarget.heatFromExternal += extraHeat;
+                    r.add(extraHeat);
+                    r.choose(true);
+                }                
+                vPhaseReport.addElement(r);                
             }
         }
     }

@@ -141,6 +141,12 @@ v0.37.0-dev (SVN)
     This enables weapons that do damage+heat to properly check for armor types.
 + Bug: <msg> tags in Report don't advance the tagCounter, causing issues with 
     other tags appearing after <msg> tags in reports
++ Bug: Report for flamer heat damage doesn't display hit/miss
++ Bug: Reports related to increased/decreased damage for reflective armor 
+    aren't indented properly
++ Bug: Reflective armor doesn't properly reduce energy-based heat damage
++ Feature: Implemented heat-dissipating armor (heat from burning hexes isn't 
+    working yet, pending a rules clarification)
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

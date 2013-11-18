@@ -9004,10 +9004,15 @@ public class Server implements Runnable {
                             .calculateLos(game, ae.getId(), t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<Report>();
+                    int heatDamage = 0;
+                    boolean heatReduced = false;
+                    String reductionCause = "";
                     for (int i = 0; i < m; i++) {
-                        int roll = Compute.d6(2);
-                        if (te.removePartialCoverHits(roll, cover,
-                                Compute.targetSideTable(ae, t, called))) {
+                        int side = Compute.targetSideTable(ae, t, called);
+                        HitData hit = 
+                                te.rollHitLocation(ToHitData.HIT_NORMAL, side);
+                        if (te.removePartialCoverHits(hit.getLocation(), cover,
+                                side)) {
                             missiles--;
                             // Determine if damagable cover is hit
                             int damagableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
@@ -9024,7 +9029,7 @@ public class Server implements Runnable {
                                             .getDamagableCoverTypeSecondary() != LosEffects.DAMAGABLE_COVER_NONE))) {
                                 // Horiztonal cover provided by two 25%'s,
                                 // so primary and secondary
-                                int hitLoc = roll;
+                                int hitLoc = hit.getLocation();
                                 // Primary stores the left side, from the
                                 // perspective of the attacker
                                 if ((hitLoc == Mech.LOC_RLEG)
@@ -9077,16 +9082,37 @@ public class Server implements Runnable {
                                 report.indent(1);
                             }
                             coverDamageReports.addAll(coverDamageReport);
+                        } else { // No partial cover, missile hits
+                            if (te.getArmor(hit) > 0 &&  
+                                   (te.getArmorType(hit.getLocation()) == 
+                                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
+                               heatDamage += 1;
+                               heatReduced = true;
+                               reductionCause = EquipmentType.armorNames
+                                       [te.getArmorType(hit.getLocation())];
+                            } else {
+                               heatDamage += 2;
+                            } 
                         }
                     }
-                    r = new Report(3400);
-                    r.add(2 * missiles);
-                    r.subject = te.getId();
-                    r.indent(2);
-                    r.choose(true);
+                    if (heatReduced){
+                        r = new Report(3406);
+                        r.add(heatDamage);
+                        r.subject = te.getId();
+                        r.indent(2);
+                        r.choose(true);
+                        r.add(missiles*2);
+                        r.add(reductionCause);                        
+                    } else {
+                        r = new Report(3400);
+                        r.add(heatDamage);
+                        r.subject = te.getId();
+                        r.indent(2);
+                        r.choose(true);
+                    }
                     vPhaseReport.add(r);
                     Report.addNewline(vPhaseReport);
-                    te.heatFromExternal += 2 * missiles;
+                    te.heatFromExternal += heatDamage;
 
                     if (missiles != m) {
                         r = new Report(3403);
@@ -19160,7 +19186,7 @@ public class Server implements Runnable {
                     }
                     r = new Report(6073);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
@@ -19169,7 +19195,7 @@ public class Server implements Runnable {
                     damage *= 2;
                     r = new Report(6066);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && areaSatArty) {
@@ -19177,7 +19203,7 @@ public class Server implements Runnable {
                     damage *= 2;
                     r = new Report(6087);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
@@ -19189,7 +19215,7 @@ public class Server implements Runnable {
                     }
                     r = new Report(6067);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reactiveArmor
@@ -19202,7 +19228,7 @@ public class Server implements Runnable {
                     }
                     r = new Report(6068);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
                 }
@@ -19235,6 +19261,7 @@ public class Server implements Runnable {
                     vDesc.lastElement().newlines = 0;
                     r = new Report(6069);
                     r.subject = te_n;
+                    r.indent(3);
                     int reportedDamage = damage / 2;
                     if ((damage % 2) > 0) {
                         r.add(String.valueOf(reportedDamage) + ".5");

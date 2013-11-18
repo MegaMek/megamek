@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.Building;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Mech;
 import megamek.common.Report;
@@ -69,10 +70,24 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(5);
-            r.choose(true);
+            if (entityTarget.getArmor(hit) > 0 && 
+                    ((entityTarget.getArmorType(hit.getLocation()) == 
+                        EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
+                     (entityTarget.getArmorType(hit.getLocation()) == 
+                        EquipmentType.T_ARMOR_REFLECTIVE))){
+                entityTarget.heatFromExternal += 2;
+                r.add(2);
+                r.choose(true);
+                r.messageId=3406;
+                r.add(5);
+                r.add(EquipmentType.armorNames
+                        [entityTarget.getArmorType(hit.getLocation())]);
+            } else {
+                entityTarget.heatFromExternal += 5;
+                r.add(5);
+                r.choose(true);
+            }
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += 5;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);

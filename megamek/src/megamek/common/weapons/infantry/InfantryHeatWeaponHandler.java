@@ -19,7 +19,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.HitData;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Mech;
 import megamek.common.Report;
@@ -56,7 +56,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         if ((entityTarget instanceof Mech)
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
                             .getAimingMode(), toHit.getCover());
 
@@ -70,10 +70,21 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(nDamPerHit);
-            r.choose(true);
+            if (entityTarget.getArmor(hit) > 0 && 
+                    (entityTarget.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
+                entityTarget.heatFromExternal += nDamPerHit/2;
+                r.add(nDamPerHit/2);
+                r.choose(true);
+                r.messageId=3406;
+                r.add(EquipmentType.armorNames
+                        [entityTarget.getArmorType(hit.getLocation())]);
+            } else {
+                entityTarget.heatFromExternal += nDamPerHit;
+                r.add(nDamPerHit);
+                r.choose(true);
+            }
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += nDamPerHit;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);

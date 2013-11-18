@@ -147,6 +147,7 @@ v0.37.0-dev (SVN)
 + Bug: Reflective armor doesn't properly reduce energy-based heat damage
 + Feature: Implemented heat-dissipating armor (heat from burning hexes isn't 
     working yet, pending a rules clarification)
++ Feature: Implemented ballistic-reinforced armor
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

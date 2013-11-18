@@ -49,7 +49,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             int ebv = 0;
             int eibv = 0;
             int team = player.getTeam();
-            if (team != player.TEAM_NONE) {
+            if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
                     continue; // skip if already
                 doneTeams.add(team);
@@ -60,7 +60,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             if (eibv != 0 && (ebv * 100) / eibv <= 100 - destroyedPercent) {
                 Report r = new Report(7105, Report.PUBLIC);
                 victory = true;
-                if (team == player.TEAM_NONE) {
+                if (team == IPlayer.TEAM_NONE) {
                     r.add(player.getName());
                     vr.addPlayerScore(player.getId(), 1.0);
                 } else {

@@ -423,6 +423,7 @@ public class Report implements Serializable {
                             text.append(ReportMessages.getString(raw.substring(
                                     raw.indexOf(',', i) + 1, endTagIdx)));
                         }
+                        tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx)
                             .equals("newline")) {
                         text.append("\n");

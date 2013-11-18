@@ -139,6 +139,8 @@ v0.37.0-dev (SVN)
     many of the references to them to be static, removing a slew of warnings
 + Made the HitData hit variable a protected state variable in Weaponhandler.  
     This enables weapons that do damage+heat to properly check for armor types.
++ Bug: <msg> tags in Report don't advance the tagCounter, causing issues with 
+    other tags appearing after <msg> tags in reports
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

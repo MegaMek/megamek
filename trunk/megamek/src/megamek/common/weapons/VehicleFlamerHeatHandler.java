@@ -23,6 +23,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -67,7 +68,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         if ((entityTarget instanceof Mech)
                 && game.getOptions().booleanOption("flamer_heat")) {
 
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());
 
@@ -84,12 +85,34 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             int heatDamage = wtype.getDamage();
             Report r = new Report(3400);
             r.subject = subjectId;
-            r.indent(2);
-            r.add(heatDamage);
             r.newlines = 0;
-            r.choose(true);
+            if (entityTarget.getArmor(hit) > 0 &&                        
+                    (entityTarget.getArmorType(hit.getLocation()) == 
+                       EquipmentType.T_ARMOR_REFLECTIVE)){
+               entityTarget.heatFromExternal += Math.max(1, heatDamage/2);
+               r.add(Math.max(1, heatDamage/2));
+               r.choose(true);
+               r.messageId=3406;
+               r.add(heatDamage);
+               r.add(EquipmentType.armorNames
+                       [entityTarget.getArmorType(hit.getLocation())]);
+            } else if (entityTarget.getArmor(hit) > 0 &&  
+                   (entityTarget.getArmorType(hit.getLocation()) == 
+                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
+               entityTarget.heatFromExternal += heatDamage/2;
+               r.add(heatDamage/2);
+               r.choose(true);
+               r.messageId=3406;
+               r.add(heatDamage);
+               r.add(EquipmentType.armorNames
+                       [entityTarget.getArmorType(hit.getLocation())]);
+            } else {
+               entityTarget.heatFromExternal += heatDamage;
+               r.add(heatDamage);
+               r.choose(true);
+            }
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += heatDamage;
+
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);

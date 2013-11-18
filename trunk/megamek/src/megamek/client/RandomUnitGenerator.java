@@ -15,6 +15,8 @@
 
 package megamek.client;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -69,6 +71,8 @@ public class RandomUnitGenerator implements Serializable {
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
+    
+    private ArrayList<ActionListener> listeners;
 
     /**
      * Plain old data class used to represent nodes in a Random Assignment Table
@@ -96,6 +100,7 @@ public class RandomUnitGenerator implements Serializable {
 
     public RandomUnitGenerator() {
         chosenRAT = "TW Heavy Mech (Kurita)";
+        listeners = new ArrayList<ActionListener>();
     }
 
     public synchronized void populateUnits() {
@@ -105,11 +110,32 @@ public class RandomUnitGenerator implements Serializable {
         loadRatsFromDirectory(Configuration.armyTablesDir());
         if (!interrupted) {
             rug.initialized = true;
+            rug.notifyListenersOfInitialization();
         }
 
         if (dispose) {
             clear();
             dispose = false;
+        }
+    }
+    
+    public synchronized void registerListener(ActionListener l){
+        listeners.add(l);
+    }
+    
+    public synchronized void removeListener(ActionListener l){
+        listeners.remove(l);
+    }
+    
+    /**
+     * Notifies all the listeners that initialization is finished
+     */
+    public void notifyListenersOfInitialization(){
+        if (initialized){
+            for (ActionListener l : listeners){
+                l.actionPerformed(new ActionEvent(
+                        this,ActionEvent.ACTION_PERFORMED,"rugInitialized"));
+            }
         }
     }
 

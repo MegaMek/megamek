@@ -18561,6 +18561,7 @@ public class Server implements Runnable {
         boolean ferroLamellorArmor = false;
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
+        boolean ballisticArmor = false;
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         if (((te instanceof Mech) || (te instanceof Tank))
@@ -18583,6 +18584,11 @@ public class Server implements Runnable {
             reactiveArmor = true;
         }
 
+        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
+            ballisticArmor = true;
+        }
+        
         // TACs from the hit location table
         int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1
                 : 0;
@@ -19185,6 +19191,18 @@ public class Server implements Runnable {
                         crits = 0;
                     }
                     r = new Report(6073);
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.add(damage);
+                    vDesc.addElement(r);
+                } else if (ballisticArmor
+                        && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                    tmpDamageHold = damage;
+                    damage = Math.max(1,damage/2);
+                    r = new Report(6088);
                     r.subject = te_n;
                     r.indent(3);
                     r.add(damage);

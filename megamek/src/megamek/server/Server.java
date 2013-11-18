@@ -19150,7 +19150,8 @@ public class Server implements Runnable {
                     // to 0
                 } else if (ferroLamellorArmor
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
-                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor((((double) damage) * 4) / 5);
                     if (damage <= 0) {
@@ -19227,7 +19228,8 @@ public class Server implements Runnable {
                 int armorThreshold = te.getArmor(hit);
                 if (hardenedArmor
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
-                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                     armorThreshold *= 2;
                     armorThreshold -= (te.isHardenedArmorDamaged(hit)) ? 1 : 0;
                     vDesc.lastElement().newlines = 0;

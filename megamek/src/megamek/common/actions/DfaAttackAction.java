@@ -79,7 +79,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
     public static int getDamageFor(Entity entity, boolean targetInfantry) {
         int toReturn = (int) Math.ceil((entity.getWeight() / 10.0) * 3.0);
 
-        if (hasTalons(entity)) {
+        if (DfaAttackAction.hasTalons(entity)) {
             toReturn *= 1.5;
         }
 
@@ -123,7 +123,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // let's just check this
         if (!md.contains(MoveStepType.DFA)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "D.F.A. action not found in movment path");
+                    "D.F.A. action not found in movement path");
         }
 
         // have to jump
@@ -189,12 +189,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
                     "Target must be done with movement");
         }
 
-        return toHit(game, attackerId, target, chargeSrc);
+        return DfaAttackAction.toHit(game, attackerId, target, chargeSrc);
     }
 
     public ToHitData toHit(IGame game) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHit(game, getEntityId(),
+        return DfaAttackAction.toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()),
                 entity.getPosition());
     }
@@ -386,7 +386,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        toHit.append(nightModifiers(game, target, null, ae, false));
+        toHit.append(AbstractAttackAction.nightModifiers(game, target, null, ae, false));
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

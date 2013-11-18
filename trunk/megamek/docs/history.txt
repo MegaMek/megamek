@@ -128,6 +128,7 @@ v0.37.0-dev (SVN)
 + remove old libraries
 + fix tooltip dismiss delay
 + Bug [#3747]: Custom RATs don't always show up
++ Bug [#3921]: charges and DFAs not working
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

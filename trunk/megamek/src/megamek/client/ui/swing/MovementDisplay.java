@@ -1564,8 +1564,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             cmd.findPathTo(dest, MoveStepType.BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
             cmd.findPathTo(dest, MoveStepType.CHARGE);
+            // The path planner shouldn't actually add the charge step
+            if (cmd.getFinalCoords().equals(dest) && 
+                    cmd.getLastStep().getType() != MoveStepType.CHARGE){
+                cmd.removeLastStep();
+                cmd.addStep(MoveStepType.CHARGE);
+            }
         } else if (gear == GEAR_DFA) {
             cmd.findPathTo(dest, MoveStepType.DFA);
+            // The path planner shouldn't actually add the DFA step
+            if (cmd.getFinalCoords().equals(dest) && 
+                    cmd.getLastStep().getType() != MoveStepType.DFA){
+                cmd.removeLastStep();
+                cmd.addStep(MoveStepType.DFA);
+            }
         } else if (gear == GEAR_SWIM) {
             cmd.findPathTo(dest, MoveStepType.SWIM);
         } else if (gear == GEAR_RAM) {

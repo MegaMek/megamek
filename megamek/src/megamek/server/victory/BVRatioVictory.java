@@ -52,7 +52,7 @@ public class BVRatioVictory extends AbstractBVVictory {
             int fbv = 0;
             int ebv = 0;
             int team = player.getTeam();
-            if (team != player.TEAM_NONE) {
+            if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
                     continue; // skip if already
                 doneTeams.add(team);
@@ -64,7 +64,7 @@ public class BVRatioVictory extends AbstractBVVictory {
             if (ebv == 0 || (100 * fbv) / ebv >= ratio) {
                 Report r = new Report(7100, Report.PUBLIC);
                 victory = true;
-                if (team == player.TEAM_NONE) {
+                if (team == IPlayer.TEAM_NONE) {
                     r.add(player.getName());
                     vr.addPlayerScore(player.getId(), 1.0);
                 } else {

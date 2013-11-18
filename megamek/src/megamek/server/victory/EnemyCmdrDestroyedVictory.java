@@ -43,7 +43,7 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
         for (IPlayer player : game.getPlayersVector()) {
             boolean killedAll = true;
             int team = player.getTeam();
-            if (team != player.TEAM_NONE) {
+            if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
                     continue; 
                 // skip if already dealt with this team
@@ -51,7 +51,7 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
             }
             for (IPlayer enemyPlayer : game.getPlayersVector()) {
                 if (enemyPlayer.equals(player) ||
-                        (team != player.TEAM_NONE && team == enemyPlayer.getTeam()))
+                        (team != IPlayer.TEAM_NONE && team == enemyPlayer.getTeam()))
                     continue;
                 if (game.getLiveCommandersOwnedBy(enemyPlayer) > 0) {
                     killedAll = false;
@@ -59,7 +59,7 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
             }
             // all enemy commanders are dead
             if (killedAll) {
-                if (team == player.TEAM_NONE) {
+                if (team == IPlayer.TEAM_NONE) {
                     Report r = new Report(7110, Report.PUBLIC);
                     r.add(player.getName());
                     vr.addPlayerScore(player.getId(), 1);

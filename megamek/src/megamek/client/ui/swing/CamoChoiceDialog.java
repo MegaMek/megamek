@@ -112,8 +112,8 @@ public class CamoChoiceDialog extends JDialog {
             camos = null;
         }
         
-        category = player.ROOT_CAMO;
-        filename = player.NO_CAMO;
+        category = IPlayer.ROOT_CAMO;
+        filename = IPlayer.NO_CAMO;
         colorIndex = -1;
         
         scrCamo = new JScrollPane();
@@ -129,10 +129,10 @@ public class CamoChoiceDialog extends JDialog {
         
         comboCategories = new JComboBox();
         DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
-        categoryModel.addElement(player.NO_CAMO);
+        categoryModel.addElement(IPlayer.NO_CAMO);
         if (camos != null) {
             if (camos.getItemNames("").hasNext()) { //$NON-NLS-1$
-                categoryModel.addElement(player.ROOT_CAMO);
+                categoryModel.addElement(IPlayer.ROOT_CAMO);
             }
             Iterator<String> names = camos.getCategoryNames();
             while (names.hasNext()) {
@@ -210,14 +210,14 @@ public class CamoChoiceDialog extends JDialog {
 
     private void select() {                                          
         category = camoModel.getCategory();
-        if(category.equals(player.NO_CAMO) && entity == null) {
+        if(category.equals(IPlayer.NO_CAMO) && entity == null) {
             colorIndex = tableCamo.getSelectedRow();
         }
         if(tableCamo.getSelectedRow() != -1) {
             filename = (String) camoModel.getValueAt(tableCamo.getSelectedRow(), 0);
         }
         if (sourceButton == null && entity != null) {
-            if (category.equals(player.NO_CAMO)) {
+            if (category.equals(IPlayer.NO_CAMO)) {
                 entity.setCamoCategory(null);
                 entity.setCamoFileName(null);
             } else {
@@ -255,14 +255,14 @@ public class CamoChoiceDialog extends JDialog {
     private void fillTable(String category) {
     	camoModel.reset();
     	camoModel.setCategory(category);
-    	if(player.NO_CAMO.equals(category)) {
-    		for (String color : player.colorNames) {
+    	if(IPlayer.NO_CAMO.equals(category)) {
+    		for (String color : IPlayer.colorNames) {
     			camoModel.addCamo(color);
     		}
     	} else {
     		// Translate the "root camo" category name.
     		Iterator<String> camoNames;
-    		if (player.ROOT_CAMO.equals(category)) {
+    		if (IPlayer.ROOT_CAMO.equals(category)) {
     			camoNames = camos.getItemNames(""); //$NON-NLS-1$
     		} else {
     			camoNames = camos.getItemNames(category);
@@ -320,15 +320,15 @@ public class CamoChoiceDialog extends JDialog {
     Icon generateIcon(String cat, String item) {
         String actualCat = cat;
         // Replace the ROOT_CAMO string with "".
-        if (player.ROOT_CAMO.equals(actualCat)) {
+        if (IPlayer.ROOT_CAMO.equals(actualCat)) {
             actualCat = ""; //$NON-NLS-1$
         }
 
         int colorInd = -1;
         //no camo, just color
-        if (player.NO_CAMO.equals(actualCat)) {
-            for (int color = 0; color < player.colorNames.length; color++) {
-                if (player.colorNames[color].equals(item)) {
+        if (IPlayer.NO_CAMO.equals(actualCat)) {
+            for (int color = 0; color < IPlayer.colorNames.length; color++) {
+                if (IPlayer.colorNames[color].equals(item)) {
                     colorInd = color;
                     break;
                 }
@@ -378,7 +378,7 @@ public class CamoChoiceDialog extends JDialog {
 
        public CamoTableModel() {
            columnNames = new String[] {"Camos"};
-           category = player.NO_CAMO;
+           category = IPlayer.NO_CAMO;
            names = new ArrayList<String>();
            images = new ArrayList<Image>();
        }
@@ -392,7 +392,7 @@ public class CamoChoiceDialog extends JDialog {
        }
 
        public void reset() {
-           category = player.NO_CAMO;
+           category = IPlayer.NO_CAMO;
            names = new ArrayList<String>();
            images = new ArrayList<Image>();
        }
@@ -492,7 +492,7 @@ public class CamoChoiceDialog extends JDialog {
 	            return;
 	        }
 	        
-	        if(player.NO_CAMO.equals(category)) {
+	        if(IPlayer.NO_CAMO.equals(category)) {
 	            if (colorInd == -1) {
 	                colorInd = 0;
 	            }
@@ -509,7 +509,7 @@ public class CamoChoiceDialog extends JDialog {
 	        try {
 
 	            // Translate the root camo directory name.
-	            if (player.ROOT_CAMO.equals(category))
+	            if (IPlayer.ROOT_CAMO.equals(category))
 	                category = ""; //$NON-NLS-1$
 	            Image camo = (Image) camos.getItem(category, name);
 	            lblImage.setIcon(new ImageIcon(camo));

@@ -664,9 +664,9 @@ public class ScenarioLoader {
 
         // Translate base categories for userfriendliness.
         if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
-            camoGroup = player.NO_CAMO;
+            camoGroup = IPlayer.NO_CAMO;
         } else if (camoGroup.equals("General")) {
-            camoGroup = player.ROOT_CAMO;
+            camoGroup = IPlayer.ROOT_CAMO;
         } else {
             // If CamoGroup does not have a trailing slash, add one, since all
             // subdirectories require it
@@ -679,8 +679,8 @@ public class ScenarioLoader {
         boolean validName = false;
 
         // Validate GroupName
-        if (camoGroup.equals(player.NO_CAMO)
-                || camoGroup.equals(player.ROOT_CAMO)) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)
+                || camoGroup.equals(IPlayer.ROOT_CAMO)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = camos.getCategoryNames();
@@ -697,15 +697,15 @@ public class ScenarioLoader {
         }
 
         // Validate CamoName
-        if (camoGroup.equals(player.NO_CAMO)) {
-            for (String color : player.colorNames) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)) {
+            for (String color : IPlayer.colorNames) {
                 if (camoName.equals(color)) {
                     validName = true;
                 }
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(player.ROOT_CAMO)) {
+            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
                 camoNames = camos.getItemNames("");
             } else {
                 camoNames = camos.getItemNames(camoGroup);

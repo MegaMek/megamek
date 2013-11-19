@@ -342,8 +342,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             r.subject = subjectId;
             r.add(wtype.getName() + number);
-            if (entityTarget != null) {
-                r.addDesc(entityTarget);
+            if (entityTarget != null) {                           
+                if (wtype.getAmmoType() != AmmoType.T_NA){
+                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                    if (atype.getMunitionType() != AmmoType.M_STANDARD){
+                        r.messageId = 3116;
+                        r.add(atype.getShortName());
+                    }
+                }
+                r.addDesc(entityTarget);     
             } else {
                 r.messageId = 3120;
                 r.add(target.getDisplayName(), true);

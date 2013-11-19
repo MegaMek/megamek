@@ -2717,7 +2717,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "LB 2-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 2-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -2745,7 +2745,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LB 5-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 5-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -2773,7 +2773,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LB 10-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 10-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -2803,7 +2803,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LB 20-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 20-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -2891,7 +2891,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 2-X Cluster Ammo (THB)";
-        ammo.shortName = "LB 2-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 2-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 2-X (CL) (THB)");
         // this isn't a true mtf code
@@ -2914,7 +2914,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 5-X Cluster Ammo (THB)";
-        ammo.shortName = "LB 5-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 5-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 5-X (CL) (THB)");
         // this isn't a true mtf code
@@ -2937,7 +2937,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 20-X Cluster Ammo (THB)";
-        ammo.shortName = "LB 20-X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("IS LB 20-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 20-X (CL) (THB)");
         // this isn't a true mtf code
@@ -3950,7 +3950,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "LB-5X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -3977,7 +3977,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "LB-10X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -4006,7 +4006,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "LB-20X Cluster";
+        ammo.shortName = "Cluster";
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -10472,7 +10472,7 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name;
+                    munition.shortName = name;
                     munition.addBeforeString(base, "Ammo", name + " ");
                     nameBuf = null;
                     break;
@@ -10496,7 +10496,7 @@ public class AmmoType extends EquipmentType {
                     index = base.internalName.lastIndexOf("Ammo");
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name;
+                    munition.shortName = name;
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);
@@ -10533,7 +10533,7 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, name);
                     munition.name = nameBuf.toString();
                     nameBuf = null;
-                    munition.shortName = munition.name;
+                    munition.shortName = name;
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_VGL:
@@ -10555,7 +10555,7 @@ public class AmmoType extends EquipmentType {
                     munition.setInternalName(munition.name);
                     munition.addToEnd(base, munition.name);
 
-                    munition.shortName = munition.name;
+                    munition.shortName = name;
                     // The munition name appears in the middle of the other
                     // names.
                     munition.addBeforeString(base, "Ammo", name + " ");

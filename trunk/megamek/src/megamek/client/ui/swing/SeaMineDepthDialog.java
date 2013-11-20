@@ -41,7 +41,7 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JLabel labDepth = new JLabel(Messages
             .getString("SeaMineDepthDialog.labDepth"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choDepth = new JComboBox();
+    private JComboBox<String> choDepth = new JComboBox<String>();
     private int depth;
     //private JFrame frame;
 

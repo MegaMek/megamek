@@ -48,7 +48,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private JLabel lblFaction;
     private JLabel lblGender;
-    private JComboBox comboFaction;
+    private JComboBox<String> comboFaction;
     private JSlider sldGender;
 
     private JButton butOkay;
@@ -58,7 +58,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private JPanel panButtons;
     private JPanel panMain;
 
-    private JComboBox chPlayer;
+    private JComboBox<String> chPlayer;
 
     public RandomNameDialog(ClientGUI clientgui) {
         super(clientgui.frame, Messages.getString("RandomNameDialog.title"), true); //$NON-NLS-1$
@@ -203,13 +203,13 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         panMain = new JPanel();
         lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
         lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));
-        comboFaction = new JComboBox();
+        comboFaction = new JComboBox<String>();
         sldGender = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
         sldGender.setMajorTickSpacing(25);
         sldGender.setPaintTicks(true);
         sldGender.setPaintLabels(true);
-        chPlayer = new JComboBox();
-        chPlayer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        chPlayer = new JComboBox<String>();
+        chPlayer.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 

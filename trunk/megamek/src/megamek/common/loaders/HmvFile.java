@@ -47,7 +47,6 @@ public class HmvFile implements IMechLoader {
     private HMVMovementType movementType;
     private int rulesLevel;
     private int year;
-    private HMVStructureType structureType;
     private boolean isOmni = false;
     private HMVTechType techType;
 

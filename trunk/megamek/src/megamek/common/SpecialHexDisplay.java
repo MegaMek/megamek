@@ -108,10 +108,6 @@ public class SpecialHexDisplay implements Serializable {
 
     public static int NO_ROUND = -99;
 
-    private SpecialHexDisplay() {
-        // deserialization use only
-    }
-
     public SpecialHexDisplay(Type type) {
         this.type = type;
         round = NO_ROUND;

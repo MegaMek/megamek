@@ -229,7 +229,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         // set up a new bay type
         boolean newBay = false;
         double bayDamage = 0;
-        int nBay = 1;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
                 rearMount = false;
@@ -313,7 +312,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             // reset bay damage
                             bayDamage = damage;
-                            nBay++;
                         }
                     }
                     // ammo should also get loaded into the bay

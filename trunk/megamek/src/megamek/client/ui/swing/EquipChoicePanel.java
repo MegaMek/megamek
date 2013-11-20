@@ -109,7 +109,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private JLabel labC3 = new JLabel(
             Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choC3 = new JComboBox();
+    private JComboBox<String> choC3 = new JComboBox<String>();
 
     ClientGUI clientgui;
     Client client;
@@ -192,7 +192,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         if ((entity instanceof Aero)
-                && !((entity instanceof SmallCraft) || 
+                && !((entity instanceof SmallCraft) ||
                         (entity instanceof Jumpship))) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -340,7 +340,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         int row = 0;
         for (Mounted m : entity.getMisc()) {
-            if (!m.getType().hasFlag((MiscType.F_MINE)) && 
+            if (!m.getType().hasFlag((MiscType.F_MINE)) &&
                     !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
             }
@@ -535,13 +535,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             private static final long serialVersionUID = -1868675102440527538L;
 
-            private JComboBox m_choice;
+            private JComboBox<String> m_choice;
 
             private Mounted m_mounted;
 
             MineChoicePanel(Mounted m) {
                 m_mounted = m;
-                m_choice = new JComboBox();
+                m_choice = new JComboBox<String>();
                 m_choice.addItem(Messages
                         .getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
                 m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
@@ -576,8 +576,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             private ArrayList<AmmoType> m_vTypes;
 
-            private JComboBox m_choice;
-            
+            private JComboBox<String> m_choice;
+
+            @SuppressWarnings("rawtypes")
             private JComboBox m_num_shots;
 
             private Mounted m_mounted;
@@ -592,11 +593,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             JCheckBox chHotLoad = new JCheckBox();
 
+            @SuppressWarnings("unchecked")
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 m_vTypes = vTypes;
                 m_mounted = m;
                 AmmoType curType = (AmmoType) m.getType();
-                m_choice = new JComboBox();
+                m_choice = new JComboBox<String>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
                 for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
@@ -605,14 +607,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_choice.setSelectedIndex(x);
                     }
                 }
-                
-                m_num_shots = new JComboBox();
+
+                m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
                 for (int i = 0; i <= shotsPerTon; i++){
                     m_num_shots.addItem(i);
                 }
                 m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
-                
+
                 m_choice.addItemListener(new ItemListener(){
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
@@ -622,16 +624,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 m_choice.getSelectedIndex()).getShots();
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
-                        }                        
+                        }
                         if (currShots <= shotsPerTon){
                             m_num_shots.setSelectedItem(currShots);
                         } else {
                             m_num_shots.setSelectedItem(shotsPerTon);
                         }
-                            
+
                     }});
-                
-                
+
+
                 int loc;
                 if (m.getLocation() == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
@@ -646,7 +648,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 setLayout(g);
                 add(lLoc, GBC.std());
                 add(m_choice, GBC.std());
-                add(m_num_shots, GBC.eol());                
+                add(m_num_shots, GBC.eol());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         "lobby_ammo_dump")) { //$NON-NLS-1$
                     add(labDump, GBC.std());
@@ -713,13 +715,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             private static final long serialVersionUID = -1645895479085898410L;
 
-            private JComboBox m_choice;
+            private JComboBox<String> m_choice;
 
             private Mounted m_mounted;
 
             public SantaAnnaChoicePanel(Mounted m) {
                 m_mounted = m;
-                m_choice = new JComboBox();
+                m_choice = new JComboBox<String>();
                 for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
                     m_choice.addItem(Integer.toString(i));
                 }

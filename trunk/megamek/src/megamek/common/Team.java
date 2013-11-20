@@ -52,7 +52,6 @@ public final class Team extends TurnOrdered {
 
     //get the next player on this team.
     public IPlayer getNextValidPlayer(IPlayer p, IGame game) {
-        IPlayer next = null;
         //start from the next player
         for (int i = players.indexOf(p) + 1; i < players.size(); ++i) {
             if (game.getTurnForPlayer(players.get(i).getId()) != null) {
@@ -61,7 +60,7 @@ public final class Team extends TurnOrdered {
         }
         //if we haven't found one yet, start again from the beginning
         //worst case we reach exactly our current player again.
-        for (int i = 0; i < players.indexOf(p) + 1; ++i) {
+        for (int i = 0; i < (players.indexOf(p) + 1); ++i) {
             if (game.getTurnForPlayer(players.get(i).getId()) != null) {
                 return players.get(i);
             }

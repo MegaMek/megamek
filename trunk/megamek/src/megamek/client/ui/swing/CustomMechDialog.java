@@ -173,14 +173,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JLabel labUnitNum = new JLabel(
             Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
 
-    private JComboBox choUnitNum = new JComboBox();
+    private JComboBox<String> choUnitNum = new JComboBox<String>();
 
     private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
 
     private JLabel labDeployment = new JLabel(
             Messages.getString("CustomMechDialog.labDeployment"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JComboBox choDeployment = new JComboBox();
+    private JComboBox<String> choDeployment = new JComboBox<String>();
 
     private JLabel labDeployShutdown = new JLabel(
             Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -210,7 +210,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JLabel labOffBoardDirection = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoardDirection"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JComboBox choOffBoardDirection = new JComboBox();
+    private JComboBox<String> choOffBoardDirection = new JComboBox<String>();
 
     private JLabel labOffBoardDistance = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoardDistance"), SwingConstants.RIGHT); //$NON-NLS-1$

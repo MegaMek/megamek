@@ -230,14 +230,14 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         butSave = new javax.swing.JButton();
         butCancel = new javax.swing.JButton();
         labelPlayer = new javax.swing.JLabel();
-        chPlayer = new javax.swing.JComboBox();
+        chPlayer = new javax.swing.JComboBox<String>();
         jPanel2 = new javax.swing.JPanel();
         labelMethod = new javax.swing.JLabel();
         labelType = new javax.swing.JLabel();
         labelLevel = new javax.swing.JLabel();
-        chMethod = new javax.swing.JComboBox();
-        chType = new javax.swing.JComboBox();
-        chLevel = new javax.swing.JComboBox();
+        chMethod = new javax.swing.JComboBox<String>();
+        chType = new javax.swing.JComboBox<String>();
+        chLevel = new javax.swing.JComboBox<String>();
         cForceClose = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         texDesc = new javax.swing.JTextArea();
@@ -256,7 +256,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         labelPlayer.setText("Player:");
         panButtons.add(labelPlayer);
 
-        chPlayer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        chPlayer.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         panButtons.add(chPlayer);
 
         getContentPane().add(panButtons, java.awt.BorderLayout.PAGE_END);
@@ -332,10 +332,10 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private javax.swing.JButton butOkay;
     private javax.swing.JButton butSave;
     private javax.swing.JCheckBox cForceClose;
-    private javax.swing.JComboBox chLevel;
-    private javax.swing.JComboBox chMethod;
-    private javax.swing.JComboBox chPlayer;
-    private javax.swing.JComboBox chType;
+    private javax.swing.JComboBox<String> chLevel;
+    private javax.swing.JComboBox<String> chMethod;
+    private javax.swing.JComboBox<String> chPlayer;
+    private javax.swing.JComboBox<String> chType;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelLevel;

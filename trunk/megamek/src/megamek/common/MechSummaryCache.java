@@ -64,7 +64,6 @@ public class MechSummaryCache {
 
     private boolean initialized = false;
     private boolean initializing = false;
-    private boolean lastCheckIgnoredUnofficial = false;
 
     private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
@@ -415,14 +414,14 @@ public class MechSummaryCache {
                 ms.setLevel("F");
             }
         }
-        
+
         ms.setGyroType(e.getGyroType());
         if (e.getEngine() != null){
             ms.setEngineName(e.getEngine().getEngineName());
         } else {
             ms.setEngineName("None");
         }
-            
+
         if (e instanceof Mech){
             if (((Mech)e).hasTSM()) {
                 ms.setMyomerName("Triple-Strength");
@@ -435,22 +434,6 @@ public class MechSummaryCache {
             ms.setMyomerName("None");
         }
         return ms;
-    }
-
-    /**
-     * Loading a complete mech object for each summary is a bear and should be
-     * changed, but it lets me use the existing parsers
-     *
-     * @param vMechs
-     * @param sKnownFiles
-     * @param lLastCheck
-     * @param fDir
-     * @return
-     */
-    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
-            Set<String> sKnownFiles, long lLastCheck, File fDir) {
-        return loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, fDir,
-                false);
     }
 
     /**

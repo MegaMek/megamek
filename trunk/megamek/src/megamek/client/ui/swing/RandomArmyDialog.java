@@ -81,8 +81,8 @@ WindowListener, TreeSelectionListener {
     private JLabel m_labelPlayer = new JLabel(Messages
             .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JComboBox m_chPlayer = new JComboBox();
-    private JComboBox m_chType = new JComboBox();
+    private JComboBox<String> m_chPlayer = new JComboBox<String>();
+    private JComboBox<String> m_chType = new JComboBox<String>();
 
     private JTree m_treeRAT = new JTree();
     //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);

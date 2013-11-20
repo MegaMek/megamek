@@ -56,12 +56,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
+    @SuppressWarnings("rawtypes")
     private JComboBox[] b_choices;
     private JLabel[] b_labels;
     private JLabel description;
-    
+
     /**
-     * Keeps track of the number of fighters in the squadron, 0 implies a 
+     * Keeps track of the number of fighters in the squadron, 0 implies a
      * single fighter not in a squadron squadron.
      */
     private double numFighters;
@@ -78,13 +79,14 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * @param spaceBomb
      *            Flag for whether or not this is space bombing
      * @param bombDump
-     *            
+     *
      * @param lim
-     * 
+     *
      * @param numFighters
-     *            The number of fighters in a squadron, 0 implies a single 
+     *            The number of fighters in a squadron, 0 implies a single
      *            fighter not in a squadron.
      */
+    @SuppressWarnings("unchecked")
     private void initialize(JFrame parent, String title, int[] b,
             boolean spaceBomb, boolean bombDump, int lim, int numFighters) {
         super.setResizable(false);
@@ -97,13 +99,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
-        
+
         c.gridwidth = 4;
         c.gridheight = 1;
         c.gridx = 0;
         c.gridy = 0;
         c.insets = new Insets(5, 5, 5, 5);
-        
+
         description = new JLabel();
         if (numFighters != 0) {
             description.setText(Messages
@@ -113,7 +115,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                     .getString("BombPayloadDialog.FighterBombDesc"));
         }
         add(description,c);
-        
+
         c.gridwidth = 1;
         c.gridheight = 1;
         c.gridx = 1;
@@ -123,24 +125,24 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         b_labels = new JLabel[bombs.length];
         //initialize the bomb choices
         for(int i = 0; i< bombs.length; i++) {
-            b_choices[i] = new JComboBox();
+            b_choices[i] = new JComboBox<String>();
             b_labels[i] = new JLabel(BombType.getBombName(i));
             int max = bombs[i];
             if((limit > -1) && (max > limit)) {
                 max = limit;
             }
             if (numFighters != 0){
-                // Squadrons give the salvo size, and the whole salvo must be 
+                // Squadrons give the salvo size, and the whole salvo must be
                 //  fired
-                
+
                 // Add 0 bombs
-                b_choices[i].addItem(Integer.toString(0));                
+                b_choices[i].addItem(Integer.toString(0));
                 double maxNumSalvos = Math.ceil(bombs[i]/this.numFighters);
                 // Add the full-squadron salvos
                 for (int j = 1; j < maxNumSalvos; j++){
                     int numBombs = j * numFighters;
                     b_choices[i].addItem(j + " (" + numBombs +")");
-                }   
+                }
                 // Add the maximum number of salvos
                 b_choices[i].addItem((int)maxNumSalvos + " (" + bombs[i] +")");
             }else{
@@ -166,7 +168,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             add(b_labels[i],c);
             c.gridx = 2;
             c.gridy = i+1;
-            c.anchor = GridBagConstraints.WEST; 
+            c.anchor = GridBagConstraints.WEST;
             add(b_choices[i], c);
         }
 
@@ -197,9 +199,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             setSize(size);
             size = getSize();
         }
-        setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - size.height / 2);
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2))
+                - (size.width / 2), (parent.getLocation().y
+                + (parent.getSize().height / 2)) - (size.height / 2));
     }
 
     private void setupButtons() {
@@ -262,12 +264,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
-        
+
         if(limit < 0) {
             return;
-        }        
-        
+        }
+
 
         int[] current = new int[b_choices.length];
         for(int i = 0; i < b_choices.length; i++) {

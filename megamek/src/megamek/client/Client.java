@@ -41,6 +41,7 @@ import javax.swing.SwingUtilities;
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.commands.AddBotCommand;
+import megamek.client.commands.AssignNovaNetworkCommand;
 import megamek.client.commands.ClientCommand;
 import megamek.client.commands.DeployCommand;
 import megamek.client.commands.FireCommand;
@@ -186,6 +187,8 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
+//WOR: Nova CEWS.
+        registerCommand(new AssignNovaNetworkCommand(this));
 
         rsg = new RandomSkillsGenerator();
 
@@ -1078,6 +1081,19 @@ public class Client implements IClientCommandHandler {
     protected void send(Packet packet) {
         connection.send(packet);
     }
+    
+
+    /**
+     * Send a Nova CEWS update packet
+     * @param ID
+     * @param net
+     */
+    public void sendNovaChange(int ID, String net)
+    {
+    	Object[] data = {new Integer(ID), new String(net)};
+    	Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
+    	send(packet);
+    }
 
     /**
      * send all buffered packets on their way this should be called after
@@ -1332,10 +1348,36 @@ public class Client implements IClientCommandHandler {
             availableSizes = (Set<BoardDimensions>)c.getObject(0);
             game.processGameEvent(new GameSettingsChangeEvent(this));
             break;
+        case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE: // WOR: Nova CEWS
+            receiveEntityNovaNetworkModeChange(c);
+            break;
         }
     }
-
     /**
+     * WOR: used the mode change function code. Don't seem to be necessary at client side.
+     * receive and process an entity mode change packet
+     * 
+     * @param c
+     * @param connIndex
+     */
+    private void receiveEntityNovaNetworkModeChange(Packet c) {
+        // FIXME: Greg: This doesn't seem right at all.        
+        try {
+        	int entityId = c.getIntValue(0);
+            String networkID = c.getObject(1).toString();
+            Entity e = game.getEntity(entityId);
+            if(e!=null)
+            {
+            	e.setNewRoundNovaNetworkString(networkID);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+    
+    /**
+     * 
      * Perform a dump of the current memory usage.
      * <p/>
      * This method is useful in tracking performance issues on various player's

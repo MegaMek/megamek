@@ -374,6 +374,7 @@ public class MiscType extends EquipmentType {
             .shiftLeft(171);
     public static final BigInteger F_BA_MANIPULATOR = BigInteger.valueOf(1)
             .shiftLeft(172);
+    public static final BigInteger F_NOVA = BigInteger.valueOf(1).shiftLeft(173); //WOR: Flag for Nova CEWS
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1377,6 +1378,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLSpaceMineDispenser());
         EquipmentType.addType(MiscType.createVehicularStealth());
         EquipmentType.addType(MiscType.createEmergencyC3M());
+        
+        //WOR: add nova CEWS
+        EquipmentType.addType(MiscType.createNovaCEWS());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAAdvancedArmor());
@@ -2458,6 +2462,31 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3059, misc.techLevel.get(3071));
         misc.techLevel.put(3080, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_F;
+        return misc;
+    }
+    
+//WOR: Create nova CEWS
+    public static MiscType createNovaCEWS() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.name = "Nova CEWS";
+        misc.setInternalName(Sensor.NOVA);
+        misc.addLookupName("Nova CEWS");
+        misc.addLookupName("NovaCEWS");
+        misc.addLookupName("CLNCEWS");
+        misc.tonnage = 1.5f;
+        misc.criticals = 1;
+        misc.cost = 1100000; // we assume that WOR had a typo there.
+        // WOR: Maybe need .or(F_C3I) ?
+        misc.flags = misc.flags.or(F_NOVA).or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 68;
+        misc.setModes(new String[]
+            { "ECM", "Off" });
+        misc.setInstantModeSwitch(false);
+        misc.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        misc.introDate = 3070;
+
         return misc;
     }
 

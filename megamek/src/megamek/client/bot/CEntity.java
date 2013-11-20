@@ -1662,10 +1662,10 @@ public class CEntity {
 
                         // Really hate to depend on string comparisons but
                         // nothing else is available
-                        if (bin_type.getName().contains("SRM")) {
+                        if (bin_type.getShortName().contains("SRM")) {
                             range_flags[0] = true;
                         } else {
-                            if (bin_type.getName().contains("LRM")
+                            if (bin_type.getShortName().contains("LRM")
                                     && !AmmoType.canDeliverMinefield(bin_type)) {
                                 range_flags[2] = true;
                             }

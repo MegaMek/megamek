@@ -305,6 +305,14 @@ public class AmmoType extends EquipmentType {
     private double kgPerShot = -1;
     // ratio for capital ammo
     private double ammoRatio;
+    /**
+     * Used for returning the submunition name for a submunition, such as 
+     * precision AC-10.  The submunition name is pre-pended onto the 
+     * <code>shortName</code> and this variable keeps track of the index of 
+     * the end of the submunition name.
+     */
+    public int subMunitionBegin = 0;
+    public int subMunitionLength = 0;
 
     // Short name of Ammo or RS Printing
     protected String shortName = "";
@@ -2717,7 +2725,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 2-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 2-X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 2-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -2745,7 +2755,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 5-X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 5-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -2773,7 +2785,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 10-X Cluster";
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 10-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -2803,7 +2817,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 20-X Cluster";
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 20-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -2891,7 +2907,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 2-X Cluster Ammo (THB)";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 2-X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 2-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 2-X (CL) (THB)");
         // this isn't a true mtf code
@@ -2914,7 +2932,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 5-X Cluster Ammo (THB)";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 5-X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 5-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 5-X (CL) (THB)");
         // this isn't a true mtf code
@@ -2937,7 +2957,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "LB 20-X Cluster Ammo (THB)";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB 20-X Cluster";
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 20-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 20-X (CL) (THB)");
         // this isn't a true mtf code
@@ -3924,6 +3946,8 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.shortName = "LB-2X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -3950,7 +3974,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 5-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB-5X Cluster";
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -3977,7 +4003,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 10-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB-10X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 15;
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -4006,7 +4034,9 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 20-X Cluster Ammo";
-        ammo.shortName = "Cluster";
+        ammo.shortName = "LB-20X Cluster";
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -10447,17 +10477,19 @@ public class AmmoType extends EquipmentType {
 
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
-
+            
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
                 case AmmoType.T_AC:
                 case AmmoType.T_AC_PRIMITIVE:
                 case AmmoType.T_LAC:
                     // Add the munition name to the beginning of the display
-                    // name.
-                    nameBuf = new StringBuffer(name);
+                    // name.                    
+                    nameBuf = new StringBuffer(name);                    
                     nameBuf.append(" ");
-                    nameBuf.append(base.name);
+                    munition.subMunitionBegin = 0;
+                    munition.subMunitionLength = nameBuf.length();
+                    nameBuf.append(base.name);                    
                     munition.name = nameBuf.toString();
 
                     // Add the munition name to the end of the TDB ammo name.
@@ -10472,7 +10504,7 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = name;
+                    munition.shortName = munition.name;
                     munition.addBeforeString(base, "Ammo", name + " ");
                     nameBuf = null;
                     break;
@@ -10486,8 +10518,12 @@ public class AmmoType extends EquipmentType {
                     if (name.endsWith("-IV")) {
                         StringBuffer tempName = new StringBuffer(name);
                         tempName.setLength(tempName.length() - 3);
+                        munition.subMunitionBegin = nameBuf.length();
+                        munition.subMunitionLength = tempName.length();
                         nameBuf.insert(index, tempName.toString());
                     } else {
+                        munition.subMunitionBegin = nameBuf.length();
+                        munition.subMunitionLength = name.length();
                         nameBuf.insert(index, name);
                     }
                     munition.name = nameBuf.toString();
@@ -10496,7 +10532,7 @@ public class AmmoType extends EquipmentType {
                     index = base.internalName.lastIndexOf("Ammo");
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = name;
+                    munition.shortName = munition.name;
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);
@@ -10530,10 +10566,12 @@ public class AmmoType extends EquipmentType {
                     nameBuf = new StringBuffer(base.name);
                     index = base.name.lastIndexOf("Ammo");
                     nameBuf.insert(index, ' ');
+                    munition.subMunitionBegin = index;
+                    munition.subMunitionLength = name.length();
                     nameBuf.insert(index, name);
                     munition.name = nameBuf.toString();
                     nameBuf = null;
-                    munition.shortName = name;
+                    munition.shortName = munition.name;
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_VGL:
@@ -10548,6 +10586,8 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_FLUID_GUN:
                     // Add the munition name to the beginning of the display
                     // name.
+                    munition.subMunitionBegin = 0;
+                    munition.subMunitionLength = name.length();
                     nameBuf = new StringBuffer(name);
                     nameBuf.append(" ");
                     nameBuf.append(base.name);
@@ -10555,7 +10595,7 @@ public class AmmoType extends EquipmentType {
                     munition.setInternalName(munition.name);
                     munition.addToEnd(base, munition.name);
 
-                    munition.shortName = name;
+                    munition.shortName = munition.name;
                     // The munition name appears in the middle of the other
                     // names.
                     munition.addBeforeString(base, "Ammo", name + " ");
@@ -10805,6 +10845,11 @@ public class AmmoType extends EquipmentType {
         }
 
         return shortName;
+    }
+    
+    public String getSubMunitionName(){
+        return shortName.substring(subMunitionBegin,
+                subMunitionBegin+subMunitionLength);
     }
 
 }

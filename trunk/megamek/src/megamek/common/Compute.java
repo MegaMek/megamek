@@ -763,13 +763,15 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype instanceof InfantryWeapon;
+        //WOR: added iATM. Why do you check for ammo types?
         boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20) || (wtype
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
+                || (wtype.getAmmoType() == AmmoType.T_IATM) || (wtype
                 .getAmmoType() == AmmoType.T_LRM_TORPEDO)) && weapon.curMode()
                 .equals("Indirect"))
                 || (wtype instanceof ArtilleryCannonWeapon);
@@ -1365,6 +1367,16 @@ public class Compute {
         }
         return finalPos;
     }
+    
+    /**
+     * WOR: Need this function to find out where my nova stuff doesn't work.
+     * Delete it if nova works but remember to alter the /nova debug server command.
+     */
+    public static Entity exposed_findC3Spotter(IGame game, Entity attacker, Targetable target)
+    {
+    	return findC3Spotter(game, attacker, target);
+    }
+    
 
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
@@ -1372,15 +1384,21 @@ public class Compute {
      *
      * @return A closer C3 spotter, or the attack if no spotters are found
      */
-    private static Entity findC3Spotter(IGame game, Entity attacker,
-            Targetable target) {
+    private static Entity findC3Spotter(IGame game, Entity attacker, Targetable target) {
         // TODO: underwater units can't spot for overwater units and vice versa
         if (!attacker.hasC3() && !attacker.hasC3i()) {
-            return attacker;
+        	// if we have nova CEWS we still want to continue.
+        	if(!attacker.hasActiveNovaCEWS())
+            {
+        		return attacker;
+            }
         }
-
+        //WOR: added nova CEWS here!
         if (attacker.hasC3i()) {
             return Compute.findC3iSpotter(game, attacker, target);
+        }
+        if (attacker.hasActiveNovaCEWS()) {
+            return Compute.findNovaSpotter(game, attacker, target);
         }
 
         Entity c3spotter = attacker;
@@ -1389,18 +1407,14 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            // TODO : can units being transported be used for C3 spotting? For
-            // now we'll say no.
-            if (attacker.equals(friend) || !friend.isActive()
-                    || !attacker.onSameC3NetworkAs(friend)
-                    || !friend.isDeployed()
-                    || (friend.getTransportId() != Entity.NONE)) {
+            // TODO : can units being transported be used for C3 spotting? For now we'll say no.
+            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)
+                    || !friend.isDeployed() || (friend.getTransportId() != Entity.NONE)) {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target,
-                    false);
-            if ((buddyRange < c3range) && Compute.canSee(game, friend, target)) {
+            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
+            if (buddyRange < c3range) {
                 c3range = buddyRange;
                 c3spotter = friend;
             }
@@ -1465,6 +1479,61 @@ public class Compute {
         }
         return c3spotter;
     }
+    
+    /**
+     * find a nova spotter that is closer to the target than the attacker.
+     * WOR: Nova CEWS uses this function too, since its the same principle.
+     *
+     * @param game
+     * @param attacker
+     * @param target
+     * @return
+     */
+    private static Entity findNovaSpotter(IGame game, Entity attacker, Targetable target) {
+        if (!attacker.hasActiveNovaCEWS()) {
+            return attacker;
+        }
+        Entity c3spotter = attacker;
+
+        ArrayList<Entity> network = new ArrayList<Entity>();
+
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity friend = i.nextElement();
+
+            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend, true) || !friend.isDeployed()) {
+                continue; // useless to us...
+            }
+
+            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
+
+            boolean added = false;
+            // but everyone in the C3i network into a list and sort it by range.
+            for (int pos = 0; pos < network.size(); pos++) {
+                if (Compute.effectiveDistance(game, network.get(pos), target, false) >= buddyRange) {
+                    network.add(pos, friend);
+                    added = true;
+                    break;
+                }
+            }
+
+            if (!added) {
+                network.add(friend);
+            }
+        }
+
+        int position = 0;
+        for (Entity spotter : network) {
+
+            for (int count = position++; count < network.size(); count++) {
+                if (Compute.canCompleteNodePathNova(spotter, attacker, network, count)) {
+                    return spotter;
+                }
+            }
+        }
+        return c3spotter;
+    }
+    
+    
 
     private static boolean canCompleteNodePath(Entity start, Entity end,
             ArrayList<Entity> network, int startPosition) {
@@ -1485,6 +1554,28 @@ public class Compute {
         for (++startPosition; startPosition < network.size(); startPosition++) {
             if (Compute.canCompleteNodePath(spotter, end, network,
                     startPosition)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private static boolean canCompleteNodePathNova(Entity start, Entity end, ArrayList<Entity> network, int startPosition) {
+
+        Entity spotter = network.get(startPosition);
+
+        // Last position cannot get to this one. go to the next person
+        if (Compute.isAffectedByNovaECM(spotter, start.getPosition(), spotter.getPosition())) {
+            return false;
+        }
+
+        if (!Compute.isAffectedByNovaECM(spotter, spotter.getPosition(), end.getPosition())) {
+            return true;
+        }
+
+        for (++startPosition; startPosition < network.size(); startPosition++) {
+            if (Compute.canCompleteNodePathNova(spotter, end, network, startPosition)) {
                 return true;
             }
         }
@@ -3714,6 +3805,20 @@ public class Compute {
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         return Compute.getECMFieldSize(ae, a, b) > 0;
     }
+    
+    /**
+     * WOR: Nova CEWS
+     * This method checks to see if a line from a to b is affected by an Nova ECM
+     * field of the enemy of ae
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @return
+     */
+    public static boolean isAffectedByNovaECM(Entity ae, Coords a, Coords b) {
+        return Compute.getNovaECMFieldSize(ae, a, b) > 0;
+    }
 
     /**
      * This method checks to see if a line from a to b is affected by an ECCM
@@ -3950,6 +4055,7 @@ public class Compute {
         }
         return worstECCM;
     }
+    
 
     /**
      * This method checks to see if a line from a to b is affected by an Angel
@@ -4098,6 +4204,99 @@ public class Compute {
                 }
             }
 
+            // if any coords in the line are affected, the whole line is
+            if (ecmStatus > worstECM) {
+                worstECM = ecmStatus;
+            }
+        }
+        return worstECM;
+    }
+    
+ //WOR Nova CEWS. Modified Angel ECM code
+    public static double getNovaECMFieldSize(Entity ae, Coords a, Coords b) {
+        if (ae.getGame().getBoard().inSpace()) {
+            // normal Nova ECM effects don't apply in space
+            return 0;
+        }
+        if ((a == null) || (b == null)) {
+            return 0;
+        }
+
+        // Only grab enemies with active Nova ECM
+        Vector<Coords> vEnemyNovaECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyNovaECMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyNovaECMStrengths = new Vector<Double>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
+        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
+            Coords entPos = ent.getPosition();
+            // add each Nova ECM at its ECM strength
+            if (ent.isEnemyOf(ae) && ent.hasActiveNovaECM() && (entPos != null)) {
+                vEnemyNovaECMCoords.addElement(entPos);
+                vEnemyNovaECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyNovaECMStrengths.add(ent.getECMStrength());
+            }
+            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                vFriendlyECCMCoords.addElement(entPos);
+                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMStrengths.add(ent.getECCMStrength());
+            }
+
+            // Check the angel ECM effects of the entity's passengers.
+            for (Entity other : ent.getLoadedUnits()) {
+                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && (entPos != null)) {
+                    vEnemyNovaECMCoords.addElement(entPos);
+                    vEnemyNovaECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyNovaECMStrengths.add(ent.getECMStrength());
+                }
+                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                    vFriendlyECCMCoords.addElement(entPos);
+                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECCMStrengths.add(ent.getECMStrength());
+                }
+            }
+        }
+
+        // none? get out of here
+        if (vEnemyNovaECMCoords.size() == 0) {
+            return 0;
+        }
+
+        // get intervening Coords.
+        ArrayList<Coords> coords = Coords.intervening(a, b);
+        // loop through all intervening coords, check each if they are ECM
+        // affected
+        double worstECM = 0;
+        for (Coords c : coords) {
+            // > 0: in friendly ECCM
+            // 0: unaffected by enemy ECM
+            // <0: affected by enemy Nova ECM
+            double ecmStatus = 0;
+            // first, subtract 2 for each enemy angel ECM that affects us
+            Enumeration<Integer> ranges = vEnemyNovaECMRanges.elements();
+            Enumeration<Double> strengths = vEnemyNovaECMStrengths.elements();
+            for (Coords enemyECMCoords : vEnemyNovaECMCoords) {
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(enemyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
+                if (nDist <= range) {
+                    ecmStatus += strength;
+                }
+            }
+            // now, add one for each friendly ECCM
+            ranges = vFriendlyECCMRanges.elements();
+            strengths = vFriendlyECCMStrengths.elements();
+            for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(friendlyECCMCoords);
+                double strength = strengths.nextElement().doubleValue();
+
+                if (nDist <= range) {
+                    ecmStatus -= strength;
+                }
+            }
             // if any coords in the line are affected, the whole line is
             if (ecmStatus > worstECM) {
                 worstECM = ecmStatus;

@@ -918,9 +918,9 @@ public class Game implements Serializable, IGame {
      */
     public Vector<Entity> getC3NetworkMembers(Entity entity) {
         Vector<Entity> members = new Vector<Entity>();
-
+        //WOR
         // Does the unit have a C3 computer?
-        if ((entity != null) && (entity.hasC3() || entity.hasC3i())) {
+        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS())) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
@@ -956,9 +956,9 @@ public class Game implements Serializable, IGame {
      * @see #getC3NetworkMembers(Entity )
      */
     public Vector<Entity> getC3SubNetworkMembers(Entity entity) {
-
+        //WOR
         // Handle null, C3i, and company commander units.
-        if ((entity == null) || entity.hasC3i() || entity.C3MasterIs(entity)) {
+        if ((entity == null) || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
         }
 

@@ -2358,8 +2358,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 i.remove();
             }
         }
-
-        if (entity.hasC3() || entity.hasC3i()) {
+//WOR
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
             addC3Link(entity);
         }
 
@@ -2452,8 +2452,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     newIsoSpriteIds.put(temp, isosprite);
                 }
             }
-
-            if (entity.hasC3() || entity.hasC3i()) {
+//WOR
+            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
                 addC3Link(entity);
             }
 
@@ -2717,6 +2717,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         && !fe.equals(e)
                         && !Compute.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
+                    c3Sprites.add(new C3Sprite(e, fe));
+                }
+            }
+         } else if (e.hasActiveNovaCEWS()) {
+//WOR Nova CEWS
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                final Entity fe = i.nextElement();
+                if (fe.getPosition() == null) {
+                    return;
+                }
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)
+                        && !Compute.isAffectedByNovaECM(e, e.getPosition(), fe.getPosition())) {
                     c3Sprites.add(new C3Sprite(e, fe));
                 }
             }

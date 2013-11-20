@@ -211,6 +211,7 @@ import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.commands.AddBotCommand;
+import megamek.server.commands.AssignNovaNetServerCommand;
 import megamek.server.commands.CheckBVCommand;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.ExportListCommand;
@@ -425,6 +426,8 @@ public class Server implements Runnable {
         registerCommand(new NukeCommand(this));
         registerCommand(new TraitorCommand(this));
         registerCommand(new ListEntitiesCommand(this));
+        // WOR: Nova CEWS
+        registerCommand(new AssignNovaNetServerCommand(this));
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -16437,6 +16440,15 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 addReport(r);
             }
+            
+            // Greg: Nova CEWS If a Mek had an active Nova suite, add 2 heat.
+            if (((entity instanceof Mech) || (entity instanceof Aero))
+                    && entity.hasActiveNovaCEWS()) {
+                entity.heatBuildup += 2; 
+                r = new Report(5013);
+                r.subject = entity.getId();
+                addReport(r);
+            }
 
             // void sig adds 10 heat
             if ((entity instanceof Mech) && entity.isVoidSigOn()) {
@@ -23841,8 +23853,9 @@ public class Server implements Runnable {
         }
 
         // Inferno ammo causes heat buildup as well as the damage
+        // WOR: Added iATMs since they have inferno ammo too.
         if ((mounted.getType() instanceof AmmoType)
-                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted
+                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM)|| (((AmmoType) mounted
                 .getType()).getAmmoType() == AmmoType.T_MML))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
                 && (mounted.getHittableShotsLeft() > 0)) {
@@ -25719,6 +25732,33 @@ public class Server implements Runnable {
         }
 
     }
+    
+    /**
+     * WOR: used the mode change function code. Don't seem to be necessary at client side.
+     * receive and process an entity mode change packet
+     * 
+     * @param c
+     * @param connIndex
+     */
+    private void receiveEntityNovaNetworkModeChange(Packet c, int connIndex) {
+        
+        
+        try {
+        	int entityId = c.getIntValue(0);
+            String networkID = c.getObject(1).toString();
+            Entity e = game.getEntity(entityId);
+            if (e.getOwner() != getPlayer(connIndex)) {
+                return;
+            }
+            // FIXME: Greg: This can result in setting the network to link to hostile units.
+            // However, it should be catched by both the ismemberofnetwork test from the c3 module as well as
+            // by the clients possible input.
+            e.setNewRoundNovaNetworkString(networkID);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
 
     /**
      * receive and process an entity mounted facing change packet
@@ -26569,6 +26609,14 @@ public class Server implements Runnable {
             conn.send(packet);
         }
     }
+    
+    //WOR
+    public void send_Nova_Change(int ID, String net)
+    {
+    	Object[] data = {new Integer(ID), new String(net)};
+    	Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
+    	send(packet);
+    }
 
     private void sendReport() {
         sendReport(false);
@@ -26753,6 +26801,9 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_MODECHANGE:
                 receiveEntityModeChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE: // WOR: Nova CEWS
+                receiveEntityNovaNetworkModeChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
                 receiveEntityMountedFacingChange(packet, connId);
@@ -26967,7 +27018,7 @@ public class Server implements Runnable {
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive(mounted)
-                        || (atype.getMunitionType() != AmmoType.M_INFERNO)) {
+                		|| ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
                     continue;
                 }
                 // Find the most destructive undamaged ammo.

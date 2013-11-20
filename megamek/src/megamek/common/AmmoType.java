@@ -124,7 +124,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_LRM_PRIMITIVE = 96;
     public static final int T_SRM_PRIMITIVE = 97;
     public static final int T_BA_TUBE = 98;
-    public static final int NUM_TYPES = 99;
+    public static final int T_IATM = 99; // Clan iATM missile systems
+    public static final int NUM_TYPES = 100;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -206,6 +207,9 @@ public class AmmoType extends EquipmentType {
     // ATM Munition Types
     public static final long M_EXTENDED_RANGE = 1l << 7;
     public static final long M_HIGH_EXPLOSIVE = 1l << 8;
+    // WOR: Number 57 is used for iATMs IMP ammo here.
+ 	public static final long M_IATM_IMP = 1l << 57;
+ 	public static final long M_IATM_IIW = 1l << 58;
 
     // LRM & SRM Munition Types
     public static final long M_FRAGMENTATION = 1l << 9;
@@ -280,6 +284,10 @@ public class AmmoType extends EquipmentType {
     public static final long M_CHAFF = 1l << 54;
     public static final long M_INCENDIARY = 1l << 55;
     public static final long M_SMOKEGRENADE = 1l << 56;
+    
+    // WOR: Number 57 is used for iATMs IMP ammo in the ATM section above.
+    // and 58 for IIW - since inferno don't work.
+ 	// WOR: Wouldn't sets be easier? With bitshift you can only add 2 more ammo types before you run out.
 
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -792,6 +800,28 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLRL15PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL20PrototypeAmmo());
         EquipmentType.addType(AmmoType.createISC3RemoteSensorAmmo());
+        
+        // WOR: iATM ammo
+     	EquipmentType.addType(AmmoType.createCLIATM3Ammo());
+     	EquipmentType.addType(AmmoType.createCLIATM3ERAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM3HEAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM3IIWAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM3IMPAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM6Ammo());
+     	EquipmentType.addType(AmmoType.createCLIATM6ERAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM6HEAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM6IIWAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM6IMPAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM9Ammo());
+     	EquipmentType.addType(AmmoType.createCLIATM9ERAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM9HEAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM9IIWAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM9IMPAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM12Ammo());
+     	EquipmentType.addType(AmmoType.createCLIATM12ERAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM12HEAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM12IIWAmmo());
+     	EquipmentType.addType(AmmoType.createCLIATM12IMPAmmo());
 
         // Unofficial Ammo
         base = AmmoType.createISAC15Ammo();
@@ -6415,6 +6445,533 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+//////////WOR: iATM Ammo ////////
+private static AmmoType createCLIATM3Ammo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 3 Ammo";
+ammo.shortName = "iATM 3";
+ammo.setInternalName("Clan Ammo iATM-3");
+ammo.addLookupName("CLIATM3 Ammo");
+ammo.addLookupName("Clan iATM-3 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 3;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.shots = 20;
+ammo.bv = 21;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM3ERAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 3 ER Ammo";
+ammo.shortName = "iATM 3 ER";
+ammo.setInternalName("Clan Ammo iATM-3 ER");
+ammo.addLookupName("CLIATM3 ER Ammo");
+ammo.addLookupName("Clan iATM-3 ER Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 3;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_EXTENDED_RANGE;
+ammo.shots = 20;
+ammo.bv = 21;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM3HEAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 3 HE Ammo";
+ammo.shortName = "iATM 3 HE";
+ammo.setInternalName("Clan Ammo iATM-3 HE");
+ammo.addLookupName("CLIATM3 HE Ammo");
+ammo.addLookupName("Clan iATM-3 HE Ammo");
+ammo.damagePerShot = 3;
+ammo.rackSize = 3;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_HIGH_EXPLOSIVE;
+ammo.shots = 20;
+ammo.bv = 21;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM3IIWAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 3 IIW Ammo";
+ammo.shortName = "iATM 3 IIW";
+ammo.setInternalName("Clan Ammo iATM-3 IIW");
+ammo.addLookupName("CLIATM3 IIW Ammo");
+ammo.addLookupName("Clan iATM-3 IIW Ammo");
+ammo.addLookupName("CLIIW3 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 3;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IIW;
+ammo.shots = 20;
+ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM3IMPAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 3 IMP Ammo";
+ammo.shortName = "iATM 3 IMP";
+ammo.setInternalName("Clan Ammo iATM-3 IMP");
+ammo.addLookupName("CLIATM3 IMP Ammo");
+ammo.addLookupName("Clan iATM-3 IMP Ammo");
+ammo.addLookupName("CLIMP3 Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 3;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IMP;
+ammo.shots = 20;
+ammo.bv = 42; // 21 * 2 = 42
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM6Ammo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 6 Ammo";
+ammo.shortName = "iATM 6";
+ammo.setInternalName("Clan Ammo iATM-6");
+ammo.addLookupName("CLIATM6 Ammo");
+ammo.addLookupName("Clan iATM-6 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 6;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.shots = 10;
+ammo.bv = 39;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM6ERAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 6 ER Ammo";
+ammo.shortName = "iATM 6 ER";
+ammo.setInternalName("Clan Ammo iATM-6 ER");
+ammo.addLookupName("CLIATM6 ER Ammo");
+ammo.addLookupName("Clan iATM-6 ER Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 6;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_EXTENDED_RANGE;
+ammo.shots = 10;
+ammo.bv = 39;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM6HEAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 6 HE Ammo";
+ammo.shortName = "iATM 6 HE";
+ammo.setInternalName("Clan Ammo iATM-6 HE");
+ammo.addLookupName("CLIATM6 HE Ammo");
+ammo.addLookupName("Clan iATM-6 HE Ammo");
+ammo.damagePerShot = 3;
+ammo.rackSize = 6;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_HIGH_EXPLOSIVE;
+ammo.shots = 10;
+ammo.bv = 39;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM6IIWAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 6 IIW Ammo";
+ammo.shortName = "iATM 6 IIW";
+ammo.setInternalName("Clan Ammo iATM-6 IIW");
+ammo.addLookupName("CLIATM6 IIW Ammo");
+ammo.addLookupName("Clan iATM-6 IIW Ammo");
+ammo.addLookupName("CLIIW6 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 6;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IIW;
+ammo.shots = 10;
+ammo.bv = 51; // 50.7 round up (?)
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM6IMPAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 6 IMP Ammo";
+ammo.shortName = "iATM 6 IMP";
+ammo.setInternalName("Clan Ammo iATM-6 IMP");
+ammo.addLookupName("CLIATM6 IMP Ammo");
+ammo.addLookupName("Clan iATM-6 IMP Ammo");
+ammo.addLookupName("CLIMP6 Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 6;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IMP;
+ammo.shots = 10;
+ammo.bv = 78; // 39 * 2 = 78
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM9Ammo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 9 Ammo";
+ammo.shortName = "iATM 9";
+ammo.setInternalName("Clan Ammo iATM-9");
+ammo.addLookupName("CLIATM9 Ammo");
+ammo.addLookupName("Clan iATM-9 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 9;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.shots = 7;
+ammo.bv = 54;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM9ERAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 9 ER Ammo";
+ammo.shortName = "iATM 9 ER";
+ammo.setInternalName("Clan Ammo iATM-9 ER");
+ammo.addLookupName("CLIATM9 ER Ammo");
+ammo.addLookupName("Clan iATM-9 ER Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 9;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_EXTENDED_RANGE;
+ammo.shots = 7;
+ammo.bv = 54;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM9HEAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 9 HE Ammo";
+ammo.shortName = "iATM 9 HE";
+ammo.setInternalName("Clan Ammo iATM-9 HE");
+ammo.addLookupName("CLIATM9 HE Ammo");
+ammo.addLookupName("Clan iATM-9 HE Ammo");
+ammo.damagePerShot = 3;
+ammo.rackSize = 9;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_HIGH_EXPLOSIVE;
+ammo.shots = 7;
+ammo.bv = 54;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM9IIWAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 9 IIW Ammo";
+ammo.shortName = "iATM 9 IIW";
+ammo.setInternalName("Clan Ammo iATM-9 IIW");
+ammo.addLookupName("CLIATM9 IIW Ammo");
+ammo.addLookupName("Clan iATM-9 IIW Ammo");
+ammo.addLookupName("CLIIW9 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 9;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IIW;
+ammo.shots = 7;
+ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM9IMPAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 9 IMP Ammo";
+ammo.shortName = "iATM 9 IMP";
+ammo.setInternalName("Clan Ammo iATM-9 IMP");
+ammo.addLookupName("CLIATM9 IMP Ammo");
+ammo.addLookupName("Clan iATM-9 IMP Ammo");
+ammo.addLookupName("CLIMP9 Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 9;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IMP;
+ammo.shots = 7;
+ammo.bv = 108; // 54 * 2 = 108
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM12Ammo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 12 Ammo";
+ammo.shortName = "iATM 12";
+ammo.setInternalName("Clan Ammo iATM-12");
+ammo.addLookupName("CLIATM12 Ammo");
+ammo.addLookupName("Clan iATM-12 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 12;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.shots = 5;
+ammo.bv = 78;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM12ERAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 12 ER Ammo";
+ammo.shortName = "iATM 12 ER";
+ammo.setInternalName("Clan Ammo iATM-12 ER");
+ammo.addLookupName("CLIATM12 ER Ammo");
+ammo.addLookupName("Clan iATM-12 ER Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 12;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_EXTENDED_RANGE;
+ammo.shots = 5;
+ammo.bv = 78;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM12HEAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 12 HE Ammo";
+ammo.shortName = "iATM 12 HE";
+ammo.setInternalName("Clan Ammo iATM-12 HE");
+ammo.addLookupName("CLIATM12 HE Ammo");
+ammo.addLookupName("Clan iATM-12 HE Ammo");
+ammo.damagePerShot = 3;
+ammo.rackSize = 12;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_HIGH_EXPLOSIVE;
+ammo.shots = 5;
+ammo.bv = 78;
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM12IIWAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 12 IIW Ammo";
+ammo.shortName = "iATM 12 IIW";
+ammo.setInternalName("Clan Ammo iATM-12 IIW");
+ammo.addLookupName("CLIATM12 IIW Ammo");
+ammo.addLookupName("Clan iATM-12 IIW Ammo");
+ammo.addLookupName("CLIIW12 Ammo");
+ammo.damagePerShot = 2;
+ammo.rackSize = 12;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IIW;
+ammo.shots = 5;
+ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+private static AmmoType createCLIATM12IMPAmmo() {
+AmmoType ammo = new AmmoType();
+
+ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+ammo.name = "iATM 12 IMP Ammo";
+ammo.shortName = "iATM 12 IMP";
+ammo.setInternalName("Clan Ammo iATM-12 IMP");
+ammo.addLookupName("CLIATM12 IMP Ammo");
+ammo.addLookupName("Clan iATM-12 IMP Ammo");
+ammo.addLookupName("CLIMP12 Ammo");
+ammo.damagePerShot = 1;
+ammo.rackSize = 12;
+ammo.ammoType = AmmoType.T_IATM;
+ammo.munitionType = M_IATM_IMP;
+ammo.shots = 5;
+ammo.bv = 156; // 78 * 2 = 156
+ammo.cost = 75000;
+ammo.flags = ammo.flags.or(F_HOTLOAD);
+ammo.setModes(new String[]
+{ "", "HotLoad" });
+ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+ammo.introDate = 3070;
+ammo.techRating = RATING_F;
+
+return ammo;
+}
+
+//////////WOR: iATM Ammo End////////
 
     private static AmmoType createCLStreakLRM5Ammo() {
         AmmoType ammo = new AmmoType();

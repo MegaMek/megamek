@@ -350,6 +350,24 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
+        //WOR: iATM stuff
+        if (getAmmoType() == AmmoType.T_IATM) {
+            AmmoType atype = (AmmoType) weapon.getLinked().getType();
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                minRange = 4;
+                sRange = 9;
+                mRange = 18;
+                lRange = 27;
+                eRange = 36;
+            } else if ((atype.getAmmoType() == AmmoType.T_IATM) && ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)||(atype.getMunitionType() == AmmoType.M_IATM_IMP))) {
+                minRange = 0;
+                sRange = 3;
+                mRange = 6;
+                lRange = 9;
+                eRange = 12;
+            }
+        }
+        //WOR: iATM stuff end
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
@@ -885,6 +903,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLATM6());
         EquipmentType.addType(new CLATM9());
         EquipmentType.addType(new CLATM12());
+        // WOR: iATMs
+        EquipmentType.addType(new CLIATM3());
+        EquipmentType.addType(new CLIATM6());
+        EquipmentType.addType(new CLIATM9());
+        EquipmentType.addType(new CLIATM12());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());

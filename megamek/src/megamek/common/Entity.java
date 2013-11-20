@@ -596,6 +596,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean bMASCWentUp = false;
 
     protected boolean usedMASC = false; // Has masc been used?
+    
+    /**
+     * Nova CEWS can adjust the network on the fly.  This keeps track of the
+     * C3 net ID to be switched to on the next turn.
+     */
+	private String newC3NetIdString = null;
+
+	/**
+	 * Keeps  track of the number of iATM improved magnetic pulse (IMP) his 
+	 * this entity took this turn.
+	 */
+	private int impThisTurn = 0;
+
+	/**
+     * Keeps  track of the number of iATM improved magnetic pulse (IMP) his 
+     * this entity took last turn.
+     */
+	private int impLastTurn = 0;
+
+	private int impThisTurnHeatHelp = 0;
 
     protected boolean military;
 
@@ -623,6 +643,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
         fluff = new EntityFluff();
+        impThisTurn = 0;
+        impLastTurn = 0;
 
     }
 
@@ -3914,6 +3936,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * WOR  Does the mech have a functioning ECM unit?
+     */
+    public boolean hasActiveNovaECM() {
+        // no ECM in space unless strat op option enabled
+        if (game.getBoard().inSpace()
+                && !game.getOptions().booleanOption("stratops_ecm")) {
+            return false;
+        }
+        if ( !isShutDown()) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if ((type instanceof MiscType)
+                        && type.hasFlag(MiscType.F_NOVA)
+                        && m.curMode().equals("ECM")) {
+                    return !(m.isInoperable());
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Does the mech have a functioning ECM unit, tuned to ghost target
      * generation?
      */
@@ -4160,9 +4204,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus;
                 }
+             // WOR: Adding nova CEWS here.
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
                         || (m.getType()).getInternalName().equals(
-                        Sensor.WATCHDOG)) {
+                                Sensor.WATCHDOG) || (m.getType()).getInternalName().equals(
+                                        Sensor.NOVA)){
                     return 5 + cyberBonus + quirkBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
@@ -4367,6 +4413,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasC3() {
         return hasC3S() || hasC3M() || hasC3MM();
     }
+ 
+    /**
+     * WOR: Checks if we have nova CEWS that is not offline.
+     * @return
+     */
+
+    public boolean hasActiveNovaCEWS()
+    {
+    	if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_NOVA) && !m.isInoperable() && !m.curMode().equals("Off")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasNovaCEWS() // we need this to get the network ID strings we cannot use.
+    {
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_NOVA) && !m.isInoperable()) {
+                return true;// hope i didn't break it by adding m.isInoperable()
+            }
+        }
+        return false;
+    }
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
@@ -4387,16 +4463,63 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    //WOR: Modified for NovaCEWS
     public String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
                 c3NetIdString = "C3." + getId();
             } else if (hasC3i()) {
                 c3NetIdString = "C3i." + getId();
+            } else if (hasActiveNovaCEWS())
+            {
+            	c3NetIdString = "C3Nova." + getId();
             }
         }
         return c3NetIdString;
     }
+    
+    public String getOriginalNovaC3NetId()
+    {
+    	return "C3Nova." + getId();
+    }
+    
+    /**
+     * Switches the C3 network Id to the new network ID.
+     */
+    public void newRoundNovaNetSwitch() {
+    	if (hasNovaCEWS()) {
+    		// FIXME: no check for network limit of 3 units
+    		c3NetIdString = newC3NetIdString;
+    	}
+    }
+    
+    /**
+     * Set the C3 network ID to be used on the next turn.  Used for 
+     * reconfiguring a C3 network with Nova CEWS.
+     * @param str
+     */
+    public void setNewRoundNovaNetworkString(String str) {
+        // Only allow Nova CEWS to change
+    	if (hasNovaCEWS()) {
+    		newC3NetIdString = str;
+    	} else {
+    		newC3NetIdString = getOriginalNovaC3NetId();
+    	}
+    }
+    
+    /**
+     * Returns the C3 network id that will be switched to on the next turn.
+     * 
+     * @return
+     */
+    public String getNewRoundNovaNetworkString() {
+    	if (newC3NetIdString == null || newC3NetIdString == "")
+    	{
+    		newC3NetIdString = getOriginalNovaC3NetId();
+    	}
+    	return newC3NetIdString;
+    }
+
 
     public void setC3NetId(Entity e) {
         if ((e == null) || isEnemyOf(e)) {
@@ -4405,8 +4528,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         c3NetIdString = e.c3NetIdString;
     }
 
+  
+ // WOR: Modified for nova. not sure if neccessary
     public void setC3NetIdSelf() {
-        c3NetIdString = "C3i." + getId();
+    	if (hasActiveNovaCEWS())
+        {
+        	c3NetIdString = "C3Nova." + getId();
+        } else {
+        	c3NetIdString = "C3i." + getId();
+        }
     }
 
     /**
@@ -4500,6 +4630,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 nodes--;
                             }
                         }
+                        if (nodes <= 0) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        } else if (hasActiveNovaCEWS()) {
+        	// WOR: Nova CEWS
+        	nodes = 2;
+            if (game != null) {
+                for (Enumeration<Entity> i = game.getEntities(); i
+                        .hasMoreElements();) {
+                    final Entity e = i.nextElement();
+                    if (!equals(e) && onSameC3NetworkAs(e)) {
+                        nodes--;
                         if (nodes <= 0) {
                             return 0;
                         }
@@ -4741,6 +4886,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && !(Compute.isAffectedByECM(this, getPosition(),
                     getPosition()));
         }
+        
+        // WOR: Nova CEWS
+        // Nova is easy - if they both have Nova, and their net ID's match,
+        // they're on the same network!
+        // At least I hope thats how it works.
+        if (hasActiveNovaCEWS() && e.hasActiveNovaCEWS() && getC3NetId().equals(e.getC3NetId())) {
+            if (ignoreECM) {
+                return true;
+            }
+            return !(Compute.isAffectedByNovaECM(e, e.getPosition(),
+                    e.getPosition()))
+                    && !(Compute.isAffectedByNovaECM(this, getPosition(),
+                            getPosition()));
+        }
+
 
         // simple sanity check - do they both have C3, and are they both on the
         // same network?
@@ -4863,6 +5023,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getEquipment()) {
             m.newRound(roundNumber);
         }
+        
+        newRoundNovaNetSwitch();
+        doNewRoundIMP();
 
         // reset hexes passed through
         setPassedThrough(new Vector<Coords>());
@@ -7235,6 +7398,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean found = false;
 
         // Walk through the unit's ammo, stop when we find a match.
+        // WOR: iATM inferno added
         for (Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType) amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype
@@ -7243,9 +7407,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
+            if((atype.getAmmoType() == AmmoType.T_IATM)&& (atype.getMunitionType() == AmmoType.M_IATM_IIW)
+                        && (amounted.getHittableShotsLeft() > 0))
+                {
+                	found = true;
+                }
+            }
+            return found;
         }
-        return found;
-    }
+  
 
     /**
      * Record if the unit is just combat-lossed or if it has been utterly
@@ -10166,6 +10336,43 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getTaserInterferenceRounds() {
         return taserInterferenceRounds;
+    }
+    
+    /**
+     * WOR:
+     * some iATM IMP stuff 
+     */
+    public void addIMPHits(int missiles)
+    {
+    	// effects last for only one turn.
+    	impThisTurn += missiles;
+    	int heatAdd = missiles + impThisTurnHeatHelp;
+    	impThisTurnHeatHelp = heatAdd % 3;
+    	heatAdd = heatAdd - impThisTurnHeatHelp;
+    	heatAdd = heatAdd / 3;
+    	heatFromExternal += heatAdd;
+    }
+    private void doNewRoundIMP()
+    {
+    	impLastTurn = impThisTurn;
+    	impThisTurn = 0;
+    }
+    public int getIMPMoveMod() // this function needs to be added to the MP calculating functions
+    //however, since no function calls super, it seems unneccesary complicated really.
+    {
+    	int max=2;
+    	int modifier = impThisTurn + impLastTurn;
+    	modifier = modifier - modifier%3;
+    	modifier = modifier / 3;
+    	return (modifier > max) ? -max : -modifier;
+    }
+    public int getIMPTHMod()
+    {
+    	int max=2;
+    	int modifier = impThisTurn + impLastTurn;
+    	modifier = modifier - modifier%3;
+    	modifier = modifier / 3;
+    	return (modifier > max) ? max : modifier;
     }
 
     /**

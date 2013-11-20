@@ -149,6 +149,7 @@ v0.37.0-dev (SVN)
     working yet, pending a rules clarification)
 + Feature: Implemented ballistic-reinforced armor
 + Bug [#3923]: Ammo type is not obvious from reports
++ Bug: Princess behavior selector defaults to "berserk" rather than the actual "default"
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

@@ -32,13 +32,19 @@ import megamek.common.weapons.battlearmor.CLHeavyRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLLightRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLMediumRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLSupportPPC;
+import megamek.common.weapons.battlearmor.ISBAERMediumLaser;
+import megamek.common.weapons.battlearmor.ISBAERSmallLaser;
 import megamek.common.weapons.battlearmor.ISBAFlamer;
 import megamek.common.weapons.battlearmor.ISBAHeavyFlamer;
 import megamek.common.weapons.battlearmor.ISBAHeavyMG;
 import megamek.common.weapons.battlearmor.ISBALightMG;
 import megamek.common.weapons.battlearmor.ISBAMG;
 import megamek.common.weapons.battlearmor.ISBAMagshotGaussRifle;
+import megamek.common.weapons.battlearmor.ISBAMediumLaser;
+import megamek.common.weapons.battlearmor.ISBAMediumPulseLaser;
 import megamek.common.weapons.battlearmor.ISBAPlasmaRifle;
+import megamek.common.weapons.battlearmor.ISBASmallLaser;
+import megamek.common.weapons.battlearmor.ISBASmallPulseLaser;
 import megamek.common.weapons.battlearmor.ISBATaser;
 import megamek.common.weapons.battlearmor.ISBATubeArtillery;
 import megamek.common.weapons.battlearmor.ISDavidLightGaussRifle;
@@ -1251,6 +1257,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLMekMortar8());
 
         // BA weapons
+        EquipmentType.addType(new ISBAERMediumLaser());
+        EquipmentType.addType(new ISBAERSmallLaser());
+        EquipmentType.addType(new ISBAMediumLaser());
+        EquipmentType.addType(new ISBAMediumPulseLaser());
+        EquipmentType.addType(new ISBASmallLaser());
+        EquipmentType.addType(new ISBASmallPulseLaser());
         EquipmentType.addType(new CLSmallLaser());
         EquipmentType.addType(new ISLightRecoillessRifle());
         EquipmentType.addType(new ISMediumRecoillessRifle());

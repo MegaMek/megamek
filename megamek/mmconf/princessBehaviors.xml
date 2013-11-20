@@ -27,7 +27,7 @@
     <strategicTargets/>
   </behavior>
   <behavior>
-    <name>Breakthrough</name>
+    <name>BREAKTHROUGH</name>
     <homeEdge>0</homeEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>true</goHome>

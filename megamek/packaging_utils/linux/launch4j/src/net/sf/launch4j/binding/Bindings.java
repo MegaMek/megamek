@@ -302,7 +302,7 @@ public class Bindings implements PropertyChangeListener {
 	/**
 	 * Handles JComboBox
 	 */
-	public Bindings add(String property, JComboBox combo, int defaultValue) {
+	public Bindings add(String property, JComboBox<String> combo, int defaultValue) {
 		registerPropertyChangeListener(combo);
 		return add(new JComboBoxBinding(property, combo, defaultValue));
 	}
@@ -310,7 +310,7 @@ public class Bindings implements PropertyChangeListener {
 	/**
 	 * Handles JComboBox
 	 */
-	public Bindings add(String property, JComboBox combo) {
+	public Bindings add(String property, JComboBox<String> combo) {
 		registerPropertyChangeListener(combo);
 		return add(new JComboBoxBinding(property, combo, 0));
 	}

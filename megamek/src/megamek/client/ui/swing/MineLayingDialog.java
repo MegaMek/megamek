@@ -54,7 +54,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
      * The <code>int</code> ID of the entity that lays the mine.
      */
     private Entity entity;
-    private JComboBox chMines = new JComboBox();
+    private JComboBox<String> chMines = new JComboBox<String>();
     private ArrayList<Mounted> vMines = new ArrayList<Mounted>();
 
     /**

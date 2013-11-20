@@ -125,7 +125,6 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
-        IHex attHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
@@ -161,7 +160,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // check range
         if (src.distance(target.getPosition()) > 1) {
-            if ((null != te) && (null != te.getSecondaryPositions())) {
+            if (null != te.getSecondaryPositions()) {
                 boolean inSecondaryRange = false;
                 for (int i : te.getSecondaryPositions().keySet()) {
                     if (null != te.getSecondaryPositions().get(i)) {

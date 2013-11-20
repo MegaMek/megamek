@@ -45,7 +45,7 @@ public class DialogOptionComponent extends JPanel implements
     IOption option;
 
     private JCheckBox checkbox;
-    private JComboBox choice;
+    private JComboBox<String> choice;
     private JTextField textField;
     private JLabel label;
     private DialogOptionListener dialogOptionListener;
@@ -72,7 +72,7 @@ public class DialogOptionComponent extends JPanel implements
 
                 break;
             case IOption.CHOICE:
-                choice = new JComboBox();
+                choice = new JComboBox<String>();
 
                 label = new JLabel(option.getDisplayableName());
                 label.setToolTipText(convertToHtml(option.getDescription()));

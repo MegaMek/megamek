@@ -92,13 +92,13 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showMapsheets;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
-    
+
     // Tactical Overlay Options
     private JCheckBox fovInsideEnabled;
     private JSlider fovHighlightAlpha;
     private JCheckBox fovOutsideEnabled;
     private JSlider fovDarkenAlpha;
-    
+
     private JList<String> keys;
     private int keysIndex = 0;
     private JTextField value;
@@ -121,19 +121,19 @@ public class CommonSettingsDialog extends ClientDialog implements
         super(owner, Messages.getString("CommonSettingsDialog.title")); //$NON-NLS-1$
 
         panTabs = new JTabbedPane();
-        
+
         JPanel settingsPanel = getSettingsPanel();
         JScrollPane settingsPane = new JScrollPane(settingsPanel);
         panTabs.add("Main", settingsPane);
-        
+
         JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
         JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
         panTabs.add("Tactical Overlay", tacticalOverlaySettingsPane);
-        
+
         JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
         JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
         panTabs.add("Advanced", advancedSettingsPane);
-        
+
         setLayout(new BorderLayout());
         getContentPane().add(panTabs, BorderLayout.CENTER);
         getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
@@ -174,7 +174,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     private JPanel getSettingsPanel() {
-    	
+
         ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
         ArrayList<JComponent> row;
 
@@ -203,7 +203,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(mouseWheelZoom);
         comps.add(row);
-        
+
         mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(mouseWheelZoomFlip);
@@ -245,7 +245,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDelayLabel);
         row.add(tooltipDelay);
         comps.add(row);
-        
+
         tooltipDismissDelay = new JTextField(4);
         tooltipDismissDelay.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
         JLabel tooltipDismissDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDismissDelay")); //$NON-NLS-1$
@@ -298,7 +298,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(generateNames);
         comps.add(row);
-        
+
         showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
         row = new ArrayList<JComponent>();
@@ -357,8 +357,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showMapsheets);
         comps.add(row);
-        
-        return this.createSettingsPanel(comps);
+
+        return createSettingsPanel(comps);
     }
 
     /**
@@ -382,14 +382,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
-        
+
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
         mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.setSelectedIndex(0);
         for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-            if (((String) unitStartChar.getItemAt(loop)).charAt(0) == PreferenceManager
+            if (unitStartChar.getItemAt(loop).charAt(0) == PreferenceManager
                     .getClientPreferences().getUnitStartChar()) {
                 unitStartChar.setSelectedIndex(loop);
                 break;
@@ -441,7 +441,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 tileSetChoice.setSelectedIndex(i);
             }
         }
-        
+
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
         fovOutsideEnabled.setSelected(gs.getFovDarken());
@@ -507,7 +507,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
         }
-        
+
         // Tactical Overlay Settings
         gs.setFovHighlight(fovInsideEnabled.isSelected());
         gs.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
@@ -521,7 +521,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
-        
+
         setVisible(false);
     }
 
@@ -566,10 +566,10 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     private JPanel getTacticalOverlaySettingsPanel() {
-        
+
         ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
         ArrayList<JComponent> row;
-        
+
         fovInsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(fovInsideEnabled);
@@ -586,7 +586,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(fovHighlightAlpha);
         row.add(highlightAlphaLabel);
         comps.add(row);
-        
+
         fovOutsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(fovOutsideEnabled);
@@ -603,10 +603,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(fovDarkenAlpha);
         row.add(darkenAlphaLabel);
         comps.add(row);
-        
-        return this.createSettingsPanel(comps);
+
+        return createSettingsPanel(comps);
     }
-    
+
     private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));

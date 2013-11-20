@@ -955,7 +955,7 @@ public class Server implements Runnable {
         // TODO: check for duplicate or reserved names
 
         // make sure colorIndex is unique
-        boolean[] colorUsed = new boolean[player.colorNames.length];
+        boolean[] colorUsed = new boolean[IPlayer.colorNames.length];
         for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
             final IPlayer otherPlayer = i.nextElement();
             if (otherPlayer.getId() != playerId) {
@@ -2930,7 +2930,7 @@ public class Server implements Runnable {
 
             if ((player.getId() == game.getVictoryPlayerId())
                     || ((player.getTeam() == game.getVictoryTeam()) && (game
-                    .getVictoryTeam() != player.TEAM_NONE))) {
+                    .getVictoryTeam() != IPlayer.TEAM_NONE))) {
                 continue;
             }
 
@@ -11161,7 +11161,7 @@ public class Server implements Runnable {
         if (null != player) {
             int teamId = player.getTeam();
 
-            if (teamId != player.TEAM_NONE) {
+            if (teamId != IPlayer.TEAM_NONE) {
                 Enumeration<Team> teams = game.getTeams();
                 while (teams.hasMoreElements()) {
                     Team team = teams.nextElement();

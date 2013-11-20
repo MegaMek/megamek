@@ -8,11 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import megamek.client.Client;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.net.Packet;
-import megamek.common.Player;
 import megamek.server.Server;
 
 /**

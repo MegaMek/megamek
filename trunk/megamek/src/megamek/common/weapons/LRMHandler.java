@@ -28,7 +28,6 @@ import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.Targetable;

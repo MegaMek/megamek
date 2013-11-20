@@ -18,6 +18,10 @@ import java.net.URL;
  */
 public class HelpDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1442198850518387690L;
     private static final int WIDTH = 600;
     private static final int HEIGHT = 400;
 

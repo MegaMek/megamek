@@ -21,6 +21,11 @@ package megamek.client.bot.princess;
  * @since: 8/17/13 11:03 PM
  */
 public class PrincessException extends Exception {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -657543995772098106L;
+
     public PrincessException() {
         super();
     }

@@ -3,14 +3,6 @@
  */
 package megamek.server.commands;
 
-import java.util.Enumeration;
-
-import megamek.client.bot.BotClient;
-import megamek.client.bot.TestBot;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.ui.swing.BotGUI;
-import megamek.common.IPlayer;
-import megamek.common.logging.LogLevel;
 import megamek.common.util.AddBotUtil;
 import megamek.server.Server;
 

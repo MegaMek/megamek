@@ -66,7 +66,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     private JPanel panStartButtons = new JPanel();
     private JButton[] butStartPos = new JButton[11];
 
-    private JList lisStartList = new JList(new DefaultListModel());
+    private JList<String> lisStartList = new JList<String>(new DefaultListModel<String>());
 
     /**
      * Creates a new instance of StartingPositionDialog
@@ -114,11 +114,11 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x
-                + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-                clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2
-                        - getSize().height / 2);
+        setLocation((clientgui.frame.getLocation().x
+                + (clientgui.frame.getSize().width / 2)) - (getSize().width / 2),
+                (clientgui.frame.getLocation().y
+                        + (clientgui.frame.getSize().height / 2))
+                        - (getSize().height / 2));
     }
 
     private void setupStartGrid() {
@@ -166,7 +166,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     }
 
     public void update() {
-        ((DefaultListModel) lisStartList.getModel()).removeAllElements();
+        ((DefaultListModel<String>) lisStartList.getModel()).removeAllElements();
         for (Enumeration<IPlayer> i = client.getPlayers(); i.hasMoreElements();) {
             IPlayer player = i.nextElement();
             if (player != null) {
@@ -174,7 +174,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player
                         .getStartingPos()]);
-                ((DefaultListModel) lisStartList.getModel()).addElement(ssb
+                ((DefaultListModel<String>) lisStartList.getModel()).addElement(ssb
                         .toString());
             }
         }
@@ -206,8 +206,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
                         // check for overlapping starting directions
                         if (((player.getStartingPos() == i)
-                                || (player.getStartingPos() + 1 == i) || (player
-                                .getStartingPos() - 1 == i))
+                                || ((player.getStartingPos() + 1) == i) || ((player
+                                .getStartingPos() - 1) == i))
                                 && (player.getId() != client.getLocalPlayer()
                                         .getId())) {
                             clientgui

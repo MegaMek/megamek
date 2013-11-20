@@ -54,7 +54,7 @@ public class ChatterBox implements KeyListener {
 
     private JPanel chatPanel;
     JTextArea chatArea;
-    JList playerList;
+    JList<String> playerList;
     JScrollPane scrPlayers;
     private JTextField inputField;
     private JButton butDone;
@@ -119,7 +119,7 @@ public class ChatterBox implements KeyListener {
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-        playerList = new JList(new DefaultListModel());
+        playerList = new JList<String>(new DefaultListModel<String>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
                 "AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
@@ -131,22 +131,22 @@ public class ChatterBox implements KeyListener {
 
         chatPanel = new JPanel(new BorderLayout());
         chatPanel.setLayout(new GridBagLayout());
-        
+
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.setPreferredSize(new Dimension(284,100));
         subPanel.setMinimumSize(new Dimension(284,100));
         subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
         subPanel.add(scrPlayers, BorderLayout.WEST);
         subPanel.add(inputField, BorderLayout.SOUTH);
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.gridheight = 3; gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = gbc.weighty = 1;
-        
+
         chatPanel.add(subPanel, gbc);
-        
+
         gbc.gridx = 5; gbc.gridy = 1;
         gbc.gridheight = 1; gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.BOTH;
@@ -191,13 +191,13 @@ public class ChatterBox implements KeyListener {
     public void setDoneButton(JButton button) {
         chatPanel.remove(butDone);
         butDone = button;
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 5; gbc.gridy = 1;
         gbc.gridheight = 1; gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = .1; gbc.weighty = .05;
-        
+
         chatPanel.add(butDone, gbc);
     }
 

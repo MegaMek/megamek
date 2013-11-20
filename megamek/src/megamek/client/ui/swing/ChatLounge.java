@@ -157,7 +157,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     /* Player Configuration Panel */
     private JPanel panPlayerInfo;
-    private JComboBox choTeam;
+    private JComboBox<String> choTeam;
     private JButton butCamo;
     private JButton butAddBot;
     private JButton butRemoveBot;
@@ -172,26 +172,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private RandomMapDialog randomMapDialog;
     private JPanel panGroundMap;
     private JPanel panSpaceMap;
-    private JComboBox comboMapType;
-    private JComboBox comboMapSizes;
+    private JComboBox<String> comboMapType;
+    @SuppressWarnings("rawtypes")
+    private JComboBox<Comparable> comboMapSizes;
     private JButton butMapSize;
     private JButton butRandomMap;
     private JButton buttonBoardPreview;
     private JScrollPane scrMapButtons;
     private JPanel panMapButtons;
     private JLabel labBoardsSelected;
-    private JList lisBoardsSelected;
+    private JList<String> lisBoardsSelected;
     private JScrollPane scrBoardsSelected;
     private JButton butChange;
     private JLabel labBoardsAvailable;
-    private JList lisBoardsAvailable;
+    private JList<String> lisBoardsAvailable;
     private JScrollPane scrBoardsAvailable;
     private JCheckBox chkRotateBoard;
     private JCheckBox chkIncludeGround;
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
     private Set<BoardDimensions> mapSizes = new TreeSet<BoardDimensions>();
-    
+
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
 
@@ -241,8 +242,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         butOptions = new JButton(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
-        
-        lblMapSummary = new JLabel("");     
+
+        lblMapSummary = new JLabel("");
         lblGameYear = new JLabel("");
         lblGameYear.setToolTipText(Messages.getString("ChatLounge.GameYearLabelToolTip"));
 
@@ -277,7 +278,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         // layout main thing
         setLayout(new BorderLayout());
-        
+
         refreshMapSummaryLabel();
         refreshGameYearLabel();
 
@@ -496,7 +497,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
         butRemoveBot.addActionListener(this);
 
-        choTeam = new JComboBox();
+        choTeam = new JComboBox<String>();
         setupTeams();
         choTeam.addItemListener(this);
 
@@ -609,10 +610,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.insets = new Insets(0,0,0,0);
         c.fill = GridBagConstraints.VERTICAL;
         c.gridx = 2; c.gridy = 0;
-        c.weightx = 0; c.weighty = 0.0; 
+        c.weightx = 0; c.weighty = 0.0;
         c.anchor = GridBagConstraints.NORTHEAST;
         panel1.add(butCompact,c);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
@@ -751,6 +752,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     /**
      * Sets up the ground map selection panel
      */
+    @SuppressWarnings("rawtypes")
     private void setupGroundMap() {
 
         panGroundMap = new JPanel();
@@ -759,13 +761,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         panMapButtons = new JPanel();
 
-        comboMapType = new JComboBox();
+        comboMapType = new JComboBox<String>();
         setupMapChoice();
 
         butMapSize = new JButton(Messages.getString("ChatLounge.MapSize")); //$NON-NLS-1$
         butMapSize.addActionListener(this);
 
-        comboMapSizes = new JComboBox();
+        comboMapSizes = new JComboBox<Comparable>();
         setupMapSizes();
 
         buttonBoardPreview = new JButton(
@@ -782,9 +784,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         labBoardsAvailable = new JLabel(
                 Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
 
-        lisBoardsSelected = new JList(new DefaultListModel());
+        lisBoardsSelected = new JList<String>(new DefaultListModel<String>());
         lisBoardsSelected.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        lisBoardsAvailable = new JList(new DefaultListModel());
+        lisBoardsAvailable = new JList<String>(new DefaultListModel<String>());
         refreshBoardsSelected();
         refreshBoardsAvailable();
         lisBoardsAvailable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1091,9 +1093,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private void refreshBoardsAvailable() {
         int selectedRow = lisBoardsAvailable.getSelectedIndex();
-        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();        
+        ((DefaultListModel<String>) lisBoardsAvailable.getModel()).removeAllElements();
         for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext(); ) {
-            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i
+            ((DefaultListModel<String>) lisBoardsAvailable.getModel()).addElement(i
                     .next());
         }
         if (resetAvailBoardSelection){
@@ -1106,10 +1108,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private void refreshBoardsSelected() {
         int selectedRow = lisBoardsSelected.getSelectedIndex();
-        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
+        ((DefaultListModel<String>) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext(); ) {
-            ((DefaultListModel) lisBoardsSelected.getModel())
+            ((DefaultListModel<String>) lisBoardsSelected.getModel())
                     .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(selectedRow);
@@ -1151,7 +1153,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         for (int i = 0; i < (items - 1); i++) {
             BoardDimensions size = (BoardDimensions) comboMapSizes.getItemAt(i);
 
-            if (size.width() == mapSettings.getBoardWidth() && size.height() == mapSettings.getBoardHeight()) {
+            if ((size.width() == mapSettings.getBoardWidth()) && (size.height() == mapSettings.getBoardHeight())) {
                 comboMapSizes.setSelectedIndex(i);
             }
 
@@ -1161,7 +1163,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void previewMapsheet() {
-        String boardName = (String) lisBoardsAvailable.getSelectedValue();
+        String boardName = lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(16, 17);
             board.load(new File(Configuration.boardsDir(), boardName + ".board"));
@@ -2098,7 +2100,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             c.sendUpdateEntity(entity);
         }
     }
-    
+
     public void mechEdit(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
@@ -2236,7 +2238,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(
+            ((DefaultListModel<String>) lisBoardsSelected.getModel()).setElementAt(
                     newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
@@ -2257,7 +2259,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.getClient().getGame().setupTeams();
         refreshPlayerInfo();
         // Update cammo info, unless the player is currently making changes
-        if (camoDialog != null && !camoDialog.isVisible()) {
+        if ((camoDialog != null) && !camoDialog.isVisible()) {
             refreshCamos();
         }
         refreshEntities();
@@ -2459,7 +2461,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             randomMapDialog.setVisible(true);
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
-                changeMap((String) lisBoardsAvailable.getSelectedValue());
+                changeMap(lisBoardsAvailable.getSelectedValue());
                 lisBoardsSelected.setSelectedIndex(
                         lisBoardsSelected.getSelectedIndex()+1);
             }
@@ -2471,7 +2473,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             mdd.setVisible(true);
         } else if (ev.getSource().equals(comboMapSizes)) {
             if (
-                    comboMapSizes.getSelectedItem() != null
+                    (comboMapSizes.getSelectedItem() != null)
                             &&
                             !comboMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))
                     ) {
@@ -2518,7 +2520,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if ((arg0.getClickCount() == 2)
                 && arg0.getSource().equals(lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
-                changeMap((String) lisBoardsAvailable.getSelectedValue());
+                changeMap(lisBoardsAvailable.getSelectedValue());
             }
         }
     }
@@ -2553,39 +2555,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshMapSummaryLabel();
         refreshGameYearLabel();
     }
-    
+
     public void refreshMapSummaryLabel(){
         String txt = Messages.getString("ChatLounge.MapSummary");
-        txt = txt + " " + 
-                mapSettings.getBoardWidth() * mapSettings.getMapWidth() + 
-                " x " + 
-                mapSettings.getBoardHeight() * mapSettings.getMapHeight();
+        txt = txt + " " +
+                (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) +
+                " x " +
+                (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (chkIncludeGround.isSelected()){
             txt = txt + " " + (String)comboMapType.getSelectedItem();
         } else {
             txt = txt + " " + "Space Map";
-        } 
+        }
         lblMapSummary.setText(txt);
-         
+
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append("<html>");
         selectedMaps.append(
                 Messages.getString("ChatLounge.MapSummarySelectedMaps"));
         selectedMaps.append("<br>");
-        ListModel model = lisBoardsSelected.getModel();
+        ListModel<String> model = lisBoardsSelected.getModel();
         for (int i = 0; i < model.getSize(); i++){
-            String map = (String)model.getElementAt(i);
+            String map = model.getElementAt(i);
             selectedMaps.append(map);
-            if (i+1 <model.getSize()){
+            if ((i+1) <model.getSize()){
                 selectedMaps.append("<br>");
             }
         }
         lblMapSummary.setToolTipText(selectedMaps.toString());
     }
-    
+
     public void refreshGameYearLabel(){
         String txt = Messages.getString("ChatLounge.GameYear");
-        txt = txt + " " + 
+        txt = txt + " " +
                 clientgui.getClient().getGame().getOptions().intOption("year");
         lblGameYear.setText(txt);
     }
@@ -2637,19 +2639,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         for (Client client2 : clientgui.getBots().values()) {
             client2.sendDone(done);
         }
-    }
-
-    Client getPlayerListSelected(JList l) {
-        if ((l == null) || (l.getSelectedIndex() == -1)) {
-            return clientgui.getClient();
-        }
-        String name = ((String) l.getSelectedValue()).substring(0,
-                Math.max(0, ((String) l.getSelectedValue()).indexOf(" :"))); //$NON-NLS-1$
-        BotClient c = (BotClient) clientgui.getBots().get(name);
-        if ((c == null) && clientgui.getClient().getName().equals(name)) {
-            return clientgui.getClient();
-        }
-        return c;
     }
 
     Client getPlayerSelected() {
@@ -3349,9 +3338,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     fighters.add(e.getId());
                 }
                 if ((!clientgui.getClient().getGame().getOptions().booleanOption("allow_large_squadrons")
-                		&& fighters.size() > FighterSquadron.MAX_SIZE)
+                		&& (fighters.size() > FighterSquadron.MAX_SIZE))
                 		|| (clientgui.getClient().getGame().getOptions().booleanOption("allow_large_squadrons")
-                        		&& fighters.size() > FighterSquadron.ALTERNATE_MAX_SIZE)) {
+                        		&& (fighters.size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("FighterSquadron.toomany"),
                             Messages.getString("FighterSquadron.error"),
@@ -3450,7 +3439,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (!(en instanceof BattleArmor)) {
                     allBattleArmor = false;
                 }
-                if (prevEntity != null && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
+                if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
                     allSameEntityType = false;
                 }
                 prevEntity = en;
@@ -3471,13 +3460,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled(isOwner || isBot);
                     menuItem.setMnemonic(KeyEvent.VK_C);
                     popup.add(menuItem);
-                    
+
                     menuItem = new JMenuItem("Edit Damage...");
                     menuItem.setActionCommand("DAMAGE");
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
-                    
+
                     menuItem = new JMenuItem("Set individual camo");
                     menuItem.setActionCommand("INDI_CAMO");
                     menuItem.addActionListener(this);
@@ -3510,7 +3499,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
                 while (players.hasMoreElements() && (isOwner || isBot)) {
                     IPlayer p = players.nextElement();
-                    // 
+                    //
                     if (!entity.getOwner().equals(p)) {
                         menuItem = new JMenuItem(p.getName());
                         menuItem.setActionCommand("CHANGE_OWNER|" + p.getId());
@@ -3563,13 +3552,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                             menuLoadAll.add(menuItem);
                             JMenu subMenu = new JMenu(loader.getShortName());
-                            if (loader instanceof FighterSquadron && allCapFighter) {
+                            if ((loader instanceof FighterSquadron) && allCapFighter) {
                                 menuItem = new JMenuItem("Join " + loader.getShortName());
                                 menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
                                 menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                 menuSquadrons.add(menuItem);
-                            } else if (loader instanceof Jumpship && allDropships) {
+                            } else if ((loader instanceof Jumpship) && allDropships) {
                                 menuItem = new JMenuItem(loader.getShortName() + " (Free Collars: " + loader.getDocks() + ")");
                                 menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
@@ -3577,7 +3566,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 menuDocking.add(menuItem);
                             } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()) {
                                 for (Transporter t : loader.getTransports()) {
-                                    if ((t instanceof ClampMountMech || t instanceof ClampMountTank) && allHaveMagClamp) {
+                                    if (((t instanceof ClampMountMech) || (t instanceof ClampMountTank)) && allHaveMagClamp) {
                                         menuItem = new JMenuItem("Onto " + loader.getShortName());
                                         menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                         menuItem.addActionListener(this);
@@ -3637,11 +3626,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             menuClamp.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuClamp);
                         }
-                        if (menuLoadAll.getMenuComponentCount() > 0
-                                && !(menuMounting.getMenuComponentCount() > 0
-                                || menuSquadrons.getMenuComponentCount() > 0
-                                || menuDocking.getMenuComponentCount() > 0
-                                || menu.getMenuComponentCount() > 0)) {
+                        if ((menuLoadAll.getMenuComponentCount() > 0)
+                                && !((menuMounting.getMenuComponentCount() > 0)
+                                || (menuSquadrons.getMenuComponentCount() > 0)
+                                || (menuDocking.getMenuComponentCount() > 0)
+                                || (menu.getMenuComponentCount() > 0))) {
                             menuLoadAll.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuLoadAll);
                         }

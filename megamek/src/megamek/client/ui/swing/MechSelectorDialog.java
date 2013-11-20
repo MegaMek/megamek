@@ -31,6 +31,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -90,9 +91,9 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private JButton btnShowBV;
     private JButton btnAdvSearch;
     private JButton btnResetSearch;
-    private JComboBox comboType;
-    private JComboBox comboUnitType;
-    private JComboBox comboWeight;
+    private JComboBox<String> comboType;
+    private JComboBox<String> comboUnitType;
+    private JComboBox<String> comboWeight;
     private JLabel lblFilter;
     private JLabel lblImage;
     private JLabel lblType;
@@ -106,7 +107,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     JTextField txtFilter;
     private MechViewPanel panelMekView;
     private JLabel lblPlayer;
-    private JComboBox comboPlayer;
+    private JComboBox<String> comboPlayer;
     private JPanel selectionPanel;
     private JSplitPane splitPane;
 
@@ -161,15 +162,15 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         scrTableUnits = new JScrollPane();
         tableUnits = new JTable();
         tableUnits.addKeyListener(this);
-        tableUnits.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        tableUnits.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
         panelMekView = new MechViewPanel();
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
 
-        comboType = new JComboBox();
-        comboWeight = new JComboBox();
-        comboUnitType = new JComboBox();
+        comboType = new JComboBox<String>();
+        comboWeight = new JComboBox<String>();
+        comboUnitType = new JComboBox<String>();
         txtFilter = new JTextField();
 
         btnSelect = new JButton();
@@ -190,7 +191,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         lblImage = new JLabel();
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
-        comboPlayer = new JComboBox();
+        comboPlayer = new JComboBox<String>();
 
         getContentPane().setLayout(new GridBagLayout());
 
@@ -250,7 +251,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblType, c);
 
-        DefaultComboBoxModel techModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<String>();
         for (int i = 0; i < TechConstants.SIZE; i++) {
             techModel.addElement(TechConstants.getLevelDisplayableName(i));
         }
@@ -271,7 +272,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblWeight, c);
 
-        DefaultComboBoxModel weightModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel<String> weightModel = new DefaultComboBoxModel<String>();
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
@@ -296,7 +297,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblUnitType, c);
 
-        DefaultComboBoxModel unitTypeModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<String>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
         unitTypeModel.setSelectedItem(Messages
                 .getString("MechSelectorDialog.All"));
@@ -622,12 +623,12 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
          unitLoadingDialog.setVisible(false);
 
-         // In some cases, it's possible to get here without an initialized 
+         // In some cases, it's possible to get here without an initialized
          // instance (loading a saved game without a cahce).  In these cases,
          // we dn't care about the failed loads.
          if (mscInstance.isInitialized())
          {
-             final Map<String, String> hFailedFiles = 
+             final Map<String, String> hFailedFiles =
                  MechSummaryCache.getInstance().getFailedFiles();
              if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
                  // self-showing dialog
@@ -642,7 +643,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
      @Override
      public void setVisible(boolean visible) {
-         if (visible){             
+         if (visible){
              GUIPreferences guip = GUIPreferences.getInstance();
              comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
              comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
@@ -656,14 +657,15 @@ public class MechSelectorDialog extends JDialog implements Runnable,
          filterUnits();
          super.setVisible(visible);
      }
-     
-     protected void processWindowEvent(WindowEvent e){
-         super.processWindowEvent(e);         
+
+     @Override
+    protected void processWindowEvent(WindowEvent e){
+         super.processWindowEvent(e);
          if (e.getID() == WindowEvent.WINDOW_DEACTIVATED){
              GUIPreferences guip = GUIPreferences.getInstance();
              guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
              guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-             guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
+             guip.setMechSelectorRulesLevel(comboType.getSelectedIndex());
              guip.setMechSelectorSizeHeight(getSize().height);
              guip.setMechSelectorSizeWidth(getSize().width);
          }
@@ -741,9 +743,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             }
 
             public Object getValueAt(int row, int col) {
-                if (data.length <= row)
+                if (data.length <= row) {
                     return "?";
-                
+                }
+
                 MechSummary ms = data[row];
                 if(col == COL_MODEL) {
                     return ms.getModel();
@@ -823,11 +826,11 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
         } else if(ev.getSource().equals(btnAdvSearch)) {
             searchFilter = asd.showDialog();
-            btnResetSearch.setEnabled(searchFilter != null && !searchFilter.isDisabled);
-            filterUnits();            
+            btnResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);
+            filterUnits();
         } else if(ev.getSource().equals(btnResetSearch)) {
             asd.clearValues();
-            searchFilter=null;            
+            searchFilter=null;
             btnResetSearch.setEnabled(false);
             filterUnits();
         }

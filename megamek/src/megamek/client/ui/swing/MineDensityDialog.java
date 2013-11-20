@@ -41,7 +41,7 @@ public class MineDensityDialog extends JDialog implements ActionListener {
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JLabel labDensity = new JLabel(Messages
             .getString("MineDensityDialog.labDensity"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choDensity = new JComboBox();
+    private JComboBox<String> choDensity = new JComboBox<String>();
     private int density;
     //private JFrame frame;
 

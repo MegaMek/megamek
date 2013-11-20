@@ -67,7 +67,7 @@ public class PortraitChoiceDialog extends JDialog {
 	private JButton sourceButton;
 	private JButton btnCancel;
 	private JButton btnSelect;
-	private JComboBox comboCategories;
+	private JComboBox<String> comboCategories;
 	private JScrollPane scrPortraits;
 	private JTable tablePortrait;
 	private DirectoryItems portraits;
@@ -108,8 +108,8 @@ public class PortraitChoiceDialog extends JDialog {
        tablePortrait.getColumnModel().getColumn(0).setCellRenderer(portraitModel.getRenderer());
        tablePortrait.addMouseListener(portraitMouseAdapter);
        scrPortraits.setViewportView(tablePortrait);
-       comboCategories = new JComboBox();
-       DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
+       comboCategories = new JComboBox<String>();
+       DefaultComboBoxModel<String> categoryModel = new DefaultComboBoxModel<String>();
        categoryModel.addElement(Crew.ROOT_PORTRAIT);
        if (portraits != null) {
            Iterator<String> names = portraits.getCategoryNames();

@@ -179,7 +179,7 @@ public class DefaultQuirksHandler {
                 }
 
                 // Add the unit to the default quirks list.
-                if ((quirkList == null) || quirkList.isEmpty()) {
+                if (quirkList.isEmpty()) {
                     System.err.println("No quirks found for " + unitId);
                 }
                 defaultQuirkMap.put(unitId, quirkList);

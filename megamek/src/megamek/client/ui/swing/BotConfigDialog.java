@@ -30,7 +30,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -60,23 +76,23 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     BehaviorSettings princessBehavior;
 
     // Items for princess config here
-    JComboBox verbosityCombo;
+    JComboBox<String> verbosityCombo;
     JTextField targetHexNum;
     JButton addTargetButton;
     JButton removeTargetButton;
     JButton princessHelpButton;
-    JList targetsList;
-    DefaultListModel targetsListModel = new DefaultListModel();
+    JList<String> targetsList;
+    DefaultListModel<String> targetsListModel = new DefaultListModel<String>();
     JCheckBox forcedWithdrawalCheck;
     JCheckBox goHomeCheck;
     JCheckBox autoFleeCheck;
-    JComboBox homeEdgeCombo; //The board edge to be used in a forced withdrawal.
+    JComboBox<String> homeEdgeCombo; //The board edge to be used in a forced withdrawal.
     JSlider aggressionSlidebar;
     JSlider fallShameSlidebar;
     JSlider herdingSlidebar;
     JSlider selfPreservationSlidebar;
     JSlider braverySlidebar;
-    JComboBox princessBehaviorNames;
+    JComboBox<String> princessBehaviorNames;
 
     private JTextField nameField;
     private boolean customName = false; // did user not use default name?
@@ -259,7 +275,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         return panel;
     }
 
-    @SuppressWarnings("unchecked")
     private JPanel princessPanel() {
 
         //Setup layout.
@@ -284,7 +299,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         //Row 1 Column 2
         constraints.gridx++;
         princessBehaviorNames = new JComboBox<String>(behaviorSettingsFactory.getBehaviorNames());
-        princessBehaviorNames.setSelectedItem(behaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
+        princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
         princessBehaviorNames.setToolTipText(Messages.getString("BotConfigDialog.behaviorToolTip"));
         princessBehaviorNames.addActionListener(this);
         princessBehaviorNames.setEditable(true);
@@ -298,7 +313,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 2 Column 2;
         constraints.gridx++;
-        verbosityCombo = new JComboBox(LogLevel.getLogLevelNames());
+        verbosityCombo = new JComboBox<String>(LogLevel.getLogLevelNames());
         verbosityCombo.setToolTipText(Messages.getString("BotConfigDialog.verbosityToolTip"));
         verbosityCombo.setSelectedIndex(0);
         panel.add(verbosityCombo, constraints);
@@ -335,7 +350,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 5 Column 2.
         constraints.gridx++;
-        homeEdgeCombo = new JComboBox(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+        homeEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
                                                    Messages.getString("BotConfigDialog.southEdge"),
                                                    Messages.getString("BotConfigDialog.westEdge"),
                                                    Messages.getString("BotConfigDialog.eastEdge")});
@@ -384,7 +399,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         constraints.gridy++;
         constraints.gridx = 0;
         constraints.gridwidth = 2;
-        targetsList = new JList(targetsListModel);
+        targetsList = new JList<String>(targetsListModel);
         targetsList.setToolTipText(Messages.getString("BotConfigDialog.princessTargetHexNumToolTip"));
         targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -488,7 +503,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         for (int i = 0; i < targetsListModel.getSize(); i++) {
-            String target = (String)targetsListModel.get(i);
+            String target = targetsListModel.get(i);
             tempBehavior.addStrategicTarget(target);
         }
         boolean save = false;

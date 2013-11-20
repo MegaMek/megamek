@@ -283,8 +283,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 1 Column 2
         constraints.gridx++;
-        princessBehaviorNames = new JComboBox(behaviorSettingsFactory.getBehaviorNames());
-        princessBehaviorNames.setSelectedIndex(0);
+        princessBehaviorNames = new JComboBox<String>(behaviorSettingsFactory.getBehaviorNames());
+        princessBehaviorNames.setSelectedItem(behaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
         princessBehaviorNames.setToolTipText(Messages.getString("BotConfigDialog.behaviorToolTip"));
         princessBehaviorNames.addActionListener(this);
         princessBehaviorNames.setEditable(true);

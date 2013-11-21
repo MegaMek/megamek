@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -80,8 +81,8 @@ WindowListener, TreeSelectionListener {
     private JLabel m_labelPlayer = new JLabel(Messages
             .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JComboBox m_chPlayer = new JComboBox();
-    private JComboBox m_chType = new JComboBox();
+    private JComboBox<String> m_chPlayer = new JComboBox<String>();
+    private JComboBox<String> m_chType = new JComboBox<String>();
 
     private JTree m_treeRAT = new JTree();
     //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
@@ -126,6 +127,7 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Tech"));
     private JLabel m_labUnits = new JLabel(Messages
             .getString("RandomArmyDialog.Unit"));
+    private JLabel m_ratStatus;
 
     private JTextField m_tBVmin = new JTextField(6);
     private JTextField m_tBVmax = new JTextField(6);
@@ -150,9 +152,17 @@ WindowListener, TreeSelectionListener {
         m_clientgui = cl;
         m_client = cl.getClient();
         rug = RandomUnitGenerator.getInstance();
+        rug.registerListener(this);
+        if (rug.isInitialized()){
+            m_ratStatus = new JLabel(Messages
+                    .getString("RandomArmyDialog.ratStatusDoneLoading"));            
+        } else {
+            m_ratStatus = new JLabel(Messages
+                    .getString("RandomArmyDialog.ratStatusLoading"));
+        }
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
-                m_client.game.getOptions().intOption("year"));
+                m_client.getGame().getOptions().intOption("year"));
         // set defaults
         m_tMechs.setText("4");
         m_tBVmin.setText("5800");
@@ -162,7 +172,7 @@ WindowListener, TreeSelectionListener {
         m_tMinYear.setText("2500");
         m_tMaxYear.setText("3100");
         m_tInfantry.setText("0");
-        m_chkCanon.setSelected(m_client.game.getOptions().booleanOption(
+        m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
         "canon_only"));
         updateTechChoice(true);
 
@@ -285,6 +295,17 @@ WindowListener, TreeSelectionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.insets = new Insets(0,10,0,0);
+        m_pRAT.add(m_ratStatus,c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -476,6 +497,10 @@ WindowListener, TreeSelectionListener {
             }finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
+        } else if (ev.getSource().equals(rug)) {
+            m_ratStatus.setText(Messages
+                    .getString("RandomArmyDialog.ratStatusDoneLoading"));
+            updateRATs();
         }
     }
 
@@ -527,7 +552,7 @@ WindowListener, TreeSelectionListener {
     }
 
     private void updateTechChoice(boolean force) {
-        boolean maxTechOption = m_client.game.getOptions().booleanOption(
+        boolean maxTechOption = m_client.getGame().getOptions().booleanOption(
         "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);

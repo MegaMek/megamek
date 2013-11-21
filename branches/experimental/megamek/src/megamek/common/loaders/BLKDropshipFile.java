@@ -58,7 +58,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find name block.");
         }
         a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
+        if (dataFile.exists("Model")
+                && (dataFile.getDataAsString("Model")[0] != null)) {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
@@ -124,7 +125,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
-            throw new EntityLoadingException("Could not find structual integrity block.");
+            throw new EntityLoadingException(
+                    "Could not find structual integrity block.");
         }
         a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
 
@@ -147,7 +149,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         // figure out engine stuff
         // not done for small craft and up
         if (!dataFile.exists("SafeThrust")) {
-            throw new EntityLoadingException("Could not find Safe Thrust block.");
+            throw new EntityLoadingException(
+                    "Could not find Safe Thrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
 
@@ -201,7 +204,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         return a;
     }
 
-    protected void loadEquipment(Dropship a, String sName, int nLoc) throws EntityLoadingException {
+    protected void loadEquipment(Dropship a, String sName, int nLoc)
+            throws EntityLoadingException {
         String[] saEquip1 = dataFile.getDataAsString(sName + " Equipment");
         String[] saEquip2 = new String[2];
         String[] saEquip;
@@ -217,7 +221,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 }
             }
         }
-        if ((saEquip2 != null) && (saEquip2[0] != null)) {
+        if (saEquip2[0] != null) {
             saEquip = new String[saEquip1.length + saEquip2.length];
             System.arraycopy(saEquip2, 0, saEquip, 0, saEquip2.length);
             System.arraycopy(saEquip1, 0, saEquip, 2, saEquip1.length);
@@ -225,10 +229,6 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             saEquip = new String[saEquip1.length];
             System.arraycopy(saEquip1, 0, saEquip, 0, saEquip1.length);
         }
-
-        /*if (saEquip == null) {
-            return;
-        }*/
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -245,7 +245,6 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         // set up a new bay type
         boolean newBay = false;
         double bayDamage = 0;
-        int nBay = 1;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
                 rearMount = false;
@@ -289,7 +288,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                         if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
-                            newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);
+                            newmount = a.addEquipment(etype, nLoc, rearMount,
+                                    nAmmo);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -305,10 +305,12 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                         WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = a.addEquipment(weap.getBayType(),
+                                        nLoc, rearMount);
                                 newBay = false;
                             } catch (LocationFullException ex) {
-                                throw new EntityLoadingException(ex.getMessage());
+                                throw new EntityLoadingException(
+                                        ex.getMessage());
                             }
                         }
 
@@ -316,20 +318,27 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                         if (weap.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay
+                                && ((bayDamage + damage) <= 700)
+                                && (bayMount.isRearMounted() == rearMount)
+                                && (weap.getAtClass() == ((WeaponType) bayMount
+                                        .getType()).getAtClass())
+                                && !(((WeaponType) bayMount.getType())
+                                        .isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;
                         } else {
                             try {
-                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = a.addEquipment(weap.getBayType(),
+                                        nLoc, rearMount);
                             } catch (LocationFullException ex) {
-                                throw new EntityLoadingException(ex.getMessage());
+                                throw new EntityLoadingException(
+                                        ex.getMessage());
                             }
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             // reset bay damage
                             bayDamage = damage;
-                            nBay++;
                         }
                     }
                     // ammo should also get loaded into the bay

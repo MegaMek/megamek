@@ -43,7 +43,7 @@ public class DeployCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         if (args.length == 1) {
-            client.getBoard();
+            getClient().getBoard();
             return "The legal deployment zone is: " + legalDeploymentZone();
         } else if (args.length == 5) {
             int id = Integer.parseInt(args[1]);
@@ -51,7 +51,7 @@ public class DeployCommand extends ClientCommand {
                     .parseInt(args[3]) - 1);
             int nFacing = getDirection(args[4]);
 
-            client.deploy(id, coord, nFacing, 0);
+            getClient().deploy(id, coord, nFacing, 0);
             return "Unit " + id + " deployed to " + coord.toFriendlyString()
                     + ". (this is assuming it worked. No error checking done.)";
         }
@@ -60,9 +60,9 @@ public class DeployCommand extends ClientCommand {
     }
 
     public String legalDeploymentZone() {
-        int width = client.getBoard().getWidth();
-        int height = client.getBoard().getHeight();
-        int nDir = client.getLocalPlayer().getStartingPos();
+        int width = getClient().getBoard().getWidth();
+        int height = getClient().getBoard().getHeight();
+        int nDir = getClient().getLocalPlayer().getStartingPos();
         int minx = 0;
         int maxx = width;
         int miny = 0;

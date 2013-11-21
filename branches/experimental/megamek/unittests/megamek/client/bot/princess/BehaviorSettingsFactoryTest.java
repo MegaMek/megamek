@@ -67,9 +67,9 @@ public class BehaviorSettingsFactoryTest {
         testFactory.behaviorMap.clear();
         TestCase.assertFalse(testFactory.loadBehaviorSettings(null));
         TestCase.assertEquals(4, testFactory.behaviorMap.size());
-        expectedBehaviors = new String[]{BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
-                                         BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
+        expectedBehaviors = new String[]{BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
                                          BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+                                         BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
                                          BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION};
         Assert.assertArrayEquals(expectedBehaviors, testFactory.getBehaviorNames());
     }

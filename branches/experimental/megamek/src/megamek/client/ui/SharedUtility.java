@@ -489,7 +489,7 @@ public class SharedUtility {
         StringBuffer nagReport = new StringBuffer();
         List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 
-        if(client.game.useVectorMove()) {
+        if(client.getGame().useVectorMove()) {
             return nagReport.toString();
         }
 

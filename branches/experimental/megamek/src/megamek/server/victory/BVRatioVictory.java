@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Report;
 
 /**
@@ -45,14 +45,14 @@ public class BVRatioVictory extends AbstractBVVictory {
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-            Player player = e.nextElement();
+        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements();) {
+            IPlayer player = e.nextElement();
             if (player.isObserver())
                 continue;
             int fbv = 0;
             int ebv = 0;
             int team = player.getTeam();
-            if (team != Player.TEAM_NONE) {
+            if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
                     continue; // skip if already
                 doneTeams.add(team);
@@ -64,7 +64,7 @@ public class BVRatioVictory extends AbstractBVVictory {
             if (ebv == 0 || (100 * fbv) / ebv >= ratio) {
                 Report r = new Report(7100, Report.PUBLIC);
                 victory = true;
-                if (team == Player.TEAM_NONE) {
+                if (team == IPlayer.TEAM_NONE) {
                     r.add(player.getName());
                     vr.addPlayerScore(player.getId(), 1.0);
                 } else {

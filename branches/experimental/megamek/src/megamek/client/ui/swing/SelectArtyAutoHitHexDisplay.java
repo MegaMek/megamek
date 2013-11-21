@@ -25,7 +25,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -63,7 +63,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     // buttons
     protected Hashtable<Command,MegamekButton> buttons;
 
-    private Player p;
+    private IPlayer p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
     
     private int startingHexes;
@@ -74,7 +74,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        clientgui.getClient().game.addGameListener(this);
+        clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
 
@@ -124,7 +124,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         p = clientgui.getClient().getLocalPlayer();
         // we should get 5 hexes per 4 mapsheets
         // 4 mapsheets is 16*17*4 hexes, so 1088        
-        IBoard board = clientgui.getClient().game.getBoard();
+        IBoard board = clientgui.getClient().getGame().getBoard();
         startingHexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
         artyAutoHitHexes.clear();
         setArtyEnabled(startingHexes);
@@ -153,7 +153,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void addArtyAutoHitHex(Coords coords) {
-        if (!clientgui.getClient().game.getBoard().contains(coords)) {
+        if (!clientgui.getClient().getGame().getBoard().contains(coords)) {
             return;
         }
         if (!artyAutoHitHexes.contains(coords)
@@ -168,7 +168,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(startingHexes - artyAutoHitHexes.size());
             p.addArtyAutoHitHex(coords);
-            clientgui.getClient().game.getBoard().addSpecialHexDisplay(
+            clientgui.getClient().getGame().getBoard().addSpecialHexDisplay(
                     coords,
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
@@ -242,10 +242,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
+                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             endMyTurn();
         }
-        if (clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }
@@ -297,7 +297,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        clientgui.getClient().game.removeGameListener(this);
+        clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 

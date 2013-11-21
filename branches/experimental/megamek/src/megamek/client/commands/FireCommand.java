@@ -91,7 +91,7 @@ public class FireCommand extends ClientCommand {
                     if (args[1].equalsIgnoreCase("TARGET")) {
                         String str = "";
                         try {
-                            Targetable target = client.getEntity(Integer
+                            Targetable target = getClient().getEntity(Integer
                                     .parseInt(args[2]));
                             if (args.length == 4
                                     && args[3].equalsIgnoreCase("ALL")) {
@@ -116,7 +116,7 @@ public class FireCommand extends ClientCommand {
                         return str + " Invalid arguments.";
                     } else if (args[1].equalsIgnoreCase("LIST")) {
                         try {
-                            Targetable target = client.getEntity(Integer
+                            Targetable target = getClient().getEntity(Integer
                                     .parseInt(args[2]));
                             if (target != null) {
                                 String str = " Weapons for " + ce() + " at "
@@ -174,7 +174,7 @@ public class FireCommand extends ClientCommand {
         attacks.removeAllElements();
 
         // remove temporary attacks from game & board
-        client.game.removeActionsFor(cen);
+        getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
@@ -194,7 +194,7 @@ public class FireCommand extends ClientCommand {
         attacks.removeAllElements();
 
         // remove temporary attacks from game & board
-        client.game.removeActionsFor(cen);
+        getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
@@ -245,7 +245,7 @@ public class FireCommand extends ClientCommand {
         attacks.addElement(waa);
 
         // and add it into the game, temporarily
-        client.game.addAction(waa);
+        getClient().getGame().addAction(waa);
 
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -258,7 +258,7 @@ public class FireCommand extends ClientCommand {
                     "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(client.game, cen, target, null))
+        if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null))
             return;
 
         // create and queue a searchlight action
@@ -267,7 +267,7 @@ public class FireCommand extends ClientCommand {
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
-        client.game.addAction(saa);
+        getClient().getGame().addAction(saa);
     }
 
     private String calculateToHit(int weaponId, Targetable target) {
@@ -275,7 +275,7 @@ public class FireCommand extends ClientCommand {
         String str = "No Data";
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
-            toHit = WeaponAttackAction.toHit(client.game, cen, target,
+            toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target,
                     weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
             // str += "Target: " + target.toString();
 
@@ -315,8 +315,8 @@ public class FireCommand extends ClientCommand {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
-                Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Entity attacker = waa.getEntity(getClient().getGame());
+                Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target,
                         attacker.getForwardArc());
@@ -338,8 +338,8 @@ public class FireCommand extends ClientCommand {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
-                Entity attacker = waa.getEntity(client.game);
-                Targetable target = waa.getTarget(client.game);
+                Entity attacker = waa.getEntity(getClient().getGame());
+                Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target,
                         attacker.getForwardArc());
@@ -356,7 +356,7 @@ public class FireCommand extends ClientCommand {
         }
 
         // send out attacks
-        client.sendAttackData(cen, newAttacks);
+        getClient().sendAttackData(cen, newAttacks);
 
         // clear queue
         attacks.removeAllElements();
@@ -366,6 +366,6 @@ public class FireCommand extends ClientCommand {
      * Returns the current Entity.
      */
     public Entity ce() {
-        return client.game.getEntity(cen);
+        return getClient().getGame().getEntity(cen);
     }
 }

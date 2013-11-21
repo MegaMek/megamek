@@ -27,7 +27,6 @@ public class ISSnubNosePPC extends PPCWeapon {
      *
      */
     private static final long serialVersionUID = -5650794792475465261L;
-    private int reintroduced;
 
     /**
      *
@@ -65,7 +64,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         introDate = 2784;
         techLevel.put(2784,TechConstants.T_IS_EXPERIMENTAL);
         extinctDate = 2790;
-        reintroduced = 3067;
+        reintroDate = 3067;
         availRating = new int[] { RATING_E, RATING_X, RATING_E };
         techRating = RATING_E;
     }

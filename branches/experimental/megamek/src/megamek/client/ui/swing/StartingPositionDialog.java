@@ -41,9 +41,9 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
+import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.OffBoardDirection;
-import megamek.common.Player;
 
 /**
  * The starting position dialog allows the player to select a starting position.
@@ -66,7 +66,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     private JPanel panStartButtons = new JPanel();
     private JButton[] butStartPos = new JButton[11];
 
-    private JList lisStartList = new JList(new DefaultListModel());
+    private JList<String> lisStartList = new JList<String>(new DefaultListModel<String>());
 
     /**
      * Creates a new instance of StartingPositionDialog
@@ -114,11 +114,11 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x
-                + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-                clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2
-                        - getSize().height / 2);
+        setLocation((clientgui.frame.getLocation().x
+                + (clientgui.frame.getSize().width / 2)) - (getSize().width / 2),
+                (clientgui.frame.getLocation().y
+                        + (clientgui.frame.getSize().height / 2))
+                        - (getSize().height / 2));
     }
 
     private void setupStartGrid() {
@@ -166,15 +166,15 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     }
 
     public void update() {
-        ((DefaultListModel) lisStartList.getModel()).removeAllElements();
-        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = i.nextElement();
+        ((DefaultListModel<String>) lisStartList.getModel()).removeAllElements();
+        for (Enumeration<IPlayer> i = client.getPlayers(); i.hasMoreElements();) {
+            IPlayer player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player
                         .getStartingPos()]);
-                ((DefaultListModel) lisStartList.getModel()).addElement(ssb
+                ((DefaultListModel<String>) lisStartList.getModel()).addElement(ssb
                         .toString());
             }
         }
@@ -183,8 +183,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         for (int i = 0; i < 11; i++) {
             if (ev.getSource().equals(butStartPos[i])) {
-                if (client.game.getOptions().booleanOption("double_blind")
-                        && client.game.getOptions().booleanOption(
+                if (client.getGame().getOptions().booleanOption("double_blind")
+                        && client.getGame().getOptions().booleanOption(
                                 "exclusive_db_deployment")) {
                     if (i == 0) {
                         clientgui
@@ -192,9 +192,9 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                         "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (Enumeration<Player> e = client.game.getPlayers(); e
+                    for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e
                             .hasMoreElements();) {
-                        Player player = e.nextElement();
+                        IPlayer player = e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
@@ -206,8 +206,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
                         // check for overlapping starting directions
                         if (((player.getStartingPos() == i)
-                                || (player.getStartingPos() + 1 == i) || (player
-                                .getStartingPos() - 1 == i))
+                                || ((player.getStartingPos() + 1) == i) || ((player
+                                .getStartingPos() - 1) == i))
                                 && (player.getId() != client.getLocalPlayer()
                                         .getId())) {
                             clientgui
@@ -218,7 +218,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                         }
                     }
                 }
-                if (client.game.getOptions().booleanOption("deep_deployment")
+                if (client.getGame().getOptions().booleanOption("deep_deployment")
                         && (i > 0) && (i <= 9)) {
                     i += 10;
                 }
@@ -228,7 +228,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 // set all the player's offboard arty units to be behind the
                 // newly
                 // selected home edge.
-                if (client.game.getOptions().booleanOption(
+                if (client.getGame().getOptions().booleanOption(
                         "set_arty_player_homeedge")) { //$NON-NLS-1$
                     OffBoardDirection direction = OffBoardDirection.NONE;
                     switch (i) {
@@ -268,7 +268,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             break;
                         default:
                     }
-                    Enumeration<Entity> thisPlayerArtyUnits = client.game
+                    Enumeration<Entity> thisPlayerArtyUnits = client.getGame()
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client

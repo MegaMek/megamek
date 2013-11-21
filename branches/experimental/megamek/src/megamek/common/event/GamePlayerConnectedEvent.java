@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when some Player connected
@@ -30,7 +30,7 @@ public class GamePlayerConnectedEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GamePlayerConnectedEvent(Object source, Player player) {
+    public GamePlayerConnectedEvent(Object source, IPlayer player) {
         super(source, player);
     }
 

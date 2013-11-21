@@ -139,10 +139,10 @@ public class FighterSquadron extends Aero {
         Vector<Aero> aeroFighters = new Vector<Aero>(fighters.size());
         for (Integer fId : fighters){
             aeroFighters.add((Aero)game.getEntity(fId));
-        }           
+        }
         return aeroFighters;
     }
-    
+
     public Vector<Integer> getFighterIds() {
         return fighters;
     }
@@ -194,7 +194,7 @@ public class FighterSquadron extends Aero {
         }
         return mp;
     }
-    
+
     @Override
     public int getFuel() {
         if (fighters.size() < 1) {
@@ -570,7 +570,8 @@ public class FighterSquadron extends Aero {
             fighter.useFuel(fuel);
         }
     }
-     
+
+    @Override
     public void autoSetMaxBombPoints() {
         maxBombPoints = Integer.MAX_VALUE;
         for (Integer fId : fighters) {
@@ -579,7 +580,8 @@ public class FighterSquadron extends Aero {
             maxBombPoints = Math.min(maxBombPoints,currBombPoints);
         }
     }
-    
+
+    @Override
     public void setBombChoices(int[] bc) {
         // Set the bombs for the squadron
         if (bc.length == bombChoices.length) {
@@ -591,16 +593,17 @@ public class FighterSquadron extends Aero {
             fighter.setBombChoices(bc);
         }
     }
-    
+
     /**
      * Produce an int array of the number of bombs of each type based on the
-     * current bomblist.  Since this is a FighterSquadron, these numbers 
+     * current bomblist.  Since this is a FighterSquadron, these numbers
      * represent the number of bombs in a salvo.  That is, it is a count  of
      * the number of fighters in the squadron that have a bomb of the particular
      * type mounted.
      *
      * @return
      */
+    @Override
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
             for (Integer fId : fighters){
@@ -608,11 +611,12 @@ public class FighterSquadron extends Aero {
                 for (Mounted m : fighter.getBombs()){
                     loadout[((BombType)m.getType()).getBombType()]++;
                 }
-            }              
+            }
         return loadout;
     }
-    
-    
+
+
+    @Override
     public void applyBombs() {
         // Make sure all of the aeros have their bombs applied, otherwise problems
         //  once the bombs are applied, the choices are cleared, so it's not an
@@ -621,11 +625,11 @@ public class FighterSquadron extends Aero {
             Aero fighter = (Aero)game.getEntity(fId);
             fighter.applyBombs();
         }
-        computeSquadronBombLoadout();        
+        computeSquadronBombLoadout();
     }
-    
+
     /**
-     * This method looks at the bombs equipped on all the fighters in the 
+     * This method looks at the bombs equipped on all the fighters in the
      * squadron and determines what possible bombing attacks the squadrons
      * can make.
      */
@@ -635,8 +639,8 @@ public class FighterSquadron extends Aero {
             equipmentList.remove(bomb);
         }
         bombList.clear();
-        
-        
+
+
         // Find out what bombs everyone has
         for (int btype = 0; btype < BombType.B_NUM; btype++){
             // This is smallest number of such a bomb
@@ -644,17 +648,17 @@ public class FighterSquadron extends Aero {
             for (Integer fId : fighters){
                 int bombCount = 0;
                 Aero fighter = (Aero)game.getEntity(fId);
-                ArrayList<Mounted> bombs = fighter.getBombs();                
+                ArrayList<Mounted> bombs = fighter.getBombs();
                 for (Mounted m : bombs){
                     if (((BombType)m.getType()).getBombType() == btype){
                         bombCount++;
                     }
                 }
-                maxBombCount = Math.max(bombCount, maxBombCount);                            
+                maxBombCount = Math.max(bombCount, maxBombCount);
             }
             bombChoices[btype] = maxBombCount;
         }
-        
+
         // Now that we know our bomb choices, load 'em
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
@@ -704,7 +708,7 @@ public class FighterSquadron extends Aero {
             }
         }
         if (!game.getBoard().inSpace()
-                && getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+                && (getBombs(AmmoType.F_GROUND_BOMB).size() > 0)) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE,
                         false);
@@ -721,11 +725,11 @@ public class FighterSquadron extends Aero {
                 }
             }
         }
-        
+
         updateWeaponGroups();
         loadAllWeapons();
     }
-    
+
     /*
      * Determine MAX_SIZE based on game options
      */
@@ -795,20 +799,21 @@ public class FighterSquadron extends Aero {
         }
         if (game.getPhase() != Phase.PHASE_LOUNGE){
             computeSquadronBombLoadout();
-            // updateWeaponGroups() and loadAllWeapons() are called in 
+            // updateWeaponGroups() and loadAllWeapons() are called in
             //  computeSquadronBombLoadout()
-        }else{        
+        }else{
             updateWeaponGroups();
             loadAllWeapons();
         }
         updateSkills();
     }
-    
+
     /**
      * We need to override this function to make sure the proper load method
      * gets called in some cases, but Squadrons can't have bays, so we can just
      * ignore the bay number.
      */
+    @Override
     public void load(Entity unit, boolean checkFalse, int bayNumber){
         load(unit, checkFalse);
     }
@@ -827,9 +832,9 @@ public class FighterSquadron extends Aero {
         boolean success = fighters.removeElement(unit.getId());
         if (game.getPhase() != Phase.PHASE_LOUNGE){
             computeSquadronBombLoadout();
-            // updateWeaponGroups() and loadAllWeapons() are called in 
+            // updateWeaponGroups() and loadAllWeapons() are called in
             //  computeSquadronBombLoadout()
-        }else{        
+        }else{
             updateWeaponGroups();
             loadAllWeapons();
         }
@@ -846,7 +851,6 @@ public class FighterSquadron extends Aero {
      *         data structure; modifying one does not affect the other.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         Vector<Entity> entityFighters = new Vector<Entity>(fighters.size());
@@ -865,18 +869,20 @@ public class FighterSquadron extends Aero {
     public String getUnusedString() {
         return " - " + (getMaxSize() - fighters.size()) + " units";
     }
-    
+
+    @Override
     public double getUnused(){
         return getMaxSize() - fighters.size();
     }
-    
+
     /**
-     * Returns the current amount of cargo space for an entity of the given 
+     * Returns the current amount of cargo space for an entity of the given
      * type.
      * @param e An entity that defines the unit class
      * @return  The number of units of the given type that can be loaded in this
      *   Entity
      */
+    @Override
     public double getUnused(Entity e){
         if (e instanceof Aero){
             return getUnused();
@@ -928,7 +934,8 @@ public class FighterSquadron extends Aero {
     public int getCargoMpReduction() {
         return 0;
     }
-    
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_FIGHTER_SQUADRON;
     }

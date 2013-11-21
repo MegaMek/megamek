@@ -37,10 +37,8 @@ public class MechView {
     private boolean isInf;
     private boolean isBA;
     private boolean isVehicle;
-    private boolean isVTOL;
     private boolean isProto;
     private boolean isGunEmplacement;
-    private boolean isLargeSupportVehicle;
     private boolean isAero;
     private boolean isFixedWingSupport;
     private boolean isSquadron;
@@ -59,10 +57,8 @@ public class MechView {
         isInf = entity instanceof Infantry;
         isBA = entity instanceof BattleArmor;
         isVehicle = entity instanceof Tank;
-        isVTOL = entity instanceof VTOL;
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
-        isLargeSupportVehicle = entity instanceof LargeSupportTank;
         isAero = entity instanceof Aero;
         isFixedWingSupport = entity instanceof FixedWingSupport;
         isSquadron = entity instanceof FighterSquadron;

@@ -32,7 +32,7 @@ public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
             WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
         // so that reflective armor doesn't halve the damae
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
     }
 
 }

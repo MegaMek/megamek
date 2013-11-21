@@ -21,7 +21,7 @@ import java.awt.Component;
 import java.awt.Image;
 
 import megamek.common.Entity;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  *
@@ -29,7 +29,7 @@ import megamek.common.Player;
  */
 public interface ITilesetManager {
 
-    public Image getPlayerCamo(Player player);
+    public Image getPlayerCamo(IPlayer player);
 
     public Image getEntityCamo(Entity entity);
 

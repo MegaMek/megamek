@@ -45,19 +45,19 @@ public final class PhysicalCalculator {
     }
 
     static PhysicalOption calculatePhysicalTurn(TestBot bot) {
-        int entNum = bot.game.getFirstEntityNum(bot.getMyTurn());
+        int entNum = bot.getGame().getFirstEntityNum(bot.getMyTurn());
         int first = entNum;
         do {
             // take the first entity that can do an attack
-            Entity en = bot.game.getEntity(entNum);
-            PhysicalOption bestAttack = getBestPhysical(en, bot.game);
+            Entity en = bot.getGame().getEntity(entNum);
+            PhysicalOption bestAttack = getBestPhysical(en, bot.getGame());
 
             if (bestAttack != null) {
 
                 return bestAttack;
 
             } // End no-attack
-            entNum = bot.game.getNextEntityNum(entNum);
+            entNum = bot.getGame().getNextEntityNum(entNum);
 
         } while ((entNum != -1) && (entNum != first));
 

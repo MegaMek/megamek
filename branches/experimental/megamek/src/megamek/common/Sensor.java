@@ -41,8 +41,10 @@ public class Sensor implements Serializable {
     public static final int TYPE_MEK_SEISMIC = 13;
     public static final int TYPE_VEE_SEISMIC = 14;
     public static final int TYPE_EW_EQUIPMENT =15;
+    public static final int TYPE_NOVA        = 16; //WOR: NovaCEWS
 
     public static final String WATCHDOG = "WatchdogECMSuite";
+    public static final String NOVA = "NovaCEWS"; //WOR: NovaCEWS
     public static final String BAP = "BeagleActiveProbe";
     public static final String CLAN_AP = "CLActiveProbe";
     public static final String BLOODHOUND = "BloodhoundActiveProbe";
@@ -55,7 +57,7 @@ public class Sensor implements Serializable {
 
     private static String[] sensorNames = {"Mech Radar", "Vehicle Radar", "Beagle Active Probe", "Clan BAP", "Bloodhound AP",
                                     "Watchdog", "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan", "Vehicle Magscan",
-                                    "Heat Sensors", "Improved Sensors", "Mech Seismic", "Vehicle Seismic", "EW Equipment"};
+                                    "Heat Sensors", "Improved Sensors", "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS"};
     public static final int SIZE = sensorNames.length;
 
 
@@ -81,7 +83,7 @@ public class Sensor implements Serializable {
     public boolean isBAP() {
         return (type == TYPE_BAP) || (type == TYPE_BLOODHOUND)
             || (type == TYPE_CLAN_BAP) || (type == TYPE_WATCHDOG)
-            || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT);
+            || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT) || (type == TYPE_NOVA); //WOR: Nova
     }
 
     public int getRangeByBracket() {
@@ -98,6 +100,8 @@ public class Sensor implements Serializable {
         case TYPE_VEE_MAGSCAN:
         case TYPE_VEE_IR:
         case TYPE_BA_HEAT:
+            return 9;
+        case TYPE_NOVA: // WOR: I've not found a reference for sensor range of NovaCEWS. Assuming Watchdog range.
             return 9;
         case TYPE_MEK_MAGSCAN:
         case TYPE_MEK_IR:
@@ -192,6 +196,7 @@ public class Sensor implements Serializable {
             }
             break;
         case (TYPE_WATCHDOG):
+        case (TYPE_NOVA): // WOR: same as above. No data available, assuming Watchdog performancae
             if(te.isVoidSigActive()) {
                 mod += 6;
             }
@@ -326,6 +331,7 @@ public class Sensor implements Serializable {
         case (TYPE_BAP):
         case (TYPE_CLAN_BAP):
         case (TYPE_WATCHDOG):
+        case (TYPE_NOVA): // WOR: as above, no data, assuming watchdog quality
         case (TYPE_EW_EQUIPMENT):
             return (int)Math.floor(ecm * 4 + ecmAngel * 5);
         case (TYPE_BLOODHOUND):

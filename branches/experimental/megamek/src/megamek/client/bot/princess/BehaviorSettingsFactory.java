@@ -68,7 +68,7 @@ public class BehaviorSettingsFactory {
 
     /**
      * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache.  If the cache is empty, it will load from
-     * mmconf/princessBehaviors.xml.  Also, if the "-- default --" behavior is missing, it will be added.
+     * mmconf/princessBehaviors.xml.  Also, if the "DEFAULT behavior is missing, it will be added.
      *
      * @param reinitialize Set TRUE to force the cache to be completely rebuilt.
      */
@@ -137,7 +137,7 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache.  If the "-- default --" behavior is
+     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache.  If the "DEFAULT" behavior is
      * missing it will be automatically added.
      *
      * @return TRUE if the load completes successfully.
@@ -348,7 +348,7 @@ public class BehaviorSettingsFactory {
      * Strategic Targets: None <br>
      */
     public final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();
-    public static final String DEFAULT_BEHAVIOR_DESCRIPTION = "- DEFAULT -";
+    public static final String DEFAULT_BEHAVIOR_DESCRIPTION = "DEFAULT";
     private BehaviorSettings buildDefaultBehavior() {
         try {
             BehaviorSettings defaultBehavior = new BehaviorSettings();

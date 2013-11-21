@@ -421,6 +421,7 @@ public class MechFileParser {
             } // End link-Apollo
               // now find any active probes and add them to the sensor list
               // choose this sensor if added
+              //WOR CEWS
             if (m.getType().hasFlag(MiscType.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
@@ -429,9 +430,11 @@ public class MechFileParser {
                         .equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if (m.getType().getInternalName()
-                        .equals(Sensor.WATCHDOG)) {
+                } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_WATCHDOG));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if (m.getType().getInternalName().equals(Sensor.NOVA)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_NOVA));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_BAP));

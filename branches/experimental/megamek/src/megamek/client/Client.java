@@ -41,6 +41,7 @@ import javax.swing.SwingUtilities;
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.commands.AddBotCommand;
+import megamek.client.commands.AssignNovaNetworkCommand;
 import megamek.client.commands.ClientCommand;
 import megamek.client.commands.DeployCommand;
 import megamek.client.commands.FireCommand;
@@ -65,6 +66,7 @@ import megamek.common.GameTurn;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.MapSettings;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
@@ -72,7 +74,6 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
@@ -117,19 +118,19 @@ public class Client implements IClientCommandHandler {
 
     // some info about us and the server
     private boolean connected = false;
-    public int local_pn = -1;
+    protected int local_pn = -1;
     private String host;
     private int port;
 
     // the game state object
-    public IGame game = new Game();
+    protected IGame game = new Game();
 
     // here's some game phase stuff
     private MapSettings mapSettings;
     public String phaseReport;
     public String roundReport;
 
-    //random generators
+    //random generatorsI
     private RandomSkillsGenerator rsg;
     // And close client events!
     private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
@@ -168,12 +169,9 @@ public class Client implements IClientCommandHandler {
      * Construct a client which will try to connect. If the connection fails, it
      * will alert the player, free resources and hide the frame.
      *
-     * @param name
-     *            the player name for this client
-     * @param host
-     *            the hostname
-     * @param port
-     *            the host port
+     * @param name the player name for this client
+     * @param host the hostname
+     * @param port the host port
      */
     public Client(String name, String host, int port) {
         // construct new client
@@ -189,6 +187,8 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
+//WOR: Nova CEWS.
+        registerCommand(new AssignNovaNetworkCommand(this));
 
         rsg = new RandomSkillsGenerator();
 
@@ -215,6 +215,14 @@ public class Client implements IClientCommandHandler {
             }
         };
         ts.schedule(packetUpdate2, 500, 100);
+    }
+
+    public int getLocal_pn() {
+        return local_pn;
+    }
+
+    public void setLocal_pn(int local_pn) {
+        this.local_pn = local_pn;
     }
 
     /**
@@ -315,7 +323,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration<Player> getPlayers() {
+    public Enumeration<IPlayer> getPlayers() {
         return game.getPlayers();
     }
 
@@ -326,14 +334,14 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    public Player getPlayer(int idx) {
+    public IPlayer getPlayer(int idx) {
         return game.getPlayer(idx);
     }
 
     /**
      * Return the local player
      */
-    public Player getLocalPlayer() {
+    public IPlayer getLocalPlayer() {
         return getPlayer(local_pn);
     }
 
@@ -390,12 +398,14 @@ public class Client implements IClientCommandHandler {
     public MapSettings getMapSettings() {
         return mapSettings;
     }
+
     /**
      * give the initiative to the next player on the team.
      */
-    public void sendNextPlayer(){
+    public void sendNextPlayer() {
         connection.send(new Packet(Packet.COMMAND_FORWARD_INITIATIVE));
     }
+
     /**
      * Changes the game phase, and the displays that go along with it.
      */
@@ -403,55 +413,55 @@ public class Client implements IClientCommandHandler {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
-        case PHASE_STARTING_SCENARIO:
-            sendDone(true);
-            break;
-        case PHASE_EXCHANGE:
-            sendDone(true);
-            break;
-        case PHASE_DEPLOYMENT:
-            // free some memory thats only needed in lounge
-            MechFileParser.dispose();
-            RandomUnitGenerator.getInstance().dispose();
-            getRandomNameGenerator().dispose();
-            //We must do this last, as the name and unit generators can create
-            // a new instance if they are running
-            MechSummaryCache.dispose();
-            memDump("entering deployment phase"); //$NON-NLS-1$
-            break;
-        case PHASE_TARGETING:
-            memDump("entering targeting phase"); //$NON-NLS-1$
-            break;
-        case PHASE_MOVEMENT:
-            memDump("entering movement phase"); //$NON-NLS-1$
-            break;
-        case PHASE_OFFBOARD:
-            memDump("entering offboard phase"); //$NON-NLS-1$
-            break;
-        case PHASE_FIRING:
-            memDump("entering firing phase"); //$NON-NLS-1$
-            break;
-        case PHASE_PHYSICAL:
-            memDump("entering physical phase"); //$NON-NLS-1$
-            break;
-        case PHASE_LOUNGE:
-            try {
-                DefaultQuirksHandler.initQuirksList();
-            } catch (IOException e) {
-                System.out.println(e);
-            }
-            RandomNameGenerator.initialize();
-            MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
-                public void doneLoading() {
+            case PHASE_STARTING_SCENARIO:
+                sendDone(true);
+                break;
+            case PHASE_EXCHANGE:
+                sendDone(true);
+                break;
+            case PHASE_DEPLOYMENT:
+                // free some memory thats only needed in lounge
+                MechFileParser.dispose();
+                RandomUnitGenerator.getInstance().dispose();
+                getRandomNameGenerator().dispose();
+                //We must do this last, as the name and unit generators can create
+                // a new instance if they are running
+                MechSummaryCache.dispose();
+                memDump("entering deployment phase"); //$NON-NLS-1$
+                break;
+            case PHASE_TARGETING:
+                memDump("entering targeting phase"); //$NON-NLS-1$
+                break;
+            case PHASE_MOVEMENT:
+                memDump("entering movement phase"); //$NON-NLS-1$
+                break;
+            case PHASE_OFFBOARD:
+                memDump("entering offboard phase"); //$NON-NLS-1$
+                break;
+            case PHASE_FIRING:
+                memDump("entering firing phase"); //$NON-NLS-1$
+                break;
+            case PHASE_PHYSICAL:
+                memDump("entering physical phase"); //$NON-NLS-1$
+                break;
+            case PHASE_LOUNGE:
+                try {
+                    DefaultQuirksHandler.initQuirksList();
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+                RandomNameGenerator.initialize();
+                MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
+                    public void doneLoading() {
+                        RandomUnitGenerator.getInstance();
+                    }
+                });
+                if (MechSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();
                 }
-            });
-            if (MechSummaryCache.getInstance().isInitialized()) {
-                RandomUnitGenerator.getInstance();
-            }
-            duplicateNameHash.clear(); // reset this
-            break;
-        default:
+                duplicateNameHash.clear(); // reset this
+                break;
+            default:
         }
     }
 
@@ -459,8 +469,7 @@ public class Client implements IClientCommandHandler {
      * Adds the specified close client listener to receive close client events.
      * This is used by external programs running megamek
      *
-     * @param l
-     *            the game listener.
+     * @param l the game listener.
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
@@ -532,8 +541,8 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip),
-                new Integer(nMode) };
+        Object[] data = {new Integer(nEntity), new Integer(nEquip),
+                new Integer(nMode)};
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
@@ -541,8 +550,8 @@ public class Client implements IClientCommandHandler {
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip),
-                new Integer(nFacing) };
+        Object[] data = {new Integer(nEntity), new Integer(nEquip),
+                new Integer(nFacing)};
         send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
     }
 
@@ -550,7 +559,7 @@ public class Client implements IClientCommandHandler {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip) };
+        Object[] data = {new Integer(nEntity), new Integer(nEquip)};
         send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, data));
     }
 
@@ -558,8 +567,8 @@ public class Client implements IClientCommandHandler {
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nSystem),
-                new Integer(nMode) };
+        Object[] data = {new Integer(nEntity), new Integer(nSystem),
+                new Integer(nMode)};
         send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
     }
 
@@ -567,8 +576,8 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon),
-                new Integer(nAmmo) };
+        Object[] data = {new Integer(nEntity), new Integer(nWeapon),
+                new Integer(nAmmo)};
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -587,12 +596,9 @@ public class Client implements IClientCommandHandler {
     /**
      * Maintain backwards compatability.
      *
-     * @param id
-     *            - the <code>int</code> ID of the deployed entity
-     * @param c
-     *            - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *            - the <code>int</code> direction the entity should face
+     * @param id      - the <code>int</code> ID of the deployed entity
+     * @param c       - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
         this.deploy(id, c, nFacing, elevation, new Vector<Entity>(), false);
@@ -602,20 +608,15 @@ public class Client implements IClientCommandHandler {
      * Deploy an entity at the given coordinates, with the given facing, and
      * starting with the given units already loaded.
      *
-     * @param id
-     *            - the <code>int</code> ID of the deployed entity
-     * @param c
-     *            - the <code>Coords</code> where the entity should be deployed
-     * @param nFacing
-     *            - the <code>int</code> direction the entity should face
-     * @param loadedUnits
-     *            - a <code>List</code> of units that start the game being
-     *            transported byt the deployed entity.
-     * @param assaultDrop
-     *            - true if deployment is an assault drop
+     * @param id          - the <code>int</code> ID of the deployed entity
+     * @param c           - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing     - the <code>int</code> direction the entity should face
+     * @param loadedUnits - a <code>List</code> of units that start the game being
+     *                    transported byt the deployed entity.
+     * @param assaultDrop - true if deployment is an assault drop
      */
     public void deploy(int id, Coords c, int nFacing, int elevation,
-            List<Entity> loadedUnits, boolean assaultDrop) {
+                       List<Entity> loadedUnits, boolean assaultDrop) {
         int packetCount = 6 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
@@ -705,7 +706,7 @@ public class Client implements IClientCommandHandler {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        Player player = game.getPlayer(local_pn);
+        IPlayer player = game.getPlayer(local_pn);
         PreferenceManager.getClientPreferences().setLastPlayerColor(
                 player.getColorIndex());
         PreferenceManager.getClientPreferences().setLastPlayerCategory(
@@ -714,12 +715,12 @@ public class Client implements IClientCommandHandler {
                 player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
-    
+
     /**
      * Reset round deployment packet
      */
     public void sendResetRoundDeployment() {
-    	send(new Packet(Packet.COMMAND_RESET_ROUND_DEPLOYMENT));
+        send(new Packet(Packet.COMMAND_RESET_ROUND_DEPLOYMENT));
     }
 
     /**
@@ -751,7 +752,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendAddSquadron(FighterSquadron fs, Vector<Integer> fighterIds) {
         checkDuplicateNamesDuringAdd(fs);
-        send(new Packet(Packet.COMMAND_SQUADRON_ADD, new Object[] {fs, fighterIds}));
+        send(new Packet(Packet.COMMAND_SQUADRON_ADD, new Object[]{fs, fighterIds}));
     }
 
     /**
@@ -779,7 +780,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "update custom initiative" packet
      */
-    public void sendCustomInit(Player player) {
+    public void sendCustomInit(IPlayer player) {
         send(new Packet(Packet.COMMAND_CUSTOM_INITIATIVE, player));
     }
 
@@ -801,18 +802,18 @@ public class Client implements IClientCommandHandler {
      * Sends a "load entity" packet
      */
     public void sendLoadEntity(int id, int loaderId, int bayNumber) {
-        send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[] {id, loaderId, bayNumber}));
+        send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[]{id, loaderId, bayNumber}));
     }
 
-    /***
+    /**
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
         ObjectInputStream ois;
         try {
             ois = new ObjectInputStream(new FileInputStream(f));
-            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { f,
-                    ois.readObject() }));
+            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[]{f,
+                    ois.readObject()}));
         } catch (Exception e) {
             System.out.println("Can't find local savegame " + f);
         }
@@ -823,7 +824,7 @@ public class Client implements IClientCommandHandler {
      */
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        Player newPlayer = (Player) c.getObject(1);
+        IPlayer newPlayer = (IPlayer) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
         } else {
@@ -1080,6 +1081,19 @@ public class Client implements IClientCommandHandler {
     protected void send(Packet packet) {
         connection.send(packet);
     }
+    
+
+    /**
+     * Send a Nova CEWS update packet
+     * @param ID
+     * @param net
+     */
+    public void sendNovaChange(int ID, String net)
+    {
+    	Object[] data = {new Integer(ID), new String(net)};
+    	Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
+    	send(packet);
+    }
 
     /**
      * send all buffered packets on their way this should be called after
@@ -1179,11 +1193,11 @@ public class Client implements IClientCommandHandler {
                     (IHex) c.getObject(1));
             break;
         case Packet.COMMAND_CHANGE_HEXES:
-            List<Coords> coords = 
+            List<Coords> coords =
                 new ArrayList<Coords>((Set<Coords>)c.getObject(0));
-            List<IHex> hexes = 
-                new ArrayList<IHex>((Set<IHex>)c.getObject(1));            
-            game.getBoard().setHexes(coords, hexes);            
+            List<IHex> hexes =
+                new ArrayList<IHex>((Set<IHex>)c.getObject(1));
+            game.getBoard().setHexes(coords, hexes);
             break;
         case Packet.COMMAND_BLDG_UPDATE:
             receiveBuildingUpdate(c);
@@ -1334,21 +1348,44 @@ public class Client implements IClientCommandHandler {
             availableSizes = (Set<BoardDimensions>)c.getObject(0);
             game.processGameEvent(new GameSettingsChangeEvent(this));
             break;
+        case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE: // WOR: Nova CEWS
+            receiveEntityNovaNetworkModeChange(c);
+            break;
         }
     }
-
     /**
+     * WOR: used the mode change function code. Don't seem to be necessary at client side.
+     * receive and process an entity mode change packet
+     * 
+     * @param c
+     * @param connIndex
+     */
+    private void receiveEntityNovaNetworkModeChange(Packet c) {
+        // FIXME: Greg: This doesn't seem right at all.        
+        try {
+        	int entityId = c.getIntValue(0);
+            String networkID = c.getObject(1).toString();
+            Entity e = game.getEntity(entityId);
+            if(e!=null)
+            {
+            	e.setNewRoundNovaNetworkString(networkID);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+    
+    /**
+     * 
      * Perform a dump of the current memory usage.
      * <p/>
      * This method is useful in tracking performance issues on various player's
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.
      *
-     * @param where
-     *            - a <code>String</code> indicating which part of the game is
-     *            making this call.
-     * @see megamek.common.Settings#memoryDumpOn
-     * @see megamek.client.Client#changePhase(int)
+     * @param where - a <code>String</code> indicating which part of the game is
+     *              making this call.
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
@@ -1408,7 +1445,7 @@ public class Client implements IClientCommandHandler {
     /**
      * If we remove an entity, we may need to update the duplicate identifier.
      *
-     * @param id
+     * @param ids
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {        
         ArrayList<Entity> myEntities = game.getPlayerEntities(
@@ -1463,8 +1500,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * @param text
-     *            a client command with CLIENT_COMMAND prepended.
+     * @param cmd a client command with CLIENT_COMMAND prepended.
      */
     public String runCommand(String cmd) {
         cmd = cmd.substring(CLIENT_COMMAND.length());
@@ -1475,9 +1511,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Runs the command
      *
-     * @param args
-     *            the command and it's arguments with the CLIENT_COMMAND already
-     *            removed, and the string tokenized.
+     * @param args the command and it's arguments with the CLIENT_COMMAND already
+     *             removed, and the string tokenized.
      */
     public String runCommand(String[] args) {
         if ((args != null) && (args.length > 0)
@@ -1520,5 +1555,9 @@ public class Client implements IClientCommandHandler {
 
     public Set<BoardDimensions> getAvailableMapSizes() {
         return availableSizes;
+    }
+
+    public IGame getGame() {
+        return game;
     }
 }

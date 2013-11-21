@@ -92,7 +92,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     return;
                 }
                 if (clientgui.getClient().isMyTurn() || 
-                		(clientgui.getClient().game.getTurn() == null)) {
+                		(clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
@@ -111,7 +111,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     return;
                 }
                 if (clientgui.getClient().isMyTurn() || 
-                		(clientgui.getClient().game.getTurn() == null)) {
+                		(clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }

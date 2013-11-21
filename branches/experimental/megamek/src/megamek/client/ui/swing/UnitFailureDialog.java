@@ -51,7 +51,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
 
     private Map<String, String> hFailedFiles;
 
-    private JList failedList;
+    private JList<String> failedList;
 
     private JTextArea reasonTextArea = new JTextArea("", 4, 20); //$NON-NLS-1$
 
@@ -65,7 +65,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
         while (failedUnits.hasNext()) {
             failed[i++] = failedUnits.next();
         }
-        failedList = new JList(failed);
+        failedList = new JList<String>(failed);
 
         reasonTextArea.setEditable(false);
         reasonTextArea.setOpaque(false);
@@ -78,9 +78,9 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
                 BorderLayout.CENTER);
 
         setSize(400, 300);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
+                - (getSize().width / 2), (frame.getLocation().y
+                + (frame.getSize().height / 2)) - (getSize().height / 2));
 
         JButton okButton = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okButton.addActionListener(this);

@@ -82,23 +82,23 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private JTextField texBoardWidth;
     private JTextField texBoardHeight;
 
-    private JComboBox choElevation;
-    private JComboBox choCliffs;
-    private JComboBox choWoods;
-    private JComboBox choLakes;
-    private JComboBox choPavement;
-    private JComboBox choRubble;
-    private JComboBox choFortified;
-    private JComboBox choIce;
-    private JComboBox choRough;
-    private JComboBox choSand;
-    private JComboBox choPlantedField;
-    private JComboBox choRoads;
-    private JComboBox choRivers;
-    private JComboBox choSwamp;
-    private JComboBox choCraters;
-    private JComboBox choCity;
-    private JComboBox choMountain;
+    private JComboBox<String> choElevation;
+    private JComboBox<String> choCliffs;
+    private JComboBox<String> choWoods;
+    private JComboBox<String> choLakes;
+    private JComboBox<String> choPavement;
+    private JComboBox<String> choRubble;
+    private JComboBox<String> choFortified;
+    private JComboBox<String> choIce;
+    private JComboBox<String> choRough;
+    private JComboBox<String> choSand;
+    private JComboBox<String> choPlantedField;
+    private JComboBox<String> choRoads;
+    private JComboBox<String> choRivers;
+    private JComboBox<String> choSwamp;
+    private JComboBox<String> choCraters;
+    private JComboBox<String> choCity;
+    private JComboBox<String> choMountain;
 
     private JLabel labElevation;
     private JLabel labCliffs;
@@ -707,97 +707,97 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         // Normal setting components...
         labElevation = new JLabel(Messages
                 .getString("RandomMapDialog.labElevation"), SwingConstants.LEFT); //$NON-NLS-1$
-        choElevation = new JComboBox();
+        choElevation = new JComboBox<String>();
         fillChoice(choElevation);
         slElevation = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labCliffs = new JLabel(
                 Messages.getString("RandomMapDialog.labCliffs"), SwingConstants.LEFT); //$NON-NLS-1$
-        choCliffs = new JComboBox();
+        choCliffs = new JComboBox<String>();
         fillChoice(choCliffs);
         slCliffs = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labWoods = new JLabel(
                 Messages.getString("RandomMapDialog.labWoods"), SwingConstants.LEFT); //$NON-NLS-1$
-        choWoods = new JComboBox();
+        choWoods = new JComboBox<String>();
         fillChoice(choWoods);
         slWoods = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labLakes = new JLabel(
                 Messages.getString("RandomMapDialog.labLakes"), SwingConstants.LEFT); //$NON-NLS-1$
-        choLakes = new JComboBox();
+        choLakes = new JComboBox<String>();
         fillChoice(choLakes);
         slLakes = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labRough = new JLabel(
                 Messages.getString("RandomMapDialog.labRough"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRough = new JComboBox();
+        choRough = new JComboBox<String>();
         fillChoice(choRough);
         slRough = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labSand = new JLabel(
                 Messages.getString("RandomMapDialog.labSand"), SwingConstants.LEFT); //$NON-NLS-1$
-        choSand = new JComboBox();
+        choSand = new JComboBox<String>();
         fillChoice(choSand);
         slSand = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labPlantedField = new JLabel(
                 Messages.getString("RandomMapDialog.labPlantedField"), SwingConstants.LEFT); //$NON-NLS-1$
-        choPlantedField = new JComboBox();
+        choPlantedField = new JComboBox<String>();
         fillChoice(choPlantedField);
         slPlantedField = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labSwamp = new JLabel(
                 Messages.getString("RandomMapDialog.labSwamp"), SwingConstants.LEFT); //$NON-NLS-1$
-        choSwamp = new JComboBox();
+        choSwamp = new JComboBox<String>();
         fillChoice(choSwamp);
         slSwamp = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labPavement = new JLabel(Messages
                 .getString("RandomMapDialog.labPavement"), SwingConstants.LEFT);
-        choPavement = new JComboBox();
+        choPavement = new JComboBox<String>();
         fillChoice(choPavement);
         slPavement = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labRubble = new JLabel(Messages.getString("RandomMapDialog.labRubble"),
                 SwingConstants.LEFT);
-        choRubble = new JComboBox();
+        choRubble = new JComboBox<String>();
         fillChoice(choRubble);
         slRubble = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labFortified = new JLabel(Messages
                 .getString("RandomMapDialog.labFortified"), SwingConstants.LEFT);
-        choFortified = new JComboBox();
+        choFortified = new JComboBox<String>();
         fillChoice(choFortified);
         slFortified = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labIce = new JLabel(Messages.getString("RandomMapDialog.labIce"),
                 SwingConstants.LEFT);
-        choIce = new JComboBox();
+        choIce = new JComboBox<String>();
         fillChoice(choIce);
         slIce = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labCraters = new JLabel(Messages
                 .getString("RandomMapDialog.labCraters"), SwingConstants.LEFT);
-        choCraters = new JComboBox();
+        choCraters = new JComboBox<String>();
         fillChoice(choCraters);
         slCraters = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labRivers = new JLabel(
                 Messages.getString("RandomMapDialog.labRivers"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRivers = new JComboBox();
+        choRivers = new JComboBox<String>();
         fillChoice(choRivers);
         slRivers = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labRoads = new JLabel(
                 Messages.getString("RandomMapDialog.labRoads"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRoads = new JComboBox();
+        choRoads = new JComboBox<String>();
         fillChoice(choRoads);
         slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labCity = new JLabel(
                 Messages.getString("RandomMapDialog.labCity"), SwingConstants.LEFT); //$NON-NLS-1$
-        choCity = new JComboBox();
+        choCity = new JComboBox<String>();
         choCity.addItem(NONE);
         choCity.addItem("HUB");
         choCity.addItem("GRID");
@@ -806,7 +806,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         slCity = new SimpleLine(NORMAL_LINE_WIDTH);
         labMountain = new JLabel(Messages
                 .getString("RandomMapDialog.labMountain"), SwingConstants.LEFT); //$NON-NLS-1$
-        choMountain = new JComboBox();
+        choMountain = new JComboBox<String>();
         fillChoice(choMountain);
         slMountain = new SimpleLine(NORMAL_LINE_WIDTH);
 
@@ -1116,7 +1116,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
 
     }
 
-    private void addOption(JLabel label, JComboBox choice, SimpleLine sl) {
+    private void addOption(JLabel label, JComboBox<String> choice, SimpleLine sl) {
         GridBagConstraints c = new GridBagConstraints();
 
         c.weightx = 1;
@@ -1138,7 +1138,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
 
     }
 
-    private void fillChoice(JComboBox c) {
+    private void fillChoice(JComboBox<String> c) {
         c.addItem(NONE);
         c.addItem(LOW);
         c.addItem(MEDIUM);

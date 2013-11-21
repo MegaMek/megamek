@@ -32,6 +32,10 @@ import java.util.ResourceBundle;
  */
 public class SavePrincessDialog extends JDialog implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8941569745045361519L;
     JLabel question;
     JCheckBox saveTargets;
     JButton yesButton;

@@ -32,13 +32,19 @@ import megamek.common.weapons.battlearmor.CLHeavyRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLLightRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLMediumRecoillessRifle;
 import megamek.common.weapons.battlearmor.CLSupportPPC;
+import megamek.common.weapons.battlearmor.ISBAERMediumLaser;
+import megamek.common.weapons.battlearmor.ISBAERSmallLaser;
 import megamek.common.weapons.battlearmor.ISBAFlamer;
 import megamek.common.weapons.battlearmor.ISBAHeavyFlamer;
 import megamek.common.weapons.battlearmor.ISBAHeavyMG;
 import megamek.common.weapons.battlearmor.ISBALightMG;
 import megamek.common.weapons.battlearmor.ISBAMG;
 import megamek.common.weapons.battlearmor.ISBAMagshotGaussRifle;
+import megamek.common.weapons.battlearmor.ISBAMediumLaser;
+import megamek.common.weapons.battlearmor.ISBAMediumPulseLaser;
 import megamek.common.weapons.battlearmor.ISBAPlasmaRifle;
+import megamek.common.weapons.battlearmor.ISBASmallLaser;
+import megamek.common.weapons.battlearmor.ISBASmallPulseLaser;
 import megamek.common.weapons.battlearmor.ISBATaser;
 import megamek.common.weapons.battlearmor.ISBATubeArtillery;
 import megamek.common.weapons.battlearmor.ISDavidLightGaussRifle;
@@ -350,6 +356,24 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
+        //WOR: iATM stuff
+        if (getAmmoType() == AmmoType.T_IATM) {
+            AmmoType atype = (AmmoType) weapon.getLinked().getType();
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                minRange = 4;
+                sRange = 9;
+                mRange = 18;
+                lRange = 27;
+                eRange = 36;
+            } else if ((atype.getAmmoType() == AmmoType.T_IATM) && ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)||(atype.getMunitionType() == AmmoType.M_IATM_IMP))) {
+                minRange = 0;
+                sRange = 3;
+                mRange = 6;
+                lRange = 9;
+                eRange = 12;
+            }
+        }
+        //WOR: iATM stuff end
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
@@ -885,6 +909,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLATM6());
         EquipmentType.addType(new CLATM9());
         EquipmentType.addType(new CLATM12());
+        // WOR: iATMs
+        EquipmentType.addType(new CLIATM3());
+        EquipmentType.addType(new CLIATM6());
+        EquipmentType.addType(new CLIATM9());
+        EquipmentType.addType(new CLIATM12());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());
@@ -1228,6 +1257,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLMekMortar8());
 
         // BA weapons
+        EquipmentType.addType(new ISBAERMediumLaser());
+        EquipmentType.addType(new ISBAERSmallLaser());
+        EquipmentType.addType(new ISBAMediumLaser());
+        EquipmentType.addType(new ISBAMediumPulseLaser());
+        EquipmentType.addType(new ISBASmallLaser());
+        EquipmentType.addType(new ISBASmallPulseLaser());
         EquipmentType.addType(new CLSmallLaser());
         EquipmentType.addType(new ISLightRecoillessRifle());
         EquipmentType.addType(new ISMediumRecoillessRifle());

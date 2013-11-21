@@ -22,21 +22,11 @@ import megamek.common.event.GamePlayerChangeEvent;
 /**
  * Represents a player in the game.
  */
-public final class Player extends TurnOrdered {
+public final class Player extends TurnOrdered implements IPlayer {
     /**
      *
      */
     private static final long serialVersionUID = 6828849559007455760L;
-    public static final int PLAYER_NONE = -1;
-    public static final int TEAM_NONE = 0;
-
-    public static final String colorNames[] = { "Blue", "Yellow", "Red",
-            "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
-            "Purple" };
-
-    public static final String teamNames[] = { "No Team", "Team 1", "Team 2",
-            "Team 3", "Team 4", "Team 5" };
-    public static final int MAX_TEAMS = teamNames.length;
 
     private transient IGame game;
 
@@ -65,8 +55,7 @@ public final class Player extends TurnOrdered {
     private int num_mf_active = 0;
     private int num_mf_inferno = 0;
 
-    // now I need to actually keep a vector of minefields because more
-    // information is needed than just the number
+    //now I need to actually keep a vector of minefields because more information is needed than just the number
 
     // hexes that are automatically hit by artillery
     private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
@@ -79,17 +68,7 @@ public final class Player extends TurnOrdered {
     private int constantInitBonus = 0;
     private int streakCompensationBonus = 0;
 
-    /**
-     * The "no camo" category.
-     */
-    public static final String NO_CAMO = "-- No Camo --";
-
-    /**
-     * The category for camos in the root directory.
-     */
-    public static final String ROOT_CAMO = "-- General --";
-
-    private String camoCategory = Player.NO_CAMO;
+    private String camoCategory = IPlayer.NO_CAMO;
 
     private String camoFileName = null;
 
@@ -97,93 +76,114 @@ public final class Player extends TurnOrdered {
 
     private boolean admitsDefeat = false;
 
+    @Override
     public Vector<Minefield> getMinefields() {
         return visibleMinefields;
     }
 
+    @Override
     public void addMinefield(Minefield mf) {
         visibleMinefields.addElement(mf);
     }
 
+    @Override
     public void addMinefields(Vector<Minefield> minefields) {
         for (int i = 0; i < minefields.size(); i++) {
             visibleMinefields.addElement(minefields.elementAt(i));
         }
     }
 
+    @Override
     public void removeMinefield(Minefield mf) {
         visibleMinefields.removeElement(mf);
     }
 
+    @Override
     public void removeMinefields() {
         visibleMinefields.removeAllElements();
     }
 
+    @Override
     public void removeArtyAutoHitHexes() {
         artyAutoHitHexes.removeAllElements();
     }
 
+    @Override
     public boolean containsMinefield(Minefield mf) {
         return visibleMinefields.contains(mf);
     }
 
+    @Override
     public boolean hasMinefields() {
-        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0)
-                || (num_mf_active > 0) || (num_mf_inferno > 0);
+        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0) || (num_mf_active > 0) || (num_mf_inferno > 0);
     }
 
+    @Override
     public void setNbrMFConventional(int nbrMF) {
         num_mf_conv = nbrMF;
     }
 
+    @Override
     public void setNbrMFCommand(int nbrMF) {
         num_mf_cmd = nbrMF;
     }
 
+    @Override
     public void setNbrMFVibra(int nbrMF) {
         num_mf_vibra = nbrMF;
     }
 
+    @Override
     public void setNbrMFActive(int nbrMF) {
         num_mf_active = nbrMF;
     }
 
+    @Override
     public void setNbrMFInferno(int nbrMF) {
         num_mf_inferno = nbrMF;
     }
 
+    @Override
     public int getNbrMFConventional() {
         return num_mf_conv;
     }
 
+    @Override
     public int getNbrMFCommand() {
         return num_mf_cmd;
     }
 
+    @Override
     public int getNbrMFVibra() {
         return num_mf_vibra;
     }
 
+    @Override
     public int getNbrMFActive() {
         return num_mf_active;
     }
 
+    @Override
     public int getNbrMFInferno() {
         return num_mf_inferno;
     }
 
+    @Override
     public void setCamoCategory(String name) {
         camoCategory = name;
     }
 
+    @Override
     public String getCamoCategory() {
         return camoCategory;
     }
 
+    @Override
     public void setCamoFileName(String name) {
         camoFileName = name;
     }
 
+    @Override
     public String getCamoFileName() {
         return camoFileName;
     }
@@ -193,47 +193,58 @@ public final class Player extends TurnOrdered {
         this.id = id;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public int getTeam() {
         return team;
     }
 
+    @Override
     public void setTeam(int team) {
         this.team = team;
     }
 
+    @Override
     public boolean isDone() {
         return done;
     }
 
+    @Override
     public void setDone(boolean done) {
         this.done = done;
         game.processGameEvent(new GamePlayerChangeEvent(this, this));
     }
 
+    @Override
     public boolean isGhost() {
         return ghost;
     }
 
+    @Override
     public void setGhost(boolean ghost) {
         this.ghost = ghost;
     }
 
+    @Override
     public boolean isObserver() {
         if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_VICTORY)) {
             return false;
@@ -241,20 +252,24 @@ public final class Player extends TurnOrdered {
         return observer;
     }
 
+    @Override
     public void setSeeAll(boolean see_all) {
         see_entire_board = see_all;
     }
 
     // This simply returns the value, without checking the observer flag
+    @Override
     public boolean getSeeAll() {
         return see_entire_board;
     }
 
     // If observer is false, see_entire_board does nothing
+    @Override
     public boolean canSeeAll() {
         return (observer && see_entire_board);
     }
 
+    @Override
     public void setObserver(boolean observer) {
         this.observer = observer;
         // If not an observer, clear the set see all flag
@@ -263,23 +278,30 @@ public final class Player extends TurnOrdered {
         }
     }
 
+    @Override
     public int getColorIndex() {
         return colorIndex;
     }
 
+    @Override
     public void setColorIndex(int index) {
         colorIndex = index;
     }
 
+    @Override
     public int getStartingPos() {
         return startingPos;
     }
 
+    @Override
     public void setStartingPos(int startingPos) {
         this.startingPos = startingPos;
     }
 
-    /** Set deployment zone to edge of board for reinforcements */
+    /**
+     * Set deployment zone to edge of board for reinforcements
+     */
+    @Override
     public void adjustStartingPosForReinforcements() {
         if (startingPos > 10) {
             startingPos -= 10; // deep deploy change to standard
@@ -289,7 +311,8 @@ public final class Player extends TurnOrdered {
         }
     }
 
-    public boolean isEnemyOf(Player other) {
+    @Override
+    public boolean isEnemyOf(IPlayer other) {
         return ((id != other.getId()) && ((team == TEAM_NONE) || (team != other
                 .getTeam())));
     }
@@ -304,7 +327,7 @@ public final class Player extends TurnOrdered {
         } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
-        Player other = (Player) object;
+        IPlayer other = (IPlayer) object;
         return other.getId() == id;
     }
 
@@ -313,26 +336,32 @@ public final class Player extends TurnOrdered {
         return getId();
     }
 
+    @Override
     public void setAdmitsDefeat(boolean admitsDefeat) {
         this.admitsDefeat = admitsDefeat;
     }
 
+    @Override
     public boolean admitsDefeat() {
         return admitsDefeat;
     }
 
+    @Override
     public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {
         this.artyAutoHitHexes = artyAutoHitHexes;
     }
 
+    @Override
     public Vector<Coords> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
 
+    @Override
     public void addArtyAutoHitHex(Coords c) {
         artyAutoHitHexes.add(c);
     }
 
+    @Override
     public boolean hasTAG() {
         for (Enumeration<Entity> e = game
                 .getSelectedEntities(new EntitySelector() {
@@ -347,7 +376,7 @@ public final class Player extends TurnOrdered {
                         }
                         return false;
                     }
-                }); e.hasMoreElements();) {
+                }); e.hasMoreElements(); ) {
             Entity m = e.nextElement();
             if (m.hasTAG()) {
                 return true;
@@ -360,14 +389,14 @@ public final class Player extends TurnOrdered {
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
+    @Override
     public int getBV() {
         Enumeration<Entity> survivors = game.getEntities();
         int bv = 0;
 
         while (survivors.hasMoreElements()) {
             Entity entity = survivors.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed()
-                    && !entity.isTrapped()) {
+            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !entity.isTrapped()) {
                 bv += entity.calculateBattleValue();
             }
         }
@@ -380,6 +409,7 @@ public final class Player extends TurnOrdered {
      *
      * @return the BV
      */
+    @Override
     public int getFledBV() {
         Enumeration<Entity> fledUnits = game.getRetreatedEntities();
         int bv = 0;
@@ -392,26 +422,32 @@ public final class Player extends TurnOrdered {
         return bv;
     }
 
+    @Override
     public void setInitialBV() {
         initialBV = getBV();
     }
 
+    @Override
     public int getInitialBV() {
         return initialBV;
     }
 
+    @Override
     public void setCompensationInitBonus(int newBonus) {
         streakCompensationBonus = newBonus;
     }
 
+    @Override
     public int getCompensationInitBonus() {
         return streakCompensationBonus;
     }
 
+    @Override
     public void setConstantInitBonus(int b) {
         constantInitBonus = b;
     }
 
+    @Override
     public int getConstantInitBonus() {
         return constantInitBonus;
     }
@@ -419,6 +455,7 @@ public final class Player extends TurnOrdered {
     /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
+    @Override
     public int getTurnInitBonus() {
         int bonusHQ = 0;
         int bonusMD = 0;
@@ -432,18 +469,17 @@ public final class Player extends TurnOrdered {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption("tacops_mobile_hqs")
-                        && (entity.getHQIniBonus() > bonusHQ)) {
+                    && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                     bonusHQ = entity.getHQIniBonus();
                 }
                 if (game.getOptions().booleanOption("manei_domini")
-                        && (entity.getMDIniBonus() > bonusMD)) {
+                    && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
                     bonusMD = entity.getMDIniBonus();
                 }
                 if (entity.getQuirkIniBonus() > bonusQ) {
-                    // TODO: I am assuming that the quirk initiative bonuses go
-                    // to the highest,
-                    // rather than being cumulative
-                    // http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
+                    //TODO: I am assuming that the quirk initiative bonuses go to the highest,
+                    //rather than being cumulative
+                    //http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
                     bonusQ = entity.getQuirkIniBonus();
                 }
             }
@@ -452,19 +488,22 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * @return the bonus to this player's initiative rolls for the highest value
-     *         initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for
+     *         the highest value initiative (i.e. the 'commander')
      */
+    @Override
     public int getCommandBonus() {
         int commandb = 0;
         if (game.getOptions().booleanOption("command_init")) {
             for (Entity entity : game.getEntitiesVector()) {
                 if ((null != entity.getOwner())
-                        && entity.getOwner().equals(this)
-                        && !entity.isDestroyed() && entity.isDeployed()
-                        && !entity.isOffBoard() && entity.getCrew().isActive()
-                        && !entity.isCaptured()
-                        && !(entity instanceof MechWarrior)) {
+                    && entity.getOwner().equals(this)
+                    && !entity.isDestroyed()
+                    && entity.isDeployed()
+                    && !entity.isOffBoard()
+                    && entity.getCrew().isActive()
+                    && !entity.isCaptured()
+                    && !(entity instanceof MechWarrior)) {
                     if (entity.getCrew().getCommandBonus() > commandb) {
                         commandb = entity.getCrew().getCommandBonus();
                     }
@@ -479,15 +518,17 @@ public final class Player extends TurnOrdered {
      *
      * @return a vector of relevant entity ids
      */
+    @Override
     public Vector<Integer> getAirborneVTOL() {
 
-        // a vector of unit ids
+        //a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if (((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.WIGE))
-                        && (!entity.isDestroyed())
-                        && (entity.getElevation() > 0)) {
+                if (((entity instanceof VTOL)
+                     || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
+                    (!entity.isDestroyed()) &&
+                    (entity.getElevation() > 0)) {
                     units.add(entity.getId());
                 }
             }

@@ -72,7 +72,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             }
         });
         this.clientgui = clientgui;
-        clientgui.getClient().game.addGameListener(this);
+        clientgui.getClient().getGame().addGameListener(this);
 
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
@@ -142,7 +142,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if ((clientgui.getClient().game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) && clientgui.getClient().game.hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+        if ((clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -182,12 +182,12 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
                 if (tabs.indexOfTab("Round " + catchup) != -1) {
                     ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + catchup))).getViewport().getView()).setText(
-                            "<pre>" + clientgui.getClient().receiveReport(clientgui.getClient().game.getReports(catchup)) + "</pre>");
+                            "<pre>" + clientgui.getClient().receiveReport(clientgui.getClient().getGame().getReports(catchup)) + "</pre>");
                     continue;
                 }
                 String text = roundText;
                 if (catchup != round) {
-                    text = clientgui.getClient().receiveReport(clientgui.getClient().game.getReports(catchup));
+                    text = clientgui.getClient().receiveReport(clientgui.getClient().getGame().getReports(catchup));
                 }
                 ta = new JTextPane();
                 setupStylesheet(ta);
@@ -253,7 +253,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             return;
         }
 
-        setReportTab(clientgui.getClient().game.getRoundCount(), clientgui.getClient().roundReport, clientgui.getClient().phaseReport);
+        setReportTab(clientgui.getClient().getGame().getRoundCount(), clientgui.getClient().roundReport, clientgui.getClient().phaseReport);
         resetButtons();
         rerolled = false;
 
@@ -278,7 +278,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        clientgui.getClient().game.removeGameListener(this);
+        clientgui.getClient().getGame().removeGameListener(this);
     }
 
 }

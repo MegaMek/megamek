@@ -271,7 +271,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
                 temp.addElement(new TriggerBPodAction(entityId, pod.getNum(),
                         chooseTarget(
-                                clientgui.getClient().game.getEntity(entityId)
+                                clientgui.getClient().getGame().getEntity(entityId)
                                         .getPosition()).getId()));
             }
         }
@@ -291,14 +291,14 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         Entity choice = null;
 
         // Get the available choices.
-        Enumeration<Entity> choices = clientgui.getClient().game
+        Enumeration<Entity> choices = clientgui.getClient().getGame()
                 .getEntities(pos);
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
         while (choices.hasMoreElements()) {
             choice = choices.nextElement();
-            if (!clientgui.getClient().game.getEntity(entityId).equals(choice)
+            if (!clientgui.getClient().getGame().getEntity(entityId).equals(choice)
                     && (choice instanceof Infantry)) {
                 targets.add(choice);
             }

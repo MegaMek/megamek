@@ -60,25 +60,25 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
     private JLabel labLight = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labLight"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choLight = new JComboBox();
+    private JComboBox<String> choLight = new JComboBox<String>();
     private JLabel labWeather = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labWeather"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choWeather = new JComboBox();
+    private JComboBox<String> choWeather = new JComboBox<String>();
     private JLabel labWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labWind"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choWind = new JComboBox();
+    private JComboBox<String> choWind = new JComboBox<String>();
     private JLabel labMinWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labMinWind"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choMinWind = new JComboBox();
+    private JComboBox<String> choMinWind = new JComboBox<String>();
     private JLabel labMaxWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labMaxWind"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choMaxWind = new JComboBox();
+    private JComboBox<String> choMaxWind = new JComboBox<String>();
     private JLabel labAtmosphere = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labAtmosphere"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choFog = new JComboBox();
+    private JComboBox<String> choFog = new JComboBox<String>();
     private JLabel labFog = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labFog"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox choAtmosphere = new JComboBox();
+    private JComboBox<String> choAtmosphere = new JComboBox<String>();
     private JCheckBox cBlowingSands = new JCheckBox(Messages
             .getString("PlanetaryConditionsDialog.BlowingSands"));
     private JCheckBox cShiftWindDir = new JCheckBox(Messages
@@ -157,7 +157,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         super(client.frame, Messages
                 .getString("PlanetaryConditionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
-        init(client.frame, client.getClient().game.getPlanetaryConditions());
+        init(client.frame, client.getClient().getGame().getPlanetaryConditions());
     }
 
     public PlanetaryConditionsDialog(JFrame frame, PlanetaryConditions conditions) {

@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import megamek.common.IGame;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.common.Report;
 
 /**
@@ -40,18 +40,18 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
         // score is 1.0 when enemy commanders are dead
         boolean victory = false;
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (Player player : game.getPlayersVector()) {
+        for (IPlayer player : game.getPlayersVector()) {
             boolean killedAll = true;
             int team = player.getTeam();
-            if (team != Player.TEAM_NONE) {
+            if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
                     continue; 
                 // skip if already dealt with this team
                 doneTeams.add(team);
             }
-            for (Player enemyPlayer : game.getPlayersVector()) {
+            for (IPlayer enemyPlayer : game.getPlayersVector()) {
                 if (enemyPlayer.equals(player) ||
-                        (team != Player.TEAM_NONE && team == enemyPlayer.getTeam()))
+                        (team != IPlayer.TEAM_NONE && team == enemyPlayer.getTeam()))
                     continue;
                 if (game.getLiveCommandersOwnedBy(enemyPlayer) > 0) {
                     killedAll = false;
@@ -59,7 +59,7 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
             }
             // all enemy commanders are dead
             if (killedAll) {
-                if (team == Player.TEAM_NONE) {
+                if (team == IPlayer.TEAM_NONE) {
                     Report r = new Report(7110, Report.PUBLIC);
                     r.add(player.getName());
                     vr.addPlayerScore(player.getId(), 1);

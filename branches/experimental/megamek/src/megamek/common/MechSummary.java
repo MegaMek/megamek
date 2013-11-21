@@ -424,7 +424,7 @@ public class MechSummary implements Serializable {
         MechSummary msOther = (MechSummary) other;
         // we match on chassis + model + unittype + sourcefile
         if (msOther.getChassis().equals(getChassis())
-                && msOther.getModel().equals(getChassis())
+                && msOther.getModel().equals(getModel())
                 && msOther.getUnitType().equals(getUnitType())
                 && msOther.getSourceFile().equals(getSourceFile())) {
             return true;

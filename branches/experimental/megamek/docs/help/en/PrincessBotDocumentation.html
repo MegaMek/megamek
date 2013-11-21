@@ -6,7 +6,7 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4  (Win32)">
 	<META NAME="AUTHOR" CONTENT="Deric Page">
 	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGED" CONTENT="20131104;21423580">
+	<META NAME="CHANGED" CONTENT="20131116;17162266">
 	<STYLE TYPE="text/css">
 	<!--
 		H2.cjk { font-family: "SimSun" }
@@ -134,8 +134,15 @@ Player with the Princess Bot</H2>
 appears next to their name, you can replace that player with a bot.&nbsp;
 To use Princess as the replacement, issue the following command in
 the chat window:</P>
-<P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;playerName&gt;</I></P>
-<P>Princess will use her <I>default</I> configuration settings.  This
-will be expanded in future releases.</P>
+<P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;-c:ConfigName&gt;
+&lt;-v:VerbosityLevel&gt; &lt;-p:&gt;PlayerName</I></P>
+<P>Princess will replace the named player.<BR>&lt;-b&gt; Specifies
+the use of Princess.  If left out, TestBot will be used instead.<BR>&lt;-c&gt;
+Specifies a saved configuration to be used by Princess.  If left out
+DEFAULT will be used.<BR>&lt;-v&gt; Specifies the verbosity level
+used to log Princess (DEBUG/INFO/WARNING/ERROR).  If left out, ERROR
+will be used.<BR>&lt;-p&gt; Specifies the player to be replaced.  The
+&ldquo;-p&rdquo; is only required with the &ldquo;-c&rdquo; or &ldquo;-v&rdquo;
+parameters are also used.</P>
 </BODY>
 </HTML>

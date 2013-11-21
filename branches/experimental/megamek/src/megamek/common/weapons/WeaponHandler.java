@@ -57,6 +57,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     private static final long serialVersionUID = 7137408139594693559L;
     public ToHitData toHit;
+    protected HitData hit;
     public WeaponAttackAction waa;
     public int roll;
     protected boolean isJammed = false;
@@ -341,8 +342,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             r.subject = subjectId;
             r.add(wtype.getName() + number);
-            if (entityTarget != null) {
-                r.addDesc(entityTarget);
+            if (entityTarget != null) {                           
+                if (wtype.getAmmoType() != AmmoType.T_NA){
+                    AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                    if (atype.getMunitionType() != AmmoType.M_STANDARD){
+                        r.messageId = 3116;
+                        r.add(atype.getSubMunitionName());
+                    }
+                }
+                r.addDesc(entityTarget);     
             } else {
                 r.messageId = 3120;
                 r.add(target.getDisplayName(), true);
@@ -714,14 +722,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @param entityTarget
      *            The target Entity
      * @param vPhaseReport
-     * @param hit
+     * @param pcHit
      * @param bldg
      * @param hits
      * @param nCluster
      * @param bldgAbsorbs
      */
     protected void handlePartialCoverHit(Entity entityTarget,
-            Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits,
+            Vector<Report> vPhaseReport, HitData pcHit, Building bldg, int hits,
             int nCluster, int bldgAbsorbs) {
 
         // Report the hit and table description, if this isn't part of a salvo
@@ -730,7 +738,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
-            r.add(entityTarget.getLocationAbbr(hit));
+            r.add(entityTarget.getLocationAbbr(pcHit));
             vPhaseReport.addElement(r);
             if (weapon.isRapidfire()){
                 r.newlines = 0;
@@ -747,7 +755,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         r = new Report(3460);
         r.subject = subjectId;
         r.add(entityTarget.getShortName());
-        r.add(entityTarget.getLocationAbbr(hit));
+        r.add(entityTarget.getLocationAbbr(pcHit));
         r.indent(2);
         vPhaseReport.addElement(r);
 
@@ -764,7 +772,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 (toHit.getCover() == LosEffects.COVER_HORIZONTAL && toHit
                         .getDamagableCoverTypeSecondary() != LosEffects.DAMAGABLE_COVER_NONE)) {
             // Horiztonal cover provided by two 25%'s, so primary and secondary
-            int hitLoc = hit.getLocation();
+            int hitLoc = pcHit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
             if (hitLoc == Mech.LOC_RLEG || hitLoc == Mech.LOC_RT
@@ -863,7 +871,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nDamage;
         missed = false;
 
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+        hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);

@@ -41,6 +41,7 @@ import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.MapSettings;
@@ -138,7 +139,7 @@ public class ScenarioLoader {
                                 System.out
                                         .println("\tSet Armor Value for (Rear "
                                                 + dp.entity
-                                                        .getLocationName(sd.loc)
+                                                .getLocationName(sd.loc)
                                                 + ") To " + sd.setArmorTo);
                                 dp.entity.setArmor(sd.setArmorTo, sd.loc, true);
                             }
@@ -208,7 +209,7 @@ public class ScenarioLoader {
                         // Is this a valid slot number?
                         else if ((ch.slot < 0)
                                 || (ch.slot > chp.entity
-                                        .getNumberOfCriticals(ch.loc))) {
+                                .getNumberOfCriticals(ch.loc))) {
                             System.out.println("\n\tInvalid Slot Specified "
                                     + ch.loc + ":" + (ch.slot + 1));
                         }
@@ -345,7 +346,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private Entity[] buildFactionEntities(Properties p, Player player)
+    private Entity[] buildFactionEntities(Properties p, IPlayer player)
             throws Exception {
         String sFaction = player.getName();
 
@@ -590,9 +591,9 @@ public class ScenarioLoader {
 
         // Translate base categories for userfriendliness.
         if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
-            camoGroup = Player.NO_CAMO;
+            camoGroup = IPlayer.NO_CAMO;
         } else if (camoGroup.equals("General")) {
-            camoGroup = Player.ROOT_CAMO;
+            camoGroup = IPlayer.ROOT_CAMO;
         } else {
             // If CamoGroup does not have a trailing slash, add one, since all
             // subdirectories require it
@@ -605,8 +606,8 @@ public class ScenarioLoader {
         boolean validName = false;
 
         // Validate GroupName
-        if (camoGroup.equals(Player.NO_CAMO)
-                || camoGroup.equals(Player.ROOT_CAMO)) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)
+                || camoGroup.equals(IPlayer.ROOT_CAMO)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = camos.getCategoryNames();
@@ -623,15 +624,15 @@ public class ScenarioLoader {
         }
 
         // Validate CamoName
-        if (camoGroup.equals(Player.NO_CAMO)) {
-            for (String color : Player.colorNames) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)) {
+            for (String color : IPlayer.colorNames) {
                 if (camoName.equals(color)) {
                     validName = true;
                 }
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(Player.ROOT_CAMO)) {
+            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
                 camoNames = camos.getItemNames("");
             } else {
                 camoNames = camos.getItemNames(camoGroup);
@@ -656,16 +657,16 @@ public class ScenarioLoader {
     /*
      * Camo Parser/Validator for Faction Camo
      */
-    private void parseCamo(Player player, String camoString) throws Exception {
+    private void parseCamo(IPlayer player, String camoString) throws Exception {
         StringTokenizer st = new StringTokenizer(camoString, ",");
         String camoGroup = st.nextToken();
         String camoName = st.nextToken();
 
         // Translate base categories for userfriendliness.
         if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
-            camoGroup = Player.NO_CAMO;
+            camoGroup = IPlayer.NO_CAMO;
         } else if (camoGroup.equals("General")) {
-            camoGroup = Player.ROOT_CAMO;
+            camoGroup = IPlayer.ROOT_CAMO;
         } else {
             // If CamoGroup does not have a trailing slash, add one, since all
             // subdirectories require it
@@ -678,8 +679,8 @@ public class ScenarioLoader {
         boolean validName = false;
 
         // Validate GroupName
-        if (camoGroup.equals(Player.NO_CAMO)
-                || camoGroup.equals(Player.ROOT_CAMO)) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)
+                || camoGroup.equals(IPlayer.ROOT_CAMO)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = camos.getCategoryNames();
@@ -696,15 +697,15 @@ public class ScenarioLoader {
         }
 
         // Validate CamoName
-        if (camoGroup.equals(Player.NO_CAMO)) {
-            for (String color : Player.colorNames) {
+        if (camoGroup.equals(IPlayer.NO_CAMO)) {
+            for (String color : IPlayer.colorNames) {
                 if (camoName.equals(color)) {
                     validName = true;
                 }
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(Player.ROOT_CAMO)) {
+            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
                 camoNames = camos.getItemNames("");
             } else {
                 camoNames = camos.getItemNames(camoGroup);
@@ -743,7 +744,7 @@ public class ScenarioLoader {
 
         StringTokenizer st = new StringTokenizer(sFactions, ",");
         Player[] out = new Player[st.countTokens()];
-        int team = Player.TEAM_NONE;
+        int team = IPlayer.TEAM_NONE;
         for (int x = 0; x < out.length; x++) {
             out[x] = new Player(x, st.nextToken());
 
@@ -851,7 +852,7 @@ public class ScenarioLoader {
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
         Vector<String> vBoards = new Vector<String>();
-        
+
         String[] fileList = Configuration.boardsDir().list();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
@@ -1039,7 +1040,7 @@ public class ScenarioLoader {
         public boolean internal;
 
         public SpecDam(int Location, int SetArmorTo, boolean RearHit,
-                boolean Internal) {
+                       boolean Internal) {
             loc = Location;
             setArmorTo = SetArmorTo;
             rear = RearHit;

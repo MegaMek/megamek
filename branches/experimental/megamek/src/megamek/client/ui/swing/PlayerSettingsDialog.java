@@ -36,7 +36,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -267,7 +267,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     }
 
     private void refreshValues() {
-        Player player = client.getLocalPlayer();
+        IPlayer player = client.getLocalPlayer();
         texInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));

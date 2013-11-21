@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,7 +21,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-public abstract class TurnOrdered implements Serializable {
+public abstract class TurnOrdered implements ITurnOrdered {
 
     /**
      *
@@ -30,7 +29,7 @@ public abstract class TurnOrdered implements Serializable {
     private static final long serialVersionUID = 4131468442031773195L;
 
     private InitiativeRoll initiative = new InitiativeRoll();
-    private static TurnOrdered lastRoundInitWinner = null;
+    private static ITurnOrdered lastRoundInitWinner = null;
 
     private transient int turns_other = 0;
     private transient int turns_even = 0;
@@ -53,128 +52,157 @@ public abstract class TurnOrdered implements Serializable {
      * @return the <code>int</code> number of "normal" turns this item should
      *         take in a phase.
      */
+    @Override
     public int getNormalTurns(IGame game) {
         return getMultiTurns(game) + getOtherTurns();
     }
 
+    @Override
     public int getOtherTurns() {
         return turns_other;
     }
 
+    @Override
     public int getEvenTurns() {
         return turns_even;
     }
 
+    @Override
     public int getMultiTurns(IGame game) {
 
         int turns = 0;
 
-        if ( game.getOptions().booleanOption("vehicle_lance_movement") ) {
+        if (game.getOptions().booleanOption("vehicle_lance_movement")) {
             turns += game.getOptions().intOption("vehicle_lance_movement_number");
         }
 
-        if ( game.getOptions().booleanOption("protos_move_multi") || game.getOptions().booleanOption("inf_move_multi") ) {
+        if (game.getOptions().booleanOption("protos_move_multi") || game.getOptions().booleanOption("inf_move_multi")) {
             turns += game.getOptions().intOption("inf_proto_move_multi");
         }
-        return (int) Math.ceil(((double) turns_multi)/ (double)turns);
+        return (int) Math.ceil(((double) turns_multi) / (double) turns);
     }
 
+    @Override
     public int getSpaceStationTurns() {
         return turns_ss;
     }
 
+    @Override
     public int getJumpshipTurns() {
         return turns_js;
     }
 
+    @Override
     public int getWarshipTurns() {
         return turns_ws;
     }
 
+    @Override
     public int getDropshipTurns() {
         return turns_ds;
     }
 
+    @Override
     public int getSmallCraftTurns() {
         return turns_sc;
     }
 
+    @Override
     public int getAeroTurns() {
         return turns_aero;
     }
 
+    @Override
     public void incrementOtherTurns() {
         turns_other++;
     }
 
+    @Override
     public void incrementEvenTurns() {
         turns_even++;
     }
 
+    @Override
     public void incrementMultiTurns() {
         turns_multi++;
     }
 
+    @Override
     public void incrementSpaceStationTurns() {
         turns_ss++;
     }
 
+    @Override
     public void incrementJumpshipTurns() {
         turns_js++;
     }
 
+    @Override
     public void incrementWarshipTurns() {
         turns_ws++;
     }
 
+    @Override
     public void incrementDropshipTurns() {
         turns_ds++;
     }
 
+    @Override
     public void incrementSmallCraftTurns() {
         turns_sc++;
     }
 
+    @Override
     public void incrementAeroTurns() {
         turns_aero++;
     }
 
+    @Override
     public void resetOtherTurns() {
         turns_other = 0;
     }
 
+    @Override
     public void resetEvenTurns() {
         turns_even = 0;
     }
 
+    @Override
     public void resetMultiTurns() {
         turns_multi = 0;
     }
 
+    @Override
     public void resetSpaceStationTurns() {
         turns_ss = 0;
     }
 
+    @Override
     public void resetJumpshipTurns() {
         turns_js = 0;
     }
 
+    @Override
     public void resetWarshipTurns() {
         turns_ws = 0;
     }
 
+    @Override
     public void resetDropshipTurns() {
         turns_ds = 0;
     }
 
+    @Override
     public void resetSmallCraftTurns() {
         turns_sc = 0;
     }
 
+    @Override
     public void resetAeroTurns() {
         turns_aero = 0;
     }
 
+    @Override
     public InitiativeRoll getInitiative() {
         return initiative;
     }
@@ -182,15 +210,16 @@ public abstract class TurnOrdered implements Serializable {
     /**
      * Clear the initiative of this object.
      */
+    @Override
     public void clearInitiative(boolean bUseInitComp) {
         getInitiative().clear();
     }
 
-    public static void rollInitiative(Vector<? extends TurnOrdered> v, boolean bUseInitiativeCompensation) {
+    public static void rollInitiative(Vector<? extends ITurnOrdered> v, boolean bUseInitiativeCompensation) {
         // Clear all rolls
-        for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
-            final TurnOrdered item = i.nextElement();
+        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
+                .hasMoreElements(); ) {
+            final ITurnOrdered item = i.nextElement();
             item.clearInitiative(bUseInitiativeCompensation);
         }
 
@@ -226,12 +255,12 @@ public abstract class TurnOrdered implements Serializable {
      * and resolves ties. The second argument is used when a specific teams
      * initiative should be re-rolled.
      */
-    public static void rollInitAndResolveTies(Vector<? extends TurnOrdered> v,
-            Vector<? extends TurnOrdered> rerollRequests,
-            boolean bInitiativeCompensationBonus) {
-        for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
-            final TurnOrdered item = i.nextElement();
+    public static void rollInitAndResolveTies(Vector<? extends ITurnOrdered> v,
+                                              Vector<? extends ITurnOrdered> rerollRequests,
+                                              boolean bInitiativeCompensationBonus) {
+        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
+                .hasMoreElements(); ) {
+            final ITurnOrdered item = i.nextElement();
             int bonus = 0;
             if (item instanceof Team) {
                 bonus = ((Team) item).getTotalInitBonus(bInitiativeCompensationBonus);
@@ -242,12 +271,12 @@ public abstract class TurnOrdered implements Serializable {
             }
             if (rerollRequests == null) { // normal init roll
                 item.getInitiative().addRoll(bonus); // add a roll for all
-                                                        // teams
+                // teams
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
-                for (Enumeration<? extends TurnOrdered> j = rerollRequests
-                        .elements(); j.hasMoreElements();) {
-                    final TurnOrdered rerollItem = j.nextElement();
+                for (Enumeration<? extends ITurnOrdered> j = rerollRequests
+                        .elements(); j.hasMoreElements(); ) {
+                    final ITurnOrdered rerollItem = j.nextElement();
                     if (item == rerollItem) { // this is the team re-rolling
                         item.getInitiative().replaceRoll(bonus);
                         break; // each team only needs one reroll
@@ -257,17 +286,17 @@ public abstract class TurnOrdered implements Serializable {
         }
 
         // check for ties
-        Vector<TurnOrdered> ties = new Vector<TurnOrdered>();
-        for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                .hasMoreElements();) {
-            final TurnOrdered item = i.nextElement();
+        Vector<ITurnOrdered> ties = new Vector<ITurnOrdered>();
+        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
+                .hasMoreElements(); ) {
+            final ITurnOrdered item = i.nextElement();
             ties.removeAllElements();
             ties.addElement(item);
-            for (Enumeration<? extends TurnOrdered> j = v.elements(); j
-                    .hasMoreElements();) {
-                final TurnOrdered other = j.nextElement();
+            for (Enumeration<? extends ITurnOrdered> j = v.elements(); j
+                    .hasMoreElements(); ) {
+                final ITurnOrdered other = j.nextElement();
                 if ((item != other)
-                        && item.getInitiative().equals(other.getInitiative())) {
+                    && item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
@@ -279,15 +308,15 @@ public abstract class TurnOrdered implements Serializable {
 
         // initiative compensation
         if (bInitiativeCompensationBonus
-                && (v.elements().nextElement() instanceof Team)) {
-            final TurnOrdered comparisonElement = v.elements().nextElement();
+            && (v.elements().nextElement() instanceof Team)) {
+            final ITurnOrdered comparisonElement = v.elements().nextElement();
             int difference = 0;
-            TurnOrdered winningElement = comparisonElement;
+            ITurnOrdered winningElement = comparisonElement;
 
             // figure out who won init this round
-            for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                    .hasMoreElements();) {
-                final TurnOrdered currentElement = i.nextElement();
+            for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
+                    .hasMoreElements(); ) {
+                final ITurnOrdered currentElement = i.nextElement();
                 if (currentElement.getInitiative().compareTo(
                         comparisonElement.getInitiative()) > difference) {
                     difference = currentElement.getInitiative().compareTo(
@@ -299,14 +328,14 @@ public abstract class TurnOrdered implements Serializable {
             // set/reset the init comp counters
             ((Team) winningElement).setInitCompensationBonus(0);
             if (lastRoundInitWinner != null) {
-                for (Enumeration<? extends TurnOrdered> i = v.elements(); i
-                        .hasMoreElements();) {
-                    final TurnOrdered currentElement = i.nextElement();
+                for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
+                        .hasMoreElements(); ) {
+                    final ITurnOrdered currentElement = i.nextElement();
                     if (!(currentElement.equals(winningElement) || currentElement
                             .equals(lastRoundInitWinner))) {
                         ((Team) currentElement)
                                 .setInitCompensationBonus(((Team) currentElement)
-                                        .getInitCompensationBonus(bInitiativeCompensationBonus) + 1);
+                                                                  .getInitCompensationBonus(bInitiativeCompensationBonus) + 1);
                     }
                 }
             }
@@ -318,7 +347,7 @@ public abstract class TurnOrdered implements Serializable {
      * This takes a Vector of TurnOrdered and generates a TurnVector.
      */
     public static TurnVectors generateTurnOrder(
-            Vector<? extends TurnOrdered> v, IGame game) {
+            Vector<? extends ITurnOrdered> v, IGame game) {
         int[] num_even_turns = new int[v.size()];
         int[] num_normal_turns = new int[v.size()];
         int[] num_space_station_turns = new int[v.size()];
@@ -338,21 +367,21 @@ public abstract class TurnOrdered implements Serializable {
         int total_small_craft_turns = 0;
         int total_aero_turns = 0;
         int index;
-        TurnOrdered[] order = new TurnOrdered[v.size()];
+        ITurnOrdered[] order = new ITurnOrdered[v.size()];
         int orderedItems = 0;
 
-        ArrayList<TurnOrdered> plist = new ArrayList<TurnOrdered>(v.size());
+        ArrayList<ITurnOrdered> plist = new ArrayList<ITurnOrdered>(v.size());
         plist.addAll(v);
 
-        Collections.sort(plist, new Comparator<TurnOrdered>() {
-            public int compare(TurnOrdered o1, TurnOrdered o2) {
+        Collections.sort(plist, new Comparator<ITurnOrdered>() {
+            public int compare(ITurnOrdered o1, ITurnOrdered o2) {
                 return o1.getInitiative().compareTo(o2.getInitiative());
             }
         });
 
         // Walk through the ordered items.
-        for (Iterator<TurnOrdered> i = plist.iterator(); i.hasNext(); orderedItems++) {
-            final TurnOrdered item = i.next();
+        for (Iterator<ITurnOrdered> i = plist.iterator(); i.hasNext(); orderedItems++) {
+            final ITurnOrdered item = i.next();
             order[orderedItems] = item;
 
             // Track even turns separately from the normal turns.
@@ -425,10 +454,10 @@ public abstract class TurnOrdered implements Serializable {
                           + total_warship_turns + total_dropship_turns + total_small_craft_turns + total_aero_turns;
 
         TurnVectors turns = new TurnVectors(total_normal_turns, total_turns,
-                total_space_station_turns,
-                total_jumpship_turns, total_warship_turns, total_dropship_turns,
-                total_small_craft_turns, total_aero_turns,
-                total_even_turns, min);
+                                            total_space_station_turns,
+                                            total_jumpship_turns, total_warship_turns, total_dropship_turns,
+                                            total_small_craft_turns, total_aero_turns,
+                                            total_even_turns, min);
 
 
         // Allocate the normal turns.

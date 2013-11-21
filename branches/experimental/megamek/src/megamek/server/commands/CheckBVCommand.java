@@ -16,7 +16,7 @@ package megamek.server.commands;
 
 import java.util.Enumeration;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 
 public class CheckBVCommand extends ServerCommand {
@@ -29,8 +29,8 @@ public class CheckBVCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Remaining BV:");
-        for (Enumeration<Player> i = server.getGame().getPlayers(); i.hasMoreElements();) {
-            Player player = i.nextElement();
+        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i.hasMoreElements();) {
+            IPlayer player = i.nextElement();
             StringBuffer cb = new StringBuffer();
             cb.append(player.getName()).append(": ");
             cb.append(player.getBV()).append("/").append(player.getInitialBV());

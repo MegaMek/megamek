@@ -101,10 +101,10 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butElevUp;
     private JButton butElevDown;
     private JLabel labTerrain;
-    private JList lisTerrain;
+    private JList<String> lisTerrain;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
-    private JComboBox choTerrainType;
+    private JComboBox<String> choTerrainType;
     private JTextField texTerrainLevel;
     private JPanel panTerrExits;
     private JCheckBox cheTerrExitSpecified;
@@ -233,7 +233,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         butElevDown.addActionListener(this);
         labTerrain = new JLabel(
                 Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
-        lisTerrain = new JList(new DefaultListModel());
+        lisTerrain = new JList<String>(new DefaultListModel<String>());
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
@@ -245,7 +245,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             terrainArray[i - 1] = Terrains.getName(i);
         }
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
-        choTerrainType = new JComboBox(terrainArray);
+        choTerrainType = new JComboBox<String>(terrainArray);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         butAddTerrain = new JButton(Messages
                 .getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
@@ -433,12 +433,12 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Refreshes the terrain list to match the current hex
      */
     private void refreshTerrainList() {
-        ((DefaultListModel) lisTerrain.getModel()).removeAllElements();
+        ((DefaultListModel<String>) lisTerrain.getModel()).removeAllElements();
         int terrainTypes[] = curHex.getTerrainTypes();
         for (int i = 0; i < terrainTypes.length; i++) {            
             ITerrain terrain = curHex.getTerrain(terrainTypes[i]);
             if (terrain != null) {
-                ((DefaultListModel) lisTerrain.getModel()).addElement(terrain
+                ((DefaultListModel<String>) lisTerrain.getModel()).addElement(terrain
                         .toString());
             }
         }
@@ -476,7 +476,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             return;
         }
         ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
-                (String) lisTerrain.getSelectedValue());
+                lisTerrain.getSelectedValue());
         terrain = curHex.getTerrain(terrain.getType());
         choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
@@ -782,7 +782,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(butDelTerrain)
                 && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
-                    (String) lisTerrain.getSelectedValue());
+                    lisTerrain.getSelectedValue());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();

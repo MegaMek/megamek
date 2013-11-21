@@ -40,6 +40,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
 
     private static final long serialVersionUID = 483782753790544050L;
 
+    @SuppressWarnings("rawtypes")
     private JComboBox[] b_choices = new JComboBox[BombType.B_NUM];
     private JLabel[] b_labels = new JLabel[BombType.B_NUM];
     private int maxPoints = 0;
@@ -48,6 +49,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
 
+    @SuppressWarnings("unchecked")
     public BombChoicePanel(Aero aero, boolean at2Nukes, boolean allowAdvancedAmmo) {
         this.aero = aero;
         this.at2Nukes = at2Nukes;
@@ -72,7 +74,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         for (int type = 0; type < BombType.B_NUM; type++) {
 
             b_labels[type] = new JLabel();
-            b_choices[type] = new JComboBox();
+            b_choices[type] = new JComboBox<String>();
 
             for (int x = 0; x <= Math.max(Math.round(availBombPoints
                     / BombType.getBombCost(type)), bombChoices[type]); x++) {
@@ -116,6 +118,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
 
         int[] current = new int[BombType.B_NUM];
@@ -149,6 +152,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
 
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         for (int type = 0; type < BombType.B_NUM; type++) {
             if ((type == BombType.B_ALAMO)

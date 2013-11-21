@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.common.IPlayer;
 import megamek.common.Player;
 
 /**
@@ -43,6 +44,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     public static final int T_OBOT = 3;
     private Player[] m_players;
     private JLabel[] m_labels;
+    @SuppressWarnings("rawtypes")
     private JComboBox[] m_typeChoices;
     private JButton[] m_camoButtons;
     private JFrame m_frame;
@@ -51,6 +53,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
 
+    @SuppressWarnings("unchecked")
     public ScenarioDialog(final JFrame frame, Player[] pa) {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
@@ -60,10 +63,10 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
         for (int x = 0; x < pa.length; x++) {
-            final Player curPlayer = m_players[x];
+            final IPlayer curPlayer = m_players[x];
             curPlayer.setColorIndex(x);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
-            m_typeChoices[x] = new JComboBox();
+            m_typeChoices[x] = new JComboBox<String>();
             m_typeChoices[x].addItem(Messages
                     .getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
             m_typeChoices[x].addItem(Messages

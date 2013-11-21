@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Player;
+import megamek.common.IPlayer;
 
 /**
  * Instances of this class are sent when Game turn changes
@@ -30,7 +30,7 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
      * @param source
      * @param player
      */
-    public GameTurnChangeEvent(Object source, Player player) {
+    public GameTurnChangeEvent(Object source, IPlayer player) {
         super(source, player);
     }
 

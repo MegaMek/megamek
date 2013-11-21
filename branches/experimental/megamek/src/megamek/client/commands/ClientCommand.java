@@ -32,6 +32,10 @@ public abstract class ClientCommand {
         this.helpText = helpText;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
     /**
      * Return the string trigger for this command
      */

@@ -124,7 +124,7 @@ public class Report implements Serializable {
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
-    public transient int player = Player.PLAYER_NONE;
+    public transient int player = IPlayer.PLAYER_NONE;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
@@ -423,6 +423,7 @@ public class Report implements Serializable {
                             text.append(ReportMessages.getString(raw.substring(
                                     raw.indexOf(',', i) + 1, endTagIdx)));
                         }
+                        tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx)
                             .equals("newline")) {
                         text.append("\n");

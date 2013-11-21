@@ -34,12 +34,12 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -116,8 +116,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             if (!skid
                     && (target.getTargetType() == Targetable.TYPE_ENTITY)
                     && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target)
-                            .getOwner().getTeam() != Player.TEAM_NONE)
-                            && (ae.getOwner().getTeam() != Player.TEAM_NONE) && (ae
+                            .getOwner().getTeam() != IPlayer.TEAM_NONE)
+                            && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE) && (ae
                             .getOwner().getTeam() == ((Entity) target)
                             .getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -125,7 +125,6 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
-        IHex attHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
@@ -161,7 +160,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // check range
         if (src.distance(target.getPosition()) > 1) {
-            if ((null != te) && (null != te.getSecondaryPositions())) {
+            if (null != te.getSecondaryPositions()) {
                 boolean inSecondaryRange = false;
                 for (int i : te.getSecondaryPositions().keySet()) {
                     if (null != te.getSecondaryPositions().get(i)) {
@@ -388,7 +387,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // let's just check this
         if (!md.contains(MoveStepType.CHARGE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Charge action not found in movment path");
+                    "Charge action not found in movement path");
         }
 
         // no jumping
@@ -470,16 +469,16 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      * delta_distance is correct.
      */
     public static int getDamageFor(Entity entity) {
-        return getDamageFor(entity, entity, false, 0, entity.delta_distance);
+        return ChargeAttackAction.getDamageFor(entity, entity, false, 0, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, boolean tacops, int hexesMoved) {
-        return getDamageFor(entity, entity, tacops, 0, hexesMoved);
+        return ChargeAttackAction.getDamageFor(entity, entity, tacops, 0, hexesMoved);
     }
 
     public static int getDamageFor(Entity entity, Entity target,
             boolean tacops, int mos) {
-        return getDamageFor(entity, target, tacops, mos, entity.delta_distance);
+        return ChargeAttackAction.getDamageFor(entity, target, tacops, mos, entity.delta_distance);
     }
 
     public static int getDamageFor(Entity entity, Entity target,
@@ -510,12 +509,12 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {
-        return getDamageTakenBy(entity, target, false, 0);
+        return ChargeAttackAction.getDamageTakenBy(entity, target, false, 0);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,
             boolean tacops) {
-        return getDamageTakenBy(entity, target, tacops, entity.delta_distance);
+        return ChargeAttackAction.getDamageTakenBy(entity, target, tacops, entity.delta_distance);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target,

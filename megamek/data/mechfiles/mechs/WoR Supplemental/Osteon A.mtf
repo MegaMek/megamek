@@ -1,0 +1,159 @@
+Version:1.1
+Osteon
+A
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3072
+Source:WoR
+Rules Level:4
+
+Mass:85
+Engine:255 XL (Clan) Engine(IS)
+Structure:Clan Standard
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:14 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:8
+LL Armor:36
+RL Armor:36
+RTL Armor:12
+RTR Armor:12
+RTC Armor:12
+
+Weapons:9
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+ER Large Laser, Left Torso
+Medium Pulse Laser, Right Torso
+'Mech Mortar 8, Left Torso
+'Mech Mortar 8, Left Torso
+'Mech Mortar 8, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+CLERLargeLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+Clan Mech Mortar-8
+CLMediumPulseLaser
+Clan Ammo SC Mortar-8
+Clan Ammo SC Mortar-8
+Clan Ammo SC Mortar-8
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+NovaCEWS
+Clan Ammo SC Mortar-8
+Clan Ammo SC Mortar-8
+Clan Ammo SC Mortar-8
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -29,7 +29,7 @@ ISMachine Gun
 ISMachine Gun
 </Front Equipment>
 <transporters>
-TroopSpace:6
+InfantryBay:1:1
 </transporters>
 <Body Equipment>
 ISMG Ammo (100)

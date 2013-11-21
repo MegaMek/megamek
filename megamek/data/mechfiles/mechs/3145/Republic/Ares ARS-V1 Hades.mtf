@@ -1,0 +1,174 @@
+Version:1.0
+Ares 
+ARS-V1B Hades
+
+Config:Tripod OmniMech
+TechBase:Mixed (IS Chassis)
+Era:3145
+Rules Level:3
+
+Mass:135
+Engine:270 Engine
+Structure:Endo-Composite
+Myomer:Standard
+Gyro:Standard Gyro
+Cockpit:Superheavy Tripod Cockpit
+
+Heat Sinks:21 Double
+Base Chassis Heat Sinks:10
+Walk MP:2
+Jump MP:0
+
+Armor:Standard
+LA Armor:41
+RA Armor:41
+LT Armor:40
+RT Armor:40
+CT Armor:60
+HD Armor:12
+LL Armor:56
+RL Armor:56
+CL Armor:56
+RTL Armor:16
+RTR Armor:16
+RTC Armor:22
+
+Weapons:14
+ISMRM20, Left Arm
+CLUltraAC10, Left Arm
+ISMRM20, Right Arm
+ISTSEMPCannon, Right Arm
+CLERMediumLaser, Right Torso
+CLERSmallLaser, Right Torso
+ISLRM5, Right Torso
+ISSRM2, Right Torso
+CLERMediumLaser, Left Torso
+CLERSmallLaser, Left Torso
+ISLRM5, Left Torso
+ISSRM2, Left Torso
+CLERSmallLaser, Center Torso
+ISSRM2, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMRM20
+ISMRM20
+IS MRM Apollo FCS
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+ISCASEII
+Endo-Composite
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMRM20
+ISMRM20
+IS MRM Apollo FCS
+ISTSEMP
+ISTSEMP
+ISTSEMP
+Endo-Composite
+-Empty-
+
+Left Torso:
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISSRM2 Ammo
+ISMRM20 Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISLRM5 Ammo
+ISMRM20 Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSRM2
+CLERSmallLaser
+Endo-Composite
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

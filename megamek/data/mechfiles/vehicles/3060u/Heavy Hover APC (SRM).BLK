@@ -33,7 +33,7 @@ ISMachine Gun
 ISMachine Gun
 </Front Equipment>
 <transporters>
-TroopSpace:3
+InfantryBay:1:1
 </transporters>
 <Body Equipment>
 ISSRM4 Ammo

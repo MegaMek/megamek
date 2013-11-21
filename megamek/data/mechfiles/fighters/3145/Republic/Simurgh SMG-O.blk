@@ -1,0 +1,108 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Simurgh
+</Name>
+
+<Model>
+SMG-O
+</Model>
+
+<Tonnage>
+85
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+81
+66
+66
+51
+</Armor>
+
+<Nose Equipment>
+ISHeavyGaussRifle
+ISRAC5
+ISRAC5
+ISHeavyGaussRifle Ammo
+ISHeavyGaussRifle Ammo
+ISHeavyGaussRifle Ammo
+ISRAC5 Ammo
+ISRAC5 Ammo
+ISRAC5 Ammo
+ISRAC5 Ammo
+ISRAC5 Ammo
+ISRAC5 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3100
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+3
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<omni>
+1
+</omni>
+

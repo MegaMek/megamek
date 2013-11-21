@@ -1,0 +1,156 @@
+Version:1.0
+Doloire
+DLR-OC
+
+Config:Biped Omnimech
+TechBase:Mixed (IS Chassis)
+Era:3121
+Source:TRO 3145 Republic
+Rules Level:4
+
+Mass:80
+Engine:320 XL (Clan) Engine
+Structure:IS Endo-Composite
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:26
+RT Armor:26
+CT Armor:38
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:8
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+Streak SRM 6, Left Leg
+ER Small Pulse Laser, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Leg
+LRM 20, Right Arm
+C3 Master with TAG, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Lance
+IS Lance
+IS Lance
+IS Lance
+ISAES
+ISAES
+ISAES
+ISAES
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+ISAES
+ISAES
+ISAES
+ISAES
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERSmallPulseLaser
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+ISCASEII
+IS Endo-Composite
+IS Endo-Composite
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,177 @@
+Version:1.0
+Ares 
+ARS-V1A Hera
+
+Config:Tripod OmniMech
+TechBase:Mixed (IS Chassis)
+Era:3145
+Rules Level:3
+
+Mass:135
+Engine:270 Engine
+Structure:Endo-Composite
+Myomer:Standard
+Gyro:Standard Gyro
+Cockpit:Superheavy Tripod Cockpit
+
+Heat Sinks:21 Double
+Base Chassis Heat Sinks:10
+Walk MP:2
+Jump MP:0
+
+Armor:Standard
+LA Armor:41
+RA Armor:41
+LT Armor:40
+RT Armor:40
+CT Armor:60
+HD Armor:12
+LL Armor:56
+RL Armor:56
+CL Armor:56
+RTL Armor:16
+RTR Armor:16
+RTC Armor:22
+
+Weapons:14
+CLERMediumPulseLaser, Left Arm
+CLERMediumPulseLaser, Left Arm
+CLERMediumPulseLaser, Left Arm
+ISImprovedHeavyGaussRifle, Right Arm
+CLERMediumLaser, Left Torso
+CLERSmallLaser, Left Torso
+ISLRM5, Left Torso
+ISSRM2, Left Torso
+CLERMediumLaser, Right Torso
+CLERSmallLaser, Right Torso
+ISLRM5, Right Torso
+ISSRM2, Right Torso
+ISSRM2, Center Torso
+CLERSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+Endo-Composite
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISCASEII
+Endo-Composite
+
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISSRM2 Ammo
+ISCASEII
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+CLERSmallLaser
+ISLRM5
+ISSRM2
+ISLRM5 Ammo
+ISImprovedHeavyGaussRifle Ammo
+ISImprovedHeavyGaussRifle Ammo
+ISImprovedHeavyGaussRifle Ammo
+ISCASEII
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSRM2
+CLERSmallLaser
+Endo-Composite
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAPod
+ISAPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

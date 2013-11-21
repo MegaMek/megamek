@@ -149,11 +149,13 @@ v0.37.0-dev (SVN)
     working yet, pending a rules clarification)
 + Feature: Implemented ballistic-reinforced armor
 + Bug [#3923]: Ammo type is not obvious from reports
-+ Bug: Princess behavior selector defaults to "berserk" rather than the actual "default"
++ Bug: Princess behavior selector defaults to "berserk" rather than the actual
+    "default"
 + Feature: Added patch for War of Reaving equipment
 + Data: Republic 3145 Units and War of Reaving Mechs (WoR Units need testing)
 + Data: Revised Unit Images and added additional Lookup Name.
 + Bug [#3927]: Cannot Update Client Settings 0.37-dev
++ Fix BA weapon flags
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

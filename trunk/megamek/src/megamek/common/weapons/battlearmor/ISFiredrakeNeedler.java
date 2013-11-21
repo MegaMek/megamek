@@ -49,7 +49,7 @@ public class ISFiredrakeNeedler extends Weapon {
         extremeRange = 4;
         bv = 2;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE);
+                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON);
     }
 
 }

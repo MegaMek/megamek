@@ -1,0 +1,153 @@
+Version:1.0
+Malice
+MAL-XP
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3129
+Source:TRO 3145 Republic
+Rules Level:3
+
+Mass:100
+Engine:400 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:30
+RT Armor:30
+CT Armor:42
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:12
+RTR Armor:12
+RTC Armor:20
+
+Weapons:6
+LB 5-X AC, Right Torso
+LB 5-X AC, Left Torso
+LB 10-X AC, Right Arm
+LB 10-X AC, Left Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+Clan LB 5-X Cluster Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+Clan LB 5-X Cluster Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

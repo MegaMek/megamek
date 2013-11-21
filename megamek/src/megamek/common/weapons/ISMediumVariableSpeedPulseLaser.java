@@ -39,6 +39,7 @@ public class ISMediumVariableSpeedPulseLaser extends
         setInternalName("ISMediumVSPLaser");
         setInternalName("ISMVSPL");
         setInternalName("ISMediumVariableSpeedLaser");
+        setInternalName("ISMediumVSP");
         heat = 7;
         damage = DAMAGE_VARIABLE;
         toHitModifier = -4;

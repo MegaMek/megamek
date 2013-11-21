@@ -40,6 +40,7 @@ public class ISLargeVariableSpeedPulseLaser extends
         setInternalName("ISLargeVSPLaser");
         setInternalName("ISLVSPL");
         setInternalName("ISLargeVariableSpeedLaser");
+        setInternalName("ISLargeVSP");
         heat = 10;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Scapha Hovertank
+</Name>
+
+<Model>
+(F)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+
+</transporters>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<engine_type>
+3
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+30
+20
+20
+20
+30
+</armor>
+
+<Body Equipment>
+ISTargeting Computer
+IS Ammo AC/5
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+ISTAG
+</Turret Equipment>
+
+<source>
+TRO 3145 Republic
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

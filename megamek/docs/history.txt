@@ -151,6 +151,8 @@ v0.37.0-dev (SVN)
 + Bug [#3923]: Ammo type is not obvious from reports
 + Bug: Princess behavior selector defaults to "berserk" rather than the actual "default"
 + Feature: Added patch for War of Reaving equipment
++ Data: Republic 3145 Units and War of Reaving Mechs (WoR Units need testing)
++ Data: Revised Unit Images and added additional Lookup Name.
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

@@ -1,0 +1,106 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Schrack
+</Name>
+
+<Model>
+SCK-O
+</Model>
+
+<Tonnage>
+60
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+81
+61
+61
+45
+</Armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISImprovedHeavyGaussRifle
+ISStreakSRM2 Ammo
+ISImprovedHeavyGaussRifle Ammo
+ISImprovedHeavyGaussRifle Ammo
+ISImprovedHeavyGaussRifle Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISStreakSRM2
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISStreakSRM2
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3105
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<omni>
+1
+</omni>
+

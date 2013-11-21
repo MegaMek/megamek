@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Centaur BattleArmor
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Squad Equipment>
+BABasicManipulator
+ISBATubeArtillery:DWP
+ISDetachableWeaponPack
+BA-Magnetic Clamp
+ISBASmallLaser
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+</Trooper 4 Equipment>
+
+<source>
+TRO 3145 Repubilc
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

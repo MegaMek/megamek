@@ -40,6 +40,7 @@ public class ISSmallVariableSpeedPulseLaser extends
         setInternalName("ISSmallVSPLaser");
         setInternalName("ISSVSPL");
         setInternalName("ISSmallVariableSpeedLaser");
+        setInternalName("ISSmallVSP");
         heat = 3;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

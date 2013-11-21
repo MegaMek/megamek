@@ -1,0 +1,155 @@
+Version:1.0
+Malice
+MAL-XV
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3129
+Source:TRO 3145 Republic
+Rules Level:3
+
+Mass:100
+Engine:400 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:30
+RT Armor:30
+CT Armor:42
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:12
+RTR Armor:12
+RTC Armor:20
+
+Weapons:8
+Improved Heavy Medium Laser, Right Torso
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Right Arm
+LAC/5, Left Torso
+LAC/5, Right Torso
+LAC/5, Left Arm
+LAC/5, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+CLCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+IS Ammo LAC/5
+CLCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

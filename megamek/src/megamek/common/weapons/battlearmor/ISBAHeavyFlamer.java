@@ -43,7 +43,6 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         criticals = 1;
         bv = 15;
         cost = 12250;
-        flags = flags.or(F_BA_WEAPON);
         techRating = RATING_C;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3070;

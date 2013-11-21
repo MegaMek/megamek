@@ -15,12 +15,11 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons.battlearmor;
+package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
-import megamek.common.weapons.GaussWeapon;
 
 /**
  * @author Sebastian Brocks

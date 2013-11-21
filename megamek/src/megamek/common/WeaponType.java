@@ -17,7 +17,6 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.weapons.*;
-import megamek.common.weapons.battlearmor.CLAPGaussRifle;
 import megamek.common.weapons.battlearmor.CLBAAPGaussRifle;
 import megamek.common.weapons.battlearmor.CLBAFlamer;
 import megamek.common.weapons.battlearmor.CLBAHeavyFlamer;

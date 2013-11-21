@@ -47,7 +47,7 @@ public class ISSupportPPC extends PPCWeapon {
         extremeRange = 10;
         tonnage = 0.25f;
         criticals = 2;
-        flags = flags.or(F_BA_WEAPON);
+        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;

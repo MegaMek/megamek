@@ -158,6 +158,7 @@ v0.37.0-dev (SVN)
 + Fix BA weapon flags
 + Added a TestAero class for validating Aerospace and Conventional fighters
 + Fix to TestAero class Cockpits/
++ Bug [#3928]: no ammo explosion due to heat
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

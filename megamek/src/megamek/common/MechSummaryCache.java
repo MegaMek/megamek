@@ -39,6 +39,7 @@ import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -47,7 +48,7 @@ import megamek.common.verifier.TestTank;
  * Cache of the Mech summary information. Implemented as Singleton so a client
  * and server running in the same process can share it
  *
- * @author Arlith
+ * @author arlith
  * @author Others...
  */
 public class MechSummaryCache {
@@ -111,14 +112,9 @@ public class MechSummaryCache {
 
     /**
      * Get the directory for the unit cache file.<br />
-     * TODO: Move this path so that the file loader doesn't need to explicitly
-     * exclude it!!!
      *
-     * @deprecated Inserted as a hack; the path should be passed-in from the
-     *             application during initialization.
      * @return The path to the directory containing the unit cache.
      */
-    @Deprecated
     public static File getUnitCacheDir() {
         return Configuration.unitsDir();
     }
@@ -401,16 +397,31 @@ public class MechSummaryCache {
 
         // we can only test meks and vehicles right now
         if ((e instanceof Mech)
-                || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {
+                || ((e instanceof Tank) && !(e instanceof GunEmplacement))
+                || (e instanceof Aero)) {
             TestEntity testEntity = null;
             if (e instanceof Mech) {
                 testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
                         null);
-            } else {
+            } else if (e instanceof Tank){
                 testEntity = new TestTank((Tank) e, entityVerifier.tankOption,
                         null);
+            }else if (e.getEntityType() == Entity.ETYPE_AERO
+                    && e.getEntityType() != 
+                            Entity.ETYPE_DROPSHIP
+                    && e.getEntityType() != 
+                            Entity.ETYPE_SMALL_CRAFT
+                    && e.getEntityType() != 
+                            Entity.ETYPE_FIGHTER_SQUADRON
+                    && e.getEntityType() != 
+                            Entity.ETYPE_JUMPSHIP
+                    && e.getEntityType() != 
+                            Entity.ETYPE_SPACE_STATION) {
+                testEntity = new TestAero((Aero)e, 
+                        entityVerifier.mechOption, null);
             }
-            if (!testEntity.correctEntity(new StringBuffer())) {
+            if (testEntity != null &&
+                    !testEntity.correctEntity(new StringBuffer())) {
                 ms.setLevel("F");
             }
         }

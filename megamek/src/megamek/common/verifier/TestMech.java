@@ -90,6 +90,11 @@ public class TestMech extends TestEntity {
     public boolean isMech() {
         return true;
     }
+    
+    @Override
+    public boolean isAero() {
+        return false;
+    }
 
     @Override
     public float getWeightMisc() {

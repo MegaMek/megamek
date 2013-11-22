@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
+import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -42,6 +43,7 @@ import megamek.common.TechConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -518,7 +520,8 @@ public class MegaMek {
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                                || (entity instanceof Tank)) {
+                                || (entity instanceof Tank || 
+                                        (entity instanceof Aero))) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity,
@@ -528,6 +531,20 @@ public class MegaMek {
                                     && !(entity instanceof GunEmplacement)) {
                                 testEntity = new TestTank((Tank) entity,
                                         entityVerifier.tankOption, null);
+                            }
+                            if (entity.getEntityType() == Entity.ETYPE_AERO
+                                    && entity.getEntityType() != 
+                                            Entity.ETYPE_DROPSHIP
+                                    && entity.getEntityType() != 
+                                            Entity.ETYPE_SMALL_CRAFT
+                                    && entity.getEntityType() != 
+                                            Entity.ETYPE_FIGHTER_SQUADRON
+                                    && entity.getEntityType() != 
+                                            Entity.ETYPE_JUMPSHIP
+                                    && entity.getEntityType() != 
+                                            Entity.ETYPE_SPACE_STATION) {
+                                testEntity = new TestAero((Aero)entity, 
+                                        entityVerifier.aeroOption, null);
                             }
 
                             if (testEntity != null) {

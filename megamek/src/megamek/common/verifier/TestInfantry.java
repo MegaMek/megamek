@@ -46,6 +46,11 @@ public class TestInfantry extends TestEntity {
 	public boolean isMech() {
 		return false;
 	}
+	
+	@Override
+    public boolean isAero() {
+        return false;
+    }
 
 	@Override
 	public float getWeightControls() {

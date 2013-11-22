@@ -39,6 +39,11 @@ import megamek.common.TripodMech;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 
+/**
+ * Abstract parent class for testing and validating instantiations of <code>
+ * Entity</code> subclasses.
+ * 
+ */
 public abstract class TestEntity implements TestEntityOption {
 
     public final static float CEIL_TON = 1.0f;
@@ -56,6 +61,8 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isTank();
 
     public abstract boolean isMech();
+    
+    public abstract boolean isAero();
 
     public abstract float getWeightControls();
 
@@ -1231,7 +1238,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printTechLevel() {
-        return "Chassis: " + getEntity().getMovementMode().toString() + " - "
+        return "Chassis: " + getEntity().getDisplayName() + " - "
                 + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
                 + Integer.toString(getEntity().getYear()) + ")\n";
     }

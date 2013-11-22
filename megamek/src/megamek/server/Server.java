@@ -199,6 +199,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -25439,7 +25440,8 @@ public class Server implements Runnable {
             }
             // we can only test meks and vehicles right now
             if ((entity instanceof Mech)
-                    || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))) {
+                    || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))
+                    || (entity instanceof Aero)) {
                 TestEntity testEntity = null;
                 entity.restore();
                 if (entity instanceof Mech) {
@@ -25448,13 +25450,25 @@ public class Server implements Runnable {
                 }
                 if (entity instanceof VTOL) {
                     testEntity = new TestTank((Tank) entity,
-                            Server.entityVerifier.tankOption, null);// not
+                            Server.entityVerifier.tankOption, null);
                 }
-                // implemented
-                // yet.
                 if (entity instanceof Tank) {
                     testEntity = new TestTank((Tank) entity,
                             Server.entityVerifier.tankOption, null);
+                }
+                if (entity.getEntityType() == Entity.ETYPE_AERO
+                        && entity.getEntityType() != 
+                                Entity.ETYPE_DROPSHIP
+                        && entity.getEntityType() != 
+                                Entity.ETYPE_SMALL_CRAFT
+                        && entity.getEntityType() != 
+                                Entity.ETYPE_FIGHTER_SQUADRON
+                        && entity.getEntityType() != 
+                                Entity.ETYPE_JUMPSHIP
+                        && entity.getEntityType() != 
+                                Entity.ETYPE_SPACE_STATION) {
+                    testEntity = new TestAero((Aero)entity, 
+                            Server.entityVerifier.aeroOption, null);
                 }
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb,

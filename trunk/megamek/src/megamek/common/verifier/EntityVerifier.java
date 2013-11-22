@@ -55,6 +55,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     public TestXMLOption mechOption = new TestXMLOption();
     public TestXMLOption tankOption = new TestXMLOption();
     public TestXMLOption aeroOption = new TestXMLOption();
+    
+    private boolean loadingVerbosity = false;
 
     public EntityVerifier(File config) {
         ParsedXML root = null;
@@ -155,18 +157,21 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(mechOption.printOptions());
         System.out.println("\nTank Options:");
         System.out.println(tankOption.printOptions());
+        System.out.println("\nAero Options:");
+        System.out.println(aeroOption.printOptions());
 
         int failures = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
-                    || ms[i].getUnitType().equals("Tank")) {
+                    || ms[i].getUnitType().equals("Tank")
+                    || ms[i].getUnitType().equals("Aero")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        false)) {
+                        loadingVerbosity)) {
                     failures++;
                 }
             }
@@ -189,6 +194,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         File config = new File(Configuration.unitsDir(), CONFIG_FILENAME);
         File f = null;
         String entityName = null;
+        boolean verbose = false;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
                 if (args.length <= i) {
@@ -209,10 +215,12 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                     i++;
                     entityName = args[i];
                 }
+            } else if (args[i].equals("-v") || args[i].equals("-verbose")){
+                verbose = true;
             } else {
                 System.err.println("Error: Invalid argument.\n");
                 System.err
-                        .println("Usage:\n\tEntityVerifier [-file <FILENAME>]");
+                        .println("Usage:\n\tEntityVerifier [-file <FILENAME>] [-v]");
                 return;
             }
         }
@@ -231,6 +239,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             // No specific file passed, so have MegaMek load all the mechs it
             // normally would, then verify all of them.
             EntityVerifier ev = new EntityVerifier(config);
+            ev.loadingVerbosity = verbose;
             mechSummaryCache = MechSummaryCache.getInstance();
             mechSummaryCache.addListener(ev);
         }

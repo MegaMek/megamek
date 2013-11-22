@@ -86,6 +86,7 @@
      David Armendariz <darm88@users.sourceforge.net>
      Nicholas Walczak <arlith@users.sourceforge.net>
      Eddy Cullen <screamingwns@users.sourceforge.net>
+     Michael Rowlett <eventsbeyondme@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

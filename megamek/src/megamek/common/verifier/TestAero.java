@@ -21,9 +21,11 @@ package megamek.common.verifier;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
@@ -544,7 +546,7 @@ public class TestAero extends TestEntity {
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
-        buff.append("Mech: ").append(aero.getDisplayName()).append("\n");
+        buff.append("Aero: ").append(aero.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append(printShortMovement());
@@ -590,6 +592,39 @@ public class TestAero extends TestEntity {
                 + printWeightArmor() + printWeightMisc()
                 + printWeightCarryingSpace() + "Equipment:\n"
                 + printMiscEquip() + printWeapon() + printAmmo();
+    }
+    
+    public String printLocations() {
+        StringBuffer buff = new StringBuffer();
+        for (int i = 0; i < getEntity().locations(); i++) {
+            String locationName = getEntity().getLocationName(i);
+            buff.append(locationName + ":");
+            buff.append("\n");
+            for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
+                CriticalSlot slot = getEntity().getCritical(i, j);
+                if (slot == null) {
+                    j = getEntity().getNumberOfCriticals(i);                    
+                } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+                    if (isMech()) {
+                        buff.append(Integer.toString(j));
+                        buff.append(". ");
+                        buff.append(((Mech) getEntity()).getSystemName(slot
+                                .getIndex()));
+                        buff.append("\n");
+                    } else {
+                        buff.append(Integer.toString(j)
+                                + ". UNKNOWN SYSTEM NAME");
+                        buff.append("\n");
+                    }
+                } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                    EquipmentType e = getEntity().getEquipmentType(slot);
+                    buff.append(Integer.toString(j) + ". "
+                            + e.getInternalName());
+                    buff.append("\n");
+                }
+            }
+        }
+        return buff.toString();
     }
     
 

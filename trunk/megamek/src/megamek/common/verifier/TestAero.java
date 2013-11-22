@@ -234,8 +234,9 @@ public class TestAero extends TestEntity {
         } else {
             weight = 3.0f;
             if (aero.getCockpitType() == Aero.COCKPIT_SMALL) {
-                weight = 2.0f;
-                weight = 6.0f;
+            	weight = 2.0f;
+        } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE){                   	
+            	weight = 6.0f;
             } else if (aero.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
                 weight = 5.0f;
             } 

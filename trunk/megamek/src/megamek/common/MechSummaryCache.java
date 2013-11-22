@@ -308,6 +308,8 @@ public class MechSummaryCache {
             m_instance.notifyAll();
         }
 
+        initialized = true;
+        
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).doneLoading();
         }
@@ -315,8 +317,6 @@ public class MechSummaryCache {
         if (disposeInstance) {
             m_instance = null;
             initialized = false;
-        } else {
-            initialized = true;
         }
     }
 

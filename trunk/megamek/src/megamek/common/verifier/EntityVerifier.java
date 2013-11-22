@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
+import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -38,6 +39,11 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
 
+/**
+ * Performs verification of the validity of different types of 
+ * <code>Entity</code> subclasses.  Most of the actual validation is performed
+ * by <code>TestEntity</code> and its subclasses. 
+ */
 public class EntityVerifier implements MechSummaryCache.Listener {
     public final static String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
 
@@ -48,6 +54,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     private static MechSummaryCache mechSummaryCache = null;
     public TestXMLOption mechOption = new TestXMLOption();
     public TestXMLOption tankOption = new TestXMLOption();
+    public TestXMLOption aeroOption = new TestXMLOption();
 
     public EntityVerifier(File config) {
         ParsedXML root = null;
@@ -83,6 +90,18 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
         } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, tankOption, fileString);
+        }else if (entity.getEntityType() == Entity.ETYPE_AERO
+                && entity.getEntityType() != 
+                        Entity.ETYPE_DROPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SMALL_CRAFT
+                && entity.getEntityType() != 
+                        Entity.ETYPE_FIGHTER_SQUADRON
+                && entity.getEntityType() != 
+                        Entity.ETYPE_JUMPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SPACE_STATION) {
+            testEntity = new TestAero((Aero)entity, aeroOption, null);
         } else {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);

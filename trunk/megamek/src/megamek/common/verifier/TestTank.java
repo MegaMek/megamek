@@ -92,6 +92,11 @@ public class TestTank extends TestEntity {
     public boolean isMech() {
         return false;
     }
+    
+    @Override
+    public boolean isAero() {
+        return false;
+    }
 
     public float getTankWeightTurret() {
         if (tank instanceof VTOL) {

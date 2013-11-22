@@ -156,6 +156,7 @@ v0.37.0-dev (SVN)
 + Data: Revised Unit Images and added additional Lookup Name.
 + Bug [#3927]: Cannot Update Client Settings 0.37-dev
 + Fix BA weapon flags
++ Added a TestAero class for validating Aerospace and Conventional fighters
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

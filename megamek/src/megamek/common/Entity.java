@@ -4238,7 +4238,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus;
                 }
-                // WOR: Adding nova CEWS here.
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
                         || (m.getType()).getInternalName().equals(
                                 Sensor.WATCHDOG)
@@ -4450,11 +4449,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * WOR: Checks if we have nova CEWS that is not offline.
+     * Checks if we have nova CEWS that is not offline.
      *
      * @return
      */
-
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
             return false;
@@ -4469,14 +4467,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public boolean hasNovaCEWS() // we need this to get the network ID strings
-                                 // we cannot use.
-    {
+    public boolean hasNovaCEWS() {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_NOVA)
                     && !m.isInoperable()) {
-                return true;// hope i didn't break it by adding m.isInoperable()
+                return true;
             }
         }
         return false;
@@ -4668,7 +4664,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         } else if (hasActiveNovaCEWS()) {
-            // WOR: Nova CEWS
             nodes = 2;
             if (game != null) {
                 for (Enumeration<Entity> i = game.getEntities(); i
@@ -4922,7 +4917,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             getPosition()));
         }
 
-        // WOR: Nova CEWS
         // Nova is easy - if they both have Nova, and their net ID's match,
         // they're on the same network!
         // At least I hope thats how it works.
@@ -7463,7 +7457,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean found = false;
 
         // Walk through the unit's ammo, stop when we find a match.
-        // WOR: iATM inferno added
         for (Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType) amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype
@@ -10435,9 +10428,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return taserInterferenceRounds;
     }
 
-    /**
-     * WOR: some iATM IMP stuff
-     */
     public void addIMPHits(int missiles) {
         // effects last for only one turn.
         impThisTurn += missiles;
@@ -10453,11 +10443,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         impThisTurn = 0;
     }
 
-    public int getIMPMoveMod() // this function needs to be added to the MP
-                               // calculating functions
-    // however, since no function calls super, it seems unneccesary complicated
-    // really.
-    {
+    public int getIMPMoveMod() {
+        // this function needs to be added to the MP
+        // calculating functions
+        //however, since no function calls super, it seems unneccesary complicated
+        // really.
         int max = 2;
         int modifier = impThisTurn + impLastTurn;
         modifier = modifier - (modifier % 3);

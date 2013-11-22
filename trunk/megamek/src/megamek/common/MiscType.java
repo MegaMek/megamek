@@ -1381,8 +1381,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLSpaceMineDispenser());
         EquipmentType.addType(MiscType.createVehicularStealth());
         EquipmentType.addType(MiscType.createEmergencyC3M());
-
-        // WOR: add nova CEWS
         EquipmentType.addType(MiscType.createNovaCEWS());
 
         // Start BattleArmor equipment
@@ -2470,7 +2468,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // WOR: Create nova CEWS
     public static MiscType createNovaCEWS() {
         MiscType misc = new MiscType();
 
@@ -2483,7 +2480,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 1;
         misc.cost = 1100000; // we assume that WOR had a typo there.
-        // WOR: Maybe need .or(F_C3I) ?
         misc.flags = misc.flags.or(F_NOVA).or(F_ECM).or(F_BAP)
                 .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 68;

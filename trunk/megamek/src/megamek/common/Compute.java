@@ -763,7 +763,6 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype instanceof InfantryWeapon;
-        //WOR: added iATM. Why do you check for ammo types?
         boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)
@@ -1367,16 +1366,16 @@ public class Compute {
         }
         return finalPos;
     }
-    
+
     /**
      * WOR: Need this function to find out where my nova stuff doesn't work.
-     * Delete it if nova works but remember to alter the /nova debug server command.
+     * Delete it if nova works but remember to alter the /nova debug server
+     * command.
      */
-    public static Entity exposed_findC3Spotter(IGame game, Entity attacker, Targetable target)
-    {
-    	return findC3Spotter(game, attacker, target);
+    public static Entity exposed_findC3Spotter(IGame game, Entity attacker,
+            Targetable target) {
+        return findC3Spotter(game, attacker, target);
     }
-    
 
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
@@ -1384,16 +1383,15 @@ public class Compute {
      *
      * @return A closer C3 spotter, or the attack if no spotters are found
      */
-    private static Entity findC3Spotter(IGame game, Entity attacker, Targetable target) {
+    private static Entity findC3Spotter(IGame game, Entity attacker,
+            Targetable target) {
         // TODO: underwater units can't spot for overwater units and vice versa
         if (!attacker.hasC3() && !attacker.hasC3i()) {
-        	// if we have nova CEWS we still want to continue.
-        	if(!attacker.hasActiveNovaCEWS())
-            {
-        		return attacker;
+            // if we have nova CEWS we still want to continue.
+            if (!attacker.hasActiveNovaCEWS()) {
+                return attacker;
             }
         }
-        //WOR: added nova CEWS here!
         if (attacker.hasC3i()) {
             return Compute.findC3iSpotter(game, attacker, target);
         }
@@ -1407,13 +1405,17 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            // TODO : can units being transported be used for C3 spotting? For now we'll say no.
-            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)
-                    || !friend.isDeployed() || (friend.getTransportId() != Entity.NONE)) {
+            // TODO : can units being transported be used for C3 spotting? For
+            // now we'll say no.
+            if (attacker.equals(friend) || !friend.isActive()
+                    || !attacker.onSameC3NetworkAs(friend)
+                    || !friend.isDeployed()
+                    || (friend.getTransportId() != Entity.NONE)) {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
+            int buddyRange = Compute.effectiveDistance(game, friend, target,
+                    false);
             if (buddyRange < c3range) {
                 c3range = buddyRange;
                 c3spotter = friend;
@@ -1455,7 +1457,8 @@ public class Compute {
             // but everyone in the C3i network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
                 if ((Compute.effectiveDistance(game, network.get(pos), target,
-                        false) >= buddyRange) && Compute.canSee(game, friend, target)) {
+                        false) >= buddyRange)
+                        && Compute.canSee(game, friend, target)) {
                     network.add(pos, friend);
                     added = true;
                     break;
@@ -1479,17 +1482,18 @@ public class Compute {
         }
         return c3spotter;
     }
-    
+
     /**
-     * find a nova spotter that is closer to the target than the attacker.
-     * WOR: Nova CEWS uses this function too, since its the same principle.
+     * find a nova spotter that is closer to the target than the attacker. WOR:
+     * Nova CEWS uses this function too, since its the same principle.
      *
      * @param game
      * @param attacker
      * @param target
      * @return
      */
-    private static Entity findNovaSpotter(IGame game, Entity attacker, Targetable target) {
+    private static Entity findNovaSpotter(IGame game, Entity attacker,
+            Targetable target) {
         if (!attacker.hasActiveNovaCEWS()) {
             return attacker;
         }
@@ -1500,16 +1504,20 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend, true) || !friend.isDeployed()) {
+            if (attacker.equals(friend)
+                    || !attacker.onSameC3NetworkAs(friend, true)
+                    || !friend.isDeployed()) {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
+            int buddyRange = Compute.effectiveDistance(game, friend, target,
+                    false);
 
             boolean added = false;
             // but everyone in the C3i network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
-                if (Compute.effectiveDistance(game, network.get(pos), target, false) >= buddyRange) {
+                if (Compute.effectiveDistance(game, network.get(pos), target,
+                        false) >= buddyRange) {
                     network.add(pos, friend);
                     added = true;
                     break;
@@ -1525,15 +1533,14 @@ public class Compute {
         for (Entity spotter : network) {
 
             for (int count = position++; count < network.size(); count++) {
-                if (Compute.canCompleteNodePathNova(spotter, attacker, network, count)) {
+                if (Compute.canCompleteNodePathNova(spotter, attacker, network,
+                        count)) {
                     return spotter;
                 }
             }
         }
         return c3spotter;
     }
-    
-    
 
     private static boolean canCompleteNodePath(Entity start, Entity end,
             ArrayList<Entity> network, int startPosition) {
@@ -1560,22 +1567,26 @@ public class Compute {
 
         return false;
     }
-    
-    private static boolean canCompleteNodePathNova(Entity start, Entity end, ArrayList<Entity> network, int startPosition) {
+
+    private static boolean canCompleteNodePathNova(Entity start, Entity end,
+            ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
         // Last position cannot get to this one. go to the next person
-        if (Compute.isAffectedByNovaECM(spotter, start.getPosition(), spotter.getPosition())) {
+        if (Compute.isAffectedByNovaECM(spotter, start.getPosition(),
+                spotter.getPosition())) {
             return false;
         }
 
-        if (!Compute.isAffectedByNovaECM(spotter, spotter.getPosition(), end.getPosition())) {
+        if (!Compute.isAffectedByNovaECM(spotter, spotter.getPosition(),
+                end.getPosition())) {
             return true;
         }
 
         for (++startPosition; startPosition < network.size(); startPosition++) {
-            if (Compute.canCompleteNodePathNova(spotter, end, network, startPosition)) {
+            if (Compute.canCompleteNodePathNova(spotter, end, network,
+                    startPosition)) {
                 return true;
             }
         }
@@ -2068,7 +2079,8 @@ public class Compute {
                                 || (entity.moved == EntityMovementType.MOVE_VTOL_RUN) || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)),
                         (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                                 || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                                || (entity.getMovementMode() == EntityMovementMode.VTOL), game);
+                                || (entity.getMovementMode() == EntityMovementMode.VTOL),
+                        game);
 
         // Did the target skid this turn?
         if (entity.moved == EntityMovementType.MOVE_SKID) {
@@ -2095,13 +2107,15 @@ public class Compute {
      * Target movement modifer for the specified delta_distance
      */
 
-    public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean isVTOL, IGame game) {
+    public static ToHitData getTargetMovementModifier(int distance,
+            boolean jumped, boolean isVTOL, IGame game) {
         ToHitData toHit = new ToHitData();
         if (distance == 0) {
             return toHit;
         }
 
-        if ((game != null) && game.getOptions().booleanOption("maxtech_movement_mods")) {
+        if ((game != null)
+                && game.getOptions().booleanOption("maxtech_movement_mods")) {
             if ((distance >= 3) && (distance <= 4)) {
                 toHit.addModifier(1, "target moved 3-4 hexes");
             } else if ((distance >= 5) && (distance <= 6)) {
@@ -3101,7 +3115,8 @@ public class Compute {
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
                 .getSecondaryFacing() : ae.getFacing();
         if ((ae instanceof Tank)
-                && (ae.getEquipment(weaponId).getLocation() == ((Tank)ae).getLocTurret2())) {
+                && (ae.getEquipment(weaponId).getLocation() == ((Tank) ae)
+                        .getLocTurret2())) {
             facing = ((Tank) ae).getDualTurretFacing();
         }
         if (ae.getEquipment(weaponId).isMechTurretMounted()) {
@@ -3420,11 +3435,13 @@ public class Compute {
         return distance <= visualRange;
 
     }
-    
-    public static int getVisualRange(IGame game, Entity ae, LosEffects los, boolean teSpotlight) {
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teSpotlight);
+
+    public static int getVisualRange(IGame game, Entity ae, LosEffects los,
+            boolean teSpotlight) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
+                teSpotlight);
         visualRange -= los.getLightSmoke();
-        visualRange -= 2*los.getHeavySmoke();
+        visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);
         return visualRange;
     }
@@ -3478,7 +3495,8 @@ public class Compute {
 
     /**
      * gets the sensor range bracket when detecting a particular type of target.
-     * target may be null here, which gives you the bracket without target entity modifiers
+     * target may be null here, which gives you the bracket without target
+     * entity modifiers
      */
     public static int getSensorRangeBracket(Entity ae, Targetable target) {
 
@@ -3488,11 +3506,11 @@ public class Compute {
         }
         // only works for entities
         Entity te = null;
-        if (null!= target) {
-            if(target.getTargetType() != Targetable.TYPE_ENTITY) {
+        if (null != target) {
+            if (target.getTargetType() != Targetable.TYPE_ENTITY) {
                 return 0;
             }
-            te = (Entity) target;           
+            te = (Entity) target;
         }
 
         // if this sensor is an active probe and it is critted, then no can see
@@ -3501,10 +3519,11 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if(null != ae.getCrew() && ae.getCrew().getOptions().booleanOption("sensor_geek")) {
+        if ((null != ae.getCrew())
+                && ae.getCrew().getOptions().booleanOption("sensor_geek")) {
             check -= 2;
         }
-        if(null != te) {
+        if (null != te) {
             check += sensor.getModsForStealth(te);
             // Metal Content...
             if (ae.getGame().getOptions().booleanOption("metal_content")) {
@@ -3536,16 +3555,19 @@ public class Compute {
     }
 
     /**
-     * gets the size of the sensor range bracket when detecting a particular type of target
+     * gets the size of the sensor range bracket when detecting a particular
+     * type of target
      */
     private static int getSensorRangeByBracket(IGame game, Entity ae,
             Targetable target) {
-        return getSensorRangeByBracket(game, ae, target, LosEffects.calculateLos(game, ae.getId(), target));
+        return getSensorRangeByBracket(game, ae, target,
+                LosEffects.calculateLos(game, ae.getId(), target));
     }
-    
+
     /**
-     * gets the size of the sensor range bracket when detecting a particular type of target.
-     * target may be null here, which gives you the range without target entity modifiers
+     * gets the size of the sensor range bracket when detecting a particular
+     * type of target. target may be null here, which gives you the range
+     * without target entity modifiers
      */
     public static int getSensorRangeByBracket(IGame game, Entity ae,
             Targetable target, LosEffects los) {
@@ -3556,13 +3578,13 @@ public class Compute {
         }
         // only works for entities
         Entity te = null;
-        if (null!= target) {
-            if(target.getTargetType() != Targetable.TYPE_ENTITY) {
+        if (null != target) {
+            if (target.getTargetType() != Targetable.TYPE_ENTITY) {
                 return 0;
             }
-            te = (Entity) target;           
+            te = (Entity) target;
         }
-        
+
         // if this sensor is an active probe and it is critted, then no can see
         if (sensor.isBAP() && !ae.hasBAP(false)) {
             return 0;
@@ -3570,7 +3592,7 @@ public class Compute {
 
         // if we are crossing water then only magscan will work unless we are a
         // naval vessel
-        if (null != te && los.isBlockedByWater()
+        if ((null != te) && los.isBlockedByWater()
                 && (sensor.getType() != Sensor.TYPE_MEK_MAGSCAN)
                 && (sensor.getType() != Sensor.TYPE_VEE_MAGSCAN)
                 && (ae.getMovementMode() != EntityMovementMode.HYDROFOIL)
@@ -3585,7 +3607,7 @@ public class Compute {
         range = sensor.adjustRange(range, game, los);
 
         // now adjust for anything about the target entity (size, heat, etc)
-        if(null != te) {
+        if (null != te) {
             range = sensor.entityAdjustments(range, te, game);
         }
 
@@ -3596,7 +3618,7 @@ public class Compute {
         return range;
 
     }
-    
+
     public static int targetSideTable(Coords inPosition, Targetable target) {
         return target.sideTable(inPosition);
     }
@@ -3805,11 +3827,10 @@ public class Compute {
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         return Compute.getECMFieldSize(ae, a, b) > 0;
     }
-    
+
     /**
-     * WOR: Nova CEWS
-     * This method checks to see if a line from a to b is affected by an Nova ECM
-     * field of the enemy of ae
+     * WOR: Nova CEWS This method checks to see if a line from a to b is
+     * affected by an Nova ECM field of the enemy of ae
      *
      * @param ae
      * @param a
@@ -4055,7 +4076,6 @@ public class Compute {
         }
         return worstECCM;
     }
-    
 
     /**
      * This method checks to see if a line from a to b is affected by an Angel
@@ -4211,8 +4231,8 @@ public class Compute {
         }
         return worstECM;
     }
-    
- //WOR Nova CEWS. Modified Angel ECM code
+
+    // WOR Nova CEWS. Modified Angel ECM code
     public static double getNovaECMFieldSize(Entity ae, Coords a, Coords b) {
         if (ae.getGame().getBoard().inSpace()) {
             // normal Nova ECM effects don't apply in space
@@ -4246,14 +4266,18 @@ public class Compute {
 
             // Check the angel ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && (entPos != null)) {
+                if (other.isEnemyOf(ae) && other.hasActiveAngelECM()
+                        && (entPos != null)) {
                     vEnemyNovaECMCoords.addElement(entPos);
-                    vEnemyNovaECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyNovaECMRanges.addElement(new Integer(other
+                            .getECMRange()));
                     vEnemyNovaECMStrengths.add(ent.getECMStrength());
                 }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                if (!other.isEnemyOf(ae) && ent.hasActiveECCM()
+                        && (entPos != null)) {
                     vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                    vFriendlyECCMRanges.addElement(new Integer(ent
+                            .getECMRange()));
                     vFriendlyECCMStrengths.add(ent.getECMStrength());
                 }
             }

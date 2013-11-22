@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -20,7 +20,7 @@ import java.util.TimerTask;
 /**
  * a singleton class (I hate singletons) to act as a central point for things
  * requiring timer services in clients.
- * 
+ *
  * note: acts as a daemon thread so will
  * exit when other threads have exited.
  */
@@ -28,8 +28,9 @@ public class TimerSingleton {
     protected static TimerSingleton inst;
 
     public static synchronized TimerSingleton getInstance() {
-        if (inst == null)
+        if (inst == null) {
             inst = new TimerSingleton();
+        }
         return inst;
     }
 

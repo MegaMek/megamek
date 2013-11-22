@@ -24237,8 +24237,7 @@ public class Server implements Runnable {
                         || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                     continue;
                 }
-                Mounted mounted = entity.getEquipment(entity.getCritical(j, k)
-                        .getIndex());
+                Mounted mounted = cs.getMount();
                 if ((mounted == null)
                         || (!(mounted.getType() instanceof AmmoType))) {
                     continue;
@@ -24262,6 +24261,13 @@ public class Server implements Runnable {
                 // damage. Ties go to most rounds.
                 int newRack = atype.getDamagePerShot() * atype.getRackSize();
                 int newDamage = mounted.getExplosionDamage();
+                Mounted mount2 = cs.getMount2();
+                if ((mount2 != null) && (mount2.getType() instanceof AmmoType) && (mount2.getHittableShotsLeft() > 0)) {
+                    // must be for same weapontype, so racksize stays
+                    atype = (AmmoType)mount2.getType();
+                    newRack += atype.getDamagePerShot() * atype.getRackSize();
+                    newDamage += mount2.getExplosionDamage();
+                }
                 if (!mounted.isHit()
                         && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;

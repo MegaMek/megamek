@@ -2210,6 +2210,7 @@ public class Compute {
             }
         }
 
+
         boolean isAboveWoodsAndSmoke = ((entityTarget != null) && (hex != null))
                 && ((entityTarget.absHeight() >= 2) || (entityTarget
                         .isAirborne()));

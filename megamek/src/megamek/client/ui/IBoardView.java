@@ -25,8 +25,8 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayListener;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.MovePath;
 import megamek.common.IPlayer;
+import megamek.common.MovePath;
 import megamek.common.ToHitData;
 import megamek.common.actions.AttackAction;
 
@@ -41,12 +41,12 @@ public interface IBoardView extends MechDisplayListener {
     public void redrawEntity(Entity ce);
 
     public Entity getDeployingEntity();
-    
+
     public void drawMovementData(Entity ce, MovePath cmd);
     public void clearMovementData();
-    public void setFiringSolutions(Entity attacker, 
+    public void setFiringSolutions(Entity attacker,
             Hashtable<Integer,ToHitData> firingSolutions);
-    public void setMovementEnvelope(Hashtable<Coords,Integer> mvEnvData, 
+    public void setMovementEnvelope(Hashtable<Coords,Integer> mvEnvData,
             int walk, int run, int jump, int gear);
     public void clearFiringSolutionData();
     public void clearMovementEnvelope();
@@ -141,11 +141,13 @@ public interface IBoardView extends MechDisplayListener {
     public abstract void processBoardViewEvent(BoardViewEvent event);
 
     public abstract Image getEntireBoardImage();
-    
+
     /**
      * Sets the BoardView's currently selected entity.
      * @param e
      */
     public abstract void selectEntity(Entity e);
+
+    public void die();
 
 }

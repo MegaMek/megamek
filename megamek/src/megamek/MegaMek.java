@@ -48,7 +48,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
-
+import megamek.client.TimerSingleton;
 /**
  * @author mev This is the class where the execution of the megamek game starts.
  */
@@ -266,6 +266,7 @@ public class MegaMek {
      */
     private static void displayMessageAndExit(String message) {
         MegaMek.displayMessage(message);
+        TimerSingleton.getInstance().killTimer();
         System.exit(1);
     }
 

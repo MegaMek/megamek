@@ -20,9 +20,8 @@ import java.util.TimerTask;
 /**
  * a singleton class (I hate singletons) to act as a central point for things
  * requiring timer services in clients.
- *
- * note: acts as a daemon thread so will
- * exit when other threads have exited.
+ * 
+ * note: acts as a daemon thread so will exit when other threads have exited.
  */
 public class TimerSingleton {
     protected static TimerSingleton inst;
@@ -43,5 +42,12 @@ public class TimerSingleton {
 
     public void schedule(TimerTask tt, long delay, long interval) {
         t.schedule(tt, delay, interval);
+    }
+
+    public void killTimer() {
+        t.cancel();
+        t.purge();
+        t = null;
+        inst = null;
     }
 }

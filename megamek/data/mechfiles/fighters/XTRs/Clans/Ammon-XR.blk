@@ -73,6 +73,10 @@ CLLaserAntiMissileSystem
 Clan Level 4
 </type>
 
+<armor_tech>
+8
+</armor_tech>
+
 <year>
 3076
 </year>

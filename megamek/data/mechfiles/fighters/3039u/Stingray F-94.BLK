@@ -7,8 +7,6 @@
 
 </BlockVersion>
 
-
-
 #Write the version number just in case...
 
 <Version>
@@ -17,15 +15,11 @@ MAM0
 
 </Version>
 
-
-
 <UnitType>
 
 Aero
 
 </UnitType>
-
-
 
 <Name>
 
@@ -33,15 +27,11 @@ Stingray
 
 </Name>
 
-
-
 <Model>
 
 F-94
 
 </Model>
-
-
 
 <Tonnage>
 
@@ -49,15 +39,11 @@ F-94
 
 </Tonnage>
 
-
-
 <SafeThrust>
 
 6
 
 </SafeThrust>
-
-
 
 <Armor>
 
@@ -71,17 +57,15 @@ F-94
 
 </Armor>
 
-
-
 <Nose Equipment>
 
 ISERLargeLaser
 
 Medium Laser
 
+IS Ammo LRM-10
+
 </Nose Equipment>
-
-
 
 <Left Wing Equipment>
 
@@ -89,11 +73,9 @@ LRM 10
 
 Medium Laser
 
-IS Ammo LRM-10
+
 
 </Left Wing Equipment>
-
-
 
 <Right Wing Equipment>
 
@@ -101,17 +83,13 @@ LRM 10
 
 Medium Laser
 
-IS Ammo LRM-10
+
 
 </Right Wing Equipment>
-
-
 
 <Aft Equipment>
 
 </Aft Equipment>
-
-
 
 <heatsinks>
 
@@ -119,15 +97,11 @@ IS Ammo LRM-10
 
 </heatsinks>
 
-
-
 <sink_type>
 
 0
 
 </sink_type>
-
-
 
 <fuel>
 
@@ -135,15 +109,11 @@ IS Ammo LRM-10
 
 </fuel>
 
-
-
 <type>
 
 IS Level 2
 
 </type>
-
-
 
 <year>
 
@@ -151,15 +121,11 @@ IS Level 2
 
 </year>
 
-
-
 <source>
 
 Clan Invasion
 
 </source>
-
-
 
 <internal_type>
 
@@ -167,23 +133,17 @@ Clan Invasion
 
 </internal_type>
 
-
-
 <armor_type>
 
 0
 
 </armor_type>
 
-
-
 <engine_type>				
 
 0
 
 </engine_type>
-
-
 
 <motion_type>
 

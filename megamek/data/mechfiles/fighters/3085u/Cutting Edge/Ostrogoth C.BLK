@@ -119,7 +119,7 @@ CLECMSuite
 
 <heatsinks>
 
-13
+12
 
 </heatsinks>
 
@@ -140,6 +140,10 @@ CLECMSuite
 Clan Level 2
 
 </type>
+
+<armor_tech>
+2
+</armor_tech>
 
 <year>
 

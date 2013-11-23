@@ -104,10 +104,12 @@ CLTargeting Computer
 </fuel>
 
 <type>
-
 Clan Level 2
-
 </type>
+
+<armor_tech>
+2
+</armor_tech>
 
 <year>
 
@@ -122,7 +124,6 @@ Clan Level 2
 </internal_type>
 
 <armor_type>
-
 19
 </armor_type>
 

@@ -113,6 +113,10 @@ IS Level 2
 
 </type>
 
+<armor_tech>
+1
+</armor_tech>
+
 <year>
 
 3070
@@ -126,8 +130,7 @@ IS Level 2
 </internal_type>
 
 <armor_type>
-
-19
+20
 </armor_type>
 
 <engine_type>

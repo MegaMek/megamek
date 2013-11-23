@@ -73,6 +73,10 @@ ISERMediumLaser
 IS Level 2
 </type>
 
+<armor_tech>
+1
+</armor_tech>
+
 <year>
 3068
 </year>

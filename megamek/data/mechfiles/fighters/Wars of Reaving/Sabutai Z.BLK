@@ -1,0 +1,117 @@
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sabutai
+</Name>
+
+<Model>
+Z
+</Model>
+
+<Tonnage>
+75
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+62
+45
+45
+40
+</Armor>
+
+<Nose Equipment>
+CLERPPC
+NovaCEWS
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+CLIATM9 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLiATM9
+CLiATM9
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLiATM9
+CLiATM9
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<type>
+Clan Level 4
+</type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<omni>
+</omni>

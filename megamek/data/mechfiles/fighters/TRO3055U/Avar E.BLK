@@ -54,7 +54,6 @@ E
 32
 
 28
-
 </Armor>
 
 <Nose Equipment>
@@ -97,10 +96,12 @@ CLSRM2IOS
 </fuel>
 
 <type>
-
 Clan Level 3
-
 </type>
+
+<armor_tech>
+6
+</armor_tech>
 
 <year>
 

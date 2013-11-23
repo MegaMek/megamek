@@ -104,7 +104,8 @@ public class AddBotUtil {
                     verbosity = LogLevel.getLogLevel(verbose);
                 }
                 if (verbosity == null) {
-                    results.add("Invalid Verbosity: '" + verbose + "'.  Defaulting to WARN.");
+                    results.add("Invalid Verbosity: '" + verbose + "'.  Defaulting to ERROR.");
+                    verbosity = LogLevel.ERROR;
                 }
                 results.add("Verbosity set to '" + verbosity.toString() + "'.");
                 parsingBot = false;
@@ -176,7 +177,7 @@ public class AddBotUtil {
             return concatResults();
         }
         botClient.retrieveServerInfo();
-        botClient.setLocal_pn(playerId);
+        botClient.setLocalPlayerNumber(playerId);
 
         StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");

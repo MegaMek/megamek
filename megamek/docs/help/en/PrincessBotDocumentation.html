@@ -3,10 +3,12 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
 	<TITLE>Princess Bot Documentation</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4  (Win32)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4.1  (Win32)">
 	<META NAME="AUTHOR" CONTENT="Deric Page">
 	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGED" CONTENT="20131116;17162266">
+	<META NAME="CHANGEDBY" CONTENT="Deric Page">
+	<META NAME="CHANGED" CONTENT="20131122;12290243">
+	<META NAME="CHANGEDBY" CONTENT="Deric Page">
 	<STYLE TYPE="text/css">
 	<!--
 		H2.cjk { font-family: "SimSun" }
@@ -83,10 +85,10 @@ Configuration</H2>
 				but she will try to escape from her home board edge ASAP. 
 				</P>
 			</UL>
-			<P><B>Verbosity</B> - Used to set the level of logging Princess
-			will use.&nbsp; DEBUG mode is <I>very</I> verbose.&nbsp; It is
-			recommended you only use it when trying to debug something
-			specific.</P>
+			<P><A NAME="Verbosity"></A><B>Verbosity</B> - Used to set the
+			level of logging Princess will use.&nbsp; DEBUG mode is <I>very</I>
+			verbose.&nbsp; It is recommended you only use it when trying to
+			debug something specific.</P>
 			<P><B>Forced Withdrawal</B>&nbsp; - Used to make the Princess
 			follow the Forced Withdrawal rules outlined in Total Warfare.</P>
 			<P><B>Immediate Withdrawal</B> - Used to make Princess send her
@@ -123,11 +125,42 @@ Configuration</H2>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 <H2 CLASS="western"><A NAME="mozTocId149056"></A><A NAME="Chat_Commands"></A>
 Chat Commands</H2>
-<P>Coming soon.</P>
+<P>Chat commands can only be given to an allied Princess player (on
+the same team).</P>
+<P><B>Flee</B><BR><I>princessName: flee</I><BR>Causes
+princess-controlled units to start fleeing the board, regardless of
+damage level or Forced Withdrawal setting.</P>
+<P><B>Verbose</B><BR><I>princessName: verbose :
+&lt;error/warning/info/debug&gt;</I><BR>Sets princess's verbosity
+level.</P>
+<P><B>Behavior</B><BR><I>princessName: behavior :
+behaviorName</I><SPAN STYLE="font-style: normal"><BR>Change's
+princess's behavior to the named behavior.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Caution</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+caution : &lt;+/-&gt;</I><SPAN STYLE="font-style: normal"><BR>Modifies
+princess's Piloting Caution setting. Each '+' increases it by 1 and
+each '-' decreases it by one.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Avoid</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+avoid : &lt;+/-&gt;</I><SPAN STYLE="font-style: normal"><BR>Modifies
+princess's Self Preservation setting. Each '+' increases it by 1 and
+each '-' decreases it by one.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Aggression</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+aggression : &lt;+/-&gt;</I><SPAN STYLE="font-style: normal"><BR>Modifies
+princess's Aggression setting. Each '+' increases it by 1 and each
+'-' decreases it by one.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Herding</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+herd : &lt;+/-&gt;</I><SPAN STYLE="font-style: normal"><BR>Modifies
+princess's Herding setting. Each '+' increases it by 1 and each '-'
+decreases it by one.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Bravery</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+brave : &lt;+/-&gt;</I><SPAN STYLE="font-style: normal"><BR>Modifies
+princess's Bravery setting. Each '+' increases it by 1 and each '-'
+decreases it by one.</SPAN></P>
+<P><SPAN STYLE="font-style: normal"><B>Target</B></SPAN><SPAN STYLE="font-style: normal"><BR></SPAN><I>princessName:
+target : hexNumber</I><SPAN STYLE="font-style: normal"><BR>Adds the
+specified hex to princess's list of Strategic Targets.</SPAN></P>
 <H2 CLASS="western"><A NAME="mozTocId779311"></A>Replacing an Absent
 Player with the Princess Bot</H2>
 <P>If a player has become disconnected (the word &quot;<I>(ghost)</I>&quot;
@@ -137,11 +170,11 @@ the chat window:</P>
 <P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;-c:ConfigName&gt;
 &lt;-v:VerbosityLevel&gt; &lt;-p:&gt;PlayerName</I></P>
 <P>Princess will replace the named player.<BR>&lt;-b&gt; Specifies
-the use of Princess.  If left out, TestBot will be used instead.<BR>&lt;-c&gt;
-Specifies a saved configuration to be used by Princess.  If left out
+the use of Princess. If left out, TestBot will be used instead.<BR>&lt;-c&gt;
+Specifies a saved configuration to be used by Princess. If left out
 DEFAULT will be used.<BR>&lt;-v&gt; Specifies the verbosity level
-used to log Princess (DEBUG/INFO/WARNING/ERROR).  If left out, ERROR
-will be used.<BR>&lt;-p&gt; Specifies the player to be replaced.  The
+used to log Princess (DEBUG/INFO/WARNING/ERROR). If left out, ERROR
+will be used.<BR>&lt;-p&gt; Specifies the player to be replaced. The
 &ldquo;-p&rdquo; is only required with the &ldquo;-c&rdquo; or &ldquo;-v&rdquo;
 parameters are also used.</P>
 </BODY>

@@ -27,19 +27,6 @@
     <strategicTargets/>
   </behavior>
   <behavior>
-    <name>BREAKTHROUGH</name>
-    <homeEdge>0</homeEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>true</goHome>
-    <autoFlee>true</autoFlee>
-    <fallShameIndex>7</fallShameIndex>
-    <hyperAggressionIndex>5</hyperAggressionIndex>
-    <selfPreservationIndex>10</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>2</braveryIndex>
-    <strategicTargets/>
-  </behavior>
-  <behavior>
     <name>ESCAPE</name>
     <homeEdge>0</homeEdge>
     <forcedWithdrawal>true</forcedWithdrawal>

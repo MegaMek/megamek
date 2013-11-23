@@ -548,8 +548,9 @@ public class TestAero extends TestEntity {
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
         buff.append("Aero: ").append(aero.getDisplayName()).append("\n");
-        buff.append("Found in: ").append(fileString).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");        
         buff.append(printTechLevel());
+        buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (")

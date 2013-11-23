@@ -161,6 +161,8 @@ v0.37.0-dev (SVN)
 + Bug [#3928]: no ammo explosion due to heat
 + Patch [#455]: memory leak in ImageCache related to redraw timers
 + Data: Fixes to Aero Files.
++ TestEntity now includes a printSource() method, and the printEntity() methods 
+    of all TestEnity subclasses have been updated to call it
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

@@ -12504,61 +12504,90 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public abstract long getEntityType();
 
-    public static String getEntityTypeName(long typeId) {
-        if (typeId == ETYPE_MECH) {
+    /**
+     * Given an Entity type, return the name of the major class it belongs to
+     * (eg: Mech, Aero, Tank, Infantry).
+     * 
+     * @param typeId  The type Id to get a major name for
+     * @return        The major class name for the given type id
+     */
+    public static String getEntityMajorTypeName(long typeId) {
+        if ((typeId & ETYPE_MECH) == ETYPE_MECH){
             return "Mech";
-        } else if (typeId == ETYPE_BIPED_MECH) {
-            return "Biped Mech";
-        } else if (typeId == ETYPE_LAND_AIR_MECH) {
-            return "Landair Mech";
-        } else if (typeId == ETYPE_QUAD_MECH) {
-            return "Quad Mech";
-        } else if (typeId == ETYPE_TRIPOD_MECH) {
-            return "Tripod Mech";
-        } else if (typeId == ETYPE_ARMLESS_MECH) {
-            return "Armless Mech";
-        } else if (typeId == ETYPE_AERO) {
-            return "Aerospace fighter";
-        } else if (typeId == ETYPE_JUMPSHIP) {
-            return "Jumpship";
-        } else if (typeId == ETYPE_WARSHIP) {
-            return "Warship";
-        } else if (typeId == ETYPE_SPACE_STATION) {
-            return "Space station";
-        } else if (typeId == ETYPE_CONV_FIGHTER) {
-            return "Convetional Fighter";
-        } else if (typeId == ETYPE_FIXED_WING_SUPPORT) {
-            return "Fixed Wing Support";
-        } else if (typeId == ETYPE_FIGHTER_SQUADRON) {
-            return "Fighter squadron";
-        } else if (typeId == ETYPE_SMALL_CRAFT) {
-            return "Small craft";
-        } else if (typeId == ETYPE_DROPSHIP) {
-            return "Dropship";
-        } else if (typeId == ETYPE_TELEMISSILE) {
-            return "Telemissile";
-        } else if (typeId == ETYPE_INFANTRY) {
-            return "Infantry";
-        } else if (typeId == ETYPE_BATTLEARMOR) {
-            return "Battlearmor";
-        } else if (typeId == ETYPE_MECHWARRIOR) {
-            return "Mechwarrior";
-        } else if (typeId == ETYPE_PROTOMECH) {
-            return "Protomech";
-        } else if (typeId == ETYPE_TANK) {
+        } else if ((typeId & ETYPE_MECH) == ETYPE_AERO){
+            return "Aero";
+        }  else if ((typeId & ETYPE_MECH) == ETYPE_TANK){
             return "Tank";
-        } else if (typeId == ETYPE_GUN_EMPLACEMENT) {
+        }  else if ((typeId & ETYPE_MECH) == ETYPE_INFANTRY){
+            return "Infantry";
+        } else {
+            return "Unknown";
+        }
+    }
+    
+    /**
+     * Returns the specific entity type name for the given type id 
+     * (eg: Biped Mech, Conventional Fighter, VTOL).
+     *   
+     * @param typeId
+     * @return
+     */
+    public static String getEntityTypeName(long typeId) {
+       
+        if ((typeId & ETYPE_BIPED_MECH) == ETYPE_BIPED_MECH) {
+            return "Biped Mech";
+        } else if ((typeId & ETYPE_LAND_AIR_MECH) == ETYPE_LAND_AIR_MECH) {
+            return "Landair Mech";
+        } else if ((typeId & ETYPE_QUAD_MECH) == ETYPE_QUAD_MECH) {
+            return "Quad Mech";
+        } else if ((typeId & ETYPE_TRIPOD_MECH) == ETYPE_TRIPOD_MECH) {
+            return "Tripod Mech";
+        } else if ((typeId & ETYPE_ARMLESS_MECH) == ETYPE_ARMLESS_MECH) {
+            return "Armless Mech";
+        } else   if ((typeId & ETYPE_MECH) == ETYPE_MECH) {
+            return "Mech";
+        } else if ((typeId & ETYPE_JUMPSHIP) == ETYPE_JUMPSHIP) {
+            return "Jumpship";
+        } else if ((typeId & ETYPE_WARSHIP) == ETYPE_WARSHIP) {
+            return "Warship";
+        } else if ((typeId & ETYPE_SPACE_STATION) == ETYPE_SPACE_STATION) {
+            return "Space station";
+        } else if ((typeId & ETYPE_CONV_FIGHTER) == ETYPE_CONV_FIGHTER) {
+            return "Convetional Fighter";
+        } else if ((typeId & ETYPE_FIXED_WING_SUPPORT) == ETYPE_FIXED_WING_SUPPORT) {
+            return "Fixed Wing Support";
+        } else if ((typeId & ETYPE_FIGHTER_SQUADRON) == ETYPE_FIGHTER_SQUADRON) {
+            return "Fighter squadron";
+        } else if ((typeId & ETYPE_SMALL_CRAFT) == ETYPE_SMALL_CRAFT) {
+            return "Small craft";
+        } else if ((typeId & ETYPE_DROPSHIP) == ETYPE_DROPSHIP) {
+            return "Dropship";
+        } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
+            return "Telemissile";
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+            return "Aerospace fighter";
+        } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
+            return "Battlearmor";
+        } else if ((typeId & ETYPE_MECHWARRIOR) == ETYPE_MECHWARRIOR) {
+            return "Mechwarrior";
+        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
+            return "Protomech";
+        } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
+            return "Infantry";
+        } else if ((typeId & ETYPE_GUN_EMPLACEMENT) == ETYPE_GUN_EMPLACEMENT) {
             return "Gun Emplacement";
-        } else if (typeId == ETYPE_SUPER_HEAVY_TANK) {
+        } else if ((typeId & ETYPE_SUPER_HEAVY_TANK) == ETYPE_SUPER_HEAVY_TANK) {
             return "Superheavy Tank";
-        } else if (typeId == ETYPE_SUPPORT_TANK) {
+        } else if ((typeId & ETYPE_SUPPORT_TANK) == ETYPE_SUPPORT_TANK) {
             return "Support Tank";
-        } else if (typeId == ETYPE_LARGE_SUPPORT_TANK) {
+        } else if ((typeId & ETYPE_LARGE_SUPPORT_TANK) == ETYPE_LARGE_SUPPORT_TANK) {
             return "Large Support Tank";
-        } else if (typeId == ETYPE_VTOL) {
+        } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
             return "VTOL";
-        } else if (typeId == ETYPE_SUPPORT_VTOL) {
+        } else if ((typeId & ETYPE_SUPPORT_VTOL) == ETYPE_SUPPORT_VTOL) {
             return "Support VTOL";
+        } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
+            return "Tank";
         } else {
             return "Unknown";
         }

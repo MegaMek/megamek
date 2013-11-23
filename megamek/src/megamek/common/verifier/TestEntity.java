@@ -1236,6 +1236,10 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return buff.toString();
     }
+    
+    public String printSource(){
+        return "Source: " + getEntity().getSource() + "\n";
+    }
 
     public String printTechLevel() {
         return "Chassis: " + getEntity().getDisplayName() + " - "

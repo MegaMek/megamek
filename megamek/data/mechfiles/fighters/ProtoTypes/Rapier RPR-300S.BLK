@@ -59,6 +59,11 @@ ISERMediumLaser
 <type>
 IS Level 4
 </type>
+
+<armor_tech>
+7
+</armor_tech>
+
 <year>
 3081
 </year>
@@ -66,7 +71,7 @@ IS Level 4
 0
 </internal_type>
 <armor_type>
-6
+20
 </armor_type>
 <engine_type>
 2

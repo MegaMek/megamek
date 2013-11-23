@@ -53,6 +53,11 @@ IS Laser AMS
 <type>
 IS Level 5
 </type>
+
+<armor_tech>
+9
+</armor_tech>
+
 <year>
 3079
 </year>
@@ -63,7 +68,7 @@ TRO:Prototypes
 0
 </internal_type>
 <armor_type>
-6
+20
 </armor_type>
 <engine_type>
 2

@@ -65,6 +65,11 @@ Clan Coolant Pod
 <type>
 Clan Level 3
 </type>
+
+<armor_tech>
+20
+</armor_tech>
+
 <year>
 3085
 </year>
@@ -72,7 +77,7 @@ Clan Level 3
 0
 </internal_type>
 <armor_type>
-1
+19
 </armor_type>
 <engine_type>
 2

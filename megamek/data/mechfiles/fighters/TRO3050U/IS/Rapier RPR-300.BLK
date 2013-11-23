@@ -68,13 +68,8 @@ ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 
 ISHeavyGauss Ammo
-
 ISPPC
-
 ISPPC
-
-CASE
-
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -112,6 +107,10 @@ CASE
 IS Level 2
 
 </type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <year>
 

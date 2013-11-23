@@ -113,6 +113,10 @@ IS Level 3
 
 </type>
 
+<armor_tech>
+5
+</armor_tech>
+
 <year>
 
 3072
@@ -126,9 +130,7 @@ IS Level 3
 </internal_type>
 
 <armor_type>
-
-0
-
+19
 </armor_type>
 
 <cockpit_type>
@@ -148,6 +150,10 @@ IS Level 3
 aerodyne
 
 </motion_type>
+
+<source>
+TRO 3067
+</source>
 
 
 

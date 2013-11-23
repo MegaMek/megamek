@@ -105,6 +105,10 @@ IS Level 2
 
 </type>
 
+<armor_tech>
+1
+</armor_tech>
+
 <year>
 
 2838
@@ -119,7 +123,7 @@ IS Level 2
 
 <armor_type>
 
-0
+19
 
 </armor_type>
 
@@ -134,5 +138,4 @@ IS Level 2
 aerodyne
 
 </motion_type>
-
 

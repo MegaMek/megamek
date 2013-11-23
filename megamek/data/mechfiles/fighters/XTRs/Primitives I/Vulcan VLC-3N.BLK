@@ -71,6 +71,10 @@ ISMediumLaser
 IS Level 5
 </type>
 
+<armor_tech>
+9
+</armor_tech>
+
 <year>
 2525
 </year>

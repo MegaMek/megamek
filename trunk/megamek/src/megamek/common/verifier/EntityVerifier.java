@@ -195,6 +195,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         File f = null;
         String entityName = null;
         boolean verbose = false;
+        boolean ignoreUnofficial = true;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
                 if (args.length <= i) {
@@ -217,10 +218,12 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 }
             } else if (args[i].equals("-v") || args[i].equals("-verbose")){
                 verbose = true;
+            } else if (args[i].equals("-unofficial")){
+                ignoreUnofficial = false;
             } else {
                 System.err.println("Error: Invalid argument.\n");
-                System.err
-                        .println("Usage:\n\tEntityVerifier [-file <FILENAME>] [-v]");
+                System.err.println("Usage:\n\tEntityVerifier " +
+                		"[-file <FILENAME>] [-v] [-unofficial]");
                 return;
             }
         }
@@ -240,7 +243,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             // normally would, then verify all of them.
             EntityVerifier ev = new EntityVerifier(config);
             ev.loadingVerbosity = verbose;
-            mechSummaryCache = MechSummaryCache.getInstance();
+            mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);
             mechSummaryCache.addListener(ev);
         }
     }

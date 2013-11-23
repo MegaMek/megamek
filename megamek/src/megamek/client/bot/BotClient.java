@@ -881,7 +881,7 @@ public abstract class BotClient extends Client {
 
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity check_ent = i.nextElement();
-            if ((check_ent.getOwnerId() == local_pn)
+            if ((check_ent.getOwnerId() == localPlayerNumber)
                     && (check_ent instanceof Mech)) {
                 if (check_ent.hasStealth()) {
                     for (Mounted mEquip : check_ent.getMisc()) {

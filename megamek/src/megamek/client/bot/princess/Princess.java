@@ -47,6 +47,16 @@ import megamek.common.util.StringUtil;
 
 public class Princess extends BotClient {
 
+    public static final String CMD_FLEE = "fl";
+    public static final String CMD_VERBOSE = "ve";
+    public static final String CMD_BEHAVIOR = "be";
+    public static final String CMD_CAUTION = "ca";
+    public static final String CMD_AVOID = "av";
+    public static final String CMD_AGGRESSION = "ag";
+    public static final String CMD_HERDING = "he";
+    public static final String CMD_BRAVERY = "br";
+    public static final String CMD_TARGET = "ta";
+
     private static final Logger logger = new Logger();
 
     private boolean initialized = false;
@@ -66,6 +76,10 @@ public class Princess extends BotClient {
         super(name, host, port);
         logger.setVerbosity(verbosity);
         setBehaviorSettings(BehaviorSettingsFactory.getInstance(logger).DEFAULT_BEHAVIOR);
+    }
+
+    public void setVerbosity(LogLevel level) {
+        logger.setVerbosity(level);
     }
 
     public LogLevel getVerbosity() {
@@ -102,7 +116,12 @@ public class Princess extends BotClient {
         log(getClass(), "setBehaviorSettings(BehaviorSettings)", LogLevel.INFO, "New behavior settings for " +
                                                                                 getName() + "\n" +
                                                                                 behaviorSettings.toLog());
-        this.behaviorSettings = behaviorSettings;
+        try {
+            this.behaviorSettings = behaviorSettings.getCopy();
+        } catch (PrincessException e) {
+            log(getClass(), "setBehaviorSettings(BehaviorSettings)", e);
+            return;
+        }
         getStrategicTargets().clear();
         setShouldFlee(behaviorSettings.shouldAutoFlee(), "Configured to auto flee.");
         if (shouldFlee()) {
@@ -809,5 +828,22 @@ public class Princess extends BotClient {
             return;
         }
         getBehaviorSettings().setHomeEdge(homeEdge);
+    }
+
+    public int calculateAdjustment(String ticks) {
+        int adjustment = 0;
+        if (StringUtil.isNullOrEmpty(ticks)) {
+            return 0;
+        }
+        for (char tick : ticks.toCharArray()) {
+            if ('+' == tick) {
+                adjustment++;
+            } else if ('-' == tick) {
+                adjustment--;
+            } else {
+                log(getClass(), "calculateAdjustment", LogLevel.WARNING, "Invalid tick: '" + tick + "'.");
+            }
+        }
+        return adjustment;
     }
 }

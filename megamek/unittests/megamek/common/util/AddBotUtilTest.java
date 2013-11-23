@@ -13,6 +13,8 @@ import megamek.common.event.GameListener;
 import megamek.common.logging.LogLevel;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.util.Enumeration;
@@ -26,6 +28,7 @@ import java.util.Vector;
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/6/13 4:24 PM
  */
+@RunWith(JUnit4.class)
 public class AddBotUtilTest {
 
     private static final String HUMAN_PLAYER_NAME = "MockHuman";
@@ -46,7 +49,7 @@ public class AddBotUtilTest {
         Mockito.when(mockBotPlayer.getName()).thenReturn(BOT_PLAYER_NAME);
         Mockito.when(mockBotPlayer.isGhost()).thenReturn(true);
 
-        Vector<IPlayer> playerVector = new Vector<>(2);
+        Vector<IPlayer> playerVector = new Vector<IPlayer>(2);
         playerVector.add(mockHumanPlayer);
         playerVector.add(mockBotPlayer);
 
@@ -63,13 +66,13 @@ public class AddBotUtilTest {
         Mockito.when(mockClient.getHost()).thenReturn("mockHost");
         Mockito.when(mockClient.getPort()).thenReturn(1);
 
-        mockPrincess = Mockito.mock(Princess.class);
+        mockPrincess = Mockito.spy(new Princess("Princess", "mockHost", 1, LogLevel.ERROR));
         Mockito.doCallRealMethod().when(mockPrincess).setBehaviorSettings(Mockito.any(BehaviorSettings.class));
-        Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
-        Mockito.when(mockPrincess.connect()).thenReturn(true);
+        Mockito.doReturn(mockGame).when(mockPrincess).getGame();
+        Mockito.doReturn(true).when(mockPrincess).connect();
         Mockito.doNothing().when(mockPrincess).retrieveServerInfo();
-        Mockito.when(mockPrincess.getStrategicTargets()).thenReturn(new HashSet<Coords>());
-        Mockito.when(mockPrincess.getBehaviorSettings()).thenCallRealMethod();
+        Mockito.doReturn(new HashSet<Coords>()).when(mockPrincess).getStrategicTargets();
+        Mockito.doCallRealMethod().when(mockPrincess).getBehaviorSettings();
         Mockito.doCallRealMethod().when(mockPrincess).getVerbosity();
 
         TestBot mockTestBot = Mockito.mock(TestBot.class);
@@ -172,7 +175,8 @@ public class AddBotUtilTest {
         // Test an invalid verbosity level for Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:invalid", "-p:" + BOT_PLAYER_NAME};
-        expected = "Verbosity set to 'ERROR'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Invalid Verbosity: 'invalid'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
+                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
@@ -190,7 +194,8 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
-        expected = "Verbosity set to 'ERROR'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
+                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");

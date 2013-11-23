@@ -118,7 +118,7 @@ public class Client implements IClientCommandHandler {
 
     // some info about us and the server
     private boolean connected = false;
-    protected int local_pn = -1;
+    protected int localPlayerNumber = -1;
     private String host;
     private int port;
 
@@ -220,12 +220,12 @@ public class Client implements IClientCommandHandler {
         ts.schedule(packetUpdate2, 500, 100);
     }
 
-    public int getLocal_pn() {
-        return local_pn;
+    public int getLocalPlayerNumber() {
+        return localPlayerNumber;
     }
 
-    public void setLocal_pn(int local_pn) {
-        this.local_pn = local_pn;
+    public void setLocalPlayerNumber(int localPlayerNumber) {
+        this.localPlayerNumber = localPlayerNumber;
     }
 
     /**
@@ -345,7 +345,7 @@ public class Client implements IClientCommandHandler {
      * Return the local player
      */
     public IPlayer getLocalPlayer() {
-        return getPlayer(local_pn);
+        return getPlayer(localPlayerNumber);
     }
 
     /**
@@ -506,15 +506,15 @@ public class Client implements IClientCommandHandler {
      */
     public boolean isMyTurn() {
         if (game.isPhaseSimultaneous()) {
-            return game.getTurnForPlayer(local_pn) != null;
+            return game.getTurnForPlayer(localPlayerNumber) != null;
         }
         return (game.getTurn() != null)
-                && game.getTurn().isValid(local_pn, game);
+                && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     public GameTurn getMyTurn() {
         if (game.isPhaseSimultaneous()) {
-            return game.getTurnForPlayer(local_pn);
+            return game.getTurnForPlayer(localPlayerNumber);
         }
         return game.getTurn();
     }
@@ -524,7 +524,7 @@ public class Client implements IClientCommandHandler {
      */
     public boolean canUnloadStranded() {
         return (game.getTurn() instanceof GameTurn.UnloadStrandedTurn)
-                && game.getTurn().isValid(local_pn, game);
+                && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     /**
@@ -720,7 +720,7 @@ public class Client implements IClientCommandHandler {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        IPlayer player = game.getPlayer(local_pn);
+        IPlayer player = game.getPlayer(localPlayerNumber);
         PreferenceManager.getClientPreferences().setLastPlayerColor(
                 player.getColorIndex());
         PreferenceManager.getClientPreferences().setLastPlayerCategory(
@@ -1148,7 +1148,7 @@ public class Client implements IClientCommandHandler {
                 correctName(c);
                 break;
             case Packet.COMMAND_LOCAL_PN:
-                local_pn = c.getIntValue(0);
+                localPlayerNumber = c.getIntValue(0);
                 break;
             case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(c);
@@ -1163,7 +1163,7 @@ public class Client implements IClientCommandHandler {
                 for (Iterator<Client> botIterator = bots.values().iterator(); botIterator
                         .hasNext();) {
                     Client bot = botIterator.next();
-                    if (bot.local_pn == c.getIntValue(0)) {
+                    if (bot.localPlayerNumber == c.getIntValue(0)) {
                         botIterator.remove();
                     }
                 }
@@ -1380,7 +1380,6 @@ public class Client implements IClientCommandHandler {
      * receive and process an entity nova network mode change packet
      *
      * @param c
-     * @param connIndex
      */
     private void receiveEntityNovaNetworkModeChange(Packet c) {
         try {
@@ -1469,11 +1468,12 @@ public class Client implements IClientCommandHandler {
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
         ArrayList<Entity> myEntities = game.getPlayerEntities(
-                game.getPlayer(local_pn), false);
-        Hashtable<String, ArrayList<Integer>> rawNameToId = new Hashtable<String, ArrayList<Integer>>(
-                (int) (myEntities.size() * 1.26));
-
-        for (Entity e : myEntities) {
+                game.getPlayer(localPlayerNumber), false);
+        Hashtable<String,ArrayList<Integer>> rawNameToId = 
+                new Hashtable<String,ArrayList<Integer>>(
+                        (int)(myEntities.size()*1.26));
+        
+        for (Entity e : myEntities){
             String rawName = e.getShortNameRaw();
             ArrayList<Integer> namedIds = rawNameToId.get(rawName);
             if (namedIds == null) {

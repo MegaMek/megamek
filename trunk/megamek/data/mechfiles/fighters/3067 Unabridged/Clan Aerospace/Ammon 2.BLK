@@ -28,8 +28,7 @@ Ammon
 </Name>
 
 <Model>
-2
-</Model>
+2</Model>
 
 <Tonnage>
 
@@ -107,6 +106,10 @@ Clan Level 2
 
 </type>
 
+<armor_tech>
+2
+</armor_tech>
+
 <year>
 
 3075
@@ -121,7 +124,7 @@ Clan Level 2
 
 <armor_type>
 
-0
+19
 
 </armor_type>
 

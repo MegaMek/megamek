@@ -58,6 +58,11 @@ CLERMediumLaser
 Clan Level 3
 </type>
 
+<armor_tech>
+6
+</armor_tech>
+
+
 <source>
 TRO:Prototypes
 </source>
@@ -71,7 +76,7 @@ TRO:Prototypes
 </internal_type>
 
 <armor_type>
-1
+19
 </armor_type>
 
 <engine_type>

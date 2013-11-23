@@ -94,10 +94,12 @@ ISMRM20 Ammo
 </fuel>
 
 <type>
-
-IS
-
+IS Level 2
 </type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <year>
 

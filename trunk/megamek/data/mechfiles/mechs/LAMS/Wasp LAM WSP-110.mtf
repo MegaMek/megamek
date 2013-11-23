@@ -7,7 +7,6 @@ TechBase:Inner Sphere
 Era:3075
 Source:TRO3085
 Rules Level:4
-History: LAM's not coded into MegaMek for play. Unit included for completeness.
 
 Mass:30
 Engine:150 Fusion Engine(IS)
@@ -53,8 +52,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
+ISMediumVSP
+ISMediumVSP
 -Empty-
 -Empty-
 -Empty-
@@ -82,11 +81,11 @@ Avionics
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
+Bomb Bay
+Bomb Bay
+Bomb Bay
+Bomb Bay
+Bomb Bay
 -Empty-
 -Empty-
 
@@ -146,4 +145,5 @@ Jump Jet
 -Empty-
 -Empty-
 
+history: LAM's not coded into MegaMek for play. Unit included for completeness.
 

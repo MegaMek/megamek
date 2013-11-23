@@ -94,8 +94,8 @@ public class MechView {
         if (!isInf) {
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
-        }
-        sHead.append("<br>"); //$NON-NLS-1$
+            sHead.append("<br>"); //$NON-NLS-1$
+        }        
         DecimalFormatSymbols unusualSymbols = new DecimalFormatSymbols();
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
@@ -106,8 +106,13 @@ public class MechView {
         sHead.append("<br>"); //$NON-NLS-1$
         sHead.append("Cost: ");
         sHead.append(dFormatter.format(entity.getCost(false)));
-        sHead.append(" C-bills");
+        sHead.append(" C-bills");  
         sHead.append("<br>"); //$NON-NLS-1$
+        if (!entity.getSource().equals("")){
+            sHead.append("Source: "); //$NON-NLS-1$
+            sHead.append(entity.getSource());
+            sHead.append("<br>"); //$NON-NLS-1$
+        }
 
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$

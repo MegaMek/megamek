@@ -12514,11 +12514,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static String getEntityMajorTypeName(long typeId) {
         if ((typeId & ETYPE_MECH) == ETYPE_MECH){
             return "Mech";
-        } else if ((typeId & ETYPE_MECH) == ETYPE_AERO){
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO){
             return "Aero";
-        }  else if ((typeId & ETYPE_MECH) == ETYPE_TANK){
+        }  else if ((typeId & ETYPE_TANK) == ETYPE_TANK){
             return "Tank";
-        }  else if ((typeId & ETYPE_MECH) == ETYPE_INFANTRY){
+        }  else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY){
             return "Infantry";
         } else {
             return "Unknown";

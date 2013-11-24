@@ -19,12 +19,12 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.weapons.ISSmallLaser;
+import megamek.common.weapons.LaserWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class ISBASmallLaser extends ISSmallLaser {
+public class ISBASmallLaser extends LaserWeapon {
 
     /**
      *
@@ -61,7 +61,6 @@ public class ISBASmallLaser extends ISSmallLaser {
         introDate = 2400;
         techLevel.put(2400, techLevel.get(3071));
         techRating = RATING_E;
-        name = "BA Small Laser";
     }
 
 }

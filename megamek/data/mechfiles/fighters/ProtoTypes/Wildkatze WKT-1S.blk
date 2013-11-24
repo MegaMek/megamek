@@ -38,18 +38,16 @@ WKT-1S
 
 <Nose Equipment>
 ISBinaryLaser
+ISMML5 SRM Ammo
+ISMML5 LRM Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISMML5
-ISMML5 SRM Ammo
-ISMML5 LRM Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML5
-ISMML5 SRM Ammo
-ISMML5 LRM Ammo
 </Right Wing Equipment>
 
 <Aft Equipment> 

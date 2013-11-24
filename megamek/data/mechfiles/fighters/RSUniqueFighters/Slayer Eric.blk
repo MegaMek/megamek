@@ -52,7 +52,7 @@ ISMediumLaser
 800
 </fuel>
 <type>
-IS Level 2
+IS Level 3
 </type>
 <year>
 3069
@@ -63,6 +63,11 @@ IS Level 2
 <armor_type>
 20
 </armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
 <engine_type>
 0
 </engine_type>

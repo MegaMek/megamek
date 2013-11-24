@@ -7,8 +7,6 @@
 
 </BlockVersion>
 
-
-
 #Write the version number just in case...
 
 <Version>
@@ -17,15 +15,11 @@ MAM0
 
 </Version>
 
-
-
 <UnitType>
 
 Aero
 
 </UnitType>
-
-
 
 <Name>
 
@@ -33,15 +27,11 @@ Sholagar
 
 </Name>
 
-
-
 <Model>
 
 SL-27X
 
 </Model>
-
-
 
 <Tonnage>
 
@@ -49,15 +39,11 @@ SL-27X
 
 </Tonnage>
 
-
-
 <SafeThrust>
 
 10
 
 </SafeThrust>
-
-
 
 <Armor>
 
@@ -71,8 +57,6 @@ SL-27X
 
 </Armor>
 
-
-
 <Nose Equipment>
 
 IOS SRM-4
@@ -83,15 +67,11 @@ ISAngelECMSuite
 
 </Nose Equipment>
 
-
-
 <Left Wing Equipment>
 
 ISLPPC
 
 </Left Wing Equipment>
-
-
 
 <Right Wing Equipment>
 
@@ -99,13 +79,9 @@ ISLPPC
 
 </Right Wing Equipment>
 
-
-
 <Aft Equipment>
 
 </Aft Equipment>
-
-
 
 <heatsinks>
 
@@ -113,15 +89,11 @@ ISLPPC
 
 </heatsinks>
 
-
-
 <sink_type>
 
 1
 
 </sink_type>
-
-
 
 <fuel>
 
@@ -129,15 +101,11 @@ ISLPPC
 
 </fuel>
 
-
-
 <type>
 
 IS Level 4
 
 </type>
-
-
 
 <year>
 
@@ -145,15 +113,11 @@ IS Level 4
 
 </year>
 
-
-
 <source>
 
 Jihad
 
 </source>
-
-
 
 <internal_type>
 
@@ -161,23 +125,17 @@ Jihad
 
 </internal_type>
 
-
-
 <armor_type>
 
 0
 
 </armor_type>
 
-
-
 <engine_type>				
 
-0
+2
 
 </engine_type>
-
-
 
 <motion_type>
 

@@ -66,8 +66,13 @@ ISERMediumLaser
 </fuel>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<armor_tech>
+5
+</armor_tech>
+
 
 <year>
 3082

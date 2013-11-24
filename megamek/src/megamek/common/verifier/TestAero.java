@@ -130,7 +130,7 @@ public class TestAero extends TestEntity {
      * @param tonnage
      * @return
      */
-    public static int maxArmorPoints(Aero aero, double tonnage){
+    public static int maxArmorPoints(Entity aero, double tonnage){
         long eType = aero.getEntityType();
         if (eType == Entity.ETYPE_CONV_FIGHTER){
             return (int)(tonnage * 1);
@@ -139,6 +139,37 @@ public class TestAero extends TestEntity {
         } else {
             return 0;
         }
+    }
+    
+    /**
+     * Computes the engine rating for the given entity type.
+     * 
+     * @param entity_type
+     * @param tonnage
+     * @param desiredSafeThrust
+     * @return
+     */
+    public static int calculateEngineRating(Aero unit, int tonnage, 
+            int desiredSafeThrust){
+        int rating;
+        long eType = unit.getEntityType();
+        if (eType == Entity.ETYPE_CONV_FIGHTER){
+            rating = (tonnage * desiredSafeThrust);
+        } else if (eType == Entity.ETYPE_AERO){
+            rating = (tonnage * (desiredSafeThrust - 2));
+        } else {
+            rating = 0;
+        }
+        
+        if (unit.isPrimitive()){
+            double dRating = rating;
+            dRating *= 1.2;
+            if ((dRating % 5) != 0) {
+                dRating = (dRating - (dRating % 5)) + 5;
+            }
+            rating = (int) dRating;
+        }
+        return rating;
     }
 
     public TestAero(Aero a, TestEntityOption option, String fs) {

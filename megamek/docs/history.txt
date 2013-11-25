@@ -166,6 +166,9 @@ v0.37.0-dev (SVN)
 + Upated MechView to print the source of a unit if it's set
 + Added several chat commands for Princess.
 + Data: More Aero Fixes
++ Changed Munition Mutators to use dates and tech level
++ Ammo Tech level and Date Fixes
++ Data: More Unit fixes.
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

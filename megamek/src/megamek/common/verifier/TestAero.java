@@ -142,6 +142,43 @@ public class TestAero extends TestEntity {
     }
     
     /**
+     * Computes the available space for each location in the supplied Aero.
+     * Aeros can only have so many weapons in each location, and this available
+     * space is reduced by the armor type.
+     * 
+     * @param a  The aero in question
+     * @return   Returns an int array, where each element corresponds to a 
+     *           location and the value is the number of weapons the Aero can
+     *           have in that location
+     */
+    public static int[] availableSpace(Aero a){
+        // Keep track of the max space we have in each arc
+        int availSpace[] = 
+            {SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC};
+        
+        // Get the armor type, to determine how much space it uses
+        AeroArmor armor = 
+                AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE),
+                                   a.isClanArmor(Aero.LOC_NOSE));
+        
+        if (armor == null){            
+            return null;
+        }
+        // Remove space for each location until we've allocated the armor
+        int spaceUsedByArmor = armor.space;
+        int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
+        while (spaceUsedByArmor > 0){
+            availSpace[loc]--;
+            spaceUsedByArmor--;
+            loc--;
+            if (loc < 0){
+                loc = Aero.LOC_AFT;
+            }
+        }  
+        return availSpace;
+    }
+    
+    /**
      * Computes the engine rating for the given entity type.
      * 
      * @param entity_type
@@ -436,40 +473,21 @@ public class TestAero extends TestEntity {
         for (Mounted m : aero.getWeaponList()){
             numWeapons[m.getLocation()]++;
         }
-        
-        // Keep track of the max space we have in each arc
-        int maxSpace[] = 
-            {SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC};
-        
-        // Get the armor type, to determine how much space it uses
-        AeroArmor armor = 
-                AeroArmor.getArmor(aero.getArmorType(Aero.LOC_NOSE),
-                                   aero.isClanArmor(Aero.LOC_NOSE));
-        
-        if (armor == null){
+                
+        int avialSpace[] = availableSpace(aero);
+        if (avialSpace == null){
             buff.append("Invalid armor type! Armor: " + 
                     EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
             return false;
-        }
-        // Remove space for each location until we've allocated the armor
-        int spaceUsedByArmor = armor.space;
-        int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
-        while (spaceUsedByArmor > 0){
-            maxSpace[loc]--;
-            spaceUsedByArmor--;
-            loc--;
-            if (loc < 0){
-                loc = Aero.LOC_AFT;
-            }
-        }            
+        }       
         
         String[] locNames = aero.getLocationNames();
-        loc = Aero.LOC_AFT;
+        int loc = Aero.LOC_AFT;
         while (loc >= 0){
-            correct &= !(numWeapons[loc] > maxSpace[loc]);
-            if (numWeapons[loc] > maxSpace[loc]){
+            correct &= !(numWeapons[loc] > avialSpace[loc]);
+            if (numWeapons[loc] > avialSpace[loc]){
                 buff.append(locNames[loc] + " has " + numWeapons[loc] + 
-                        " weapons but it can only fit " + maxSpace[loc] + 
+                        " weapons but it can only fit " + avialSpace[loc] + 
                         " weapons!");
             }
             loc--;

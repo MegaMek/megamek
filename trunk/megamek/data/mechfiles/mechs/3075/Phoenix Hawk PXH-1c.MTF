@@ -6,18 +6,18 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2784
 Source:Star League
-Rules Level:2
+Rules Level:4
 
 Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:6
 Jump MP:6
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:12
 RA Armor:12
 LT Armor:18
@@ -31,12 +31,12 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:6
-Medium Laser, Right Arm
 Medium Laser, Left Arm
-ER Large Laser, Right Torso
-Machine Gun, Right Arm
 Machine Gun, Left Arm
 Snub-Nose PPC, Right Arm
+Medium Laser, Right Arm
+Machine Gun, Right Arm
+ER Large Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -45,9 +45,9 @@ Lower Arm Actuator
 Hand Actuator
 Medium Laser
 Machine Gun
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -61,8 +61,8 @@ ISSNPPC
 ISSNPPC
 Medium Laser
 Machine Gun
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -75,8 +75,8 @@ Jump Jet
 Jump Jet
 IS Ammo MG - Full
 ISCASE
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -89,8 +89,8 @@ Jump Jet
 Jump Jet
 ISERLargeLaser
 ISERLargeLaser
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

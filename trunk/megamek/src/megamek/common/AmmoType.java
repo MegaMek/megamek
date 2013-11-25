@@ -18,7 +18,9 @@ package megamek.common;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 @SuppressWarnings("unchecked")
@@ -1153,28 +1155,17 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,2380,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,2385,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,2597,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1,M_ARTEMIS_CAPABLE,2598, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3038, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3030, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD,3053,TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3055, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,2340,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE,2757,TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,2333,TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1183,31 +1174,22 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO,
-                TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,
-                M_FRAGMENTATION, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,
-                M_NARC_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,
-                M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2,
-                M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2,
-                M_TANDEM_CHARGE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO,2820,
+        		TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,M_FRAGMENTATION,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,  M_ARTEMIS_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING,2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2,M_TANDEM_CHARGE,2757, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,2820,TechConstants.T_CLAN_ADVANCED));
 
+        
+        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,TechConstants.T_CLAN_UNOFFICIAL));
+        
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanSrmAmmos, munitions);
@@ -1215,8 +1197,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for BA SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_ALLOWED_ALL));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2380,TechConstants.T_ALLOWED_ALL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1224,8 +1205,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2380,TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1233,10 +1213,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,
-                TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,2820,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2820,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1244,40 +1222,23 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Thunder", 1, M_THUNDER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Augmented", 2,
-                M_THUNDER_AUGMENTED, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Inferno", 2,
-                M_THUNDER_INFERNO, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Active", 2,
-                M_THUNDER_ACTIVE, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Vibrabomb", 2,
-                M_THUNDER_VIBRABOMB, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Swarm", 1, M_SWARM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Swarm-I", 1, M_SWARM_I,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Follow The Leader", 2,
-                M_FOLLOW_THE_LEADER, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,2385,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Thunder", 1, M_THUNDER,2620,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Augmented", 2,M_THUNDER_AUGMENTED,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Inferno", 2,M_THUNDER_INFERNO,3056, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Active", 2,M_THUNDER_ACTIVE,3058, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Vibrabomb", 2,M_THUNDER_VIBRABOMB,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,2597,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,2598, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,3057, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Swarm", 1, M_SWARM,2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Swarm-I", 1, M_SWARM_I,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3038, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3030, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3055, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,2340,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Follow The Leader", 2,M_FOLLOW_THE_LEADER,3053, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,2333,TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1287,42 +1248,35 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,
-                M_FRAGMENTATION, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2,
-                M_THUNDER_AUGMENTED, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2,
-                M_THUNDER_INFERNO, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2,
-                M_THUNDER_ACTIVE, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,
-                M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,
-                M_NARC_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,
-                M_SEMIGUIDED, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Swarm", 1, M_SWARM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,
-                M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2,
-                M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2,
-                M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,M_FRAGMENTATION,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER,2820,TechConstants.T_CLAN_ADVANCED));
+        
+        // According to TM clans don't get these Ammo Types.  Pg 295.
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2,
+        //        M_THUNDER_AUGMENTED,3057, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2,
+        //        M_THUNDER_INFERNO,3056, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2,
+        //       M_THUNDER_ACTIVE,3058, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,
+        //        M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
+        //        TechConstants.T_CLAN_ADVANCED));
+        //        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,
+        //	M_SEMIGUIDED, TechConstants.T_CLAN_TW));
+        
+        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,M_NARC_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,M_ARTEMIS_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Swarm", 1, M_SWARM,2820,TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING,2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2, M_FOLLOW_THE_LEADER,2755, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,2825,TechConstants.T_CLAN_ADVANCED));
+        
+        //Clans don't have access to these Munition Types
+        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL, 	TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,         TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,       TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1331,18 +1285,12 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for AC rounds.
         munitions.clear();
-        munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Armor-Piercing", 2,
-                M_ARMOR_PIERCING, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Precision", 2, M_PRECISION, 3062, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Armor-Piercing", 2,M_ARMOR_PIERCING, 3059, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 3055, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC, 3059, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER, 2300, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flak", 1, M_FLAK, 2310, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1350,22 +1298,14 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2620, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2600, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV, 3055, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB, 3052, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2620, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2620, TechConstants.T_IS_EXPERIMENTAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1373,16 +1313,11 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5,M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1390,38 +1325,27 @@ public class AmmoType extends EquipmentType {
 
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();
-        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3065, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
 
         // create the munition types for IS vehicular grenade launchers
         munitions.clear();
-        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3052, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
         // Create the munition types for Artillery launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2645, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, 2645, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1429,23 +1353,17 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 1950, TechConstants.T_IS_EXPERIMENTAL));
         AmmoType.createMunitions(longTomAmmos, munitions);
 
         // Create the munition types for Artillery Cannons.
         // These were taken out in TacOps errata, so are unofficial.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2645, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, 2645, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1453,22 +1371,16 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperCannonAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 1950, TechConstants.T_IS_UNOFFICIAL));
         AmmoType.createMunitions(longTomCannonAmmos, munitions);
 
         // Create the munition types for Clan Artillery launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Cluster", 1, M_CLUSTER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Copperhead", 1, M_HOMING,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Cluster", 1, M_CLUSTER, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Copperhead", 1, M_HOMING, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, 2820, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1476,8 +1388,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2598, TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1485,8 +1396,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2598, TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1494,10 +1404,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1505,10 +1413,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1516,30 +1422,26 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for vehicle flamers
         munitions.clear();
-        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, 1950, TechConstants.T_IS_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
 
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, 1950, TechConstants.T_CLAN_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanVehicleFlamerAmmos, munitions);
 
         // Create the munition types for heavy flamers
         munitions.clear();
-        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, 1950, TechConstants.T_IS_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(heavyFlamerAmmos, munitions);
 
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, 3067, TechConstants.T_CLAN_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
@@ -10987,7 +10889,7 @@ public class AmmoType extends EquipmentType {
          */
         private long type;
 
-        private int techLevel = TechConstants.T_TECH_UNKNOWN;
+        private Map<Integer, Integer> techLevel;
 
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
@@ -11000,17 +10902,31 @@ public class AmmoType extends EquipmentType {
          *            to a round of the standard type.
          * @param munitionType
          *            - the <code>int</code> munition flag(s) of this type.
-         * @param newTechLevel
+         * @param introyear  
+         *            - the year of introduction for the tech level
+         * @param introTechLevel
          *            - The new tech level, if different from the base ammo
          *            type.
          */
         public MunitionMutator(String munitionName, int weightRatio,
-                long munitionType, int newTechLevel) {
+                long munitionType, int introYear, int introTechLevel) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
-            techLevel = newTechLevel;
+            techLevel = new HashMap<Integer, Integer>();
+            techLevel.put(introYear, introTechLevel);
         }
+        
+        /**
+         * Adds another tech level and year that level is assumed.
+         * 
+         * @param year
+         * @param tl
+         */
+        public MunitionMutator addTechLevel(int year, int tl){
+        	techLevel.put(year,tl);
+        	return this;
+        	}
 
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
@@ -11159,8 +11075,8 @@ public class AmmoType extends EquipmentType {
             munition.munitionType = type;
 
             // Make sure the tech level is now correct.
-            if (techLevel != TechConstants.T_TECH_UNKNOWN) {
-                munition.techLevel.put(munition.introDate, techLevel);
+            if (!techLevel.isEmpty()) {
+                munition.techLevel = this.techLevel;
             } else {
                 munition.techLevel = base.techLevel;
             }

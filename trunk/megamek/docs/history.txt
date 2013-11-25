@@ -169,6 +169,7 @@ v0.37.0-dev (SVN)
 + Changed Munition Mutators to use dates and tech level
 + Ammo Tech level and Date Fixes
 + Data: More Unit fixes.
++ Changed the default log level of ChatProcessorTest from DEBUG to ERROR, to reduce the number of log statements during the build.
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

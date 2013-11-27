@@ -1199,6 +1199,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFerroFibrousPrototype());
         EquipmentType.addType(MiscType.createLightFerroFibrous());
         EquipmentType.addType(MiscType.createHeavyFerroFibrous());
+        EquipmentType.addType(MiscType.createISFerroAlum());
+        EquipmentType.addType(MiscType.createCLFerroAlum());
+        EquipmentType.addType(MiscType.createHeavyFerroAlum());
+        EquipmentType.addType(MiscType.createLightFerroAlum());
+        EquipmentType.addType(MiscType.createPrimitiveFerroAlum());
         EquipmentType.addType(MiscType.createISHardenedArmor());
         EquipmentType.addType(MiscType.createCLHardenedArmor());
         EquipmentType.addType(MiscType.createISIndustrialArmor());
@@ -3492,6 +3497,121 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_HEAVY_FERRO).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.introDate = 3069;
+        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createCLFerroAlum() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_ALUM, true));
+        misc.addLookupName("Clan Ferro-Aluminum Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.introDate = 3069;
+        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createISFerroAlum() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_ALUM, false));
+        misc.addLookupName("IS Ferro-Aluminum Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.introDate = 3069;
+        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createHeavyFerroAlum() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_HEAVY_ALUM, false));
+        misc.addLookupName("IS Heavy Ferro-Aluminum Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.introDate = 3069;
+        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createLightFerroAlum() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_LIGHT_ALUM, false));
+        misc.addLookupName("IS Light Ferro-Aluminum Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.introDate = 3069;
+        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createPrimitiveFerroAlum() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_ALUM_PRIMITIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_ALUM_PRIMITIVE, false));
+        misc.addLookupName("IS Primitive Ferro-Aluminum Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.introDate = 3069;

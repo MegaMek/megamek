@@ -64,7 +64,7 @@ public class TestAero extends TestEntity {
                 EquipmentType.T_ARMOR_BALLISTIC_REINFORCED,2,false),
         FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,2,false),
         FERRO_PRIMITIVE(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO,2,false),
-        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR,2,false),
+        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR,2,true),
         HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM,4,false),
         LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM,1,false),
         PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE,0,false),

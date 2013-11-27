@@ -53,20 +53,24 @@ public class TestAero extends TestEntity {
      *
      */
     public static enum AeroArmor{
-        STANDARD(0,0,false),   
-        CLAN_STANDARD(0,0,true),
-        CLAN_FERRO_ALUM(19,1,true),
-        CLAN_REFLECTIVE(3,1,true),
-        CLAN_REACTIVE(2,1,true),
-        ANTI_PENETRATIVE_ABLATION(23,1,false),
-        BALLISTIC_REINFORCED(26,2,false),
-        FERRO_ALUM(19,2,false),
-        FERRO_LAMELLOR(16,2,false),
-        HEAVY_FERRO_ALUM(20,4,false),
-        LIGHT_FERRO_ALUM(21,1,false),
-        REACTIVE(2,3,false),        
-        REFLECTIVE(3,2,false),
-        STEALTH_VEHICLE(22,2,false);
+        STANDARD(EquipmentType.T_ARMOR_STANDARD,0,false),   
+        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD,0,true),
+        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,1,true),
+        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,1,true),
+        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE,1,true),
+        ANTI_PENETRATIVE_ABLATION(
+                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION,1,false),
+        BALLISTIC_REINFORCED(
+                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED,2,false),
+        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,2,false),
+        FERRO_PRIMITIVE(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO,2,false),
+        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR,2,false),
+        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM,4,false),
+        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM,1,false),
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE,0,false),
+        REACTIVE(EquipmentType.T_ARMOR_REACTIVE,3,false),        
+        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,2,false),
+        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE,2,false);
 
         /**
          * The type, corresponding to types defined in 

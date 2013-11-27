@@ -90,7 +90,7 @@ public class TestAero extends TestEntity {
         /**
          * Denotes whether this armor is Clan or not.
          */
-        boolean isClan;
+        public boolean isClan;
         
         AeroArmor(int t, int s, boolean c){
             type = t;

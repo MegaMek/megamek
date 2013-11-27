@@ -78,8 +78,7 @@ public class EquipmentType {
     public static final int T_ARMOR_HEAT_DISSIPATING = 24;
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
-    public static final int T_ARMOR_ALUM_PRIMITIVE = 27;
-    public static final int T_ARMOR_FERRO_ALUM_PROTO = 28;
+    public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -114,7 +113,7 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
-            "Primitive Fero-Aluminum" };
+            "Prototype Ferro-Aluminum" };
 
 
     public static final String[] structureNames = { "Standard", "Industrial",

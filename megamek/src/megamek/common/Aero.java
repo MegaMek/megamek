@@ -2714,8 +2714,11 @@ public class Aero extends Entity {
     }
 
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
-        super.addEquipment(mounted, loc, rearMounted);
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+            throws LocationFullException {
+        if (getEquipmentNum(mounted) == -1){
+            super.addEquipment(mounted, loc, rearMounted);
+        }
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(mounted));
     }

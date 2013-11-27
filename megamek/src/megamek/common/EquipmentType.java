@@ -79,6 +79,7 @@ public class EquipmentType {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_ALUM_PRIMITIVE = 27;
+    public static final int T_ARMOR_FERRO_ALUM_PROTO = 28;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -156,6 +157,7 @@ public class EquipmentType {
 
     public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
             "X" };
+	
 
     protected String name = null;
 

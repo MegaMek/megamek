@@ -170,6 +170,15 @@ v0.37.0-dev (SVN)
 + Ammo Tech level and Date Fixes
 + Data: More Unit fixes.
 + Changed the default log level of ChatProcessorTest from DEBUG to ERROR, to reduce the number of log statements during the build.
++ Updated TestAero to allow primitive standard and ferror armors. 
+  Also updated it to use EquipmentType defines instead of magic numbers.
++ Ferro-Lamellor was clan tech, who knew... updated TestAero to reflect this so some units stop failing.
++ Added primitive ferro-alumnium armor and made it legal for Aeros to use it.
++ Updated TestAero: made the isClan state variable of AeroArmor public.
++ MiscType: Added entries for various Aero armors that were missing them.
++ Updated TestAero: made the isClan state variable of AeroArmor public.
++ Updated MiscType Data for Aeros and some unit fixes.
+
 
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)

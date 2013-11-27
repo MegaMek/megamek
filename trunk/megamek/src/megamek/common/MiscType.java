@@ -1197,6 +1197,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
         EquipmentType.addType(MiscType.createFerroFibrousPrototype());
+        EquipmentType.addType(MiscType.createFerroAlumPrototype());
         EquipmentType.addType(MiscType.createLightFerroFibrous());
         EquipmentType.addType(MiscType.createHeavyFerroFibrous());
         EquipmentType.addType(MiscType.createISFerroAlum());
@@ -3521,10 +3522,10 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
         misc.bv = 0;
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        misc.introDate = 3069;
-        misc.techLevel.put(3069, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
+        misc.introDate = 2820;
+        misc.techLevel.put(2820, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_D, RATING_C };
         misc.techRating = RATING_E;
 
         return misc;
@@ -3545,9 +3546,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        misc.introDate = 3069;
-        misc.techLevel.put(3069, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.introDate = 2571;
+        misc.extinctDate = 2810;
+        misc.reintroDate = 3040;
+        misc.techLevel.put(2571, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_D, RATING_F, RATING_D };
         misc.techRating = RATING_E;
 
         return misc;
@@ -3591,8 +3594,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        misc.introDate = 3069;
-        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.introDate = 3067;
+        misc.techLevel.put(3067, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
 
@@ -3613,10 +3616,37 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT);
         misc.bv = 0;
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        misc.introDate = 3069;
-        misc.techLevel.put(3069, misc.techLevel.get(3071));
+        misc.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
+        misc.introDate = 2400;
+        misc.techLevel.put(2400, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+ 
+  
+        public static MiscType createFerroAlumPrototype() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+        .getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+        EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false));
+ 		  misc.addLookupName("IS Ferro-Alum Armor Prototype");
+		  misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.bv = 0;
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.introDate = 2557;
+        misc.extinctDate = 2571;
+        misc.reintroDate = 3040;
+        misc.techLevel.put(2557, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_D, RATING_F, RATING_D };
         misc.techRating = RATING_E;
 
         return misc;
@@ -3778,8 +3808,11 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.bv = 0;
         misc.industrial = true;
+        misc.introDate = 2400;
+        misc.availRating = new int[] { RATING_B, RATING_C, RATING_B };
+        misc.techRating = RATING_C;
         misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
         return misc;
     }
 

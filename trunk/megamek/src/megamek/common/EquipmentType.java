@@ -78,6 +78,7 @@ public class EquipmentType {
     public static final int T_ARMOR_HEAT_DISSIPATING = 24;
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
+    public static final int T_ARMOR_ALUM_PRIMITIVE = 27;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -111,7 +112,8 @@ public class EquipmentType {
             "Electric Discharge ProtoMech", "Ferro-Aluminum",
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced" };
+            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
+            "Primitive Fero-Aluminum" };
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -134,7 +136,7 @@ public class EquipmentType {
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
             1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1,
-            1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75 };
+            1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 

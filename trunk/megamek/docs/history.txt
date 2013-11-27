@@ -178,6 +178,7 @@ v0.37.0-dev (SVN)
 + MiscType: Added entries for various Aero armors that were missing them.
 + Updated TestAero: made the isClan state variable of AeroArmor public.
 + Updated MiscType Data for Aeros and some unit fixes.
++ Unit Fixes
 
 
 

@@ -1,138 +1,92 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Sabre
-
 </Name>
 
 <Model>
-
 SB-28
-
 </Model>
 
-<Tonnage>
+<year>
+2753
+</year>
 
-25
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 11
-
 </SafeThrust>
 
-<Armor>
-
-30
-
-28
-
-28
-
-21
-
-</Armor>
-
-<Nose Equipment>
-
-ISERLargeLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMediumLaser 
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
-
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-IS Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 1
 </armor_tech>
 
-<year>
+<armor>
+26
+21
+21
+21
+</armor>
 
-2753
+<Nose Equipment>
+ISERLargeLaser
+</Nose Equipment>
 
-</year>
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
 
-<internal_type>
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
 
-0
+<Aft Equipment>
+</Aft Equipment>
 
-</internal_type>
+<source>
+RS 3075 Unabridged
+</source>
 
-<armor_type>
+<tonnage>
+25.0
+</tonnage>
 
-19
-
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>

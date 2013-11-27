@@ -1,164 +1,107 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Wusun
-
 </Name>
 
 <Model>
-
 Prime
-
 </Model>
 
-<Tonnage>
+<year>
+3084
+</year>
 
-55
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-74
-
-55
-
-55
-
-37
-
-</Armor>
-
-<Nose Equipment>
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-CLTargeting Computer
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLStreakSRM6
-
-CLStreakSRM6 Ammo
-
-CLStreakSRM6
-
-CLStreakSRM6 Ammo
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLStreakSRM6
-
-CLStreakSRM6 Ammo
-
-CLStreakSRM6
-
-CLStreakSRM6 Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
-
 <heatsinks>
-
 14
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
-
-Clan Level 2
-
-</type>
-
-<armor_tech>
+<engine_type>
 2
-</armor_tech>
-
-<year>
-
-3084
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-
+<armor_tech>
 2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+</armor_tech>
 
 <omni>
-
+1
 </omni>
 
+<armor>
+74
+55
+55
+37
+</armor>
+
+<Nose Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLTargeting Computer
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
 <source>
-
 Dark Age
-
 </source>
+
+<tonnage>
+55.0
+</tonnage>
+

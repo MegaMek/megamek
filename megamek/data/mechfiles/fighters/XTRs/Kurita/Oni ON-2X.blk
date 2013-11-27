@@ -1,14 +1,9 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,41 +20,21 @@ Oni
 ON-2X
 </Model>
 
-<Tonnage>
-55
-</Tonnage>
+<year>
+3077
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 7
 </SafeThrust>
-
-<Armor>
-45
-34
-34
-23
-</Armor>
-
-<Nose Equipment>
-ISBinaryLaser
-ISMRM30
-IS MRM Apollo FCS
-ISMRM30 Ammo
-IS Laser AMS
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISMediumPulseLaser
-ISAngelECM
-</Aft Equipment>
 
 <heatsinks>
 15
@@ -73,30 +48,47 @@ ISAngelECM
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3077
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 22
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+45
+34
+34
+23
+</armor>
 
+<Nose Equipment>
+Blazer Cannon
+MRM 30
+ISApollo
+IS MRM 30 Ammo
+ISLaserAntiMissileSystem
+</Nose Equipment>
 
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+ISAngelECMSuite
+</Aft Equipment>
+
+<tonnage>
+55.0
+</tonnage>
 

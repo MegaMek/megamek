@@ -1,51 +1,40 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Persepolis
 </Name>
 
-<Tonnage>
-70
-</Tonnage>
+<Model>
+(Standard)
+</Model>
+
+<year>
+3085
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 6
 </SafeThrust>
-<Armor>
-56
-40
-40
-36
-</Armor>
-<Nose Equipment>
-CLERLargeLaser
-CLERLargeLaser
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLStreakLRM20
-CLStreakLRM20 Ammo
-CLStreakLRM20 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLStreakLRM20
-CLStreakLRM20 Ammo
-CLStreakLRM20 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLImprovedHeavySmallLaser
-CLImprovedHeavySmallLaser
-</Aft Equipment>
 
 <heatsinks>
 20
@@ -59,34 +48,58 @@ CLImprovedHeavySmallLaser
 400
 </fuel>
 
-<type>
-Clan Level 3
-</type>
-
-<source>
-TRO:Prototypes
-</source>
-
-<year>
-3085
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
 2
-</engine_type>
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+56
+40
+40
+36
+</armor>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakLRM20
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakLRM20
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser
+CLCASE
+</Aft Equipment>
+
+<source>
+TRO:Prototypes
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

@@ -27,7 +27,7 @@ import java.util.Vector;
 public abstract class AbstractOptions implements IOptions, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6406883135074654379L;
     private Hashtable<String, IOption> optionsHash = new Hashtable<String, IOption>();
@@ -45,7 +45,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IOptions#getOptions()
      */
     public Enumeration<IOption> getOptions() {
@@ -54,7 +54,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IOptions#getOptionInfo(java.lang.String)
      */
     public IOptionInfo getOptionInfo(String name) {
@@ -68,7 +68,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     public boolean booleanOption(String name) {
         IOption opt = getOption(name);
         if (opt == null){
-            return false; 
+            return false;
         } else {
             return opt.booleanValue();
         }
@@ -140,7 +140,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.Enumeration#hasMoreElements()
          */
         public boolean hasMoreElements() {
@@ -149,7 +149,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.Enumeration#nextElement()
          */
         public IOptionGroup nextElement() {
@@ -196,12 +196,12 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 private Enumeration<String> optionNames;
 
                 OptionsEnumeration() {
-                    this.optionNames = group.getOptionNames();
+                    optionNames = group.getOptionNames();
                 }
 
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see java.util.Enumeration#hasMoreElements()
                  */
                 public boolean hasMoreElements() {
@@ -210,13 +210,13 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
                 /*
                  * (non-Javadoc)
-                 * 
+                 *
                  * @see java.util.Enumeration#nextElement()
                  */
                 public IOption nextElement() {
                     return getOption(optionNames.nextElement());
                 }
-                
+
                 public void sortOptions() {
                     List<String> names = Collections.list(optionNames);
                     Collections.sort(names);

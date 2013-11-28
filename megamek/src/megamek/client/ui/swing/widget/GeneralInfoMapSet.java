@@ -168,12 +168,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR3);
-        
+
         mpL4 = createLabel(
                 Messages.getString("GeneralInfoMapSet.mpL4"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         mpL4.moveTo(mpL0.getSize().width - mpL3.getSize().width, getYCoord());
         content.addArea(mpL4);
-        
+
         mpR4 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR4);
 
@@ -282,15 +282,18 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         statusR.setString(en.isProne() ? Messages
                 .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
-        playerR.setString(en.getOwner().getName());
-        if (en.getOwner().getTeam() == 0) {
-            teamL.setVisible(false);
-            teamR.setVisible(false);
-        } else {
-            teamL.setVisible(true);
-            teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
-            teamR.setVisible(true);
+        if (en.getOwner() != null) {
+            playerR.setString(en.getOwner().getName());
+            if (en.getOwner().getTeam() == 0) {
+                teamL.setVisible(false);
+                teamR.setVisible(false);
+            } else {
+                teamL.setVisible(true);
+                teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
+                teamR.setVisible(true);
+            }
         }
+
         if (en instanceof Infantry) {
             weightR.setString(Float.toString(en.getWeight()));
         } else {
@@ -374,7 +377,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
-        
+
         if (en.hasUMU()) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
@@ -426,7 +429,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
-        if (en.getGame().getOptions().booleanOption("double_blind")) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption("double_blind")) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);
@@ -489,12 +492,20 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelL.setVisible(false);
             fuelR.setVisible(false);
         }
-        if (en.getGame().getBoard().inSpace()) {
+        if ((en.getGame() != null) && en.getGame().getBoard().inSpace()) {
             elevationL.setVisible(false);
             elevationR.setVisible(false);
         }
+        // if we don't have a game, don't show BV labels (used for mekwars)
+        if (en.getGame() != null) {
+            bvL.setVisible(true);
+            bvR.setVisible(true);
+            bvR.setString(Integer.toString(en.calculateBattleValue()));
+        } else {
+            bvL.setVisible(false);
+            bvR.setVisible(false);
 
-        bvR.setString(Integer.toString(en.calculateBattleValue()));
+        }
     }
 
     public PMAreasGroup getContentGroup() {

@@ -212,6 +212,58 @@ public class TestAero extends TestEntity {
         }
         return rating;
     }
+    
+    /**
+     * Computes and returns the maximum number of turns the given unit could
+     * fly at safe thrust given its fuel payload.  Aerospace fighters consume
+     * 1 fuel point per thrust point spent up the the maximum safe thrust, 
+     * whereas conventional fighters consume 0.5 fuel points per thrust point 
+     * spent up to the maximum safe thrust.  See Strategic Operations pg 34. 
+     * 
+     * @param aero
+     * @return
+     */
+    public static float calculateMaxTurnsAtSafe(Aero aero){
+        int fuelPoints = aero.getFuel();
+        float fuelPerTurn;
+        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+            fuelPerTurn = aero.getWalkMP() * 0.5f;
+        } else {
+            fuelPerTurn = aero.getWalkMP();
+        }
+        return fuelPoints/fuelPerTurn;        
+    }
+    
+    /**
+     * Computes and returns the maximum number of turns the given unit could
+     * fly at max thrust given its fuel payload.  Aerospace fighters consume
+     * 1 fuel point per thrust point spent up the the maximum safe thrust and
+     * 2 fuel points per thrust point afterwards, whereas conventional fighters 
+     * with ICE engines consume 0.5 fuel points per thrust point spent up to 
+     * the maximum safe thrust and 1 fuel point per thrust up to the maximum 
+     * thrust.  Conventional fighters with Fusion engines spend 0.5 fuel points
+     * per thrust up to the safe thrust and then 2 fuel points per thrust 
+     * afterwards.  See Strategic Operations pg 34.
+     * 
+     * @param aero
+     * @return
+     */
+    public static float calculateMaxTurnsAtMax(Aero aero){
+        int fuelPoints = aero.getFuel();
+        float fuelPerTurn;
+        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+            fuelPerTurn = aero.getWalkMP() * 0.5f;
+            if (aero.getEngine().isFusion()){
+                fuelPerTurn += (aero.getRunMP()-aero.getWalkMP()) * 2;
+            } else {
+                fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
+            }            
+        } else {
+            fuelPerTurn = aero.getWalkMP() + 
+                    (aero.getRunMP()-aero.getWalkMP()) * 2;
+        }
+        return fuelPoints/fuelPerTurn;       
+    }    
 
     public TestAero(Aero a, TestEntityOption option, String fs) {
         super(option, a.getEngine(), getArmor(a), getStructure(a));

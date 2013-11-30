@@ -646,7 +646,7 @@ public class Aero extends Entity {
      * 
      * @param fuelTons  The number of tons of fuel
      */
-    public void setFuelTonnage(int fuelTons){
+    public void setFuelTonnage(float fuelTons){
         float pointsPerTon = getFuelPointsPerTon();        
         fuel = (int)Math.ceil(pointsPerTon * fuelTons);        
     }

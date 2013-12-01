@@ -36,7 +36,7 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         name = "LRM Launcher";
         setInternalName(name);
         addLookupName("InfantryLRM");
-        ammoType = AmmoType.T_LRM;
+        ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 3.44;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);

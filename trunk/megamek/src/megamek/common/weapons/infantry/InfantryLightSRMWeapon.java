@@ -37,7 +37,7 @@ public class InfantryLightSRMWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantrySRMLight");
         addLookupName("InfantrySRM");
-        ammoType = AmmoType.T_SRM;
+        ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 2.91;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);

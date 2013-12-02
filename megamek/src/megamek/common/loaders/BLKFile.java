@@ -388,6 +388,7 @@ public class BLKFile {
 
         if (!(t instanceof Infantry)) {
             if (t instanceof Aero){
+                blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
                 blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
                 blk.writeBlockData("fuel", ((Aero)t).getFuel());

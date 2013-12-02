@@ -201,8 +201,9 @@ public class RandomUnitGenerator implements Serializable {
             if (!file.getName().toLowerCase().endsWith(".txt")) {
                 continue;
             }
+            FileInputStream ratst = null;
             try {
-                FileInputStream ratst = new FileInputStream(file);
+                ratst = new FileInputStream(file);
                 input = new Scanner(ratst, "UTF-8");
                 int linen = 0;
                 String key = "Huh";
@@ -258,6 +259,14 @@ public class RandomUnitGenerator implements Serializable {
                 }
             } catch (FileNotFoundException fne) {
                 System.err.println("Unable to find " + file.getName());
+            } finally {
+                if (ratst != null){
+                    try {
+                        ratst.close();
+                    } catch (Exception e){
+                        // Nothing to do...
+                    }
+                }
             }
         }
 

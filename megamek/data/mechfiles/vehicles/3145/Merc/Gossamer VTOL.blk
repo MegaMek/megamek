@@ -13,11 +13,11 @@ VTOL
 </UnitType>
 
 <Name>
-Gossamer
+Gossamer VTOL
 </Name>
 
 <Model>
-VTOL
+(Standard)
 </Model>
 
 <year>

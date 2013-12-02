@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,39 +20,21 @@ Lightning
 LTN-G14
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+2465
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-6
+5
 </SafeThrust>
-
-<Armor>
-46
-30
-30
-22
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser
-ISAC10
-ISAC10 Ammo
-ISAC10 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-</Aft Equipment>
 
 <heatsinks>
 13
@@ -65,30 +48,45 @@ ISMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 5
-</type>
-
-<year>
-2465
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 17
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+46
+30
+30
+22
+</armor>
 
-<cockpit_type>
-3
-</cockpit_type>
+<Nose Equipment>
+Medium Laser
+Autocannon/10
+IS Ammo AC/10
+IS Ammo AC/10
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<tonnage>
+50.0
+</tonnage>
+

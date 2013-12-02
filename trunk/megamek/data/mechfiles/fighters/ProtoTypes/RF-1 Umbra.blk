@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Umbra
 </Name>
@@ -17,41 +20,21 @@ Umbra
 RF-1
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3082
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 10
 </SafeThrust>
-
-<Armor>
-45
-32
-32
-34
-</Armor>
-
-<armor_type>
-19
-</armor_type>
-
-
-<Nose Equipment>
-ISSnubnosedPPC
-SNPPC Capacitor
-ISERMediumLaser
-ISERMediumLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
 
 <heatsinks>
 10
@@ -65,35 +48,46 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 3
-</type>
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 5
 </armor_tech>
 
+<armor>
+45
+32
+32
+34
+</armor>
 
-<year>
-3082
-</year>
+<Nose Equipment>
+ISSNPPC
+PPC Capacitor
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <source>
 TRO:Prototypes
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+30.0
+</tonnage>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<cockpit_type>
-0
-</cockpit_type>

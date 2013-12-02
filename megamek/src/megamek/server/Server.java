@@ -24011,8 +24011,12 @@ public class Server implements Runnable {
      * ammo, or an explosive weapon. Returns a vector of Report objects.
      */
     private Vector<Report> explodeEquipment(Entity en, int loc, int slot) {
-        return explodeEquipment(en, loc,
-                en.getEquipment(en.getCritical(loc, slot).getIndex()));
+        CriticalSlot critSlot = en.getCritical(loc, slot);
+        Vector<Report> reports =  explodeEquipment(en,loc,critSlot.getMount());
+        if (critSlot.getMount2() != null){
+            reports.addAll(explodeEquipment(en,loc,critSlot.getMount2()));
+        }
+        return reports;
     }
 
     /**
@@ -24286,7 +24290,10 @@ public class Server implements Runnable {
         if ((boomloc != -1) && (boomslot != -1)) {
             CriticalSlot slot = entity.getCritical(boomloc, boomslot);
             slot.setHit(true);
-            entity.getEquipment(slot.getIndex()).setHit(true);
+            slot.getMount().setHit(true);
+            if (slot.getMount2() != null){
+                slot.getMount2().setHit(true);
+            }
             vDesc.addAll(explodeEquipment(entity, boomloc, boomslot));
         } else {
             // Luckily, there is no ammo to explode.

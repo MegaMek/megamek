@@ -183,6 +183,8 @@ v0.37.0-dev (SVN)
 + Unit Fixes
 + made it possible to use MechDisplay with a null clientgui, for use in MekWars
 + Bug [#3943]: Firing Heavy SRM Infantry causes fire phase to hang
++ Updated EntityVerifier: -v flag now only prints reports for failed units, 
+    use -valid along with -v to print reports for all units, updated usage msg.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

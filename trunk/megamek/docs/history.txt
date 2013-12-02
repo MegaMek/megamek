@@ -187,6 +187,7 @@ v0.37.0-dev (SVN)
     use -valid along with -v to print reports for all units, updated usage msg.
 + Data: Unit Fixes and new images. Thanks Deadborder.
 + Bug: Possible NPE in MechDisplay, related to ammo weapons not having ammo
++ Bug: BLKAeroFile was computing primitive engine ratings incorrectly
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

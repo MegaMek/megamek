@@ -115,8 +115,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
         if (a.isPrimitive()) {
             engineRating *= 1.2;
+            // Ensure the rating is divisible by 5
             if ((engineRating % 5) != 0) {
-                engineRating = engineRating + (engineRating % 5);
+                engineRating = engineRating - (engineRating % 5) + 5;
             }
         }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));

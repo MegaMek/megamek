@@ -25712,33 +25712,30 @@ public class Server implements Runnable {
                         Configuration.unitsDir(),
                         EntityVerifier.CONFIG_FILENAME));
             }
-            // we can only test meks and vehicles right now
-            if ((entity instanceof Mech)
-                    || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))
-                    || (entity instanceof Aero)) {
-                TestEntity testEntity = null;
-                entity.restore();
-                if (entity instanceof Mech) {
-                    testEntity = new TestMech((Mech) entity,
-                            Server.entityVerifier.mechOption, null);
-                }
-                if (entity instanceof VTOL) {
-                    testEntity = new TestTank((Tank) entity,
-                            Server.entityVerifier.tankOption, null);
-                }
-                if (entity instanceof Tank) {
-                    testEntity = new TestTank((Tank) entity,
-                            Server.entityVerifier.tankOption, null);
-                }
-                if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                        && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
-                        && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
-                        && (entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON)
-                        && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
-                        && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
-                    testEntity = new TestAero((Aero) entity,
-                            Server.entityVerifier.aeroOption, null);
-                }
+
+            // Create a TestEntity instance for supported unit types
+            TestEntity testEntity = null;
+            entity.restore();
+            if (entity instanceof Mech) {
+                testEntity = new TestMech((Mech) entity,
+                        Server.entityVerifier.mechOption, null);
+            } else if (entity instanceof VTOL) {
+                testEntity = new TestTank((Tank) entity,
+                        Server.entityVerifier.tankOption, null);
+            } else if (entity instanceof Tank) {
+                testEntity = new TestTank((Tank) entity,
+                        Server.entityVerifier.tankOption, null);
+            } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
+                    && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
+                    && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
+                    && (entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON)
+                    && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
+                    && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
+                testEntity = new TestAero((Aero) entity,
+                        Server.entityVerifier.aeroOption, null);
+            }
+            
+            if (testEntity != null){
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb, !game.getOptions()
                         .booleanOption("is_eq_limits"))) {

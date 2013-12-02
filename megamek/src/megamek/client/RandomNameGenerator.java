@@ -18,6 +18,7 @@ package megamek.client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -134,8 +135,9 @@ public class RandomNameGenerator implements Serializable {
 
         // READ IN MALE FIRST NAMES
         File male_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE);
+        FileInputStream fnms = null;
         try {            
-            FileInputStream fnms = new FileInputStream(male_firstnames_path);
+            fnms = new FileInputStream(male_firstnames_path);
             input = new Scanner(fnms, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -144,6 +146,8 @@ public class RandomNameGenerator implements Serializable {
                     if (dispose) {
                         clear();
                     }
+                    fnms.close();
+                    input.close();
                     return;
                 }
                 String line = input.nextLine();
@@ -173,14 +177,26 @@ public class RandomNameGenerator implements Serializable {
                     }
                 }
             }
-        } catch (FileNotFoundException fne) {
+        } catch (IOException fne) {
             System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'");
+        } finally {
+            try {
+                if (fnms != null){
+                    fnms.close();
+                }
+                if (input != null){
+                    input.close();
+                }
+            } catch (IOException e) {
+                // Nothing to do...
+            }
         }
 
         // READ IN FEMALE FIRST NAMES
         File female_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE);
+        FileInputStream fnfs = null;
         try {
-            FileInputStream fnfs = new FileInputStream(female_firstnames_path);
+            fnfs = new FileInputStream(female_firstnames_path);
             input = new Scanner(fnfs, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -189,6 +205,8 @@ public class RandomNameGenerator implements Serializable {
                     if (dispose) {
                         clear();
                     }
+                    fnfs.close();
+                    input.close();
                     return;
                 }
                 String line = input.nextLine();
@@ -218,14 +236,26 @@ public class RandomNameGenerator implements Serializable {
                     }
                 }
             }
-        } catch (FileNotFoundException fne) {
+        } catch (IOException fne) {
             System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'");
+        } finally {
+            try {
+                if (fnfs != null){
+                    fnfs.close();
+                }
+                if (input != null){
+                    input.close();
+                }
+            } catch (IOException e){
+                
+            }
         }
 
         // READ IN SURNAMES
         File surnames_path = new File(Configuration.namesDir(), FILENAME_SURNAMES);
+        FileInputStream lns = null;
         try {
-            FileInputStream lns = new FileInputStream(surnames_path);
+            lns = new FileInputStream(surnames_path);
             input = new Scanner(lns, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -234,6 +264,8 @@ public class RandomNameGenerator implements Serializable {
                     if (dispose) {
                         clear();
                     }
+                    lns.close();
+                    input.close();
                     return;
                 }
                 String line = input.nextLine();
@@ -263,8 +295,19 @@ public class RandomNameGenerator implements Serializable {
                     }
                 }
             }
-        } catch (FileNotFoundException fne) {
+        } catch (IOException fne) {
             System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'");
+        } finally {
+            try {
+                if (lns != null){
+                    lns.close();
+                }
+                if (input != null){
+                    input.close();
+                }
+            } catch (IOException e){
+                // Nothing to do...
+            }
         }
 
         // READ IN FACTION FILES
@@ -336,6 +379,7 @@ public class RandomNameGenerator implements Serializable {
                 hash.put(ethnicity, v);
             }
             factionFirst.put(key, hash);
+            input.close();
         }
     }
 

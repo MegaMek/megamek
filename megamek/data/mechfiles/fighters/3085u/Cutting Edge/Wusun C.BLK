@@ -1,159 +1,102 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Wusun
-
 </Name>
 
 <Model>
-
 C
-
 </Model>
 
-<Tonnage>
+<year>
+3084
+</year>
 
-55
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-74
-
-55
-
-55
-
-37
-
-</Armor>
-
-<Nose Equipment>
-
-CLERLargeLaser
-
-CLTargeting Computer
-
-CLActiveProbe
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLHeavyMediumLaser
-
-CLHeavyMediumLaser
-
-CLHeavyMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLHeavyMediumLaser
-
-CLHeavyMediumLaser
-
-CLHeavyMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
-
 <heatsinks>
-
 21
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-3084
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
 
+<armor>
+74
+55
+55
+37
+</armor>
+
+<Nose Equipment>
+CLERLargeLaser
+CLTargeting Computer
+CLActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
 <source>
-
 Dark Age
-
 </source>
+
+<tonnage>
+55.0
+</tonnage>
+

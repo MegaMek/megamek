@@ -193,6 +193,8 @@ v0.37.0-dev (SVN)
     verifier (Jumpships, Warships, etc)
 + Bug: RandomNameGenerator and RandomUnitGenerator both were opening files and 
     not closing them
++ Bug [#3929]: old firing solutions shown at start of firing phase when opponent
+    has first turn
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

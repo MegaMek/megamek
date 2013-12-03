@@ -15756,9 +15756,6 @@ public class Server implements Runnable {
             addReport(r);
         }
 
-        // entity isn't DFAing any more
-        ae.setDisplacementAttack(null);
-
         // should we even bother?
         if ((target == null)
                 || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
@@ -15768,6 +15765,8 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.indent();
             addReport(r);
+            // entity isn't DFAing any more
+            ae.setDisplacementAttack(null);
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
@@ -15796,6 +15795,8 @@ public class Server implements Runnable {
             r = new Report(4215);
             r.subject = ae.getId();
             addReport(r);
+            // entity isn't DFAing any more
+            ae.setDisplacementAttack(null);
             addReport(doEntityFallsInto(ae, ae.getElevation(),
                     ae.getPosition(), daa.getTargetPos(),
                     ae.getBasePilotingRoll(), true));
@@ -15864,6 +15865,8 @@ public class Server implements Runnable {
                 r.add(dest.getBoardNum(), true);
                 r.indent();
                 addReport(r);
+                // entity isn't DFAing any more
+                ae.setDisplacementAttack(null);
                 int height = 2 + (game.getBoard().getHex(dest)
                         .containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard()
                         .getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
@@ -15919,6 +15922,8 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
+            // entity isn't DFAing any more
+            ae.setDisplacementAttack(null);
         } else { // Target isn't building.
 
             if (glancing) {
@@ -16022,6 +16027,9 @@ public class Server implements Runnable {
                 addReport(destroyEntity(te, "impossible displacement",
                         te instanceof Mech, te instanceof Mech));
             }
+            
+            // entity isn't DFAing any more
+            ae.setDisplacementAttack(null);
         }
 
         if (glancing) {

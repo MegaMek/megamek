@@ -15808,6 +15808,7 @@ public class Server implements Runnable {
             r = new Report(4250);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
+            r.newlines--;
             addReport(r);
         } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             roll = -12;
@@ -15854,19 +15855,20 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             addReport(r);
             if (targetDest != null) {
+                // move target to preferred hex
+                addReport(doEntityDisplacement(te, dest, targetDest, null));
                 // attacker falls into destination hex
                 r = new Report(4265);
                 r.subject = ae.getId();
                 r.addDesc(ae);
                 r.add(dest.getBoardNum(), true);
+                r.indent();
                 addReport(r);
-                // move target to preferred hex
-                addReport(doEntityDisplacement(te, dest, targetDest, null));
                 int height = 2 + (game.getBoard().getHex(dest)
                         .containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard()
                         .getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
                 addReport(doEntityFall(ae, dest, height, 3,
-                        ae.getBasePilotingRoll(), false));
+                        ae.getBasePilotingRoll(), false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(),
                         dest);
                 if (violation != null) {
@@ -30197,6 +30199,18 @@ public class Server implements Runnable {
      */
     private void addReport(Vector<Report> reports) {
         vPhaseReport.addAll(reports);
+    }
+    
+    /**
+     * Add a whole lotta Reports to the players report queues as well as the
+     * Master report queue vPhaseReport, indenting each report by the passed 
+     * value.
+     */
+    private void addReport(Vector<Report> reports, int indents) {
+        for (Report r : reports){
+            r.indent(indents);
+            vPhaseReport.add(r);
+        }
     }
 
     /**

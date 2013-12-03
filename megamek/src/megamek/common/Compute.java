@@ -596,6 +596,8 @@ public class Compute {
         final Entity entity = game.getEntity(entityId);
         int highestElev = Integer.MIN_VALUE;
         Coords highest = null;
+        int srcElevation = 
+                entity.elevationOccupied(game.getBoard().getHex(src));
 
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
@@ -617,7 +619,7 @@ public class Compute {
                     highest = dest;
                 }
                 // preferably, go to same elevation
-                if (elevation == entity.getElevation()) {
+                if (elevation == srcElevation) {
                     return dest;
                 }
             }

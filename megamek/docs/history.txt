@@ -201,6 +201,7 @@ v0.37.0-dev (SVN)
     patchwork armor
 + Reverted [r9893]: I could've sworn it just said round, but it does say round 
     up, so the code before was actually correct
++ Bug[#3924]: Firing Phase NPE with Friendly Fire Turned On 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

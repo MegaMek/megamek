@@ -301,7 +301,8 @@ public abstract class TestEntity implements TestEntityOption {
         } else {
             for (int i = 0; i < armor.length; i++) {
                 int points = getEntity().getOArmor(i);
-                if (getEntity().getOArmor(i, true) > 0) {
+                if (getEntity().hasRearArmor(i) && 
+                        getEntity().getOArmor(i, true) > 0) {
                     points += getEntity().getOArmor(i, true);
                 }
                 armorWeight += armor[i].getWeightArmor(points,

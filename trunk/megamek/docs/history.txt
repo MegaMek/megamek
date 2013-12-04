@@ -197,6 +197,8 @@ v0.37.0-dev (SVN)
     has first turn
 + Adjusted formatting on reports related to DFAs, fixing newlines/indents etc
 + Bug [#3944]: missed DFA results in wrong displacement
++ Bug: TestEntity.getWeightAllocatedArmor() was double counting armor points for
+    patchwork armor
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

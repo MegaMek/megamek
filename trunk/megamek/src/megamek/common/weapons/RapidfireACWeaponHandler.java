@@ -85,11 +85,11 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 int wlocation = weapon.getLocation();
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                    if ((slot1 == null)
-                            || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
+                    if ((slot1 == null) || 
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
-                    Mounted mounted = ae.getEquipment(slot1.getIndex());
+                    Mounted mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
                         ae.hitAllCriticals(wlocation, i);
                         break;

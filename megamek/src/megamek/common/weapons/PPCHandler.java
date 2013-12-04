@@ -150,9 +150,10 @@ public class PPCHandler extends EnergyWeaponHandler {
                 rollTarget = 10;
             }
             // roll to avoid damage
+            Report.addNewline(vPhaseReport);
             Report r = new Report(3175);
             r.subject = subjectId;
-            r.indent();
+            r.indent(2);
             vPhaseReport.addElement(r);
             r = new Report(3180);
             r.subject = subjectId;
@@ -163,23 +164,33 @@ public class PPCHandler extends EnergyWeaponHandler {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
+                // Destroy the first unmarked critical for the PPC
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                    if ((slot1 == null)
-                            || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
+                    if ((slot1 == null) || 
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM) || 
+                            slot1.isHit()) {
                         continue;
                     }
-                    Mounted mounted = ae.getEquipment(slot1.getIndex());
+                    Mounted mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
-                        ae.hitAllCriticals(wlocation, i);
+                        slot1.setHit(true);
+                        break;
                     }
                 }
                 // Bug 1066147 : damage is *not* like an ammo explosion,
                 // but it *does* get applied directly to the IS.
                 r.choose(false);
+                r.indent(2);
                 vPhaseReport.addElement(r);
-                vPhaseReport.addAll(server.damageEntity(ae, new HitData(
-                        wlocation), 10, false, DamageType.NONE, true));
+                Vector<Report> newReports = server.damageEntity(ae, new HitData(
+                        wlocation), 10, false, DamageType.NONE, true);
+                for (Report rep : newReports){
+                    rep.indent(2);
+                }
+                vPhaseReport.addAll(newReports);
+                // Deal 2 damage to the pilot
+                vPhaseReport.addAll(server.damageCrew(ae, 2));
                 r = new Report(3185);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

@@ -4981,10 +4981,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void hitAllCriticals(int loc, int slot) {
         CriticalSlot orig = getCritical(loc, slot);
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot cs = getCritical(loc, slot);
-            if ((cs.getType() == orig.getType())
-                    && (cs.getIndex() == orig.getIndex())) {
-                cs.setHit(true);
+            CriticalSlot cs = getCritical(loc, i);
+            if (cs != null && cs.getType() == orig.getType()){
+                Mounted csMount = cs.getMount();
+                if ((csMount != null) && csMount.equals(orig.getMount())){
+                    cs.setHit(true);
+                }
             }
         }
     }

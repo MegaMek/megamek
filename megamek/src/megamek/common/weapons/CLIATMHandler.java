@@ -245,10 +245,17 @@ public class CLIATMHandler extends ATMHandler {
 		}
 
 		// add AMS mods
-		nMissilesModifier += getAMSHitsMod(vPhaseReport);
+		int amsMod = getAMSHitsMod(vPhaseReport);
+		nMissilesModifier += amsMod;
 
 		if (allShotsHit()) {
-			missilesHit = wtype.getRackSize();
+		    if (amsMod == 0){
+		        missilesHit = wtype.getRackSize();
+		    } else {
+		        missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
+	                    weapon.isHotLoaded(), allShotsHit(), advancedAMS
+	                            && amsEnganged);
+		    }
 		} else {
 			if (ae instanceof BattleArmor) {
 				missilesHit = Compute.missilesHit(wtype.getRackSize()

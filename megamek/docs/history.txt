@@ -203,6 +203,7 @@ v0.37.0-dev (SVN)
     up, so the code before was actually correct
 + Bug [#3924]: Firing Phase NPE with Friendly Fire Turned On 0.37-dev
 + Bug [#3935]: Graphical Errors with Sand Hexes at Level -2 and Below
++ Bug [#3937]: AMS not working against iATMs 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

@@ -8842,7 +8842,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract boolean doomedInSpace();
 
     /**
-     * The weight of the armor in a specific location, rounded to the nearest
+     * The weight of the armor in a specific location, rounded up to the nearest
      * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1). Note:
      * Unless overridden, this should <em>only</em> be called on units with
      * patchwork armor, as rounding behavior is not guaranteed to be correct or
@@ -8860,7 +8860,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         double points = getOArmor(loc)
                 + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
         double armorWeight = points / armorPerTon;
-        return Math.round(armorWeight * 2.0) / 2.0;
+        return Math.ceil(armorWeight * 2.0) / 2.0;
 
     }
 

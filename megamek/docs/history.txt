@@ -208,6 +208,7 @@ v0.37.0-dev (SVN)
     was only partially implemented: the option didn't have a displayable_name 
     or description, and the option always took effect regardless of whether it 
     was turned on
++ Adjusted formatting of ammo explosion reports
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

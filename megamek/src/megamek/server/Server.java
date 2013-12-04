@@ -24219,8 +24219,9 @@ public class Server implements Runnable {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
-        if (en.locationHasCase(hit.getLocation())
-                || en.hasCASEII(hit.getLocation())) {
+        if (game.getOptions().booleanOption("case_pilot_damage")
+                && (en.locationHasCase(hit.getLocation()) || 
+                        en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
         if (en.getCrew().getOptions().booleanOption("pain_resistance")

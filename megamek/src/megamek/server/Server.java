@@ -24038,7 +24038,7 @@ public class Server implements Runnable {
      * Makes a piece of equipment on a mech explode! POW! This expects either
      * ammo, or an explosive weapon. Returns a vector of Report objects.
      */
-    private Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted) {
+    public Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted) {
         Vector<Report> vDesc = new Vector<Report>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
@@ -24061,8 +24061,9 @@ public class Server implements Runnable {
             }
         }
 
-        // special case. ACs only explode when firing incendiary ammo
-        if ((mounted.getType() instanceof WeaponType)
+        // special case. ACs only explode if firing incendiary ammo or rapid firing
+        if ((mounted.getType() instanceof WeaponType) &&
+                !mounted.curMode().equals("Rapid")
                 && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC) || (((WeaponType) mounted
                         .getType()).getAmmoType() == AmmoType.T_LAC))) {
             if (!mounted.isUsedThisRound()) {
@@ -24083,8 +24084,10 @@ public class Server implements Runnable {
                 return vDesc;
             }
         }
-        // special case. HVACs only explode when there's ammo left
-        if (mounted.getType() instanceof HVACWeapon) {
+        
+        // special case. HVACs only explode if there's ammo left or rapid firing
+        if (mounted.getType() instanceof HVACWeapon && 
+                !mounted.curMode().equals("Rapid")) {
             if (mounted.getEntity().getTotalAmmoOfType(
                     mounted.getLinked().getType()) == 0) {
                 return vDesc;

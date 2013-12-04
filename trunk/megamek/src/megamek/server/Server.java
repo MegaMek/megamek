@@ -18277,7 +18277,7 @@ public class Server implements Runnable {
      * @param damage
      *            The <code>int</code> amount of damage.
      */
-    private Vector<Report> damageCrew(Entity en, int damage) {
+    public Vector<Report> damageCrew(Entity en, int damage) {
         Vector<Report> vDesc = new Vector<Report>();
         Crew crew = en.getCrew();
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {

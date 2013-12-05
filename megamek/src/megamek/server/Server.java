@@ -4164,11 +4164,32 @@ public class Server implements Runnable {
         // Update the unloaded unit.
         entityUpdate(unit.getId());
 
+        // Set the turn mask.  We need to be specific otherwise we run the risk
+        //  of having a unit of another class consume the turn and leave the 
+        //  unloaded unit without a turn
+        int turnMask;
+        Vector<GameTurn> turnVector = game.getTurnVector();
+        if (unit instanceof Dropship){
+            turnMask = GameTurn.CLASS_DROPSHIP;
+        } else if (unit instanceof SmallCraft){
+            turnMask = GameTurn.CLASS_SMALL_CRAFT;
+        } else {
+            turnMask = GameTurn.CLASS_AERO;
+        }
+        int turnInsertIdx = game.getTurnIndex();
+        // We have to figure out where to insert this turn, to maintain proper
+        //  space turn order (Jumpships, Smallcraft, Dropships, Aeros)
+        for (; turnInsertIdx < turnVector.size(); turnInsertIdx++){
+            GameTurn turn = turnVector.get(turnInsertIdx);
+            if (turn.isValidEntity(unit, game)){
+                break;
+            }
+        }
+            
         // ok add another turn for the unloaded entity so that it can move
         GameTurn newTurn = new GameTurn.EntityClassTurn(
-                unit.getOwner().getId(), GameTurn.CLASS_AERO
-                        | GameTurn.CLASS_DROPSHIP | GameTurn.CLASS_SMALL_CRAFT);
-        game.insertNextTurn(newTurn);
+                unit.getOwner().getId(),turnMask);
+        turnVector.insertElementAt(newTurn, turnInsertIdx);
         // brief everybody on the turn update
         send(createTurnVectorPacket());
 
@@ -24163,7 +24184,6 @@ public class Server implements Runnable {
         r.add(mounted.getName());
         r.add(damage);
         r.indent(3);
-        r.newlines = 0;
         vDesc.addElement(r);
         // Mounted is a weapon and has Hot-Loaded ammo in it and it exploded now
         // we need to roll for chain reaction
@@ -24215,7 +24235,11 @@ public class Server implements Runnable {
         }
 
         mounted.setShotsLeft(0);
-        vDesc.addAll(damageEntity(en, hit, damage, true));
+        Vector<Report> newReports = damageEntity(en, hit, damage, true);
+        for (Report rep : newReports){
+            rep.indent(2);
+        }
+        vDesc.addAll(newReports);
         Report.addNewline(vDesc);
 
         int pilotDamage = 2;

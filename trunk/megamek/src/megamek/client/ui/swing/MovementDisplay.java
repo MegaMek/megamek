@@ -3109,7 +3109,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                         		collar.getType(), collarNum }),
                                 question, names);
                         choiceDialog.setVisible(true);
-                        if (choiceDialog.getChoices().length > (1)) {
+                        if (choiceDialog.getChoices() != null && 
+                                choiceDialog.getChoices().length > (1)) {
                             ConfirmDialog nag = new ConfirmDialog(
                                     clientgui.frame,
                                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$

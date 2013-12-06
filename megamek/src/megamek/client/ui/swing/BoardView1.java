@@ -6283,7 +6283,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (toHitMod >= 0) {
                     modifier = "+" + toHitMod;
                 } else {
-                    modifier = "-" + toHitMod;
+                    modifier = "" + toHitMod;
                 }
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));

@@ -4176,7 +4176,8 @@ public class Server implements Runnable {
         } else {
             turnMask = GameTurn.CLASS_AERO;
         }
-        int turnInsertIdx = game.getTurnIndex();
+        // Add one, otherwise we consider the turn we're currently processing
+        int turnInsertIdx = game.getTurnIndex() + 1;
         // We have to figure out where to insert this turn, to maintain proper
         //  space turn order (Jumpships, Smallcraft, Dropships, Aeros)
         for (; turnInsertIdx < turnVector.size(); turnInsertIdx++){
@@ -23005,6 +23006,14 @@ public class Server implements Runnable {
 
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
+        if (critType == Tank.CRIT_NONE 
+                && (game.getOptions().booleanOption("vehicles_threshold") 
+                        && !t.getOverThresh())){
+            r = new Report(6006);
+            r.subject = t.getId();
+            r.newlines = 0;
+            vDesc.add(r);
+        }
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType),
                 true, damage, false));
         if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion()
@@ -27353,25 +27362,39 @@ public class Server implements Runnable {
                     continue;
                 }
                 // Ignore everything but weapons slots.
-                Mounted mounted = entity.getEquipment(entity.getCritical(j, k)
-                        .getIndex());
+                Mounted mounted = cs.getMount();
                 if (!(mounted.getType() instanceof AmmoType)) {
                     continue;
                 }
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive(mounted)
-                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
-                                .getMunitionType() != AmmoType.M_IATM_IIW))) {
+                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && 
+                            (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
                     continue;
                 }
+                
+                // ignore empty, destroyed, or missing bins
+                if (mounted.getHittableShotsLeft() == 0) {
+                    continue;
+                }
+
                 // Find the most destructive undamaged ammo.
-                // BMRr, pg. 48, compare one rack's
+                // TW page 160, compare one rack's
                 // damage. Ties go to most rounds.
                 int newRack = atype.getDamagePerShot() * atype.getRackSize();
                 int newDamage = mounted.getExplosionDamage();
+                Mounted mount2 = cs.getMount2();
+                if ((mount2 != null) && (mount2.getType() instanceof AmmoType) 
+                        && (mount2.getHittableShotsLeft() > 0)) {
+                    // must be for same weapontype, so racksize stays
+                    atype = (AmmoType)mount2.getType();
+                    newRack += atype.getDamagePerShot() * atype.getRackSize();
+                    newDamage += mount2.getExplosionDamage();
+                }
                 if (!mounted.isHit()
-                        && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
+                        && ((rack < newRack) || 
+                                ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
                     boomloc = j;

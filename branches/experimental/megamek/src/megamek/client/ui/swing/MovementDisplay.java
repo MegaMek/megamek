@@ -3664,13 +3664,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         } else if (ev.getActionCommand().equals(Command.MOVE_LAUNCH.getCmd())) {
-            TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
-            if (!launched.isEmpty()) {
-                cmd.addStep(MoveStepType.LAUNCH, launched);
-            }
             TreeMap<Integer, Vector<Integer>> undocked = getUndockedUnits();
             if (!undocked.isEmpty()) {
                 cmd.addStep(MoveStepType.UNDOCK, undocked);
+            }
+            TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
+            if (!launched.isEmpty()) {
+                cmd.addStep(MoveStepType.LAUNCH, launched);
             }
             if (!launched.isEmpty() || !undocked.isEmpty()) {
                 clientgui.bv.drawMovementData(ce, cmd);

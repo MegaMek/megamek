@@ -217,6 +217,11 @@ v0.37.0-dev (SVN)
     or description, and the option always took effect regardless of whether it 
     was turned on
 + Adjusted formatting of ammo explosion reports
++ Bug [#3940]: Has no unit to move error when launching 2nd aero unit on space 
+    map on Megamek 0.37.0-dev
++ Bug [#3932]: Infernos do not appear to cause any critical hit effects against 
+    vehicles.
++ Bug [#3945]: Another NPE, but for an inferno ammo explosion 0.37-dev
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

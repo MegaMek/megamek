@@ -27362,25 +27362,39 @@ public class Server implements Runnable {
                     continue;
                 }
                 // Ignore everything but weapons slots.
-                Mounted mounted = entity.getEquipment(entity.getCritical(j, k)
-                        .getIndex());
+                Mounted mounted = cs.getMount();
                 if (!(mounted.getType() instanceof AmmoType)) {
                     continue;
                 }
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive(mounted)
-                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
-                                .getMunitionType() != AmmoType.M_IATM_IIW))) {
+                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && 
+                            (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
                     continue;
                 }
+                
+                // ignore empty, destroyed, or missing bins
+                if (mounted.getHittableShotsLeft() == 0) {
+                    continue;
+                }
+
                 // Find the most destructive undamaged ammo.
-                // BMRr, pg. 48, compare one rack's
+                // TW page 160, compare one rack's
                 // damage. Ties go to most rounds.
                 int newRack = atype.getDamagePerShot() * atype.getRackSize();
                 int newDamage = mounted.getExplosionDamage();
+                Mounted mount2 = cs.getMount2();
+                if ((mount2 != null) && (mount2.getType() instanceof AmmoType) 
+                        && (mount2.getHittableShotsLeft() > 0)) {
+                    // must be for same weapontype, so racksize stays
+                    atype = (AmmoType)mount2.getType();
+                    newRack += atype.getDamagePerShot() * atype.getRackSize();
+                    newDamage += mount2.getExplosionDamage();
+                }
                 if (!mounted.isHit()
-                        && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
+                        && ((rack < newRack) || 
+                                ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
                     boomloc = j;

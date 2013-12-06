@@ -23006,6 +23006,14 @@ public class Server implements Runnable {
 
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
+        if (critType == Tank.CRIT_NONE 
+                && (game.getOptions().booleanOption("vehicles_threshold") 
+                        && !t.getOverThresh())){
+            r = new Report(6006);
+            r.subject = t.getId();
+            r.newlines = 0;
+            vDesc.add(r);
+        }
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType),
                 true, damage, false));
         if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion()

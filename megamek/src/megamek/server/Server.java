@@ -4176,7 +4176,8 @@ public class Server implements Runnable {
         } else {
             turnMask = GameTurn.CLASS_AERO;
         }
-        int turnInsertIdx = game.getTurnIndex();
+        // Add one, otherwise we consider the turn we're currently processing
+        int turnInsertIdx = game.getTurnIndex() + 1;
         // We have to figure out where to insert this turn, to maintain proper
         //  space turn order (Jumpships, Smallcraft, Dropships, Aeros)
         for (; turnInsertIdx < turnVector.size(); turnInsertIdx++){

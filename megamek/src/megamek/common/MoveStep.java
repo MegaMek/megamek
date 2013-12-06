@@ -1824,13 +1824,15 @@ public class MoveStep implements Serializable {
                 return;
             }
 
-            // no moves after launching fighters
-            if (!isFirstStep() && (prev.getType() == MoveStepType.LAUNCH)) {
+            // no moves after launching fighters, unless we were undocking
+            if (!isFirstStep() && (prev.getType() == MoveStepType.LAUNCH) &&
+                    (getType() != MoveStepType.UNDOCK)) {
                 return;
             }
 
-            // no moves after launching dropships
-            if (!isFirstStep() && (prev.getType() == MoveStepType.UNDOCK)) {
+            // no moves after launching dropships, unless we are launching
+            if (!isFirstStep() && (prev.getType() == MoveStepType.UNDOCK) &&
+                    (getType() != MoveStepType.LAUNCH)) {
                 return;
             }
 

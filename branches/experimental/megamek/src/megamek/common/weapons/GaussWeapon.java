@@ -29,8 +29,7 @@ public abstract class GaussWeapon extends AmmoWeapon {
     public GaussWeapon() {
         super();
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_NO_FIRES);
+                .or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_NO_FIRES);
         explosive = true;
         atClass = CLASS_AC;
     }

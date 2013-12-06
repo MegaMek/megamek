@@ -1,18 +1,11 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
@@ -27,35 +20,21 @@ Sabre
 SB-29
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 11
 </SafeThrust>
-
-<Armor>
-21
-17
-17
-17
-</Armor>
-
-<Nose Equipment>
-ISLightPPC
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser 
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
 
 <heatsinks>
 10
@@ -69,30 +48,45 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3068
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+21
+17
+17
+17
+</armor>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Nose Equipment>
+Light PPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

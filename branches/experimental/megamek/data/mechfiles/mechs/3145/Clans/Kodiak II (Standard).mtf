@@ -17,7 +17,7 @@ Heat Sinks:20 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:33
 RA Armor:33
 LT Armor:32
@@ -31,17 +31,17 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:12
-LRM 10, Left Torso
-LRM 20, Right Arm
 LRM 20, Left Arm
 ER Small Laser, Left Arm
 ER Small Laser, Left Arm
 ER Small Laser, Left Arm
-ER Small Laser, Right Arm
 ER Small Laser, Left Arm
+LRM 20, Right Arm
 ER Small Laser, Right Arm
 ER Small Laser, Right Arm
 ER Small Laser, Right Arm
+ER Small Laser, Right Arm
+LRM 10, Left Torso
 ER PPC, Right Torso
 
 Left Arm:
@@ -79,9 +79,9 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLLRM10
 CLArtemisIV
-Clan Ammo LRM-10
-Clan Ammo LRM-20 (Clan) Semi-guided
-Clan Ammo LRM-20 (Clan) Semi-guided
+Clan Ammo LRM-10 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -93,8 +93,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLERPPC
 CLERPPC
-Clan Ammo LRM-20 (Clan) Semi-guided
-Clan Ammo LRM-20 (Clan) Semi-guided
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel

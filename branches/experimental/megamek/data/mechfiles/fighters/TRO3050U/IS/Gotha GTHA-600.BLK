@@ -125,7 +125,7 @@ IS Level 2
 
 <year>
 
-3064
+3067
 
 </year>
 
@@ -134,8 +134,12 @@ IS Level 2
 </internal_type>
 
 <armor_type>
-0
+19
 </armor_type>
+
+<armor_tech>
+3
+</armor_tech>
 
 <engine_type>
 4

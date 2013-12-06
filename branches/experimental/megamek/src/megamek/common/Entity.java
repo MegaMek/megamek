@@ -4238,7 +4238,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus;
                 }
-                // WOR: Adding nova CEWS here.
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
                         || (m.getType()).getInternalName().equals(
                                 Sensor.WATCHDOG)
@@ -4450,11 +4449,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * WOR: Checks if we have nova CEWS that is not offline.
+     * Checks if we have nova CEWS that is not offline.
      *
      * @return
      */
-
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
             return false;
@@ -4469,14 +4467,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public boolean hasNovaCEWS() // we need this to get the network ID strings
-                                 // we cannot use.
-    {
+    public boolean hasNovaCEWS() {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_NOVA)
                     && !m.isInoperable()) {
-                return true;// hope i didn't break it by adding m.isInoperable()
+                return true;
             }
         }
         return false;
@@ -4668,7 +4664,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         } else if (hasActiveNovaCEWS()) {
-            // WOR: Nova CEWS
             nodes = 2;
             if (game != null) {
                 for (Enumeration<Entity> i = game.getEntities(); i
@@ -4922,7 +4917,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             getPosition()));
         }
 
-        // WOR: Nova CEWS
         // Nova is easy - if they both have Nova, and their net ID's match,
         // they're on the same network!
         // At least I hope thats how it works.
@@ -4987,10 +4981,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void hitAllCriticals(int loc, int slot) {
         CriticalSlot orig = getCritical(loc, slot);
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot cs = getCritical(loc, slot);
-            if ((cs.getType() == orig.getType())
-                    && (cs.getIndex() == orig.getIndex())) {
-                cs.setHit(true);
+            CriticalSlot cs = getCritical(loc, i);
+            if (cs != null && cs.getType() == orig.getType()){
+                Mounted csMount = cs.getMount();
+                if ((csMount != null) && csMount.equals(orig.getMount())){
+                    cs.setHit(true);
+                }
             }
         }
     }
@@ -7463,7 +7459,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean found = false;
 
         // Walk through the unit's ammo, stop when we find a match.
-        // WOR: iATM inferno added
         for (Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType) amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype
@@ -8849,7 +8844,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract boolean doomedInSpace();
 
     /**
-     * The weight of the armor in a specific location, rounded to the nearest
+     * The weight of the armor in a specific location, rounded up to the nearest
      * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1). Note:
      * Unless overridden, this should <em>only</em> be called on units with
      * patchwork armor, as rounding behavior is not guaranteed to be correct or
@@ -8867,7 +8862,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         double points = getOArmor(loc)
                 + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
         double armorWeight = points / armorPerTon;
-        return Math.round(armorWeight * 2.0) / 2.0;
+        return Math.ceil(armorWeight * 2.0) / 2.0;
 
     }
 
@@ -10435,9 +10430,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return taserInterferenceRounds;
     }
 
-    /**
-     * WOR: some iATM IMP stuff
-     */
     public void addIMPHits(int missiles) {
         // effects last for only one turn.
         impThisTurn += missiles;
@@ -10453,11 +10445,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         impThisTurn = 0;
     }
 
-    public int getIMPMoveMod() // this function needs to be added to the MP
-                               // calculating functions
-    // however, since no function calls super, it seems unneccesary complicated
-    // really.
-    {
+    public int getIMPMoveMod() {
+        // this function needs to be added to the MP
+        // calculating functions
+        //however, since no function calls super, it seems unneccesary complicated
+        // really.
         int max = 2;
         int modifier = impThisTurn + impLastTurn;
         modifier = modifier - (modifier % 3);
@@ -12514,61 +12506,90 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public abstract long getEntityType();
 
-    public static String getEntityTypeName(long typeId) {
-        if (typeId == ETYPE_MECH) {
+    /**
+     * Given an Entity type, return the name of the major class it belongs to
+     * (eg: Mech, Aero, Tank, Infantry).
+     * 
+     * @param typeId  The type Id to get a major name for
+     * @return        The major class name for the given type id
+     */
+    public static String getEntityMajorTypeName(long typeId) {
+        if ((typeId & ETYPE_MECH) == ETYPE_MECH){
             return "Mech";
-        } else if (typeId == ETYPE_BIPED_MECH) {
-            return "Biped Mech";
-        } else if (typeId == ETYPE_LAND_AIR_MECH) {
-            return "Landair Mech";
-        } else if (typeId == ETYPE_QUAD_MECH) {
-            return "Quad Mech";
-        } else if (typeId == ETYPE_TRIPOD_MECH) {
-            return "Tripod Mech";
-        } else if (typeId == ETYPE_ARMLESS_MECH) {
-            return "Armless Mech";
-        } else if (typeId == ETYPE_AERO) {
-            return "Aerospace fighter";
-        } else if (typeId == ETYPE_JUMPSHIP) {
-            return "Jumpship";
-        } else if (typeId == ETYPE_WARSHIP) {
-            return "Warship";
-        } else if (typeId == ETYPE_SPACE_STATION) {
-            return "Space station";
-        } else if (typeId == ETYPE_CONV_FIGHTER) {
-            return "Convetional Fighter";
-        } else if (typeId == ETYPE_FIXED_WING_SUPPORT) {
-            return "Fixed Wing Support";
-        } else if (typeId == ETYPE_FIGHTER_SQUADRON) {
-            return "Fighter squadron";
-        } else if (typeId == ETYPE_SMALL_CRAFT) {
-            return "Small craft";
-        } else if (typeId == ETYPE_DROPSHIP) {
-            return "Dropship";
-        } else if (typeId == ETYPE_TELEMISSILE) {
-            return "Telemissile";
-        } else if (typeId == ETYPE_INFANTRY) {
-            return "Infantry";
-        } else if (typeId == ETYPE_BATTLEARMOR) {
-            return "Battlearmor";
-        } else if (typeId == ETYPE_MECHWARRIOR) {
-            return "Mechwarrior";
-        } else if (typeId == ETYPE_PROTOMECH) {
-            return "Protomech";
-        } else if (typeId == ETYPE_TANK) {
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO){
+            return "Aero";
+        }  else if ((typeId & ETYPE_TANK) == ETYPE_TANK){
             return "Tank";
-        } else if (typeId == ETYPE_GUN_EMPLACEMENT) {
+        }  else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY){
+            return "Infantry";
+        } else {
+            return "Unknown";
+        }
+    }
+    
+    /**
+     * Returns the specific entity type name for the given type id 
+     * (eg: Biped Mech, Conventional Fighter, VTOL).
+     *   
+     * @param typeId
+     * @return
+     */
+    public static String getEntityTypeName(long typeId) {
+       
+        if ((typeId & ETYPE_BIPED_MECH) == ETYPE_BIPED_MECH) {
+            return "Biped Mech";
+        } else if ((typeId & ETYPE_LAND_AIR_MECH) == ETYPE_LAND_AIR_MECH) {
+            return "Landair Mech";
+        } else if ((typeId & ETYPE_QUAD_MECH) == ETYPE_QUAD_MECH) {
+            return "Quad Mech";
+        } else if ((typeId & ETYPE_TRIPOD_MECH) == ETYPE_TRIPOD_MECH) {
+            return "Tripod Mech";
+        } else if ((typeId & ETYPE_ARMLESS_MECH) == ETYPE_ARMLESS_MECH) {
+            return "Armless Mech";
+        } else   if ((typeId & ETYPE_MECH) == ETYPE_MECH) {
+            return "Mech";
+        } else if ((typeId & ETYPE_JUMPSHIP) == ETYPE_JUMPSHIP) {
+            return "Jumpship";
+        } else if ((typeId & ETYPE_WARSHIP) == ETYPE_WARSHIP) {
+            return "Warship";
+        } else if ((typeId & ETYPE_SPACE_STATION) == ETYPE_SPACE_STATION) {
+            return "Space station";
+        } else if ((typeId & ETYPE_CONV_FIGHTER) == ETYPE_CONV_FIGHTER) {
+            return "Convetional Fighter";
+        } else if ((typeId & ETYPE_FIXED_WING_SUPPORT) == ETYPE_FIXED_WING_SUPPORT) {
+            return "Fixed Wing Support";
+        } else if ((typeId & ETYPE_FIGHTER_SQUADRON) == ETYPE_FIGHTER_SQUADRON) {
+            return "Fighter squadron";
+        } else if ((typeId & ETYPE_SMALL_CRAFT) == ETYPE_SMALL_CRAFT) {
+            return "Small craft";
+        } else if ((typeId & ETYPE_DROPSHIP) == ETYPE_DROPSHIP) {
+            return "Dropship";
+        } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
+            return "Telemissile";
+        } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
+            return "Aerospace fighter";
+        } else if ((typeId & ETYPE_BATTLEARMOR) == ETYPE_BATTLEARMOR) {
+            return "Battlearmor";
+        } else if ((typeId & ETYPE_MECHWARRIOR) == ETYPE_MECHWARRIOR) {
+            return "Mechwarrior";
+        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
+            return "Protomech";
+        } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
+            return "Infantry";
+        } else if ((typeId & ETYPE_GUN_EMPLACEMENT) == ETYPE_GUN_EMPLACEMENT) {
             return "Gun Emplacement";
-        } else if (typeId == ETYPE_SUPER_HEAVY_TANK) {
+        } else if ((typeId & ETYPE_SUPER_HEAVY_TANK) == ETYPE_SUPER_HEAVY_TANK) {
             return "Superheavy Tank";
-        } else if (typeId == ETYPE_SUPPORT_TANK) {
+        } else if ((typeId & ETYPE_SUPPORT_TANK) == ETYPE_SUPPORT_TANK) {
             return "Support Tank";
-        } else if (typeId == ETYPE_LARGE_SUPPORT_TANK) {
+        } else if ((typeId & ETYPE_LARGE_SUPPORT_TANK) == ETYPE_LARGE_SUPPORT_TANK) {
             return "Large Support Tank";
-        } else if (typeId == ETYPE_VTOL) {
+        } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
             return "VTOL";
-        } else if (typeId == ETYPE_SUPPORT_VTOL) {
+        } else if ((typeId & ETYPE_SUPPORT_VTOL) == ETYPE_SUPPORT_VTOL) {
             return "Support VTOL";
+        } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
+            return "Tank";
         } else {
             return "Unknown";
         }

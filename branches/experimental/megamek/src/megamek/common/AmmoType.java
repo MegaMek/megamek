@@ -18,7 +18,9 @@ package megamek.common;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 @SuppressWarnings("unchecked")
@@ -124,7 +126,7 @@ public class AmmoType extends EquipmentType {
     public static final int T_LRM_PRIMITIVE = 96;
     public static final int T_SRM_PRIMITIVE = 97;
     public static final int T_BA_TUBE = 98;
-    public static final int T_IATM = 99; // Clan iATM missile systems
+    public static final int T_IATM = 99;
     public static final int NUM_TYPES = 100;
 
     // ammo flags
@@ -207,9 +209,8 @@ public class AmmoType extends EquipmentType {
     // ATM Munition Types
     public static final long M_EXTENDED_RANGE = 1l << 7;
     public static final long M_HIGH_EXPLOSIVE = 1l << 8;
-    // WOR: Number 57 is used for iATMs IMP ammo here.
- 	public static final long M_IATM_IMP = 1l << 57;
- 	public static final long M_IATM_IIW = 1l << 58;
+    public static final long M_IATM_IMP = 1l << 57;
+    public static final long M_IATM_IIW = 1l << 58;
 
     // LRM & SRM Munition Types
     public static final long M_FRAGMENTATION = 1l << 9;
@@ -284,10 +285,9 @@ public class AmmoType extends EquipmentType {
     public static final long M_CHAFF = 1l << 54;
     public static final long M_INCENDIARY = 1l << 55;
     public static final long M_SMOKEGRENADE = 1l << 56;
-    
-    // WOR: Number 57 is used for iATMs IMP ammo in the ATM section above.
-    // and 58 for IIW - since inferno don't work.
- 	// WOR: Wouldn't sets be easier? With bitshift you can only add 2 more ammo types before you run out.
+
+    // Number 57 is used for iATMs IMP ammo in the ATM section above.
+    // and 58 for IIW
 
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -314,10 +314,10 @@ public class AmmoType extends EquipmentType {
     // ratio for capital ammo
     private double ammoRatio;
     /**
-     * Used for returning the submunition name for a submunition, such as 
-     * precision AC-10.  The submunition name is pre-pended onto the 
-     * <code>shortName</code> and this variable keeps track of the index of 
-     * the end of the submunition name.
+     * Used for returning the submunition name for a submunition, such as
+     * precision AC-10. The submunition name is pre-pended onto the
+     * <code>shortName</code> and this variable keeps track of the index of the
+     * end of the submunition name.
      */
     public int subMunitionBegin = 0;
     public int subMunitionLength = 0;
@@ -418,9 +418,12 @@ public class AmmoType extends EquipmentType {
         for (int i = 0; i < vAmmo.size(); i++) {
             at = vAmmo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize())
-                    && (TechConstants.isLegal(mounted.getType().getTechLevel(mounted.getEntity().getTechLevelYear()),
-                            at.getTechLevel(mounted.getEntity().getTechLevelYear()), false, mounted.getEntity()
-                                    .isMixedTech()))) {
+                    && (TechConstants.isLegal(
+                            mounted.getType().getTechLevel(
+                                    mounted.getEntity().getTechLevelYear()), at
+                                    .getTechLevel(mounted.getEntity()
+                                            .getTechLevelYear()), false,
+                            mounted.getEntity().isMixedTech()))) {
                 return at;
             }
         }
@@ -428,9 +431,10 @@ public class AmmoType extends EquipmentType {
         for (int i = 0; i < vAmmo.size(); i++) {
             at = vAmmo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize())
-                    && (TechConstants.isLegal(mounted.getType().getTechLevel(3071),
-                            at.getTechLevel(3071), false, mounted.getEntity()
-                                    .isMixedTech()))) {
+                    && (TechConstants.isLegal(
+                            mounted.getType().getTechLevel(3071), at
+                                    .getTechLevel(3071), false, mounted
+                                    .getEntity().isMixedTech()))) {
                 return at;
             }
         }
@@ -800,28 +804,27 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLRL15PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL20PrototypeAmmo());
         EquipmentType.addType(AmmoType.createISC3RemoteSensorAmmo());
-        
-        // WOR: iATM ammo
-     	EquipmentType.addType(AmmoType.createCLIATM3Ammo());
-     	EquipmentType.addType(AmmoType.createCLIATM3ERAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM3HEAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM3IIWAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM3IMPAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM6Ammo());
-     	EquipmentType.addType(AmmoType.createCLIATM6ERAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM6HEAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM6IIWAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM6IMPAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM9Ammo());
-     	EquipmentType.addType(AmmoType.createCLIATM9ERAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM9HEAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM9IIWAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM9IMPAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM12Ammo());
-     	EquipmentType.addType(AmmoType.createCLIATM12ERAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM12HEAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM12IIWAmmo());
-     	EquipmentType.addType(AmmoType.createCLIATM12IMPAmmo());
+
+        EquipmentType.addType(AmmoType.createCLIATM3Ammo());
+        EquipmentType.addType(AmmoType.createCLIATM3ERAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM3HEAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM3IIWAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM3IMPAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM6Ammo());
+        EquipmentType.addType(AmmoType.createCLIATM6ERAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM6HEAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM6IIWAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM6IMPAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM9Ammo());
+        EquipmentType.addType(AmmoType.createCLIATM9ERAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM9HEAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM9IIWAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM9IMPAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM12Ammo());
+        EquipmentType.addType(AmmoType.createCLIATM12ERAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM12HEAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM12IIWAmmo());
+        EquipmentType.addType(AmmoType.createCLIATM12IMPAmmo());
 
         // Unofficial Ammo
         base = AmmoType.createISAC15Ammo();
@@ -1152,28 +1155,17 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,2380,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,2385,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,2597,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1,M_ARTEMIS_CAPABLE,2598, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3038, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3030, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD,3053,TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3055, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,2340,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE,2757,TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,2333,TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1182,31 +1174,22 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO,
-                TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,
-                M_FRAGMENTATION, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,
-                M_NARC_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,
-                M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2,
-                M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2,
-                M_TANDEM_CHARGE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO,2820,
+        		TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,M_FRAGMENTATION,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,  M_ARTEMIS_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING,2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2,M_TANDEM_CHARGE,2757, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,2820,TechConstants.T_CLAN_ADVANCED));
 
+        
+        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,TechConstants.T_CLAN_UNOFFICIAL));
+        
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanSrmAmmos, munitions);
@@ -1214,8 +1197,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for BA SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_ALLOWED_ALL));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2380,TechConstants.T_ALLOWED_ALL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1223,8 +1205,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2380,TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1232,10 +1213,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,
-                TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
-                TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,2820,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,2820,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1243,40 +1222,23 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Thunder", 1, M_THUNDER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Augmented", 2,
-                M_THUNDER_AUGMENTED, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Inferno", 2,
-                M_THUNDER_INFERNO, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Active", 2,
-                M_THUNDER_ACTIVE, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Thunder-Vibrabomb", 2,
-                M_THUNDER_VIBRABOMB, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Swarm", 1, M_SWARM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Swarm-I", 1, M_SWARM_I,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Follow The Leader", 2,
-                M_FOLLOW_THE_LEADER, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION,2385,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Thunder", 1, M_THUNDER,2620,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Augmented", 2,M_THUNDER_AUGMENTED,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Inferno", 2,M_THUNDER_INFERNO,3056, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Active", 2,M_THUNDER_ACTIVE,3058, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Thunder-Vibrabomb", 2,M_THUNDER_VIBRABOMB,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,2597,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,2598, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,3057, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Swarm", 1, M_SWARM,2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Swarm-I", 1, M_SWARM_I,3057, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3038, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3030, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3055, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING,2340,TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Follow The Leader", 2,M_FOLLOW_THE_LEADER,3053, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,2333,TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1286,42 +1248,35 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan LRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,
-                M_FRAGMENTATION, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2,
-                M_THUNDER_AUGMENTED, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2,
-                M_THUNDER_INFERNO, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2,
-                M_THUNDER_ACTIVE, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,
-                M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,
-                M_NARC_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,
-                M_SEMIGUIDED, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Swarm", 1, M_SWARM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,
-                M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,
-                TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
-                TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2,
-                M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2,
-                M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1,M_FRAGMENTATION,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER,2820,TechConstants.T_CLAN_ADVANCED));
+        
+        // According to TM clans don't get these Ammo Types.  Pg 295.
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2,
+        //        M_THUNDER_AUGMENTED,3057, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2,
+        //        M_THUNDER_INFERNO,3056, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2,
+        //       M_THUNDER_ACTIVE,3058, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,
+        //        M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED));
+        //munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
+        //        TechConstants.T_CLAN_ADVANCED));
+        //        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,
+        //	M_SEMIGUIDED, TechConstants.T_CLAN_TW));
+        
+        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1,M_NARC_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,M_ARTEMIS_CAPABLE,2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Swarm", 1, M_SWARM,2820,TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING,2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2, M_FOLLOW_THE_LEADER,2755, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,2825,TechConstants.T_CLAN_ADVANCED));
+        
+        //Clans don't have access to these Munition Types
+        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL, 	TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,         TechConstants.T_CLAN_EXPERIMENTAL));
+        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,       TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1330,18 +1285,12 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for AC rounds.
         munitions.clear();
-        munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Armor-Piercing", 2,
-                M_ARMOR_PIERCING, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
-                TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Precision", 2, M_PRECISION, 3062, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Armor-Piercing", 2,M_ARMOR_PIERCING, 3059, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 3055, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC, 3059, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER, 2300, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flak", 1, M_FLAK, 2310, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1349,22 +1298,14 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB,
-                TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2620, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2600, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV, 3055, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB, 3052, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2620, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2620, TechConstants.T_IS_EXPERIMENTAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1372,16 +1313,11 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5,M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1389,38 +1325,27 @@ public class AmmoType extends EquipmentType {
 
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();
-        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3065, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080,TechConstants.T_CLAN_TW));
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
 
         // create the munition types for IS vehicular grenade launchers
         munitions.clear();
-        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3052, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080,TechConstants.T_IS_TW_NON_BOX));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
         // Create the munition types for Artillery launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2645, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, 2645, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1428,23 +1353,17 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 1950, TechConstants.T_IS_EXPERIMENTAL));
         AmmoType.createMunitions(longTomAmmos, munitions);
 
         // Create the munition types for Artillery Cannons.
         // These were taken out in TacOps errata, so are unofficial.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
-                TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2645, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, 2645, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1452,22 +1371,16 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperCannonAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5,
-                M_DAVY_CROCKETT_M, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 1950, TechConstants.T_IS_UNOFFICIAL));
         AmmoType.createMunitions(longTomCannonAmmos, munitions);
 
         // Create the munition types for Clan Artillery launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Cluster", 1, M_CLUSTER,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Copperhead", 1, M_HOMING,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE,
-                TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Cluster", 1, M_CLUSTER, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Copperhead", 1, M_HOMING, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, 2820, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1475,8 +1388,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2598, TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1484,8 +1396,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2598, TechConstants.T_IS_TW_NON_BOX));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1493,10 +1404,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1504,10 +1413,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRT launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1,
-                M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1,
-                M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085,TechConstants.T_CLAN_TW));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1515,30 +1422,26 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for vehicle flamers
         munitions.clear();
-        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, 1950, TechConstants.T_IS_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
 
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, 1950, TechConstants.T_CLAN_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanVehicleFlamerAmmos, munitions);
 
         // Create the munition types for heavy flamers
         munitions.clear();
-        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, 1950, TechConstants.T_IS_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(heavyFlamerAmmos, munitions);
 
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, 3067, TechConstants.T_CLAN_ADVANCED));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
@@ -5906,8 +5809,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 30;
         ammo.bv = 5;
         ammo.cost = 30000;
-		ammo.introDate = 3059;
-		ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
+        ammo.introDate = 3059;
+        ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
@@ -5926,8 +5829,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 12;
         ammo.cost = 30000;
-		ammo.introDate = 3059;
-		ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
+        ammo.introDate = 3059;
+        ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
@@ -6445,533 +6348,531 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
-//////////WOR: iATM Ammo ////////
-private static AmmoType createCLIATM3Ammo() {
-AmmoType ammo = new AmmoType();
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 3 Ammo";
-ammo.shortName = "iATM 3";
-ammo.setInternalName("Clan Ammo iATM-3");
-ammo.addLookupName("CLIATM3 Ammo");
-ammo.addLookupName("Clan iATM-3 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 3;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.shots = 20;
-ammo.bv = 21;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM3Ammo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 3 Ammo";
+        ammo.shortName = "iATM 3";
+        ammo.setInternalName("Clan Ammo iATM-3");
+        ammo.addLookupName("CLIATM3 Ammo");
+        ammo.addLookupName("Clan iATM-3 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.shots = 20;
+        ammo.bv = 21;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM3ERAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 3 ER Ammo";
-ammo.shortName = "iATM 3 ER";
-ammo.setInternalName("Clan Ammo iATM-3 ER");
-ammo.addLookupName("CLIATM3 ER Ammo");
-ammo.addLookupName("Clan iATM-3 ER Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 3;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_EXTENDED_RANGE;
-ammo.shots = 20;
-ammo.bv = 21;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM3ERAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 3 ER Ammo";
+        ammo.shortName = "iATM 3 ER";
+        ammo.setInternalName("Clan Ammo iATM-3 ER");
+        ammo.addLookupName("CLIATM3 ER Ammo");
+        ammo.addLookupName("Clan iATM-3 ER Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.shots = 20;
+        ammo.bv = 21;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM3HEAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 3 HE Ammo";
-ammo.shortName = "iATM 3 HE";
-ammo.setInternalName("Clan Ammo iATM-3 HE");
-ammo.addLookupName("CLIATM3 HE Ammo");
-ammo.addLookupName("Clan iATM-3 HE Ammo");
-ammo.damagePerShot = 3;
-ammo.rackSize = 3;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_HIGH_EXPLOSIVE;
-ammo.shots = 20;
-ammo.bv = 21;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM3HEAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 3 HE Ammo";
+        ammo.shortName = "iATM 3 HE";
+        ammo.setInternalName("Clan Ammo iATM-3 HE");
+        ammo.addLookupName("CLIATM3 HE Ammo");
+        ammo.addLookupName("Clan iATM-3 HE Ammo");
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.shots = 20;
+        ammo.bv = 21;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM3IIWAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 3 IIW Ammo";
-ammo.shortName = "iATM 3 IIW";
-ammo.setInternalName("Clan Ammo iATM-3 IIW");
-ammo.addLookupName("CLIATM3 IIW Ammo");
-ammo.addLookupName("Clan iATM-3 IIW Ammo");
-ammo.addLookupName("CLIIW3 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 3;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IIW;
-ammo.shots = 20;
-ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM3IIWAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 3 IIW Ammo";
+        ammo.shortName = "iATM 3 IIW";
+        ammo.setInternalName("Clan Ammo iATM-3 IIW");
+        ammo.addLookupName("CLIATM3 IIW Ammo");
+        ammo.addLookupName("Clan iATM-3 IIW Ammo");
+        ammo.addLookupName("CLIIW3 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IIW;
+        ammo.shots = 20;
+        ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM3IMPAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 3 IMP Ammo";
-ammo.shortName = "iATM 3 IMP";
-ammo.setInternalName("Clan Ammo iATM-3 IMP");
-ammo.addLookupName("CLIATM3 IMP Ammo");
-ammo.addLookupName("Clan iATM-3 IMP Ammo");
-ammo.addLookupName("CLIMP3 Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 3;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IMP;
-ammo.shots = 20;
-ammo.bv = 42; // 21 * 2 = 42
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM3IMPAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 3 IMP Ammo";
+        ammo.shortName = "iATM 3 IMP";
+        ammo.setInternalName("Clan Ammo iATM-3 IMP");
+        ammo.addLookupName("CLIATM3 IMP Ammo");
+        ammo.addLookupName("Clan iATM-3 IMP Ammo");
+        ammo.addLookupName("CLIMP3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IMP;
+        ammo.shots = 20;
+        ammo.bv = 42; // 21 * 2 = 42
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM6Ammo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 6 Ammo";
-ammo.shortName = "iATM 6";
-ammo.setInternalName("Clan Ammo iATM-6");
-ammo.addLookupName("CLIATM6 Ammo");
-ammo.addLookupName("Clan iATM-6 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 6;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.shots = 10;
-ammo.bv = 39;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM6Ammo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 6 Ammo";
+        ammo.shortName = "iATM 6";
+        ammo.setInternalName("Clan Ammo iATM-6");
+        ammo.addLookupName("CLIATM6 Ammo");
+        ammo.addLookupName("Clan iATM-6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.shots = 10;
+        ammo.bv = 39;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM6ERAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 6 ER Ammo";
-ammo.shortName = "iATM 6 ER";
-ammo.setInternalName("Clan Ammo iATM-6 ER");
-ammo.addLookupName("CLIATM6 ER Ammo");
-ammo.addLookupName("Clan iATM-6 ER Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 6;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_EXTENDED_RANGE;
-ammo.shots = 10;
-ammo.bv = 39;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM6ERAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 6 ER Ammo";
+        ammo.shortName = "iATM 6 ER";
+        ammo.setInternalName("Clan Ammo iATM-6 ER");
+        ammo.addLookupName("CLIATM6 ER Ammo");
+        ammo.addLookupName("Clan iATM-6 ER Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.shots = 10;
+        ammo.bv = 39;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM6HEAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 6 HE Ammo";
-ammo.shortName = "iATM 6 HE";
-ammo.setInternalName("Clan Ammo iATM-6 HE");
-ammo.addLookupName("CLIATM6 HE Ammo");
-ammo.addLookupName("Clan iATM-6 HE Ammo");
-ammo.damagePerShot = 3;
-ammo.rackSize = 6;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_HIGH_EXPLOSIVE;
-ammo.shots = 10;
-ammo.bv = 39;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM6HEAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 6 HE Ammo";
+        ammo.shortName = "iATM 6 HE";
+        ammo.setInternalName("Clan Ammo iATM-6 HE");
+        ammo.addLookupName("CLIATM6 HE Ammo");
+        ammo.addLookupName("Clan iATM-6 HE Ammo");
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.shots = 10;
+        ammo.bv = 39;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM6IIWAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 6 IIW Ammo";
-ammo.shortName = "iATM 6 IIW";
-ammo.setInternalName("Clan Ammo iATM-6 IIW");
-ammo.addLookupName("CLIATM6 IIW Ammo");
-ammo.addLookupName("Clan iATM-6 IIW Ammo");
-ammo.addLookupName("CLIIW6 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 6;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IIW;
-ammo.shots = 10;
-ammo.bv = 51; // 50.7 round up (?)
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM6IIWAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 6 IIW Ammo";
+        ammo.shortName = "iATM 6 IIW";
+        ammo.setInternalName("Clan Ammo iATM-6 IIW");
+        ammo.addLookupName("CLIATM6 IIW Ammo");
+        ammo.addLookupName("Clan iATM-6 IIW Ammo");
+        ammo.addLookupName("CLIIW6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IIW;
+        ammo.shots = 10;
+        ammo.bv = 51; // 50.7 round up (?)
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM6IMPAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 6 IMP Ammo";
-ammo.shortName = "iATM 6 IMP";
-ammo.setInternalName("Clan Ammo iATM-6 IMP");
-ammo.addLookupName("CLIATM6 IMP Ammo");
-ammo.addLookupName("Clan iATM-6 IMP Ammo");
-ammo.addLookupName("CLIMP6 Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 6;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IMP;
-ammo.shots = 10;
-ammo.bv = 78; // 39 * 2 = 78
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM6IMPAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 6 IMP Ammo";
+        ammo.shortName = "iATM 6 IMP";
+        ammo.setInternalName("Clan Ammo iATM-6 IMP");
+        ammo.addLookupName("CLIATM6 IMP Ammo");
+        ammo.addLookupName("Clan iATM-6 IMP Ammo");
+        ammo.addLookupName("CLIMP6 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IMP;
+        ammo.shots = 10;
+        ammo.bv = 78; // 39 * 2 = 78
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM9Ammo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 9 Ammo";
-ammo.shortName = "iATM 9";
-ammo.setInternalName("Clan Ammo iATM-9");
-ammo.addLookupName("CLIATM9 Ammo");
-ammo.addLookupName("Clan iATM-9 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 9;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.shots = 7;
-ammo.bv = 54;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM9Ammo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 9 Ammo";
+        ammo.shortName = "iATM 9";
+        ammo.setInternalName("Clan Ammo iATM-9");
+        ammo.addLookupName("CLIATM9 Ammo");
+        ammo.addLookupName("Clan iATM-9 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.shots = 7;
+        ammo.bv = 54;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM9ERAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 9 ER Ammo";
-ammo.shortName = "iATM 9 ER";
-ammo.setInternalName("Clan Ammo iATM-9 ER");
-ammo.addLookupName("CLIATM9 ER Ammo");
-ammo.addLookupName("Clan iATM-9 ER Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 9;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_EXTENDED_RANGE;
-ammo.shots = 7;
-ammo.bv = 54;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM9ERAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 9 ER Ammo";
+        ammo.shortName = "iATM 9 ER";
+        ammo.setInternalName("Clan Ammo iATM-9 ER");
+        ammo.addLookupName("CLIATM9 ER Ammo");
+        ammo.addLookupName("Clan iATM-9 ER Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.shots = 7;
+        ammo.bv = 54;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM9HEAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 9 HE Ammo";
-ammo.shortName = "iATM 9 HE";
-ammo.setInternalName("Clan Ammo iATM-9 HE");
-ammo.addLookupName("CLIATM9 HE Ammo");
-ammo.addLookupName("Clan iATM-9 HE Ammo");
-ammo.damagePerShot = 3;
-ammo.rackSize = 9;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_HIGH_EXPLOSIVE;
-ammo.shots = 7;
-ammo.bv = 54;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM9HEAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 9 HE Ammo";
+        ammo.shortName = "iATM 9 HE";
+        ammo.setInternalName("Clan Ammo iATM-9 HE");
+        ammo.addLookupName("CLIATM9 HE Ammo");
+        ammo.addLookupName("Clan iATM-9 HE Ammo");
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.shots = 7;
+        ammo.bv = 54;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM9IIWAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 9 IIW Ammo";
-ammo.shortName = "iATM 9 IIW";
-ammo.setInternalName("Clan Ammo iATM-9 IIW");
-ammo.addLookupName("CLIATM9 IIW Ammo");
-ammo.addLookupName("Clan iATM-9 IIW Ammo");
-ammo.addLookupName("CLIIW9 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 9;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IIW;
-ammo.shots = 7;
-ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM9IIWAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 9 IIW Ammo";
+        ammo.shortName = "iATM 9 IIW";
+        ammo.setInternalName("Clan Ammo iATM-9 IIW");
+        ammo.addLookupName("CLIATM9 IIW Ammo");
+        ammo.addLookupName("Clan iATM-9 IIW Ammo");
+        ammo.addLookupName("CLIIW9 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IIW;
+        ammo.shots = 7;
+        ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM9IMPAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 9 IMP Ammo";
-ammo.shortName = "iATM 9 IMP";
-ammo.setInternalName("Clan Ammo iATM-9 IMP");
-ammo.addLookupName("CLIATM9 IMP Ammo");
-ammo.addLookupName("Clan iATM-9 IMP Ammo");
-ammo.addLookupName("CLIMP9 Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 9;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IMP;
-ammo.shots = 7;
-ammo.bv = 108; // 54 * 2 = 108
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM9IMPAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 9 IMP Ammo";
+        ammo.shortName = "iATM 9 IMP";
+        ammo.setInternalName("Clan Ammo iATM-9 IMP");
+        ammo.addLookupName("CLIATM9 IMP Ammo");
+        ammo.addLookupName("Clan iATM-9 IMP Ammo");
+        ammo.addLookupName("CLIMP9 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IMP;
+        ammo.shots = 7;
+        ammo.bv = 108; // 54 * 2 = 108
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM12Ammo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 12 Ammo";
-ammo.shortName = "iATM 12";
-ammo.setInternalName("Clan Ammo iATM-12");
-ammo.addLookupName("CLIATM12 Ammo");
-ammo.addLookupName("Clan iATM-12 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 12;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.shots = 5;
-ammo.bv = 78;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM12Ammo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 12 Ammo";
+        ammo.shortName = "iATM 12";
+        ammo.setInternalName("Clan Ammo iATM-12");
+        ammo.addLookupName("CLIATM12 Ammo");
+        ammo.addLookupName("Clan iATM-12 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.shots = 5;
+        ammo.bv = 78;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM12ERAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 12 ER Ammo";
-ammo.shortName = "iATM 12 ER";
-ammo.setInternalName("Clan Ammo iATM-12 ER");
-ammo.addLookupName("CLIATM12 ER Ammo");
-ammo.addLookupName("Clan iATM-12 ER Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 12;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_EXTENDED_RANGE;
-ammo.shots = 5;
-ammo.bv = 78;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM12ERAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 12 ER Ammo";
+        ammo.shortName = "iATM 12 ER";
+        ammo.setInternalName("Clan Ammo iATM-12 ER");
+        ammo.addLookupName("CLIATM12 ER Ammo");
+        ammo.addLookupName("Clan iATM-12 ER Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.shots = 5;
+        ammo.bv = 78;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM12HEAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 12 HE Ammo";
-ammo.shortName = "iATM 12 HE";
-ammo.setInternalName("Clan Ammo iATM-12 HE");
-ammo.addLookupName("CLIATM12 HE Ammo");
-ammo.addLookupName("Clan iATM-12 HE Ammo");
-ammo.damagePerShot = 3;
-ammo.rackSize = 12;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_HIGH_EXPLOSIVE;
-ammo.shots = 5;
-ammo.bv = 78;
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM12HEAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 12 HE Ammo";
+        ammo.shortName = "iATM 12 HE";
+        ammo.setInternalName("Clan Ammo iATM-12 HE");
+        ammo.addLookupName("CLIATM12 HE Ammo");
+        ammo.addLookupName("Clan iATM-12 HE Ammo");
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.shots = 5;
+        ammo.bv = 78;
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM12IIWAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 12 IIW Ammo";
-ammo.shortName = "iATM 12 IIW";
-ammo.setInternalName("Clan Ammo iATM-12 IIW");
-ammo.addLookupName("CLIATM12 IIW Ammo");
-ammo.addLookupName("Clan iATM-12 IIW Ammo");
-ammo.addLookupName("CLIIW12 Ammo");
-ammo.damagePerShot = 2;
-ammo.rackSize = 12;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IIW;
-ammo.shots = 5;
-ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM12IIWAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 12 IIW Ammo";
+        ammo.shortName = "iATM 12 IIW";
+        ammo.setInternalName("Clan Ammo iATM-12 IIW");
+        ammo.addLookupName("CLIATM12 IIW Ammo");
+        ammo.addLookupName("Clan iATM-12 IIW Ammo");
+        ammo.addLookupName("CLIIW12 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IIW;
+        ammo.shots = 5;
+        ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-private static AmmoType createCLIATM12IMPAmmo() {
-AmmoType ammo = new AmmoType();
+        return ammo;
+    }
 
-ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
-ammo.name = "iATM 12 IMP Ammo";
-ammo.shortName = "iATM 12 IMP";
-ammo.setInternalName("Clan Ammo iATM-12 IMP");
-ammo.addLookupName("CLIATM12 IMP Ammo");
-ammo.addLookupName("Clan iATM-12 IMP Ammo");
-ammo.addLookupName("CLIMP12 Ammo");
-ammo.damagePerShot = 1;
-ammo.rackSize = 12;
-ammo.ammoType = AmmoType.T_IATM;
-ammo.munitionType = M_IATM_IMP;
-ammo.shots = 5;
-ammo.bv = 156; // 78 * 2 = 156
-ammo.cost = 75000;
-ammo.flags = ammo.flags.or(F_HOTLOAD);
-ammo.setModes(new String[]
-{ "", "HotLoad" });
-ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
-ammo.introDate = 3070;
-ammo.techRating = RATING_F;
+    private static AmmoType createCLIATM12IMPAmmo() {
+        AmmoType ammo = new AmmoType();
 
-return ammo;
-}
+        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "iATM 12 IMP Ammo";
+        ammo.shortName = "iATM 12 IMP";
+        ammo.setInternalName("Clan Ammo iATM-12 IMP");
+        ammo.addLookupName("CLIATM12 IMP Ammo");
+        ammo.addLookupName("Clan iATM-12 IMP Ammo");
+        ammo.addLookupName("CLIMP12 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_IATM;
+        ammo.munitionType = M_IATM_IMP;
+        ammo.shots = 5;
+        ammo.bv = 156; // 78 * 2 = 156
+        ammo.cost = 75000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        ammo.introDate = 3070;
+        ammo.techRating = RATING_F;
 
-//////////WOR: iATM Ammo End////////
+        return ammo;
+    }
+
 
     private static AmmoType createCLStreakLRM5Ammo() {
         AmmoType ammo = new AmmoType();
@@ -6991,7 +6892,7 @@ return ammo;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.techRating = RATING_F;
 
         return ammo;
@@ -7015,9 +6916,8 @@ return ammo;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.techRating = RATING_F;
-
 
         return ammo;
     }
@@ -7040,9 +6940,8 @@ return ammo;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.techRating = RATING_F;
-
 
         return ammo;
     }
@@ -7065,9 +6964,8 @@ return ammo;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.techRating = RATING_F;
-
 
         return ammo;
     }
@@ -7835,7 +7733,6 @@ return ammo;
         return ammo;
     }
 
-
     private static AmmoType createISMRM1Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -8487,7 +8384,6 @@ return ammo;
     private static AmmoType createISCoolantPod() {
         AmmoType ammo = new AmmoType();
 
-        
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
         ammo.setInternalName("IS Coolant Pod");
@@ -8503,7 +8399,6 @@ return ammo;
         ammo.techRating = RATING_D;
         ammo.techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
         ammo.techLevel.put(3079, TechConstants.T_IS_TW_NON_BOX);
-        
 
         // TODO: modes is a bodge because there is no proper end phase
         String[] theModes = { "safe", "efficient", "off", "dump" };
@@ -8516,7 +8411,6 @@ return ammo;
     private static AmmoType createCLCoolantPod() {
         AmmoType ammo = new AmmoType();
 
-        
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
         ammo.setInternalName("Clan Coolant Pod");
@@ -8526,7 +8420,7 @@ return ammo;
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 50000;
-                ammo.availRating = new int[] { EquipmentType.RATING_X,
+        ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         ammo.techRating = RATING_D;
         ammo.techLevel.put(3056, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -8680,7 +8574,7 @@ return ammo;
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.introDate = 3072;
         ammo.techLevel.put(3072, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3081,  TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
         return ammo;
@@ -8708,7 +8602,7 @@ return ammo;
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.introDate = 3072;
         ammo.techLevel.put(3072, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3081,  TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
         return ammo;
@@ -8736,7 +8630,7 @@ return ammo;
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.introDate = 3072;
         ammo.techLevel.put(3072, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3081,  TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
         return ammo;
@@ -8764,7 +8658,7 @@ return ammo;
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.introDate = 3072;
         ammo.techLevel.put(3072, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3081,  TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
         return ammo;
@@ -10743,7 +10637,7 @@ return ammo;
                 EquipmentType.RATING_F, EquipmentType.RATING_X };
         ammo.introDate = 1950;
         ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084,TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
         return ammo;
@@ -10767,7 +10661,7 @@ return ammo;
                 EquipmentType.RATING_F, EquipmentType.RATING_X };
         ammo.introDate = 1950;
         ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084,TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
         return ammo;
@@ -10791,7 +10685,7 @@ return ammo;
                 EquipmentType.RATING_F, EquipmentType.RATING_X };
         ammo.introDate = 1950;
         ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084,TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
         return ammo;
@@ -10995,7 +10889,7 @@ return ammo;
          */
         private long type;
 
-        private int techLevel = TechConstants.T_TECH_UNKNOWN;
+        private Map<Integer, Integer> techLevel;
 
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
@@ -11008,17 +10902,31 @@ return ammo;
          *            to a round of the standard type.
          * @param munitionType
          *            - the <code>int</code> munition flag(s) of this type.
-         * @param newTechLevel
+         * @param introyear  
+         *            - the year of introduction for the tech level
+         * @param introTechLevel
          *            - The new tech level, if different from the base ammo
          *            type.
          */
         public MunitionMutator(String munitionName, int weightRatio,
-                long munitionType, int newTechLevel) {
+                long munitionType, int introYear, int introTechLevel) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
-            techLevel = newTechLevel;
+            techLevel = new HashMap<Integer, Integer>();
+            techLevel.put(introYear, introTechLevel);
         }
+        
+        /**
+         * Adds another tech level and year that level is assumed.
+         * 
+         * @param year
+         * @param tl
+         */
+        public MunitionMutator addTechLevel(int year, int tl){
+        	techLevel.put(year,tl);
+        	return this;
+        	}
 
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
@@ -11034,19 +10942,19 @@ return ammo;
 
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
-            
+
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
                 case AmmoType.T_AC:
                 case AmmoType.T_AC_PRIMITIVE:
                 case AmmoType.T_LAC:
                     // Add the munition name to the beginning of the display
-                    // name.                    
-                    nameBuf = new StringBuffer(name);                    
+                    // name.
+                    nameBuf = new StringBuffer(name);
                     nameBuf.append(" ");
                     munition.subMunitionBegin = 0;
                     munition.subMunitionLength = nameBuf.length();
-                    nameBuf.append(base.name);                    
+                    nameBuf.append(base.name);
                     munition.name = nameBuf.toString();
 
                     // Add the munition name to the end of the TDB ammo name.
@@ -11167,8 +11075,8 @@ return ammo;
             munition.munitionType = type;
 
             // Make sure the tech level is now correct.
-            if (techLevel != TechConstants.T_TECH_UNKNOWN) {
-                munition.techLevel.put(munition.introDate, techLevel);
+            if (!techLevel.isEmpty()) {
+                munition.techLevel = this.techLevel;
             } else {
                 munition.techLevel = base.techLevel;
             }
@@ -11403,10 +11311,10 @@ return ammo;
 
         return shortName;
     }
-    
-    public String getSubMunitionName(){
-        return shortName.substring(subMunitionBegin,
-                subMunitionBegin+subMunitionLength);
+
+    public String getSubMunitionName() {
+        return shortName.substring(subMunitionBegin, subMunitionBegin
+                + subMunitionLength);
     }
 
 }

@@ -92,6 +92,11 @@ public class TestTank extends TestEntity {
     public boolean isMech() {
         return false;
     }
+    
+    @Override
+    public boolean isAero() {
+        return false;
+    }
 
     public float getTankWeightTurret() {
         if (tank instanceof VTOL) {
@@ -336,6 +341,7 @@ public class TestTank extends TestEntity {
         buff.append("Tank: ").append(tank.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
+        buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(

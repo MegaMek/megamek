@@ -51,7 +51,6 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        flags = flags.or(F_BA_WEAPON);
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_B };

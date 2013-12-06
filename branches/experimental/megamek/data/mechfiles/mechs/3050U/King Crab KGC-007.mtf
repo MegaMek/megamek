@@ -31,12 +31,12 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:6
-Streak SRM 6, Center Torso
-Plasma Rifle, Left Torso
-Light PPC, Left Arm
-Light PPC, Right Arm
-Rotary AC/5, Right Arm
 Rotary AC/5, Left Arm
+Light PPC, Left Arm
+Rotary AC/5, Right Arm
+Light PPC, Right Arm
+Plasma Rifle, Left Torso
+Streak SRM 6, Center Torso
 
 Left Arm:
 Shoulder
@@ -64,7 +64,7 @@ ISRotaryAC5
 Light PPC
 Light PPC
 IS Light Ferro-Fibrous
-ISCASE
+-Empty-
 
 Left Torso:
 ISPlasmaRifle
@@ -88,7 +88,7 @@ ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
 IS Streak SRM 6 Ammo
--Empty-
+ISCASE
 -Empty-
 -Empty-
 -Empty-

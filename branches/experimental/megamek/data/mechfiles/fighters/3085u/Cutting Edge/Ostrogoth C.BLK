@@ -81,7 +81,7 @@ CLLRM15 Ammo (Clan) Artemis-capable
 
 CLLRM15 Ammo (Clan) Artemis-capable
 
-CLLRM15 Ammo (Clan) Artemis-capable
+
 
 Clan Artemis IV FCS
 
@@ -101,7 +101,7 @@ CLLRM15 Ammo (Clan) Artemis-capable
 
 CLLRM15 Ammo (Clan) Artemis-capable
 
-CLLRM15 Ammo (Clan) Artemis-capable
+
 
 Clan Artemis IV FCS
 
@@ -119,7 +119,7 @@ CLECMSuite
 
 <heatsinks>
 
-13
+12
 
 </heatsinks>
 
@@ -140,6 +140,10 @@ CLECMSuite
 Clan Level 2
 
 </type>
+
+<armor_tech>
+2
+</armor_tech>
 
 <year>
 

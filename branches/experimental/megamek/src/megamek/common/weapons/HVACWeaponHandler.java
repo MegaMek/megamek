@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
-import megamek.common.HitData;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -28,7 +27,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Jason Tighe
@@ -99,21 +97,20 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
-            int wlocation = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
-                CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                if ((slot1 == null)
-                        || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
+            int wloc = weapon.getLocation();
+            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = ae.getCritical(wloc, i);
+                if ((slot1 == null) || 
+                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
-                Mounted mounted = ae.getEquipment(slot1.getIndex());
+                Mounted mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticals(wlocation, i);
+                    ae.hitAllCriticals(wloc, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation),
-                    wtype.getDamage(), true, DamageType.NONE, true));
+            vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return true;

@@ -107,6 +107,21 @@ public class BehaviorSettings {
         fromXml(behavior);
     }
 
+    public BehaviorSettings getCopy() throws PrincessException {
+        BehaviorSettings copy = new BehaviorSettings();
+        copy.setHomeEdge(getHomeEdge());
+        copy.setForcedWithdrawal(isForcedWithdrawal());
+        copy.setAutoFlee(shouldAutoFlee());
+        copy.setDescription(getDescription());
+        copy.setGoHome(shouldGoHome());
+        copy.setFallShameIndex(getFallShameIndex());
+        copy.setBraveryIndex(getBraveryIndex());
+        copy.setHerdMentalityIndex(getHerdMentalityIndex());
+        copy.setHyperAggressionIndex(getHyperAggressionIndex());
+        copy.setSelfPreservationIndex(getSelfPreservationIndex());
+        return copy;
+    }
+
     /**
      * @return TRUE if I should immediately proceed to my home board edge.
      */

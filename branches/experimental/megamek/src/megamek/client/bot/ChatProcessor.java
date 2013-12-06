@@ -18,10 +18,15 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.logging.LogLevel;
 import megamek.common.util.StringUtil;
 import megamek.server.commands.DefeatCommand;
 
@@ -112,6 +117,8 @@ public class ChatProcessor {
         }
         if (bot instanceof TestBot) {
             additionalTestBotCommands(st, (TestBot) bot, p);
+        } else if (bot instanceof Princess) {
+            additionalPrincessCommands(ge, (Princess) bot);
         }
     }
 
@@ -175,6 +182,239 @@ public class ChatProcessor {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private IPlayer getPlayer(IGame game, String playerName) {
+        Enumeration<IPlayer> players = game.getPlayers();
+        while (players.hasMoreElements()) {
+            IPlayer testPlayer = players.nextElement();
+            if (playerName.equalsIgnoreCase(testPlayer.getName())) {
+                return testPlayer;
+            }
+        }
+        return null;
+    }
+
+    protected void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
+        final String METHOD_NAME = "additionalPrincessCommands(GamePlayerChatEvent, Princess, IPlayer)";
+
+        // Commands should be sent in this format:
+        //   <botName>: <command> : <arguments>
+
+        StringTokenizer tokenizer = new StringTokenizer(chatEvent.getMessage(), ":");
+        if (tokenizer.countTokens() < 3) {
+            return;
+        }
+
+        String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
+        princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+
+        String from = tokenizer.nextToken().trim(); // First token should be who sent the message.
+        String sentTo = tokenizer.nextToken().trim(); // Second token should be the player name the message is directed
+                                                      // to.
+        String command = tokenizer.nextToken().trim(); // The third token should be the actual command.
+        if (command.length() < 2) {
+            princess.sendChat("I do not recognize that command.");
+        }
+        String[] arguments = null; // Any remaining tokens should be the command arguments.
+        if (tokenizer.hasMoreElements()) {
+            arguments = tokenizer.nextToken().trim().split(" ");
+        }
+
+        // Make sure the command is directed at the Princess player.
+        IPlayer speakerPlayer = chatEvent.getPlayer();
+        if (speakerPlayer == null) {
+            speakerPlayer = getPlayer(princess.getGame(), from);
+            if (speakerPlayer == null) {
+                princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "speakerPlayer is NULL.");
+                return;
+            }
+        }
+        IPlayer princessPlayer = princess.getLocalPlayer();
+        if (princessPlayer == null) {
+            princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Princess Player is NULL.");
+            return;
+        }
+        String princessName = princessPlayer.getName();
+        if (!princessName.equalsIgnoreCase(sentTo)) {
+            return;
+        }
+
+        // Make sure the command came from my team.
+        int speakerTeam = speakerPlayer.getTeam();
+        int princessTeam = princessPlayer.getTeam();
+        if (princessTeam != speakerTeam) {
+            return;
+        }
+
+        // If instructed to, flee.
+        if (command.toLowerCase().startsWith(Princess.CMD_FLEE)) {
+            msg = "Received flee order!";
+            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            princess.sendChat("Run Away!");
+            princess.setShouldFlee(true, msg);
+            return;
+        }
+
+        // Change verbosity level.
+        if (command.toLowerCase().startsWith(Princess.CMD_VERBOSE)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "No log level specified.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            LogLevel newLevel = LogLevel.getLogLevel(arguments[0].trim());
+            if (newLevel == null) {
+                msg = "Invalid verbosity specified: " + arguments[0];
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
+                princess.sendChat(msg);
+                return;
+            }
+            princess.setVerbosity(newLevel);
+            msg = "Verbosity set to " + princess.getVerbosity().toString();
+            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            princess.sendChat(msg);
+            return;
+        }
+
+        // Load a new behavior.
+        if (command.toLowerCase().startsWith(Princess.CMD_BEHAVIOR)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "No new behavior specified.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            String behaviorName = arguments[0].trim();
+            BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behaviorName);
+            if (newBehavior == null) {
+                msg = "Behavior '" + behaviorName + "' does not exist.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
+                princess.sendChat(msg);
+                return;
+            }
+            princess.setBehaviorSettings(newBehavior);
+            msg = "Behavior changed to " + princess.getBehaviorSettings().getDescription();
+            princess.sendChat(msg);
+            return;
+        }
+
+        // Adjust fall shame.
+        if (command.toLowerCase().startsWith(Princess.CMD_CAUTION)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax.  Should be 'princessName : caution : <+/->'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String adjustment = arguments[0];
+            int currentFallShame = princess.getBehaviorSettings().getFallShameIndex();
+            int newFallShame = currentFallShame;
+            newFallShame += princess.calculateAdjustment(adjustment);
+            princess.getBehaviorSettings().setFallShameIndex(newFallShame);
+            msg = "Piloting Caution changed from " + currentFallShame + " to " +
+                  princess.getBehaviorSettings().getFallShameIndex();
+            princess.sendChat(msg);
+        }
+
+        // Adjust self preservation.
+        if (command.toLowerCase().startsWith(Princess.CMD_AVOID)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax.  Should be 'princessName : avoid : <+/->'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String adjustment = arguments[0];
+            int currentSelfPreservation = princess.getBehaviorSettings().getSelfPreservationIndex();
+            int newSelfPreservation = currentSelfPreservation;
+            newSelfPreservation += princess.calculateAdjustment(adjustment);
+            princess.getBehaviorSettings().setSelfPreservationIndex(newSelfPreservation);
+            msg = "Self Preservation changed from " + currentSelfPreservation + " to " +
+                  princess.getBehaviorSettings().getSelfPreservationIndex();
+            princess.sendChat(msg);
+        }
+
+        // Adjust aggression.
+        if (command.toLowerCase().startsWith(Princess.CMD_AGGRESSION)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax.  Should be 'princessName : aggression : <+/->'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String adjustment = arguments[0];
+            int currentAggression = princess.getBehaviorSettings().getHyperAggressionIndex();
+            int newAggression = currentAggression;
+            newAggression += princess.calculateAdjustment(adjustment);
+            princess.getBehaviorSettings().setHyperAggressionIndex(newAggression);
+            msg = "Aggression changed from " + currentAggression + " to " +
+                  princess.getBehaviorSettings().getHyperAggressionIndex();
+            princess.sendChat(msg);
+        }
+
+        // Adjust herd mentality.
+        if (command.toLowerCase().startsWith(Princess.CMD_HERDING)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax.  Should be 'princessName : herding : <+/->'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String adjustment = arguments[0];
+            int currentHerding = princess.getBehaviorSettings().getHerdMentalityIndex();
+            int newHerding = currentHerding;
+            newHerding += princess.calculateAdjustment(adjustment);
+            princess.getBehaviorSettings().setHerdMentalityIndex(newHerding);
+            msg = "Herding changed from " + currentHerding + " to " +
+                  princess.getBehaviorSettings().getHerdMentalityIndex();
+            princess.sendChat(msg);
+        }
+
+        // Adjust bravery.
+        if (command.toLowerCase().startsWith(Princess.CMD_BRAVERY)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax.  Should be 'princessName : brave : <+/->'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String adjustment = arguments[0];
+            int currentBravery = princess.getBehaviorSettings().getBraveryIndex();
+            int newBravery = currentBravery;
+            newBravery += princess.calculateAdjustment(adjustment);
+            princess.getBehaviorSettings().setBraveryIndex(newBravery);
+            msg = "Bravery changed from " + currentBravery + " to " +
+                  princess.getBehaviorSettings().getBraveryIndex();
+            princess.sendChat(msg);
+        }
+
+        if (command.toLowerCase().startsWith(Princess.CMD_TARGET)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid syntax.  Should be 'princessName : target : hexNumber'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String hex = arguments[0];
+            if (hex.length() != 4 || !StringUtil.isPositiveInteger(hex)) {
+                msg = "Invalid hex number: " + hex;
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            princess.getBehaviorSettings().addStrategicTarget(hex);
+            msg = "Hex " + hex + " added to strategic targets list.";
+            princess.sendChat(msg);
         }
     }
 }

@@ -157,11 +157,66 @@ v0.37.0-dev (SVN)
     working yet, pending a rules clarification)
 + Feature: Implemented ballistic-reinforced armor
 + Bug [#3923]: Ammo type is not obvious from reports
-+ Bug: Princess behavior selector defaults to "berserk" rather than the actual "default"
++ Bug: Princess behavior selector defaults to "berserk" rather than the actual
+    "default"
 + Feature: Added patch for War of Reaving equipment
 + Data: Republic 3145 Units and War of Reaving Mechs (WoR Units need testing)
 + Data: Revised Unit Images and added additional Lookup Name.
-
++ Bug [#3927]: Cannot Update Client Settings 0.37-dev
++ Fix BA weapon flags
++ Added a TestAero class for validating Aerospace and Conventional fighters
++ Fix to TestAero class Cockpits
++ Bug [#3928]: no ammo explosion due to heat
++ Patch [#455]: memory leak in ImageCache related to redraw timers
++ Data: Fixes to Aero Files.
++ TestEntity now includes a printSource() method, and the printEntity() methods 
+    of all TestEnity subclasses have been updated to call it
++ Upated MechView to print the source of a unit if it's set
++ Added several chat commands for Princess.
++ Data: More Aero Fixes
++ Changed Munition Mutators to use dates and tech level
++ Ammo Tech level and Date Fixes
++ Data: More Unit fixes.
++ Changed the default log level of ChatProcessorTest from DEBUG to ERROR, to
+    reduce the number of log statements during the build.
++ Updated TestAero to allow primitive standard and ferror armors. 
+    Also updated it to use EquipmentType defines instead of magic numbers.
++ Ferro-Lamellor was clan tech, who knew... updated TestAero to reflect this so
+    some units stop failing.
++ Added primitive ferro-alumnium armor and made it legal for Aeros to use it.
++ Updated TestAero: made the isClan state variable of AeroArmor public.
++ MiscType: Added entries for various Aero armors that were missing them.
++ Updated TestAero: made the isClan state variable of AeroArmor public.
++ Updated MiscType Data for Aeros and some unit fixes.
++ Unit Fixes
++ made it possible to use MechDisplay with a null clientgui, for use in MekWars
++ Bug [#3943]: Firing Heavy SRM Infantry causes fire phase to hang
++ Updated EntityVerifier: -v flag now only prints reports for failed units, 
+    use -valid along with -v to print reports for all units, updated usage msg.
++ Data: Unit Fixes and new images. Thanks Deadborder.
++ Bug: Possible NPE in MechDisplay, related to ammo weapons not having ammo
++ Bug: BLKAeroFile was computing primitive engine ratings incorrectly
++ Bug [#3939]: NPE from ammo explosion caused by heat 0.37-dev
++ Bug: Server.receiveEntityAdd gets an NPE when adding Aeros that don't have a 
+    verifier (Jumpships, Warships, etc)
++ Bug: RandomNameGenerator and RandomUnitGenerator both were opening files and 
+    not closing them
++ Bug [#3929]: old firing solutions shown at start of firing phase when opponent
+    has first turn
++ Adjusted formatting on reports related to DFAs, fixing newlines/indents etc
++ Bug [#3944]: missed DFA results in wrong displacement
++ Bug: TestEntity.getWeightAllocatedArmor() was double counting armor points for
+    patchwork armor
++ Reverted [r9893]: I could've sworn it just said round, but it does say round 
+    up, so the code before was actually correct
++ Bug [#3924]: Firing Phase NPE with Friendly Fire Turned On 0.37-dev
++ Bug [#3935]: Graphical Errors with Sand Hexes at Level -2 and Below
++ Bug [#3937]: AMS not working against iATMs 0.37-dev
++ Bug: Unofficial option for CASE/CASEII to reduce ammo explosion pilot damage 
+    was only partially implemented: the option didn't have a displayable_name 
+    or description, and the option always took effect regardless of whether it 
+    was turned on
++ Adjusted formatting of ammo explosion reports
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

@@ -64,6 +64,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import keypoint.PngEncoder;
 import megamek.client.Client;
+import megamek.client.TimerSingleton;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -108,12 +109,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$    
+    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
-    
+
     // a frame, to show stuff in
     public JFrame frame;
 
@@ -477,11 +478,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);      
+        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         randomNameDialog = new RandomNameDialog(this);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$        
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
         frame.setVisible(true);
     }
 
@@ -671,7 +672,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_HIGHLIGHT)) {
             GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getFovHighlight());
-            bv.refreshDisplayables();                              
+            bv.refreshDisplayables();
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
             GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
             bv.refreshDisplayables();
@@ -684,13 +685,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     ((FiringDisplay) curPanel).setFiringSolutions();
                 }
             }
-            bv.refreshDisplayables();             
+            bv.refreshDisplayables();
         } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
             if (curPanel instanceof MovementDisplay){
                 ((MovementDisplay) curPanel).computeMovementEnvelope();
             }
         }
-        
+
     }
 
     /**
@@ -784,6 +785,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     void die() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
+        if (bv != null) {
+            //cleanup our timers first
+            bv.die();
+        }
         Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
             JComponent component = phaseComponents.get(names.next());
@@ -812,6 +817,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (chatlounge != null) {
             chatlounge.die();
         }
+        TimerSingleton.getInstance().killTimer();
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -870,7 +876,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                this.mechW.setVisible(false);
+                mechW.setVisible(false);
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:
@@ -1293,7 +1299,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     entity.setOwner(player);
                     if (reinforce) {
                     	entity.setDeployRound(client.getGame().getRoundCount()+1);
-                    }                    
+                    }
                 }
                 client.sendAddEntity(loadedUnits);
             } catch (IOException excep) {
@@ -1316,7 +1322,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     	for (Entity e : currentUnits){
     	    ids.add(e.getId());
     	}
-    	c.sendDeleteEntities(ids);        
+    	c.sendDeleteEntities(ids);
     }
 
     /**
@@ -1485,7 +1491,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // better one without making massive changes (which didn't seem
             // worth it for one little feature).
             if (bv.getLocalPlayer() != client.getLocalPlayer()) {
-                // The adress based comparison is somewhat important.  
+                // The adress based comparison is somewhat important.
                 //  Use of the /reset command can cause the player to get reset,
                 //  and the equals function of Player isn't powerful enough.
                 bv.setLocalPlayer(client.getLocalPlayer());

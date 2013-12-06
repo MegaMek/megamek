@@ -7,8 +7,6 @@
 
 </BlockVersion>
 
-
-
 #Write the version number just in case...
 
 <Version>
@@ -17,15 +15,11 @@ MAM0
 
 </Version>
 
-
-
 <UnitType>
 
 Aero
 
 </UnitType>
-
-
 
 <Name>
 
@@ -33,15 +27,11 @@ Sai
 
 </Name>
 
-
-
 <Model>
 
 S-4C
 
 </Model>
-
-
 
 <Tonnage>
 
@@ -49,15 +39,11 @@ S-4C
 
 </Tonnage>
 
-
-
 <SafeThrust>
 
 8
 
 </SafeThrust>
-
-
 
 <Armor>
 
@@ -71,15 +57,11 @@ S-4C
 
 </Armor>
 
-
-
 <Nose Equipment>
 
 CLERPPC
 
 </Nose Equipment>
-
-
 
 <Left Wing Equipment>
 
@@ -91,8 +73,6 @@ Clan Streak SRM 4 Ammo
 
 </Left Wing Equipment>
 
-
-
 <Right Wing Equipment>
 
 CLStreakSRM4
@@ -103,13 +83,9 @@ Clan Streak SRM 4 Ammo
 
 </Right Wing Equipment>
 
-
-
 <Aft Equipment>
 
 </Aft Equipment>
-
-
 
 <heatsinks>
 
@@ -117,15 +93,11 @@ Clan Streak SRM 4 Ammo
 
 </heatsinks>
 
-
-
 <sink_type>
 
 1
 
 </sink_type>
-
-
 
 <fuel>
 
@@ -133,15 +105,11 @@ Clan Streak SRM 4 Ammo
 
 </fuel>
 
-
-
 <type>
 
 Clan Level 2
 
 </type>
-
-
 
 <year>
 
@@ -149,15 +117,11 @@ Clan Level 2
 
 </year>
 
-
-
 <source>
 
 Clan Invasion
 
 </source>
-
-
 
 <internal_type>
 
@@ -165,13 +129,13 @@ Clan Invasion
 
 </internal_type>
 
-
-
 <armor_type>
-
 19
 </armor_type>
 
+<armor_tech>
+2
+</armor_tech>
 
 
 <engine_type>				
@@ -179,8 +143,6 @@ Clan Invasion
 2
 
 </engine_type>
-
-
 
 <motion_type>
 

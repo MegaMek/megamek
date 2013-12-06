@@ -152,7 +152,7 @@ public class Aero extends Entity {
     protected int maxBombPoints = 0;
     protected int[] bombChoices = new int[BombType.B_NUM];
 
-    // fuel
+    // fuel - number of fuel points
     private int fuel = 0;
 
     // these are used by more advanced aeros
@@ -595,9 +595,70 @@ public class Aero extends Entity {
         return fuel;
     }
 
+    /**
+     * Sets the number of fuel points.
+     * @param gas  Number of fuel points.
+     */
     public void setFuel(int gas) {
         fuel = gas;
     }
+    
+    public float getFuelPointsPerTon(){
+        if (getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+            return 160;            
+        } else if (getEntityType() == Entity.ETYPE_DROPSHIP) {
+            if (getWeight() < 400){
+                return 80;
+            } else if (getWeight() < 800){
+                return 70;
+            } else if (getWeight() < 1200){
+                return 60;
+            } else if (getWeight() < 1900){
+                return 50;
+            } else if (getWeight() < 3000){
+                return 40;
+            } else if (getWeight() < 20000){
+                return 30;
+            } else if (getWeight() < 40000){
+                return 20;
+            } else {
+                return 10;
+            }
+        } else if (getEntityType() == Entity.ETYPE_WARSHIP ||
+                getEntityType() == Entity.ETYPE_JUMPSHIP ||
+                getEntityType() == Entity.ETYPE_SPACE_STATION) {
+            if (getWeight() < 110000){
+                return 10;
+            } else if (getWeight() < 250000){
+                return 5;
+            } else {
+                return 2.5f;
+            }
+        } else if (getEntityType() == Entity.ETYPE_SMALL_CRAFT) {
+            return 80;
+        } else { // Entity.ETYPE_AERO
+            return 80;
+        }
+    }
+    
+    /**
+     * Set number of fuel points based on fuel tonnage.
+     * 
+     * @param fuelTons  The number of tons of fuel
+     */
+    public void setFuelTonnage(float fuelTons){
+        float pointsPerTon = getFuelPointsPerTon();        
+        fuel = (int)Math.ceil(pointsPerTon * fuelTons);        
+    }
+    
+    /**
+     * Gets the fuel for this Aero in terms of tonnage.
+     * 
+     * @return The number of tons of fuel on this Aero.
+     */
+    public float getFuelTonnage(){
+        return fuel / getFuelPointsPerTon();        
+    }    
 
     public int getHeatType() {
         return heatType;
@@ -2653,8 +2714,11 @@ public class Aero extends Entity {
     }
 
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
-        super.addEquipment(mounted, loc, rearMounted);
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+            throws LocationFullException {
+        if (getEquipmentNum(mounted) == -1){
+            super.addEquipment(mounted, loc, rearMounted);
+        }
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(mounted));
     }
@@ -3419,6 +3483,8 @@ public class Aero extends Entity {
     /***
      * use the specified amount of fuel for this Aero. The amount may be
      * adjusted by certain game options
+     * 
+     * @param fuel  The number of fuel points to use
      */
     public void useFuel(int fuelUsed) {
         setFuel(Math.max(0, getFuel() - fuelUsed));

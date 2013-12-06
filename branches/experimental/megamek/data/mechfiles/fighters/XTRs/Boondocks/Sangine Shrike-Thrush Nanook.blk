@@ -7,8 +7,6 @@
 
 </BlockVersion>
 
-
-
 #Write the version number just in case...
 
 <Version>
@@ -17,15 +15,11 @@ MAM0
 
 </Version>
 
-
-
 <UnitType>
 
 Aero
 
 </UnitType>
-
-
 
 <Name>
 
@@ -33,23 +27,17 @@ Sangine Shrike-Thrush 'Nanook'
 
 </Name>
 
-
-
 <Tonnage>
 
 25
 
 </Tonnage>
 
-
-
 <SafeThrust>
 
 12
 
 </SafeThrust>
-
-
 
 <Armor>
 
@@ -63,8 +51,6 @@ Sangine Shrike-Thrush 'Nanook'
 
 </Armor>
 
-
-
 <Nose Equipment>
 
 ClMediumPulseLaser
@@ -73,15 +59,11 @@ ClMediumPulseLaser
 
 </Nose Equipment>
 
-
-
 <Left Wing Equipment>
 
 ClERMediumLaser
 
 </Left Wing Equipment>
-
-
 
 <Right Wing Equipment>
 
@@ -89,15 +71,11 @@ ClERMediumLaser
 
 </Right Wing Equipment>
 
-
-
 <Aft Equipment>
 
 ISSmallLaser
 
 </Aft Equipment>
-
-
 
 <heatsinks>
 
@@ -105,15 +83,11 @@ ISSmallLaser
 
 </heatsinks>
 
-
-
 <sink_type>
 
 1
 
 </sink_type>
-
-
 
 <fuel>
 
@@ -121,15 +95,11 @@ ISSmallLaser
 
 </fuel>
 
-
-
 <type>
 
-Mixed (IS Chassis)
+Mixed (IS Chassis) Experimental 
 
 </type>
-
-
 
 <year>
 
@@ -137,15 +107,11 @@ Mixed (IS Chassis)
 
 </year>
 
-
-
 <source>
 
 Jihad
 
 </source>
-
-
 
 <internal_type>
 
@@ -153,15 +119,11 @@ Jihad
 
 </internal_type>
 
-
-
 <armor_type>
 
 7
 
 </armor_type>
-
-
 
 <Nose_armor_type>
 
@@ -169,15 +131,11 @@ Jihad
 
 </Nose_armor_type>
 
-
-
 <Nose_armor_tech>
 
 7
 
 </Nose_armor_tech>
-
-
 
 <Right Wing_armor_type>
 
@@ -185,15 +143,11 @@ Jihad
 
 </Right Wing_armor_type>
 
-
-
 <Right Wing_armor_tech>
 
 7
 
 </Right Wing_armor_tech>
-
-
 
 <Left Wing_armor_type>
 
@@ -201,15 +155,11 @@ Jihad
 
 </Left Wing_armor_type>
 
-
-
 <Left Wing_armor_tech>
 
 7
 
 </Left Wing_armor_tech>
-
-
 
 <Aft_armor_type>
 
@@ -217,23 +167,17 @@ Jihad
 
 </Aft_armor_type>
 
-
-
 <Aft_armor_tech>
 
 7
 
 </Aft_armor_tech>
 
-
-
 <engine_type>				
 
 3
 
 </engine_type>
-
-
 
 <motion_type>
 

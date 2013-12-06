@@ -54,11 +54,11 @@ public enum LogLevel {
 
     public static LogLevel getLogLevel(String levelName) {
         for (LogLevel l : values()) {
-            if (l.toString().equals(levelName)) {
+            if (l.toString().equalsIgnoreCase(levelName)) {
                 return l;
             }
         }
-        return ERROR;
+        return null;
     }
 
     public static LogLevel getLogLevel(int level) {
@@ -67,6 +67,6 @@ public enum LogLevel {
                 return l;
             }
         }
-        return ERROR;
+        return null;
     }
 }

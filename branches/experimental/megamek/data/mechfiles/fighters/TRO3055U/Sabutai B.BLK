@@ -105,8 +105,6 @@ CLLRM20 Ammo
 
 CLMediumPulseLaser
 
-CLMediumPulseLaser
-
 CLECMSuite
 
 </Aft Equipment>
@@ -135,6 +133,10 @@ Clan Level 2
 
 </type>
 
+<armor_tech>
+2
+</armor_tech>
+
 <year>
 
 3048
@@ -148,7 +150,6 @@ Clan Level 2
 </internal_type>
 
 <armor_type>
-
 19
 </armor_type>
 

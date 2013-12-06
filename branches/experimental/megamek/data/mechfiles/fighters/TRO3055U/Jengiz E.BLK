@@ -74,8 +74,12 @@ CLStreakSRM2 (IOS)
 </fuel>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
+
+<armor_tech>
+6
+</armor_tech>
 
 <year>
 3064

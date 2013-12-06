@@ -102,7 +102,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
-        int engineFlags = Engine.TANK_ENGINE;
+        int engineFlags = 0;
         if (a.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }

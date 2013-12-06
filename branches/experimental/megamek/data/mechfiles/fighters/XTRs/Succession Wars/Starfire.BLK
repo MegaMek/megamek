@@ -1,142 +1,92 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Starfire
-
 </Name>
 
 <Model>
-
 SF-1X (Prototype)
-
 </Model>
 
-<Tonnage>
+<year>
+3028
+</year>
 
-55
+<type>
+IS Level 4
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-42
-
-31
-
-31
-
-21
-
-</Armor>
-
-<Nose Equipment>
-Ultra AC/5 Prototype
-IS Ultra AC/5 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMediumLaser 
-
-ISMediumLaser 
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISMediumLaser 
-
-ISMediumLaser 
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISSmallLaser
-
-</Aft Equipment>
-
 <heatsinks>
-
 20
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 4
-
-</type>
-
-<year>
-
-3028
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-9
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor_type>
+27
+</armor_type>
 
-aerodyne
+<armor_tech>
+7
+</armor_tech>
 
-</motion_type>
+<armor>
+42
+31
+31
+21
+</armor>
 
+<Nose Equipment>
+ISUltraAC5Prototype
+IS Ultra AC/5 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+</Aft Equipment>
+
+<tonnage>
+55.0
+</tonnage>
 

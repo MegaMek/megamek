@@ -17,7 +17,6 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.weapons.*;
-import megamek.common.weapons.battlearmor.CLAPGaussRifle;
 import megamek.common.weapons.battlearmor.CLBAAPGaussRifle;
 import megamek.common.weapons.battlearmor.CLBAFlamer;
 import megamek.common.weapons.battlearmor.CLBAHeavyFlamer;
@@ -356,7 +355,6 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        //WOR: iATM stuff
         if (getAmmoType() == AmmoType.T_IATM) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
@@ -373,7 +371,6 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        //WOR: iATM stuff end
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
@@ -909,7 +906,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLATM6());
         EquipmentType.addType(new CLATM9());
         EquipmentType.addType(new CLATM12());
-        // WOR: iATMs
+        // iATMs
         EquipmentType.addType(new CLIATM3());
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());

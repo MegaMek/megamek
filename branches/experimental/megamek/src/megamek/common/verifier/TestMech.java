@@ -92,10 +92,15 @@ public class TestMech extends TestEntity {
     }
 
     @Override
+    public boolean isAero() {
+        return false;
+    }
+
+    @Override
     public float getWeightMisc() {
         if (mech instanceof LandAirMech) {
             // 10% of weight is conversion equipment
-            return mech.getWeight() / 10f;
+            return (float) Math.ceil(mech.getWeight() / 10f);
         }
         return 0.0f;
     }
@@ -615,6 +620,7 @@ public class TestMech extends TestEntity {
         buff.append("Mech: ").append(mech.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
+        buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (")

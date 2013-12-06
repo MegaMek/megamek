@@ -38,16 +38,15 @@ CRX-OR
 CLERMediumLaser
 CLERMediumLaser
 CLERMediumLaser
+Clan Streak SRM 4 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
 Clan Streak SRM 4
-Clan Streak SRM 4 Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
 Clan Streak SRM 4
-Clan Streak SRM 4 Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -69,6 +68,10 @@ CLTargeting Computer
 <type>
 Mixed (IS Chassis) Experimental
 </type>
+
+<armor_tech>
+7
+</armor_tech>
 
 <year>
 3076

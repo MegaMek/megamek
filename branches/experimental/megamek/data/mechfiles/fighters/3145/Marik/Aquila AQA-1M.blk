@@ -41,9 +41,6 @@ ISLightGaussRifle
 ISLightGaussRifle Ammo
 ISLightGaussRifle Ammo
 ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -82,7 +79,7 @@ IS Level 2
 </internal_type>
 
 <armor_type>
-1
+19
 </armor_type>
 
 <engine_type>

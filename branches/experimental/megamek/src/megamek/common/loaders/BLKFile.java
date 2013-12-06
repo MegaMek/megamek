@@ -372,11 +372,27 @@ public class BLKFile {
         }
 
         if (!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
-            blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+            if (t instanceof Aero){
+                blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
+            } else {
+                blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+            }
+        }
+        
+        int numLocs = t.locations();
+        // Aeros have an extra special location called "wings" that we
+        //  don't want to consider
+        if (t instanceof Aero){
+            numLocs--;
         }
 
         if (!(t instanceof Infantry)) {
-
+            if (t instanceof Aero){
+                blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
+                blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
+                blk.writeBlockData("fuel", ((Aero)t).getFuel());
+            }
             int engineCode = BLKFile.FUSION;
             switch (t.getEngine().getEngineType()) {
                 case Engine.COMBUSTION_ENGINE:
@@ -408,7 +424,7 @@ public class BLKFile {
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
-                for (int i = 1; i < t.locations(); i++) {
+                for (int i = 1; i < numLocs; i++) {
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type",
                             t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
@@ -422,18 +438,30 @@ public class BLKFile {
                 blk.writeBlockData("omni", 1);
             }
             int armor_array[];
-            armor_array = new int[t.locations() - 1];
-            for (int i = 1; i < t.locations(); i++) {
-                armor_array[i - 1] = t.getOArmor(i);
+            if (t instanceof Aero){
+                armor_array = new int[numLocs];
+                for (int i = 0; i < numLocs; i++) {
+                    armor_array[i] = t.getOArmor(i);
+                }
+            } else {
+                armor_array = new int[numLocs - 1];
+                for (int i = 1; i < numLocs; i++) {
+                    armor_array[i - 1] = t.getOArmor(i);
+                }
             }
             blk.writeBlockData("armor", armor_array);
         }
 
-        Vector<Vector<String>> eq = new Vector<Vector<String>>(t.locations());
-        for (int i = 0; i < t.locations(); i++) {
+        Vector<Vector<String>> eq = new Vector<Vector<String>>(numLocs);
+        
+        for (int i = 0; i < numLocs; i++) {
             eq.add(new Vector<String>());
         }
         for (Mounted m : t.getEquipment()) {
+            // Ignore Mounteds that represent a WeaponGroup
+            if (m.isWeaponGroup()){
+                continue;
+            }
             String name = m.getType().getInternalName();
             if (m.isSponsonTurretMounted()) {
                 name = name + "(ST)";
@@ -449,7 +477,7 @@ public class BLKFile {
                 eq.get(loc).add(name);
             }
         }
-        for (int i = 0; i < t.locations(); i++) {
+        for (int i = 0; i < numLocs; i++) {
             if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
                 blk.writeBlockData(t.getLocationName(i) + " Equipment",
                         eq.get(i));

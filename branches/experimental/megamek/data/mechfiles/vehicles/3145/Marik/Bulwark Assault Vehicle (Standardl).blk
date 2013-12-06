@@ -17,7 +17,7 @@ Bulwark Assault Vehicle
 </Name>
 
 <Model>
-(Standardl)
+(Standard)
 </Model>
 
 <year>
@@ -57,6 +57,8 @@ Tracked
 </armor>
 
 <Body Equipment>
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 </Body Equipment>

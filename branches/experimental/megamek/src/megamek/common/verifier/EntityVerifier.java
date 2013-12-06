@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
+import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -38,6 +39,11 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
 
+/**
+ * Performs verification of the validity of different types of 
+ * <code>Entity</code> subclasses.  Most of the actual validation is performed
+ * by <code>TestEntity</code> and its subclasses. 
+ */
 public class EntityVerifier implements MechSummaryCache.Listener {
     public final static String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
 
@@ -48,6 +54,10 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     private static MechSummaryCache mechSummaryCache = null;
     public TestXMLOption mechOption = new TestXMLOption();
     public TestXMLOption tankOption = new TestXMLOption();
+    public TestXMLOption aeroOption = new TestXMLOption();
+    
+    private boolean loadingVerbosity = false;
+    private boolean failsOnly = false;
 
     public EntityVerifier(File config) {
         ParsedXML root = null;
@@ -76,13 +86,31 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, boolean ignoreAmmo) {
+        return checkEntity(entity, fileString, verbose, ignoreAmmo, false);
+    }
+    
+    public boolean checkEntity(Entity entity, String fileString,
+            boolean verbose, boolean ignoreAmmo, boolean failsOnly) {
         boolean retVal = false;
 
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
-        } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement)) {
+        } else if ((entity instanceof Tank) && 
+                !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, tankOption, fileString);
+        }else if (entity.getEntityType() == Entity.ETYPE_AERO
+                && entity.getEntityType() != 
+                        Entity.ETYPE_DROPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SMALL_CRAFT
+                && entity.getEntityType() != 
+                        Entity.ETYPE_FIGHTER_SQUADRON
+                && entity.getEntityType() != 
+                        Entity.ETYPE_JUMPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SPACE_STATION) {
+            testEntity = new TestAero((Aero)entity, aeroOption, null);
         } else {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);
@@ -90,14 +118,17 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         }
 
         if (verbose) {
-            System.out.print(testEntity.printEntity());
             StringBuffer buff = new StringBuffer();
-            System.out.println("BV: " + entity.calculateBattleValue()
-                    + "    Cost: " + entity.getCost(false));
-            if (testEntity.correctEntity(buff, ignoreAmmo)) {
-                System.out.println("---Entity is valid---");
-            } else {
-                System.out.println("---Entity INVALID---");
+            boolean valid = testEntity.correctEntity(buff, ignoreAmmo);
+            if (!valid || !failsOnly){
+                if (valid) {
+                    System.out.println("---Entity is valid---");
+                } else {
+                    System.out.println("---Entity INVALID---");
+                }
+                System.out.print(testEntity.printEntity());                        
+                System.out.println("BV: " + entity.calculateBattleValue()
+                        + "    Cost: " + entity.getCost(false));
             }
         } else {
             StringBuffer buff = new StringBuffer();
@@ -136,18 +167,21 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(mechOption.printOptions());
         System.out.println("\nTank Options:");
         System.out.println(tankOption.printOptions());
+        System.out.println("\nAero Options:");
+        System.out.println(aeroOption.printOptions());
 
         int failures = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
-                    || ms[i].getUnitType().equals("Tank")) {
+                    || ms[i].getUnitType().equals("Tank")
+                    || ms[i].getUnitType().equals("Aero")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        false)) {
+                        loadingVerbosity,false,failsOnly)) {
                     failures++;
                 }
             }
@@ -170,6 +204,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         File config = new File(Configuration.unitsDir(), CONFIG_FILENAME);
         File f = null;
         String entityName = null;
+        boolean verbose = false;
+        boolean ignoreUnofficial = true;
+        boolean failsOnly = true;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
                 if (args.length <= i) {
@@ -190,10 +227,21 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                     i++;
                     entityName = args[i];
                 }
+            } else if (args[i].equals("-v") || args[i].equals("-verbose")){
+                verbose = true;
+            } else if (args[i].equals("-valid")){
+                failsOnly = false;
+            } else if (args[i].equals("-unofficial")){
+                ignoreUnofficial = false;
             } else {
                 System.err.println("Error: Invalid argument.\n");
-                System.err
-                        .println("Usage:\n\tEntityVerifier [-file <FILENAME>]");
+                System.err.println("Usage:\n\tEntityVerifier [flags] \n\n" +
+                "Valid Flags: \n" +
+                "-file <FILENAME> \t Specify a file to validate,\n"+
+                "                 \t   else the data directory is checked\n" +
+                "-v               \t Verbose -- print detailed report\n" +
+                "-unofficial      \t Consider unofficial units in data dir\n"+ 
+                "-valid           \t Print verbose reports for valid units\n");
                 return;
             }
         }
@@ -212,7 +260,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             // No specific file passed, so have MegaMek load all the mechs it
             // normally would, then verify all of them.
             EntityVerifier ev = new EntityVerifier(config);
-            mechSummaryCache = MechSummaryCache.getInstance();
+            ev.loadingVerbosity = verbose;
+            ev.failsOnly = failsOnly;
+            mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);
             mechSummaryCache.addListener(ev);
         }
     }

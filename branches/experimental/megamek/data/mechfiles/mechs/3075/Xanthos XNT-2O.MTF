@@ -6,11 +6,11 @@ Config:Quad
 TechBase:Inner Sphere
 Era:2564
 Source:Star League
-Rules Level:1
+Rules Level:5
 
 Mass:100
-Engine:360 Fusion Engine
-Structure:Standard
+Engine:360 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Primitive Cockpit
 Gyro:Standard Gyro
@@ -33,13 +33,13 @@ RTR Armor:5
 RTC Armor:8
 
 Weapons:7
-Autocannon/10, Right Torso
-Medium Laser, Right Torso
-Medium Laser, Left Torso
 Large Laser, Left Torso
 SRM 4, Left Torso
-Small Laser, Left Torso
+Medium Laser, Left Torso
+AC/10, Right Torso
+Medium Laser, Right Torso
 Small Laser, Head
+Small Laser, Left Torso
 
 Front Left Leg:
 Hip

@@ -99,7 +99,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
-        int engineFlags = Engine.TANK_ENGINE;
+        int engineFlags = 0;
         if (a.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
@@ -115,8 +115,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
         if (a.isPrimitive()) {
             engineRating *= 1.2;
+            // Ensure the rating is divisible by 5
             if ((engineRating % 5) != 0) {
-                engineRating = engineRating + (engineRating % 5);
+                engineRating = engineRating - (engineRating % 5) + 5;
             }
         }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));

@@ -115,9 +115,15 @@ public class GameTurn implements Serializable {
         return playerId == this.playerId;
     }
 
+    /**
+     * Prints out a shortened class name (w/o package information) plus the id
+     * of the player whose turn this is for.
+     */
     @Override
     public String toString() {
-        return getClass().getName() + " [" + playerId + "]";
+        String className = getClass().getName();
+        return className.substring(className.lastIndexOf('.')+1) + 
+                " pid: " + playerId;
     }
 
     /**
@@ -148,9 +154,14 @@ public class GameTurn implements Serializable {
          * entity that can move this turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
-            return super.isValidEntity(entity, game)
+        public boolean isValidEntity(Entity entity, IGame game, 
+                boolean useValidNonInfantryCheck) {
+            return super.isValidEntity(entity, game, useValidNonInfantryCheck)
                     && (entity.getId() == entityId);
+        }
+
+        public String toString() {
+            return super.toString() + "eid: " + entityId;
         }
     }
 
@@ -174,10 +185,12 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, IGame game, 
+                boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
-            final boolean result = super.isValidEntity(entity, game);
+            final boolean result = 
+                    super.isValidEntity(entity, game, useValidNonInfantryCheck);
             entity.done = oldDone;
             return result;
         }
@@ -209,11 +222,13 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, IGame game, 
+                boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
 
             entity.done = false;
-            final boolean result = super.isValidEntity(entity, game);
+            final boolean result = 
+                    super.isValidEntity(entity, game, useValidNonInfantryCheck);
             entity.done = oldDone;
             return result;
         }
@@ -239,10 +254,12 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, IGame game, 
+                boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
-            final boolean result = super.isValidEntity(entity, game);
+            final boolean result = 
+                    super.isValidEntity(entity, game, useValidNonInfantryCheck);
             entity.done = oldDone;
             return result;
         }
@@ -354,12 +371,16 @@ public class GameTurn implements Serializable {
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, IGame game, 
+                boolean useValidNonInfantryCheck) {
             // The entity must be in the mask, and pass
             // the requirements of the parent class.
             return ((GameTurn.getClassCode(entity) & mask) != 0)
-                    && super.isValidEntity(entity, game);
+                    && super.isValidEntity(entity, game, 
+                            useValidNonInfantryCheck);
         }
+        
+        
 
         /**
          * Determine if entities of the given class get to move.
@@ -377,6 +398,10 @@ public class GameTurn implements Serializable {
          */
         public int getTurnCode(){
             return mask;
+        }
+        
+        public String toString() {
+            return super.toString() + " mask: " + mask;
         }
     }
 
@@ -533,7 +558,7 @@ public class GameTurn implements Serializable {
 
         @Override
         public String toString() {
-            return getClass().getName() + ", entity IDs: [" + entityIds + "]";
+            return super.toString() + ", entity IDs: [" + entityIds + "]";
         }
 
         public int[] getEntityIds() {
@@ -570,9 +595,10 @@ public class GameTurn implements Serializable {
          * turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
-            return (super.isValidEntity(entity, game) && (unitNumber == entity
-                    .getUnitNumber()));
+        public boolean isValidEntity(Entity entity, IGame game,
+                boolean useValidNonInfantryCheck) {
+            return (super.isValidEntity(entity, game, useValidNonInfantryCheck) 
+                    && (unitNumber == entity.getUnitNumber()));
         }
     }
 

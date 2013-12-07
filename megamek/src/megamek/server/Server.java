@@ -3309,13 +3309,12 @@ public class Server implements Runnable {
             float teamEvenTurns = team.getEvenTurns();
 
             // Calculate the number of "even" turns to add for this team.
-            // FIXME: I don't think this is working right, all protos and PBI
-            // are deployed/moved after first unit goes
-            // regardless of how many there are (Taharqa)
             int numEven = 0;
             if (1 == numTeamsMoving) {
-                // The only team moving should move all "even" units.
-                numEven += teamEvenTurns;
+                // If there's only one team moving, we don't need to bother 
+                //  with the evenTracker, just make sure the even turns are
+                //  evenly distributed
+                numEven += teamEvenTurns / min + 0.5;
             } else if (prevTeam == null) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
@@ -3356,15 +3355,11 @@ public class Server implements Runnable {
 
                 // If we've added all "normal" turns, allocate turns
                 // for the infantry and/or protomechs moving even.
-                // FIXME: What is this doing? (Taharqa) - I think it just
-                // distributes any remaining "move even" units
-                // that were not handled
                 GameTurn turn = null;
                 if (numTurn >= team_order.getTotalTurns()) {
                     turn = new GameTurn.EntityClassTurn(player.getId(),
                             evenMask);
                 }
-
                 // If either Infantry or Protomechs move even, only allow
                 // the other classes to move during the "normal" turn.
                 else if (infMoveEven || protosMoveEven) {

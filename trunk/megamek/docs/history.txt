@@ -214,6 +214,9 @@ v0.37.0-dev (SVN)
 + Bug [#3932]: Infernos do not appear to cause any critical hit effects against 
     vehicles.
 + Bug [#3945]: Another NPE, but for an inferno ammo explosion 0.37-dev
++ Bug: Added two new conditions to Entity.isTargetable: entities are no longer 
+    considered targetable if they are being transported and if they are 
+    captured.  This prevents some exceptions with the firing solutions code.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

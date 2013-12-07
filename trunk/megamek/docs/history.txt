@@ -217,6 +217,8 @@ v0.37.0-dev (SVN)
 + Bug: Added two new conditions to Entity.isTargetable: entities are no longer 
     considered targetable if they are being transported and if they are 
     captured.  This prevents some exceptions with the firing solutions code.
++ Bug [#3946]: Infantry Don't count towards initiative rule can lead to no unit 
+    to move errors
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

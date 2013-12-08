@@ -303,6 +303,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         layoutScreen();
         setupButtonPanel();
+        
+        clientgui.bv.addKeyListener(this);
+        addKeyListener(this);
     }
 
     /**

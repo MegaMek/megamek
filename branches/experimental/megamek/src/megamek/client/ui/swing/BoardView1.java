@@ -74,7 +74,6 @@ import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
@@ -153,8 +152,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable,
-        BoardListener, MouseListener, MechDisplayListener,
-        IPreferenceChangeListener {
+        BoardListener, MouseListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -438,6 +436,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 "scrollW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),
                 "scrollE");
+        
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
+                "activateChat");
 
         ActionMap actionMap = getActionMap();
         actionMap.put("centerOnSelected", new AbstractAction() {
@@ -536,6 +537,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
             }
         });
+        
+        actionMap.put("activateChat", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 687064821229643708L;
+
+            public void actionPerformed(ActionEvent e) {
+            	requestFocusInWindow(false);
+            	for (IDisplayable disp : displayables){
+            		if (disp instanceof ChatterBox2){
+            			ChatterBox2 cb2 = (ChatterBox2)disp;
+            			if (!cb2.hasFocus){
+            				cb2.hasFocus = true;
+            				cb2.slideUp();
+            			} else {
+            				cb2.hasFocus = false;
+            			}
+            		}
+            	}
+            	refreshDisplayables();
+            }
+        });              
 
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
             @Override

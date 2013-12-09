@@ -6,6 +6,11 @@ v0.37.0-exp (SVN)
 + Bug: Exception when saving client options with a tooltip dismiss delay <0
 + Feature: Added a skinning help menu item and a corresponding help file
 + Bug [#3917]: UMU button causes issues for Battlearmor moving underwater
++ Feature: Changed the typing behavior of ChatterBox2 - now it only consumes 
+    keypresses when it's 'active' and can be activated by pressing enter, 
+    both escape and enter will deactive text entry with escape clearing the 
+    text and enter sending the text.  Clicking on the cb2 and clicking on the 
+    board view active and deactive text entry respectively.
 
 
 v0.37.0-dev (SVN)

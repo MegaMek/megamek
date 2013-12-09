@@ -128,7 +128,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // keep me
     ChatterBox cb;
-    ChatterBox2 cb2;
+    public ChatterBox2 cb2;
     public IBoardView bv;
     private Component bvc;
     public JDialog mechW;

@@ -203,6 +203,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         slidingUp = false;
         slidingDown = true;
+        hasFocus = false;
     }
 
     private void stopSliding() {
@@ -355,17 +356,18 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return false;
         }
         isHit = true;
-        hasFocus = true;
         // Hide button
-        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18))) {
-
-            if (isDown()) {
-                slideUp();
-            } else {
-                slideDown();
-            }
-            return true;
+        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18)) 
+        		&& !isDown()) {
+        	slideDown();
+        	return true;
         }
+        
+        hasFocus = true;
+        if (isDown()){
+        	slideUp();
+        }
+
         // Scroll up
         if ((x > (width - 17)) && (x < (width - 1)) && (y > (yOffset + 2 + 14))
                 && (y < (yOffset + 32))) {

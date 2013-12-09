@@ -1133,10 +1133,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns true if this entity is targetable for attacks
+     * Returns true if this entity is targetable for attacks.  A unit is 
+     * targetable if it is not destroyed, not doomed, deployed, not off board,
+     * not being transported, and not captured.
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && deployed && !isOffBoard();
+        return !destroyed && !doomed && deployed && !isOffBoard() && 
+                conveyance == Entity.NONE && !captured;
     }
 
     public boolean isProne() {

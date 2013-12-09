@@ -50,6 +50,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -168,6 +170,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     private static final int HEX_ELEV = 12;
+    
+    private static final int MAX_REPEAT_RATE = 10;
+    private static final int MAX_REPEAT_DELAY = 10;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
             0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f };
@@ -225,6 +230,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean dragging = false;
     // should we scroll when the mouse is dragged?
     private boolean shouldScroll = false;
+    
+    private Timer keyRepeatTimer = new Timer("Key Repeat Timer");
+    private Map<String, TimerTask> repeatingTasks = 
+    		new HashMap<String, TimerTask>();
 
     // entity sprites
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
@@ -409,42 +418,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         });
 
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD1, 0, false),
-                "scrollSW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false),
                 "scrollS");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD3, 0, false),
-                "scrollSE");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0, false),
                 "scrollW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, 0, false),
                 "centerOnSelected");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0, false),
                 "scrollE");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD7, 0, false),
-                "scrollNW");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0, false),
                 "scrollN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD9, 0, false),
-                "scrollNE");
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false),
-                "scrollS");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false),
-                "scrollN");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false),
-                "scrollW");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false),
-                "scrollE");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false),
+                "scrollSPress");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true),
+                "scrollSRelease");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false),
+                "scrollNPress");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true),
+                "scrollNRelease");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false),
+                "scrollWPress");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true),
+                "scrollWRelease");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false),
+                "scrollEPress");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true),
+                "scrollERelease");
+    
         
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
                 "activateChat");
 
         ActionMap actionMap = getActionMap();
         actionMap.put("centerOnSelected", new AbstractAction() {
-            /**
-             *
-             */
             private static final long serialVersionUID = -7302042484036200465L;
 
             public void actionPerformed(ActionEvent e) {
@@ -453,95 +460,156 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         });
-        actionMap.put("scrollNW", new AbstractAction() {
-            /**
-             *
-             */
-            private static final long serialVersionUID = -6214470514742631913L;
-
-            public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
-                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
-            }
-        });
-        actionMap.put("scrollN", new AbstractAction() {
-            /**
-             *
-             */
+        /*********************************************************************/
+        actionMap.put("scrollNPress", new AbstractAction() {
             private static final long serialVersionUID = 1261354793320440332L;
 
             public void actionPerformed(ActionEvent e) {
-                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+            	if (!repeatingTasks.containsKey("scrollN")){
+            		if (repeatingTasks.containsKey("scrollS")){
+	                    repeatingTasks.get("scrollS").cancel();
+	                    repeatingTasks.remove("scrollS");
+            		}                    
+            		long delay = MAX_REPEAT_DELAY;
+            		int rate = MAX_REPEAT_RATE;
+            		long period = (long) (1000.0 / rate);
+            		
+            		TimerTask tt = new TimerTask() {
+
+                        public void run() {
+                        	 vbar.setValue((int)
+                        			 (vbar.getValue() - (HEX_H * scale)));
+                            Thread.yield();
+                        }
+                    };
+                    repeatingTasks.put("scrollN", tt);
+                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
+            	}
             }
         });
-        actionMap.put("scrollNE", new AbstractAction() {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 2864813742650634006L;
+        actionMap.put("scrollNRelease", new AbstractAction() {
+            private static final long serialVersionUID = 1261354793320440332L;
 
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
-                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+                if (!repeatingTasks.containsKey("scrollN"))
+                    return;
+                repeatingTasks.get("scrollN").cancel();
+                repeatingTasks.remove("scrollN");
             }
         });
-        actionMap.put("scrollW", new AbstractAction() {
-            /**
-             *
-             */
+        /*********************************************************************/
+        actionMap.put("scrollWPress", new AbstractAction() {
             private static final long serialVersionUID = 3117624598134850245L;
 
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+            	if (!repeatingTasks.containsKey("scrollW")){
+            		if (repeatingTasks.containsKey("scrollE")){
+	                    repeatingTasks.get("scrollE").cancel();
+	                    repeatingTasks.remove("scrollE");
+            		}   
+            		long delay = MAX_REPEAT_DELAY;
+            		int rate = MAX_REPEAT_RATE;
+            		long period = (long) (1000.0 / rate);
+            		
+            		TimerTask tt = new TimerTask() {
+
+                        public void run() {
+                        	hbar.setValue((int) 
+                        			(hbar.getValue() - (HEX_W * scale)));
+                            Thread.yield();
+                        }
+                    };
+                    repeatingTasks.put("scrollW", tt);
+                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
+            	}
             }
         });
-        actionMap.put("scrollE", new AbstractAction() {
-            /**
-             *
-             */
+        actionMap.put("scrollWRelease", new AbstractAction() {
+            private static final long serialVersionUID = 3117624598134850245L;
+
+            public void actionPerformed(ActionEvent e) {
+                if (!repeatingTasks.containsKey("scrollW"))
+                    return;
+                repeatingTasks.get("scrollW").cancel();
+                repeatingTasks.remove("scrollW");
+            }
+        });
+        /*********************************************************************/
+        actionMap.put("scrollEPress", new AbstractAction() {
             private static final long serialVersionUID = 6453983031778932319L;
 
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+            	if (!repeatingTasks.containsKey("scrollE")){
+            		if (repeatingTasks.containsKey("scrollW")){
+	                    repeatingTasks.get("scrollW").cancel();
+	                    repeatingTasks.remove("scrollW");
+            		}   
+            		long delay = MAX_REPEAT_DELAY;
+            		int rate = MAX_REPEAT_RATE;
+            		long period = (long) (1000.0 / rate);
+            		
+            		TimerTask tt = new TimerTask() {
+
+                        public void run() {
+                        	hbar.setValue((int) 
+                        			(hbar.getValue() + (HEX_W * scale)));
+                            Thread.yield();
+                        }
+                    };
+                    repeatingTasks.put("scrollE", tt);
+                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
+            	}
             }
         });
-        actionMap.put("scrollSW", new AbstractAction() {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 3499825674934961200L;
+        actionMap.put("scrollERelease", new AbstractAction() {
+            private static final long serialVersionUID = 6453983031778932319L;
 
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
-                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                if (!repeatingTasks.containsKey("scrollE"))
+                    return;
+                repeatingTasks.get("scrollE").cancel();
+                repeatingTasks.remove("scrollE");
             }
         });
-        actionMap.put("scrollS", new AbstractAction() {
-            /**
-             *
-             */
+        /*********************************************************************/
+        actionMap.put("scrollSPress", new AbstractAction() {
             private static final long serialVersionUID = 8148891921567972362L;
 
             public void actionPerformed(ActionEvent e) {
-                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+            	if (!repeatingTasks.containsKey("scrollS")){
+            		if (repeatingTasks.containsKey("scrollN")){
+	                    repeatingTasks.get("scrollN").cancel();
+	                    repeatingTasks.remove("scrollN");
+            		}
+            		long delay = MAX_REPEAT_DELAY;
+            		int rate = MAX_REPEAT_RATE;
+            		long period = (long) (1000.0 / rate);
+            		
+            		TimerTask tt = new TimerTask() {
+
+                        public void run() {
+                        	vbar.setValue((int) 
+                        			(vbar.getValue() + (HEX_H * scale)));
+                            Thread.yield();
+                        }
+                    };
+                    repeatingTasks.put("scrollS", tt);
+                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
+            	} 
             }
         });
-        actionMap.put("scrollSE", new AbstractAction() {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 687064821229643708L;
+        actionMap.put("scrollSRelease", new AbstractAction() {
+            private static final long serialVersionUID = 8148891921567972362L;
 
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
-                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                if (!repeatingTasks.containsKey("scrollS"))
+                    return;
+                repeatingTasks.get("scrollS").cancel();
+                repeatingTasks.remove("scrollS");
             }
         });
         
         actionMap.put("activateChat", new AbstractAction() {
-            /**
-             *
-             */
             private static final long serialVersionUID = 687064821229643708L;
 
             public void actionPerformed(ActionEvent e) {

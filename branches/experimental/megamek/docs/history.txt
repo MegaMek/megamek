@@ -11,6 +11,8 @@ v0.37.0-exp (SVN)
     both escape and enter will deactive text entry with escape clearing the 
     text and enter sending the text.  Clicking on the cb2 and clicking on the 
     board view active and deactive text entry respectively.
++ Feature: Added WASD based scrolling for the board view.  This is implemented 
+    with timers and is considerably smoother than previous keyboard scrolling
 
 
 v0.37.0-dev (SVN)

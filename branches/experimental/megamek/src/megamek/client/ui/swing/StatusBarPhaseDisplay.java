@@ -78,8 +78,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.cb2.hasFocus){
-                	clientgui.cb2.hasFocus = false;
+                if (clientgui.bv.getChatterBoxActive()){
+                	clientgui.bv.setChatterBoxActive(false);
                 	clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn()) {
                     clear();

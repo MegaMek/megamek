@@ -321,6 +321,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
+    
+    
+    /**
+     * Keeps track of whether we have an active ChatterBox2
+     */
+    public boolean chatterBoxActive = false;
 
     /**
      * Construct a new board view for the specified game
@@ -413,53 +419,70 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         });
 
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0, false),
-                "scrollS");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0, false),
-                "scrollW");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, 0, false),
-                "centerOnSelected");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0, false),
-                "scrollE");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0, false),
-                "scrollN");
+        final BoardView1 bv = this;
+        // Register the action for TOGGLE_CHAT
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
+        		new CommandAction(){
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false),
-                "scrollSPress");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true),
-                "scrollSRelease");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false),
-                "scrollNPress");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true),
-                "scrollNRelease");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false),
-                "scrollWPress");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true),
-                "scrollWRelease");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false),
-                "scrollEPress");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true),
-                "scrollERelease");
-    
-        
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
-                "activateChat");
+        			@Override
+        			public boolean shouldPerformAction(){
+        				if (chatterBoxActive || !bv.isVisible()){
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						if (!chatterBoxActive){
+							chatterBoxActive = true;
+							for (IDisplayable disp : displayables){
+			            		if (disp instanceof ChatterBox2){
+			            			((ChatterBox2)disp).slideUp();
+	            				}
+		            		}
+							requestFocusInWindow(false);
+						}
+					}
+        	
+        });
 
-        ActionMap actionMap = getActionMap();
-        actionMap.put("centerOnSelected", new AbstractAction() {
-            private static final long serialVersionUID = -7302042484036200465L;
+        // Register the action for CENTER_ON_SELECTED        
+        controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,
+        		new CommandAction(){
 
-            public void actionPerformed(ActionEvent e) {
-                if (selectedEntity != null) {
-                    centerOnHex(selectedEntity.getPosition());
-                }
-            }
+					@Override
+					public boolean shouldPerformAction(){
+						if (selectedEntity != null && bv.isVisible()) {
+							return true;
+						} else {
+							return false;
+						}
+					}        	
+        	
+					@Override
+					public void performAction() {
+						if (selectedEntity != null) {
+		                    centerOnHex(selectedEntity.getPosition());
+		                }
+					}
+        	
         });
         
+        // Register the action for SCROLL_NORTH        
         controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
         		new CommandAction(){
 
+					@Override
+					public boolean shouldPerformAction(){
+						if (chatterBoxActive || !bv.isVisible()) {
+							return false;
+						} else {
+							return true;
+						}
+					}    
+					
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
@@ -468,9 +491,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 					}
         	
         });
+        
+        // Register the action for SCROLL_SOUTH        
         controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
         		new CommandAction(){
 
+					@Override
+					public boolean shouldPerformAction(){
+						if (chatterBoxActive || !bv.isVisible()) {
+							return false;
+						} else {
+							return true;
+						}
+					}           	
+        	
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
@@ -479,9 +513,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 					}
         	
         });
+        
+        // Register the action for SCROLL_EAST        
         controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
         		new CommandAction(){
 
+		        	@Override
+					public boolean shouldPerformAction(){
+						if (chatterBoxActive || !bv.isVisible()) {
+							return false;
+						} else {
+							return true;
+						}
+					} 
+        	
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
@@ -490,9 +535,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 					}
         	
         });
+        
+        // Register the action for SCROLL_WEST        
         controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
         		new CommandAction(){
 
+		        	@Override
+					public boolean shouldPerformAction(){
+						if (chatterBoxActive || !bv.isVisible()) {
+							return false;
+						} else {
+							return true;
+						}
+					}         	
+        	
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
@@ -503,26 +559,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         });        
 
         
-        actionMap.put("activateChat", new AbstractAction() {
-            private static final long serialVersionUID = 687064821229643708L;
-
-            public void actionPerformed(ActionEvent e) {
-            	requestFocusInWindow(false);
-            	for (IDisplayable disp : displayables){
-            		if (disp instanceof ChatterBox2){
-            			ChatterBox2 cb2 = (ChatterBox2)disp;
-            			if (!cb2.hasFocus){
-            				cb2.hasFocus = true;
-            				cb2.slideUp();
-            			} else {
-            				cb2.hasFocus = false;
-            			}
-            		}
-            	}
-            	refreshDisplayables();
-            }
-        });              
-
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -7572,5 +7608,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void die() {
         ourTask.cancel();
+    }
+    
+    /**
+     * Returns true if the BoardView has an active chatter box else false.
+     * @return
+     */
+    public boolean getChatterBoxActive(){
+    	return chatterBoxActive;
+    }
+
+    /**
+     * Sets whether the BoardView has an active chatter box or not.
+     * @param cba
+     */
+    public void setChatterBoxActive(boolean cba){
+    	chatterBoxActive = cba;
     }
 }

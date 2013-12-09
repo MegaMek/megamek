@@ -192,10 +192,13 @@ public class MegaMekGUI implements IMegaMekGUI {
     	KeyCommandBind.SCROLL_SOUTH.key = KeyEvent.VK_S;
     	KeyCommandBind.SCROLL_EAST.key = KeyEvent.VK_D;
     	KeyCommandBind.SCROLL_WEST.key = KeyEvent.VK_A;
+    	KeyCommandBind.TOGGLE_CHAT.key = KeyEvent.VK_ENTER;
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_NORTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_SOUTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_EAST);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_WEST);
+    	controller.registerKeyCommandBind(KeyCommandBind.TOGGLE_CHAT);
+    	
     	return controller;
     }    
 

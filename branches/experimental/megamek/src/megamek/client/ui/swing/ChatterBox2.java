@@ -106,8 +106,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private float scrollBarDragPos;
     private String message = "";
     private String visibleMessage = "";
-    
-    public boolean hasFocus = false;
 
     private Point lastScrollPoint;
 
@@ -203,7 +201,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         slidingUp = false;
         slidingDown = true;
-        hasFocus = false;
+        bv.chatterBoxActive = false;
     }
 
     private void stopSliding() {
@@ -352,7 +350,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
                 || (y > (yOffset + height))) {
-        	hasFocus = false;
+        	bv.chatterBoxActive = false;
             return false;
         }
         isHit = true;
@@ -363,7 +361,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         	return true;
         }
         
-        hasFocus = true;
+        bv.chatterBoxActive = true;
         if (isDown()){
         	slideUp();
         }
@@ -463,7 +461,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         // Message box
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
-        if (message != null && hasFocus) {
+        if (message != null && bv.chatterBoxActive) {
             printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
@@ -685,7 +683,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-    	if (!hasFocus){
+    	if (!bv.chatterBoxActive){
     		return;
     	}
     	
@@ -778,11 +776,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     client.sendChat(message);
                     clearMessage();
                     cb.setMessage("");
+                    bv.chatterBoxActive = false;
                 }
                 break;
             case KeyEvent.VK_ESCAPE:
             	clearMessage();
-            	hasFocus = false;
+            	bv.chatterBoxActive = false;
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {

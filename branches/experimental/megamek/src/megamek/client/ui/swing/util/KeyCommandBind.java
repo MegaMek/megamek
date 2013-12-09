@@ -26,18 +26,38 @@ public enum KeyCommandBind {
 	SCROLL_SOUTH("scrollS",true),
 	SCROLL_EAST("scrollE",true),
 	SCROLL_WEST("scrollW",true),
-	TOGGLE_CHAT("toggleChat",true),
-	ESCAPE_CHAT("escapeChat",true);
+	TOGGLE_CHAT("toggleChat",false),
+	CENTER_ON_SELECTED("centerOnSelected",false);
 	
+	/**
+	 * The command associated with this binding.
+	 */
 	public String cmd;
 	
+	/**
+	 * Defines the keycode for the command. This should correspond to defines in
+	 * <code>KeyEvent</code>.
+	 */
 	public int key;
 	
+	/**
+	 * Defines any modifiers to the key code, such as whether control or alt 
+	 * are pressed.  This should correspond to the modifiers defined in 
+	 * <code>KeyEvent</code>.
+	 */
+	public int modifiers;
+	
+	/**
+	 * A flag that determines whether this binding is repeatable.  If a bind is
+	 * repeatable then when the key is pressed the action will be added to a 
+	 * timer and will be repeated until the key is released.
+	 */
 	public boolean isRepeatable;
 	
 	private KeyCommandBind(String c, boolean r){
 		cmd = c;
 		key = -1;
+		modifiers = 0;
 		isRepeatable = r;
 	}
 	

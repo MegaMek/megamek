@@ -30,6 +30,15 @@ import java.util.TimerTask;
  * KeyEvents.  If the KeyEvent correspondes to a registerd hotkey, the action 
  * for that hotkey will be used to consume the event otherwise the event will
  * be dispatched as normal.
+ * 
+ * The idea is that the system is split into two: keys can be bound to string
+ * commands, and string commands can be bound to <code>CommandAction</code> 
+ * objects, which are a simple class that implements an "actionPerformed" 
+ * method.  The class that implements the <code>CommandAction</code> creates 
+ * the object and registers it, agnostic to what key is bound to the command.  
+ * Then, somewhere else (ie; a file) can specify what keys are bound to what 
+ * string commands.  The possible string commands are specified in 
+ * <code>KeyCommandBind</code>.
  *  
  * @author arlith
  *
@@ -77,14 +86,18 @@ public class MegaMekController implements KeyEventDispatcher {
 			return false;
 		}
 		
+		// If there's no action associated with this key bind, or the currenty
+		//  action is invalid, do not consume this event.
+		CommandAction action = cmdActionMap.get(kcb.cmd);
+		if (action == null || !action.shouldPerformAction()){
+			return false;
+		}
+		
 		if (evt.getID() == KeyEvent.KEY_PRESSED) {
 			if (kcb.isRepeatable){
-				startRepeating(kcb);
+				startRepeating(kcb, action);
 			} else {
-				CommandAction action = cmdActionMap.get(kcb.cmd);
-				if (action != null){
 					action.performAction();
-				}
 			}
 		}
 		
@@ -113,7 +126,8 @@ public class MegaMekController implements KeyEventDispatcher {
 	 * <code>KeyCommandBind</code> no task is scheduled.
 	 * @param kcb
 	 */
-	protected void startRepeating(KeyCommandBind kcb){
+	protected void startRepeating(KeyCommandBind kcb, 
+			final CommandAction action){
 		
 		long delay = MAX_REPEAT_DELAY;
 		int rate = MAX_REPEAT_RATE;
@@ -125,7 +139,6 @@ public class MegaMekController implements KeyEventDispatcher {
 		}
 		
 		// Get the corresponding actoin, stop if there's no mapped action
-		final CommandAction action = cmdActionMap.get(kcb.cmd);
 		if (action == null){
 			return;
 		}

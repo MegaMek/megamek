@@ -716,6 +716,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return;
         }
 
+        ke.consume();
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_UP:
                 cb.historyBookmark++;
@@ -782,7 +783,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             case KeyEvent.VK_ESCAPE:
             	clearMessage();
             	hasFocus = false;
-            	ke.consume();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {

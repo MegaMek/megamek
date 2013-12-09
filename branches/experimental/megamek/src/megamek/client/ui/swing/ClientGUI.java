@@ -26,6 +26,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -71,6 +72,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -126,6 +128,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private String helpFileName = 
     		Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
 
+    public MegaMekController controller = null;
     // keep me
     ChatterBox cb;
     public ChatterBox2 cb2;
@@ -340,7 +343,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
             Class<?> c = getClass().getClassLoader().loadClass(System.getProperty("megamek.client.ui.AWT.boardView", "megamek.client.ui.swing.BoardView1"));
-            bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.getGame());
+            bv = (IBoardView) c.getConstructor(IGame.class, MegaMekController.class).newInstance(client.getGame(), controller);
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
@@ -818,6 +821,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
+        
+        if (controller != null){
+        	KeyboardFocusManager kbfm = 
+        			KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        	kbfm.removeKeyEventDispatcher(controller);
+        }
     }
 
     public GameOptionsDialog getGameOptionsDialog() {

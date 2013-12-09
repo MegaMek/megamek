@@ -29,12 +29,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -188,8 +188,14 @@ public class MechDisplay extends JPanel {
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
             int condition, boolean pressed) {
+    	if (e.getID() == KeyEvent.KEY_RELEASED){
+    		int temp = 1;
+    		if (temp == 1){
+    			
+    		}
+    	}
         if (clientgui != null) {
-            clientgui.curPanel.dispatchEvent(e);
+            ((BoardView1)clientgui.bv).dispatchEvent(e);
         }
         if (!e.isConsumed()) {
             return super.processKeyBinding(ks, e, condition, pressed);
@@ -719,6 +725,10 @@ public class MechDisplay extends JPanel {
                             .fill(GridBagConstraints.HORIZONTAL)
                             .anchor(GridBagConstraints.CENTER).gridy(0)
                             .gridx(0));
+            weaponList.resetKeyboardActions();
+            for (KeyListener key : weaponList.getKeyListeners()){
+            	weaponList.removeKeyListener(key);
+            }
 
             // adding Ammo choice + label
 
@@ -1087,29 +1097,6 @@ public class MechDisplay extends JPanel {
 
             setBackGround();
             onResize();
-
-            getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                    "clearButton");
-
-            getActionMap().put("clearButton", new AbstractAction() {
-                private static final long serialVersionUID = -7781405756822535409L;
-
-                public void actionPerformed(ActionEvent e) {
-                    if (clientgui != null) {
-                        JComponent curPanel = clientgui.curPanel;
-                        if (curPanel instanceof StatusBarPhaseDisplay) {
-                            StatusBarPhaseDisplay display = (StatusBarPhaseDisplay) curPanel;
-                            if (display.isIgnoringEvents()) {
-                                return;
-                            }
-                            if (clientgui.getClient().isMyTurn()) {
-                                display.clear();
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         @Override

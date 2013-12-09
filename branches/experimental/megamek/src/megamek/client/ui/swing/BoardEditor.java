@@ -65,6 +65,7 @@ import keypoint.PngEncoder;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
@@ -129,13 +130,16 @@ public class BoardEditor extends JComponent implements ItemListener,
     private MapSettings mapSettings = new MapSettings();
 
     Coords lastClicked;
+    
+    MegaMekController controller;
 
     /**
      * Creates and lays out a new Board Editor frame.
      */
-    public BoardEditor() {
+    public BoardEditor(MegaMekController c) {
+    	controller = c;
         try {
-            bv = new BoardView1(game);
+            bv = new BoardView1(game, controller);
             bvc = bv.getComponent();
         } catch (IOException e) {
             JOptionPane

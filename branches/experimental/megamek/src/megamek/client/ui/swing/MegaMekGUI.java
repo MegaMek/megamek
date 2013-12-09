@@ -22,10 +22,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -58,6 +60,8 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.IGame;
@@ -87,7 +91,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonHelpDialog help;
     private GameOptionsDialog optdlg;
     private CommonSettingsDialog setdlg;
-
+    
     public void start(String[] args) {
         createGUI();
     }
@@ -171,6 +175,29 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
     }
+    
+    public void createController(ClientGUI clientGui){
+    	MegaMekController controller = createController();
+    	clientGui.controller = controller;
+    }
+    
+    public MegaMekController createController(){
+    	MegaMekController controller = new MegaMekController();
+    	KeyboardFocusManager kbfm = 
+    			KeyboardFocusManager.getCurrentKeyboardFocusManager();
+    	kbfm.addKeyEventDispatcher(controller);
+    	
+    	// TODO: These should be read in from a file
+    	KeyCommandBind.SCROLL_NORTH.key = KeyEvent.VK_W;
+    	KeyCommandBind.SCROLL_SOUTH.key = KeyEvent.VK_S;
+    	KeyCommandBind.SCROLL_EAST.key = KeyEvent.VK_D;
+    	KeyCommandBind.SCROLL_WEST.key = KeyEvent.VK_A;
+    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_NORTH);
+    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_SOUTH);
+    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_EAST);
+    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_WEST);
+    	return controller;
+    }    
 
     /**
      * Display the main menu.
@@ -284,7 +311,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor.
      */
     void showEditor() {
-        BoardEditor editor = new BoardEditor();
+        BoardEditor editor = new BoardEditor(createController());
         launch(editor.getFrame());
         editor.boardNew();
     }
@@ -293,7 +320,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor and open an "open" dialog.
      */
     void showEditorOpen() {
-        BoardEditor editor = new BoardEditor();
+        BoardEditor editor = new BoardEditor(createController());
         launch(editor.getFrame());
         editor.boardLoad();
     }
@@ -350,6 +377,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize client
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
+        createController(gui);
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -446,6 +474,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
+        createController(gui);
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -631,6 +660,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             // initialize game
             client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
+            createController(gui);
             gui.initialize();
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
@@ -723,6 +753,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize game
         client = new Client(cd.playerName, cd.serverAddr, cd.port);
         ClientGUI gui = new ClientGUI(client);
+        createController(gui);
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -777,6 +808,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
+        createController(gui);
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();

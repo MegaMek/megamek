@@ -50,8 +50,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -80,9 +78,12 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -171,8 +172,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     private static final int HEX_ELEV = 12;
     
-    private static final int MAX_REPEAT_RATE = 10;
-    private static final int MAX_REPEAT_DELAY = 10;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
             0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f };
@@ -230,10 +229,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean dragging = false;
     // should we scroll when the mouse is dragged?
     private boolean shouldScroll = false;
-    
-    private Timer keyRepeatTimer = new Timer("Key Repeat Timer");
-    private Map<String, TimerTask> repeatingTasks = 
-    		new HashMap<String, TimerTask>();
 
     // entity sprites
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
@@ -330,7 +325,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game) throws java.io.IOException {
+    public BoardView1(IGame game, final MegaMekController controller) 
+    		throws java.io.IOException {
         this.game = game;
 
         tileManager = new TilesetManager(this);
@@ -460,154 +456,52 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         });
-        /*********************************************************************/
-        actionMap.put("scrollNPress", new AbstractAction() {
-            private static final long serialVersionUID = 1261354793320440332L;
+        
+        controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
+        		new CommandAction(){
 
-            public void actionPerformed(ActionEvent e) {
-            	if (!repeatingTasks.containsKey("scrollN")){
-            		if (repeatingTasks.containsKey("scrollS")){
-	                    repeatingTasks.get("scrollS").cancel();
-	                    repeatingTasks.remove("scrollS");
-            		}                    
-            		long delay = MAX_REPEAT_DELAY;
-            		int rate = MAX_REPEAT_RATE;
-            		long period = (long) (1000.0 / rate);
-            		
-            		TimerTask tt = new TimerTask() {
-
-                        public void run() {
-                        	 vbar.setValue((int)
-                        			 (vbar.getValue() - (HEX_H * scale)));
-                            Thread.yield();
-                        }
-                    };
-                    repeatingTasks.put("scrollN", tt);
-                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
-            	}
-            }
+					@Override
+					public void performAction() {
+						controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
+						vbar.setValue((int)
+                   			 (vbar.getValue() - (HEX_H * scale)));
+					}
+        	
         });
-        actionMap.put("scrollNRelease", new AbstractAction() {
-            private static final long serialVersionUID = 1261354793320440332L;
+        controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
+        		new CommandAction(){
 
-            public void actionPerformed(ActionEvent e) {
-                if (!repeatingTasks.containsKey("scrollN"))
-                    return;
-                repeatingTasks.get("scrollN").cancel();
-                repeatingTasks.remove("scrollN");
-            }
+					@Override
+					public void performAction() {
+						controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
+						vbar.setValue((int)
+                   			 (vbar.getValue() + (HEX_H * scale)));
+					}
+        	
         });
-        /*********************************************************************/
-        actionMap.put("scrollWPress", new AbstractAction() {
-            private static final long serialVersionUID = 3117624598134850245L;
+        controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
+        		new CommandAction(){
 
-            public void actionPerformed(ActionEvent e) {
-            	if (!repeatingTasks.containsKey("scrollW")){
-            		if (repeatingTasks.containsKey("scrollE")){
-	                    repeatingTasks.get("scrollE").cancel();
-	                    repeatingTasks.remove("scrollE");
-            		}   
-            		long delay = MAX_REPEAT_DELAY;
-            		int rate = MAX_REPEAT_RATE;
-            		long period = (long) (1000.0 / rate);
-            		
-            		TimerTask tt = new TimerTask() {
-
-                        public void run() {
-                        	hbar.setValue((int) 
-                        			(hbar.getValue() - (HEX_W * scale)));
-                            Thread.yield();
-                        }
-                    };
-                    repeatingTasks.put("scrollW", tt);
-                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
-            	}
-            }
+					@Override
+					public void performAction() {
+						controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
+						hbar.setValue((int) 
+                    			(hbar.getValue() + (HEX_W * scale)));
+					}
+        	
         });
-        actionMap.put("scrollWRelease", new AbstractAction() {
-            private static final long serialVersionUID = 3117624598134850245L;
+        controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
+        		new CommandAction(){
 
-            public void actionPerformed(ActionEvent e) {
-                if (!repeatingTasks.containsKey("scrollW"))
-                    return;
-                repeatingTasks.get("scrollW").cancel();
-                repeatingTasks.remove("scrollW");
-            }
-        });
-        /*********************************************************************/
-        actionMap.put("scrollEPress", new AbstractAction() {
-            private static final long serialVersionUID = 6453983031778932319L;
+					@Override
+					public void performAction() {
+						controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
+						hbar.setValue((int) 
+                    			(hbar.getValue() - (HEX_W * scale)));
+					}
+        	
+        });        
 
-            public void actionPerformed(ActionEvent e) {
-            	if (!repeatingTasks.containsKey("scrollE")){
-            		if (repeatingTasks.containsKey("scrollW")){
-	                    repeatingTasks.get("scrollW").cancel();
-	                    repeatingTasks.remove("scrollW");
-            		}   
-            		long delay = MAX_REPEAT_DELAY;
-            		int rate = MAX_REPEAT_RATE;
-            		long period = (long) (1000.0 / rate);
-            		
-            		TimerTask tt = new TimerTask() {
-
-                        public void run() {
-                        	hbar.setValue((int) 
-                        			(hbar.getValue() + (HEX_W * scale)));
-                            Thread.yield();
-                        }
-                    };
-                    repeatingTasks.put("scrollE", tt);
-                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
-            	}
-            }
-        });
-        actionMap.put("scrollERelease", new AbstractAction() {
-            private static final long serialVersionUID = 6453983031778932319L;
-
-            public void actionPerformed(ActionEvent e) {
-                if (!repeatingTasks.containsKey("scrollE"))
-                    return;
-                repeatingTasks.get("scrollE").cancel();
-                repeatingTasks.remove("scrollE");
-            }
-        });
-        /*********************************************************************/
-        actionMap.put("scrollSPress", new AbstractAction() {
-            private static final long serialVersionUID = 8148891921567972362L;
-
-            public void actionPerformed(ActionEvent e) {
-            	if (!repeatingTasks.containsKey("scrollS")){
-            		if (repeatingTasks.containsKey("scrollN")){
-	                    repeatingTasks.get("scrollN").cancel();
-	                    repeatingTasks.remove("scrollN");
-            		}
-            		long delay = MAX_REPEAT_DELAY;
-            		int rate = MAX_REPEAT_RATE;
-            		long period = (long) (1000.0 / rate);
-            		
-            		TimerTask tt = new TimerTask() {
-
-                        public void run() {
-                        	vbar.setValue((int) 
-                        			(vbar.getValue() + (HEX_H * scale)));
-                            Thread.yield();
-                        }
-                    };
-                    repeatingTasks.put("scrollS", tt);
-                    keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
-            	} 
-            }
-        });
-        actionMap.put("scrollSRelease", new AbstractAction() {
-            private static final long serialVersionUID = 8148891921567972362L;
-
-            public void actionPerformed(ActionEvent e) {
-                if (!repeatingTasks.containsKey("scrollS"))
-                    return;
-                repeatingTasks.get("scrollS").cancel();
-                repeatingTasks.remove("scrollS");
-            }
-        });
         
         actionMap.put("activateChat", new AbstractAction() {
             private static final long serialVersionUID = 687064821229643708L;

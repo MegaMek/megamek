@@ -13,6 +13,16 @@ v0.37.0-exp (SVN)
     board view active and deactive text entry respectively.
 + Feature: Added WASD based scrolling for the board view.  This is implemented 
     with timers and is considerably smoother than previous keyboard scrolling
++ Initiated a rewrite of the whole key handling framework in MegaMek.  
+    Previously, we were using KeyListeners scattered throughout the project and 
+    this caused issues, particularly with the MechDisplay; when the MechDisplay 
+    has focus there are issues getting KeyEvents to the BoardView and current 
+    phase display panel.  Instead of having disparate KeyListeners, I created a 
+    new KeyDispatcher, called MegaMekController.  This KeyDispatcher gets 
+    registered with the KeyFocusManager and basically gets first crack at all 
+    of the KeyEvents, regardless of where they originate from.  The Dispatcher 
+    can choose to consume the event, or pass it along.  This allows a more 
+    central handler for key events regardless of focus.
 
 
 v0.37.0-dev (SVN)

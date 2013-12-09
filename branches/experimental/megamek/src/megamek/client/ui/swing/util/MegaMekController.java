@@ -131,6 +131,7 @@ public class MegaMekController implements KeyEventDispatcher {
 		ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
 		if (actions == null){
 			actions = new ArrayList<CommandAction>();
+			actions.add(action);
 			cmdActionMap.put(cmd,actions);
 		} else {
 			actions.add(action);

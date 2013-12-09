@@ -32,8 +32,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -53,17 +51,12 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
@@ -7018,43 +7011,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return choice;
     }
 
-    /**
-     * Return the highest Entity from the entities at the given coords.
-     * 
-     * @param pos
-     *            - the <code>Coords</code> containing targets.
-     */
-    private Entity getHighestEntity(Coords pos) {
-
-        // there may be no entity at this position
-        Entity choice = null;
-
-        // Get the available choices.
-        Enumeration<Entity> choices = game.getEntities(pos);
-
-        // Convert the choices into a List of targets.
-        Vector<Entity> entities = new Vector<Entity>();
-        while (choices.hasMoreElements()) {
-            entities.addElement(choices.nextElement());
-        }
-
-        // Do we have a single choice?
-        if (entities.size() == 1) {
-            // Return that choice.
-            choice = entities.elementAt(0);
-        } else {
-            int max_height = 0;
-            for (Entity e : entities) {
-                int h = e.getHeight();
-                if (h > max_height) {
-                    choice = e;
-                    max_height = h;
-                }
-            }
-        }
-
-        return choice;
-    }
 
     /**
      * The text to be displayed when the mouse is at a certain point TODO: just

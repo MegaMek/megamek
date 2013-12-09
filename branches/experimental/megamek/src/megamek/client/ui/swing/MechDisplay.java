@@ -188,14 +188,8 @@ public class MechDisplay extends JPanel {
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
             int condition, boolean pressed) {
-    	if (e.getID() == KeyEvent.KEY_RELEASED){
-    		int temp = 1;
-    		if (temp == 1){
-    			
-    		}
-    	}
         if (clientgui != null) {
-            ((BoardView1)clientgui.bv).dispatchEvent(e);
+            clientgui.curPanel.dispatchEvent(e);
         }
         if (!e.isConsumed()) {
             return super.processKeyBinding(ks, e, condition, pressed);

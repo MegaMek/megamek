@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -30,6 +29,9 @@ import javax.swing.JOptionPane;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
@@ -273,7 +275,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Creates and lays out a new movement phase display for the specified
      * clientgui.getClient().
      */
-    public MovementDisplay(ClientGUI clientgui) {
+    public MovementDisplay(final ClientGUI clientgui) {
     	super();
     	
         this.clientgui = clientgui;
@@ -306,7 +308,133 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         clientgui.bv.addKeyListener(this);
         addKeyListener(this);
+        
+        MegaMekController controller = clientgui.controller;
+        
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for SHIFT_HELD
+        controller.registerCommandAction(KeyCommandBind.SHIFT_HELD.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (shiftheld || !clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+			            shiftheld = true;
+						if (clientgui.getClient().isMyTurn()
+								&& (clientgui.getBoardView().getLastCursor() 
+										!= null)
+								&& !clientgui.getBoardView().getLastCursor()
+										.equals(clientgui.getBoardView()
+												.getSelected())) {
+			                // switch to turning
+			                currentMove(clientgui.getBoardView()
+			                		.getLastCursor());
+			                clientgui.bv.drawMovementData(ce(), cmd);
+			            }
+					}
+					
+					public boolean hasReleaseAction(){
+						return true;
+					}
+					
+					public void releaseAction(){
+						shiftheld = false;
+					}
+        });
+        
+        // Register the action for TURN_LEFT
+        controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| display.isIgnoringEvents()
+								|| !display.isVisible()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						int curDir = cmd.getFinalFacing();
+			            int dir = curDir;
+			            dir = (dir + 5) % 6;
+			            Coords curPos = cmd.getFinalCoords();
+			            Coords target = curPos.translated(dir);
+			            // We need to set this to get the rotate behavior
+			            shiftheld = true;
+			            currentMove(target);
+			            shiftheld = false;
+			            clientgui.bv.drawMovementData(ce(), cmd);
+					}
+        });   
+        
+        // Register the action for TURN_RIGHT
+        controller.registerCommandAction(KeyCommandBind.TURN_RIGHT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| display.isIgnoringEvents()
+								|| !display.isVisible()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						int curDir = cmd.getFinalFacing();
+			            int dir = curDir;
+			            dir = (dir + 7) % 6;
+			            Coords curPos = cmd.getFinalCoords();
+			            Coords target = curPos.translated(dir);
+			            // We need to set this to get the rotate behavior
+			            shiftheld = true;
+			            currentMove(target);
+			            shiftheld = false;
+			            clientgui.bv.drawMovementData(ce(), cmd);
+					}
+        });   
+        
+        // Register the action for UNDO
+        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| display.isIgnoringEvents()
+								|| !display.isVisible()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						removeLastStep();
+					}
+        });          
+
     }
+
 
     /**
      * Return the button list: we need to determine what unit type is selected
@@ -3896,64 +4024,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         clientgui.getClient().sendUnloadStranded(ids);
-    }
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (clientgui.getClient().isMyTurn()) {
-                removeLastStep();
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && !shiftheld) {
-            shiftheld = true;
-            if (clientgui.getClient().isMyTurn()
-                    && (clientgui.getBoardView().getLastCursor() != null)
-                    && !clientgui.getBoardView().getLastCursor()
-                            .equals(clientgui.getBoardView().getSelected())) {
-                // switch to turning
-                // clientgui.bv.clearMovementData();
-                currentMove(clientgui.getBoardView().getLastCursor());
-                clientgui.bv.drawMovementData(ce(), cmd);
-            }
-        }
-
-        // arrow can also rotate when shift is down
-        if (shiftheld
-                && clientgui.getClient().isMyTurn()
-                && ((ev.getKeyCode() == KeyEvent.VK_LEFT) || (ev.getKeyCode() == KeyEvent.VK_RIGHT))) {
-            int curDir = cmd.getFinalFacing();
-            int dir = curDir;
-            if (ev.getKeyCode() == KeyEvent.VK_LEFT) {
-                dir = (dir + 5) % 6;
-            } else {
-                dir = (dir + 7) % 6;
-            }
-            Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(dir);
-            currentMove(target);
-            clientgui.bv.drawMovementData(ce(), cmd);
-        }
-    }
-
-    public void keyReleased(KeyEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
-            shiftheld = false;
-        }
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
     }
 
     // board view listener

@@ -27,6 +27,13 @@ public enum KeyCommandBind {
 	SCROLL_EAST("scrollE",true),
 	SCROLL_WEST("scrollW",true),
 	TOGGLE_CHAT("toggleChat",false),
+	SHIFT_HELD("shiftHeld",false),
+	// Change facing one hexside to the left
+	TURN_LEFT("turnLeft",false),
+	// Change facing one hexside to the right
+	TURN_RIGHT("turnRight",false),
+	// Undo an action, such as a move step in the movement phase
+	UNDO("undo",false),
 	CENTER_ON_SELECTED("centerOnSelected",false);
 	
 	/**

@@ -24,6 +24,7 @@ v0.37.0-exp (SVN)
     can choose to consume the event, or pass it along.  This allows a more 
     central handler for key events regardless of focus.
 + Moved ChatterBox activation/deactivation into the new key handling framework
++ Converted MovementDisplay to use MegaMekController
 
 
 v0.37.0-dev (SVN)

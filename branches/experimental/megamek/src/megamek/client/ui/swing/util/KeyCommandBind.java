@@ -61,9 +61,9 @@ public enum KeyCommandBind {
 		isRepeatable = r;
 	}
 	
-	public static KeyCommandBind getBindByKey(int keycode){
+	public static KeyCommandBind getBindByKey(int keycode, int modifiers){
 		for (KeyCommandBind bind : values()){
-			if (bind.key == keycode){
+			if (bind.key == keycode && bind.modifiers == modifiers){
 				return bind;
 			}
 		}

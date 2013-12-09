@@ -17,6 +17,7 @@ package megamek.client.ui.swing.util;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class MegaMekController implements KeyEventDispatcher {
 	/**
 	 * Map that maps command strings to CommandAction objects.
 	 */
-	protected Map<String, CommandAction> cmdActionMap; 
+	protected Map<String, ArrayList<CommandAction>> cmdActionMap; 
 	
 	/**
 	 * Timer for repeating commands for key presses.  This is necessary to 
@@ -71,7 +72,7 @@ public class MegaMekController implements KeyEventDispatcher {
 	
 	public MegaMekController(){	
 		keyCmdSet = new HashSet<KeyCommandBind>();
-		cmdActionMap = new HashMap<String, CommandAction>();
+		cmdActionMap = new HashMap<String, ArrayList<CommandAction>>();
 		keyRepeatTimer = new Timer("Key Repeat Timer");
 		repeatingTasks = new HashMap<KeyCommandBind, TimerTask>();
 	}
@@ -79,43 +80,61 @@ public class MegaMekController implements KeyEventDispatcher {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent evt) {
 		int keyCode = evt.getKeyCode();
-		KeyCommandBind kcb = KeyCommandBind.getBindByKey(keyCode);
+		int modifiers = evt.getModifiers();
+		KeyCommandBind kcb = KeyCommandBind.getBindByKey(keyCode, modifiers);
 		
 		// Do we have a binding for this key?
 		if (!keyCmdSet.contains(kcb)){
 			return false;
 		}
 		
+		ArrayList<CommandAction> actions = cmdActionMap.get(kcb.cmd);
 		// If there's no action associated with this key bind, or the currenty
 		//  action is invalid, do not consume this event.
-		CommandAction action = cmdActionMap.get(kcb.cmd);
-		if (action == null || !action.shouldPerformAction()){
-			return false;
-		}
-		
-		if (evt.getID() == KeyEvent.KEY_PRESSED) {
-			if (kcb.isRepeatable){
-				startRepeating(kcb, action);
-			} else {
+		boolean consumed = false;
+		for (CommandAction action : actions){
+			// If the action is null or shouldn't be performed, skip it
+			if (action == null || !action.shouldPerformAction()){
+				continue;
+			}
+			// If we perform at least one action, this event is consumed
+			consumed = true;
+			
+			if (evt.getID() == KeyEvent.KEY_PRESSED) {
+				if (kcb.isRepeatable){
+					startRepeating(kcb, action);
+				} else {
 					action.performAction();
+				}
+			}
+			
+			// If the key bind is repeatable, we need to stop it's timer event
+			if (evt.getID() == KeyEvent.KEY_RELEASED) {
+				if (kcb.isRepeatable){
+					stopRepeating(kcb);
+				}
+				if (action.hasReleaseAction()){
+					action.releaseAction();
+				}
 			}
 		}
-		
-		// If the key bind is repeatable, we need to stop it's timer event
-		if (evt.getID() == KeyEvent.KEY_RELEASED && kcb.isRepeatable) {
-			stopRepeating(kcb);
-		}
-		
 		// If we had a binding, this event should be considered consumed
-		return true;
+		return consumed;
 	}
 	
-	public void registerKeyCommandBind(KeyCommandBind kcb){
+	public synchronized void registerKeyCommandBind(KeyCommandBind kcb){
 		keyCmdSet.add(kcb);		
 	}
 	
-	public void registerCommandAction(String cmd, CommandAction action){
-		cmdActionMap.put(cmd,action);
+	public synchronized void registerCommandAction(String cmd, 
+			CommandAction action){
+		ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
+		if (actions == null){
+			actions = new ArrayList<CommandAction>();
+			cmdActionMap.put(cmd,actions);
+		} else {
+			actions.add(action);
+		}
 	}
 	
 	/**

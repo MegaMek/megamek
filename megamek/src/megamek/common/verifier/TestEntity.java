@@ -32,6 +32,7 @@ import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
@@ -42,7 +43,7 @@ import megamek.common.util.StringUtil;
 /**
  * Abstract parent class for testing and validating instantiations of <code>
  * Entity</code> subclasses.
- * 
+ *
  */
 public abstract class TestEntity implements TestEntityOption {
 
@@ -61,7 +62,7 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isTank();
 
     public abstract boolean isMech();
-    
+
     public abstract boolean isAero();
 
     public abstract float getWeightControls();
@@ -301,8 +302,8 @@ public abstract class TestEntity implements TestEntityOption {
         } else {
             for (int i = 0; i < armor.length; i++) {
                 int points = getEntity().getOArmor(i);
-                if (getEntity().hasRearArmor(i) && 
-                        getEntity().getOArmor(i, true) > 0) {
+                if (getEntity().hasRearArmor(i) &&
+                        (getEntity().getOArmor(i, true) > 0)) {
                     points += getEntity().getOArmor(i, true);
                 }
                 armorWeight += armor[i].getWeightArmor(points,
@@ -722,6 +723,20 @@ public abstract class TestEntity implements TestEntityOption {
         boolean hasHarjelII = false;
         boolean hasHarjelIII = false;
         for (Mounted m : getEntity().getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
+                if ((getEntity() instanceof Mech) && !((Mech)getEntity()).isIndustrial()) {
+                    illegal = true;
+                    buff.append("BattleMech can't mount light fluid suction system");
+                }
+                if (getEntity() instanceof Protomech) {
+                    illegal = true;
+                    buff.append("ProtoMech can't mount light fluid suction system");
+                }
+                if ((getEntity() instanceof Tank) && (m.getLocation() == Tank.LOC_BODY)) {
+                    illegal = true;
+                    buff.append("Vehicle must not mount light fluid suction system in body");
+                }
+            }
             if (m.getType().hasFlag(MiscType.F_VOIDSIG)
                     && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
                 illegal = true;
@@ -1237,7 +1252,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return buff.toString();
     }
-    
+
     public String printSource(){
         return "Source: " + getEntity().getSource() + "\n";
     }

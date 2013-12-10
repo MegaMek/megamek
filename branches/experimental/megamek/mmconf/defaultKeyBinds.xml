@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  This is the default key binding for MegaMek.  
+
+   Key code numeric values are defined in awt.event.KeyEvent.
+   See: http://docs.oracle.com/javase/7/docs/api/constant-values.html#java.awt.event.KeyEvent.CHAR_UNDEFINED
+
+   The modifier numeric value is a mask that determines what modifier keys are pressed (ie; ctrl, shift, etc). 
+   These are defined at the same webpage, however they should be combined using bitwise ors.
+
+    Commands are strings used to represent the possible actions MegaMek recognizes.
+    These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
+-->
+<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="keyBindingSchema.xsl">
+
+      <KeyBind>
+        <command>scrollN</command>
+        <keyCode>87</keyCode> <!-- W -->
+        <modifier>0</modifier>          
+        <isRepeatable>1</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>scrollS</command>
+        <keyCode>83</keyCode> <!-- S -->
+        <modifier>0</modifier>          
+        <isRepeatable>1</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>scrollE</command>
+        <keyCode>68</keyCode> <!-- D -->
+        <modifier>0</modifier>          
+        <isRepeatable>1</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>scrollW</command>
+        <keyCode>65</keyCode> <!-- A -->
+        <modifier>0</modifier>          
+        <isRepeatable>1</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>toggleChat</command>
+        <keyCode>10</keyCode> <!-- Enter -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>turnLeft</command>
+        <keyCode>65</keyCode> <!-- Shift-A -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>turnRight</command>
+        <keyCode>68</keyCode> <!-- Shift-D -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>twistLeft</command>
+        <keyCode>65</keyCode> <!-- Shift-A -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>twistRight</command>
+        <keyCode>68</keyCode> <!-- Shift-D -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextWeapon</command>
+        <keyCode>69</keyCode> <!-- E -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>fire</command>
+        <keyCode>70</keyCode> <!-- F -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>undo</command>
+        <keyCode>8</keyCode> <!-- Backspace -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>centerOnSelected</command>
+        <keyCode>32</keyCode> <!-- Spacebar -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+</skin>

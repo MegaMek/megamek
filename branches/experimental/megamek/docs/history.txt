@@ -27,6 +27,7 @@ v0.37.0-exp (SVN)
 + Converted MovementDisplay to use MegaMekController
 + Converted FiringDisplay to use MegaMekController
 + Converted TargetingDisplay to use MegaMekController
++ Added key binds for weapons firing and next weapon
 
 
 v0.37.0-dev (SVN)

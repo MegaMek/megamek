@@ -268,7 +268,50 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 						updateFlipArms(false);
 			            torsoTwist(1);
 					}
-        });        
+        });    
+        
+        // Register the action for FIRE
+        controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						fire();
+					}
+        }); 
+        
+        // Register the action for NEXT_WEAPON
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						nextWeapon();
+					}
+        });      
+        
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                

@@ -202,6 +202,8 @@ public class MegaMekGUI implements IMegaMekGUI {
     	KeyCommandBind.TWIST_RIGHT.key = KeyEvent.VK_D;
     	KeyCommandBind.TWIST_RIGHT.modifiers = KeyEvent.SHIFT_MASK;
     	KeyCommandBind.UNDO.key = KeyEvent.VK_BACK_SPACE;
+    	KeyCommandBind.FIRE.key = KeyEvent.VK_F;
+    	KeyCommandBind.NEXT_WEAPON.key = KeyEvent.VK_E;
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_NORTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_SOUTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_EAST);
@@ -212,6 +214,8 @@ public class MegaMekGUI implements IMegaMekGUI {
     	controller.registerKeyCommandBind(KeyCommandBind.TWIST_LEFT);
     	controller.registerKeyCommandBind(KeyCommandBind.TWIST_RIGHT);
     	controller.registerKeyCommandBind(KeyCommandBind.UNDO);
+    	controller.registerKeyCommandBind(KeyCommandBind.FIRE);
+    	controller.registerKeyCommandBind(KeyCommandBind.NEXT_WEAPON);
     	
     	return controller;
     }    

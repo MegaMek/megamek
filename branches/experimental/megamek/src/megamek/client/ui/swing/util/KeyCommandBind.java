@@ -36,7 +36,11 @@ public enum KeyCommandBind {
 	// Change facing one hexside to the left
 	TWIST_LEFT("twistLeft",false),
 	// Change facing one hexside to the right
-	TWIST_RIGHT("twistRight",false),	
+	TWIST_RIGHT("twistRight",false),
+	// Fire the currently selected weapon
+	FIRE("fire", false),
+	NEXT_WEAPON("nextWeapon", false),
+	PREV_WEAPON("prevWeapon", false),
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false),
 	CENTER_ON_SELECTED("centerOnSelected",false);

@@ -378,6 +378,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(173);
     public static final BigInteger F_BOMB_BAY = BigInteger.valueOf(1)
             .shiftLeft(174);
+    public static final BigInteger F_LIGHT_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
+            .shiftLeft(175);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -758,6 +760,12 @@ public class MiscType extends EquipmentType {
             return (entity.getWeight() / 10f) + 0.5f;
         } else if (hasFlag(MiscType.F_NAVAL_TUG_ADAPTOR)) {
             return (100 + (entity.getWeight() / 10.0f));
+        } else if (hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
+            if (entity instanceof Tank) {
+                return 0.015f;
+            } else if (entity instanceof Mech) {
+                return 0.5f;
+            }
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -1474,6 +1482,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRadicalHeatSinkSystem());
 
         EquipmentType.addType(MiscType.createLAMBombBay());
+        EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
     }
 
     public static MiscType createHeatSink() {
@@ -3513,7 +3522,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLFerroAlum() {
         MiscType misc = new MiscType();
 
@@ -3535,7 +3544,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createISFerroAlum() {
         MiscType misc = new MiscType();
 
@@ -3559,7 +3568,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createHeavyFerroAlum() {
         MiscType misc = new MiscType();
 
@@ -3581,7 +3590,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createLightFerroAlum() {
         MiscType misc = new MiscType();
 
@@ -3603,7 +3612,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-  
+
     public static MiscType createFerroAlumPrototype() {
         MiscType misc = new MiscType();
 
@@ -8349,6 +8358,23 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createLightFluidSuctionSystem() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Light Fluid Suction System";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        misc.cost = 1000;
+        misc.introDate = 1950;
+        misc.flags = misc.flags.or(F_LIGHT_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
 
         return misc;
     }

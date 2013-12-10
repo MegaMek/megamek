@@ -28,6 +28,8 @@ v0.37.0-exp (SVN)
 + Converted FiringDisplay to use MegaMekController
 + Converted TargetingDisplay to use MegaMekController
 + Added key binds for weapons firing and next weapon
++ Keybinds can now be specified in an xml file, defaultKeyBinds.xml has been 
+    created which follows the schema defined in keyBindingSchem.xsl
 
 
 v0.37.0-dev (SVN)

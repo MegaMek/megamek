@@ -27,7 +27,6 @@ import java.awt.MediaTracker;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -60,12 +59,12 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.KeyBindParser;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
@@ -187,35 +186,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     			KeyboardFocusManager.getCurrentKeyboardFocusManager();
     	kbfm.addKeyEventDispatcher(controller);
     	
-    	// TODO: These should be read in from a file
-    	KeyCommandBind.SCROLL_NORTH.key = KeyEvent.VK_W;
-    	KeyCommandBind.SCROLL_SOUTH.key = KeyEvent.VK_S;
-    	KeyCommandBind.SCROLL_EAST.key = KeyEvent.VK_D;
-    	KeyCommandBind.SCROLL_WEST.key = KeyEvent.VK_A;
-    	KeyCommandBind.TOGGLE_CHAT.key = KeyEvent.VK_ENTER;
-    	KeyCommandBind.TURN_LEFT.key = KeyEvent.VK_A;
-    	KeyCommandBind.TURN_LEFT.modifiers = KeyEvent.SHIFT_MASK;
-    	KeyCommandBind.TURN_RIGHT.key = KeyEvent.VK_D;
-    	KeyCommandBind.TURN_RIGHT.modifiers = KeyEvent.SHIFT_MASK;
-    	KeyCommandBind.TWIST_LEFT.key = KeyEvent.VK_A;
-    	KeyCommandBind.TWIST_LEFT.modifiers = KeyEvent.SHIFT_MASK;
-    	KeyCommandBind.TWIST_RIGHT.key = KeyEvent.VK_D;
-    	KeyCommandBind.TWIST_RIGHT.modifiers = KeyEvent.SHIFT_MASK;
-    	KeyCommandBind.UNDO.key = KeyEvent.VK_BACK_SPACE;
-    	KeyCommandBind.FIRE.key = KeyEvent.VK_F;
-    	KeyCommandBind.NEXT_WEAPON.key = KeyEvent.VK_E;
-    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_NORTH);
-    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_SOUTH);
-    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_EAST);
-    	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_WEST);
-    	controller.registerKeyCommandBind(KeyCommandBind.TOGGLE_CHAT);
-    	controller.registerKeyCommandBind(KeyCommandBind.TURN_LEFT);
-    	controller.registerKeyCommandBind(KeyCommandBind.TURN_RIGHT);
-    	controller.registerKeyCommandBind(KeyCommandBind.TWIST_LEFT);
-    	controller.registerKeyCommandBind(KeyCommandBind.TWIST_RIGHT);
-    	controller.registerKeyCommandBind(KeyCommandBind.UNDO);
-    	controller.registerKeyCommandBind(KeyCommandBind.FIRE);
-    	controller.registerKeyCommandBind(KeyCommandBind.NEXT_WEAPON);
+    	KeyBindParser.parseKeyBindings(controller);
     	
     	return controller;
     }    

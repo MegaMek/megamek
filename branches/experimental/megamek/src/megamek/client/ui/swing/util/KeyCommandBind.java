@@ -87,4 +87,13 @@ public enum KeyCommandBind {
 		return binds;
 	}
 	
+	public static KeyCommandBind getBindByCmd(String cmd){
+		for (KeyCommandBind bind : values()){
+			if (bind.cmd.equals(cmd)){
+				return bind;
+			}
+		}
+		return null;
+	}
+	
 }

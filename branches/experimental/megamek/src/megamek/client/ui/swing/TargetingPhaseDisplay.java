@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,6 +35,9 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -135,7 +137,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Creates and lays out a new targeting phase display for the specified
      * clientgui.getClient().
      */
-    public TargetingPhaseDisplay(ClientGUI clientgui, boolean offboard) {
+    public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         this.clientgui = clientgui;
         phase = offboard ? IGame.Phase.PHASE_OFFBOARD
                 : IGame.Phase.PHASE_TARGETING;
@@ -167,6 +169,52 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         layoutScreen();
         
         setupButtonPanel();
+        
+        MegaMekController controller = clientgui.controller;
+        final StatusBarPhaseDisplay display = this;       
+        // Register the action for TWIST_LEFT
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(0);
+					}
+        });
+        
+        // Register the action for TWIST_RIGHT
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(1);
+					}
+        });                
     }
 
     /**
@@ -185,7 +233,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().addBoardViewListener(this);
 
         clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
 
         // mech display.
         clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
@@ -1079,56 +1126,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
     }
 
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && !shiftheld) {
-            shiftheld = true;
-            if (clientgui.getClient().isMyTurn()
-                    && (clientgui.getBoardView().getLastCursor() != null)) {
-                updateFlipArms(false);
-                torsoTwist(clientgui.getBoardView().getLastCursor());
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_LEFT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(0);
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_RIGHT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(1);
-        }
-    }
-
     @Override
     public void clear() {
         clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();
-    }
-
-    public void keyReleased(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
-            shiftheld = false;
-        }
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
     }
 
     //

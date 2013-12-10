@@ -26,6 +26,7 @@ v0.37.0-exp (SVN)
 + Moved ChatterBox activation/deactivation into the new key handling framework
 + Converted MovementDisplay to use MegaMekController
 + Converted FiringDisplay to use MegaMekController
++ Converted TargetingDisplay to use MegaMekController
 
 
 v0.37.0-dev (SVN)

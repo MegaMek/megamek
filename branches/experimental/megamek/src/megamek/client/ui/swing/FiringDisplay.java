@@ -20,8 +20,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -39,6 +37,9 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Aero;
@@ -85,7 +86,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
-        KeyListener, ItemListener, ListSelectionListener {
+		ItemListener, ListSelectionListener {
     /**
      *
      */
@@ -95,7 +96,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * This enumeration lists all of the possible ActionCommands that can be
      * carried out during the firing phase.  Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
-     * @author walczak
+     * @author arlith
      *
      */
     public static enum Command {
@@ -158,7 +159,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * Creates and lays out a new firing phase display for the specified
      * clientgui.getClient().
      */
-    public FiringDisplay(ClientGUI clientgui) {
+    public FiringDisplay(final ClientGUI clientgui) {
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
@@ -195,13 +196,79 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setupButtonPanel();
 
         clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
 
         // mech display.
         clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler();
+        
+        MegaMekController controller = clientgui.controller;
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for UNDO
+        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| display.isIgnoringEvents()
+								|| !display.isVisible()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						removeLastFiring();
+					}
+        }); 
+        
+        // Register the action for TWIST_LEFT
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(0);
+					}
+        });
+        
+        // Register the action for TWIST_RIGHT
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(1);
+					}
+        });        
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
@@ -258,8 +325,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (ce().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
-                for (int nextId = clientgui.getClient().getNextEntityNum(en); nextId != en; nextId = clientgui
-                        .getClient().getNextEntityNum(nextId)) {
+                for (int nextId = clientgui.getClient().getNextEntityNum(en); 
+                		nextId != en; nextId = clientgui
+                				.getClient().getNextEntityNum(nextId)) {
 
                     if (clientgui.getClient().getGame().getEntity(nextId)
                             .getPosition() != null) {
@@ -271,9 +339,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                 // We were *supposed* to have found an on-board entity.
                 if (ce().getPosition() == null) {
-                    System.err
-                            .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                                    en);
+                    System.err.println("FiringDisplay: could " + //$NON-NLS-1$
+                    		"not find an on-board entity: " + en); //$NON-NLS-1$
+                                    
                     return;
                 }
 
@@ -316,8 +384,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateClearTurret();
             updateClearWeaponJam();
         } else {
-            System.err
-                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
+            		"select non-existant entity: " + en); //$NON-NLS-1$
         }
 
         setFiringSolutions();
@@ -1537,61 +1605,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.getMenuBar().setFireNextEnabled(enabled);
     }
 
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (clientgui.getClient().isMyTurn()) {
-                removeLastFiring();
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && !shiftheld) {
-            shiftheld = true;
-            if (clientgui.getClient().isMyTurn()
-                    && (clientgui.getBoardView().getLastCursor() != null)) {
-                updateFlipArms(false);
-                torsoTwist(clientgui.getBoardView().getLastCursor());
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_LEFT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(0);
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_RIGHT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(1);
-        }
-    }
-
     @Override
     public void clear() {
         clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();
-    }
-
-    public void keyReleased(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
-            shiftheld = false;
-        }
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
     }
 
     //

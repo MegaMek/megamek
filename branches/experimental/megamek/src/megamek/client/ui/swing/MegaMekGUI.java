@@ -193,20 +193,24 @@ public class MegaMekGUI implements IMegaMekGUI {
     	KeyCommandBind.SCROLL_EAST.key = KeyEvent.VK_D;
     	KeyCommandBind.SCROLL_WEST.key = KeyEvent.VK_A;
     	KeyCommandBind.TOGGLE_CHAT.key = KeyEvent.VK_ENTER;
-    	KeyCommandBind.SHIFT_HELD.key = KeyEvent.VK_SHIFT;
     	KeyCommandBind.TURN_LEFT.key = KeyEvent.VK_A;
     	KeyCommandBind.TURN_LEFT.modifiers = KeyEvent.SHIFT_MASK;
     	KeyCommandBind.TURN_RIGHT.key = KeyEvent.VK_D;
     	KeyCommandBind.TURN_RIGHT.modifiers = KeyEvent.SHIFT_MASK;
+    	KeyCommandBind.TWIST_LEFT.key = KeyEvent.VK_A;
+    	KeyCommandBind.TWIST_LEFT.modifiers = KeyEvent.SHIFT_MASK;
+    	KeyCommandBind.TWIST_RIGHT.key = KeyEvent.VK_D;
+    	KeyCommandBind.TWIST_RIGHT.modifiers = KeyEvent.SHIFT_MASK;
     	KeyCommandBind.UNDO.key = KeyEvent.VK_BACK_SPACE;
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_NORTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_SOUTH);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_EAST);
     	controller.registerKeyCommandBind(KeyCommandBind.SCROLL_WEST);
     	controller.registerKeyCommandBind(KeyCommandBind.TOGGLE_CHAT);
-    	controller.registerKeyCommandBind(KeyCommandBind.SHIFT_HELD);
     	controller.registerKeyCommandBind(KeyCommandBind.TURN_LEFT);
     	controller.registerKeyCommandBind(KeyCommandBind.TURN_RIGHT);
+    	controller.registerKeyCommandBind(KeyCommandBind.TWIST_LEFT);
+    	controller.registerKeyCommandBind(KeyCommandBind.TWIST_RIGHT);
     	controller.registerKeyCommandBind(KeyCommandBind.UNDO);
     	
     	return controller;

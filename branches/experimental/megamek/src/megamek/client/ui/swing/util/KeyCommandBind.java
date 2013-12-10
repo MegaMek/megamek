@@ -15,6 +15,8 @@
 
 package megamek.client.ui.swing.util;
 
+import java.util.ArrayList;
+
 /**
  * This enum is a collection of commands that can be bound to a particular key.
  * 
@@ -27,11 +29,14 @@ public enum KeyCommandBind {
 	SCROLL_EAST("scrollE",true),
 	SCROLL_WEST("scrollW",true),
 	TOGGLE_CHAT("toggleChat",false),
-	SHIFT_HELD("shiftHeld",false),
 	// Change facing one hexside to the left
 	TURN_LEFT("turnLeft",false),
 	// Change facing one hexside to the right
 	TURN_RIGHT("turnRight",false),
+	// Change facing one hexside to the left
+	TWIST_LEFT("twistLeft",false),
+	// Change facing one hexside to the right
+	TWIST_RIGHT("twistRight",false),	
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false),
 	CENTER_ON_SELECTED("centerOnSelected",false);
@@ -68,13 +73,14 @@ public enum KeyCommandBind {
 		isRepeatable = r;
 	}
 	
-	public static KeyCommandBind getBindByKey(int keycode, int modifiers){
+	public static ArrayList<KeyCommandBind> getBindByKey(int keycode, int modifiers){
+		ArrayList<KeyCommandBind> binds = new ArrayList<KeyCommandBind>();
 		for (KeyCommandBind bind : values()){
 			if (bind.key == keycode && bind.modifiers == modifiers){
-				return bind;
+				binds.add(bind);
 			}
 		}
-		return null;
+		return binds;
 	}
 	
 }

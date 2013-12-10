@@ -81,40 +81,50 @@ public class MegaMekController implements KeyEventDispatcher {
 	public boolean dispatchKeyEvent(KeyEvent evt) {
 		int keyCode = evt.getKeyCode();
 		int modifiers = evt.getModifiers();
-		KeyCommandBind kcb = KeyCommandBind.getBindByKey(keyCode, modifiers);
+		// Get a collection of key/cmd binds that match the keycode/modifiers
+		ArrayList<KeyCommandBind> kcbs = 
+				KeyCommandBind.getBindByKey(keyCode, modifiers);
 		
-		// Do we have a binding for this key?
-		if (!keyCmdSet.contains(kcb)){
-			return false;
-		}
-		
-		ArrayList<CommandAction> actions = cmdActionMap.get(kcb.cmd);
-		// If there's no action associated with this key bind, or the currenty
-		//  action is invalid, do not consume this event.
+		// If there's no action associated with this key bind, or the 
+		//  current action is invalid, do not consume this event.		
 		boolean consumed = false;
-		for (CommandAction action : actions){
-			// If the action is null or shouldn't be performed, skip it
-			if (action == null || !action.shouldPerformAction()){
+		
+		for (KeyCommandBind kcb : kcbs){
+			// Do we have a binding for this key?
+			if (!keyCmdSet.contains(kcb)){
 				continue;
 			}
-			// If we perform at least one action, this event is consumed
-			consumed = true;
 			
-			if (evt.getID() == KeyEvent.KEY_PRESSED) {
-				if (kcb.isRepeatable){
-					startRepeating(kcb, action);
-				} else {
-					action.performAction();
-				}
+			// Get the actions associated with this key/cmd binding
+			ArrayList<CommandAction> actions = cmdActionMap.get(kcb.cmd);
+			// Skip if we don't have an action vector
+			if (actions == null){
+				continue;
 			}
-			
-			// If the key bind is repeatable, we need to stop it's timer event
-			if (evt.getID() == KeyEvent.KEY_RELEASED) {
-				if (kcb.isRepeatable){
-					stopRepeating(kcb);
+			for (CommandAction action : actions){
+				// If the action is null or shouldn't be performed, skip it
+				if (action == null || !action.shouldPerformAction()){
+					continue;
 				}
-				if (action.hasReleaseAction()){
-					action.releaseAction();
+				// If we perform at least one action, this event is consumed
+				consumed = true;
+				
+				if (evt.getID() == KeyEvent.KEY_PRESSED) {
+					if (kcb.isRepeatable){
+						startRepeating(kcb, action);
+					} else {
+						action.performAction();
+					}
+				}
+				
+				if (evt.getID() == KeyEvent.KEY_RELEASED) {
+					// If the key bind is repeatable, we need to stop its timer
+					if (kcb.isRepeatable){
+						stopRepeating(kcb);
+					}
+					if (action.hasReleaseAction()){
+						action.releaseAction();
+					}
 				}
 			}
 		}

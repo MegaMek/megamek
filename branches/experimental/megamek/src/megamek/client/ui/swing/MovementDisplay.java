@@ -312,46 +312,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MegaMekController controller = clientgui.controller;
         
         final StatusBarPhaseDisplay display = this;
-        // Register the action for SHIFT_HELD
-        controller.registerCommandAction(KeyCommandBind.SHIFT_HELD.cmd,
-        		new CommandAction(){
-
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (shiftheld || !clientgui.getClient().isMyTurn()
-								|| !display.isVisible()
-								|| display.isIgnoringEvents()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-			            shiftheld = true;
-						if (clientgui.getClient().isMyTurn()
-								&& (clientgui.getBoardView().getLastCursor() 
-										!= null)
-								&& !clientgui.getBoardView().getLastCursor()
-										.equals(clientgui.getBoardView()
-												.getSelected())) {
-			                // switch to turning
-			                currentMove(clientgui.getBoardView()
-			                		.getLastCursor());
-			                clientgui.bv.drawMovementData(ce(), cmd);
-			            }
-					}
-					
-					public boolean hasReleaseAction(){
-						return true;
-					}
-					
-					public void releaseAction(){
-						shiftheld = false;
-					}
-        });
-        
         // Register the action for TURN_LEFT
         controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
         		new CommandAction(){

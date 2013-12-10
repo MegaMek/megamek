@@ -25,6 +25,7 @@ v0.37.0-exp (SVN)
     central handler for key events regardless of focus.
 + Moved ChatterBox activation/deactivation into the new key handling framework
 + Converted MovementDisplay to use MegaMekController
++ Converted FiringDisplay to use MegaMekController
 
 
 v0.37.0-dev (SVN)

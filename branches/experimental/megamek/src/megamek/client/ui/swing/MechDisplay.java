@@ -1444,6 +1444,10 @@ public class MechDisplay extends JPanel {
             }
             onResize();
         }
+        
+        public int getSelectedEntityId(){
+        	return entity.getId();
+        }
 
         /**
          * Selects the weapon at the specified index in the list
@@ -1469,6 +1473,61 @@ public class MechDisplay extends JPanel {
             }
             return entity.getEquipmentNum(entity.getWeaponList().get(selected));
         }
+        
+        /**
+         * Selects the next valid weapon in the weapon list.
+         * 
+         * @return  The weaponId for the selected weapon
+         */
+        public int selectNextWeapon(){
+        	int selected = weaponList.getSelectedIndex();
+        	int initialSelection = selected;
+        	boolean hasLooped = false;
+        	do{
+	        	selected++;
+	        	if (selected >= weaponList.getModel().getSize()){
+	        		selected = 0;
+	        	}
+	        	if (selected == initialSelection){
+	        		hasLooped = true;
+	        	}
+        	} while (!hasLooped && !entity.isWeaponValidForPhase(
+        					entity.getWeaponList().get(selected)));
+        	
+        	weaponList.setSelectedIndex(selected);
+        	if (selected > 0 && selected < entity.getWeaponList().size()){
+        		return entity.getEquipmentNum(
+        				entity.getWeaponList().get(selected));
+        	} else {
+        		return -1;
+        	}
+        }
+        
+        public int selectPrevWeapon(){
+        	int selected = weaponList.getSelectedIndex();
+        	int initialSelection = selected;
+        	boolean hasLooped = false;
+        	do{
+	        	selected--;
+	        	if (selected < 0){
+	        		selected = weaponList.getModel().getSize()-1;
+	        	}
+	        	if (selected == initialSelection){
+	        		hasLooped = true;
+	        	}
+        	} while (!hasLooped && !entity.isWeaponValidForPhase(
+        					entity.getWeaponList().get(selected)));
+        	
+        	weaponList.setSelectedIndex(selected);
+        	if (selected > 0 && selected < entity.getWeaponList().size()){
+        		return entity.getEquipmentNum(
+        				entity.getWeaponList().get(selected));
+        	} else {
+        		return -1;
+        	}
+        }
+        
+        
 
         /**
          * displays the selected item from the list in the weapon display panel.

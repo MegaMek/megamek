@@ -3009,7 +3009,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // Start reached, now we can attempt to pick a weapon.
-            if (weaponValidForPhase(mounted)) {
+            if (isWeaponValidForPhase(mounted)) {
                 return getEquipmentNum(mounted);
             }
 
@@ -3022,11 +3022,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return getFirstWeapon();
     }
     
-    public boolean weaponValidForPhase(int weapNum){
-    	return weaponValidForPhase(equipmentList.get(weapNum));
+    /**
+     * Returns true if the weapon, specified as a weapon id, is valid for the
+     * current phase.
+     * 
+     * @param weapNum
+     * @return True if valid, else false
+     */
+    public boolean isWeaponValidForPhase(int weapNum){
+    	return isWeaponValidForPhase(equipmentList.get(weapNum));
     }
     
-    public boolean weaponValidForPhase(Mounted mounted){
+    /**
+     * Returns true if the weapon, specified as a <code>Mounted</code>, is 
+     * valid for the current phase.
+     * 
+     * @param mounted 
+     * @return True if valid, else false
+     */
+    public boolean isWeaponValidForPhase(Mounted mounted){
     	// Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
                 && (mounted.isReady())

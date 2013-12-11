@@ -310,7 +310,28 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 					public void performAction() {
 						nextWeapon();
 					}
-        });      
+        });  
+        
+        // Register the action for PREV_WEAPON
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						prevWeapon();
+					}
+        });         
         
     }
 
@@ -1077,15 +1098,34 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int nextWeapon = ce().getNextWeapon(
-                clientgui.mechD.wPan.getSelectedWeaponNum());
-        // if there's no next weapon, forget about it
-        if (nextWeapon == -1) {
+        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
+        
+        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()){
+        	clientgui.mechD.wPan.displayMech(ce());
+        }
+        
+        if (weaponId == -1) {
+            setFireModeEnabled(false);
+        } else {
+            Mounted m = ce().getEquipment(weaponId);
+            setFireModeEnabled(m.isModeSwitchable());
+        }
+        updateTarget();
+    }
+    
+    /**
+     * Skips to the previous weapon
+     */
+    void prevWeapon() {
+        if (ce() == null) {
             return;
         }
-        clientgui.mechD.wPan.displayMech(ce());
-        clientgui.mechD.wPan.selectWeapon(nextWeapon);
-        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
+        
+        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()){
+        	clientgui.mechD.wPan.displayMech(ce());
+        }
+        
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {

@@ -78,6 +78,13 @@
       </KeyBind>
 
       <KeyBind>
+        <command>prevWeapon</command>
+        <keyCode>81</keyCode> <!-- Q -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
         <command>nextWeapon</command>
         <keyCode>69</keyCode> <!-- E -->
         <modifier>0</modifier>          

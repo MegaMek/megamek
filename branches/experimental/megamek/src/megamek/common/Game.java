@@ -1712,6 +1712,42 @@ public class Game implements Serializable, IGame {
         // return getFirstEntityNum(turn);
         return -1;
     }
+    
+    /**
+     * Returns the entity id of the previous entity that can move during the
+     * specified
+     *
+     * @param turn
+     *            the turn to use
+     * @param start
+     *            the entity id to start at
+     */
+    public int getPrevEntityNum(GameTurn turn, int start) {
+    	boolean hasLooped = false;
+    	int i = (entities.indexOf(entityIds.get(start)) - 1) % entities.size();
+    	if (i == -2){
+    	    //This means we were given an invalid entity ID, punt
+            return -1;
+        }
+    	if (i == -1){
+    	    //This means we were given an invalid entity ID, punt
+            i = entities.size() - 1;
+        }
+    	int startingIndex = i;
+        while (!((hasLooped == true) && (i == startingIndex))) {
+            final Entity entity = entities.get(i);
+            if (turn.isValidEntity(entity, this)) {
+                return entity.getId();
+            }
+            i--;
+            if (i < 0) {
+            	i = entities.size() - 1;
+                hasLooped = true;
+            }
+        }
+        // return getFirstEntityNum(turn);
+        return -1;
+    }    
 
     /**
      * Returns the number of the first deployable entity

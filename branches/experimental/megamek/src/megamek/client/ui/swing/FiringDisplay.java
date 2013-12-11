@@ -203,6 +203,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         ash = new AimedShotHandler();
         
+        registerKeyCommands();        
+    }
+    
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    private void registerKeyCommands(){
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
         // Register the action for UNDO
@@ -330,6 +337,92 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 					@Override
 					public void performAction() {
 						prevWeapon();
+					}
+        });  
+        
+        // Register the action for NEXT_UNIT
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getNextEntityNum(cen));
+					}
+        });  
+        
+        // Register the action for PREV_UNIT
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getPrevEntityNum(cen));
+					}
+        });     
+        
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						jumpToNextTarget();
+					}
+        });  
+        
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						jumpToPrevTarget();
 					}
         });         
         
@@ -698,7 +791,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         return visibleTargets[lastTargetID];
-    }
+    }  
 
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
@@ -720,6 +813,45 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         showTargetChoice = true;
         target(targ);
     }
+    
+    
+    /**
+     * Get the next target. Return null if we don't have any targets.
+     */
+    private Entity getPrevTarget() {
+        if (visibleTargets == null) {
+            return null;
+        }
+
+        lastTargetID--;
+
+        if (lastTargetID < 0) {
+            lastTargetID = visibleTargets.length - 1;
+        }
+
+        return visibleTargets[lastTargetID];
+    }  
+    
+    /**
+     * Jump to our next target. If there isn't one, well, don't do anything.
+     */
+    private void jumpToPrevTarget() {
+        Entity targ = getPrevTarget();
+
+        if (targ == null) {
+            return;
+        }
+
+        // HACK : don't show the choice dialog.
+        showTargetChoice = false;
+
+        clientgui.bv.centerOnHex(targ.getPosition());
+        clientgui.getBoardView().select(targ.getPosition());
+
+        // HACK : show the choice dialog again.
+        showTargetChoice = true;
+        target(targ);
+    }    
 
     /**
      * Called when the current entity is done firing. Send out our attack queue

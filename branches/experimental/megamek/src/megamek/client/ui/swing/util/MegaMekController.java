@@ -40,6 +40,12 @@ import java.util.TimerTask;
  * Then, somewhere else (ie; a file) can specify what keys are bound to what 
  * string commands.  The possible string commands are specified in 
  * <code>KeyCommandBind</code>.
+ * 
+ * There are three things that need to be done to create a key binding.  First,
+ * a command must exist, defined in <code>KeyCommandBind</code>.  Then, the 
+ * command must be bound to a key in the keybind XML file 
+ * (mmconf/defaultKeyBinds.xml by default).  Finally, a 
+ * <code>CommandAction</code> needs to be registered somewhere.  
  *  
  * @author arlith
  *

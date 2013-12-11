@@ -41,6 +41,10 @@ public enum KeyCommandBind {
 	FIRE("fire", false),
 	NEXT_WEAPON("nextWeapon", false),
 	PREV_WEAPON("prevWeapon", false),
+	NEXT_UNIT("nextUnit", false),
+	PREV_UNIT("prevUnit", false),
+	NEXT_TARGET("nextTarget", false),
+	PREV_TARGET("prevTarget", false),
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false),
 	CENTER_ON_SELECTED("centerOnSelected",false);

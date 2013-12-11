@@ -78,6 +78,34 @@
       </KeyBind>
 
       <KeyBind>
+        <command>prevUnit</command>
+        <keyCode>90</keyCode> <!-- Z -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextUnit</command>
+        <keyCode>67</keyCode> <!-- C -->
+        <modifier>0</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevTarget</command>
+        <keyCode>81</keyCode> <!-- Shift-Q -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextTarget</command>
+        <keyCode>69</keyCode> <!-- Shift-E -->
+        <modifier>1</modifier>          
+        <isRepeatable>0</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
         <command>prevWeapon</command>
         <keyCode>81</keyCode> <!-- Q -->
         <modifier>0</modifier>          

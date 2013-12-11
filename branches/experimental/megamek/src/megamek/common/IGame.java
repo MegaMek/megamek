@@ -797,6 +797,15 @@ public interface IGame {
      * @param start the entity id to start at
      */
     public abstract int getNextEntityNum(GameTurn turn, int start);
+    
+    /**
+     * Returns the entity id of the previous entity that can move during the
+     * specified
+     *
+     * @param turn the turn to use
+     * @param start the entity id to start at
+     */
+    public abstract int getPrevEntityNum(GameTurn turn, int start);
 
     /**
      * Returns the number of the first deployable entity

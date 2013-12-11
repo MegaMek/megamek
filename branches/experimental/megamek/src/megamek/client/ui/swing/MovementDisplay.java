@@ -307,8 +307,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();
         
         clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
         
+        registerKeyCommands();    
+    }
+        
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    private void registerKeyCommands(){
         MegaMekController controller = clientgui.controller;
         
         final StatusBarPhaseDisplay display = this;
@@ -391,7 +397,51 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 					public void performAction() {
 						removeLastStep();
 					}
-        });          
+        });  
+        
+        // Register the action for NEXT_UNIT
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getNextEntityNum(cen));
+					}
+        });  
+        
+        // Register the action for PREV_UNIT
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getPrevEntityNum(cen));
+					}
+        });        
 
     }
 

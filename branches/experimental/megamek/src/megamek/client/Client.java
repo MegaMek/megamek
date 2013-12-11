@@ -369,6 +369,13 @@ public class Client implements IClientCommandHandler {
     public int getNextEntityNum(int entityId) {
         return game.getNextEntityNum(getMyTurn(), entityId);
     }
+    
+    /**
+     * Returns the number of the previous selectable entity after the one given
+     */
+    public int getPrevEntityNum(int entityId) {
+        return game.getPrevEntityNum(getMyTurn(), entityId);
+    }
 
     /**
      * Returns the number of the first deployable entity

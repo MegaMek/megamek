@@ -30,6 +30,9 @@ v0.37.0-exp (SVN)
 + Added key binds for weapons firing and next weapon
 + Keybinds can now be specified in an xml file, defaultKeyBinds.xml has been 
     created which follows the schema defined in keyBindingSchem.xsl
++ Added key binds for previous weapon/next weapon (Q/E)
++ Added key binds for previous target/next target (Shift-Q/Shift-E)
++ Added key binds for previous unit/next unit (Z/C)
 
 
 v0.37.0-dev (SVN)

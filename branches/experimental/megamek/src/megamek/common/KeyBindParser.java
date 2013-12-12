@@ -15,7 +15,12 @@
 
 package megamek.common;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,7 +45,7 @@ public class KeyBindParser {
 	/**
 	 * Default path to the key bindings XML file.
 	 */
-	public static String keyBindingsFilename = "defaultKeyBinds.xml";
+	public static String DEFAULT_BINDINGS_FILE = "defaultKeyBinds.xml";
 	
 	//XML tag defines
 	public static String KEY_BIND = "KeyBind";
@@ -55,7 +60,8 @@ public class KeyBindParser {
         if (!filePath.endsWith(File.separator)) {
             filePath += File.separator;
         }
-        filePath += "mmconf" + File.separator + keyBindingsFilename;
+        filePath += Configuration.configDir() + File.separator + 
+        		DEFAULT_BINDINGS_FILE;
         File file = new File(filePath);
         if (!file.exists() || !file.isFile()) {
             return;
@@ -120,7 +126,7 @@ public class KeyBindParser {
                     continue;
                 }
 				boolean isRepeatable = 
-						Byte.parseByte(elem.getTextContent()) == 1;
+						Boolean.parseBoolean(elem.getTextContent());
 				
 				KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 				
@@ -138,6 +144,40 @@ public class KeyBindParser {
             System.err.println("Error parsing key bindings!");
             e.printStackTrace(System.err);
         }
+	}
+	
+	/**
+	 * Write the current keybindings to the default XML file.
+	 */
+	public static void writeKeyBindings(){
+		try {
+			Writer output = new BufferedWriter(new OutputStreamWriter(
+			        new FileOutputStream(new File(Configuration.configDir(), 
+			        		DEFAULT_BINDINGS_FILE))));
+			output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			output.write("<KeyBindings " +
+					"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+					" xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsl\">\n");
+			
+			for (KeyCommandBind kcb : KeyCommandBind.values()){
+				output.write("<KeyBind>\n");
+				output.write("    <command>"+kcb.cmd+"</command>\n");
+				output.write("    <keyCode>"+kcb.key+"</keyCode>\n");
+				output.write("    <modifier>"+kcb.modifiers+"</modifier>\n");
+				output.write("    <isRepeatable>"+kcb.isRepeatable
+						+"</isRepeatable>\n");
+				output.write("</KeyBind>\n");
+				output.write("\n");
+			}
+			
+			output.write("</KeyBindings>");
+			output.close();
+		} catch (IOException e) {
+			System.err.println("Error writing keybindings file!");
+			e.printStackTrace(System.err);
+		}
+
+		
 	}
 	
 }

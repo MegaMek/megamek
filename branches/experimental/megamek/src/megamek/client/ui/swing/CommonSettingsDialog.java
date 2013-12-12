@@ -23,12 +23,16 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,6 +54,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -105,6 +111,18 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JComboBox<String> tileSetChoice;
     private File[] tileSets;
+    
+    /**
+     * A Map that maps command strings to a JTextField for updating the modifier
+     * for the command.
+     */
+    private Map<String, JTextField> cmdModifierMap;
+
+    /**
+     * A Map that maps command strings to a JTextField for updating the key
+     * for the command.
+     */
+    private Map<String, Integer> cmdKeyMap;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
@@ -129,6 +147,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
         JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
         panTabs.add("Tactical Overlay", tacticalOverlaySettingsPane);
+        
+        JPanel keyBindPanel = getKeyBindPanel();
+        JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
+        panTabs.add("Key Binds", keyBindScrollPane);
 
         JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
         JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
@@ -521,6 +543,45 @@ public class CommonSettingsDialog extends ClientDialog implements
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
+        
+        // Lets iterate through all of the KeyCommandBinds and see if they've
+        //  changed
+        boolean bindsChanged = false;
+        for (KeyCommandBind kcb : KeyCommandBind.values()){
+        	JTextField txtModifiers = cmdModifierMap.get(kcb.cmd);
+        	Integer keyCode = cmdKeyMap.get(kcb.cmd);
+        	// This shouldn't happen, but just to be safe...
+        	if (txtModifiers == null || keyCode == null){
+        		continue;
+        	}
+        	int modifiers = 0;
+        	if (txtModifiers.getText().contains(
+        			KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK))){
+        		modifiers |= KeyEvent.SHIFT_MASK;
+        	}
+        	if (txtModifiers.getText().contains(
+        			KeyEvent.getKeyModifiersText(KeyEvent.ALT_MASK))){
+        		modifiers |= KeyEvent.ALT_MASK;
+        	}
+        	if (txtModifiers.getText().contains(
+        			KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
+        		modifiers |= KeyEvent.CTRL_MASK;
+        	}
+        	
+        	if (kcb.modifiers != modifiers){
+        		bindsChanged = true;
+        		kcb.modifiers = modifiers;
+        	}
+        	
+        	if (kcb.key != keyCode){
+        		bindsChanged = true;
+        		kcb.key = keyCode;
+        	}        	
+        }
+        
+        if (bindsChanged){
+        	KeyBindParser.writeKeyBindings();
+        }
 
         setVisible(false);
     }
@@ -605,6 +666,111 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
 
         return createSettingsPanel(comps);
+    }
+    
+    /**
+     * Creates a panel with a box for all of the commands that can be bound to
+     * keys.
+     * 
+     * @return
+     */
+    private JPanel getKeyBindPanel(){
+    	// Create the panel to hold all the components
+    	// We will have an N x 3 grid, the first column is for labels, the 
+    	//  second column will hold text fields for modifiers and the third
+    	//  column holds text fields for keys.
+    	JPanel keyBinds = new JPanel(new GridLayout(0,3,5,5));
+    	
+    	// Create header: labels for describing what each column does
+    	JLabel headers = new JLabel("Name");
+    	headers.setToolTipText("The name of the action");
+    	keyBinds.add(headers);
+    	headers = new JLabel("Modifier");
+    	headers.setToolTipText("The modifier key, like shift, ctrl, alt");
+    	keyBinds.add(headers);
+    	headers = new JLabel("Key");
+    	headers.setToolTipText("The key");
+    	keyBinds.add(headers);
+    	
+    	// Create maps to retrieve the text fields for saving
+    	int numBinds = KeyCommandBind.values().length;
+    	cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
+    	cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
+    	
+    	// For each keyCommandBind, create a label and two text fields
+    	for (KeyCommandBind kcb : KeyCommandBind.values()){    		
+    		JLabel name = new JLabel(
+    				Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
+    		name.setToolTipText(
+    				Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
+    		keyBinds.add(name);
+
+    		final JTextField modifiers = new JTextField(15);
+    		modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
+    		for (KeyListener kl : modifiers.getKeyListeners()){
+    			modifiers.removeKeyListener(kl);
+            }
+    		// Update how typing in the text field works
+    		modifiers.addKeyListener(new KeyListener(){
+
+				@Override
+				public void keyPressed(KeyEvent evt) {
+					modifiers.setText(
+							KeyEvent.getKeyModifiersText(evt.getModifiers()));
+					evt.consume();
+				}
+
+				@Override
+				public void keyReleased(KeyEvent evt) {
+				}
+
+				@Override
+				public void keyTyped(KeyEvent evt) {
+					// This might be a bit hackish, but we want to deal with
+					//  the key code, so the code to update the text is in 
+					//  keyPressed.  We've already done what we want with the
+					//  typed key, and we don't want anything else acting upon
+					//  the key typed event, so we consume it here.
+					evt.consume();
+				}
+    			
+    		});
+    		keyBinds.add(modifiers);
+    		cmdModifierMap.put(kcb.cmd, modifiers);
+    		final JTextField key  = new JTextField(15);
+    		key.setName(kcb.cmd);
+    		key.setText(KeyEvent.getKeyText(kcb.key));
+    		// Update how typing in the text field works
+    		final String cmd = kcb.cmd;
+    		cmdKeyMap.put(cmd, kcb.key);
+    		key.addKeyListener(new KeyListener(){
+
+				@Override
+				public void keyPressed(KeyEvent evt) {
+					key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
+					cmdKeyMap.put(cmd, evt.getKeyCode());
+					evt.consume();
+				}
+
+				@Override
+				public void keyReleased(KeyEvent evt) {
+				}
+
+				@Override
+				public void keyTyped(KeyEvent evt) {
+					// This might be a bit hackish, but we want to deal with
+					//  the key code, so the code to update the text is in 
+					//  keyPressed.  We've already done what we want with the
+					//  typed key, and we don't want anything else acting upon
+					//  the key typed event, so we consume it here.
+					evt.consume();
+				}
+    			
+    		});
+    		keyBinds.add(key);
+    	}
+    	
+    	return keyBinds;
     }
 
     private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {

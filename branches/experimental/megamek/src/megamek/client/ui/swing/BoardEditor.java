@@ -140,7 +140,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     	controller = c;
         try {
             bv = new BoardView1(game, controller);
-            bvc = bv.getComponent();
+            bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane
                     .showMessageDialog(

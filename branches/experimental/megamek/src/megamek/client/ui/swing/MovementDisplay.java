@@ -325,6 +325,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         			@Override
         			public boolean shouldPerformAction(){
 						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
 								|| display.isIgnoringEvents()
 								|| !display.isVisible()) {
         					return false;
@@ -355,6 +356,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         			@Override
         			public boolean shouldPerformAction(){
 						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
 								|| display.isIgnoringEvents()
 								|| !display.isVisible()) {
         					return false;
@@ -385,6 +387,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         			@Override
         			public boolean shouldPerformAction(){
 						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
 								|| display.isIgnoringEvents()
 								|| !display.isVisible()) {
         					return false;
@@ -406,6 +409,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         			@Override
         			public boolean shouldPerformAction(){
 						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
 								|| !display.isVisible()
 								|| display.isIgnoringEvents()) {
         					return false;
@@ -428,6 +432,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         			@Override
         			public boolean shouldPerformAction(){
 						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
 								|| !display.isVisible()
 								|| display.isIgnoringEvents()) {
         					return false;

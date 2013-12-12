@@ -1231,11 +1231,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         int weaponId = clientgui.mechD.wPan.selectNextWeapon();
-        
+
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()){
         	clientgui.mechD.wPan.displayMech(ce());
         }
-        
+
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {

@@ -1495,7 +1495,8 @@ public class MechDisplay extends JPanel {
         					entity.getWeaponList().get(selected)));
         	
         	weaponList.setSelectedIndex(selected);
-        	if (selected > 0 && selected < entity.getWeaponList().size()){
+        	weaponList.ensureIndexIsVisible(selected);
+        	if (selected >= 0 && selected < entity.getWeaponList().size()){
         		return entity.getEquipmentNum(
         				entity.getWeaponList().get(selected));
         	} else {
@@ -1519,7 +1520,8 @@ public class MechDisplay extends JPanel {
         					entity.getWeaponList().get(selected)));
         	
         	weaponList.setSelectedIndex(selected);
-        	if (selected > 0 && selected < entity.getWeaponList().size()){
+        	weaponList.ensureIndexIsVisible(selected);
+        	if (selected >= 0 && selected < entity.getWeaponList().size()){
         		return entity.getEquipmentNum(
         				entity.getWeaponList().get(selected));
         	} else {

@@ -820,6 +820,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
+        
+        controller.clientgui = null;
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -1844,6 +1846,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public void unitSelected(BoardViewEvent b) {
         // ignored
+    }
+    
+    /**
+     * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
+     * For example, the <code>MegaMekController</code> should ignore hotkeys
+     * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
+     * @return
+     */
+    public boolean shouldIgnoreHotKeys(){
+    	return (gameOptionsDialog != null && gameOptionsDialog.isVisible())
+    			|| (about != null && about.isVisible()) 
+    			|| (help != null && help.isVisible()) 
+    			|| (setdlg != null && setdlg.isVisible());
     }
 
 }

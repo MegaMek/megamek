@@ -897,4 +897,16 @@ public class BoardEditor extends JComponent implements ItemListener,
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
+    
+    /**
+     * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
+     * For example, the <code>MegaMekController</code> should ignore hotkeys
+     * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
+     * @return
+     */
+    public boolean shouldIgnoreHotKeys(){
+    	return (about != null && about.isVisible()) 
+    			|| (help != null && help.isVisible()) 
+    			|| (setdlg != null && setdlg.isVisible());
+    }    
 }

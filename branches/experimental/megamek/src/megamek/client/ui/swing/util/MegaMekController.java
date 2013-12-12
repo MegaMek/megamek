@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import megamek.client.ui.swing.BoardEditor;
+import megamek.client.ui.swing.ClientGUI;
+
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated 
@@ -55,6 +58,9 @@ public class MegaMekController implements KeyEventDispatcher {
 	private static final int MAX_REPEAT_RATE = 10;
     private static final int MAX_REPEAT_DELAY = 10;
 	
+    public BoardEditor boardEditor = null;
+    public ClientGUI clientgui = null;
+    
 	/**
 	 * Map that maps a key code to a command string.
 	 */
@@ -85,6 +91,13 @@ public class MegaMekController implements KeyEventDispatcher {
 	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent evt) {
+		
+		// Don't consider hotkeys when the clientgui has a dialog visible
+		if ((clientgui != null && clientgui.shouldIgnoreHotKeys()) 
+				|| (boardEditor != null && boardEditor.shouldIgnoreHotKeys())){
+			return false;
+		}
+		
 		int keyCode = evt.getKeyCode();
 		int modifiers = evt.getModifiers();
 		// Get a collection of key/cmd binds that match the keycode/modifiers

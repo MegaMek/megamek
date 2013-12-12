@@ -11,7 +11,7 @@
     Commands are strings used to represent the possible actions MegaMek recognizes.
     These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
 -->
-<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<KeyBindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="keyBindingSchema.xsl">
 
       <KeyBind>
@@ -140,4 +140,4 @@
         <isRepeatable>0</isRepeatable>
       </KeyBind>
 
-</skin>
+</KeyBindings>

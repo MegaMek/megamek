@@ -91,6 +91,8 @@ public class MegaMekGUI implements IMegaMekGUI {
     private GameOptionsDialog optdlg;
     private CommonSettingsDialog setdlg;
     
+    private MegaMekController controller;
+    
     public void start(String[] args) {
         createGUI();
     }
@@ -99,6 +101,8 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
+    	createController();
+    	
         // Set a couple of things to make the Swing GUI look more "Mac-like" on
         // Macs
         // Taken from:
@@ -175,20 +179,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
     }
     
-    public void createController(ClientGUI clientGui){
-    	MegaMekController controller = createController();
-    	clientGui.controller = controller;
-    }
-    
-    public MegaMekController createController(){
-    	MegaMekController controller = new MegaMekController();
+    public void createController(){
+    	controller = new MegaMekController();
     	KeyboardFocusManager kbfm = 
     			KeyboardFocusManager.getCurrentKeyboardFocusManager();
     	kbfm.addKeyEventDispatcher(controller);
     	
     	KeyBindParser.parseKeyBindings(controller);
-    	
-    	return controller;
     }    
 
     /**
@@ -303,7 +300,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor.
      */
     void showEditor() {
-        BoardEditor editor = new BoardEditor(createController());
+        BoardEditor editor = new BoardEditor(controller);
         launch(editor.getFrame());
         editor.boardNew();
     }
@@ -312,7 +309,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor and open an "open" dialog.
      */
     void showEditorOpen() {
-        BoardEditor editor = new BoardEditor(createController());
+        BoardEditor editor = new BoardEditor(controller);
         launch(editor.getFrame());
         editor.boardLoad();
     }
@@ -369,7 +366,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize client
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
-        createController(gui);
+        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -466,7 +463,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
-        createController(gui);
+        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -652,7 +649,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             // initialize game
             client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
-            createController(gui);
+            gui.controller = controller;
             gui.initialize();
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
@@ -745,7 +742,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize game
         client = new Client(cd.playerName, cd.serverAddr, cd.port);
         ClientGUI gui = new ClientGUI(client);
-        createController(gui);
+        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -800,7 +797,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
-        createController(gui);
+        gui.controller = controller;
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();

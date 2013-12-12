@@ -26,7 +26,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
-import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -821,12 +820,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
-        if (controller != null){
-        	KeyboardFocusManager kbfm = 
-        			KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        	kbfm.removeKeyEventDispatcher(controller);
-        }
     }
 
     public GameOptionsDialog getGameOptionsDialog() {

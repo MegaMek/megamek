@@ -777,6 +777,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     clearMessage();
                     cb.setMessage("");
                     bv.chatterBoxActive = false;
+                } else {
+                	bv.chatterBoxActive = false;
                 }
                 break;
             case KeyEvent.VK_ESCAPE:

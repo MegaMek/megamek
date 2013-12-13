@@ -27,6 +27,7 @@ import java.util.TimerTask;
 
 import megamek.client.ui.swing.BoardEditor;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 
 
 /**
@@ -55,8 +56,7 @@ import megamek.client.ui.swing.ClientGUI;
  */
 public class MegaMekController implements KeyEventDispatcher {
 
-	private static final int MAX_REPEAT_RATE = 10;
-    private static final int MAX_REPEAT_DELAY = 10;
+	private static final int MAX_REPEAT_RATE = 100;
 	
     public BoardEditor boardEditor = null;
     public ClientGUI clientgui = null;
@@ -178,8 +178,14 @@ public class MegaMekController implements KeyEventDispatcher {
 	protected void startRepeating(KeyCommandBind kcb, 
 			final CommandAction action){
 		
-		long delay = MAX_REPEAT_DELAY;
-		int rate = MAX_REPEAT_RATE;
+		GUIPreferences guip = GUIPreferences.getInstance();
+		// Make sure the delay is positive
+		long delay = Math.max(0,
+				guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY));
+		// Make sure the rate is positive and that it is below a maximum
+		int rate = Math.max(0, Math.min(MAX_REPEAT_RATE, 
+				guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE)));
+
 		long period = (long) (1000.0 / rate);
 		
 		// If we're already repeating, don't add a new task
@@ -187,7 +193,7 @@ public class MegaMekController implements KeyEventDispatcher {
 			return;
 		}
 		
-		// Get the corresponding actoin, stop if there's no mapped action
+		// Get the corresponding action, stop if there's no mapped action
 		if (action == null){
 			return;
 		}

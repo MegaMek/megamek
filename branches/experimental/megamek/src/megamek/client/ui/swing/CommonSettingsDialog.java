@@ -119,10 +119,16 @@ public class CommonSettingsDialog extends ClientDialog implements
     private Map<String, JTextField> cmdModifierMap;
 
     /**
-     * A Map that maps command strings to a JTextField for updating the key
+     * A Map that maps command strings to a Integer for updating the key
      * for the command.
      */
     private Map<String, Integer> cmdKeyMap;
+    
+    /**
+     * A Map that maps command strings to a JCheckBox for updating the 
+     * isRepeatable flag.
+     */
+    private Map<String, JCheckBox> cmdRepeatableMap;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
@@ -549,9 +555,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         boolean bindsChanged = false;
         for (KeyCommandBind kcb : KeyCommandBind.values()){
         	JTextField txtModifiers = cmdModifierMap.get(kcb.cmd);
+        	JCheckBox repeatable = cmdRepeatableMap.get(kcb.cmd);
         	Integer keyCode = cmdKeyMap.get(kcb.cmd);
         	// This shouldn't happen, but just to be safe...
-        	if (txtModifiers == null || keyCode == null){
+        	if (txtModifiers == null || keyCode == null || repeatable == null){
         		continue;
         	}
         	int modifiers = 0;
@@ -576,7 +583,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         	if (kcb.key != keyCode){
         		bindsChanged = true;
         		kcb.key = keyCode;
-        	}        	
+        	}   
+        	
+        	if (kcb.isRepeatable != repeatable.isSelected()){
+        		bindsChanged = true;
+        		kcb.isRepeatable = repeatable.isSelected();
+        	}
         }
         
         if (bindsChanged){
@@ -676,10 +688,11 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     private JPanel getKeyBindPanel(){
     	// Create the panel to hold all the components
-    	// We will have an N x 3 grid, the first column is for labels, the 
-    	//  second column will hold text fields for modifiers and the third
-    	//  column holds text fields for keys.
-    	JPanel keyBinds = new JPanel(new GridLayout(0,3,5,5));
+    	// We will have an N x 43 grid, the first column is for labels, the 
+    	//  second column will hold text fields for modifiers, the third
+    	//  column holds text fields for keys, and the fourth has a checkbox for
+    	//  isRepeatable.
+    	JPanel keyBinds = new JPanel(new GridLayout(0,4,5,5));
     	
     	// Create header: labels for describing what each column does
     	JLabel headers = new JLabel("Name");
@@ -691,11 +704,16 @@ public class CommonSettingsDialog extends ClientDialog implements
     	headers = new JLabel("Key");
     	headers.setToolTipText("The key");
     	keyBinds.add(headers);
+    	headers = new JLabel("Repeatable?");
+    	headers.setToolTipText("Should this action repeat rapidly " +
+    			"when the key is held down?");
+    	keyBinds.add(headers);
     	
     	// Create maps to retrieve the text fields for saving
     	int numBinds = KeyCommandBind.values().length;
     	cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
     	cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
+    	cmdRepeatableMap = new HashMap<String,JCheckBox>((int)(numBinds*1.26));
     	
     	// For each keyCommandBind, create a label and two text fields
     	for (KeyCommandBind kcb : KeyCommandBind.values()){    		
@@ -768,6 +786,11 @@ public class CommonSettingsDialog extends ClientDialog implements
     			
     		});
     		keyBinds.add(key);
+    		
+    		JCheckBox repeatable = new JCheckBox("Repeatable?");
+    		repeatable.setSelected(kcb.isRepeatable);
+    		cmdRepeatableMap.put(kcb.cmd,repeatable);   	
+    		keyBinds.add(repeatable);
     	}
     	
     	return keyBinds;

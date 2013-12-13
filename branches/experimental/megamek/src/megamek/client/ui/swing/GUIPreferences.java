@@ -72,6 +72,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
     public static final String ADVANCED_UNITOVERVIEW_SELECTED_COLOR = "AdvancedUnitOverviewSelectedColor";
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
+    public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
+    public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     /* --End advanced settings-- */
 
 //    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR0 = "AdvancedFovHighlightColor0";
@@ -206,6 +208,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
         store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
+        store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 10);
+        store.setDefault(ADVANCED_KEY_REPEAT_RATE, 10);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);

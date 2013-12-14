@@ -222,6 +222,8 @@ v0.37.0-dev (SVN)
 + Bug: inf ignore initiative rule was bugged when there is only one team: in 
     that case initiative order would be like: unit, <all infantry>, <rest>.
 + added construction data for light fluid suction system
++ Bug [#3951]: Field Gun infantry can fire into the same hex, but shouldn't be 
+    able to.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

@@ -450,7 +450,13 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public MoveStep getLastStep() {
-        return getStep(steps.size() - 1);
+        for (int i = steps.size() - 1; i >= 0; i--) {
+            MoveStep last = getStep(i);
+            if (last != null) {
+                return last;
+            }
+        }
+        return null;
     }
 
     public MoveStep getSecondLastStep() {

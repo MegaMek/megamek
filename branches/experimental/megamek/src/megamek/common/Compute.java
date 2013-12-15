@@ -918,14 +918,14 @@ public class Compute {
                     "Target out of range");
         }
         if ((distance == 0)
-                && !isAttackerInfantry
+                && (!isAttackerInfantry || !isWeaponInfantry)
                 && !(ae.isAirborne())
                 && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                         && !ae.isAirborne() && !ae.isSpaceborne())
                 && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
                         .getTargetId()))) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
-                    "Only infantry shoot at zero range");
+                    "Only infantry weapons shoot at zero range");
         }
 
         // Account for "dead zones" between Aeros at different altitudes

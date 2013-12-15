@@ -427,7 +427,7 @@ public class TestBot extends BotClient {
      * ************************************************************************
      */
     private void firstPass(CEntity self) {
-        ArrayList<Entity> enemies = getEnemyEntities();
+        List<Entity> enemies = getEnemyEntities();
         MoveOption[] move_array;
         if (self.getEntity().isSelectableThisTurn() && !self.moved) {
             move_array = self.getAllMoves(this).values()

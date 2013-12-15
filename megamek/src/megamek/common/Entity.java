@@ -12639,4 +12639,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return 1;
     }
+
+    public int getMaxWeaponRange() {
+        int maxRange = 0;
+        for (Mounted weapon : getWeaponList()) {
+            if (!weapon.isReady()) {
+                continue;
+            }
+
+            WeaponType type = (WeaponType)weapon.getType();
+            int range = (game.getOptions().booleanOption("tacops_range") ? type.getExtremeRange() :
+                    type.getLongRange());
+            if (range > maxRange) {
+                maxRange = range;
+            }
+        }
+        return maxRange;
+    }
 }

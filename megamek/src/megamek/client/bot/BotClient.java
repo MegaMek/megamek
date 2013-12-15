@@ -135,7 +135,7 @@ public abstract class BotClient extends Client {
 
     protected abstract Vector<Coords> calculateArtyAutoHitHexes();
 
-    public ArrayList<Entity> getEntitiesOwned() {
+    public List<Entity> getEntitiesOwned() {
         ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
@@ -147,12 +147,25 @@ public abstract class BotClient extends Client {
         return result;
     }
 
-    public ArrayList<Entity> getEnemyEntities() {
+    public List<Entity> getEnemyEntities() {
         ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
             if (entity.getOwner().isEnemyOf(getLocalPlayer())
                     && (entity.getPosition() != null) && !entity.isOffBoard()) {
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+
+    public List<Entity> getFriendEntities() {
+        List<Entity> result = new ArrayList<Entity>();
+        Enumeration<Entity> i = game.getEntities();
+        while (i.hasMoreElements()) {
+            Entity entity = i.nextElement();
+            if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
+                    && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }

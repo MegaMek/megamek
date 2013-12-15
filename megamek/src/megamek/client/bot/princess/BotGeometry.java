@@ -104,19 +104,14 @@ public class BotGeometry {
          */
         public HexLine(Coords c,int dir) {
             final String METHOD_NAME = "HexLine(Coords, int)";
-            owner.methodBegin(getClass(), METHOD_NAME);
 
-            try {
-                direction=dir;
-                if((direction==0)||(direction==3)) {
-                    intercept=c.x;
-                } else if((direction==1)||(direction==4)) {
-                    intercept=c.y+((c.x+1)/2);
-                } else {//direction==2||direction==5
-                    intercept=c.y-((c.x)/2);
-                }
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+            direction=dir;
+            if((direction==0)||(direction==3)) {
+                intercept=c.x;
+            } else if((direction==1)||(direction==4)) {
+                intercept=c.y+((c.x+1)/2);
+            } else {//direction==2||direction==5
+                intercept=c.y-((c.x)/2);
             }
         }
 

@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.bot.PhysicalOption;
@@ -1869,7 +1870,7 @@ public class FireControl {
                 ret.add(e);
             }
         }
-        ret.addAll(additional_targets);
+        ret.addAll(additionalTargets);
         return ret;
     }
 
@@ -1952,5 +1953,13 @@ public class FireControl {
      * able to target anyways. This is create with buildings and bridges and
      * mind
      */
-    public ArrayList<Targetable> additional_targets = new ArrayList<Targetable>();
+    private List<Targetable> additionalTargets = new ArrayList<Targetable>();
+
+    public List<Targetable> getAdditionalTargets() {
+        return additionalTargets;
+    }
+
+    public void setAdditionalTargets(List<Targetable> targets) {
+        additionalTargets = targets;
+    }
 }

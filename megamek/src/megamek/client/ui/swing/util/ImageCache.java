@@ -18,12 +18,8 @@ package megamek.client.ui.swing.util;
 import java.util.Hashtable;
 
 /**
- * An ImageCache that keeps a Hashtable of mapped keys and values.  The cache is
- * prevented from exceeding a set maximum.  If the cache exceeds its maximum 
- * size, items are removed based by looking at access times: the items with the
- * oldest access time are removed first.
+ * An ImageCache that keeps a Hashtable of mapped keys and values.
  * 
- * @author pjm1
  * @author Arlith
  */
 public class ImageCache<K, V> {
@@ -52,8 +48,7 @@ public class ImageCache<K, V> {
     }
 
     /**
-     * Adds a new key/value pair into the cache.  A timestamp is stored and used
-     * to determine which objects to remove if the cache gets too large.
+     * Adds a new key/value pair into the cache.
      * 
      * @param key
      * @param value
@@ -76,6 +71,10 @@ public class ImageCache<K, V> {
 
     public void remove(Object key) {
         cache.remove(key);
+    }
+    
+    public int size(){
+        return cache.size();
     }
     
 }

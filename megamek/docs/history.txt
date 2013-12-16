@@ -228,6 +228,7 @@ v0.37.0-dev (SVN)
 + Modified the Princess path ranking code for quicker processing of fast units.  Depending on situation, Princess
     should be 25% to 60% faster moving units.  Unfortunately, once units get close to the enemy is where the least
     improvement happens.
++ Bug: memory leak with scaled image cache in BoardView1
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

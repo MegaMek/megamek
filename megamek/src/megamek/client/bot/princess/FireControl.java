@@ -71,92 +71,6 @@ public class FireControl {
     }
 
     /**
-     * EntityState describes a hypothetical situation an entity could be in when
-     * firing
-     */
-    public static class EntityState {
-        public Coords position;
-        public int facing;
-        public int secondary_facing; // to account for torso twists
-        public int heat;
-        public int hexes_moved;
-        public boolean isprone;
-        public boolean isimmobile;
-        public boolean isjumping;
-        public EntityMovementType movement_type;
-
-        /**
-         * Initialize an entity state from the state an entity is actually in
-         * (or something that isn't an entity)
-         */
-        EntityState(Targetable t) {
-            final String METHOD_NAME = "EntityState(Targetable)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                if (t instanceof Entity) { // mechs and planes and tanks etc
-                    Entity e = (Entity) t;
-                    position = e.getPosition();
-                    facing = e.getFacing();
-                    hexes_moved = e.delta_distance;
-                    heat = e.heat;
-                    isprone = e.isProne() || e.isHullDown();
-                    isimmobile = e.isImmobile();
-                    isjumping = (e.moved == EntityMovementType.MOVE_JUMP);
-                    movement_type = e.moved;
-                    secondary_facing = e.getSecondaryFacing();
-                } else { // for buildings and such
-                    position = t.getPosition();
-                    facing = 0;
-                    hexes_moved = 0;
-                    heat = 0;
-                    isprone = false;
-                    isimmobile = true;
-                    isjumping = false;
-                    movement_type = EntityMovementType.MOVE_NONE;
-                    secondary_facing = 0;
-                }
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        /**
-         * Initialize an entity state from a movement path
-         */
-        EntityState(MovePath path) {
-            final String METHOD_NAME = "EntityState(MovePath)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                position = path.getFinalCoords();
-                facing = path.getFinalFacing();
-                hexes_moved = path.getHexesMoved();
-                heat = path.getEntity().heat;
-                if (path.getLastStepMovementType() == EntityMovementType.MOVE_WALK) {
-                    heat += 1;
-                } else if (path.getLastStepMovementType() == EntityMovementType.MOVE_RUN) {
-                    heat += 2;
-                } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                        && (hexes_moved <= 3)) {
-                    heat += 3;
-                } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                        && (hexes_moved > 3)) {
-                    heat += hexes_moved;
-                }
-                isprone = path.getFinalProne() || path.getFinalHullDown();
-                isimmobile = path.getEntity().isImmobile();
-                isjumping = path.isJumping();
-                movement_type = path.getLastStepMovementType();
-                secondary_facing = facing;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-    }
-
-    /**
      * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
      * probability to hit and expected damage
      */
@@ -170,11 +84,11 @@ public class FireControl {
         public double max_damage;
         public double expected_damage_on_hit;
         public int damage_direction; // direction damage is coming from relative
-                                     // to target
+        // to target
         public ToHitData to_hit;
         public double expected_criticals;
         public double kill_probability; // probability to destroy CT or HEAD
-                                        // (ignores criticals)
+        // (ignores criticals)
 
         public double getExpectedDamage() {
             return prob_to_hit * expected_damage_on_hit;
@@ -185,7 +99,7 @@ public class FireControl {
          * with real to hit values
          */
         WeaponFireInfo(Entity sshooter, Targetable ttarget, Mounted wep,
-                IGame game) {
+                       IGame game) {
             final String METHOD_NAME = "WeaponFireInfo(Entity, Targetable, Mounted)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -217,8 +131,8 @@ public class FireControl {
          * this is to hit without actually constructing the weaponattackaction
          */
         WeaponFireInfo(Entity sshooter, EntityState shooter_state,
-                Targetable ttarget, EntityState target_state, Mounted wep,
-                IGame game) {
+                       Targetable ttarget, EntityState target_state, Mounted wep,
+                       IGame game) {
             final String METHOD_NAME = "WeaponFireInfo(Entity, EntityState, Targetable, EntityState, Mounted, IGame)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -242,9 +156,9 @@ public class FireControl {
                 // shooter.getEquipmentNum(weapon));
                 to_hit = guessToHitModifier(shooter, shooter_state, ttarget,
                         target_state, wep, game);
-                int fromdir = target_state.position
-                        .direction(shooter_state.position);
-                damage_direction = ((fromdir - target_state.facing) + 6) % 6;
+                int fromdir = target_state.getPosition()
+                        .direction(shooter_state.getPosition());
+                damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;
                 initDamage(game);
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
@@ -264,8 +178,8 @@ public class FireControl {
          * @param game
          */
         WeaponFireInfo(Entity sshooter, MovePath shooter_path,
-                Targetable ttarget, EntityState target_state, Mounted wep,
-                IGame game, boolean assume_under_flight_path) {
+                       Targetable ttarget, EntityState target_state, Mounted wep,
+                       IGame game, boolean assume_under_flight_path) {
             final String METHOD_NAME = "WeaponFireInfo(Entity, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -286,9 +200,9 @@ public class FireControl {
                 to_hit = guessAirToGroundStrikeToHitModifier(shooter, ttarget,
                         target_state, shooter_path, wep, game,
                         assume_under_flight_path);
-                int fromdir = target_state.position
+                int fromdir = target_state.getPosition()
                         .direction(shooter.getPosition());
-                damage_direction = ((fromdir - target_state.facing) + 6) % 6;
+                damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;
                 initDamage(game);
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
@@ -384,7 +298,7 @@ public class FireControl {
                         } else if (expected_damage_on_hit > (target_armor)) {
                             expected_criticals += hprob
                                     * ProbabilityCalculator
-                                            .getExpectedCriticalHitCount()
+                                    .getExpectedCriticalHitCount()
                                     * prob_to_hit;
                         }
                     }
@@ -588,19 +502,21 @@ public class FireControl {
         public double max_damage;
         public double expected_damage_on_hit;
         public int damage_direction; // direction damage is coming from relative
-                                     // to target
+        // to target
         public double expected_criticals;
         public double kill_probability; // probability to destroy CT or HEAD
-                                        // (ignores criticals)
+        // (ignores criticals)
         public double utility; // filled out externally
 
         public double getExpectedDamage() {
             return prob_to_hit * expected_damage_on_hit;
-        };
+        }
+
+        ;
 
         PhysicalInfo(Entity sshooter, EntityState shooter_state,
-                Targetable ttarget, EntityState target_state,
-                PhysicalAttackType atype, IGame game) {
+                     Targetable ttarget, EntityState target_state,
+                     PhysicalAttackType atype, IGame game) {
             final String METHOD_NAME = "PhysicalInfo(Entity, EntityState, Targetable, EntityState, PhysicalAttackType, IGame)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -616,9 +532,9 @@ public class FireControl {
                 attack_type = atype;
                 to_hit = guessToHitModifier_Physical(shooter, shooter_state,
                         target, target_state, attack_type, game);
-                int fromdir = target_state.position
-                        .direction(shooter_state.position);
-                damage_direction = ((fromdir - target_state.facing) + 6) % 6;
+                int fromdir = target_state.getPosition()
+                        .direction(shooter_state.getPosition());
+                damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;
                 if ((atype == PhysicalAttackType.LEFT_PUNCH)
                         || (atype == PhysicalAttackType.RIGHT_PUNCH)) {
                     if (sshooter instanceof BipedMech) {
@@ -636,7 +552,7 @@ public class FireControl {
         }
 
         PhysicalInfo(Entity sshooter, Targetable ttarget,
-                PhysicalAttackType atype, IGame game) {
+                     PhysicalAttackType atype, IGame game) {
             final String METHOD_NAME = "PhysicalInfo(Entity, Targetable, PhysicalAttackType, IGame)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -737,7 +653,7 @@ public class FireControl {
                         } else if (expected_damage_on_hit > (target_armor)) {
                             expected_criticals += hprob
                                     * ProbabilityCalculator
-                                            .getExpectedCriticalHitCount()
+                                    .getExpectedCriticalHitCount()
                                     * prob_to_hit;
                         }
                     }
@@ -749,7 +665,7 @@ public class FireControl {
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
-         }
+        }
 
         /**
          * Current bot code requires physical attacks to be given as 'physical
@@ -786,8 +702,8 @@ public class FireControl {
      * Gets the toHit modifier common to both weapon and physical attacks
      */
     public static ToHitData guessToHitModifierHelper_AnyAttack(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, IGame game) {
+                                                               EntityState shooter_state, Targetable target,
+                                                               EntityState target_state, IGame game) {
         final String METHOD_NAME = "guessToHitModifierHelper_AnyAttack(Entity, EntityState, Targetable, EntityState, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -802,31 +718,31 @@ public class FireControl {
             ToHitData tohit = new ToHitData();
             // If people are moving or lying down, there are consequences
             tohit.append(Compute.getAttackerMovementModifier(game, shooter.getId(),
-                    shooter_state.movement_type));
+                    shooter_state.getMovementType()));
             tohit.append(Compute.getTargetMovementModifier(
-                    target_state.hexes_moved, target_state.isjumping, target instanceof VTOL, game));
-            if (shooter_state.isprone) {
+                    target_state.getHexesMoved(), target_state.isJumping(), target instanceof VTOL, game));
+            if (shooter_state.isProne()) {
                 tohit.addModifier(2, "attacker prone");
             }
-            if (target_state.isimmobile) {
+            if (target_state.isImmobile()) {
                 tohit.addModifier(-4, "target immobile");
             }
-            if (target_state.movement_type == EntityMovementType.MOVE_SKID) {
+            if (target_state.getMovementType() == EntityMovementType.MOVE_SKID) {
                 tohit.addModifier(2, "target skidded");
             }
-            if (game.getOptions().booleanOption("tacops_standing_still") && (target_state.movement_type == EntityMovementType.MOVE_NONE)
-                    && !target_state.isimmobile
+            if (game.getOptions().booleanOption("tacops_standing_still") && (target_state.getMovementType() == EntityMovementType.MOVE_NONE)
+                    && !target_state.isImmobile()
                     && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof GunEmplacement))) {
                 tohit.addModifier(-1, "target didn't move");
             }
 
             // did the target sprint?
-            if (target_state.movement_type== EntityMovementType.MOVE_SPRINT) {
+            if (target_state.getMovementType() == EntityMovementType.MOVE_SPRINT) {
                 tohit.addModifier(-1, "target sprinted");
             }
 
             // terrain modifiers, since "compute" won't let me do these remotely
-            IHex target_hex = game.getBoard().getHex(target_state.position);
+            IHex target_hex = game.getBoard().getHex(target_state.getPosition());
             int woodslevel = target_hex.terrainLevel(Terrains.WOODS);
             if (target_hex.terrainLevel(Terrains.JUNGLE) > woodslevel) {
                 woodslevel = target_hex.terrainLevel(Terrains.JUNGLE);
@@ -840,10 +756,10 @@ public class FireControl {
             if (woodslevel == 3) {
                 tohit.addModifier(3, " woods");
             }
-            int distance = shooter_state.position.distance(target_state.position);
-            if (target_state.isprone && (distance > 1)) {
+            int distance = shooter_state.getPosition().distance(target_state.getPosition());
+            if (target_state.isProne() && (distance > 1)) {
                 tohit.addModifier(1, "target prone and at range");
-            } else if (target_state.isprone && (distance == 1)) {
+            } else if (target_state.isProne() && (distance == 1)) {
                 tohit.addModifier(-2, "target prone and adjacent");
             }
             boolean isShooterInfantry = (shooter instanceof Infantry);
@@ -865,15 +781,17 @@ public class FireControl {
 
     public enum PhysicalAttackType {
         LEFT_KICK, RIGHT_KICK, LEFT_PUNCH, RIGHT_PUNCH
-    };
+    }
+
+    ;
 
     /**
      * Makes a rather poor guess as to what the to hit modifier will be with a
      * physical attack.
      */
     public static ToHitData guessToHitModifier_Physical(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, PhysicalAttackType attack_type, IGame game) {
+                                                        EntityState shooter_state, Targetable target,
+                                                        EntityState target_state, PhysicalAttackType attack_type, IGame game) {
         final String METHOD_NAME = "guessToHitModifier(Entity, EntityState, Targetable, EntityState, PhysicalAttackType, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -890,7 +808,7 @@ public class FireControl {
             if (target_state == null) {
                 target_state = new EntityState(target);
             }
-            int distance = shooter_state.position.distance(target_state.position);
+            int distance = shooter_state.getPosition().distance(target_state.getPosition());
             if (distance > 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't hit that far");
             }
@@ -906,13 +824,13 @@ public class FireControl {
             } else {
                 arc = Compute.ARC_FORWARD; // assume kick
             }
-            if (!(Compute.isInArc(shooter_state.position,
-                    shooter_state.secondary_facing, target_state.position, arc) || (distance == 0))) {
+            if (!(Compute.isInArc(shooter_state.getPosition(),
+                    shooter_state.getSecondaryFacing(), target_state.getPosition(), arc) || (distance == 0))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
             }
 
-            IHex attHex = game.getBoard().getHex(shooter_state.position);
-            IHex targHex = game.getBoard().getHex(target_state.position);
+            IHex attHex = game.getBoard().getHex(shooter_state.getPosition());
+            IHex targHex = game.getBoard().getHex(target_state.getPosition());
             final int attackerElevation = shooter.getElevation()
                     + attHex.getElevation();
             final int attackerHeight = shooter.absHeight() + attHex.getElevation();
@@ -927,7 +845,7 @@ public class FireControl {
                             "Target elevation not in range");
                 }
 
-                if (shooter_state.isprone) {
+                if (shooter_state.isProne()) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "can't punch while prone");
                 }
@@ -957,7 +875,7 @@ public class FireControl {
             } else // assuming kick
             {
                 tohit.addModifier(shooter.getCrew().getPiloting() - 2, "base");
-                if (shooter_state.isprone) {
+                if (shooter_state.isProne()) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "Can't kick while prone");
                 }
@@ -1013,8 +931,8 @@ public class FireControl {
      * exceptionally slow. Most of this is copied from WeaponAttack.
      */
     public static ToHitData guessToHitModifier(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, Mounted mw, IGame game) {
+                                               EntityState shooter_state, Targetable target,
+                                               EntityState target_state, Mounted mw, IGame game) {
         final String METHOD_NAME = "guessToHitModifier(Entity, EntityState, Targetable, EntityState, Mounted, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -1038,21 +956,21 @@ public class FireControl {
                             "weapon out of ammo");
                 }
             }
-            if ((shooter_state.isprone)
+            if ((shooter_state.isProne())
                     && ((shooter.isLocationBad(Mech.LOC_RARM)) || (shooter
-                            .isLocationBad(Mech.LOC_LARM)))) {
+                    .isLocationBad(Mech.LOC_LARM)))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "prone and missing an arm.");
             }
 
-            int shooter_facing = shooter_state.facing;
+            int shooter_facing = shooter_state.getFacing();
             if (shooter.isSecondaryArcWeapon(shooter.getEquipmentNum(mw))) {
-                shooter_facing = shooter_state.secondary_facing; // check if torso
+                shooter_facing = shooter_state.getSecondaryFacing(); // check if torso
             }
             // twists affect
             // weapon
-            boolean inarc = Compute.isInArc(shooter_state.position, shooter_facing,
-                    target_state.position,
+            boolean inarc = Compute.isInArc(shooter_state.getPosition(), shooter_facing,
+                    target_state.getPosition(),
                     shooter.getWeaponArc(shooter.getEquipmentNum(mw)));
             if (!inarc) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "not in arc");
@@ -1061,10 +979,10 @@ public class FireControl {
             boolean isShooterInfantry = (shooter instanceof Infantry);
             boolean isWeaponInfantry = ((WeaponType) mw.getType())
                     .hasFlag(WeaponType.F_INFANTRY);
-            if ((shooter_state.position == null) || (target_state.position == null)) {
+            if ((shooter_state.getPosition() == null) || (target_state.getPosition() == null)) {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "null position");
             }
-            int distance = shooter_state.position.distance(target_state.position);
+            int distance = shooter_state.getPosition().distance(target_state.getPosition());
 
             if ((distance == 0) && (!isShooterInfantry)) {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
@@ -1078,9 +996,9 @@ public class FireControl {
             // There is kindly already a class that will calculate line of sight for
             // me
             LosEffects loseffects = LosEffects.calculateLos(game, shooter.getId(),
-                    target, shooter_state.position, target_state.position, false);
+                    target, shooter_state.getPosition(), target_state.getPosition(), false);
             // water is a separate loseffect
-            IHex target_hex = game.getBoard().getHex(target_state.position);
+            IHex target_hex = game.getBoard().getHex(target_state.getPosition());
             if (target instanceof Entity) {
                 if (target_hex.containsTerrain(Terrains.WATER)
                         && (target_hex.terrainLevel(Terrains.WATER) == 1)
@@ -1105,7 +1023,7 @@ public class FireControl {
                 }
             }
             if (shooter instanceof Tank) {
-                int sensors = ((Tank)shooter).getSensorHits();
+                int sensors = ((Tank) shooter).getSensorHits();
                 if (sensors > 0) {
                     tohit.addModifier(sensors, "sensor damage");
                 }
@@ -1164,16 +1082,16 @@ public class FireControl {
                 tohit.addModifier(((WeaponType) mw.getType()).getToHitModifier(),
                         "weapon to-hit");
             }
-            if (((WeaponType)mw.getType()).getAmmoType() != AmmoType.T_NA) {
-                AmmoType atype = (AmmoType)mw.getLinked().getType();
+            if (((WeaponType) mw.getType()).getAmmoType() != AmmoType.T_NA) {
+                AmmoType atype = (AmmoType) mw.getLinked().getType();
                 if ((atype != null) && (atype.getToHitModifier() != 0)) {
                     tohit.addModifier(atype.getToHitModifier(),
-                        "ammunition to-hit modifier");
+                            "ammunition to-hit modifier");
                 }
             }
             if (shooter.hasTargComp()
                     && ((WeaponType) mw.getType())
-                            .hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    .hasFlag(WeaponType.F_DIRECT_FIRE)) {
                 tohit.addModifier(-1, "targeting computer");
             }
 
@@ -1186,11 +1104,10 @@ public class FireControl {
     /**
      * Makes an educated guess as to the to hit modifier by an aerospace unit
      * flying on a ground map doing a strike attack on a unit
-     *
      */
     public static ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
-            Targetable target, EntityState target_state, MovePath shooter_path,
-            Mounted mw, IGame game, boolean assume_under_flight_plan) {
+                                                                Targetable target, EntityState target_state, MovePath shooter_path,
+                                                                Mounted mw, IGame game, boolean assume_under_flight_plan) {
         final String METHOD_NAME = "guessAirToGroundStrikeToHitModifier(Entity, Targetable, EntityState, MovePath, Mounted, IGame, boolean)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -1237,21 +1154,19 @@ public class FireControl {
      * Checks if a target lies under a move path, to see if an aero unit can
      * attack it
      *
-     * @param p
-     *            move path to check
-     * @param target_state
-     *            used for targets position
+     * @param p            move path to check
+     * @param target_state used for targets position
      * @return
      */
     public static boolean isTargetUnderMovePath(MovePath p,
-            EntityState target_state) {
+                                                EntityState target_state) {
         final String METHOD_NAME = "isTargetUnderMovePath(MovePath, EntityState)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
         try {
-            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements();) {
+            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements(); ) {
                 Coords cord = e.nextElement().getPosition();
-                if (cord.equals(target_state.position)) {
+                if (cord.equals(target_state.getPosition())) {
                     return true;
                 }
             }
@@ -1270,13 +1185,13 @@ public class FireControl {
      * @return
      */
     ArrayList<Entity> getEnemiesUnderFlightPath(MovePath p, Entity shooter,
-            IGame game) {
+                                                IGame game) {
         final String METHOD_NAME = "getEnemiesUnderFlightPath(MovePath, Entity, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
         try {
             ArrayList<Entity> ret = new ArrayList<Entity>();
-            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements();) {
+            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements(); ) {
                 Coords cord = e.nextElement().getPosition();
                 Entity enemy = game.getFirstEnemyEntity(cord, shooter);
                 if (enemy != null) {
@@ -1333,7 +1248,7 @@ public class FireControl {
      * if accurate
      */
     String checkGuess_Physical(Entity shooter, Targetable target,
-            PhysicalAttackType attack_type, IGame game) {
+                               PhysicalAttackType attack_type, IGame game) {
         final String METHOD_NAME = "getGuess_Physical(Entity, Targetable, PhysicalAttackType, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -1456,19 +1371,19 @@ public class FireControl {
      * not change facing
      */
     FiringPlan guessFullFiringPlan(Entity shooter, EntityState shooter_state,
-            Targetable target, EntityState target_state, IGame game) {
+                                   Targetable target, EntityState target_state, IGame game) {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
         FiringPlan myplan = new FiringPlan();
         if (shooter.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      LogLevel.ERROR, "Shooter's position is NULL!");
+                    LogLevel.ERROR, "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      LogLevel.ERROR, "Target's position is NULL!");
+                    LogLevel.ERROR, "Target's position is NULL!");
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
@@ -1480,7 +1395,7 @@ public class FireControl {
         }
         calculateUtility(
                 myplan,
-                (shooter instanceof Mech) ? ((shooter.getHeatCapacity() - shooter_state.heat) + 5)
+                (shooter instanceof Mech) ? ((shooter.getHeatCapacity() - shooter_state.getHeat()) + 5)
                         : 999);
         return myplan;
     }
@@ -1498,8 +1413,8 @@ public class FireControl {
      * @return
      */
     FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target,
-            EntityState target_state, MovePath shooter_path, IGame game,
-            boolean assume_under_flight_path) {
+                                        EntityState target_state, MovePath shooter_path, IGame game,
+                                        boolean assume_under_flight_path) {
         if (target_state == null) {
             target_state = new EntityState(target);
         }
@@ -1511,14 +1426,14 @@ public class FireControl {
         FiringPlan myplan = new FiringPlan();
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
-                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      LogLevel.ERROR, "Shooter's position is NULL!");
+                    "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
+                    LogLevel.ERROR, "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(),
-                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      LogLevel.ERROR, "Target's position is NULL!");
+                    "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
+                    LogLevel.ERROR, "Target's position is NULL!");
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
@@ -1530,7 +1445,7 @@ public class FireControl {
             }
         }
         calculateUtility(myplan, 999); // Aeros don't have heat capacity, (I
-                                       // think?)
+        // think?)
         return myplan;
     }
 
@@ -1539,7 +1454,7 @@ public class FireControl {
      * weapons at the target
      */
     double guessExpectedDamage(Entity shooter, EntityState shooter_state,
-            Targetable target, EntityState target_state, IGame game) {
+                               Targetable target, EntityState target_state, IGame game) {
         // FiringPlan
         // fullplan=guessFullFiringPlan(shooter,shooter_state,target,target_state,game);
         FiringPlan fullplan = guessFullFiringPlan(shooter, shooter_state,
@@ -1556,14 +1471,14 @@ public class FireControl {
         FiringPlan myplan = new FiringPlan();
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
-                      "Shooter's position is NULL!");
+                    "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
+                    "Shooter's position is NULL!");
             return myplan;
         }
         if (target.getPosition() == null) {
             owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
-                      "Target's position is NULL!");
+                    "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
+                    "Target's position is NULL!");
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
@@ -1581,7 +1496,7 @@ public class FireControl {
      * under the heat of the index
      */
     FiringPlan[] calcFiringPlansUnderHeat(FiringPlan maxplan, int maxheat,
-            IGame game) {
+                                          IGame game) {
         if (maxheat < 0) {
             maxheat = 0; // can't be worse than zero heat
         }
@@ -1621,7 +1536,7 @@ public class FireControl {
      * Gets the 'best' firing plan under a certain heat No twisting is done
      */
     FiringPlan getBestFiringPlanUnderHeat(Entity shooter, Targetable target,
-            int maxheat, IGame game) {
+                                          int maxheat, IGame game) {
         if (maxheat < 0) {
             maxheat = 0; // can't have less than zero heat
         }
@@ -1660,8 +1575,8 @@ public class FireControl {
      * Guesses the 'best' firing plan under a certain heat No twisting is done
      */
     FiringPlan guessBestFiringPlanUnderHeat(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, int maxheat, IGame game) {
+                                            EntityState shooter_state, Targetable target,
+                                            EntityState target_state, int maxheat, IGame game) {
         if (maxheat < 0) {
             maxheat = 0; // can't have less than zero heat
         }
@@ -1680,7 +1595,7 @@ public class FireControl {
      * is done
      */
     FiringPlan guessBestFiringPlan(Entity shooter, EntityState shooter_state,
-            Targetable target, EntityState target_state, IGame game) {
+                                   Targetable target, EntityState target_state, IGame game) {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
@@ -1692,7 +1607,7 @@ public class FireControl {
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan,
                 fullplan.getHeat(), game);
         FiringPlan best_plan = new FiringPlan();
-        int overheat = (shooter.getHeatCapacity() - shooter_state.heat) + 4;
+        int overheat = (shooter.getHeatCapacity() - shooter_state.getHeat()) + 4;
         for (int i = 0; i < fullplan.getHeat(); i++) {
             calculateUtility(heatplans[i], overheat);
             if ((best_plan.utility < heatplans[i].utility)) {
@@ -1707,7 +1622,7 @@ public class FireControl {
      * twisting
      */
     FiringPlan getBestFiringPlanUnderHeatWithTwists(Entity shooter,
-            Targetable target, int maxheat, IGame game) {
+                                                    Targetable target, int maxheat, IGame game) {
         int orig_facing = shooter.getSecondaryFacing();
         FiringPlan notwist_plan = getBestFiringPlanUnderHeat(shooter, target,
                 maxheat, game);
@@ -1726,7 +1641,7 @@ public class FireControl {
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
                 && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                        .getExpectedDamage())) {
+                .getExpectedDamage())) {
             return notwist_plan;
         }
         if (lefttwist_plan.getExpectedDamage() > righttwist_plan
@@ -1741,7 +1656,7 @@ public class FireControl {
      * of twisting
      */
     FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target,
-            IGame game) {
+                                           IGame game) {
         int orig_facing = shooter.getSecondaryFacing();
         FiringPlan notwist_plan = getBestFiringPlan(shooter, target, game);
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1757,7 +1672,7 @@ public class FireControl {
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
                 && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                        .getExpectedDamage())) {
+                .getExpectedDamage())) {
             return notwist_plan;
         }
         if (lefttwist_plan.getExpectedDamage() > righttwist_plan
@@ -1772,30 +1687,30 @@ public class FireControl {
      * of twisting
      */
     FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, int maxheat, IGame game) {
+                                                      EntityState shooter_state, Targetable target,
+                                                      EntityState target_state, int maxheat, IGame game) {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
-        int orig_facing = shooter_state.facing;
+        int orig_facing = shooter_state.getFacing();
         FiringPlan notwist_plan = guessBestFiringPlanUnderHeat(shooter,
                 shooter_state, target, target_state, maxheat, game);
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooter_state.secondary_facing = correct_facing(orig_facing + 1);
+        shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                 shooter_state, target, target_state, maxheat, game);
         righttwist_plan.twist = 1;
-        shooter_state.secondary_facing = correct_facing(orig_facing - 1);
+        shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                 shooter_state, target, target_state, maxheat, game);
         lefttwist_plan.twist = -1;
-        shooter_state.secondary_facing = orig_facing;
+        shooter_state.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
                 && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                        .getExpectedDamage())) {
+                .getExpectedDamage())) {
             return notwist_plan;
         }
         if (lefttwist_plan.getExpectedDamage() > righttwist_plan
@@ -1810,30 +1725,30 @@ public class FireControl {
      * of twisting
      */
     FiringPlan guessBestFiringPlanWithTwists(Entity shooter,
-            EntityState shooter_state, Targetable target,
-            EntityState target_state, IGame game) {
+                                             EntityState shooter_state, Targetable target,
+                                             EntityState target_state, IGame game) {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
-        int orig_facing = shooter_state.facing;
+        int orig_facing = shooter_state.getFacing();
         FiringPlan notwist_plan = guessBestFiringPlan(shooter, shooter_state,
                 target, target_state, game);
         if (!shooter.canChangeSecondaryFacing()) {
             return notwist_plan;
         }
-        shooter_state.secondary_facing = correct_facing(orig_facing + 1);
+        shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = guessBestFiringPlan(shooter,
                 shooter_state, target, target_state, game);
         righttwist_plan.twist = 1;
-        shooter_state.secondary_facing = correct_facing(orig_facing - 1);
+        shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = guessBestFiringPlan(shooter, shooter_state,
                 target, target_state, game);
         lefttwist_plan.twist = -1;
-        shooter_state.secondary_facing = orig_facing;
+        shooter_state.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
                 && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                        .getExpectedDamage())) {
+                .getExpectedDamage())) {
             return notwist_plan;
         }
         if (lefttwist_plan.getExpectedDamage() > righttwist_plan

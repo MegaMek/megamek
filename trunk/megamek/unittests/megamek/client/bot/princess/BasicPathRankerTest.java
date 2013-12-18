@@ -25,7 +25,6 @@ import megamek.common.MoveStep;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import org.junit.Assert;
 import org.junit.Before;
@@ -273,7 +272,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
         Mockito.doReturn(15.0)
                 .when(testRanker)
-                .calculateDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(FireControl.EntityState.class),
+                .calculateDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(EntityState.class),
                         Mockito.any(MovePath.class), Mockito.any(IGame.class));
         Mockito.doReturn(10.0)
                 .when(testRanker)
@@ -328,7 +327,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockMover.isClan()).thenReturn(false);
         Mockito.when(mockPrincess.wantsToFlee(Mockito.eq(mockMover))).thenReturn(false);
 
-        Coords finalCoords = new Coords(0,0);
+        Coords finalCoords = new Coords(0, 0);
 
         MoveStep mockLastStep = Mockito.mock(MoveStep.class);
         Mockito.when(mockLastStep.getFacing()).thenReturn(0);
@@ -355,7 +354,7 @@ public class BasicPathRankerTest {
         Map<Integer, Double> bestDamageByEnemies = new TreeMap<Integer, Double>();
         Mockito.when(testRanker.getBestDamageByEnemies()).thenReturn(bestDamageByEnemies);
 
-        Coords enemyMech1Position = Mockito.spy(new Coords(10,10));
+        Coords enemyMech1Position = Mockito.spy(new Coords(10, 10));
         Mockito.doReturn(3)
                 .when(enemyMech1Position)
                 .direction(Mockito.any(Coords.class));
@@ -392,7 +391,7 @@ public class BasicPathRankerTest {
                 .evaluateUnmovedEnemy(Mockito.eq(mockEnemyMech2), Mockito.any(MovePath.class));
         testEnemies.add(mockEnemyMech2);
 
-        Coords friendsCoords = new Coords(10,10);
+        Coords friendsCoords = new Coords(10, 10);
 
         double baseRank = -126.4; // The rank I expect to get with the above settings.
 
@@ -535,7 +534,7 @@ public class BasicPathRankerTest {
                 .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
 
         // Change the distance to my friends.
-        friendsCoords = new Coords(0,10);
+        friendsCoords = new Coords(0, 10);
         expected = new RankedPath(-126.35, mockPath, "Calculation: fall mod [0.0 = 0.0 * 10.0] + " +
                 "braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [120.00 = 12.00 * 10.00] - " +
                 "herdingMod [0.10 = 10.00 * 0.01] - facingMod [0.00 = max(0, 50 * {0 - 1})]");
@@ -544,7 +543,7 @@ public class BasicPathRankerTest {
         if (baseRank > actual.rank) {
             Assert.fail("The closer I am to my friends, the higher the path rank should be.");
         }
-        friendsCoords = new Coords(20,10);
+        friendsCoords = new Coords(20, 10);
         expected = new RankedPath(-126.45, mockPath, "Calculation: fall mod [0.0 = 0.0 * 10.0] + " +
                 "braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [120.00 = 12.00 * 10.00] - " +
                 "herdingMod [0.20 = 20.00 * 0.01] - facingMod [0.00 = max(0, 50 * {0 - 1})]");
@@ -553,7 +552,7 @@ public class BasicPathRankerTest {
         if (baseRank < actual.rank) {
             Assert.fail("The further I am from my friends, the lower the path rank should be.");
         }
-        friendsCoords = new Coords(10,10);
+        friendsCoords = new Coords(10, 10);
 
         // Set myself up to run away.
         double baseFleeingRank = -726.4;
@@ -630,18 +629,18 @@ public class BasicPathRankerTest {
         List<Entity> enemyList = new ArrayList<Entity>(3);
 
         Entity enemyMech = Mockito.mock(BipedMech.class);
-        Mockito.when(enemyMech.getPosition()).thenReturn(new Coords(10,10));
+        Mockito.when(enemyMech.getPosition()).thenReturn(new Coords(10, 10));
         enemyList.add(enemyMech);
 
         Entity enemyTank = Mockito.mock(Tank.class);
-        Mockito.when(enemyTank.getPosition()).thenReturn(new Coords(10,15));
+        Mockito.when(enemyTank.getPosition()).thenReturn(new Coords(10, 15));
         enemyList.add(enemyTank);
 
         Entity enemyBA = Mockito.mock(BattleArmor.class);
-        Mockito.when(enemyBA.getPosition()).thenReturn(new Coords(15,15));
+        Mockito.when(enemyBA.getPosition()).thenReturn(new Coords(15, 15));
         enemyList.add(enemyBA);
 
-        Coords position = new Coords(0,0);
+        Coords position = new Coords(0, 0);
         Entity me = Mockito.mock(BipedMech.class);
         IGame mockGame = Mockito.mock(IGame.class);
 

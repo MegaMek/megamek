@@ -23,7 +23,6 @@ import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.client.bot.princess.FireControl.EntityState;
 import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.common.Aero;
@@ -106,15 +105,15 @@ public class BasicPathRanker extends PathRanker {
             getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "no facing set for " + enemy.getDisplayName());
             return false;
         }
-        return enemyFacingSet.contains(new CoordFacingCombo(behind,myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind,(myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind,(myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank,myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank,(myFacing + 4) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank,(myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank,myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank,(myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank,(myFacing + 2) % 6));
+        return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
+                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -132,7 +131,7 @@ public class BasicPathRanker extends PathRanker {
 
             //Aeros always move after other units, and would require an entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if(enemy instanceof Aero) {
+            if (enemy instanceof Aero) {
                 return returnResponse;
             }
 
@@ -150,20 +149,20 @@ public class BasicPathRanker extends PathRanker {
             HexLine leftBounds;
             HexLine rightBounds;
             if (path.getEntity().canChangeSecondaryFacing()) {
-                leftBounds = new HexLine(behind,(myFacing + 2) % 6);
-                rightBounds = new HexLine(behind,(myFacing + 4) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 2) % 6);
+                rightBounds = new HexLine(behind, (myFacing + 4) % 6);
             } else {
-                leftBounds = new HexLine(behind,(myFacing + 1) % 6);
-                rightBounds = new HexLine(behind,(myFacing + 5) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 1) % 6);
+                rightBounds = new HexLine(behind, (myFacing + 5) % 6);
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
-            if(inMyLos) {
+            if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range) *
                         damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
-            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy,range) * damageDiscount);
+            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range) * damageDiscount);
 
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -232,12 +231,12 @@ public class BasicPathRanker extends PathRanker {
 
     protected double calculateMyDamagePotential(MovePath path, Entity enemy, IGame game) {
         FiringPlan myFiringPlan;
-        if(path.getEntity() instanceof Aero) {
-            myFiringPlan = fireControl.guessFullAirToGroundPlan(path.getEntity(),enemy,
-                    new EntityState(enemy), path,game,false);
+        if (path.getEntity() instanceof Aero) {
+            myFiringPlan = fireControl.guessFullAirToGroundPlan(path.getEntity(), enemy,
+                    new EntityState(enemy), path, game, false);
         } else {
             myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
-                    new EntityState(path),enemy, null, game);
+                    new EntityState(path), enemy, null, game);
         }
         return myFiringPlan.utility;
     }
@@ -381,7 +380,7 @@ public class BasicPathRanker extends PathRanker {
                 }
 
                 EntityEvaluationResponse eval;
-                if((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
+                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path);
@@ -396,7 +395,7 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // Include damage I can do to strategic targets
-            for(int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
+            for (int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
                 Targetable target = getOwner().getFireControl().getAdditionalTargets().get(i);
                 if (target.isOffBoard() || (target.getPosition() == null)
                         || !game.getBoard().contains(target.getPosition())) {
@@ -405,7 +404,7 @@ public class BasicPathRanker extends PathRanker {
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
                         new EntityState(path), target, null, game);
                 double myDamagePotential = myFiringPlan.utility;
-                if(myDamagePotential>maximumDamageDone) {
+                if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
                 }
                 FireControl.PhysicalInfo myKick = new FireControl.PhysicalInfo(
@@ -491,7 +490,7 @@ public class BasicPathRanker extends PathRanker {
                     double damage = fireControl
                             .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
                                     null, (e.getHeatCapacity() - e.heat) + 5, game)
-                                    .getExpectedDamage();
+                            .getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
                     }
@@ -525,17 +524,17 @@ public class BasicPathRanker extends PathRanker {
     /**
      * Gives the distance to the closest enemy unit, or zero if none exist
      *
-     * @param me Entity who has enemies
+     * @param me       Entity who has enemies
      * @param position Coords from which the closest enemy is found
-     * @param game IGame that we're playing
+     * @param game     IGame that we're playing
      */
     @Override
-    public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
-            Entity closest = findClosestEnemy(me,position, game);
+            Entity closest = findClosestEnemy(me, position, game);
             if (closest == null) {
                 return 0;
             }
@@ -547,24 +546,23 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Gives the distance to the closest edge
-     *
      */
     public int distanceToClosestEdge(Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
-            int width=game.getBoard().getWidth();
-            int height=game.getBoard().getHeight();
-            int minimum=position.x;
-            if((width-position.x)<minimum) {
-                minimum=position.x;
+            int width = game.getBoard().getWidth();
+            int height = game.getBoard().getHeight();
+            int minimum = position.x;
+            if ((width - position.x) < minimum) {
+                minimum = position.x;
             }
-            if(position.y<minimum) {
-                minimum=position.y;
+            if (position.y < minimum) {
+                minimum = position.y;
             }
-            if((height-position.y)<minimum) {
-                minimum=height-position.y;
+            if ((height - position.y) < minimum) {
+                minimum = height - position.y;
             }
             return minimum;
         } finally {
@@ -582,42 +580,42 @@ public class BasicPathRanker extends PathRanker {
      * @return The distance to the unit's home edge.
      */
     public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
-    	final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
+        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
-        	String msg = "Getting distance to home edge: " + homeEdge.toString();
+            String msg = "Getting distance to home edge: " + homeEdge.toString();
 
-	        int width=game.getBoard().getWidth();
-	        int height=game.getBoard().getHeight();
+            int width = game.getBoard().getWidth();
+            int height = game.getBoard().getHeight();
 
-	        int distance;
-	        switch (homeEdge) {
-	        	case NORTH : {
-	        		distance = position.y;
-	        		break;
-	        	}
-	        	case SOUTH : {
-	        		distance = height - position.y - 1;
-	        		break;
-	        	}
-	        	case WEST : {
-	        		distance = position.x;
-	        		break;
-	        	}
-	        	case EAST : {
-	        		distance = width - position.x - 1;
-	        		break;
-	        	}
-	        	default : {
-	        		owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-	        		distance = position.y;
-	        	}
-	        }
+            int distance;
+            switch (homeEdge) {
+                case NORTH: {
+                    distance = position.y;
+                    break;
+                }
+                case SOUTH: {
+                    distance = height - position.y - 1;
+                    break;
+                }
+                case WEST: {
+                    distance = position.x;
+                    break;
+                }
+                case EAST: {
+                    distance = width - position.x - 1;
+                    break;
+                }
+                default: {
+                    owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                    distance = position.y;
+                }
+            }
 
-	        msg += " -> " + distance;
-	        owner.log(BasicPathRanker.class, METHOD_NAME, msg);
-	        return distance;
+            msg += " -> " + distance;
+            owner.log(BasicPathRanker.class, METHOD_NAME, msg);
+            return distance;
         } finally {
             owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }

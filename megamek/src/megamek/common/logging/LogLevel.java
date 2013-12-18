@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 9/7/13 9:31 AM
  */

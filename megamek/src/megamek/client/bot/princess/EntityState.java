@@ -21,6 +21,10 @@ import megamek.common.Targetable;
 
 /**
  * EntityState describes a hypothetical situation an entity could be in when firing
+ *
+ * @version $Id$
+ * @modifiedBy Deric Page (deric dot page at usa dot net)
+ * @since 12/18/13 9:28 AM
  */
 public class EntityState {
     private Coords position;

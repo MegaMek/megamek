@@ -17,7 +17,7 @@ package megamek.client.bot.princess;
  * Created with IntelliJ IDEA.
  *
  * @author : Deric "Netzilla" Page (deric dot page at usa dot net
- * @version %Id%
+ * @version $Id$
  * @since : 8/17/13 10:37 PM
  */
 public enum HomeEdge {

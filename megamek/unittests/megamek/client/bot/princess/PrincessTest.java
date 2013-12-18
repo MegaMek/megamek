@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 11/22/13 8:33 AM
  */
 @RunWith(JUnit4.class)

@@ -1474,6 +1474,7 @@ public class MiscType extends EquipmentType {
 
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
         EquipmentType.addType(MiscType.createISHeatDissipating());
+        EquipmentType.addType(MiscType.createCLHeatDissipating());
         EquipmentType.addType(MiscType.createISImpactResistant());
         EquipmentType.addType(MiscType.createISBallisticReinforced());
 
@@ -8190,44 +8191,6 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
         misc.techLevel.put(3126, TechConstants.T_CLAN_ADVANCED);
-
-        return misc;
-    }
-
-    public static MiscType createCLImpactResistant() {
-        MiscType misc = new MiscType();
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_IMPACT_RESISTANT);
-        misc.setInternalName("Clan " + misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = false;
-        misc.spreadable = true;
-        misc.flags = misc.flags.or(F_IMPACT_RESISTANT).or(F_MECH_EQUIPMENT);
-        misc.bv = 0;
-        misc.introDate = 3103;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
-        misc.techRating = RATING_E;
-        misc.techLevel.put(misc.introDate, TechConstants.T_CLAN_TW);
-
-        return misc;
-    }
-
-    public static MiscType createCLBallisticReinforced() {
-        MiscType misc = new MiscType();
-        misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        misc.setInternalName("Clan " + misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = false;
-        misc.spreadable = true;
-        misc.flags = misc.flags.or(F_BALLISTIC_REINFORCED).or(F_MECH_EQUIPMENT);
-        misc.bv = 0;
-        misc.introDate = 3137;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_F };
-        misc.techRating = RATING_F;
-        misc.techLevel.put(misc.introDate, TechConstants.T_CLAN_TW);
 
         return misc;
     }

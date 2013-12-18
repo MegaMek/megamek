@@ -12,14 +12,14 @@ import java.net.URL;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/4/13 9:20 PM
  */
 public class HelpDialog extends JDialog {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1442198850518387690L;
     private static final int WIDTH = 600;
@@ -48,7 +48,7 @@ public class HelpDialog extends JDialog {
                     if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                         mainView.setPage(e.getURL());
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     handleError("hyperlinkUpdate(HyperlinkEvent)", ex, false);
                 }
             }

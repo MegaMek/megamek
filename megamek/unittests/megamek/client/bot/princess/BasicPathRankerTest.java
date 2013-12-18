@@ -40,7 +40,7 @@ import java.util.TreeMap;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 12/5/13 10:19 AM
  */
 @RunWith(JUnit4.class)

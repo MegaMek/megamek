@@ -19,7 +19,7 @@ import java.util.Date;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 9/7/13 9:33 AM
  */
@@ -36,7 +36,7 @@ public class Logger {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
-                           String msg) {
+                    String msg) {
         if (level.getLevel() > verbosity.getLevel()) {
             return;
         }

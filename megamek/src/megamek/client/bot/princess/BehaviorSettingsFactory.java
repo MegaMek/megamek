@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 9/6/13 6:50 PM
  */
@@ -126,7 +126,7 @@ public class BehaviorSettingsFactory {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
                 logger.log(BehaviorSettingsFactory.class, "buildPrincessBehaviorDoc()", LogLevel.ERROR,
-                           "Could not load " + PRINCESS_BEHAVIOR_PATH);
+                        "Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(behaviorFile));
@@ -183,13 +183,13 @@ public class BehaviorSettingsFactory {
             if (!behaviorFile.exists()) {
                 if (!behaviorFile.createNewFile()) {
                     logger.log(BehaviorSettingsFactory.class, METHOD_NAME, LogLevel.ERROR,
-                               "Could not create " + PRINCESS_BEHAVIOR_PATH);
+                            "Could not create " + PRINCESS_BEHAVIOR_PATH);
                     return false;
                 }
             }
             if (!behaviorFile.canWrite()) {
                 logger.log(BehaviorSettingsFactory.class, METHOD_NAME, LogLevel.ERROR,
-                           "Could not write to " + PRINCESS_BEHAVIOR_PATH);
+                        "Could not write to " + PRINCESS_BEHAVIOR_PATH);
                 return false;
             }
 
@@ -247,6 +247,7 @@ public class BehaviorSettingsFactory {
      */
     public final BehaviorSettings BERSERK_BEHAVIOR = buildBerserkBehavior();
     public static final String BERSERK_BEHAVIOR_DESCRIPTION = "BERSERK";
+
     private BehaviorSettings buildBerserkBehavior() {
         try {
             BehaviorSettings berserkBehavior = new BehaviorSettings();
@@ -281,6 +282,7 @@ public class BehaviorSettingsFactory {
      */
     public final BehaviorSettings COWARDLY_BEHAVIOR = buildCowardlyBehavior();
     public static final String COWARDLY_BEHAVIOR_DESCRIPTION = "COWARDLY";
+
     private BehaviorSettings buildCowardlyBehavior() {
         try {
             BehaviorSettings cowardlyBehavior = new BehaviorSettings();
@@ -315,6 +317,7 @@ public class BehaviorSettingsFactory {
      */
     public final BehaviorSettings ESCAPE_BEHAVIOR = buildEscapeBehavior();
     public static final String ESCAPE_BEHAVIOR_DESCRIPTION = "ESCAPE";
+
     private BehaviorSettings buildEscapeBehavior() {
         try {
             BehaviorSettings escapeBehavior = new BehaviorSettings();
@@ -349,6 +352,7 @@ public class BehaviorSettingsFactory {
      */
     public final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();
     public static final String DEFAULT_BEHAVIOR_DESCRIPTION = "DEFAULT";
+
     private BehaviorSettings buildDefaultBehavior() {
         try {
             BehaviorSettings defaultBehavior = new BehaviorSettings();

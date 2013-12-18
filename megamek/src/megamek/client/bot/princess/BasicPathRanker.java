@@ -23,8 +23,6 @@ import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.client.bot.princess.FireControl.FiringPlan;
-import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -220,8 +218,8 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
 
         // if they can kick me, and probably hit, they probably will.
-        FireControl.PhysicalInfo theirKick = new FireControl.PhysicalInfo(enemy, null, path.getEntity(),
-                new EntityState(path), PhysicalAttackType.RIGHT_KICK, game);
+        PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
+                new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner);
 
         if (theirKick.prob_to_hit <= 0.5) {
             return 0.0;
@@ -242,8 +240,8 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
-        FireControl.PhysicalInfo myKick = new FireControl.PhysicalInfo(path.getEntity(),
-                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK, game);
+        PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
+                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK, game, owner);
         if (myKick.prob_to_hit <= 0.5) {
             return 0;
         }
@@ -407,9 +405,9 @@ public class BasicPathRanker extends PathRanker {
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
                 }
-                FireControl.PhysicalInfo myKick = new FireControl.PhysicalInfo(
+                PhysicalInfo myKick = new PhysicalInfo(
                         path.getEntity(), new EntityState(path), target, null,
-                        PhysicalAttackType.RIGHT_KICK, game);
+                        PhysicalAttackType.RIGHT_KICK, game, owner);
                 double expectedKickDamage = myKick.expected_damage_on_hit * myKick.prob_to_hit;
                 if (expectedKickDamage > maximumPhysicalDamage) {
                     maximumPhysicalDamage = expectedKickDamage;

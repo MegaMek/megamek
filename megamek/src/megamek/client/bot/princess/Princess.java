@@ -15,12 +15,16 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
-import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -107,14 +111,14 @@ public class Princess extends BotClient {
 
     public void setShouldFlee(boolean shouldFlee, String reason) {
         log(getClass(), "setShouldFlee(boolean, String)", LogLevel.INFO, "Setting Should Flee " + shouldFlee +
-                                                                         " because: " + reason);
+                " because: " + reason);
         flee = shouldFlee;
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
         log(getClass(), "setBehaviorSettings(BehaviorSettings)", LogLevel.INFO, "New behavior settings for " +
-                                                                                getName() + "\n" +
-                                                                                behaviorSettings.toLog());
+                getName() + "\n" +
+                behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (PrincessException e) {
@@ -231,7 +235,7 @@ public class Princess extends BotClient {
             // act this turn
             // make sure weapons are loaded
             fireControl.loadAmmo(shooter, game);
-            FireControl.FiringPlan plan = fireControl.getBestFiringPlan(
+            FiringPlan plan = fireControl.getBestFiringPlan(
                     shooter, game);
             if (plan != null) {
                 log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
@@ -406,7 +410,7 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn
             Entity first_entity = game.getFirstEntity(getMyTurn());
             Entity hitter = first_entity;
-            FireControl.PhysicalInfo best_attack = null;
+            PhysicalInfo best_attack = null;
             do {
                 log(getClass(),
                         METHOD_NAME,
@@ -419,7 +423,7 @@ public class Princess extends BotClient {
                     if (e.getPosition() == null) {
                         continue; // Skip enemies not on the board.
                     }
-                    FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
+                    PhysicalInfo right_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
                     fireControl.calculateUtility(right_punch);
                     if (right_punch.utility > 0) {
@@ -428,7 +432,7 @@ public class Princess extends BotClient {
                             best_attack = right_punch;
                         }
                     }
-                    FireControl.PhysicalInfo left_punch = new FireControl.PhysicalInfo(
+                    PhysicalInfo left_punch = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
                     fireControl.calculateUtility(left_punch);
                     if (left_punch.utility > 0) {
@@ -437,7 +441,7 @@ public class Princess extends BotClient {
                             best_attack = left_punch;
                         }
                     }
-                    FireControl.PhysicalInfo right_kick = new FireControl.PhysicalInfo(
+                    PhysicalInfo right_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_KICK, game);
                     if (right_kick.utility > 0) {
                         if ((best_attack == null)
@@ -445,7 +449,7 @@ public class Princess extends BotClient {
                             best_attack = right_kick;
                         }
                     }
-                    FireControl.PhysicalInfo left_kick = new FireControl.PhysicalInfo(
+                    PhysicalInfo left_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_KICK, game);
                     if (left_kick.getExpectedDamage() > 0) {
                         if ((best_attack == null)
@@ -468,7 +472,7 @@ public class Princess extends BotClient {
                 // otherwise, check if the next entity can hit something
                 if (hitter.equals(first_entity)) {
                     hitter = null; // getNextEntity is incorrect, it does not
-                                   // return
+                    // return
                     // null at the end, it returns the first entity
                 }
             } while (hitter != null);
@@ -513,7 +517,7 @@ public class Princess extends BotClient {
             return false;
         }
 
-        Mech mech = (Mech)mover;
+        Mech mech = (Mech) mover;
         if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
             return false;
         }
@@ -591,7 +595,7 @@ public class Princess extends BotClient {
 
     protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths, int maxRange, double fallTollerance,
                                               int startingHomeDistance, int startingDistToNearestEnemy,
-                                              List<Entity> enemies, List<Entity> friends){
+                                              List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
                 startingDistToNearestEnemy, enemies, friends);
     }
@@ -665,7 +669,7 @@ public class Princess extends BotClient {
             double fallTolerance = getBehaviorSettings().getFallShameIndex() / 10d;
             int startingHomeDistance = getPathRanker().distanceToHomeEdge(entity.getPosition(),
                     getBehaviorSettings().getHomeEdge(), getGame());
-            int distanceToNerestEnemy = (int)getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
+            int distanceToNerestEnemy = (int) getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
                     getGame());
             List<RankedPath> rankedpaths = rankPaths(paths, entity.getMaxWeaponRange(), fallTolerance,
                     startingHomeDistance, distanceToNerestEnemy, getEnemyEntities(), getFriendEntities());
@@ -739,7 +743,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements();) {
+                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
                         if ((entity instanceof GunEmplacement)
@@ -789,7 +793,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements();) {
+                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         if (entity instanceof GunEmplacement
                                 && entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -815,7 +819,7 @@ public class Princess extends BotClient {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
-            String msg) {
+                    String msg) {
         logger.log(callingClass, methodName, level, msg);
     }
 
@@ -824,7 +828,7 @@ public class Princess extends BotClient {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
-            Throwable t) {
+                    Throwable t) {
         logger.log(callingClass, methodName, level, t);
     }
 
@@ -847,7 +851,7 @@ public class Princess extends BotClient {
     public void setHomeEdge(HomeEdge homeEdge) {
         if (homeEdge == null) {
             log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
-                new IllegalArgumentException("Home Edge is required!"));
+                    new IllegalArgumentException("Home Edge is required!"));
             return;
         }
         getBehaviorSettings().setHomeEdge(homeEdge);

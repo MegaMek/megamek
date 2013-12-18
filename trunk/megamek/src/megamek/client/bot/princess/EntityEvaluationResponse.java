@@ -17,7 +17,7 @@ import java.text.DecimalFormat;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 12/10/13 3:19 PM
  */
 public class EntityEvaluationResponse {

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/9/13 8:41 AM
  */
@@ -38,16 +38,16 @@ public class AddBotUtil {
     private final List<String> results = new ArrayList<String>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
-                                       "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
-                                       "<-p:>name." +
-                                       "\n  <-b> Specifies use if either TestBot or Princess.  If left out, " +
-                                       "TestBot will be used." +
-                                       "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
-                                       " DEFAULT will be used." +
-                                       "\n  <-v> Specifies the verbosity level for Princess " +
-                                       "(DEBUG/INFO/WARNING/ERROR)." +
-                                       "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
-                                       "or '-v' parameters are also used.";
+            "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
+            "<-p:>name." +
+            "\n  <-b> Specifies use if either TestBot or Princess.  If left out, " +
+            "TestBot will be used." +
+            "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
+            " DEFAULT will be used." +
+            "\n  <-v> Specifies the verbosity level for Princess " +
+            "(DEBUG/INFO/WARNING/ERROR)." +
+            "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
+            "or '-v' parameters are also used.";
 
     private String concatResults() {
         StringBuilder output = new StringBuilder();

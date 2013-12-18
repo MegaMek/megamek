@@ -33,7 +33,7 @@ import java.io.Reader;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 9/6/13 10:11 PM
  */
@@ -57,10 +57,10 @@ public class BehaviorSettingsFactoryTest {
         TestCase.assertEquals(5, testFactory.behaviorMap.size());
         String[] expectedBehaviors = new String[]
                 {BehaviorSettingsFactoryTestConstants.NM_RECKLESS,
-                 BehaviorSettingsFactoryTestConstants.NM_COWARDLY,
-                 BehaviorSettingsFactoryTestConstants.NM_ESCAPE,
-                 BehaviorSettingsFactoryTestConstants.NM_DEFAULT,
-                BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION};
+                        BehaviorSettingsFactoryTestConstants.NM_COWARDLY,
+                        BehaviorSettingsFactoryTestConstants.NM_ESCAPE,
+                        BehaviorSettingsFactoryTestConstants.NM_DEFAULT,
+                        BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION};
         TestCase.assertEquals(Sets.newSet(expectedBehaviors), Sets.newSet(testFactory.getBehaviorNames()));
 
         // Test loading a null behavior settings file.
@@ -68,9 +68,9 @@ public class BehaviorSettingsFactoryTest {
         TestCase.assertFalse(testFactory.loadBehaviorSettings(null));
         TestCase.assertEquals(4, testFactory.behaviorMap.size());
         expectedBehaviors = new String[]{BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
-                                         BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
-                                         BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
-                                         BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION};
+                BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+                BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
+                BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION};
         Assert.assertArrayEquals(expectedBehaviors, testFactory.getBehaviorNames());
     }
 }

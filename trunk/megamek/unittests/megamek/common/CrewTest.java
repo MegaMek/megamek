@@ -23,7 +23,7 @@ import org.mockito.Mockito;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 10/30/13 9:25 AM
  */
 @RunWith(JUnit4.class)

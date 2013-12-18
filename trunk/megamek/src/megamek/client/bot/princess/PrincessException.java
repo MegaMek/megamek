@@ -16,13 +16,13 @@ package megamek.client.bot.princess;
 /**
  * Created with IntelliJ IDEA.
  *
+ * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since: 8/17/13 11:03 PM
  */
 public class PrincessException extends Exception {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -657543995772098106L;
 

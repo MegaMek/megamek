@@ -19,32 +19,34 @@ import java.text.DecimalFormat;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 12/5/13 10:19 AM
  */
-class RankedPath implements Comparable<RankedPath>{
+class RankedPath implements Comparable<RankedPath> {
     public MovePath path;
     public double rank;
     public String reason;
 
-    public RankedPath() {}
+    public RankedPath() {
+    }
 
-    public RankedPath(double r,MovePath p, String reason) {
-        rank=r;
-        path=p;
+    public RankedPath(double r, MovePath p, String reason) {
+        rank = r;
+        path = p;
         this.reason = reason;
     }
+
     public int compareTo(RankedPath p) {
-        if(rank<p.rank) {
+        if (rank < p.rank) {
             return -1;
         }
-        if(p.rank<rank) {
+        if (p.rank < rank) {
             return 1;
         }
-        if(path.getKey().hashCode()<p.path.getKey().hashCode()) {
+        if (path.getKey().hashCode() < p.path.getKey().hashCode()) {
             return -1;
         }
-        if(path.getKey().hashCode()>p.path.getKey().hashCode()) {
+        if (path.getKey().hashCode() > p.path.getKey().hashCode()) {
             return 1;
         }
         return 0;

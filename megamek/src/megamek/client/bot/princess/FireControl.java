@@ -70,151 +70,6 @@ public class FireControl {
     }
 
     /**
-     * FiringPlan is a series of WeaponFireInfos describing a full attack turn
-     */
-    public class FiringPlan extends ArrayList<WeaponFireInfo> {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 8938385222775928559L;
-        int twist;
-        public double utility; // calculated elsewhere
-
-        FiringPlan() {
-            twist = 0;
-            utility = 0;
-        }
-
-        int getHeat() {
-            final String METHOD_NAME = "getHeat()";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                int heat = 0;
-                for (WeaponFireInfo f : this) {
-                    heat += f.getHeat();
-                }
-                return heat;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getExpectedDamage() {
-            final String METHOD_NAME = "getExpectedDamage()";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double exdam = 0;
-                for (WeaponFireInfo f : this) {
-                    exdam += f.getExpectedDamageOnHit() * f.getProbabilityToHit();
-                }
-                return exdam;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getExpectedCriticals() {
-            final String METHOD_NAME = "getExpectedCriticals()";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double expcrit = 0;
-                for (WeaponFireInfo f : this) {
-                    expcrit += f.getExpectedCriticals();
-                }
-                return expcrit;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        double getKillProbability() {
-            final String METHOD_NAME = "getKillProbability()";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                double killprob = 0;
-                for (WeaponFireInfo f : this) {
-                    killprob = killprob + ((1 - killprob) * f.getKillProbability());
-                }
-                return killprob;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        boolean containsWeapon(Mounted wep) {
-            final String METHOD_NAME = "containsWeapon(Mounted)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                for (WeaponFireInfo f : this) {
-                    if (f.getWeapon() == wep) {
-                        return true;
-                    }
-                }
-                return false;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        public Vector<EntityAction> getEntityActionVector(IGame game) {
-            final String METHOD_NAME = "getEntiyActionVector(IGame)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                Vector<EntityAction> ret = new Vector<EntityAction>();
-                if (size() == 0) {
-                    return ret;
-                }
-                if (twist == -1) {
-                    ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                            correct_facing(get(0).getShooter().getFacing() - 1)));
-                } else if (twist == +1) {
-                    ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                            correct_facing(get(0).getShooter().getFacing() + 1)));
-                }
-                for (WeaponFireInfo f : this) {
-                    ret.add(f.getWeaponAttackAction());
-                }
-                return ret;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
-        }
-
-        /*
-         * Returns a string describing the firing actions, their likelyhood to
-         * hit, and damage
-         */
-        String getDebugDescription(boolean detailed) {
-            if (size() == 0) {
-                return "Empty FiringPlan!";
-            }
-            String ret = new String("Firing Plan for "
-                    + get(0).getShooter().getChassis() + " at "
-                    + get(0).getTarget().getDisplayName() + " "
-                    + Integer.toString(size()) + " weapons fired \n");
-            if (detailed) {
-                for (WeaponFireInfo wfi : this) {
-                    ret += wfi.getDebugDescription() + "\n";
-                }
-            }
-            ret += "Total Expected Damage="
-                    + Double.toString(getExpectedDamage()) + "\n";
-            ret += "Total Expected Criticals="
-                    + Double.toString(getExpectedCriticals()) + "\n";
-            ret += "Kill Probability=" + Double.toString(getKillProbability())
-                    + "\n";
-            return ret;
-        }
-
-    }
-
-    /**
      * PhysicalInfo is a wrapper around a PhysicalAttackAction that includes
      * probability to hit and expected damage
      */
@@ -1101,7 +956,7 @@ public class FireControl {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(owner);
         if (shooter.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
                     LogLevel.ERROR, "Shooter's position is NULL!");
@@ -1146,10 +1001,10 @@ public class FireControl {
         }
         if (!assume_under_flight_path) {
             if (!isTargetUnderMovePath(shooter_path, target_state)) {
-                return new FiringPlan();
+                return new FiringPlan(owner);
             }
         }
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(owner);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                     "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
@@ -1194,7 +1049,7 @@ public class FireControl {
      * states
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan myplan = new FiringPlan();
+        FiringPlan myplan = new FiringPlan(owner);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                     "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
@@ -1227,8 +1082,8 @@ public class FireControl {
             maxheat = 0; // can't be worse than zero heat
         }
         FiringPlan[] best_plans = new FiringPlan[maxheat + 1];
-        best_plans[0] = new FiringPlan();
-        FiringPlan nonzeroheat_options = new FiringPlan();
+        best_plans[0] = new FiringPlan(owner);
+        FiringPlan nonzeroheat_options = new FiringPlan(owner);
         // first extract any firings of zero heat
         for (WeaponFireInfo f : maxplan) {
             if (f.getHeat() == 0) {
@@ -1239,12 +1094,12 @@ public class FireControl {
         }
         // build up heat table
         for (int i = 1; i <= maxheat; i++) {
-            best_plans[i] = new FiringPlan();
+            best_plans[i] = new FiringPlan(owner);
             best_plans[i].addAll(best_plans[i - 1]);
             for (WeaponFireInfo f : nonzeroheat_options) {
                 if ((i - f.getHeat()) >= 0) {
                     if (!best_plans[i - f.getHeat()].containsWeapon(f.getWeapon())) {
-                        FiringPlan testplan = new FiringPlan();
+                        FiringPlan testplan = new FiringPlan(owner);
                         testplan.addAll(best_plans[i - f.getHeat()]);
                         testplan.add(f);
                         calculateUtility(testplan, 999); // TODO fix overheat
@@ -1286,7 +1141,7 @@ public class FireControl {
         }
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan,
                 fullplan.getHeat(), game);
-        FiringPlan best_plan = new FiringPlan();
+        FiringPlan best_plan = new FiringPlan(owner);
         int overheat = (shooter.getHeatCapacity() - shooter.heat) + 4;
         for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -1332,7 +1187,7 @@ public class FireControl {
         }
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan,
                 fullplan.getHeat(), game);
-        FiringPlan best_plan = new FiringPlan();
+        FiringPlan best_plan = new FiringPlan(owner);
         int overheat = (shooter.getHeatCapacity() - shooter_state.getHeat()) + 4;
         for (int i = 0; i < fullplan.getHeat(); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -1520,7 +1375,7 @@ public class FireControl {
      * Overload this function if you think you can do better.
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
-        FiringPlan bestplan = new FiringPlan();
+        FiringPlan bestplan = new FiringPlan(owner);
         ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter,
                 game);
         for (Targetable e : enemies) {

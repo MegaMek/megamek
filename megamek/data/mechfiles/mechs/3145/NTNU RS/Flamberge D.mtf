@@ -1,0 +1,156 @@
+Version:1.0
+Flamberge
+D
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3077
+Source:Jihad
+Rules Level:4
+
+Mass:70
+Engine:280 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:11
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(IS/Clan)
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:31
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:8
+Plasma Rifle, Left Torso
+Plasma Rifle, Right Torso
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+SRM 6, Left Arm
+SRM 6, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSRM6
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSRM6
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+Clan Ammo SRM-6
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+Clan Ammo SRM-6
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -35,7 +35,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         damage = DAMAGE_BY_CLUSTERTABLE;
         setModes(new String[] { "", "Indirect" });
         atClass = CLASS_NONE;
-        flags = flags.or(F_MECH_WEAPON).or(F_MISSILE);
+        flags = flags.or(F_MECH_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 

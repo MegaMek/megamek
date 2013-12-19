@@ -1,0 +1,158 @@
+Version:1.1
+Xanthos
+XNT-6O
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:2
+
+Mass:100
+Engine:300 Compact Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:15 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Stealth(Inner Sphere)
+FLL Armor:42
+FRL Armor:42
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+RLL Armor:42
+RRL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
+
+Weapons:9
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+PPC, Right Torso
+PPC, Left Torso
+Small Pulse Laser, Center Torso
+Small Pulse Laser, Center Torso
+LRM 10, Center Torso
+ER Medium Laser, Left Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+PPC
+PPC
+PPC
+ISERMediumLaser
+IS Stealth
+IS Stealth
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+PPC
+PPC
+PPC
+ISERMediumLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Coolant Pod
+IS Stealth
+IS Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+LRM 10
+LRM 10
+ISERMediumLaser
+ISERMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+IS Ammo LRM-10
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

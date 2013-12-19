@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Fury Command Tank
+</Name>
+
+<Model>
+(Fury III)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+53
+43
+43
+35
+44
+</armor>
+
+<Body Equipment>
+BeagleActiveProbe
+ISC3BoostedSystemSlaveUnit
+IS Gauss Ammo
+IS Gauss Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+CLRotaryAC5
+</Turret Equipment>
+
+<source>
+RS 3145 NT NU
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

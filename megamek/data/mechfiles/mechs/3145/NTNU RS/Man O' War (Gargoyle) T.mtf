@@ -1,0 +1,157 @@
+Version:1.0
+Man O' War (Gargoyle)
+T
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3130
+Source:TRO 3145 NT NU
+Rules Level:3
+
+Mass:80
+Engine:400 XL (Clan) Engine
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:23
+RA Armor:23
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:9
+Small Pulse Laser, Center Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+TSEMP Cannon, Left Arm
+ATM 9, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+CLCASEII
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLSmallPulseLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -56,7 +56,7 @@ public class ISMekTaser extends AmmoWeapon {
         explosionDamage = 6;
         explosive = true;
         flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
-                .or(F_TASER);
+                .or(F_TASER).or(F_TANK_WEAPON);
         introDate = 3084;
         techLevel.put(3084, TechConstants.T_IS_ADVANCED);
     }

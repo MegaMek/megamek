@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Harasser Missile Platform
+</Name>
+
+<Model>
+(MML)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+7
+7
+7
+7
+7
+</armor>
+
+<Body Equipment>
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISMML5
+ISMML5
+</Turret Equipment>
+
+<source>
+RS 3145 NT NU
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

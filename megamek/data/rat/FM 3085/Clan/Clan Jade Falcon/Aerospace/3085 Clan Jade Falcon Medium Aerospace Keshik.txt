@@ -2,9 +2,9 @@
 Gotha GTHA-500b,1
 Hellcat II HCT-213C,2
 Hellcat II HCT-213C,3
-Persepolis,4
+Persepolis (Standard),4
 Ammon,5
-Persepolis,6
+Persepolis (Standard),6
 Tyre 2,5
 Jagatai Prime,4
 Visigoth Prime,3

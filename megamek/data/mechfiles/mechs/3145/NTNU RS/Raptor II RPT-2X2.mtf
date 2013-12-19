@@ -1,0 +1,153 @@
+Version:1.1
+Raptor II
+RPT-2X2
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:4
+
+Mass:40
+Engine:280 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:15
+RT Armor:15
+CT Armor:20
+HD Armor:8
+LL Armor:15
+RL Armor:15
+RTL Armor:3
+RTR Armor:3
+RTC Armor:4
+
+Weapons:3
+Medium VSP Laser, Left Torso
+Medium VSP Laser, Right Torso
+TSEMP Cannon, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Mek Void Signature System
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
+Mek Void Signature System
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumVSP
+ISMediumVSP
+ISMASC
+ISMASC
+Mek Void Signature System
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumVSP
+ISMediumVSP
+Mek Void Signature System
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Mek Void Signature System
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISAngelECMSuite
+ISAngelECMSuite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Void Signature System
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Void Signature System
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3076Raptor II.jpg
+

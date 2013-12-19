@@ -1,0 +1,150 @@
+Version:1.1
+Thunder Fox
+TFT-F11
+
+Config:Quad
+TechBase:Mixed (IS Chassis)
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:4
+
+Mass:55
+Engine:275 XXL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Hardened(Inner Sphere)
+FLL Armor:26
+FRL Armor:26
+LT Armor:21
+RT Armor:21
+CT Armor:31
+HD Armor:9
+RLL Armor:26
+RRL Armor:26
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:1
+ER PPC, Head
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Life Support
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Life Support
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+Jump Jet
+ISHeadTurret
+
+Head:
+Sensors
+Sensors
+CLERPPC (T)
+CLERPPC (T)
+ISTargeting Computer
+ISTargeting Computer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

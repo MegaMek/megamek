@@ -5455,6 +5455,7 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.introDate = 3070;
         misc.techLevel.put(3070, misc.techLevel.get(3071));
+        misc.techLevel.put(3109, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 

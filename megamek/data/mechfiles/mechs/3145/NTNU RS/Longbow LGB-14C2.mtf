@@ -1,0 +1,157 @@
+Version:1.1
+Longbow
+LGB-14C2
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:85
+Engine:255 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:24
+RA Armor:24
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:7
+MML 9, Left Arm
+MML 9, Right Arm
+MML 9, Left Arm
+MML 9, Right Torso
+MML 9, Right Arm
+MML 9, Left Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+IS Ammo MML-9 SRM
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3085 Longbow .jpg
+

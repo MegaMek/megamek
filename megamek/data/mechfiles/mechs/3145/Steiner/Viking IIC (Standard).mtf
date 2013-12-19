@@ -31,16 +31,16 @@ RTR Armor:7
 RTC Armor:10
 
 Weapons:10
-LRM 20, Right Arm
+Machine Gun, Left Leg
+Machine Gun, Left Leg
+Machine Gun, Right Leg
+Machine Gun, Right Leg
 LRM 20, Left Arm
+LRM 20, Right Arm
 LRM 15, Left Torso
+ER Micro Laser, Left Torso
 LRM 15, Right Torso
 ER Micro Laser, Right Torso
-ER Micro Laser, Left Torso
-Machine Gun, Left Leg
-Machine Gun, Right Leg
-Machine Gun, Right Leg
-Machine Gun, Left Leg
 
 Left Arm:
 Shoulder
@@ -76,10 +76,10 @@ CLLRM15
 CLArtemisV
 CLArtemisV
 CLERMicroLaser
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
 CLCASEII
 Clan Endo Steel
 Clan Endo Steel
@@ -90,9 +90,9 @@ CLLRM15
 CLArtemisV
 CLArtemisV
 CLERMicroLaser
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-15 (Clan) Artemis V-capable
 Clan Machine Gun Ammo - Half
 CLCASEII
 Clan Endo Steel

@@ -1,0 +1,153 @@
+Version:1.1
+Targe
+TRG-3M
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:2
+
+Mass:40
+Engine:320 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:8
+Jump MP:0
+
+Armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:14
+RT Armor:14
+CT Armor:15
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+ER Medium Laser, Left Torso
+ER Medium Laser, Head
+ER Medium Laser, Right Torso
+LRM 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISMASC
+ISMASC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+IS Ammo LRM-10
+IS Ammo LRM-10
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 10
+LRM 10
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISERMediumLaser
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

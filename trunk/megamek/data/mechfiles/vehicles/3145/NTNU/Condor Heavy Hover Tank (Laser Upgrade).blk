@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Condor Heavy Hover Tank
+</Name>
+
+<Model>
+(Laser Upgrade)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+36
+28
+28
+23
+28
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Re-engineered Laser
+Medium Re-engineered Laser
+Medium Re-engineered Laser
+</Turret Equipment>
+
+<source>
+RS 3145 NT NU
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

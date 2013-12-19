@@ -40,23 +40,15 @@ Tracked
 2
 </engine_type>
 
-<armor_type>
-4
-</armor_type>
-
-<armor_tech>
-7
-</armor_tech>
-
 <armor>
-68
-52
-52
-45
-45
-32
-33
-25
+136
+104
+104
+90
+90
+50
+66
+64
 </armor>
 
 <Body Equipment>

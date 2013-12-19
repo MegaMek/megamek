@@ -1,0 +1,151 @@
+Version:1.1
+Nyx
+NX-110
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:30
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Double
+Walk MP:10
+Jump MP:0
+
+Armor:Anti-Penetrative Ablation(Inner Sphere)
+LA Armor:7
+RA Armor:7
+LT Armor:10
+RT Armor:10
+CT Armor:12
+HD Armor:8
+LL Armor:8
+RL Armor:8
+RTL Armor:2
+RTR Armor:2
+RTC Armor:4
+
+Weapons:2
+Medium Re-engineered Laser, Left Arm
+Medium Re-engineered Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Medium Re-engineered Laser
+Medium Re-engineered Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Anti-Penetrative Ablation
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Medium Re-engineered Laser
+Medium Re-engineered Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Anti-Penetrative Ablation
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Anti-Penetrative Ablation
+IS Anti-Penetrative Ablation
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Anti-Penetrative Ablation
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Anti-Penetrative Ablation
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

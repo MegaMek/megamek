@@ -272,8 +272,8 @@ public class Princess extends BotClient {
      * @param entity The unit to be indexed.
      * @return The movement index of this unit.  May be positive or negative.  Higher index values should move first.
      */
-    protected double calculateMoveIndex(Entity entity) {
-        StringBuilder msg = new StringBuilder("Calculating move index for ").append(entity.getDisplayName());
+    protected double calculateMoveIndex(Entity entity, StringBuilder msg) {
+        msg.append("\n\tCalculating move index for ").append(entity.getDisplayName());
         StringBuilder modifiers = new StringBuilder();
         NumberFormat numberFormat = DecimalFormat.getInstance();
         double total = 0;
@@ -283,16 +283,16 @@ public class Princess extends BotClient {
             if (entity.getJumpMP(true) > fastestMove) {
                 fastestMove = entity.getJumpMP(true);
             }
-            msg.append("\n\tFastest Move = ").append(fastestMove);
+            msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
             // Get the distance to the nearest enemy.
             double distance = getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(), game);
-            msg.append("\n\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));
+            msg.append("\n\t\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));
 
             // Get the ration of distance to speed.
             // Faster units that are closer to the enemy should move later.
             total = distance / fastestMove;
-            msg.append("\n\tDistance to Move Ratio (dist / move): ").append(numberFormat.format(total));
+            msg.append("\n\t\tDistance to Move Ratio (dist / move): ").append(numberFormat.format(total));
 
             // Prone enemies move sooner.
             if (entity.isProne()) {
@@ -338,16 +338,15 @@ public class Princess extends BotClient {
 
             return total;
         } finally {
-            msg.append("\n\tModifiers:").append(modifiers);
-            msg.append("\n\tTotal = ").append(numberFormat.format(total));
-            log(getClass(), "calculateMoveIndex(Entity)", LogLevel.INFO, msg.toString());
+            msg.append("\n\t\tModifiers:").append(modifiers);
+            msg.append("\n\t\tTotal = ").append(numberFormat.format(total));
         }
     }
 
     /**
      * Loops through the list of entities controlled by this Princess instance and decides which should be moved first.
      * Immobile units and ejected mechwarriors/crews will be moved first.  After that, each unit is given an index
-     * via the {@link #calculateMoveIndex(Entity)} method.  The highest index value is moved first.
+     * via the {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest index value is moved first.
      *
      * @return The entity that should be moved next.
      */
@@ -357,34 +356,44 @@ public class Princess extends BotClient {
         Entity movingEntity = null;
         List<Entity> myEntities = getEntitiesOwned();
         double highestIndex = Double.MIN_VALUE;
+        StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (Entity entity : myEntities) {
+            msg.append("\n\tUnit ").append(entity.getDisplayName());
             if (entity.isOffBoard() || (entity.getPosition() == null) || !entity.isSelectableThisTurn()) {
+                msg.append("cannot be moved.");
                 continue;
             }
 
             // Move immobile units & ejected mechwarriors immediately.
             if (entity.isImmobile()) {
+                msg.append("is immobile.");
                 movingEntity = entity;
                 break;
             }
             if (entity instanceof MechWarrior) {
+                msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
             }
 
             // If I only have 1 unit, no need to calculate an index.
             if (myEntities.size() == 1) {
+                msg.append("is my only unit.");
                 movingEntity = entity;
                 break;
             }
 
             // We will move the entity with the highest index.
-            double moveIndex = calculateMoveIndex(entity);
+            double moveIndex = calculateMoveIndex(entity, msg);
             if (moveIndex >= highestIndex) {
+                msg.append("\n\thas the highest move index so far.");
                 highestIndex = moveIndex;
                 movingEntity = entity;
             }
         }
+
+        LogLevel level = (movingEntity == null ? LogLevel.WARNING : LogLevel.INFO);
+        log(getClass(), "getEntityToMove()", level, msg.toString());
 
         return movingEntity;
     }
@@ -604,6 +613,10 @@ public class Princess extends BotClient {
     protected MovePath continueMovementFor(Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
         methodBegin(getClass(), METHOD_NAME);
+
+        if (entity == null) {
+            log(getClass(), METHOD_NAME, LogLevel.WARNING, "Entity is NULL.");
+        }
 
         try {
             // figure out who moved last, and who's move lists need to be updated

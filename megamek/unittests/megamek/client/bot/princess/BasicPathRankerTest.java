@@ -552,6 +552,12 @@ public class BasicPathRankerTest {
         if (baseRank < actual.rank) {
             Assert.fail("The further I am from my friends, the lower the path rank should be.");
         }
+        friendsCoords = null;
+        expected = new RankedPath(-126.25, mockPath, "Calculation: fall mod [0.0 = 0.0 * 10.0] + " +
+                "braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [120.00 = 12.00 * 10.00] - " +
+                "herdingMod [0 no friends] - facingMod [0.00 = max(0, 50 * {0 - 1})]");
+        actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
+        assertRankedPathEquals(expected, actual);
         friendsCoords = new Coords(10, 10);
 
         // Set myself up to run away.
@@ -652,5 +658,89 @@ public class BasicPathRankerTest {
         Entity expected = enemyMech;
         Entity actual = testRanker.findClosestEnemy(me, position, mockGame);
         Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testCalcAllyCenter() {
+        BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
+
+        int myId = 1;
+
+        List<Entity> friends = new ArrayList<Entity>();
+
+        IBoard mockBoard = Mockito.mock(IBoard.class);
+        Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
+
+        IGame mockGame = Mockito.mock(IGame.class);
+        Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
+
+        Entity mockFriend1 = Mockito.mock(BipedMech.class);
+        Mockito.when(mockFriend1.getId()).thenReturn(myId);
+        Mockito.when(mockFriend1.isOffBoard()).thenReturn(false);
+        Coords friendPosition1 = new Coords(0, 0);
+        Mockito.when(mockFriend1.getPosition()).thenReturn(friendPosition1);
+        friends.add(mockFriend1);
+
+        Entity mockFriend2 = Mockito.mock(BipedMech.class);
+        Mockito.when(mockFriend2.getId()).thenReturn(2);
+        Mockito.when(mockFriend2.isOffBoard()).thenReturn(false);
+        Coords friendPosition2 = new Coords(10, 0);
+        Mockito.when(mockFriend2.getPosition()).thenReturn(friendPosition2);
+        friends.add(mockFriend2);
+
+        Entity mockFriend3 = Mockito.mock(BipedMech.class);
+        Mockito.when(mockFriend3.getId()).thenReturn(3);
+        Mockito.when(mockFriend3.isOffBoard()).thenReturn(false);
+        Coords friendPosition3 = new Coords(0, 10);
+        Mockito.when(mockFriend3.getPosition()).thenReturn(friendPosition3);
+        friends.add(mockFriend3);
+
+        Entity mockFriend4 = Mockito.mock(BipedMech.class);
+        Mockito.when(mockFriend4.getId()).thenReturn(4);
+        Mockito.when(mockFriend4.isOffBoard()).thenReturn(false);
+        Coords friendPosition4 = new Coords(10, 10);
+        Mockito.when(mockFriend4.getPosition()).thenReturn(friendPosition4);
+        friends.add(mockFriend4);
+
+        // Test the default conditions.
+        Coords expected = new Coords(6, 6);
+        Coords actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        assertCoordsEqual(expected, actual);
+
+        // Move one of my friends off-board.
+        Mockito.when(mockFriend2.isOffBoard()).thenReturn(true);
+        expected = new Coords(5, 10);
+        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        assertCoordsEqual(expected, actual);
+        Mockito.when(mockFriend2.isOffBoard()).thenReturn(false);
+
+        // Give one of my friends a null position.
+        Mockito.when(mockFriend3.getPosition()).thenReturn(null);
+        expected = new Coords(10, 5);
+        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        assertCoordsEqual(expected, actual);
+        Mockito.when(mockFriend3.getPosition()).thenReturn(friendPosition3);
+
+        // Give one of my friends an invalid position.
+        Mockito.when(mockBoard.contains(Mockito.eq(friendPosition4))).thenReturn(false);
+        expected = new Coords(5, 5);
+        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        assertCoordsEqual(expected, actual);
+        Mockito.when(mockBoard.contains(Mockito.eq(friendPosition4))).thenReturn(true);
+
+        // Test having no friends.
+        actual = testRanker.calcAllyCenter(myId, new ArrayList<Entity>(0), mockGame);
+        Assert.assertNull(actual);
+        actual = testRanker.calcAllyCenter(myId, null, mockGame);
+        Assert.assertNull(actual);
+        List<Entity> solo = new ArrayList<Entity>(1);
+        solo.add(mockFriend1);
+        actual = testRanker.calcAllyCenter(myId, solo, mockGame);
+        Assert.assertNull(actual);
+    }
+
+    private void assertCoordsEqual(Coords expected, Coords actual) {
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(expected.toString(), actual.toString());
     }
 }

@@ -27,7 +27,7 @@ import megamek.common.*;
 import megamek.common.logging.LogLevel;
 import megamek.common.util.StringUtil;
 
-public class PathRanker {       
+public class PathRanker {
 
     private static Princess owner;
 
@@ -56,7 +56,7 @@ public class PathRanker {
         return null;
     }
 
-    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> movePaths,IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> movePaths, IGame game, int maxRange,
                                            double fallTollerance, int startingHomeDistance,
                                            int startingDistToNearestEnemy, List<Entity> enemies,
                                            List<Entity> friends) {
@@ -75,7 +75,7 @@ public class PathRanker {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
-            for(MovePath path : validPaths) {
+            for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
                 returnPaths.add(rankPath(path, game, maxRange, fallTollerance, startingHomeDistance, enemies,
                         allyCenter));
@@ -161,14 +161,14 @@ public class PathRanker {
         return returnPaths;
     }
 
-    public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps,double lessthan) {
+    public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps, double lessthan) {
         final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
         owner.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
-            ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
-            for(RankedPath p:ps) {
-                if(p.rank>lessthan) {
+            ArrayList<RankedPath> ret = new ArrayList<RankedPath>();
+            for (RankedPath p : ps) {
+                if (p.rank > lessthan) {
                     ret.add(p);
                 }
             }
@@ -183,7 +183,7 @@ public class PathRanker {
         owner.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
-            if(ps.size()==0) {
+            if (ps.size() == 0) {
                 return null;
             }
             return Collections.max(ps);
@@ -204,7 +204,7 @@ public class PathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(Entity me,Coords position, IGame game) {
+    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
         owner.methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -256,7 +256,7 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> enemies = new ArrayList<Entity>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (entity.getOwner().isEnemyOf(myunit.getOwner())
                         && (entity.getPosition() != null) && !entity.isOffBoard()) {
@@ -278,7 +278,7 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> friends = new ArrayList<Entity>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
                         && (entity.getPosition() != null) && !entity.isOffBoard()
@@ -291,12 +291,12 @@ public class PathRanker {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
+
     /**
      * Returns the probability of success of a movepath
      */
     public double getMovePathSuccessProbability(MovePath movePath) {
-    	MovePath pathCopy = movePath.clone();
+        MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
         for (TargetRoll roll : pilotingRolls) {
@@ -339,7 +339,7 @@ public class PathRanker {
             } else {
                 msg.append("Default");
                 owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-                edgeCoords = new Coords(boardWidth/2, 0);
+                edgeCoords = new Coords(boardWidth / 2, 0);
             }
             msg.append(edgeCoords.toFriendlyString());
 
@@ -402,7 +402,7 @@ public class PathRanker {
         float mass = path.getEntity().getWeight() + 10;
         Enumeration steps = path.getSteps();
         while (steps.hasMoreElements()) {
-            MoveStep step = (MoveStep)steps.nextElement();
+            MoveStep step = (MoveStep) steps.nextElement();
             Building building = game.getBoard().getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;
@@ -416,8 +416,13 @@ public class PathRanker {
     }
 
     public Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
+        if (friends == null || friends.isEmpty()) {
+            return null;
+        }
+
         int xTotal = 0;
         int yTotal = 0;
+        int friendOnBoardCount = 0;
 
         for (Entity friend : friends) {
             if (friend.getId() == myId) {
@@ -435,10 +440,15 @@ public class PathRanker {
 
             xTotal += friendPosition.x;
             yTotal += friendPosition.y;
+            friendOnBoardCount++;
         }
 
-        int xCenter = Math.round(xTotal / (friends.size() - 1));
-        int yCenter = Math.round(yTotal / (friends.size() - 1));
+        if (friendOnBoardCount == 0) {
+            return null;
+        }
+
+        int xCenter = Math.round(xTotal / friendOnBoardCount);
+        int yCenter = Math.round(yTotal / friendOnBoardCount);
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
@@ -450,7 +460,7 @@ public class PathRanker {
         return center;
     }
 
-    public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         return 0;
     }
 }

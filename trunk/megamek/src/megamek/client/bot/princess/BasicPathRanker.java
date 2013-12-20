@@ -281,6 +281,11 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from my teammates, the lower this path ranks (weighted by Herd Mentality).
     private double calculateHerdingMod(Coords friendsCoords, MovePath path, StringBuilder formula) {
+        if (friendsCoords == null) {
+            formula.append(" - herdingMod [0 no friends]");
+            return 0;
+        }
+
         double distanceToAllies = friendsCoords.distance(path.getFinalCoords());
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
         double herdingMod = distanceToAllies * herding;

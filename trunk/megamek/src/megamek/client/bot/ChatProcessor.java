@@ -208,7 +208,7 @@ public class ChatProcessor {
         }
 
         String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
-        princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
 
         String from = tokenizer.nextToken().trim(); // First token should be who sent the message.
         String sentTo = tokenizer.nextToken().trim(); // Second token should be the player name the message is directed
@@ -251,7 +251,7 @@ public class ChatProcessor {
         // If instructed to, flee.
         if (command.toLowerCase().startsWith(Princess.CMD_FLEE)) {
             msg = "Received flee order!";
-            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
             princess.sendChat("Run Away!");
             princess.setShouldFlee(true, msg);
             return;
@@ -274,7 +274,7 @@ public class ChatProcessor {
             }
             princess.setVerbosity(newLevel);
             msg = "Verbosity set to " + princess.getVerbosity().toString();
-            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
             princess.sendChat(msg);
             return;
         }

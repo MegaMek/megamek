@@ -234,10 +234,10 @@ public class Princess extends BotClient {
             // entity that can
             // act this turn
             // make sure weapons are loaded
-            fireControl.loadAmmo(shooter, game);
-            FiringPlan plan = fireControl.getBestFiringPlan(
-                    shooter, game);
+            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
             if (plan != null) {
+                fireControl.loadAmmo(shooter, plan.getTarget());
+
                 log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
@@ -355,7 +355,7 @@ public class Princess extends BotClient {
         // first move useless units: immobile units, ejected mechwarrior, etc
         Entity movingEntity = null;
         List<Entity> myEntities = getEntitiesOwned();
-        double highestIndex = Double.MIN_VALUE;
+        double highestIndex = -10000.0;
         StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
@@ -385,14 +385,14 @@ public class Princess extends BotClient {
 
             // We will move the entity with the highest index.
             double moveIndex = calculateMoveIndex(entity, msg);
+            msg.append("\n\thas index " + moveIndex + " vs " + highestIndex);
             if (moveIndex >= highestIndex) {
-                msg.append("\n\thas the highest move index so far.");
                 highestIndex = moveIndex;
                 movingEntity = entity;
             }
         }
 
-        LogLevel level = (movingEntity == null ? LogLevel.WARNING : LogLevel.INFO);
+        LogLevel level = (movingEntity == null ? LogLevel.WARNING : LogLevel.DEBUG);
         log(getClass(), "getEntityToMove()", level, msg.toString());
 
         return movingEntity;

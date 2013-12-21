@@ -50,8 +50,8 @@ Tracked
 
 <Body Equipment>
 IS Machine Gun Ammo - Half
-IS Ammo MML-5 LRM
-IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
 </Body Equipment>
 
 <Front Equipment>
@@ -71,6 +71,8 @@ Machine Gun
 ISMML5
 ISMML5
 ISSNPPC
+ISArtemisIV
+ISArtemisIV
 </Turret Equipment>
 
 <source>

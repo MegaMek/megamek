@@ -18,25 +18,25 @@ Walk MP:4
 Jump MP:4
 
 Armor:Ferro-Fibrous(Clan)
-LA Armor:27
-RA Armor:27
-LT Armor:26
-RT Armor:26
-CT Armor:38
+LA Armor:30
+RA Armor:30
+LT Armor:30
+RT Armor:30
+CT Armor:45
 HD Armor:9
-LL Armor:34
-RL Armor:34
+LL Armor:38
+RL Armor:38
 RTL Armor:8
 RTR Armor:8
 RTC Armor:12
 
 Weapons:6
 ER Large Laser, Left Arm
-ER Large Laser, Right Arm
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
-LRM 15, Right Torso
+ER Large Laser, Right Arm
+ER Large Laser, Right Arm
 LRM 15, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder

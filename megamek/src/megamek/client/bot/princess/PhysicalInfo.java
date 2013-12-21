@@ -91,9 +91,10 @@ public class PhysicalInfo {
     }
 
     PhysicalInfo(Entity sshooter, Targetable ttarget,
-                 PhysicalAttackType atype, IGame game) {
+                 PhysicalAttackType atype, IGame game, Princess owner) {
         final String METHOD_NAME = "PhysicalInfo(Entity, Targetable, PhysicalAttackType, IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
+        this.owner = owner;
 
         try {
             shooter = sshooter;

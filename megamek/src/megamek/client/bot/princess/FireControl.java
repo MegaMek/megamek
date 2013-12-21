@@ -628,7 +628,7 @@ public class FireControl {
             PhysicalInfo guess_info = new PhysicalInfo(shooter, null, target, null,
                     attack_type, game, owner);
             PhysicalInfo accurate_info = new PhysicalInfo(shooter, target,
-                    attack_type, game);
+                    attack_type, game, owner);
             if (guess_info.to_hit.getValue() != accurate_info.to_hit.getValue()) {
                 ret = new String();
                 ret += "Incorrect To Hit prediction, physical attack "

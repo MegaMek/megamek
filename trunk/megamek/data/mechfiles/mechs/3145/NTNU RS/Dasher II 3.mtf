@@ -13,22 +13,22 @@ Engine:320 XL (Clan) Engine
 Structure:Clan Endo Steel
 Myomer:Standard
 
-Heat Sinks:12 Double
+Heat Sinks:10 Double
 Walk MP:8
 Jump MP:0
 
 Armor:Ferro-Fibrous(Clan)
-LA Armor:5
-RA Armor:5
-LT Armor:7
-RT Armor:7
-CT Armor:7
-HD Armor:6
-LL Armor:7
-RL Armor:7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+LA Armor:12
+RA Armor:12
+LT Armor:15
+RT Armor:15
+CT Armor:20
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:4
 
 Weapons:1
 ER PPC, Center Torso

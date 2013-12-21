@@ -28,15 +28,15 @@ CT Armor:15
 HD Armor:9
 LL Armor:18
 RL Armor:18
-RTL Armor:4
-RTR Armor:4
+RTL Armor:5
+RTR Armor:5
 RTC Armor:5
 
 Weapons:4
 ER Medium Laser, Left Torso
-ER Medium Laser, Head
 ER Medium Laser, Right Torso
 LRM 10, Center Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder

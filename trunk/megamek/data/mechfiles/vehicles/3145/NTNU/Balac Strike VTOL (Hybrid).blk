@@ -60,11 +60,13 @@ VTOL
 Clan Ammo ATM-6
 Clan Ammo ATM-6
 CLCASE
+Clan Heavy Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
 CLATM6
 CLATM6
+CLHeavyMG
 </Front Equipment>
 
 <Right Equipment>

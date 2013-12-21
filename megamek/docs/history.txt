@@ -235,6 +235,11 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Clan Heat-Dissipating armor not available
 + Data: Start of Units from RS 3145 NTNU and some unit and RAT Fixes.
 + Bug: [#3956] Bot hangs on Divide By Zero error 0.37-dev
++ Added code to Princess to make (semi) intelligent use of ammo.  Previously she just picked whichever ammo bin was
+    next on the list.  Now she will examine her target and try to pick the best ammo of what she has available
+    (infernos vs hot targets, cluster/flak vs aero/vtol, cluster/inferno vs tanks, etc).  She also takes into account
+    range when using ATMs and MMLs.  Don't expect this to work with ammo introduced after the FCCW as I'm not familiar
+    with it myself.
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

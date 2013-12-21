@@ -15,6 +15,7 @@ package megamek.client.bot.princess;
 
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.Targetable;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
 
@@ -34,11 +35,17 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
     int twist;
     public double utility; // calculated elsewhere
     private Princess owner;
+    private Targetable target;
 
-    FiringPlan(Princess owner) {
+    FiringPlan(Princess owner, Targetable target) {
         twist = 0;
         utility = 0;
         this.owner = owner;
+        this.target = target;
+    }
+
+    public Targetable getTarget() {
+        return target;
     }
 
     int getHeat() {

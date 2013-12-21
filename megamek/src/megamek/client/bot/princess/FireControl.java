@@ -23,6 +23,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -38,6 +39,7 @@ import megamek.common.MechWarrior;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.Protomech;
 import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -50,6 +52,8 @@ import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.logging.LogLevel;
+import megamek.common.weapons.ATMWeapon;
+import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -737,7 +741,7 @@ public class FireControl {
         if (shooter_state == null) {
             shooter_state = new EntityState(shooter);
         }
-        FiringPlan myplan = new FiringPlan(owner);
+        FiringPlan myplan = new FiringPlan(owner, target);
         if (shooter.getPosition() == null) {
             owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
                     LogLevel.ERROR, "Shooter's position is NULL!");
@@ -782,10 +786,10 @@ public class FireControl {
         }
         if (!assume_under_flight_path) {
             if (!isTargetUnderMovePath(shooter_path, target_state)) {
-                return new FiringPlan(owner);
+                return new FiringPlan(owner, target);
             }
         }
-        FiringPlan myplan = new FiringPlan(owner);
+        FiringPlan myplan = new FiringPlan(owner, target);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                     "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
@@ -830,7 +834,7 @@ public class FireControl {
      * states
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan myplan = new FiringPlan(owner);
+        FiringPlan myplan = new FiringPlan(owner, target);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                     "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
@@ -857,14 +861,14 @@ public class FireControl {
      * Creates an array that gives the 'best' firing plan (the maximum utility)
      * under the heat of the index
      */
-    FiringPlan[] calcFiringPlansUnderHeat(FiringPlan maxplan, int maxheat,
+    FiringPlan[] calcFiringPlansUnderHeat(FiringPlan maxplan, int maxheat, Targetable target,
                                           IGame game) {
         if (maxheat < 0) {
             maxheat = 0; // can't be worse than zero heat
         }
         FiringPlan[] best_plans = new FiringPlan[maxheat + 1];
-        best_plans[0] = new FiringPlan(owner);
-        FiringPlan nonzeroheat_options = new FiringPlan(owner);
+        best_plans[0] = new FiringPlan(owner, target);
+        FiringPlan nonzeroheat_options = new FiringPlan(owner, target);
         // first extract any firings of zero heat
         for (WeaponFireInfo f : maxplan) {
             if (f.getHeat() == 0) {
@@ -875,12 +879,12 @@ public class FireControl {
         }
         // build up heat table
         for (int i = 1; i <= maxheat; i++) {
-            best_plans[i] = new FiringPlan(owner);
+            best_plans[i] = new FiringPlan(owner, target);
             best_plans[i].addAll(best_plans[i - 1]);
             for (WeaponFireInfo f : nonzeroheat_options) {
                 if ((i - f.getHeat()) >= 0) {
                     if (!best_plans[i - f.getHeat()].containsWeapon(f.getWeapon())) {
-                        FiringPlan testplan = new FiringPlan(owner);
+                        FiringPlan testplan = new FiringPlan(owner, target);
                         testplan.addAll(best_plans[i - f.getHeat()]);
                         testplan.add(f);
                         calculateUtility(testplan, 999); // TODO fix overheat
@@ -906,8 +910,7 @@ public class FireControl {
         if (fullplan.getHeat() <= maxheat) {
             return fullplan;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat,
-                game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat, target, game);
         return heatplans[maxheat];
     }
 
@@ -920,9 +923,8 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan,
-                fullplan.getHeat(), game);
-        FiringPlan best_plan = new FiringPlan(owner);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
+        FiringPlan best_plan = new FiringPlan(owner, target);
         int overheat = (shooter.getHeatCapacity() - shooter.heat) + 4;
         for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -947,8 +949,7 @@ public class FireControl {
         if (fullplan.getHeat() <= maxheat) {
             return fullplan;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat,
-                game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat, target, game);
         return heatplans[maxheat];
     }
 
@@ -966,9 +967,8 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan,
-                fullplan.getHeat(), game);
-        FiringPlan best_plan = new FiringPlan(owner);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
+        FiringPlan best_plan = new FiringPlan(owner, target);
         int overheat = (shooter.getHeatCapacity() - shooter_state.getHeat()) + 4;
         for (int i = 0; i < fullplan.getHeat(); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -1156,7 +1156,7 @@ public class FireControl {
      * Overload this function if you think you can do better.
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
-        FiringPlan bestplan = new FiringPlan(owner);
+        FiringPlan bestplan = null;
         ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter,
                 game);
         for (Targetable e : enemies) {
@@ -1198,30 +1198,29 @@ public class FireControl {
     /**
      * Makes sure ammo is loaded for each weapon
      */
-    public void loadAmmo(Entity shooter, IGame game) {
+    public void loadAmmo(Entity shooter, Targetable target) {
         if (shooter == null) {
             return;
         }
-        Iterator<Mounted> weps = shooter.getWeapons();
-        while (weps.hasNext()) {
-            Mounted onwep = weps.next();
-            WeaponType weptype = (WeaponType) onwep.getType();
-            if (weptype.ammoType != AmmoType.T_NA) {
-                for (Mounted mountedAmmo : shooter.getAmmo()) {
-                    AmmoType atype = (AmmoType) mountedAmmo.getType();
-                    if (mountedAmmo.isAmmoUsable()
-                            && (atype.getAmmoType() == weptype.getAmmoType())
-                            && (atype.getRackSize() == weptype.getRackSize())) {
-                        if (!shooter.loadWeapon(onwep, mountedAmmo)) {
-                            System.err.println(shooter.getChassis()
-                                    + " tried to load " + onwep.getName()
-                                    + " with ammo " + mountedAmmo.getName()
-                                    + " but failed somehow");
-                        }
-                    }
-                }
+
+        // Loading ammo for all my weapons.
+        Iterator<Mounted> weapons = shooter.getWeapons();
+        while (weapons.hasNext()) {
+            Mounted currentWeapon = weapons.next();
+            WeaponType weaponType = (WeaponType) currentWeapon.getType();
+
+            // Skip weapons that don't use ammo.
+            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+                continue;
             }
 
+            Mounted mountedAmmo = getPreferredAmmo(shooter, target, weaponType);
+            // Log failures.
+            if ((mountedAmmo != null) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
+                owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,
+                        shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
+                                mountedAmmo.getDesc() + " but failed somehow.");
+            }
         }
     }
 
@@ -1238,5 +1237,509 @@ public class FireControl {
 
     public void setAdditionalTargets(List<Targetable> targets) {
         additionalTargets = targets;
+    }
+
+    protected Mounted getClusterAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                // MMLs have additional considerations.
+                // There are no "cluster" missile munitions at this point in time.  Code is included in case
+                // they are added to the game at some later date.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if (mmlLrm != null) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getPreferredAmmo(Entity shooter, Targetable target, WeaponType weaponType) {
+        final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
+
+        StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName()).append(" firing at ").append(target.getDisplayName());
+        Entity targetEntity = null;
+        Mounted preferredAmmo = null;
+
+        try {
+            if (target instanceof Entity) {
+                targetEntity = (Entity) target;
+            }
+
+            // Find the ammo that is valid for this weapon.
+            List<Mounted> ammo = shooter.getAmmo();
+            List<Mounted> validAmmo = new ArrayList<Mounted>();
+            for (Mounted a : ammo) {
+                if (AmmoType.isAmmoValid(a, weaponType)) {
+                    validAmmo.add(a);
+                }
+            }
+
+            // If no valid ammo was found, return nothing.
+            if (validAmmo.isEmpty()) {
+                return preferredAmmo;
+            }
+            msg.append("\n\tFound ").append(validAmmo.size()).append(" units of valid ammo.");
+
+            int range = shooter.getPosition().distance(target.getPosition());
+            msg.append("\n\tRange to target is ").append(range);
+
+            // AMS only uses 1 type of ammo.
+            if (weaponType.hasFlag(WeaponType.F_AMS)) {
+                return validAmmo.get(0);
+            }
+
+            // ATMs
+            if (weaponType instanceof ATMWeapon) {
+                return getAtmAmmo(validAmmo, range);
+            }
+
+            // Target is a building.
+            if (target instanceof BuildingTarget) {
+                msg.append("\n\tTarget is a building... ");
+                preferredAmmo = getHeatAmmo(validAmmo, weaponType, range);
+                if (preferredAmmo != null) {
+                    msg.append("Burn It Down!");
+                    return preferredAmmo;
+                }
+
+                // Entity targets.
+            } else if (targetEntity != null) {
+                // Airborne targts
+                if (targetEntity.isAirborne()) {
+                    msg.append("\n\tTarget is airborne... ");
+                    preferredAmmo = getAntiAirAmmo(validAmmo, weaponType, range);
+                    if (preferredAmmo != null) {
+                        msg.append("Shoot It Down!");
+                        return preferredAmmo;
+                    }
+                }
+                // Battle Armor, Tanks and Protos, oh my!
+                if ((targetEntity instanceof BattleArmor)
+                        || (targetEntity instanceof Tank)
+                        || (targetEntity instanceof Protomech)) {
+                    msg.append("\n\tTarget is BA/Proto/Tank... ");
+                    preferredAmmo = getAntiVeeAmmo(validAmmo, weaponType, range);
+                    if (preferredAmmo != null) {
+                        msg.append("We have ways of dealing with that.");
+                        return preferredAmmo;
+                    }
+                }
+                // PBI
+                if (targetEntity instanceof Infantry) {
+                    msg.append("\n\tTarget is infantry... ");
+                    preferredAmmo = getAntiInfantryAmmo(validAmmo, weaponType, range);
+                    if (preferredAmmo != null) {
+                        msg.append("They squish nicely.");
+                        return preferredAmmo;
+                    }
+                }
+                // On his last legs
+                if (targetEntity.getDamageLevel() >= Entity.DMG_HEAVY) {
+                    msg.append("\n\tTarget is heavily damaged... ");
+                    preferredAmmo = getClusterAmmo(validAmmo, weaponType, range);
+                    if (preferredAmmo != null) {
+                        msg.append("Let's find a soft spot.");
+                        return preferredAmmo;
+                    }
+                }
+                // He's running hot.
+                if (targetEntity.getHeat() >= 9) {
+                    msg.append("\n\tTarget is at ").append(targetEntity.getHeat()).append(" heat... ");
+                    preferredAmmo = getHeatAmmo(validAmmo, weaponType, range);
+                    if (preferredAmmo != null) {
+                        msg.append("Let's heat him up more.");
+                        return preferredAmmo;
+                    }
+                }
+                // Everything else.
+                msg.append("\n\tTarget is a hard target... ");
+                preferredAmmo = getHardTargetAmmo(validAmmo, weaponType, range);
+                if (preferredAmmo != null) {
+                    msg.append("Fill him with holes!");
+                    return preferredAmmo;
+                }
+            }
+
+            // If we've gotten this far, no specialized ammo has been loaded
+            if (weaponType instanceof MMLWeapon) {
+                msg.append("\n\tLoading MML Ammo.");
+                preferredAmmo = getGeneralMmlAmmo(validAmmo, range);
+            } else {
+                msg.append("\n\tLoading first available ammo.");
+                preferredAmmo = validAmmo.get(0);
+            }
+            return preferredAmmo;
+        } finally {
+            msg.append("\n\tReturning: ").append(preferredAmmo == null ? "null" : preferredAmmo.getDesc());
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+        }
+    }
+
+    protected Mounted getGeneralMmlAmmo(List<Mounted> ammoList, int range) {
+        Mounted returnAmmo = null;
+
+        // Get the LRM and SRM bins if we have them.
+        Mounted mmlSrm = null;
+        Mounted mmlLrm = null;
+        for (Mounted ammo : ammoList) {
+            AmmoType type = (AmmoType) ammo.getType();
+            if ((mmlLrm == null) && type.hasFlag(AmmoType.F_MML_LRM)) {
+                mmlLrm = ammo;
+            } else if (mmlSrm == null) {
+                mmlSrm = ammo;
+            } else if ((mmlSrm != null) && (mmlLrm != null)) {
+                break;
+            }
+        }
+
+        // Out of SRM range.
+        if (range > 9) {
+            returnAmmo = mmlLrm;
+
+            // LRMs have better chance to hit if we have them.
+        } else if (range > 5) {
+            returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+
+            // If we only have LRMs left.
+        } else if (mmlSrm == null) {
+            returnAmmo = mmlLrm;
+
+            // Left with SRMS.
+        } else {
+            returnAmmo = mmlSrm;
+        }
+        return returnAmmo;
+    }
+
+    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range) {
+        Mounted returnAmmo = null;
+
+        // Get the Hi-Ex, Ex-Range and Standard ammo bins if we have them.
+        Mounted heAmmo = null;
+        Mounted erAmmo = null;
+        Mounted stAmmo = null;
+        for (Mounted ammo : ammoList) {
+            AmmoType type = (AmmoType) ammo.getType();
+            if ((heAmmo == null) && (AmmoType.M_HIGH_EXPLOSIVE == type.getMunitionType())) {
+                heAmmo = ammo;
+            } else if ((erAmmo == null) && (AmmoType.M_EXTENDED_RANGE == type.getMunitionType())) {
+                erAmmo = ammo;
+            } else if ((stAmmo == null) && (AmmoType.M_STANDARD == type.getMunitionType())) {
+                stAmmo = ammo;
+            } else if ((heAmmo != null) && (erAmmo == null) && (stAmmo == null)) {
+                break;
+            }
+        }
+
+        // Beyond 15 hexes is ER Ammo only range.
+        if (range > 15) {
+            returnAmmo = erAmmo;
+            // ER Ammo has a better chance to hit past 10 hexes.
+        } else if (range > 10) {
+            returnAmmo = (erAmmo == null ? stAmmo : erAmmo);
+            // At 7-10 hexes, go with Standard, then ER then HE due to hit odds.
+        } else if (range > 6) {
+            if (stAmmo != null) {
+                returnAmmo = stAmmo;
+            } else if (erAmmo != null) {
+                returnAmmo = erAmmo;
+            } else {
+                returnAmmo = heAmmo;
+            }
+            // Six hexes is at min for ER, and medium for both ST & HE.
+        } else if (range == 6) {
+            if (heAmmo != null) {
+                returnAmmo = heAmmo;
+            } else if (stAmmo != null) {
+                returnAmmo = stAmmo;
+            } else {
+                returnAmmo = erAmmo;
+            }
+            // 4-5 hexes is medium for HE, short for ST and well within min for ER.
+        } else if (range > 3) {
+            if (stAmmo != null) {
+                returnAmmo = stAmmo;
+            } else if (heAmmo != null) {
+                returnAmmo = heAmmo;
+            } else {
+                returnAmmo = erAmmo;
+            }
+            // Short range for HE.
+        } else {
+            if (heAmmo != null) {
+                returnAmmo = heAmmo;
+            } else if (stAmmo != null) {
+                returnAmmo = stAmmo;
+            } else {
+                returnAmmo = erAmmo;
+            }
+        }
+        return returnAmmo;
+    }
+
+    protected Mounted getAntiVeeAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_CLUSTER == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
+
+                // MMLs have additional considerations.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if (mmlLrm != null) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getAntiInfantryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_FLECHETTE == ammoType.getMunitionType()
+                    || AmmoType.M_FRAGMENTATION == ammoType.getMunitionType()
+                    || AmmoType.M_CLUSTER == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
+
+                // MMLs have additional considerations.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if ((mmlLrm != null) && (mmlSrm != null)) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getHeatAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_INCENDIARY == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
+
+                // MMLs have additional considerations.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if (mmlLrm != null) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getHardTargetAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_CLUSTER == ammoType.getMunitionType()
+                    || AmmoType.M_ANTI_FLAME_FOAM == ammoType.getMunitionType()
+                    || AmmoType.M_CHAFF == ammoType.getMunitionType()
+                    || AmmoType.M_COOLANT == ammoType.getMunitionType()
+                    || AmmoType.M_ECM == ammoType.getMunitionType()
+                    || AmmoType.M_FASCAM == ammoType.getMunitionType()
+                    || AmmoType.M_FLAK == ammoType.getMunitionType()
+                    || AmmoType.M_FLARE == ammoType.getMunitionType()
+                    || AmmoType.M_FLECHETTE == ammoType.getMunitionType()
+                    || AmmoType.M_FRAGMENTATION == ammoType.getMunitionType()
+                    || AmmoType.M_HAYWIRE == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
+                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()
+                    || AmmoType.M_LASER_INHIB == ammoType.getMunitionType()
+                    || AmmoType.M_OIL_SLICK == ammoType.getMunitionType()
+                    || AmmoType.M_NEMESIS == ammoType.getMunitionType()
+                    || AmmoType.M_PAINT_OBSCURANT == ammoType.getMunitionType()
+                    || AmmoType.M_SMOKE == ammoType.getMunitionType()
+                    || AmmoType.M_SMOKE_WARHEAD == ammoType.getMunitionType()
+                    || AmmoType.M_SMOKEGRENADE == ammoType.getMunitionType()
+                    || AmmoType.M_THUNDER == ammoType.getMunitionType()
+                    || AmmoType.M_THUNDER_ACTIVE == ammoType.getMunitionType()
+                    || AmmoType.M_THUNDER_AUGMENTED == ammoType.getMunitionType()
+                    || AmmoType.M_THUNDER_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_THUNDER_VIBRABOMB == ammoType.getMunitionType()
+                    || AmmoType.M_TORPEDO == ammoType.getMunitionType()
+                    || AmmoType.M_VIBRABOMB_IV == ammoType.getMunitionType()
+                    || AmmoType.M_WATER == ammoType.getMunitionType()
+                    || AmmoType.M_ANTI_TSM == ammoType.getMunitionType()
+                    || AmmoType.M_CORROSIVE == ammoType.getMunitionType()) {
+                continue;
+            }
+            // MMLs have additional considerations.
+            if (!(weaponType instanceof MMLWeapon)) {
+                returnAmmo = ammo;
+                break;
+            }
+            if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                mmlLrm = ammo;
+            } else if (mmlSrm == null) {
+                mmlSrm = ammo;
+            } else if ((mmlLrm != null) && (mmlSrm != null)) {
+                break;
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getAntiAirAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_CLUSTER == ammoType.getMunitionType()
+                    || AmmoType.M_FLAK == ammoType.getMunitionType()) {
+
+                // MMLs have additional considerations.
+                // There are no "flak" or "cluster" missile munitions at this point in time.  Code is included in case
+                // they are added to the game at some later date.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if (mmlLrm != null) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
     }
 }

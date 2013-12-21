@@ -296,6 +296,20 @@ public class PrincessTest {
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockEjectedMechwarrior, pickedEntity);
 
+        // Test a list that contains a unit with a move index of 0.
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(0.0);
+        pickedEntity = mockPrincess.getEntityToMove();
+        Assert.assertEquals(mockMech, pickedEntity);
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
+
         // Test a list where everyone has moved except one unit with the lowest possible move index.
         Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(false);
         Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(false);
@@ -304,6 +318,11 @@ public class PrincessTest {
         Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(Double.MIN_VALUE);
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockMech, pickedEntity);
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
     }
 
     @Test

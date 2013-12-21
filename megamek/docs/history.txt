@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.37.1-dev (SVN)
+
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 
   I changed the ArrayList to a PriorityQueue.  There was also a bug where every 

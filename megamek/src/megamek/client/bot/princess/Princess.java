@@ -433,7 +433,7 @@ public class Princess extends BotClient {
                         continue; // Skip enemies not on the board.
                     }
                     PhysicalInfo right_punch = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
+                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this);
                     fireControl.calculateUtility(right_punch);
                     if (right_punch.utility > 0) {
                         if ((best_attack == null)
@@ -442,7 +442,7 @@ public class Princess extends BotClient {
                         }
                     }
                     PhysicalInfo left_punch = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
+                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game, this);
                     fireControl.calculateUtility(left_punch);
                     if (left_punch.utility > 0) {
                         if ((best_attack == null)
@@ -451,7 +451,7 @@ public class Princess extends BotClient {
                         }
                     }
                     PhysicalInfo right_kick = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_KICK, game);
+                            hitter, e, PhysicalAttackType.RIGHT_KICK, game, this);
                     if (right_kick.utility > 0) {
                         if ((best_attack == null)
                                 || (right_kick.utility > best_attack.utility)) {
@@ -459,7 +459,7 @@ public class Princess extends BotClient {
                         }
                     }
                     PhysicalInfo left_kick = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_KICK, game);
+                            hitter, e, PhysicalAttackType.LEFT_KICK, game, this);
                     if (left_kick.getExpectedDamage() > 0) {
                         if ((best_attack == null)
                                 || (left_kick.utility > best_attack.utility)) {

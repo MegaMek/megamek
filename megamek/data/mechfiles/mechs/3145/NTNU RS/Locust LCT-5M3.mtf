@@ -23,7 +23,7 @@ RA Armor:4
 LT Armor:8
 RT Armor:8
 CT Armor:9
-HD Armor:7
+HD Armor:8
 LL Armor:7
 RL Armor:7
 RTL Armor:2
@@ -31,9 +31,9 @@ RTR Armor:2
 RTC Armor:3
 
 Weapons:3
-ER Large Laser, Center Torso
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Large Laser, Center Torso
 
 Left Arm:
 Shoulder

@@ -13,7 +13,7 @@ Engine:360 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel
 Myomer:Standard
 
-Heat Sinks:10 Double
+Heat Sinks:11 Double
 Walk MP:6
 Jump MP:6
 
@@ -31,12 +31,12 @@ RTR Armor:5
 RTC Armor:7
 
 Weapons:6
-ER Medium Laser, Right Torso
-Streak SRM 6, Left Torso
-Streak SRM 6, Right Torso
-Streak SRM 6, Right Torso
-Streak SRM 6, Left Torso
 ER Large Laser, Right Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder

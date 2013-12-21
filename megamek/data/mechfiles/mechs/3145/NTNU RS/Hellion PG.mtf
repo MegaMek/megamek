@@ -1,54 +1,54 @@
-Version:1.1
-Cougar
-X 3
+Version:1.0
+Hellion
+PG
 
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3132
+TechBase:Mixed (Clan Chassis)
+Era:3130
 Source:RS 3145 NT NU
 Rules Level:3
 
-Mass:35
-Engine:175 XL (Clan) Engine
-Structure:IS Composite
+Mass:30
+Engine:210 XL (Clan) Engine
+Structure:Clan Endo Steel
 Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:Heavy Duty Gyro
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:7
-Walk MP:5
+Base Chassis Heat Sinks:8
+Walk MP:7
 Jump MP:0
 
 Armor:Ferro-Fibrous(Clan)
-LA Armor:11
-RA Armor:11
-LT Armor:12
-RT Armor:12
-CT Armor:14
-HD Armor:8
-LL Armor:12
-RL Armor:12
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:9
+LL Armor:14
+RL Armor:14
 RTL Armor:4
 RTR Armor:4
 RTC Armor:5
 
-Weapons:3
-ER Large Pulse Laser, Right Arm
-ER Medium Pulse Laser, Right Arm
-Streak LRM 10, Left Torso
+Weapons:5
+LRM 10, Right Torso
+TSEMP One-Shot, Left Torso
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
 
@@ -56,25 +56,25 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERMediumPulseLaser
-CLERMediumPulseLaser
+Hand Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
--Empty-
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakLRM10
-CLStreakLRM10
-Clan Streak LRM 10 Ammo
--Empty-
--Empty-
--Empty-
+TSEMP One-Shot
+TSEMP One-Shot
+TSEMP One-Shot
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -83,11 +83,11 @@ Clan Streak LRM 10 Ammo
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLTargeting Computer
-CLTargeting Computer
--Empty-
+CLLRM10
+Clan Ammo LRM-10
+CLMASC
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
 Sensors
 Cockpit
-Clan Ferro-Fibrous
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

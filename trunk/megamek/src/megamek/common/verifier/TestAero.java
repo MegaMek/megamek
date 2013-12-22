@@ -19,6 +19,10 @@
 
 package megamek.common.verifier;
 
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.CriticalSlot;
@@ -512,6 +516,36 @@ public class TestAero extends TestEntity {
         return true;
     }
     
+    public void checkCriticalSlotsForEquipment(Entity entity,
+            Vector<Mounted> unallocated, Vector<Serializable> allocation,
+            Vector<Integer> heatSinks) {
+        int countInternalHeatSinks = 0;
+        for (Mounted m : entity.getEquipment()) {
+            if (m.getLocation() == Entity.LOC_NONE) {
+                if ((m.getType() instanceof AmmoType)
+                        && (m.getUsableShotsLeft() <= 1)) {
+                    continue;
+                }
+                if ((entity instanceof Mech) && (m.getType().getCriticals(entity) == 0)) {
+                    continue;
+                }
+                if (!(m.getType() instanceof MiscType)) {
+                    unallocated.addElement(m);
+                    continue;
+                }
+                MiscType mt = (MiscType) m.getType();
+                if (mt.hasFlag(MiscType.F_HEAT_SINK)
+                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                        || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    countInternalHeatSinks++;
+                } else {
+                    unallocated.addElement(m);
+                    continue;
+                }
+            }
+        }
+    }
+
     /**
      * For Aerospace and Conventional fighters the only thing we need to ensure
      * is that they do not mount more weapons in each arc then allowed.  They
@@ -522,11 +556,41 @@ public class TestAero extends TestEntity {
      * @return  True if the mounted weapons are valid, else false
      */
     public boolean correctCriticals(StringBuffer buff) {
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        Vector<Serializable> allocation = new Vector<Serializable>();
+        Vector<Integer> heatSinks = new Vector<Integer>();
+        checkCriticalSlotsForEquipment(aero, unallocated, allocation, heatSinks);
         boolean correct = true;
         
+        if (!unallocated.isEmpty()) {
+            buff.append("Unallocated Equipment:\n");
+            for (Mounted mount : unallocated) {
+                buff.append(mount.getType().getInternalName()).append("\n");
+            }
+            correct = false;
+        }
+        if (!allocation.isEmpty()) {
+            buff.append("Allocated Equipment:\n");
+            for (Enumeration<Serializable> serializableEnum = allocation
+                    .elements(); serializableEnum.hasMoreElements();) {
+                Mounted mount = (Mounted) serializableEnum.nextElement();
+                int needCrits = ((Integer) serializableEnum.nextElement())
+                        .intValue();
+                int aktCrits = ((Integer) serializableEnum.nextElement())
+                        .intValue();
+                buff.append(mount.getType().getInternalName()).append(" has ")
+                        .append(needCrits).append(" Slots, but ")
+                        .append(aktCrits).append(" Slots are allocated!")
+                        .append("\n");
+            }
+            correct = false;
+        }
         int numWeapons[] = new int[4];
         
         for (Mounted m : aero.getWeaponList()){
+            if (m.getLocation() == Entity.LOC_NONE)
+                continue;
+            
             numWeapons[m.getLocation()]++;
         }
                 

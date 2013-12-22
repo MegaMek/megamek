@@ -20,10 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author pjm1 <p/> TODO As soon as we get a stable release and we can upgrade
- *         to 1.5 this class should be replaced with a LinkedHashMap<Hex,
- *         Image> and LinkedHashMap<Hex,List<Image>> and the methods should be
- *         reworked to have that take care of all the LRU removal.
+ * An ImageCache that keeps a Hashtable of mapped keys and values.
+ * 
+ * @author Arlith
  */
 public class ImageCache<K, V> {
 
@@ -42,6 +41,13 @@ public class ImageCache<K, V> {
         maxSize = max;
     }
 
+    /**
+     * Adds a new key/value pair into the cache.
+     * 
+     * @param key
+     * @param value
+     * @return
+     */
     public synchronized V put(K key, V value) {
         if ((key == null) || (value == null))
             return null;
@@ -82,4 +88,8 @@ public class ImageCache<K, V> {
     public void remove(Object key) {
         cache.remove(key);
     }
+    public int size(){
+        return cache.size();
+    }
+    
 }

@@ -270,7 +270,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Image, Image> scaledImageCache = new ImageCache<Image, Image>();
+    private ImageCache<Integer, Image> scaledImageCache = 
+            new ImageCache<Integer, Image>();
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
@@ -1163,7 +1164,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 Minefield mf = game.getMinefields(c).get(0);
 
-                Image tmpImage = getScaledImage(tileManager.getMinefieldSign());
+                Image tmpImage = getScaledImage(tileManager.getMinefieldSign(),true);
                 g.drawImage(tmpImage, p.x + (int) (13 * scale), p.y
                         + (int) (13 * scale), this);
 
@@ -1357,20 +1358,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
-        Image scaledImage = getScaledImage(baseImage);
+        Image scaledImage = getScaledImage(baseImage,true);
 
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
 
         if (tileManager.supersFor(hex) != null) {
             for (Image image : tileManager.supersFor(hex)) {
-                scaledImage = getScaledImage(image);
+                scaledImage = getScaledImage(image,true);
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
 
         if (tileManager.orthoFor(hex) != null) {
             for (Image image : tileManager.orthoFor(hex)) {
-                scaledImage = getScaledImage(image);
+                scaledImage = getScaledImage(image,true);
                 if (!useIsometric()) {
                     boardGraph.drawImage(scaledImage, drawX, drawY, this);
                 }
@@ -1390,7 +1391,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Integer tint = ecmHexes.get(c);
             if (tint != null) {
                 scaledImage = getScaledImage(tileManager.getEcmShade(tint
-                        .intValue()));
+                        .intValue()),true);
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
@@ -1399,7 +1400,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && !game.isPositionIlluminated(c)) {
-            scaledImage = getScaledImage(tileManager.getNightFog());
+            scaledImage = getScaledImage(tileManager.getNightFog(),true);
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
@@ -1573,7 +1574,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (tileManager.orthoFor(oHex) != null) {
             for (Image image : tileManager.orthoFor(oHex)) {
-                Image scaledImage = getScaledImage(image);
+                Image scaledImage = getScaledImage(image,true);
 
                 // draw orthogonal
                 boardGraph.drawImage(scaledImage, orthX, orthY, this);
@@ -3018,7 +3019,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     } else {
                         shadow = getScaledImage(createImage(new FilteredImageSource(
                                 shadow.getSource(), new KeyAlphaFilter(
-                                        TRANSPARENT))));
+                                        TRANSPARENT))),false);
                     }
                     // Draw airborne units in 2 passes. Shadow is rendered
                     // during the opaque pass, and the
@@ -3044,7 +3045,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     } else {
                         shadow = getScaledImage(createImage(new FilteredImageSource(
                                 shadow.getSource(), new KeyAlphaFilter(
-                                        TRANSPARENT))));
+                                        TRANSPARENT))),false);
                     }
                     // Entities on a bridge hex or submerged in water.
                     int altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
@@ -3102,7 +3103,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -3147,7 +3148,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -3222,7 +3223,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -3297,7 +3298,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             shadow.getSource(), new KeyAlphaFilter(TRANSPARENT)));
                 } else {
                     shadow = getScaledImage(createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
                 }
 
                 g.drawImage(shadow, x, y + (int) (DROPSHDW_DIST * scale),
@@ -3311,7 +3312,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             shadow.getSource(), new KeyAlphaFilter(TRANSPARENT)));
                 } else {
                     shadow = getScaledImage(createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
                 }
 
                 g.drawImage(shadow, x,
@@ -3340,7 +3341,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             shadow.getSource(), new KeyAlphaFilter(TRANSPARENT)));
                 } else {
                     shadow = getScaledImage(createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
                 }
 
                 g.drawImage(shadow, x, y, observer);
@@ -3376,7 +3377,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -3522,7 +3523,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -3639,7 +3640,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -4172,7 +4173,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -4367,7 +4368,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
                         baseScaleImage.getSource(), new KeyAlphaFilter(
-                                TRANSPARENT))));
+                                TRANSPARENT))),false);
             }
         }
 
@@ -4710,7 +4711,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
             } else {
                 image = getScaledImage(createImage(new FilteredImageSource(
-                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))),false);
             }
             graph.dispose();
             tempImage.flush();
@@ -6748,7 +6749,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<Image, Image>();
+        scaledImageCache = new ImageCache<Integer, Image>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();
@@ -6786,9 +6787,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Manages a cache of scaled images.
+     * Return a scaled version of the input.  If the useCache flag is set, the
+     * scaled image will be stored in an image cache for later retrieval.
+     * 
+     * @param base   The image to get a scaled copy of.  The current zoom level
+     *                  is used to determine the scale.
+     *                  
+     * @param useCache  This flag determines whether the scaled image should
+     *                      be stored in a cache for later retrieval.                    
      */
-    Image getScaledImage(Image base) {
+    Image getScaledImage(Image base, boolean useCache) {
         if (base == null) {
             return null;
         }
@@ -6796,7 +6804,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return base;
         }
 
-        Image scaled = scaledImageCache.get(base);
+        
+        Image scaled;
+        if (useCache){
+            // Check the cache
+            scaled = scaledImageCache.get(base.hashCode());
+        } else {
+            scaled = null;
+        }
+        // Compute the scaled image
         if (scaled == null) {
             MediaTracker tracker = new MediaTracker(this);
             if ((base.getWidth(null) == -1) || (base.getHeight(null) == -1)) {
@@ -6822,8 +6838,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 e.printStackTrace();
             }
             tracker.removeImage(scaled);
-
-            scaledImageCache.put(base, scaled);
+            // Cache the image if the flag is set
+            if (useCache){
+                scaledImageCache.put(base.hashCode(), scaled);
+            }            
         }
         return scaled;
     }

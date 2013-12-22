@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:50
 Engine:300 XL Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Standard Cockpit
 Gyro:XL Gyro
@@ -33,11 +33,11 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:6
+ER PPC, Left Arm
 Medium VSP Laser, Right Arm
 Medium Pulse Laser, Right Arm
-Small Pulse Laser, Right Torso
 Small Pulse Laser, Left Torso
-ER PPC, Left Arm
+Small Pulse Laser, Right Torso
 TAG, Head
 
 Left Arm:
@@ -50,23 +50,23 @@ ISERPPC
 ISERPPC
 ISAES
 ISAES
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
+ISMediumVSP
+ISMediumVSP
 ISMediumPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -76,11 +76,11 @@ ISPartialWing
 ISPartialWing
 ISPartialWing
 ISPartialWing
+Jump Jet
 ISSmallPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -90,11 +90,11 @@ ISPartialWing
 ISPartialWing
 ISPartialWing
 ISPartialWing
+Jump Jet
 ISSmallPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-

@@ -1,0 +1,150 @@
+Version:1.0
+Cougar
+X 2
+
+Config:Biped Omnimech
+TechBase:Mixed (IS Chassis)
+Era:3132
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:35
+Engine:175 XL (Clan) Engine
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
+Walk MP:5
+Jump MP:8
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:12
+RT Armor:12
+CT Armor:14
+HD Armor:8
+LL Armor:12
+RL Armor:12
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:2
+ER Medium Pulse Laser, Right Arm
+Streak LRM 15, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

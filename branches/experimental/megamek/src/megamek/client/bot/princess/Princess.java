@@ -15,12 +15,16 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
-import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -107,14 +111,14 @@ public class Princess extends BotClient {
 
     public void setShouldFlee(boolean shouldFlee, String reason) {
         log(getClass(), "setShouldFlee(boolean, String)", LogLevel.INFO, "Setting Should Flee " + shouldFlee +
-                                                                         " because: " + reason);
+                " because: " + reason);
         flee = shouldFlee;
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
         log(getClass(), "setBehaviorSettings(BehaviorSettings)", LogLevel.INFO, "New behavior settings for " +
-                                                                                getName() + "\n" +
-                                                                                behaviorSettings.toLog());
+                getName() + "\n" +
+                behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (PrincessException e) {
@@ -230,10 +234,10 @@ public class Princess extends BotClient {
             // entity that can
             // act this turn
             // make sure weapons are loaded
-            fireControl.loadAmmo(shooter, game);
-            FireControl.FiringPlan plan = fireControl.getBestFiringPlan(
-                    shooter, game);
+            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
             if (plan != null) {
+                fireControl.loadAmmo(shooter, plan.getTarget());
+
                 log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
@@ -268,8 +272,8 @@ public class Princess extends BotClient {
      * @param entity The unit to be indexed.
      * @return The movement index of this unit.  May be positive or negative.  Higher index values should move first.
      */
-    protected double calculateMoveIndex(Entity entity) {
-        StringBuilder msg = new StringBuilder("Calculating move index for ").append(entity.getDisplayName());
+    protected double calculateMoveIndex(Entity entity, StringBuilder msg) {
+        msg.append("\n\tCalculating move index for ").append(entity.getDisplayName());
         StringBuilder modifiers = new StringBuilder();
         NumberFormat numberFormat = DecimalFormat.getInstance();
         double total = 0;
@@ -279,16 +283,16 @@ public class Princess extends BotClient {
             if (entity.getJumpMP(true) > fastestMove) {
                 fastestMove = entity.getJumpMP(true);
             }
-            msg.append("\n\tFastest Move = ").append(fastestMove);
+            msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
             // Get the distance to the nearest enemy.
             double distance = getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(), game);
-            msg.append("\n\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));
+            msg.append("\n\t\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));
 
             // Get the ration of distance to speed.
             // Faster units that are closer to the enemy should move later.
             total = distance / fastestMove;
-            msg.append("\n\tDistance to Move Ratio (dist / move): ").append(numberFormat.format(total));
+            msg.append("\n\t\tDistance to Move Ratio (dist / move): ").append(numberFormat.format(total));
 
             // Prone enemies move sooner.
             if (entity.isProne()) {
@@ -334,16 +338,15 @@ public class Princess extends BotClient {
 
             return total;
         } finally {
-            msg.append("\n\tModifiers:").append(modifiers);
-            msg.append("\n\tTotal = ").append(numberFormat.format(total));
-            log(getClass(), "calculateMoveIndex(Entity)", LogLevel.INFO, msg.toString());
+            msg.append("\n\t\tModifiers:").append(modifiers);
+            msg.append("\n\t\tTotal = ").append(numberFormat.format(total));
         }
     }
 
     /**
      * Loops through the list of entities controlled by this Princess instance and decides which should be moved first.
      * Immobile units and ejected mechwarriors/crews will be moved first.  After that, each unit is given an index
-     * via the {@link #calculateMoveIndex(Entity)} method.  The highest index value is moved first.
+     * via the {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest index value is moved first.
      *
      * @return The entity that should be moved next.
      */
@@ -352,35 +355,45 @@ public class Princess extends BotClient {
         // first move useless units: immobile units, ejected mechwarrior, etc
         Entity movingEntity = null;
         List<Entity> myEntities = getEntitiesOwned();
-        double highestIndex = Double.MIN_VALUE;
+        double highestIndex = -10000.0;
+        StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (Entity entity : myEntities) {
+            msg.append("\n\tUnit ").append(entity.getDisplayName());
             if (entity.isOffBoard() || (entity.getPosition() == null) || !entity.isSelectableThisTurn()) {
+                msg.append("cannot be moved.");
                 continue;
             }
 
             // Move immobile units & ejected mechwarriors immediately.
             if (entity.isImmobile()) {
+                msg.append("is immobile.");
                 movingEntity = entity;
                 break;
             }
             if (entity instanceof MechWarrior) {
+                msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
             }
 
             // If I only have 1 unit, no need to calculate an index.
             if (myEntities.size() == 1) {
+                msg.append("is my only unit.");
                 movingEntity = entity;
                 break;
             }
 
             // We will move the entity with the highest index.
-            double moveIndex = calculateMoveIndex(entity);
+            double moveIndex = calculateMoveIndex(entity, msg);
+            msg.append("\n\thas index " + moveIndex + " vs " + highestIndex);
             if (moveIndex >= highestIndex) {
                 highestIndex = moveIndex;
                 movingEntity = entity;
             }
         }
+
+        LogLevel level = (movingEntity == null ? LogLevel.WARNING : LogLevel.DEBUG);
+        log(getClass(), "getEntityToMove()", level, msg.toString());
 
         return movingEntity;
     }
@@ -406,7 +419,7 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn
             Entity first_entity = game.getFirstEntity(getMyTurn());
             Entity hitter = first_entity;
-            FireControl.PhysicalInfo best_attack = null;
+            PhysicalInfo best_attack = null;
             do {
                 log(getClass(),
                         METHOD_NAME,
@@ -419,8 +432,8 @@ public class Princess extends BotClient {
                     if (e.getPosition() == null) {
                         continue; // Skip enemies not on the board.
                     }
-                    FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
+                    PhysicalInfo right_punch = new PhysicalInfo(
+                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this);
                     fireControl.calculateUtility(right_punch);
                     if (right_punch.utility > 0) {
                         if ((best_attack == null)
@@ -428,8 +441,8 @@ public class Princess extends BotClient {
                             best_attack = right_punch;
                         }
                     }
-                    FireControl.PhysicalInfo left_punch = new FireControl.PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
+                    PhysicalInfo left_punch = new PhysicalInfo(
+                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game, this);
                     fireControl.calculateUtility(left_punch);
                     if (left_punch.utility > 0) {
                         if ((best_attack == null)
@@ -437,16 +450,16 @@ public class Princess extends BotClient {
                             best_attack = left_punch;
                         }
                     }
-                    FireControl.PhysicalInfo right_kick = new FireControl.PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_KICK, game);
+                    PhysicalInfo right_kick = new PhysicalInfo(
+                            hitter, e, PhysicalAttackType.RIGHT_KICK, game, this);
                     if (right_kick.utility > 0) {
                         if ((best_attack == null)
                                 || (right_kick.utility > best_attack.utility)) {
                             best_attack = right_kick;
                         }
                     }
-                    FireControl.PhysicalInfo left_kick = new FireControl.PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_KICK, game);
+                    PhysicalInfo left_kick = new PhysicalInfo(
+                            hitter, e, PhysicalAttackType.LEFT_KICK, game, this);
                     if (left_kick.getExpectedDamage() > 0) {
                         if ((best_attack == null)
                                 || (left_kick.utility > best_attack.utility)) {
@@ -468,7 +481,7 @@ public class Princess extends BotClient {
                 // otherwise, check if the next entity can hit something
                 if (hitter.equals(first_entity)) {
                     hitter = null; // getNextEntity is incorrect, it does not
-                                   // return
+                    // return
                     // null at the end, it returns the first entity
                 }
             } while (hitter != null);
@@ -513,7 +526,7 @@ public class Princess extends BotClient {
             return false;
         }
 
-        Mech mech = (Mech)mover;
+        Mech mech = (Mech) mover;
         if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
             return false;
         }
@@ -591,7 +604,7 @@ public class Princess extends BotClient {
 
     protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths, int maxRange, double fallTollerance,
                                               int startingHomeDistance, int startingDistToNearestEnemy,
-                                              List<Entity> enemies, List<Entity> friends){
+                                              List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
                 startingDistToNearestEnemy, enemies, friends);
     }
@@ -600,6 +613,10 @@ public class Princess extends BotClient {
     protected MovePath continueMovementFor(Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
         methodBegin(getClass(), METHOD_NAME);
+
+        if (entity == null) {
+            log(getClass(), METHOD_NAME, LogLevel.WARNING, "Entity is NULL.");
+        }
 
         try {
             // figure out who moved last, and who's move lists need to be updated
@@ -665,7 +682,7 @@ public class Princess extends BotClient {
             double fallTolerance = getBehaviorSettings().getFallShameIndex() / 10d;
             int startingHomeDistance = getPathRanker().distanceToHomeEdge(entity.getPosition(),
                     getBehaviorSettings().getHomeEdge(), getGame());
-            int distanceToNerestEnemy = (int)getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
+            int distanceToNerestEnemy = (int) getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
                     getGame());
             List<RankedPath> rankedpaths = rankPaths(paths, entity.getMaxWeaponRange(), fallTolerance,
                     startingHomeDistance, distanceToNerestEnemy, getEnemyEntities(), getFriendEntities());
@@ -739,7 +756,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements();) {
+                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
                         if ((entity instanceof GunEmplacement)
@@ -789,7 +806,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements();) {
+                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         if (entity instanceof GunEmplacement
                                 && entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -815,7 +832,7 @@ public class Princess extends BotClient {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
-            String msg) {
+                    String msg) {
         logger.log(callingClass, methodName, level, msg);
     }
 
@@ -824,7 +841,7 @@ public class Princess extends BotClient {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level,
-            Throwable t) {
+                    Throwable t) {
         logger.log(callingClass, methodName, level, t);
     }
 
@@ -847,7 +864,7 @@ public class Princess extends BotClient {
     public void setHomeEdge(HomeEdge homeEdge) {
         if (homeEdge == null) {
             log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
-                new IllegalArgumentException("Home Edge is required!"));
+                    new IllegalArgumentException("Home Edge is required!"));
             return;
         }
         getBehaviorSettings().setHomeEdge(homeEdge);

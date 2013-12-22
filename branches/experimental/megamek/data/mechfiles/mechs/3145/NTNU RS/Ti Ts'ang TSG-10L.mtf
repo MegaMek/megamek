@@ -1,0 +1,157 @@
+Version:1.0
+Ti Ts'ang
+TSG-10L
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NTNU
+Rules Level:4
+
+Mass:60
+Engine:360 XXL Engine(IS)
+Structure:IS Endo-Composite
+Myomer:Triple-Strength
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Heat-Dissipating(Inner Sphere)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:30
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:10
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Left Torso
+Medium VSP Laser, Left Arm
+Small Laser, Left Arm
+Small Laser, Left Arm
+Small Laser, Left Arm
+Small Laser, Left Arm
+TAG, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumVSP
+ISMediumVSP
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+IS Endo-Composite
+IS Endo-Composite
+IS Heat-Dissipating
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Heat-Dissipating
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
+IS Endo-Composite
+TSM
+TSM
+TSM
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
+ISChaffPod
+TSM
+TSM
+TSM
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger
+ISTAG
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Composite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heat-Dissipating
+IS Heat-Dissipating
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heat-Dissipating
+IS Heat-Dissipating
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

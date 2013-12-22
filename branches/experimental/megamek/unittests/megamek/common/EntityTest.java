@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/3/13 8:48 AM
  */

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 
+import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.common.Aero;
 import megamek.common.Configuration;
@@ -48,13 +49,12 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
-import megamek.client.TimerSingleton;
 /**
  * @author mev This is the class where the execution of the megamek game starts.
  */
 public class MegaMek {
 
-    public static String VERSION = "0.37.0-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.37.1-dev"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -521,7 +521,7 @@ public class MegaMek {
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                                || (entity instanceof Tank || 
+                                || ((entity instanceof Tank) ||
                                         (entity instanceof Aero))) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
@@ -533,18 +533,18 @@ public class MegaMek {
                                 testEntity = new TestTank((Tank) entity,
                                         entityVerifier.tankOption, null);
                             }
-                            if (entity.getEntityType() == Entity.ETYPE_AERO
-                                    && entity.getEntityType() != 
-                                            Entity.ETYPE_DROPSHIP
-                                    && entity.getEntityType() != 
-                                            Entity.ETYPE_SMALL_CRAFT
-                                    && entity.getEntityType() != 
-                                            Entity.ETYPE_FIGHTER_SQUADRON
-                                    && entity.getEntityType() != 
-                                            Entity.ETYPE_JUMPSHIP
-                                    && entity.getEntityType() != 
-                                            Entity.ETYPE_SPACE_STATION) {
-                                testEntity = new TestAero((Aero)entity, 
+                            if ((entity.getEntityType() == Entity.ETYPE_AERO)
+                                    && (entity.getEntityType() !=
+                                            Entity.ETYPE_DROPSHIP)
+                                    && (entity.getEntityType() !=
+                                            Entity.ETYPE_SMALL_CRAFT)
+                                    && (entity.getEntityType() !=
+                                            Entity.ETYPE_FIGHTER_SQUADRON)
+                                    && (entity.getEntityType() !=
+                                            Entity.ETYPE_JUMPSHIP)
+                                    && (entity.getEntityType() !=
+                                            Entity.ETYPE_SPACE_STATION)) {
+                                testEntity = new TestAero((Aero)entity,
                                         entityVerifier.aeroOption, null);
                             }
 

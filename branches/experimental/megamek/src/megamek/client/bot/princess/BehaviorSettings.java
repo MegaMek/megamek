@@ -25,67 +25,67 @@ import java.util.Set;
 /**
  * Created with IntelliJ IDEA.
  *
+ * @version $Id$
  * @lastModifiedBy Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 8/17/13 10:47 PM
  */
 public class BehaviorSettings {
 
     private static final int[] SELF_PRESERVATION_VALUES = new int[]{5,
-                                                                    10,
-                                                                    15,
-                                                                    20,
-                                                                    25,
-                                                                    30,
-                                                                    35,
-                                                                    40,
-                                                                    45,
-                                                                    50,
-                                                                    60};
+            10,
+            15,
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            60};
     private static final int[] FALL_SHAME_VALUES = new int[]{1,
-                                                             2,
-                                                             4,
-                                                             6,
-                                                             8,
-                                                             10,
-                                                             12,
-                                                             14,
-                                                             16,
-                                                             18,
-                                                             20};
+            2,
+            4,
+            6,
+            8,
+            10,
+            12,
+            14,
+            16,
+            18,
+            20};
     private static final double[] BRAVERY = new double[]{0.1,
-                                                         0.3,
-                                                         0.6,
-                                                         0.9,
-                                                         1.2,
-                                                         1.5,
-                                                         1.8,
-                                                         2.1,
-                                                         2.4,
-                                                         2.7,
-                                                         3.0};
+            0.3,
+            0.6,
+            0.9,
+            1.2,
+            1.5,
+            1.8,
+            2.1,
+            2.4,
+            2.7,
+            3.0};
     private static final int[] HYPER_AGGRESSION_VALUES = new int[]{1,
-                                                                   2,
-                                                                   4,
-                                                                   6,
-                                                                   8,
-                                                                   10,
-                                                                   12,
-                                                                   14,
-                                                                   16,
-                                                                   18,
-                                                                   20};
+            2,
+            4,
+            6,
+            8,
+            10,
+            12,
+            14,
+            16,
+            18,
+            20};
     private static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
-                                                                       0.002,
-                                                                       0.004,
-                                                                       0.006,
-                                                                       0.008,
-                                                                       0.01,
-                                                                       0.012,
-                                                                       0.014,
-                                                                       0.016,
-                                                                       0.018,
-                                                                       0.02};
+            0.002,
+            0.004,
+            0.006,
+            0.008,
+            0.01,
+            0.012,
+            0.014,
+            0.016,
+            0.018,
+            0.02};
 
     private String description = BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 

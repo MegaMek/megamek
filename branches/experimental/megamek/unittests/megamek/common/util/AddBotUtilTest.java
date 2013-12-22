@@ -24,7 +24,7 @@ import java.util.Vector;
 /**
  * Created with IntelliJ IDEA.
  *
- * @version %Id%
+ * @version $Id$
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/6/13 4:24 PM
  */
@@ -82,12 +82,12 @@ public class AddBotUtilTest {
 
         testAddBotUtil = Mockito.spy(new AddBotUtil());
         Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(Mockito.any(IPlayer.class),
-                                                                                  Mockito.any(LogLevel.class),
-                                                                                  Mockito.anyString(),
-                                                                                  Mockito.anyInt());
+                Mockito.any(LogLevel.class),
+                Mockito.anyString(),
+                Mockito.anyInt());
         Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(Mockito.any(IPlayer.class),
-                                                                                Mockito.anyString(),
-                                                                                Mockito.anyInt());
+                Mockito.anyString(),
+                Mockito.anyInt());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class AddBotUtilTest {
         // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "-c:ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
+                "-p:" + BOT_PLAYER_NAME};
         expected = "Verbosity set to 'WARNING'.\nPrincess has replaced MockBot.  Config: ESCAPE.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
@@ -166,7 +166,7 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-c:invalid", "-p:" + BOT_PLAYER_NAME};
         expected = "Unrecognized Behavior Setting: 'invalid'.  Using DEFAULT.\n" +
-                   "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+                "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");
@@ -176,14 +176,14 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:invalid", "-p:" + BOT_PLAYER_NAME};
         expected = "Invalid Verbosity: 'invalid'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+                "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
         // Test leaving out a delimiter.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", LogLevel.WARNING.toString(), "-c:ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
+                "-p:" + BOT_PLAYER_NAME};
         expected = "Princess has replaced MockBot.  Config: ESCAPE.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
@@ -193,9 +193,9 @@ public class AddBotUtilTest {
         // Test leaving out a different delimiter.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
+                "-p:" + BOT_PLAYER_NAME};
         expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+                "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");

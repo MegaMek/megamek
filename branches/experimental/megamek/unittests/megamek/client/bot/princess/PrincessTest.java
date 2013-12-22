@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
+ * @version $Id$
  * @since 11/22/13 8:33 AM
  */
 @RunWith(JUnit4.class)
@@ -101,7 +101,8 @@ public class PrincessTest {
     @Test
     public void testCalculateMoveIndex() {
         final double TOLERANCE = 0.001;
-        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.any(Entity.class))).thenCallRealMethod();
+        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.any(Entity.class), Mockito.any(StringBuilder.class)))
+                .thenCallRealMethod();
         Mockito.when(mockPrincess.isFleeing(Mockito.any(Entity.class))).thenReturn(false);
 
         Mockito.when(mockPathRanker
@@ -122,53 +123,53 @@ public class PrincessTest {
         Mockito.when(mockMech.isVoidSigActive()).thenReturn(false);
         Mockito.when(mockMech.isVoidSigOn()).thenReturn(false);
         double expected = 1.111;
-        double actual = mockPrincess.calculateMoveIndex(mockMech);
+        double actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make the mech prone.
         Mockito.when(mockMech.isProne()).thenReturn(true);
         expected = 1.222;
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make the mech flee.
         Mockito.when(mockMech.isProne()).thenReturn(false);
         Mockito.when(mockPrincess.isFleeing(Mockito.eq(mockMech))).thenReturn(true);
         expected = 2.222;
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make the mech a commander.
         Mockito.when(mockPrincess.isFleeing(Mockito.eq(mockMech))).thenReturn(false);
         Mockito.when(mockMech.isCommander()).thenReturn(true);
         expected = 0.555;
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make it a civillian mech.
         Mockito.when(mockMech.isCommander()).thenReturn(false);
         Mockito.when(mockMech.isMilitary()).thenReturn(false);
         expected = 5.555;
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make it stealthy;
         Mockito.when(mockMech.isMilitary()).thenReturn(true);
         Mockito.when(mockMech.isStealthActive()).thenReturn(true);
         expected = 0.370;
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
         Mockito.when(mockMech.isStealthActive()).thenReturn(false);
         Mockito.when(mockMech.isStealthOn()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
         Mockito.when(mockMech.isStealthOn()).thenReturn(false);
         Mockito.when(mockMech.isVoidSigActive()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
         Mockito.when(mockMech.isVoidSigActive()).thenReturn(false);
         Mockito.when(mockMech.isVoidSigOn()).thenReturn(true);
-        actual = mockPrincess.calculateMoveIndex(mockMech);
+        actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Test a BA unit.
@@ -184,7 +185,7 @@ public class PrincessTest {
         Mockito.when(mockBA.isVoidSigActive()).thenReturn(false);
         Mockito.when(mockBA.isVoidSigOn()).thenReturn(false);
         expected = 6.666;
-        actual = mockPrincess.calculateMoveIndex(mockBA);
+        actual = mockPrincess.calculateMoveIndex(mockBA, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Test an Inf unit.
@@ -200,7 +201,7 @@ public class PrincessTest {
         Mockito.when(mockInf.isVoidSigActive()).thenReturn(false);
         Mockito.when(mockInf.isVoidSigOn()).thenReturn(false);
         expected = 30.0;
-        actual = mockPrincess.calculateMoveIndex(mockInf);
+        actual = mockPrincess.calculateMoveIndex(mockInf, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Test a Tank.
@@ -216,7 +217,7 @@ public class PrincessTest {
         Mockito.when(mockTank.isVoidSigActive()).thenReturn(false);
         Mockito.when(mockTank.isVoidSigOn()).thenReturn(false);
         expected = 2.5;
-        actual = mockPrincess.calculateMoveIndex(mockTank);
+        actual = mockPrincess.calculateMoveIndex(mockTank, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
     }
 
@@ -230,19 +231,22 @@ public class PrincessTest {
         Mockito.when(mockMech.isOffBoard()).thenReturn(false);
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockMech.isSelectableThisTurn()).thenReturn(true);
-        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockMech))).thenReturn(1.111);
+        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockMech), Mockito.any(StringBuilder.class)))
+                .thenReturn(1.111);
 
         Entity mockBA = Mockito.mock(BattleArmor.class);
         Mockito.when(mockBA.isOffBoard()).thenReturn(false);
         Mockito.when(mockBA.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
-        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockBA))).thenReturn(6.666);
+        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockBA), Mockito.any(StringBuilder.class)))
+                .thenReturn(6.666);
 
         Entity mockTank = Mockito.mock(Tank.class);
         Mockito.when(mockTank.isOffBoard()).thenReturn(false);
         Mockito.when(mockTank.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
-        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockTank))).thenReturn(2.5);
+        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockTank), Mockito.any(StringBuilder.class)))
+                .thenReturn(2.5);
 
         Entity mockEjectedMechwarrior = Mockito.mock(MechWarrior.class);
         Mockito.when(mockEjectedMechwarrior.isOffBoard()).thenReturn(false);
@@ -259,7 +263,8 @@ public class PrincessTest {
         Mockito.when(mockOffBoardArty.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockOffBoardArty.isOffBoard()).thenReturn(true);
-        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockOffBoardArty))).thenReturn(10.0);
+        Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockOffBoardArty), Mockito.any(StringBuilder.class)))
+                .thenReturn(10.0);
 
         // Test a list of normal units.
         List<Entity> testEntityList = new ArrayList<Entity>();
@@ -291,14 +296,33 @@ public class PrincessTest {
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockEjectedMechwarrior, pickedEntity);
 
+        // Test a list that contains a unit with a move index of 0.
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(0.0);
+        pickedEntity = mockPrincess.getEntityToMove();
+        Assert.assertEquals(mockMech, pickedEntity);
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
+
         // Test a list where everyone has moved except one unit with the lowest possible move index.
         Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(false);
         Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(false);
         Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(false);
         Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(false);
-        Mockito.when(mockPrincess.calculateMoveIndex(mockMech)).thenReturn(Double.MIN_VALUE);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(Double.MIN_VALUE);
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockMech, pickedEntity);
+        Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(mockPrincess.calculateMoveIndex(mockMech, new StringBuilder())).thenReturn(1.111);
     }
 
     @Test

@@ -7,6 +7,6 @@ Tyre,5
 Gotha GTHA-500b,6
 Hellcat II HCT-213C,5
 Lucifer LCF-R16,4
-Persepolis,3
+Persepolis (Standard),3
 Ammon,2
-Persepolis,1
+Persepolis (Standard),1

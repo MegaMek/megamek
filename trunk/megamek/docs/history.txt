@@ -8,6 +8,7 @@ v0.37.1-dev (SVN)
     with it myself.
 + Data: Unit fixes and New Images
 + Tweak TestAero to allow for customization of Aeros in MHQ
++ Data: Unit fixes and image fixes
 
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 

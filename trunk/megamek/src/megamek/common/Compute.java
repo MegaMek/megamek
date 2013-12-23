@@ -38,6 +38,7 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.HAGWeapon;
+import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
 
@@ -764,7 +765,8 @@ public class Compute {
         WeaponType wtype = (WeaponType) weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
-        boolean isWeaponInfantry = wtype instanceof InfantryWeapon;
+        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon);
+        boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
         boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)
@@ -918,7 +920,8 @@ public class Compute {
                     "Target out of range");
         }
         if ((distance == 0)
-                && (!isAttackerInfantry || !isWeaponInfantry)
+                && (!isAttackerInfantry ||
+                        !(isWeaponInfantry || isSwarmOrLegAttack))
                 && !(ae.isAirborne())
                 && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                         && !ae.isAirborne() && !ae.isSpaceborne())
@@ -1036,7 +1039,7 @@ public class Compute {
         // if this is an infantry weapon then we use a whole different
         // calculation
         // to figure out range, so overwrite whatever we have at this point
-        if (isWeaponInfantry) {
+        if (isWeaponInfantry ) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
                     (InfantryWeapon) wtype);
         }

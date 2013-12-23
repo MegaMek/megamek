@@ -1,0 +1,75 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Warg Assault Battle Armor
+</Name>
+
+<model>
+(Reactive)
+</model>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+16
+</Armor>
+
+<Squad Equipment>
+CLSmallPulseLaser
+Clan BA Light Machine Gun
+CLSRM2:Body
+BASRM2 Ammo
+BASRM2 Ammo
+BASRM2 Ammo
+CLSRM2:Body
+BASRM2 Ammo
+BASRM2 Ammo
+BASRM2 Ammo
+BAHeavyBattleClaw
+BABasicManipulator
+</Squad Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3130
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+RS3145 NT NU
+</source>
+
+<history>
+BA Reactive Armor not coded. Unit included for completeness
+</history>

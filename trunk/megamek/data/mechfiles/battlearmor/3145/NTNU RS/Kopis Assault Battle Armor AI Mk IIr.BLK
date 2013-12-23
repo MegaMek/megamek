@@ -1,0 +1,75 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kopis Assault Battle Armor
+</Name>
+
+<Model>
+(AI Mk IIr)
+</Model>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+10
+</Armor>
+
+<armor_type>
+2
+</armor_type>
+
+<Squad Equipment>
+BAHeavyBattleClaw
+BAHeavyBattleClaw
+ISHeavyGL
+ISHeavyGL
+ISMedium Recoilless Rifle:Body
+ISMedium Recoilless Rifle:Body
+IS Improved Sensors
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3130
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+RS3145 NTNU
+</source>
+
+<history>
+BA Reactive Armor not coded. Unit included for completeness
+</history>

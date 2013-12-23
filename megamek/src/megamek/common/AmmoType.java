@@ -3937,7 +3937,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.shortName = "LB-10X Cluster";
         ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 15;
+        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code

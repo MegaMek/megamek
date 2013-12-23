@@ -3285,8 +3285,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (prevAttack.getEntityId() == attackerId) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack
                             .getWeaponId());
-                    if (prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                            && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) {
+                    if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                            && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) 
+                            || (weapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                                    && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
                         return "Can't fire field guns and small arms at the same time.";
                     }
                     if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS)

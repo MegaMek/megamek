@@ -27,11 +27,13 @@ import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.VTOL;
 import megamek.common.logging.LogLevel;
 
 /**
@@ -172,9 +174,9 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected RankedPath doAeroSpecificRanking(MovePath movePath) {
+    protected RankedPath doAeroSpecificRanking(MovePath movePath, boolean vtol) {
         // stalling is bad.
-        if (movePath.getFinalVelocity() == 0) {
+        if (movePath.getFinalVelocity() == 0 && !vtol) {
             return new RankedPath(-1000d, movePath, "stall");
         }
 
@@ -185,6 +187,9 @@ public class BasicPathRanker extends PathRanker {
 
         // Flying off board should only be done if necessary, but is better than taking a lot of damage.
         if ((movePath.getLastStep() != null) && (movePath.getLastStep().getType() == MoveStepType.RETURN)) {
+            if (vtol) {
+                return new RankedPath(-5000d, movePath, "off-board");
+            }
             return new RankedPath(-5d, movePath, "off-board");
         }
 
@@ -271,6 +276,9 @@ public class BasicPathRanker extends PathRanker {
     // The further I am from a target, the lower this path ranks (weighted by Hyper Aggression.
     private double calculateAggreesionMod(Entity movingUnit, MovePath path, IGame game, StringBuilder formula) {
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+        if ((distToEnemy == 0) && !(movingUnit instanceof Infantry)) {
+            distToEnemy = 2;
+        }
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = distToEnemy * aggression;
         formula.append(" - aggressionMod [").append(LOG_DECIMAL.format(aggressionMod)).append(" = ")
@@ -352,12 +360,12 @@ public class BasicPathRanker extends PathRanker {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         Entity movingUnit = path.getEntity();
-        StringBuilder formula = new StringBuilder("Calculation: ");
+        StringBuilder formula = new StringBuilder("Calculation: {");
 
         try {
 
-            if (movingUnit instanceof Aero) {
-                RankedPath aeroRankedPath = doAeroSpecificRanking(path);
+            if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
+                RankedPath aeroRankedPath = doAeroSpecificRanking(path, (movingUnit instanceof VTOL));
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;
                 }

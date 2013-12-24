@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class BehaviorSettings {
 
-    private static final int[] SELF_PRESERVATION_VALUES = new int[]{5,
+    protected static final int[] SELF_PRESERVATION_VALUES = new int[]{5,
             10,
             15,
             20,
@@ -42,18 +42,18 @@ public class BehaviorSettings {
             45,
             50,
             60};
-    private static final int[] FALL_SHAME_VALUES = new int[]{1,
-            2,
-            4,
-            6,
-            8,
-            10,
-            12,
-            14,
-            16,
-            18,
-            20};
-    private static final double[] BRAVERY = new double[]{0.1,
+    protected static final int[] FALL_SHAME_VALUES = new int[]{1,
+            20,
+            40,
+            60,
+            80,
+            100,
+            120,
+            140,
+            160,
+            180,
+            200};
+    protected static final double[] BRAVERY = new double[]{0.1,
             0.3,
             0.6,
             0.9,
@@ -64,18 +64,18 @@ public class BehaviorSettings {
             2.4,
             2.7,
             3.0};
-    private static final int[] HYPER_AGGRESSION_VALUES = new int[]{1,
+    protected static final double[] HYPER_AGGRESSION_VALUES = new double[]{0.5,
+            1,
             2,
+            3,
             4,
+            5,
             6,
+            7,
             8,
-            10,
-            12,
-            14,
-            16,
-            18,
-            20};
-    private static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
+            9,
+            10};
+    protected static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
             0.002,
             0.004,
             0.006,
@@ -436,17 +436,18 @@ public class BehaviorSettings {
      *
      * @return Current hyper aggression value.
      */
-    public int getHyperAggressionValue() {
+    public double getHyperAggressionValue() {
         return getHyperAggressionValue(hyperAggressionIndex);
     }
 
     /**
      * How close to I want to get to my enemies?
      *
+     *
      * @param index The index[0-10] of the hyper aggression value desired.
      * @return The hyper aggression value at the given index.
      */
-    public int getHyperAggressionValue(int index) {
+    public double getHyperAggressionValue(int index) {
         return HYPER_AGGRESSION_VALUES[validateIndex(index)];
     }
 

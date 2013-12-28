@@ -22,6 +22,7 @@ v0.37.1-dev (SVN)
     using a special multiplier and multiple if statements for them I used a single if statement with an
     additive of 0.08 (clan multipler for FF anf FA is 1.2 vs. 1.12, and the rest of these are additions on
     top of that) to the I.S. multipler.
++ Data: Unit Fixes.
 
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 

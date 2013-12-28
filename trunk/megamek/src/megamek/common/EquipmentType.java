@@ -135,10 +135,11 @@ public class EquipmentType {
             25000, 15000, 50000, 15000, 25000, 20000, 25000 };
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
-            1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1,
+            1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1,
             1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
+    public static final double POINT_ADDITION_CLAN_FF = 0.08;
 
     public static final int RATING_A = 0;
     public static final int RATING_B = 1;
@@ -787,11 +788,19 @@ public class EquipmentType {
         if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length)) {
             return POINT_MULTIPLIER_UNKNOWN;
         }
+        /*
+         * now handled in a single if statement
         if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor) {
             return POINT_MULTIPLIER_CLAN_FF;
         }
         if ((inArmor == T_ARMOR_ALUM) && clanArmor) {
             return POINT_MULTIPLIER_CLAN_FF;
+        }*/
+        // Clan armors of these types have a multiplier exactly 0.08 higher than the I.S. variety
+        if (clanArmor && (inArmor == EquipmentType.T_ARMOR_FERRO_CARBIDE || inArmor == EquipmentType.T_ARMOR_FERRO_IMP
+                || inArmor == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE || inArmor == T_ARMOR_ALUM || inArmor == T_ARMOR_FERRO_FIBROUS)) {
+            return armorPointMultipliers[inArmor] + POINT_ADDITION_CLAN_FF;
+            
         }
         return armorPointMultipliers[inArmor];
     }

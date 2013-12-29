@@ -23,6 +23,10 @@ v0.37.1-dev (SVN)
     additive of 0.08 (clan multipler for FF anf FA is 1.2 vs. 1.12, and the rest of these are additions on
     top of that) to the I.S. multipler.
 + Data: Unit Fixes.
++ Adjusted the too many units loading message: added a specific message for 
+    infantry, so it makes more sense.  Also fixed a bug where instead of 
+    currentLoad/capcity being displayed it was displaying 
+    currentLoad/currentLoad.
 
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 

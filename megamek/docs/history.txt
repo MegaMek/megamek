@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v0.37.2-dev (SVN)
+
+
 v0.37.1 (2013-12-29, 19:26 UTC)
 + Added code to Princess to make (semi) intelligent use of ammo.  Previously she just picked whichever ammo bin was
     next on the list.  Now she will examine her target and try to pick the best ammo of what she has available

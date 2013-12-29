@@ -2014,4 +2014,14 @@ public class BattleArmor extends Infantry {
     public boolean doomedInVacuum() {
         return false;
     }
+    
+    /**
+     * Convenience method for determining if the BA has magnetic clamps.
+     * 
+     * @return true if the unit has at least one magnetic clamp, else false
+     */
+    public boolean hasMagneticClamps(){
+        return countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
+    }
+    
 } // End public class BattleArmor extends Infantry implements Serializable

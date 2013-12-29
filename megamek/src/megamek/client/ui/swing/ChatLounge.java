@@ -3532,7 +3532,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             continue;
                         }
                         BattleArmor ba = (BattleArmor) b;
-                        if (!ba.canDoMechanizedBA()) {
+                        if (!ba.hasMagneticClamps()) {
                             allHaveMagClamp = false;
                         }
                     }

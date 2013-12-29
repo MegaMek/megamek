@@ -27,6 +27,8 @@ v0.37.1-dev (SVN)
     infantry, so it makes more sense.  Also fixed a bug where instead of 
     currentLoad/capcity being displayed it was displaying 
     currentLoad/currentLoad.
++ Bug [#3963]: The check for adding the MagClamp loading option was using a 
+    different check than what is used to determine if mag clamps can be used.
 
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 

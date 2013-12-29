@@ -1315,7 +1315,7 @@ public class FireControl {
 
             // ATMs
             if (weaponType instanceof ATMWeapon) {
-                return getAtmAmmo(validAmmo, range);
+                return getAtmAmmo(validAmmo, range, new EntityState(target));
             }
 
             // Target is a building.
@@ -1330,7 +1330,7 @@ public class FireControl {
                 // Entity targets.
             } else if (targetEntity != null) {
                 // Airborne targts
-                if (targetEntity.isAirborne()) {
+                if (targetEntity.isAirborne() || (targetEntity instanceof VTOL)) {
                     msg.append("\n\tTarget is airborne... ");
                     preferredAmmo = getAntiAirAmmo(validAmmo, weaponType, range);
                     if (preferredAmmo != null) {
@@ -1436,13 +1436,14 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range) {
+    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range, EntityState target) {
         Mounted returnAmmo = null;
 
         // Get the Hi-Ex, Ex-Range and Standard ammo bins if we have them.
         Mounted heAmmo = null;
         Mounted erAmmo = null;
         Mounted stAmmo = null;
+        Mounted infernoAmmo = null;
         for (Mounted ammo : ammoList) {
             AmmoType type = (AmmoType) ammo.getType();
             if ((heAmmo == null) && (AmmoType.M_HIGH_EXPLOSIVE == type.getMunitionType())) {
@@ -1451,7 +1452,9 @@ public class FireControl {
                 erAmmo = ammo;
             } else if ((stAmmo == null) && (AmmoType.M_STANDARD == type.getMunitionType())) {
                 stAmmo = ammo;
-            } else if ((heAmmo != null) && (erAmmo == null) && (stAmmo == null)) {
+            } else if ((infernoAmmo == null) && (AmmoType.M_IATM_IIW == type.getMunitionType())) {
+                infernoAmmo = ammo;
+            } else if ((heAmmo != null) && (erAmmo != null) && (stAmmo != null) && (infernoAmmo !=null)) {
                 break;
             }
         }
@@ -1499,6 +1502,12 @@ public class FireControl {
                 returnAmmo = erAmmo;
             }
         }
+
+        if ((returnAmmo == stAmmo) && (infernoAmmo != null)
+            && ((target.getHeat() >= 9) || (target.isBuilding()))) {
+            returnAmmo = infernoAmmo;
+        }
+
         return returnAmmo;
     }
 

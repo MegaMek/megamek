@@ -3303,8 +3303,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         if (currCount > currCapacity) {
                             hasEnoughCargoCapacity = false;
                             capacity = currCapacity;
-                            errorMessage = Messages.getString("LoadingBay.nonbaytoomany", //$NON-NLS-2$
-                                    new Object[]{currCount, Entity.getEntityTypeName(typeId), currCapacity});
+                            String messageName;
+                            if (typeId == Entity.ETYPE_INFANTRY){
+                                messageName = "LoadingBay.nonbaytoomanyInf";
+                            } else {
+                                messageName = "LoadingBay.nonbaytoomany";
+                            }
+                            errorMessage = Messages.getString(messageName, 
+                                    new Object[]{currCount, 
+                                        Entity.getEntityTypeName(typeId), 
+                                        currCapacity});
                         }
                     }
                 }
@@ -3524,7 +3532,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             continue;
                         }
                         BattleArmor ba = (BattleArmor) b;
-                        if (!ba.canDoMechanizedBA()) {
+                        if (!ba.hasMagneticClamps()) {
                             allHaveMagClamp = false;
                         }
                     }

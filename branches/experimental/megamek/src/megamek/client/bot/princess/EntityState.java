@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
@@ -36,6 +37,7 @@ public class EntityState {
     private boolean immobile;
     private boolean jumping;
     private EntityMovementType movementType;
+    private boolean building;
 
     /**
      * Initialize an entity state from the state an entity is actually in
@@ -53,6 +55,7 @@ public class EntityState {
             jumping = (entity.moved == EntityMovementType.MOVE_JUMP);
             movementType = entity.moved;
             setSecondaryFacing(entity.getSecondaryFacing());
+            building = false;
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -63,6 +66,7 @@ public class EntityState {
             jumping = false;
             movementType = EntityMovementType.MOVE_NONE;
             setSecondaryFacing(0);
+            building = (target instanceof BuildingTarget);
         }
     }
 
@@ -130,5 +134,9 @@ public class EntityState {
 
     public void setSecondaryFacing(int secondaryFacing) {
         this.secondaryFacing = secondaryFacing;
+    }
+
+    public boolean isBuilding() {
+        return building;
     }
 }

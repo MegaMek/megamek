@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -299,14 +300,25 @@ public class PathRanker {
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
+        StringBuilder msg = new StringBuilder("Calculating Move Path Success");
         for (TargetRoll roll : pilotingRolls) {
-            successProbability *= Compute.oddsAbove(roll.getValue()) / 100;
+            msg.append("\n\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
+            double odds = Compute.oddsAbove(roll.getValue()) / 100;
+            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
+            successProbability *= odds;
         }
 
         // Account for MASC
         if (pathCopy.hasActiveMASC()) {
+            msg.append("\n\tMASC ");
+            int target = pathCopy.getEntity().getMASCTarget();
+            msg.append(target);
+            double odds = Compute.oddsAbove(target) / 100;
+            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
         }
+        msg.append("\n\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
+        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", LogLevel.INFO, msg.toString());
 
         return successProbability;
     }

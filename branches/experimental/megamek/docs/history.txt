@@ -44,6 +44,27 @@ v0.37.1-dev (SVN)
     with it myself.
 + Data: Unit fixes and New Images
 + Tweak TestAero to allow for customization of Aeros in MHQ
++ Data: Unit fixes and image fixes
++ Data: Remaining RS 3145 Units and a couple of new images.
++ Bug: subMunitionLength for Clan LB10-X was improperly set, which could lead 
+    to a string index out of range exception
++ Bug: Infantry unable to use swarm/leg attacks, getting a "only infantry weapon
+    can fire at 0 range" message
++ Bug: Firing small arms then trying to fire field guns would lead to a 
+    'infantry can't fire small arms and field guns in the same turn' message, 
+    however firing a field gun then small arms didn't receive this message
++ Bug: Improved Ferro-Aluminum, Ferro-Carbide, and Lamellor Ferro-Carbide armor multipliers incorrect
+    I took a moment to re-work how the clan armors for these specialty types is worked as well, instead of
+    using a special multiplier and multiple if statements for them I used a single if statement with an
+    additive of 0.08 (clan multipler for FF anf FA is 1.2 vs. 1.12, and the rest of these are additions on
+    top of that) to the I.S. multipler.
++ Data: Unit Fixes.
++ Adjusted the too many units loading message: added a specific message for 
+    infantry, so it makes more sense.  Also fixed a bug where instead of 
+    currentLoad/capcity being displayed it was displaying 
+    currentLoad/currentLoad.
++ Bug [#3963]: The check for adding the MagClamp loading option was using a 
+    different check than what is used to determine if mag clamps can be used.
 
 v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Fixed some issues with the path planner.  First, for the candidate list, 

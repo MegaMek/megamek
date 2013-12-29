@@ -125,7 +125,7 @@ package megamek.common;
 
         // The unit must be capable of doing mechanized BA
         else {
-            result = ((BattleArmor)unit).countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
+            result = ((BattleArmor)unit).hasMagneticClamps();
         }
 
         // Return our result.

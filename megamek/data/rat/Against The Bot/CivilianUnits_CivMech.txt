@@ -1,0 +1,26 @@
+#############################################################################
+# Tables adapted from the Against the Bot Campaign Civilian Units Tables    #
+#   Original tables can be found here:                                      #
+#     http://bg.battletech.com/forums/index.php/topic,23390.msg521754.html#msg521754   #
+#   As noted in the original files (probably), these are fan works          #
+#   and should not be taken as official in any way.                         #
+#                                                                           #
+# Adaptation performed by user Obvious from                                 #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   AtBC tables, please post the updated file on the forum thread.          #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * Civilian Mech table alone, for convenience                              #
+#############################################################################
+CivilianUnits_CivMech
+Harvester Ant KIC-3 (LRM),27
+Harvester Ant KIC-3 (MG),27
+Crosscut LoggerMech ED-X2 (Flamer),27
+Crosscut LoggerMech ED-X2 (Rocket),27
+Carbine ConstructionMech CON-1 (RL),27
+Powerman LoaderMech SC XI (Laser),27
+Powerman LoaderMech SC XI (SRM),27
+Buster Class HaulerMech BC XV (AC),27
+Buster Class HaulerMech BC XV (PPC),27
+Lumberjack LM4/P,27

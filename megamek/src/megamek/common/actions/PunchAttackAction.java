@@ -14,7 +14,6 @@
 
 package megamek.common.actions;
 
-import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -306,7 +305,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
 
         // Rules state tonnage/7 for claws
-        if (((BipedMech) entity).hasClaw(armLoc)) {
+        if (((Mech) entity).hasClaw(armLoc)) {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
 

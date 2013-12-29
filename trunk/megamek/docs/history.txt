@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.37.2-dev (SVN)
++ Bug [#3957]: New (Unofficial) Case Rule Duplicated
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

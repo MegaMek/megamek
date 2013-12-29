@@ -5,6 +5,7 @@ v0.37.2-dev (SVN)
 + Data: New (Unofficial) Against The Bot RATS (Currently Civilian Only)
 + Bug [#3962]: NPE in TripodMech.hasActiveShield when Tripod adjacent to 
     building
++ Bug [#3958]: Re-Lasers versus Hardened Armor
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

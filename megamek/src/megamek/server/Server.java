@@ -19529,7 +19529,8 @@ public class Server implements Runnable {
                     // Hardened armor deals with damage in its own fashion...
                     if (hardenedArmor
                             && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
-                            && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                            && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                            && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                         armorThreshold -= damage;
                         te.setHardenedArmorDamaged(hit,
                                 (armorThreshold % 2) > 0);

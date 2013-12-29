@@ -1,0 +1,26 @@
+#############################################################################
+# Tables adapted from the Against the Bot Campaign Civilian Units Tables    #
+#   Original tables can be found here:                                      #
+#     http://bg.battletech.com/forums/index.php/topic,23390.msg521754.html#msg521754   #
+#   As noted in the original files (probably), these are fan works          #
+#   and should not be taken as official in any way.                         #
+#                                                                           #
+# Adaptation performed by user Obvious from                                 #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   AtBC tables, please post the updated file on the forum thread.          #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * Civilian Vehicle table alone, for convenience                           #
+#############################################################################
+CivilianUnits_CivVeh
+J-27 Ordnance Transport,27
+J-27 Ordnance Transport K-27 "Killjoy",27
+Flatbed Truck (SRM),27
+Flatbed Truck (LRM),27
+Flatbed Truck (RL),27
+Truck (AC Conversion),27
+Truck (SRM Conversion),27
+Coolant Truck (Hover),27
+Coolant Truck (Tracked),27
+Coolant Truck 135-K,27

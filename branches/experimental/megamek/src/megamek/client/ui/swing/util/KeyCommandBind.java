@@ -47,6 +47,7 @@ public enum KeyCommandBind {
 	PREV_TARGET("prevTarget", false),
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false),
+	MOVE_ENVELOPE("movementEnvelope",false),
 	CENTER_ON_SELECTED("centerOnSelected",false);
 	
 	/**

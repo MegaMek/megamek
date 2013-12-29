@@ -446,7 +446,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 						selectEntity(
 								clientgui.getClient().getPrevEntityNum(cen));
 					}
-        });        
+        });  
+        
+        // Register the action for MOVE_ENVELOPE
+        controller.registerCommandAction(KeyCommandBind.MOVE_ENVELOPE.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						computeMovementEnvelope();
+					}
+        });         
 
     }
 
@@ -3335,8 +3357,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    
     public void computeMovementEnvelope(){
+    	if (ce() == null){
+    		return;
+    	}
         Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
         mvEnvData.put(ce().getPosition(), mp);

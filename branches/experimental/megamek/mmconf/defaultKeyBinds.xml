@@ -134,6 +134,13 @@
       </KeyBind>
 
       <KeyBind>
+          <command>movementEnvelope</command>
+          <keyCode>82</keyCode> <!-- R -->
+          <modifier>0</modifier>
+          <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
         <command>centerOnSelected</command>
         <keyCode>32</keyCode> <!-- Spacebar -->
         <modifier>0</modifier>          

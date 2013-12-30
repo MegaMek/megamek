@@ -180,6 +180,11 @@ public class Board implements Serializable, IBoard {
         return height;
     }
 
+    @Override
+    public Coords getCenter() {
+        return new Coords(getWidth() / 2, getHeight() / 2);
+    }
+
     /*
      * (non-Javadoc)
      *

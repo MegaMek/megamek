@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.1-exp (SVN)
+v0.37.2-exp (SVN)
 + Feature: Allowing UI components to be customized (skins)
 + Bug: readme path was wrong in MegamekGUI
 + Bug: Exception when saving client options with a tooltip dismiss delay <0
@@ -36,8 +36,7 @@ v0.37.1-exp (SVN)
 + Added 'Key Binds' panel to Client Settings dialog.  Keybinds can now be 
     edited in game and will be saved to an xml file
 
-v0.37.1-dev (SVN)
-=======
+
 v0.37.2-dev (SVN)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated
 + Data: New (Unofficial) Against The Bot RATS (Currently Civilian Only)

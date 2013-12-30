@@ -367,9 +367,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         // initialize client
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
         controller.clientgui = gui;
-        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -465,9 +464,8 @@ public class MegaMekGUI implements IMegaMekGUI {
             return;
         }
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
         controller.clientgui = gui;
-        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -652,9 +650,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!"".equals(sd.localName)) { //$NON-NLS-1$
             // initialize game
             client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-            gui = new ClientGUI(client);
+            gui = new ClientGUI(client,controller);
             controller.clientgui = gui;
-            gui.controller = controller;
             gui.initialize();
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
@@ -746,9 +743,8 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // initialize game
         client = new Client(cd.playerName, cd.serverAddr, cd.port);
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
         controller.clientgui = gui;
-        gui.controller = controller;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -802,9 +798,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);
         client.getGame().addGameListener(new BotGUI((BotClient) client));
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
         controller.clientgui = gui;
-        gui.controller = controller;
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();

@@ -213,9 +213,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client) {
+    public ClientGUI(Client client, MegaMekController c) {
         super(new BorderLayout());
         this.client = client;
+        controller = c;
         loadSoundClip();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);

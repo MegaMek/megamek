@@ -34,7 +34,7 @@ P2
 </Armor>
 <Main Gun Equipment>
 Clan SRM-4
-CLSRM5 Ammo (8)
+CLSRM4 Ammo (8)
 </Main Gun Equipment>
 <Torso Equipment>
 Magnetic Clamp
@@ -47,7 +47,7 @@ CLImprovedHeavySmallLaser
 </Left Arm Equipment>
 
 <type>
-Clan Level 4
+Clan Level 3
 </type>
 <year>
 3080
@@ -65,5 +65,5 @@ Clan Level 4
 Biped
 </motion_type>
 <source>
-XTR Clans
+TRO Prototypes
 </source>

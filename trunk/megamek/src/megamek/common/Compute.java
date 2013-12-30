@@ -765,6 +765,7 @@ public class Compute {
         WeaponType wtype = (WeaponType) weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
+        boolean isAttackerBA = (ae instanceof BattleArmor);
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
         boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
@@ -919,9 +920,13 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Target out of range");
         }
+        
+        // Infantry with infantry weapons (rifles, etc, i.e. not field pieces) 
+        //  and BattleArmor can fire at zero range, among other things        
         if ((distance == 0)
                 && (!isAttackerInfantry ||
-                        !(isWeaponInfantry || isSwarmOrLegAttack))
+                        !(isWeaponInfantry || isSwarmOrLegAttack 
+                                || isAttackerBA))
                 && !(ae.isAirborne())
                 && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                         && !ae.isAirborne() && !ae.isSpaceborne())

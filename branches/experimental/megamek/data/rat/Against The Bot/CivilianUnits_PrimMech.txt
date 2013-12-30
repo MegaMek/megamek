@@ -1,0 +1,28 @@
+#############################################################################
+# Tables adapted from the Against the Bot Campaign Civilian Units Tables    #
+#   Original tables can be found here:                                      #
+#     http://bg.battletech.com/forums/index.php/topic,23390.msg521754.html#msg521754   #
+#   As noted in the original files (probably), these are fan works          #
+#   and should not be taken as official in any way.                         #
+#                                                                           #
+# Adaptation performed by user Obvious from                                 #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   AtBC tables, please post the updated file on the forum thread.          #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * Primitive Mech table alone, for convenience                             #
+# * May in the future want to expand this table to include                  #
+#       a wider variety of mechs and/or split table by weight class.        #
+#############################################################################
+CivilianUnits_PrimMech
+Wasp WSP-1,9
+Commando COM-1A,9
+Firebee FRB-1E(WAM-B),9
+Toro TR-A-1,9
+Quasit MilitiaMech QUA-51T,9
+Kyudo KY2-D-01,9
+Shadow Hawk SHD-1R,9
+Dervish DV-1S,9
+Phoenix PX-1R,9
+Gladiator GLD-1R,9

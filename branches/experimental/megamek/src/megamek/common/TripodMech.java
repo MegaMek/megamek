@@ -402,7 +402,7 @@ public class TripodMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
                     && type.hasFlag(MiscType.F_HAND_WEAPON)
@@ -456,7 +456,7 @@ public class TripodMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             // sometimes this mounted is null in MML - causing problems so check
             if (null == m) {
                 continue;
@@ -517,7 +517,7 @@ public class TripodMech extends Mech {
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             // sometimes this mounted is null in MML - causing problems so check
             if (null == m) {
                 continue;
@@ -665,7 +665,7 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()
                     && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
@@ -737,7 +737,7 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield()
                     && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
@@ -772,7 +772,7 @@ public class TripodMech extends Mech {
                 continue;
             }
 
-            Mounted m = this.getEquipment(cs.getIndex());
+            Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
                     && ((MiscType) type).isShield()

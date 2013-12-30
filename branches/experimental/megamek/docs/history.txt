@@ -37,6 +37,18 @@ v0.37.1-exp (SVN)
     edited in game and will be saved to an xml file
 
 v0.37.1-dev (SVN)
+=======
+v0.37.2-dev (SVN)
++ Bug [#3957]: New (Unofficial) Case Rule Duplicated
++ Data: New (Unofficial) Against The Bot RATS (Currently Civilian Only)
++ Bug [#3962]: NPE in TripodMech.hasActiveShield when Tripod adjacent to 
+    building
++ Bug [#3958]: Re-Lasers versus Hardened Armor
++ Bug: BattleArmor couldn't fire at zero range
++ Bug: Disabling firing solutions wasn't working quite right
+
+
+v0.37.1 (2013-12-29, 19:26 UTC)
 + Added code to Princess to make (semi) intelligent use of ammo.  Previously she just picked whichever ammo bin was
     next on the list.  Now she will examine her target and try to pick the best ammo of what she has available
     (infernos vs hot targets, cluster/flak vs aero/vtol, cluster/inferno vs tanks, etc).  She also takes into account

@@ -553,7 +553,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             		"select non-existant entity: " + en); //$NON-NLS-1$
         }
 
-        setFiringSolutions();
+        if (GUIPreferences.getInstance().getBoolean("FiringSolutions")){
+            setFiringSolutions();
+        } else {
+            clientgui.getBoardView().clearFiringSolutionData();
+        }
     }
 
     public void setFiringSolutions() {

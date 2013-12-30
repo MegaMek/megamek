@@ -8,6 +8,8 @@ v0.37.2-dev (SVN)
 + Bug [#3958]: Re-Lasers versus Hardened Armor
 + Bug: BattleArmor couldn't fire at zero range
 + Bug: Disabling firing solutions wasn't working quite right
++ Data: Unit fixes/New Images
++ Bug: Restoring Commented out Clan Missile Ammunitions.
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

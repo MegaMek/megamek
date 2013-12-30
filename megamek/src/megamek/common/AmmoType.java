@@ -1,5 +1,5 @@
 /*
- * MegaMek -
+  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -1249,21 +1249,12 @@ public class AmmoType extends EquipmentType {
         munitions.clear();
         munitions.add(new MunitionMutator("(Clan) Fragmentation", 1, M_FRAGMENTATION, 2820, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER, 2820, TechConstants.T_CLAN_ADVANCED));
-
-        // According to TM clans don't get these Ammo Types.  Pg 295.
-        //munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2,
-        //        M_THUNDER_AUGMENTED,3057, TechConstants.T_CLAN_ADVANCED));
-        //munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2,
-        //        M_THUNDER_INFERNO,3056, TechConstants.T_CLAN_ADVANCED));
-        //munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2,
-        //       M_THUNDER_ACTIVE,3058, TechConstants.T_CLAN_ADVANCED));
-        //munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,
-        //        M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_ADVANCED));
-        //munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
-        //        TechConstants.T_CLAN_ADVANCED));
-        //        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,
-        //	M_SEMIGUIDED, TechConstants.T_CLAN_TW));
-
+        munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2, M_THUNDER_AUGMENTED,3057, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2, M_THUNDER_INFERNO,3056, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2, M_THUNDER_ACTIVE,3058, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2,M_THUNDER_VIBRABOMB,3058, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,3058,TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Semi-guided", 1,M_SEMIGUIDED,3058, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE, 2820, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061, TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085, TechConstants.T_CLAN_TW));
@@ -1271,11 +1262,9 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2, M_FOLLOW_THE_LEADER, 2755, TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, 2825, TechConstants.T_CLAN_ADVANCED));
-
-        //Clans don't have access to these Munition Types
-        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL, 	TechConstants.T_CLAN_EXPERIMENTAL));
-        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,         TechConstants.T_CLAN_EXPERIMENTAL));
-        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,       TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL,3055,TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3055,TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

@@ -7,6 +7,7 @@ v0.37.2-dev (SVN)
     building
 + Bug [#3958]: Re-Lasers versus Hardened Armor
 + Bug: BattleArmor couldn't fire at zero range
++ Bug: Disabling firing solutions wasn't working quite right
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

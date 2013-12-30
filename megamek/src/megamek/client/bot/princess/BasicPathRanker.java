@@ -308,7 +308,10 @@ public class BasicPathRanker extends PathRanker {
         final String METHOD_NAME = "calculateFacingMod(Entity, IGame, MovePath, StringBuilder)";
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
-        int desiredFacing = (closest.getPosition().direction(movingUnit.getPosition()) + 3) % 6;
+        Coords toFace = closest == null ?
+                        game.getBoard().getCenter() :
+                        closest.getPosition();
+        int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         MoveStep lastStep = path.getLastStep();
         if (lastStep == null) {
             String msg = "No last step for " + path.toString();

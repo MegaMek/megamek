@@ -106,7 +106,9 @@ public class PathRanker {
         }
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
-        int startingTargetDistance = closestTarget.getPosition().distance(mover.getPosition());
+        int startingTargetDistance = (closestTarget == null ?
+                                      Integer.MAX_VALUE :
+                                      closestTarget.getPosition().distance(mover.getPosition()));
 
         List<MovePath> returnPaths = new ArrayList<MovePath>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
@@ -367,12 +369,15 @@ public class PathRanker {
 
     private String validRange(Coords finalCoords, Targetable target, int startingTargetDistance, int maxRange,
                               boolean inRange) {
+        if (target == null) {
+            return null;
+        }
 
         // If I am not currently in range, discard any path that takes me further away from my target.
         int finalDistanceToTarget = finalCoords.distance(target.getPosition());
         if (!inRange) {
             if (finalDistanceToTarget > startingTargetDistance) {
-                return "INVALID: Not in range and moving futher away.";
+                return "INVALID: Not in range and moving further away.";
             }
 
         } else { // If I am in range, discard any path that takes me out of range.

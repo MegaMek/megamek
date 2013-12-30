@@ -41,6 +41,8 @@ public class PathEnumerator {
 
     private static Princess owner;
 
+    //todo VTOL elevation changes.
+
     public PathEnumerator(Princess owningPrincess) {
         owner = owningPrincess;
     }

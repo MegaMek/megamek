@@ -106,7 +106,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         Vector<Report> specialDamageReport = server
                 .criticalEntity(
                         entityTarget,
-                        hit.getLocation(),
+                        hit.getLocation(), hit.isRear(),
                         entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
                                 : 0, 4);
 

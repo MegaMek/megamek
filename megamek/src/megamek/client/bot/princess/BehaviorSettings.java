@@ -31,18 +31,20 @@ import java.util.Set;
  */
 public class BehaviorSettings {
 
-    protected static final int[] SELF_PRESERVATION_VALUES = new int[]{5,
+    protected static final double[] SELF_PRESERVATION_VALUES = new double[]{
+            2.5,
+            5,
+            7.5,
             10,
+            12.5,
             15,
+            17.5,
             20,
+            22.5,
             25,
-            30,
-            35,
-            40,
-            45,
-            50,
-            60};
-    protected static final int[] FALL_SHAME_VALUES = new int[]{1,
+            30};
+    protected static final int[] FALL_SHAME_VALUES = new int[]{
+            10,
             20,
             40,
             60,
@@ -53,7 +55,8 @@ public class BehaviorSettings {
             160,
             180,
             200};
-    protected static final double[] BRAVERY = new double[]{0.1,
+    protected static final double[] BRAVERY = new double[]{
+            0.1,
             0.3,
             0.6,
             0.9,
@@ -64,28 +67,30 @@ public class BehaviorSettings {
             2.4,
             2.7,
             3.0};
-    protected static final double[] HYPER_AGGRESSION_VALUES = new double[]{0.5,
+    protected static final double[] HYPER_AGGRESSION_VALUES = new double[]{
+            0.25,
+            0.5,
             1,
+            1.5,
             2,
+            2.5,
             3,
+            3.5,
             4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10};
-    protected static final double[] HERD_MENTALITY_VALUES = new double[]{0.001,
-            0.002,
-            0.004,
-            0.006,
-            0.008,
-            0.01,
-            0.012,
-            0.014,
-            0.016,
-            0.018,
-            0.02};
+            4.5,
+            5};
+    protected static final double[] HERD_MENTALITY_VALUES = new double[]{
+            0.05,
+            0.1,
+            0.2,
+            0.3,
+            0.4,
+            0.5,
+            0.6,
+            0.7,
+            0.8,
+            0.9,
+            1.0};
 
     private String description = BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 
@@ -487,17 +492,18 @@ public class BehaviorSettings {
      *
      * @return The current self preservation value.
      */
-    public int getSelfPreservationValue() {
+    public double getSelfPreservationValue() {
         return getSelfPreservationValue(selfPreservationIndex);
     }
 
     /**
      * How worried about enemy damage am I?
      *
+     *
      * @param index The index [0-10] of the self preservation value desired.
      * @return The self preservation value at the specified index.
      */
-    public int getSelfPreservationValue(int index) {
+    public double getSelfPreservationValue(int index) {
         if (index < 0) {
             index = 0;
         } else if (index > 10) {

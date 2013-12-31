@@ -10,6 +10,7 @@ v0.37.2-dev (SVN)
 + Bug: Disabling firing solutions wasn't working quite right
 + Data: Unit fixes/New Images
 + Bug: Restoring Commented out Clan Missile Ammunitions.
++ Bug: Call to CriticalSlot.getIndex can lead to an NPE in Server.CriticalEntity
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

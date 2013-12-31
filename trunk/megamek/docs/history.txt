@@ -11,6 +11,7 @@ v0.37.2-dev (SVN)
 + Data: Unit fixes/New Images
 + Bug: Restoring Commented out Clan Missile Ammunitions.
 + Bug: Call to CriticalSlot.getIndex can lead to an NPE in Server.CriticalEntity
++ Bug [#3965]: ABA armor incorrectly adding -2 modifier
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

@@ -6906,20 +6906,22 @@ public class Server implements Runnable {
                         addReport(damageEntity(entity, new HitData(
                                 Mech.LOC_RLEG), leapDistance));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 0, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 
+                                false, 0, 0));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 0, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 
+                                false, 0, 0));
                         if (entity instanceof QuadMech) {
                             addReport(damageEntity(entity, new HitData(
                                     Mech.LOC_LARM), leapDistance));
                             addReport(damageEntity(entity, new HitData(
                                     Mech.LOC_RARM), leapDistance));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_LARM, 0,
-                                    0));
+                            addReport(criticalEntity(entity, Mech.LOC_LARM, 
+                                    false, 0, 0));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_RARM, 0,
-                                    0));
+                            addReport(criticalEntity(entity, Mech.LOC_RARM, 
+                                    false, 0, 0));
                         }
                     }
                     // skill check for fall
@@ -9229,7 +9231,8 @@ public class Server implements Runnable {
                             critRollMod -= 2;
                         }
                         vPhaseReport.addAll(criticalEntity(te,
-                                hit.getLocation(), critRollMod, 0));
+                                hit.getLocation(), hit.isRear(), 
+                                critRollMod, 0));
                     }
                 } else if (te instanceof Protomech) {
                     te.heatFromExternal += missiles;
@@ -12879,8 +12882,8 @@ public class Server implements Runnable {
                 // to be handled differently
                 if (!(target instanceof Infantry)) {
                     addNewLines();
-                    addReport(criticalEntity(te, hit.getLocation(), 0, true,
-                            false, damage));
+                    addReport(criticalEntity(te, hit.getLocation(), 
+                            hit.isRear(), 0, true, false, damage));
                 }
                 if ((target instanceof BattleArmor)
                         && (hit.getLocation() < te.locations())
@@ -13163,7 +13166,8 @@ public class Server implements Runnable {
             }
             if (te.hasQuirk("weak_legs")) {
                 addNewLines();
-                addReport(criticalEntity(te, hit.getLocation(), 0, 0));
+                addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 
+                        0, 0));
             }
         }
 
@@ -13603,7 +13607,8 @@ public class Server implements Runnable {
                     r.add(te.getLocationAbbr(targetTrooper));
                     vPhaseReport.add(r);
                     vPhaseReport.addAll(criticalEntity(ae,
-                            targetTrooper.getLocation(), 0, false, false, 0));
+                            targetTrooper.getLocation(), targetTrooper.isRear(),
+                            0, false, false, 0));
                 } else if (te instanceof Mech) {
                     if (((Mech) te).isIndustrial()) {
                         if (taserRoll >= 8) {
@@ -16082,14 +16087,14 @@ public class Server implements Runnable {
 
         if (ae.hasQuirk("weak_legs")) {
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_LLEG, 0, 0));
+            addReport(criticalEntity(ae, Mech.LOC_LLEG, false, 0, 0));
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_RLEG, 0, 0));
+            addReport(criticalEntity(ae, Mech.LOC_RLEG, false, 0, 0));
             if (ae instanceof QuadMech) {
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_LARM, 0, 0));
+                addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 0));
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_RARM, 0, 0));
+                addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 0));
             }
         }
 
@@ -17139,7 +17144,7 @@ public class Server implements Runnable {
                         r.choose(false);
                         addReport(r);
                         addReport(oneCriticalEntity(entity,
-                                Compute.randomInt(8), 0));
+                                Compute.randomInt(8), false, 0));
                         // add an empty report, for linebreaking
                         r = new Report(1210, Report.PUBLIC);
                         addReport(r);
@@ -17672,10 +17677,11 @@ public class Server implements Runnable {
                         r.add(mech.getLevelsFallen());
                     }
                     vPhaseReport.add(r);
+                    HitData newHit = mech.rollHitLocation(ToHitData.HIT_NORMAL,
+                            ToHitData.SIDE_FRONT);
                     vPhaseReport.addAll(criticalEntity(
                             mech,
-                            mech.rollHitLocation(ToHitData.HIT_NORMAL,
-                                    ToHitData.SIDE_FRONT).getLocation(),
+                            newHit.getLocation(), newHit.isRear(),
                             mech.getLevelsFallen(), 0));
                 }
             }
@@ -19618,10 +19624,10 @@ public class Server implements Runnable {
                         if (te.hasArmoredChassis()) {
                             // crit roll with -1 mod
                             vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                    -1 + critBonus, damage_orig));
+                                    hit.isRear(), -1 + critBonus, damage_orig));
                         } else {
                             vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                    critBonus, damage_orig));
+                                    hit.isRear(), critBonus, damage_orig));
                         }
                     }
                 }
@@ -20204,7 +20210,8 @@ public class Server implements Runnable {
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                            hit.glancingMod() + critBonus, damage_orig));
+                            hit.isRear(), hit.glancingMod() + critBonus, 
+                            damage_orig));
                 }
                 crits = 0;
 
@@ -20219,8 +20226,8 @@ public class Server implements Runnable {
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod
-                            + critBonus, damage_orig));
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), 
+                            hit.isRear(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
             }
@@ -21238,10 +21245,12 @@ public class Server implements Runnable {
                 // All vehicles suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
 
                 // ...and a Crew Killed hit.
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
@@ -21251,10 +21260,12 @@ public class Server implements Runnable {
                 // 'Mechs suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
 
                 // and four pilot hits.
                 vDesc.addAll(damageCrew(entity, 4));
@@ -21292,7 +21303,8 @@ public class Server implements Runnable {
                 // It takes one crit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
 
                 // Plus a Crew Stunned critical.
                 vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0,
@@ -21302,7 +21314,8 @@ public class Server implements Runnable {
                 // 'Mechs suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                        hd.isRear(), 0));
 
                 // and two pilot hits.
                 vDesc.addAll(damageCrew(entity, 2));
@@ -22563,7 +22576,8 @@ public class Server implements Runnable {
                 r.addDesc(en);
                 r.newlines = 0;
                 vDesc.addElement(r);
-                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), damageCaused));
+                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), false, 
+                        damageCaused));
             }
             en.hitThisRoundByAntiTSM = false;
         }
@@ -22594,16 +22608,17 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits with a die roll modifier.
      */
 
-    public Vector<Report> criticalEntity(Entity en, int loc, int critMod,
-            int damage) {
-        return criticalEntity(en, loc, critMod, true, false, damage);
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, 
+            int critMod, int damage) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage);
     }
 
     /**
      * Rolls one critical hit
      */
-    private Vector<Report> oneCriticalEntity(Entity en, int loc, int damage) {
-        return criticalEntity(en, loc, 0, false, false, damage);
+    private Vector<Report> oneCriticalEntity(Entity en, int loc, boolean isRear,
+            int damage) {
+        return criticalEntity(en, loc, isRear, 0, false, false, damage);
     }
 
     /**
@@ -23150,8 +23165,8 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
-    public Vector<Report> criticalEntity(Entity en, int loc, int critMod,
-            boolean rollNumber, boolean isCapital, int damage) {
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
+            int critMod, boolean rollNumber, boolean isCapital, int damage) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -23161,8 +23176,9 @@ public class Server implements Runnable {
         }
 
         // Apply modifiers for Anti-penetrative ablation armor
-        if ((en.getArmor(loc) > 0)
-                && (en.getArmorType(loc) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
+        if ((en.getArmor(loc, isRear) > 0)
+                && (en.getArmorType(loc) == 
+                        EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
             critMod -= 2;
         }
 

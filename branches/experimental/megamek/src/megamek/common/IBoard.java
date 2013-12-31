@@ -40,6 +40,8 @@ public interface IBoard {
      */
     public abstract int getHeight();
 
+    Coords getCenter();
+
     /**
      * Creates a new data set for the board, with the specified dimensions and
      * data; notifies listeners that a new data set has been created.

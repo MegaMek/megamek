@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.2-exp (SVN)
+v0.37.2-exp (2014-01-01 17:50 UTC)
 + Feature: Allowing UI components to be customized (skins)
 + Bug: readme path was wrong in MegamekGUI
 + Bug: Exception when saving client options with a tooltip dismiss delay <0

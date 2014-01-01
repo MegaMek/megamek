@@ -1888,36 +1888,36 @@ Longinus Battle Armor [David] (WoB)|
 Longinus Battle Armor [Laser]|
 Achileus Light Battle Armor (WoB) [MG]|
 Raiden Battle Armor [MRM]|
-Fusilier BattleArmor (Upgrade)|
+Fusilier Battle Armor (Upgrade)|
 PAB-28 Sniper Suit|
 Sea Fox Amphibious Armor (Standard)|
-Fusilier BattleArmor (Standard)|
-Simian BattleArmor (Small Laser)|
-Quirinus BattleArmor (MG)|
-Simian BattleArmor (Heavy MG)|
-Quirinus BattleArmor (Grenade Launcher)|
-Quirinus BattleArmor (David LGR)|
-Simian BattleArmor (Flamer)|
-Centaur BattleArmor (Standard)|
-Simian BattleArmor (LRR)|
+Fusilier Battle Armor (Standard)|
+Simian Battle Armor (Small Laser)|
+Quirinus Battle Armor (MG)|
+Simian Battle Armor (Heavy MG)|
+Quirinus Battle Armor (Grenade Launcher)|
+Quirinus Battle Armor (David LGR)|
+Simian Battle Armor (Flamer)|
+Centaur Battle Armor (Standard)|
+Simian Battle Armor (LRR)|
+Kishi Ceremonial Armor (Standard)|
 Oni Battle Armor [Bearhunter]|
 Oni Battle Armor [PPC]|
+Zou Heavy Battle Armor (Standard)|
+Zou Heavy Battle Armor (C3)|
 Oni Battle Armor [Narc]|
-Zou Heavy BattleArmor (Standard)|
 Oni Battle Armor [MRR]|
-Kishi Ceremonial Armor (Standard)|
-Zou Heavy BattleArmor (C3)|
-Fenrir II Assault Battlearmor (LRM)|
+Fenrir II Assault Battle Armor (LRM)|
 GD Inflitrator Suit (Firedrake)|
-Fenrir II Assault Battlearmor (MRR)|
-Fenrir II Assault Battlearmor (Med. Laser)|
+Fenrir II Assault Battle Armor (MRR)|
+Fenrir II Assault Battle Armor (Med. Laser)|
 Cuchulainn Support Armor (IS Model)|
 GD Inflitrator Suit (Mine)|
 GD Inflitrator Suit (Light TAG)|
 GD Inflitrator Suit (Sensors)|
 Cuchulainn Support Armor (Clan Model)|
-Fenrir II Assault Battlearmor (SRM)|
-Fenrir II Assault Battlearmor (AI)|
+Fenrir II Assault Battle Armor (SRM)|
+Fenrir II Assault Battle Armor (AI)|
 GD Inflitrator Suit (Remote Sensors)|
 Leonidas Battle Armor (MG)|
 Ogre Battle Armor (Standard)|
@@ -1950,29 +1950,29 @@ Thunderbird Battle Armor [Upgrade](Pulse Laser)|
 Gray Death Strike (Harjel)|
 Ravager Assault Battle Armor (LRM)|
 Kopis Assault Battle Armor (AI Mk II)|
-Shen Long BattleArmor [MG]|
-Shen Long BattleArmor [Flamer]|
+Shen Long Battle Armor [MG]|
+Shen Long Battle Armor [Flamer]|
 Amazon Battle Armor [MRR]|
-Shen Long BattleArmor [David Light Gauss]|
-Shen Long BattleArmor [MRM]|
-Shen Long BattleArmor [HGL]|
-Shen Long BattleArmor [SRM]|
+Shen Long Battle Armor [David Light Gauss]|
+Shen Long Battle Armor [MRM]|
+Shen Long Battle Armor [HGL]|
+Shen Long Battle Armor [SRM]|
 Amazon Battle Armor [Sup PPC]|
 Constable Pacification Suit (ECM)|
 Buraq Fast Battle Armor (Support)|
 Wraith Battle Armor (Standard)|
 Constable Pacification Suit (LMG)|
 Constable Pacification Suit (Sensors)|
-Black Wolf BattleArmor (Heavy Mortar)|
+Black Wolf Battle Armor (Heavy Mortar)|
 Constable Pacification Suit (TAG)|
-Black Wolf BattleArmor (Plasma)|
+Black Wolf Battle Armor (Plasma)|
 Wraith Battle Armor (Anti-Infantry)|
 Buraq Fast Battle Armor (Standard)|
-Black Wolf BattleArmor (Heavy Flamer)|
+Black Wolf Battle Armor (Heavy Flamer)|
 Buraq Fast Battle Armor (Hunter-Killer)|
-Black Wolf BattleArmor (BA LBX)|
+Black Wolf Battle Armor (BA LBX)|
 Constable Pacification Suit (SRM)|
-Black Wolf BattleArmor (ER Pulse)|
+Black Wolf Battle Armor (ER Pulse)|
 Spectre Stealth Battle Armor (RA)|
 Marauder Battle Armor (MH)|
 Spectre Stealth Battle Armor (Standard)|

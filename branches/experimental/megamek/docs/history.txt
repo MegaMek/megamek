@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.37.3-exp (SVN)
+
 v0.37.2-exp (2014-01-01 17:50 UTC)
 + Feature: Allowing UI components to be customized (skins)
 + Bug: readme path was wrong in MegamekGUI
@@ -36,8 +38,9 @@ v0.37.2-exp (2014-01-01 17:50 UTC)
 + Added 'Key Binds' panel to Client Settings dialog.  Keybinds can now be 
     edited in game and will be saved to an xml file
 
+v0.37.3-dev (SVN)
 
-v0.37.2-dev (SVN)
+v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated
 + Data: New (Unofficial) Against The Bot RATS (Currently Civilian Only)
 + Bug [#3962]: NPE in TripodMech.hasActiveShield when Tripod adjacent to 

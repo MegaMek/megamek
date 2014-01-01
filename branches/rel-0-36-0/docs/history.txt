@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.36.2 (SVN)
+
 v0.36.1 (2014-01-01, 17:11 UTC)
 + Bug: PPC capacitor has wrong explosive BV penalty
 + Bug: init bonuses from mobile hq not working correct with multiple mobile HQs

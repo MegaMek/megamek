@@ -33,7 +33,7 @@
 	<property name="svnbuilddir" value="${svndir}/${builddir}" />
 
 	<!-- svnroot used for svn authentification -->
-	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/trunk/megamek" />
+	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/branches/experimental/megamek" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
 	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />

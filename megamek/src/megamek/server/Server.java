@@ -10540,8 +10540,6 @@ public class Server implements Runnable {
      *            The <code>Entity</code> that is falling.
      * @param src
      *            The <code>Coords</code> of the source hex.
-     * @param dest
-     *            The <code>Coords</code> of the destination hex.
      * @param roll
      *            The <code>PilotingRollData</code> to be used for PSRs induced
      *            by the falling.
@@ -11367,6 +11365,11 @@ public class Server implements Runnable {
      * proper list to be processed later.
      */
     private void processAttack(Entity entity, Vector<EntityAction> vector) {
+
+        // Convert any null vectors to empty vectors to avoid NPEs.
+        if (vector == null) {
+            vector = new Vector<EntityAction>(0);
+        }
 
         // Not **all** actions take up the entity's turn.
         boolean setDone = !((game.getTurn() instanceof GameTurn.TriggerAPPodTurn) || (game
@@ -25169,9 +25172,7 @@ public class Server implements Runnable {
      * Recursively scan the specified path to determine the board sizes
      * available.
      *
-     * @param basePath
-     *            The base path to search.
-     * @param dir
+     * @param searchDir
      *            The directory to search below this path (may be null for all
      *            in base path).
      * @return

@@ -23413,7 +23413,7 @@ public class Server implements Runnable {
                                 .booleanOption("edge_when_explosion"))
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                         && slot.getMount().getType()
-                                .isExplosive(en.getEquipment(slot.getIndex()))) {
+                                .isExplosive(slot.getMount())) {
                     en.getCrew().decreaseEdge();
                     r = new Report(6530);
                     r.subject = en.getId();

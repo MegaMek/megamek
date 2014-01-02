@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.37.3-dev (SVN)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid targets
 + Data: Unit Fixes
++ Bug: Fixed a few instances were CriticalSlot.getIndex() was causing NPEs
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

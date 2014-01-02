@@ -216,7 +216,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                         continue;
                     }
                     // Only one Crit needs to be damaged.
-                    Mounted mounted = ae.getEquipment(slot.getIndex());
+                    Mounted mounted = slot.getMount();
                     if (mounted.equals(weapon)) {
                         slot.setDestroyed(true);
                         break;

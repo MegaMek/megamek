@@ -289,7 +289,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 						if (!clientgui.getClient().isMyTurn()
 								|| clientgui.bv.getChatterBoxActive()
 								|| !display.isVisible()
-								|| display.isIgnoringEvents()) {
+								|| display.isIgnoringEvents()
+								|| !buttons.get(Command.FIRE_FIRE).isEnabled()){
         					return false;
         				} else {
         					return true;

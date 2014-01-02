@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.37.3-dev (SVN)
++ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid targets
++ Data: Unit Fixes
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated
@@ -14,7 +16,7 @@ v0.37.2 (2014-01-01 17:32 UTC)
 + Bug: Restoring Commented out Clan Missile Ammunitions.
 + Bug: Call to CriticalSlot.getIndex can lead to an NPE in Server.CriticalEntity
 + Bug [#3965]: ABA armor incorrectly adding -2 modifier
-+ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid targets
+
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)

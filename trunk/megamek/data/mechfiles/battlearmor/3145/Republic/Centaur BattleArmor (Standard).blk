@@ -42,51 +42,15 @@ ISBATubeArtillery:DWP
 ISDetachableWeaponPack
 BA-Magnetic Clamp
 ISBASmallLaser
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
+ISBATubeArtilleryAmmo
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Repubilc

@@ -561,6 +561,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void setFiringSolutions() {
+    	// If no Entity is selected, exit
+    	if (cen == Entity.NONE){
+    		return;
+    	}
+    	
         IGame game = clientgui.getClient().getGame();
         if (!GUIPreferences.getInstance().getFiringSolutions()){
         	return;

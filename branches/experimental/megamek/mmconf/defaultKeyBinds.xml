@@ -18,119 +18,119 @@
         <command>scrollN</command>
         <keyCode>87</keyCode> <!-- W -->
         <modifier>0</modifier>          
-        <isRepeatable>1</isRepeatable>
+        <isRepeatable>true</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>scrollS</command>
         <keyCode>83</keyCode> <!-- S -->
         <modifier>0</modifier>          
-        <isRepeatable>1</isRepeatable>
+        <isRepeatable>true</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>scrollE</command>
         <keyCode>68</keyCode> <!-- D -->
         <modifier>0</modifier>          
-        <isRepeatable>1</isRepeatable>
+        <isRepeatable>true</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>scrollW</command>
         <keyCode>65</keyCode> <!-- A -->
         <modifier>0</modifier>          
-        <isRepeatable>1</isRepeatable>
+        <isRepeatable>true</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>toggleChat</command>
         <keyCode>10</keyCode> <!-- Enter -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>turnLeft</command>
         <keyCode>65</keyCode> <!-- Shift-A -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>turnRight</command>
         <keyCode>68</keyCode> <!-- Shift-D -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>twistLeft</command>
         <keyCode>65</keyCode> <!-- Shift-A -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>twistRight</command>
         <keyCode>68</keyCode> <!-- Shift-D -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>prevUnit</command>
         <keyCode>90</keyCode> <!-- Z -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>nextUnit</command>
         <keyCode>67</keyCode> <!-- C -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>prevTarget</command>
         <keyCode>81</keyCode> <!-- Shift-Q -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>nextTarget</command>
         <keyCode>69</keyCode> <!-- Shift-E -->
         <modifier>1</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>prevWeapon</command>
         <keyCode>81</keyCode> <!-- Q -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>nextWeapon</command>
         <keyCode>69</keyCode> <!-- E -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>fire</command>
         <keyCode>70</keyCode> <!-- F -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
         <command>undo</command>
         <keyCode>8</keyCode> <!-- Backspace -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
@@ -144,7 +144,7 @@
         <command>centerOnSelected</command>
         <keyCode>32</keyCode> <!-- Spacebar -->
         <modifier>0</modifier>          
-        <isRepeatable>0</isRepeatable>
+        <isRepeatable>false</isRepeatable>
       </KeyBind>
 
 </KeyBindings>

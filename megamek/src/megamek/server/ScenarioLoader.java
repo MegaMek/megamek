@@ -273,8 +273,8 @@ public class ScenarioLoader {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc,
                                 sa.slot);
                         if (!(cs == null)) {
-                            Mounted ammo = sap.entity.getEquipment(sap.entity
-                                    .getCritical(sa.loc, sa.slot).getIndex());
+                            Mounted ammo = sap.entity.getCritical(sa.loc,
+                                    sa.slot).getMount();
                             if (ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max aloud
                                 ammo.setShotsLeft(Math.min(sa.setAmmoTo,

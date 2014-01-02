@@ -42,6 +42,7 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
+import megamek.common.actions.EntityAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
@@ -243,7 +244,7 @@ public class Princess extends BotClient {
                 sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
 
             } else {
-                sendAttackData(shooter.getId(), null);
+                sendAttackData(shooter.getId(), new Vector<EntityAction>(0));
             }
         } finally {
             methodEnd(getClass(), METHOD_NAME);

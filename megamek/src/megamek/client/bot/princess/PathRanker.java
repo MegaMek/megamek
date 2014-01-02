@@ -320,7 +320,7 @@ public class PathRanker {
             successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
         }
         msg.append("\n\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
-        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", LogLevel.INFO, msg.toString());
+        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", LogLevel.DEBUG, msg.toString());
 
         return successProbability;
     }

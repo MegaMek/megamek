@@ -865,7 +865,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawSprites(g, pathSprites);
 
         // draw firing solution sprites, but only during the firing phase
-        if (game.getPhase() == Phase.PHASE_FIRING) {
+        if (game.getPhase() == Phase.PHASE_FIRING ||
+                game.getPhase() == Phase.PHASE_OFFBOARD) {
             drawSprites(g, firingSprites);
         }
 

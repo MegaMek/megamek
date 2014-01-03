@@ -1133,7 +1133,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isTargetable() {
         return !destroyed && !doomed && deployed && !isOffBoard() &&
-                conveyance == Entity.NONE && !captured;
+                conveyance == Entity.NONE && !captured && position != null;
     }
 
     public boolean isProne() {

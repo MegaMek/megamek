@@ -1,10 +1,10 @@
 Version:1.0
 Anubis
-ANB-5Z
+ABS-5Y
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3124
+Era:3121
 Source:TRO 3145 CC
 Rules Level:2
 
@@ -18,30 +18,30 @@ Walk MP:7
 Jump MP:0
 
 Armor:Stealth(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:10
-RT Armor:10
-CT Armor:15
+LA Armor:8
+RA Armor:8
+LT Armor:9
+RT Armor:9
+CT Armor:11
 HD Armor:9
-LL Armor:14
-RL Armor:14
-RTL Armor:4
-RTR Armor:4
+LL Armor:12
+RL Armor:12
+RTL Armor:3
+RTR Armor:3
 RTC Armor:4
 
-Weapons:5
-ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
-Streak SRM 4, Left Torso
-Streak SRM 4, Right Torso
-TAG, Head
+Weapons:4
+Light PPC, Left Arm
+Light PPC, Right Arm
+LRM 5, Left Torso
+LRM 5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERMediumLaser
+Light PPC
+Light PPC
 IS Endo-Steel
 IS Endo-Steel
 IS Endo-Steel
@@ -49,13 +49,13 @@ IS Endo-Steel
 IS Endo-Steel
 IS Stealth
 IS Stealth
--Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERMediumLaser
+Light PPC
+Light PPC
 IS Endo-Steel
 IS Endo-Steel
 IS Endo-Steel
@@ -63,7 +63,6 @@ IS Endo-Steel
 IS Endo-Steel
 IS Stealth
 IS Stealth
--Empty-
 
 Left Torso:
 Fusion Engine
@@ -72,7 +71,7 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISStreakSRM4
+LRM 5
 IS Endo-Steel
 IS Endo-Steel
 IS Stealth
@@ -86,8 +85,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISStreakSRM4
-IS Streak SRM 4 Ammo
+LRM 5
+IS Ammo LRM-5
 IS Endo-Steel
 IS Endo-Steel
 IS Stealth
@@ -111,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISTAG
+-Empty-
 Sensors
 Life Support
 -Empty-

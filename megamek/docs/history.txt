@@ -6,6 +6,7 @@ v0.37.3-dev (SVN)
 + Bug: Fixed a few instances were CriticalSlot.getIndex() was causing NPEs
 + Bug: Updated Entity.isTargetable() to return false if position == null, to 
     prevent some exceptions in the firing solution code
++ Feature:  Added black borders around text in firing solutions, for readability
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

@@ -30,6 +30,7 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -38,6 +39,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
@@ -886,7 +888,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawSprites(g, pathSprites);
 
         // draw firing solution sprites, but only during the firing phase
-        if (game.getPhase() == Phase.PHASE_FIRING) {
+        if (game.getPhase() == Phase.PHASE_FIRING ||
+                game.getPhase() == Phase.PHASE_OFFBOARD) {
             drawSprites(g, firingSprites);
         }
 
@@ -6309,19 +6312,45 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 } else {
                     modifier = "" + toHitMod;
                 }
-                graph.setColor(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                Graphics2D g2 = (Graphics2D) graph;
+                GlyphVector gv = getFiringFont().createGlyphVector(
+                        g2.getFontRenderContext(), modifier);
+                g2.translate(xOffset, yOffset);
+                for (int i = 0; i < modifier.length(); i++){
+                    Shape gs = gv.getGlyphOutline(i);
+                    g2.setPaint(GUIPreferences.getInstance().getColor(
+                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR)); 
+                    g2.fill(gs); // Fill the shape
+                    g2.setPaint(Color.black); // Switch to solid black
+                    g2.draw(gs); // And draw the outline
+                }
+                g2.translate(-13, metrics.getHeight());
                 yOffset += metrics.getHeight();
-                // Draw range
                 modifier = "rng: " + range;
-                xOffset = 13;
-                graph.drawString(modifier, p.x + xOffset, p.y + yOffset);
+                gv = getFiringFont().createGlyphVector(
+                        g2.getFontRenderContext(), modifier);
+                for (int i = 0; i < modifier.length(); i++){
+                    Shape gs = gv.getGlyphOutline(i);
+                    g2.setPaint(GUIPreferences.getInstance().getColor(
+                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR)); 
+                    g2.fill(gs); // Fill the shape
+                    g2.setPaint(Color.black); // Switch to solid black
+                    g2.draw(gs); // And draw the outline
+                }
             } else {
-                graph.setColor(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR));
-                String modifierString = "X";
-                graph.drawString(modifierString, p.x + 35, p.y + 39);
+                String modifier = "X";
+                Graphics2D g2 = (Graphics2D) graph;
+                GlyphVector gv = getFiringFont().createGlyphVector(
+                        g2.getFontRenderContext(), modifier);
+                g2.translate(35, 39);
+                for (int i = 0; i < modifier.length(); i++){
+                    Shape gs = gv.getGlyphOutline(i);
+                    g2.setPaint(GUIPreferences.getInstance().getColor(
+                            GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR)); 
+                    g2.fill(gs); // Fill the shape
+                    g2.setPaint(Color.black); // Switch to solid black
+                    g2.draw(gs); // And draw the outline
+                }
             }
 
             // graph.setColor(drawColor);

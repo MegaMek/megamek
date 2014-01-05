@@ -2862,27 +2862,21 @@ public class Game implements Serializable, IGame {
             TagInfo info = tagInfoForTurn.elementAt(i);
             Entity attacker = getEntity(info.attackerId);
             Targetable target = info.target;
-            if (!ae.isEnemyOf(attacker) && isOnSameSheet(target.getPosition(),tc)) {
+            if (!ae.isEnemyOf(attacker) && isIn8HexRadius(target.getPosition(),tc)) {
                 info.shots = info.priority;
                 tagInfoForTurn.setElementAt(info, i);
             }
         }
     }
 
-    public boolean isOnSameSheet(Coords c1, Coords c2){
-        if (getOptions().booleanOption("a4homing_target_area")) {
-            // unofficial rule which may be better with odd sized boards
-            if (c2.distance(c1) <= 8) {
-                return true;
-            }
-            return false;
-        }
-        // using FASA map sheets
-        if (((c2.x / 16) == (c1.x / 16))
-                && ((c2.y / 17) == (c1.y / 17))) {
+    public boolean isIn8HexRadius(Coords c1, Coords c2){
+
+        // errata says we now always use 8 hex radius
+        if (c2.distance(c1) <= 8) {
             return true;
         }
         return false;
+
     }
 
     /**

@@ -1,7 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.37.3-dev (SVN)
-+ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid targets
++ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid
+    targets
 + Data: Unit Fixes
 + Bug: Fixed a few instances were CriticalSlot.getIndex() was causing NPEs
 + Bug: Updated Entity.isTargetable() to return false if position == null, to 
@@ -9,6 +10,7 @@ v0.37.3-dev (SVN)
 + Feature: Added black borders around text in firing solutions, for readability
 + Feature: Enabled firing solutions for offboard phase (firing tags and such)
 + Bug [#3862]: Nighttime Movement Penalty Applies to Airborne VTOLS?
++ Errata: homing artillery now always targets an area, not a mapsheet
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated
@@ -26,11 +28,13 @@ v0.37.2 (2014-01-01 17:32 UTC)
 
 
 v0.37.1 (2013-12-29, 19:26 UTC)
-+ Added code to Princess to make (semi) intelligent use of ammo.  Previously she just picked whichever ammo bin was
-    next on the list.  Now she will examine her target and try to pick the best ammo of what she has available
-    (infernos vs hot targets, cluster/flak vs aero/vtol, cluster/inferno vs tanks, etc).  She also takes into account
-    range when using ATMs and MMLs.  Don't expect this to work with ammo introduced after the FCCW as I'm not familiar
-    with it myself.
++ Added code to Princess to make (semi) intelligent use of ammo.  Previously she
+    just picked whichever ammo bin was next on the list.  Now she will examine
+    her target and try to pick the best ammo of what she has available (infernos
+    vs hot targets, cluster/flak vs aero/vtol, cluster/inferno vs tanks, etc).
+    She also takes into account range when using ATMs and MMLs.  Don't expect 
+    this to work with ammo introduced after the FCCW as I'm not familiar with it
+    myself.
 + Data: Unit fixes and New Images
 + Tweak TestAero to allow for customization of Aeros in MHQ
 + Data: Unit fixes and image fixes

@@ -304,7 +304,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // todo account for damaged locations and face those away from enemy.
-    private double calculateFacingMod(Entity movingUnit, IGame game, MovePath path, StringBuilder formula) {
+    private double calculateFacingMod(Entity movingUnit, IGame game, final MovePath path, StringBuilder formula) {
         final String METHOD_NAME = "calculateFacingMod(Entity, IGame, MovePath, StringBuilder)";
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);

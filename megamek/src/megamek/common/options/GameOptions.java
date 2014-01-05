@@ -130,7 +130,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "woods_burn_down", false); //$NON-NLS-1$
         addOption(advancedRules, "woods_burn_down_amount", 5); //$NON-NLS-1$
         addOption(advancedRules, "no_ignite_clear", false); //$NON-NLS-1$
-        addOption(advancedRules, "a4homing_target_area", false); //$NON-NLS-1$
         addOption(advancedRules, "all_have_ei_cockpit", false); //$NON-NLS-1$
         addOption(advancedRules, "extreme_temperature_survival", false); //$NON-NLS-1$
         addOption(advancedRules, "armed_mechwarriors", false); //$NON-NLS-1$

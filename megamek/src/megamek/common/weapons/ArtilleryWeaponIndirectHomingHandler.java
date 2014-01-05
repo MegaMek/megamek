@@ -377,20 +377,17 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         for (TagInfo ti : v) {
             newTarget = ti.target;
             // homing target area is 8 hexes
-            if (game.getOptions().booleanOption("a4homing_target_area")) {
-                if (tc.distance(newTarget.getPosition()) <= 8) {
-                    allowed.add(ti);
-                }
-            } else if (game.isOnSameSheet(newTarget.getPosition(),tc)) {
+            if (tc.distance(newTarget.getPosition()) <= 8) {
                 allowed.add(ti);
             }
+
         }
         if (allowed.size() == 0) {
             aaa.setTargetId(newTarget.getTargetId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no tag on the same mapsheet");
+                    "no tag in 8 hex radius of target hex");
         } else {
             // find the TAG hit with the most shots left, and closest
             int bestDistance = Integer.MAX_VALUE;

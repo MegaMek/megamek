@@ -55,7 +55,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -271,7 +271,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        
+
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
         bldg = null;
@@ -377,11 +377,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         for (TagInfo ti : v) {
             newTarget = ti.target;
             // homing target area is 8 hexes
-            if (game.getOptions().booleanOption("a4homing_target_area")) {
-                if (tc.distance(newTarget.getPosition()) <= 8) {
-                    allowed.add(ti);
-                }
-            } else if (game.isOnSameSheet(newTarget.getPosition(),tc)) {
+            if (tc.distance(newTarget.getPosition()) <= 8) {
                 allowed.add(ti);
             }
         }
@@ -390,7 +386,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no tag on the same mapsheet");
+                    "no tag in 8 hex radius of target hex");
         } else {
             // find the TAG hit with the most shots left, and closest
             int bestDistance = Integer.MAX_VALUE;
@@ -435,7 +431,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)

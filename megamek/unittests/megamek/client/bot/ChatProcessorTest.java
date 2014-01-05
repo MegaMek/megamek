@@ -158,7 +158,7 @@ public class ChatProcessorTest {
         // Test enemy admits defeat.
         cmd = DefeatCommand.getAdmitsDefeat(MOCK_HUMAN_PLAYER_DAVE.getName());
         msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        Assert.assertTrue(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+        Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test ally wants defeat.
         cmd = DefeatCommand.getWantsDefeat(MOCK_HUMAN_PLAYER_KIRK.getName());

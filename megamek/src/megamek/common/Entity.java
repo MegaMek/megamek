@@ -57,6 +57,7 @@ import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
+import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
 
@@ -299,7 +300,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
+    
+    /**
+     * Keeps track of whether this Entity was hit by a TSEMP this turn.
+     */
+    private int tsempHitsThisTurn = 0;
+    
+    /**
+     * Keeps track of the current TSEMP effect on this entity
+     */
+    private int tsempEffect = TSEMPWeapon.TSEMP_EFFECT_NONE;
 
+    /**
+     * Keeps track of whether this Entity fired a TSEMP this turn
+     */
+    private boolean firedTsempThisTurn = false;
+    
+    /**
+     * Keeps track of whether this Entity has ever fired a TSEMP.  This is used
+     * to avoid having to iterate over all weapons looking for TSEMPs to reset
+     * at the start of every round.
+     */
+    private boolean hasFiredTsemp= false;
+    
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
@@ -868,7 +891,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return;
         }
         setManualShutdown(false);
-        if (getTaserShutdownRounds() == 0) {
+        // Can't startup if a taser shutdown or a TSEMP shutdown
+        if (getTaserShutdownRounds() == 0 
+                && (getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
             setShutDown(false);
             setStartupThisPhase(true);
         }
@@ -5074,7 +5099,35 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
         }
-
+        
+        // If we are effected by the TSEMP Shutdown effect, we should remove
+        // it now, so we can startup during the end phase
+        if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN){
+            setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
+        // The TSEMP interference effect shouldn't be removed until the start
+        //  of a round where we didn't have any TSEMP hits, since we need the
+        //  effect active during the firing phase
+        } else if (getTsempHitsThisTurn() == 0){
+            setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
+            
+        }
+        
+        // TSEMPs can fire every other round, so if we didn't fire last 
+        //  round and the TSEMP isn't one-shot, reset it's fired state
+        if (!isFiredTsempThisTurn() && hasFiredTsemp()){
+            for (Mounted m : getWeaponList()){
+                if (m.getType().hasFlag(WeaponType.F_TSEMP) 
+                        && !m.getType().hasFlag(WeaponType.F_ONESHOT) 
+                        && m.isFired()){
+                    m.setFired(false);
+                }
+            } 
+        }
+        
+        // Reset TSEMP hits
+        tsempHitsThisTurn = 0;
+        // Reset TSEMP firing flag
+        this.setFiredTsempThisTurn(false);
     }
 
     /**
@@ -12529,5 +12582,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getHeat() {
         return heat;
+    }
+
+    public int getTsempHitsThisTurn() {
+        return tsempHitsThisTurn;
+    }
+
+    public void addTsempHitThisTurn() {
+        this.tsempHitsThisTurn++;
+    }
+
+    public int getTsempEffect() {
+        return tsempEffect;
+    }
+
+    public void setTsempEffect(int tsempEffect) {
+        this.tsempEffect = tsempEffect;
+    }
+
+    public boolean isFiredTsempThisTurn() {
+        return firedTsempThisTurn;
+    }
+
+    public void setFiredTsempThisTurn(boolean firedTsempThisTurn) {
+        this.firedTsempThisTurn = firedTsempThisTurn;
+    }
+
+    public boolean hasFiredTsemp() {
+        return hasFiredTsemp;
+    }
+
+    public void setHasFiredTsemp(boolean hasFiredTSEMP) {
+        this.hasFiredTsemp = hasFiredTSEMP;
     }
 }

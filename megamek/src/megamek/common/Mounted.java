@@ -48,7 +48,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean jammed = false;
     private boolean jammedThisPhase = false;
     private boolean useless = false;
-    private boolean fired = false; // Only true for used OS stuff.
+    private boolean fired = false; // Only true for used OS stuff and TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
                                            // ACs.

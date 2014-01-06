@@ -3867,7 +3867,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.shortName = "LB-2X Cluster";
-        ammo.subMunitionBegin = 7;
+        ammo.subMunitionBegin = 6;
         ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");

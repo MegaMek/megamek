@@ -11,6 +11,7 @@ v0.37.3-dev (SVN)
 + Feature: Enabled firing solutions for offboard phase (firing tags and such)
 + Bug [#3862]: Nighttime Movement Penalty Applies to Airborne VTOLS?
 + Errata: homing artillery now always targets an area, not a mapsheet
++ Bug [#3971]: More Clan LB-X submunition trouble
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

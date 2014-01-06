@@ -309,17 +309,10 @@ public class BasicPathRanker extends PathRanker {
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                        game.getBoard().getCenter() :
-                        closest.getPosition();
+                game.getBoard().getCenter() :
+                closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
-        String msg = "Getting last step for " + path.toString();
-        MoveStep lastStep = path.getLastStep();
-        if (lastStep == null) {
-            msg += "\n\tNo last step found.";
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.ERROR, msg);
-            return -10000.0;
-        }
-        int currentFacing = lastStep.getFacing();
+        int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;

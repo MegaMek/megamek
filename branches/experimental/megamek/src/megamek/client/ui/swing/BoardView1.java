@@ -439,11 +439,41 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 			            			((ChatterBox2)disp).slideUp();
 	            				}
 		            		}
-							requestFocusInWindow(false);
+							requestFocus();
 						}
 					}
         	
         });
+        
+        // Register the action for TOGGLE_CHAT
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+        				if (chatterBoxActive || !bv.isVisible()
+        						|| game.getPhase() == Phase.PHASE_LOUNGE){
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						if (!chatterBoxActive){
+							chatterBoxActive = true;
+							for (IDisplayable disp : displayables){
+			            		if (disp instanceof ChatterBox2){
+			            			((ChatterBox2)disp).slideUp();
+			            			((ChatterBox2)disp).setMessage("/");
+	            				}
+		            		}
+							requestFocus();
+						}
+					}
+        	
+        });        
 
         // Register the action for CENTER_ON_SELECTED        
         controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,

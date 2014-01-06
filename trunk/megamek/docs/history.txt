@@ -15,6 +15,7 @@ v0.37.3-dev (SVN)
 + Bug: Princess.getEntityToMove() wasn't considering whether the Entity chose 
     was valid for the current turn, which could lead to the Princess hanging 
     during the movement phase in some situations (with no Exceptions thrown)
++ Feature: Implemented TSEMP
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

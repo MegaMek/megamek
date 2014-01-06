@@ -334,8 +334,9 @@ public class MovePath implements Cloneable, Serializable {
      * path.
      */
     public int getFinalFacing() {
-        if (getLastStep() != null) {
-            return getLastStep().getFacing();
+        MoveStep last = getLastStep();
+        if (last != null) {
+            return last.getFacing();
         }
         return entity.getFacing();
     }

@@ -208,6 +208,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String CHASSIS = "chassis";
     public static final String MODEL = "model";
     public static final String NAME = "name";
+    public static final String SIZE = "size";
     public static final String CAMO_CATEGORY = "camoCategory";
     public static final String CAMO_FILENAME = "camoFileName";
     public static final String EXT_ID = "externalId";
@@ -648,6 +649,7 @@ public class XMLStreamParser implements XMLResponder {
 
                 // Look for the element's attributes.
                 String pilotName = (String) attr.get(NAME);
+                String pilotSize = (String) attr.get(SIZE);
                 String pilotNickname = (String) attr.get(NICK);
                 String gunnery = (String) attr.get(GUNNERY);
                 String gunneryL = (String) attr.get(GUNNERYL);
@@ -793,6 +795,8 @@ public class XMLStreamParser implements XMLResponder {
 
                     Crew crew = new Crew(pilotName, 1, gunneryLVal, gunneryMVal,
                             gunneryBVal, pilotVal);
+                    
+                    crew.setSize(Integer.parseInt(pilotSize));
 
                     if ((null != pilotNickname) && (pilotNickname.length() > 0)) {
                         crew.setNickname(pilotNickname);

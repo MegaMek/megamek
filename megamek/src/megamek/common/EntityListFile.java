@@ -473,6 +473,8 @@ public class EntityListFile {
             final Crew crew = entity.getCrew();
             output.write("      <pilot name=\"");
             output.write(crew.getName().replaceAll("\"", "&quot;"));
+            output.write("\" size=\"");
+            output.write(String.valueOf(crew.getSize()));
             output.write("\" nick=\"");
             output.write(crew.getNickname().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");

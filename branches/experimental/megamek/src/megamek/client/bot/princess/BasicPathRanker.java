@@ -304,22 +304,15 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // todo account for damaged locations and face those away from enemy.
-    private double calculateFacingMod(Entity movingUnit, IGame game, MovePath path, StringBuilder formula) {
+    private double calculateFacingMod(Entity movingUnit, IGame game, final MovePath path, StringBuilder formula) {
         final String METHOD_NAME = "calculateFacingMod(Entity, IGame, MovePath, StringBuilder)";
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                        game.getBoard().getCenter() :
-                        closest.getPosition();
+                game.getBoard().getCenter() :
+                closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
-        String msg = "Getting last step for " + path.toString();
-        MoveStep lastStep = path.getLastStep();
-        if (lastStep == null) {
-            msg += "\n\tNo last step found.";
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.ERROR, msg);
-            return -10000.0;
-        }
-        int currentFacing = lastStep.getFacing();
+        int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;

@@ -61,7 +61,7 @@ public class ChatProcessor {
         boolean result = false;
 
         if (!StringUtil.isNullOrEmpty(message) &&
-            (message.contains(DefeatCommand.wantsDefeat) || message.contains(DefeatCommand.admitsDefeat))) {
+            (message.contains(DefeatCommand.wantsDefeat))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];

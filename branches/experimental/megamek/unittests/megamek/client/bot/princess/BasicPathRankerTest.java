@@ -84,8 +84,8 @@ public class BasicPathRankerTest {
             failure.append("\nExpected :").append(expected.toString());
             failure.append("\nActual   :").append(actual.toString());
         }
-        int expectedRank = (int)(expected.rank * (1/TOLERANCE));
-        int actualRank = (int)(actual.rank * (1/TOLERANCE));
+        int expectedRank = (int) (expected.rank * (1 / TOLERANCE));
+        int actualRank = (int) (actual.rank * (1 / TOLERANCE));
         if (expectedRank != actualRank) {
             failure.append("\nExpected :").append(expected.rank);
             failure.append("\nActual   :").append(actual.rank);
@@ -360,11 +360,11 @@ public class BasicPathRankerTest {
 
         IBoard mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
-        Coords boardCenter = Mockito.spy(new Coords(8,8));
+        Coords boardCenter = Mockito.spy(new Coords(8, 8));
         Mockito.when(mockBoard.getCenter()).thenReturn(boardCenter);
         Mockito.doReturn(3)
-               .when(boardCenter)
-               .direction(Mockito.any(Coords.class));
+                .when(boardCenter)
+                .direction(Mockito.any(Coords.class));
 
         GameOptions mockGameOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq("no_clan_physical"))).thenReturn(false);
@@ -590,39 +590,39 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.wantsToFlee(Mockito.eq(mockMover))).thenReturn(false);
 
         // Change my facing.
-        Mockito.when(mockLastStep.getFacing()).thenReturn(1);
+        Mockito.when(mockPath.getFinalFacing()).thenReturn(1);
         expected = new RankedPath(baseRank, mockPath, "Calculation: {fall mod [0.0 = 0.0 * 100.0] + braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [30.00 = 12.00 * 2.50] - herdingMod [7.50 = 15.00 * 0.50] - facingMod [0.00 = max(0, 50 * {1 - 1})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank != actual.rank) {
             Assert.fail("Being 1 hex off facing should make no difference in rank.");
         }
-        Mockito.when(mockLastStep.getFacing()).thenReturn(4);
+        Mockito.when(mockPath.getFinalFacing()).thenReturn(4);
         expected = new RankedPath(-93.75, mockPath, "Calculation: {fall mod [0.0 = 0.0 * 100.0] + braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [30.00 = 12.00 * 2.50] - herdingMod [7.50 = 15.00 * 0.50] - facingMod [50.00 = max(0, 50 * {2 - 1})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.rank) {
             Assert.fail("Being 2 or more hexes off facing should lower the path rank.");
         }
-        Mockito.when(mockLastStep.getFacing()).thenReturn(3);
+        Mockito.when(mockPath.getFinalFacing()).thenReturn(3);
         expected = new RankedPath(-143.75, mockPath, "Calculation: {fall mod [0.0 = 0.0 * 100.0] + braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [30.00 = 12.00 * 2.50] - herdingMod [7.50 = 15.00 * 0.50] - facingMod [100.00 = max(0, 50 * {3 - 1})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.rank) {
             Assert.fail("Being 2 or more hexes off facing should lower the path rank.");
         }
-        Mockito.when(mockLastStep.getFacing()).thenReturn(0);
+        Mockito.when(mockPath.getFinalFacing()).thenReturn(0);
 
         // Test not being able to find an enemy.
         Mockito.doReturn(null)
-               .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
+                .when(testRanker)
+                .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
         expected = new RankedPath(-43.75, mockPath, "Calculation: {fall mod [0.0 = 0.0 * 100.0] + braveryMod [-6.25 = 100% * ((22.50 * 1.50) - 40.00] - aggressionMod [30.00 = 12.00 * 2.50] - herdingMod [7.50 = 15.00 * 0.50] - facingMod [0.00 = max(0, 50 * {0 - 1})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(mockEnemyMech1)
-               .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
+                .when(testRanker)
+                .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
     }
 
     @Test

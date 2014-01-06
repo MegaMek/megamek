@@ -65,7 +65,7 @@ public class Princess extends BotClient {
 
     private boolean initialized = false;
 
-    private PathSearcher pathSearcher;
+    //private PathSearcher pathSearcher;
     private BasicPathRanker pathRanker;
     private FireControl fireControl;
     private BehaviorSettings behaviorSettings;
@@ -360,7 +360,9 @@ public class Princess extends BotClient {
         StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
-            if (entity.isOffBoard() || (entity.getPosition() == null) || !entity.isSelectableThisTurn()) {
+            if (entity.isOffBoard() || (entity.getPosition() == null) 
+                    || !entity.isSelectableThisTurn() 
+                    || !game.getTurn().isValidEntity(entity,game)) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -503,7 +505,6 @@ public class Princess extends BotClient {
         return !entity.isImmobile() && wantsToFlee(entity);
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     protected boolean mustFleeBoard(Entity entity) {
         if (!isFleeing(entity)) {
             return false;
@@ -701,10 +702,8 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
             precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
-            log(getClass(), METHOD_NAME,
-                    "Best Path: " + bestpath.path.toString() + "  Rank: "
-                            + bestpath.rank);
-            bestpath.path.printAllSteps();
+            log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
+                    + bestpath.rank);
             return bestpath.path;
         } finally {
             methodEnd(getClass(), METHOD_NAME);

@@ -701,10 +701,8 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
             precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
-            log(getClass(), METHOD_NAME,
-                    "Best Path: " + bestpath.path.toString() + "  Rank: "
-                            + bestpath.rank);
-            bestpath.path.printAllSteps();
+            log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
+                    + bestpath.rank);
             return bestpath.path;
         } finally {
             methodEnd(getClass(), METHOD_NAME);

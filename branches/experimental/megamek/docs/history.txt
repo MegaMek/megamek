@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.37.3-exp (SVN)
 + Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE
 + Bug: Fire keybind could make attacks that were invalid
++ Feature: When using ESC to clear chat message it now also slides the box down
++ Bug: Up/Down arrows in ChatterBox didn't appear to work properly
 
 v0.37.2-exp (2014-01-01 17:50 UTC)
 + Feature: Allowing UI components to be customized (skins)

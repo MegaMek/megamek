@@ -719,10 +719,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             case KeyEvent.VK_UP:
                 cb.historyBookmark++;
                 cb.fetchHistory();
+                bv.repaint();
                 return;
             case KeyEvent.VK_DOWN:
                 cb.historyBookmark--;
                 cb.fetchHistory();
+                bv.repaint();
                 return;
             case KeyEvent.VK_ALT:
             case KeyEvent.VK_SHIFT:
@@ -784,6 +786,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             case KeyEvent.VK_ESCAPE:
             	clearMessage();
             	bv.chatterBoxActive = false;
+            	slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {

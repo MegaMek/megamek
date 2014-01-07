@@ -6176,7 +6176,7 @@ public class Compute {
             }
         }
         else if(entity instanceof SmallCraft) {
-            return 3;
+            return getTotalDriverNeeds(entity);
         }
         else if(entity instanceof Warship || entity instanceof SpaceStation) {
             return 45 + (int)Math.ceil(entity.getWeight()/5000.0);
@@ -6211,6 +6211,34 @@ public class Compute {
         else {
             return 1;
         }
+    }
+    
+    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
+    public static int getTotalDriverNeeds(Entity entity) {
+        if(entity instanceof SpaceStation) {
+            return 0;
+        }
+        if(entity instanceof SmallCraft || entity instanceof Jumpship) {
+            //its not at all clear how many pilots dropships and jumpships 
+            //should have, but the old BattleSpace book suggests they should
+            //be able to get by with 2. For warships, lets go with 2 per shift 
+            // so 6.
+            if(entity instanceof Warship) {
+                return 6;
+            }
+            if(entity instanceof SmallCraft) {
+                return 3;
+            }
+            return 2;
+        }
+        if(entity instanceof Mech || entity instanceof Tank || entity instanceof Aero || entity instanceof Protomech) {
+            //only one driver please
+            return 1;
+        }
+        else if(entity instanceof Infantry) {
+            return getFullCrewSize(entity);
+        }
+        return 0;
     }
 
 } // End public class Compute

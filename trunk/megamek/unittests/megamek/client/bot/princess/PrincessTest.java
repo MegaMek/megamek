@@ -17,6 +17,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -267,6 +268,12 @@ public class PrincessTest {
                 .thenReturn(10.0);
 
         // Test a list of normal units.
+        IGame mockGame = Mockito.mock(IGame.class);
+        GameTurn mockTurn = Mockito.mock(GameTurn.class);
+        Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenReturn(true);
+        Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
+        
         List<Entity> testEntityList = new ArrayList<Entity>();
         testEntityList.add(mockMech);
         testEntityList.add(mockBA);

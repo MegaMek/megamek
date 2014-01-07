@@ -15,12 +15,16 @@
 package megamek.common;
 
 import junit.framework.TestCase;
+import megamek.common.Entity;
+import megamek.common.MechFileParser;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,4 +77,25 @@ public class EntityTest {
         actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);
     }
+    
+    @Test
+    public void testCalculateWeight() {
+        File f; 
+        MechFileParser mfp;
+        Entity e;
+        int expectedWeight, computedWeight;
+        
+        // Test 1/1
+        try {
+            f = new File("data/mechfiles/mechs/3039/Exterminator EXT-4A.MTF");
+            mfp  = new MechFileParser(f);
+            e = mfp.getEntity();
+            expectedWeight = 65;
+            computedWeight = (int)e.getWeight();
+            TestCase.assertEquals(expectedWeight, computedWeight);
+        } catch (Exception exc){
+            TestCase.fail(exc.getMessage());
+        }
+    }
+    
 }

@@ -119,6 +119,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.ConvFighter;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -209,6 +210,7 @@ import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.MPodWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TAGHandler;
+import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.commands.AddBotCommand;
@@ -2477,6 +2479,7 @@ public class Server implements Runnable {
                 resolveAeroElevationLoss();
                 resolveScheduledNukes();
                 applyBuildingDamage();
+                processTSEMPHits();
                 checkForPSRFromDamage();
                 addReport(resolvePilotingRolls());
                 checkForFlawedCooling();
@@ -10041,6 +10044,9 @@ public class Server implements Runnable {
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
             }
+            if (entity.hasDamagedRHS()){
+                entity.heatBuildup += 1;
+            }
         }
     }
 
@@ -16196,6 +16202,88 @@ public class Server implements Runnable {
             if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
+            if (entity.hasDamagedRHS() && entity.weaponFired()){
+                entity.heatBuildup += 1;
+            }
+            
+            int radicalHSBonus = 0;
+            Vector<Report> rhsReports = new Vector<Report>();
+            if (entity.hasActivatedRadicalHS()){
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses()+1);
+                if (entity instanceof Mech){
+                    radicalHSBonus = ((Mech)entity).getActiveSinks();
+                } else if (entity instanceof Aero){
+                    radicalHSBonus = ((Aero)entity).getHeatSinks();
+                } else {
+                    System.out.println("Server.resolveHeat() Error: " +
+                            "Radical heatsinks mounted on non-mech " +
+                            "non-aero Entity!");
+                }
+                int rhsRoll = Compute.d6(2);
+                int targetNumber = 2;
+                switch (entity.getConsecutiveRHSUses()){
+                    case 1:
+                        targetNumber = 3;
+                        break;
+                    case 2:
+                        targetNumber = 5;
+                        break;
+                    case 3:
+                        targetNumber = 7;
+                        break;
+                    case 4:
+                        targetNumber = 10;
+                        break;
+                    case 5:
+                        targetNumber = 11;
+                        break;
+                    case 6:
+                    default:
+                        targetNumber = 13; // Auto-fail
+                }
+                // RHS actiavtion report
+                r = new Report(5540);
+                r.subject = entity.getId();
+                r.indent();
+                r.addDesc(entity);
+                r.add(radicalHSBonus);
+                rhsReports.add(r);
+                
+                boolean rhsFailure = rhsRoll < targetNumber;
+                r = new Report(5541);
+                r.indent(2);
+                r.subject = entity.getId();
+                r.add(targetNumber);
+                r.add(rhsRoll);
+                r.choose(rhsFailure);
+                rhsReports.add(r);
+                
+                if (rhsFailure){
+                    entity.setHasDamagedRHS(true);
+                    int loc = Entity.LOC_NONE;
+                    for (Mounted m : entity.getEquipment()){
+                        if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+                            loc = m.getLocation();
+                            m.setDestroyed(true);
+                            break;
+                        }
+                    }
+                    if (loc == Entity.LOC_NONE){
+                        throw new IllegalStateException("Server." +
+                        		"resolveHeat(): Could not find Radical " +
+                        		"Heatsink mount on unit that used RHS!");
+                    } 
+                    for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
+                        CriticalSlot slot = entity.getCritical(loc, s);
+                        if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT 
+                                && slot.getMount().getType().hasFlag(
+                                        MiscType.F_RADICAL_HEATSINK)){
+                            slot.setHit(true);
+                            break;
+                        }
+                    }
+                }
+            }
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
@@ -16245,7 +16333,7 @@ public class Server implements Runnable {
                 entity.heat += entity.heatBuildup;
 
                 // how much heat can we sink?
-                int tosink = entity.getHeatCapacityWithWater();
+                int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
                 // should we use a coolant pod?
                 int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
@@ -16297,6 +16385,7 @@ public class Server implements Runnable {
                 r.add(entity.heat);
                 addReport(r);
                 entity.heatBuildup = 0;
+                vPhaseReport.addAll(rhsReports);
 
                 // add in the effects of heat
 
@@ -16333,8 +16422,10 @@ public class Server implements Runnable {
 
                 // heat effects: start up
                 if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
-                    // only start up if not shut down by taser
-                    if (entity.getTaserShutdownRounds() == 0) {
+                    // only start up if not shut down by taser or a TSEMP
+                    if (entity.getTaserShutdownRounds() == 0 
+                            && entity.getTsempEffect() != 
+                                TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
                         if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
@@ -16761,7 +16852,7 @@ public class Server implements Runnable {
             entity.heat += entity.heatBuildup;
 
             // how much heat can we sink?
-            int tosink = entity.getHeatCapacityWithWater();
+            int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
             if (entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
@@ -16821,6 +16912,7 @@ public class Server implements Runnable {
             r.add(entity.heat);
             addReport(r);
             entity.heatBuildup = 0;
+            vPhaseReport.addAll(rhsReports);
 
             // Does the unit have inferno ammo?
             if (entity.hasInfernoAmmo()) {
@@ -16863,7 +16955,9 @@ public class Server implements Runnable {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown()
                     && !entity.isStalled()) {
-                if (entity.getTaserShutdownRounds() == 0) {
+                if (entity.getTaserShutdownRounds() == 0 
+                        && entity.getTsempEffect() != 
+                            TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
@@ -17394,6 +17488,136 @@ public class Server implements Runnable {
         return out;
     }
 
+    /**
+     * Called at the end of the firing phase, this method iterates through all
+     * the entities and checks to see if they need to have the effects of TSEMP
+     * resolved.
+     */
+    private void processTSEMPHits(){
+        boolean firstReport = true;
+        for (Entity e : game.getEntitiesVector()){           
+            // If this unit was hit by a TSEMP, process the results
+            if (e.getTsempHitsThisTurn() > 0){
+                // Keep nice spacing
+                if (firstReport){
+                    Report.addNewline(vPhaseReport);
+                    firstReport = false;
+                }
+                // Report that this unit has been hit by TSEMP
+                Report r = new Report(7410);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.add(e.getTsempHitsThisTurn());
+                vPhaseReport.add(r);
+
+                // TSEMP has no effect against infantry
+                if ((e instanceof Infantry) 
+                        && !(e instanceof BattleArmor)){
+                    // No Effect
+                    r = new Report(7415);
+                    r.subject = e.getId();
+                    vPhaseReport.add(r);
+                    continue;
+                }
+                
+                // Determine roll modifiers
+                int tsempModifiers = 0;
+                if (e.getWeight() >= 200){
+                    // No Effect
+                    r = new Report(7416);
+                    r.subject = e.getId();
+                    r.indent();
+                    vPhaseReport.add(r);
+                    continue;
+                } else if (e.getWeight() >= 100){
+                    tsempModifiers -= 2;
+                }
+                
+                if (e.getEngine().getEngineType() == 
+                        Engine.COMBUSTION_ENGINE){
+                    tsempModifiers -= 1;
+                }
+                
+                int numHits = e.getTsempHitsThisTurn();
+                // Roll for each TSEMP hit
+                for (int hit = 0; hit < numHits; hit++){
+                    // Multiple hits add a +1 for each hit after the first, 
+                    //  up to a max of 4                   
+                    int tsempRoll = Math.max(2, Compute.d6(2) + tsempModifiers + 
+                            Math.min(4, hit));
+                    
+                    // Ugly code to set the target rolls
+                    int shutdownTarget = 13;
+                    int interferenceTarget = 13;
+                    if (e instanceof Mech){
+                        if (((Mech) e).isIndustrial()){
+                            interferenceTarget = 6;
+                            shutdownTarget = 8;
+                        } else {
+                            interferenceTarget = 7;
+                            shutdownTarget = 9;
+                        }            
+                    } else if (e instanceof SupportTank){
+                        interferenceTarget = 5;
+                        shutdownTarget = 7;
+                    } else if (e instanceof Tank){
+                        interferenceTarget = 6;
+                        shutdownTarget = 8;
+                    } else if (e instanceof BattleArmor){
+                        interferenceTarget = 6;
+                        shutdownTarget = 8;
+                    } else if (e instanceof Protomech){
+                        interferenceTarget = 6;
+                        shutdownTarget = 9;
+                    } else if (e instanceof ConvFighter){
+                        interferenceTarget = 6;
+                        shutdownTarget = 8;
+                    } else if (e instanceof Aero){
+                        interferenceTarget = 7;
+                        shutdownTarget = 9;
+                    }
+    
+                    // Create the effect report
+                    if (tsempModifiers == 0){
+                        r = new Report(7411);
+                    } else {
+                        r = new Report(7412);
+                        r.add(tsempModifiers + Math.min(4, hit));
+                    }
+                    r.indent();
+                    r.add(tsempRoll);
+                    r.subject = e.getId();
+                    String tsempEffect;
+    
+                    // Determine the effect
+                    if (tsempRoll >= shutdownTarget){
+                        e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
+                        tsempEffect = 
+                                "<font color='C00000'><b>Shutdown!</b></font>";
+                        e.setShutDown(true);
+                    } else if (tsempRoll >= interferenceTarget){
+                        e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+                        tsempEffect = "<b>Interference!</b>";
+                    } else {
+                        // No effect roll
+                        tsempEffect = "No Effect!";
+                    }
+                    r.add(tsempEffect);
+                    vPhaseReport.add(r); 
+                }
+            }
+            
+            // Firing a TSEMP adds the interference effect to the attacker
+            if (e.isFiredTsempThisTurn()){
+                if (e.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE){
+                    e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+                }
+                if (e.getTsempHitsThisTurn() == 0){
+                    e.addTsempHitThisTurn();
+                }
+            }
+        }
+    }
     /**
      * Checks to see if any entity takes enough damage that requires them to
      * make a piloting roll
@@ -20636,14 +20860,13 @@ public class Server implements Runnable {
             // We are going to assume that explosions are on the ground here so
             // flying entities should be
             // unaffected
-            // TODO: What about VTOLs? for now we assume they are affected
             if (entity.isAirborne()) {
                 continue;
             }
 
             if ((entity instanceof MechWarrior)
                     && !((MechWarrior) entity).hasLanded()) {
-                // MechWarrior is still up in the air ejecting their for safe
+                // MechWarrior is still up in the air ejecting hence safe
                 // from this explosion.
                 continue;
             }

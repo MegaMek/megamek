@@ -48,7 +48,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean jammed = false;
     private boolean jammedThisPhase = false;
     private boolean useless = false;
-    private boolean fired = false; // Only true for used OS stuff.
+    private boolean fired = false; // Only true for used OS stuff and TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
                                            // ACs.
@@ -321,7 +321,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     m.setMode(newMode);
                 }
             }
-        }
+        }    
         return true;
     }
 
@@ -486,6 +486,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
+        if (destroyed == true 
+                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+            if (entity != null){
+                entity.setHasDamagedRHS(true);
+            }
+        }
     }
 
     public boolean isInoperable() {
@@ -506,6 +512,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setHit(boolean hit) {
         this.hit = hit;
+        if (hit == true 
+                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+            if (entity != null){
+                entity.setHasDamagedRHS(true);
+            }
+        }
     }
 
     public boolean isMissing() {

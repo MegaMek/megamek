@@ -117,6 +117,7 @@ import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
+import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -1269,6 +1270,7 @@ public class MechDisplay extends JPanel {
                 usedRearArc[i] = false;
             }
 
+            boolean hasFiredWeapons = false;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted mounted = entity.getWeaponList().get(i);
                 WeaponType wtype = (WeaponType) mounted.getType();
@@ -1328,6 +1330,7 @@ public class MechDisplay extends JPanel {
                 if (mounted.isUsedThisRound()
                         && (game.getPhase() == mounted.usedInPhase())
                         && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
+                    hasFiredWeapons = true;
                     // add heat from weapons fire to heat tracker
                     if (entity.usesWeaponBays()) {
                         // if using bay heat option then don't add total arc
@@ -1361,6 +1364,9 @@ public class MechDisplay extends JPanel {
                     }
                 }
             }
+            if (en.hasDamagedRHS() && hasFiredWeapons){
+                currentHeatBuildup++; 
+            }
 
             // This code block copied from the MovementPanel class,
             // bad coding practice (duplicate code).
@@ -1369,6 +1375,15 @@ public class MechDisplay extends JPanel {
             if (en.getCoolantFailureAmount() > 0) {
                 heatCap -= en.getCoolantFailureAmount();
                 heatCapWater -= en.getCoolantFailureAmount();
+            }
+            if (en.hasActivatedRadicalHS()){
+                if (en instanceof Mech){
+                    heatCap += ((Mech)en).getActiveSinks(); 
+                    heatCapWater += ((Mech)en).getActiveSinks(); 
+                } else if (en instanceof Aero){
+                    heatCap += ((Aero)en).getHeatSinks();
+                    heatCapWater += ((Aero)en).getHeatSinks();
+                }
             }
             String heatCapacityStr = Integer.toString(heatCap);
 
@@ -2884,6 +2899,10 @@ public class MechDisplay extends JPanel {
                                     .systemMessage(Messages
                                             .getString(
                                                     "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
+                            int weap = wPan.getSelectedWeaponNum();
+                            wPan.displayMech(en);
+                            wPan.selectWeapon(weap);
+                            //displaySlots();
                         } else {
                             if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
                                     .getClient().getGame().getPhase()) {
@@ -3564,6 +3583,23 @@ public class MechDisplay extends JPanel {
                 if (en.getTaserInterference() > 0) {
                     ((DefaultListModel<String>) narcList.getModel())
                             .addElement("+" + en.getTaserInterference() + " " + Messages.getString("MechDisplay.TaserInterference"));//$NON-NLS-1$
+                }
+                
+                // suffering from TSEMP Interference?
+                if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+                    ((DefaultListModel<String>) narcList.getModel())
+                    .addElement(Messages.getString("MechDisplay.TSEMPInterference"));//$NON-NLS-1$
+                }
+                
+                // suffering from TSEMP shutdown?
+                if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
+                    ((DefaultListModel<String>) narcList.getModel())
+                    .addElement(Messages.getString("MechDisplay.TSEMPShutdown"));//$NON-NLS-1$
+                }
+                
+                if (en.hasDamagedRHS()){
+                    ((DefaultListModel<String>) narcList.getModel())
+                    .addElement(Messages.getString("MechDisplay.RHSDamaged"));//$NON-NLS-1$
                 }
 
                 // Show Turret Locked.

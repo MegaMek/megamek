@@ -71,6 +71,7 @@ import megamek.common.weapons.LRTWeapon;
 import megamek.common.weapons.MekMortarWeapon;
 import megamek.common.weapons.SRTWeapon;
 import megamek.common.weapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
 /**
@@ -2019,6 +2020,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         "Swarm-I at friendly unit with intact sensors");
             }
         }
+        
+        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE){
+            toHit.addModifier(+2, "attacker has TSEMP interference");
+        }
 
         // okay!
         return toHit;
@@ -2630,7 +2635,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-
+        
+        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE){
+            toHit.addModifier(+2, "attacker has TSEMP interference");
+        }
+        
         // okay!
         return toHit;
     }
@@ -2664,6 +2673,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 return "Tasers can only fire at units.";
             }
+        }
+        
+        if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()){
+            return "TSEMP cannon recharging";
         }
 
         // only leg mounted b-pods can be fired normally

@@ -26011,10 +26011,8 @@ public class Server implements Runnable {
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
                         Server.entityVerifier.mechOption, null);
-            } else if (entity instanceof VTOL) {
-                testEntity = new TestTank((Tank) entity,
-                        Server.entityVerifier.tankOption, null);
-            } else if (entity instanceof Tank) {
+            } else if (entity.getEntityType() == Entity.ETYPE_TANK
+                    && entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT) {
                 testEntity = new TestTank((Tank) entity,
                         Server.entityVerifier.tankOption, null);
             } else if ((entity.getEntityType() == Entity.ETYPE_AERO)

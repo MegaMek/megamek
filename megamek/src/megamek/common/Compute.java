@@ -1913,12 +1913,21 @@ public class Compute {
             }
         }
         
-        /*
-         * If we are a tank, and our previous targets are less than the number of crew - 2
-         * we don't have a secondary modifier 
-         */
-        if (attacker instanceof Tank && countTargets < attacker.getCrew().getSize()-2) {
-            return null; // no modifier
+        if (game.getOptions().booleanOption("tacops_tank_crews") && attacker instanceof Tank) {
+            /*
+             * If we are a tank, and only have 1 crew then we have some special restrictions
+             */
+            if (attacker.getCrew().getSize() == 1) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Vehicles with only 1 crewman may not attack secondary targets");
+            }
+            /*
+             * If we are a tank, and our previous targets are less than the number of crew - 2
+             * we don't have a secondary modifier 
+             */
+            if (countTargets < attacker.getCrew().getSize()-2) {
+                return null; // no modifier
+            }
         }
 
         if ((primaryTarget == Entity.NONE)

@@ -24,6 +24,7 @@ v0.37.3-dev (SVN)
 + Added some new methods to Compute.java for calculating Crew size and made
     it so that entities now set their crew size correctly
 + Added another crew calculation method that I missed
++ Optionized RFE 1210 and added the malus/restrictions for single crew vehicles
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

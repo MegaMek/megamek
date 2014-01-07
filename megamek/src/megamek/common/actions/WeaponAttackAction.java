@@ -2654,6 +2654,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
+        
+        if (game.getOptions().booleanOption("tacops_tank_crews")
+                && ae instanceof Tank && ae.isUnjammingRAC()
+                && ae.getCrew().getSize() == 1) {
+            return "Vehicles with only 1 crewman may not take other actions while unjamming";
+        }
 
         // is the attack originating from underwater
         boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)

@@ -972,6 +972,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setWeight(float weight) {
         this.weight = weight;
+        // Any time the weight is reset we need to reset the crew size
+        this.crew.setSize(Compute.getFullCrewSize(this));
     }
 
     public boolean isOmni() {

@@ -2487,8 +2487,7 @@ public class Aero extends Entity {
 
     @Override
     public int getHeatCapacity() {
-        boolean radical = hasWorkingMisc(MiscType.F_RADICAL_HEATSINK);
-        return ((getHeatSinks() * (getHeatType() + 1)) + (radical?(int)Math.ceil(getHeatSinks()*0.4):0));
+        return (getHeatSinks() * (getHeatType() + 1));
     }
 
     // If the aero is in the water, it is dead so no worries

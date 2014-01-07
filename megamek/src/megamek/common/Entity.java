@@ -637,6 +637,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private int impThisTurnHeatHelp = 0;
 
     protected boolean military;
+    
+    /**
+     * Keeps track of whether or not this Entity has a critically hit radical 
+     * heat sink.  Using a flag will prevent having to iterate over all of the
+     * Entity's mounted equipment
+     */
+    protected boolean hasDamagedRHS = false;
+    
+    /**
+     * Keeps track of the number of consecutive turns a radical heat sink has
+     * been used.
+     */
+    protected int consecutiveRHSUses = 0;
 
     /**
      * Generates a new, blank, entity.
@@ -3124,6 +3137,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Checks whether a weapon has been fired on this unit this turn
+     * @return
+     */
+    public boolean weaponFired(){
+        boolean fired = false;
+        for (int loc = 0; loc < locations() && !fired; loc++){
+            fired |= weaponFiredFrom(loc);
+        }
+        return fired;
+    }
+    /**
      * Checks whether a weapon has been fired from the specified location this
      * turn
      */
@@ -5127,7 +5151,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Reset TSEMP hits
         tsempHitsThisTurn = 0;
         // Reset TSEMP firing flag
-        this.setFiredTsempThisTurn(false);
+        setFiredTsempThisTurn(false);
+        
+        // Decrement the number of consecutive turns if not used last turn
+        if (!hasActivatedRadicalHS()){
+            setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
+        }
+        // Reset used RHS flag
+        deactivateRadicalHS();        
     }
 
     /**
@@ -12614,5 +12645,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setHasFiredTsemp(boolean hasFiredTSEMP) {
         this.hasFiredTsemp = hasFiredTSEMP;
+    }
+
+    public boolean hasActivatedRadicalHS() {
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK) 
+                    && m.curMode().equals("On")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void deactivateRadicalHS() {
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+                m.setMode("Off");
+                // Can only have one radical heat sink
+                break;
+            }
+        }
+    }
+
+    public int getConsecutiveRHSUses() {
+        return consecutiveRHSUses;
+    }
+
+    public void setConsecutiveRHSUses(int consecutiveRHSUses) {
+        this.consecutiveRHSUses = consecutiveRHSUses;
+    }
+
+    public boolean hasDamagedRHS() {
+        return hasDamagedRHS;
+    }
+
+    public void setHasDamagedRHS(boolean hasDamagedRHS) {
+        this.hasDamagedRHS = hasDamagedRHS;
     }
 }

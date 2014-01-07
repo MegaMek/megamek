@@ -1070,6 +1070,9 @@ public class MovePath implements Cloneable, Serializable {
                 game.getBoard().getHex(getFinalCoords()).getElevation();
     }
 
+    /**
+     * @return TRUE if there are any buildings in a dropship's landing zone.
+     */
     public boolean willCrushBuildings() {
         for (MoveStep step : steps) {
             if (!step.getCrushedBuildingLocs().isEmpty()) {

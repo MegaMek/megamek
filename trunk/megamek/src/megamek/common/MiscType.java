@@ -8306,8 +8306,9 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_E };
         misc.introDate = 3095;
-        String[] saModes = { "On", "Off" };
+        String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
+        misc.setInstantModeSwitch(true);
         misc.techRating = RATING_E;
         misc.techLevel.put(3122, TechConstants.T_IS_ADVANCED);
 

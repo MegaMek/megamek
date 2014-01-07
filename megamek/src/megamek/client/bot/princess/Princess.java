@@ -362,7 +362,7 @@ public class Princess extends BotClient {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
             if (entity.isOffBoard() || (entity.getPosition() == null) 
                     || !entity.isSelectableThisTurn() 
-                    || !game.getTurn().isValidEntity(entity,game)) {
+                    || !getGame().getTurn().isValidEntity(entity,getGame())) {
                 msg.append("cannot be moved.");
                 continue;
             }

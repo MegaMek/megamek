@@ -107,8 +107,8 @@ public class PathRanker {
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null ?
-                                      Integer.MAX_VALUE :
-                                      closestTarget.getPosition().distance(mover.getPosition()));
+                Integer.MAX_VALUE :
+                closestTarget.getPosition().distance(mover.getPosition()));
 
         List<MovePath> returnPaths = new ArrayList<MovePath>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
@@ -320,7 +320,9 @@ public class PathRanker {
             successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
         }
         msg.append("\n\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
-        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", LogLevel.DEBUG, msg.toString());
+
+        LogLevel logLevel = (successProbability < 1.0 ? LogLevel.INFO : LogLevel.DEBUG);
+        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", logLevel, msg.toString());
 
         return successProbability;
     }

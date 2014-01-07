@@ -10044,6 +10044,9 @@ public class Server implements Runnable {
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
             }
+            if (entity.hasDamagedRHS()){
+                entity.heatBuildup += 1;
+            }
         }
     }
 
@@ -16199,6 +16202,88 @@ public class Server implements Runnable {
             if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
+            if (entity.hasDamagedRHS() && entity.weaponFired()){
+                entity.heatBuildup += 1;
+            }
+            
+            int radicalHSBonus = 0;
+            Vector<Report> rhsReports = new Vector<Report>();
+            if (entity.hasActivatedRadicalHS()){
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses()+1);
+                if (entity instanceof Mech){
+                    radicalHSBonus = ((Mech)entity).getActiveSinks();
+                } else if (entity instanceof Aero){
+                    radicalHSBonus = ((Aero)entity).getHeatSinks();
+                } else {
+                    System.out.println("Server.resolveHeat() Error: " +
+                            "Radical heatsinks mounted on non-mech " +
+                            "non-aero Entity!");
+                }
+                int rhsRoll = Compute.d6(2);
+                int targetNumber = 2;
+                switch (entity.getConsecutiveRHSUses()){
+                    case 1:
+                        targetNumber = 3;
+                        break;
+                    case 2:
+                        targetNumber = 5;
+                        break;
+                    case 3:
+                        targetNumber = 7;
+                        break;
+                    case 4:
+                        targetNumber = 10;
+                        break;
+                    case 5:
+                        targetNumber = 11;
+                        break;
+                    case 6:
+                    default:
+                        targetNumber = 13; // Auto-fail
+                }
+                // RHS actiavtion report
+                r = new Report(5540);
+                r.subject = entity.getId();
+                r.indent();
+                r.addDesc(entity);
+                r.add(radicalHSBonus);
+                rhsReports.add(r);
+                
+                boolean rhsFailure = rhsRoll < targetNumber;
+                r = new Report(5541);
+                r.indent(2);
+                r.subject = entity.getId();
+                r.add(targetNumber);
+                r.add(rhsRoll);
+                r.choose(rhsFailure);
+                rhsReports.add(r);
+                
+                if (rhsFailure){
+                    entity.setHasDamagedRHS(true);
+                    int loc = Entity.LOC_NONE;
+                    for (Mounted m : entity.getEquipment()){
+                        if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+                            loc = m.getLocation();
+                            m.setDestroyed(true);
+                            break;
+                        }
+                    }
+                    if (loc == Entity.LOC_NONE){
+                        throw new IllegalStateException("Server." +
+                        		"resolveHeat(): Could not find Radical " +
+                        		"Heatsink mount on unit that used RHS!");
+                    } 
+                    for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
+                        CriticalSlot slot = entity.getCritical(loc, s);
+                        if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT 
+                                && slot.getMount().getType().hasFlag(
+                                        MiscType.F_RADICAL_HEATSINK)){
+                            slot.setHit(true);
+                            break;
+                        }
+                    }
+                }
+            }
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
@@ -16248,7 +16333,7 @@ public class Server implements Runnable {
                 entity.heat += entity.heatBuildup;
 
                 // how much heat can we sink?
-                int tosink = entity.getHeatCapacityWithWater();
+                int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
                 // should we use a coolant pod?
                 int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
@@ -16300,6 +16385,7 @@ public class Server implements Runnable {
                 r.add(entity.heat);
                 addReport(r);
                 entity.heatBuildup = 0;
+                vPhaseReport.addAll(rhsReports);
 
                 // add in the effects of heat
 
@@ -16766,7 +16852,7 @@ public class Server implements Runnable {
             entity.heat += entity.heatBuildup;
 
             // how much heat can we sink?
-            int tosink = entity.getHeatCapacityWithWater();
+            int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
             if (entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
@@ -16826,6 +16912,7 @@ public class Server implements Runnable {
             r.add(entity.heat);
             addReport(r);
             entity.heatBuildup = 0;
+            vPhaseReport.addAll(rhsReports);
 
             // Does the unit have inferno ammo?
             if (entity.hasInfernoAmmo()) {

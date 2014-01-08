@@ -954,7 +954,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.subject = subjectId;
             r.indent(2);
             r.addDesc(entityTarget);
-            r.newlines = 0;
             vPhaseReport.addElement(r);
             missed = true;
         } else {

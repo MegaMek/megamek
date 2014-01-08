@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+v0.37.4-dev-exp (SVN)
+
+v0.37.4-dev (SVN)
+
 v0.37.3-exp (2014-01-07 02:54 UTC)
 + Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE
 + Bug: Fire keybind could make attacks that were invalid

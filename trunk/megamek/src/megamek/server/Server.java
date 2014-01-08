@@ -16654,22 +16654,26 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (!(entity.isManualShutdown())) {
-                        entity.setShutDown(false);
-                    }
                     entity.setBATaserShutdown(false);
-                } else {
+                    if (entity.isShutDown() && !entity.isManualShutdown()
+                            && entity.getTsempEffect() != 
+                                TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
+                        entity.setShutDown(false);
+                        r = new Report(5045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
+                    }
+                } else if (entity.isBATaserShutdown()){
                     // if we're shutdown by a BA taser, we might activate
                     // again
-                    if (entity.isBATaserShutdown()) {
-                        int roll = Compute.d6(2);
-                        if (roll >= 8) {
-                            entity.setTaserShutdownRounds(0);
-                            if (!(entity.isManualShutdown())) {
-                                entity.setShutDown(false);
-                            }
-                            entity.setBATaserShutdown(false);
+                    int roll = Compute.d6(2);
+                    if (roll >= 8) {
+                        entity.setTaserShutdownRounds(0);
+                        if (!(entity.isManualShutdown())) {
+                            entity.setShutDown(false);
                         }
+                        entity.setBATaserShutdown(false);
                     }
                 }
 

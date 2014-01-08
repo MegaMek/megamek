@@ -1,0 +1,12 @@
+Draconis Combine Assault Mechs A
+Cerberus MR-V3,1
+Hatamoto-Suna HTM-30S,2
+Orochi OR-2I,3
+Atlas AS7-K3,4
+BattleMaster BLR-K4,5
+Tenshi TN-10-O,6
+Peacekeeper PKP-1B,5
+Mad Cat Mk II (Standard),4
+Warhammer IIC 8,3
+Phoenix Hawk IIC 2,2
+Supernova,1

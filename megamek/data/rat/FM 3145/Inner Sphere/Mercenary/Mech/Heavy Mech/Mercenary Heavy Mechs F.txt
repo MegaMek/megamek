@@ -1,0 +1,12 @@
+Mercenary Heavy Mechs F
+Tempest TMP-3M,1
+Orion ON1-M,2
+Guillotine GLT-3N,3
+Yeoman YMN-6Y,4
+Hercules HRC-LS-9000,5
+Thunderbolt TDR-7M,6
+Merlin MLN-1C,5
+Archer ARC-8M,4
+Thanatos TNS-6S,3
+Hound HD-2F,2
+Argus AGS-4D,1

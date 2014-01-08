@@ -1,0 +1,12 @@
+Capellan Confederation Medium Mechs A
+Osprey OSP-26,1
+Vindicator VND-6L,2
+Eyleuka EYL-45A,3
+Firestarter FS9-O,4
+Raven II RVN-5X,5
+Men Shen MS1-O,6
+Yao Lien YOL-4C,5
+Agrotera AGT-1A,4
+Goshawk II,3
+Black Hawk,2
+Avalanche AVL-1O,1

@@ -1,0 +1,12 @@
+Sea Fox Frontline Light Mechs
+Razorback RZK-10S,1
+Arctic Fox AF1,2
+Puma (Adder) Prime,3
+Tiburon (Standard),4
+Fire Falcon Prime,5
+Uller (Kit Fox) Prime,6
+Tiburon (Standard),5
+Cougar Prime,4
+Dasher (Fire Moth) Prime,3
+Hankyu (Arctic Cheetah) Prime,2
+Solitaire,1

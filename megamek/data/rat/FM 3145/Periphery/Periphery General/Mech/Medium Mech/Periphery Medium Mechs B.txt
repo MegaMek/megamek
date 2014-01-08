@@ -1,0 +1,12 @@
+Periphery Medium Mechs B
+Centurion CN9-Ar,1
+Phoenix Hawk PXH-4W,2
+Lineholder KW1-LH2,3
+Vulcan VT-5M,4
+Shadow Hawk SHD-7M,5
+Dervish DV-6Mr,6
+Griffin GRF-4N,5
+Icarus II ICR-2S,4
+Cronus CNS-5M,3
+Ghost GST-11,2
+Scorpion SCP-10M,1

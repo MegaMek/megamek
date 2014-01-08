@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.3-exp (SVN)
+v0.37.3-exp (2014-01-07 02:54 UTC)
 + Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE
 + Bug: Fire keybind could make attacks that were invalid
 + Feature: When using ESC to clear chat message it now also slides the box down
@@ -9,6 +9,35 @@ v0.37.3-exp (SVN)
     activated, which could lead to key presses not being consumed by the CB
 + Feature: Added TOGGLE_CHAT_CMD keybind, which when used activates the 
     ChatterBox and enters the command character (/)
+
+v0.37.3 (2014-01-07 02:54 UTC)
++ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid
+    targets
++ Data: Unit Fixes
++ Bug: Fixed a few instances were CriticalSlot.getIndex() was causing NPEs
++ Bug: Updated Entity.isTargetable() to return false if position == null, to 
+    prevent some exceptions in the firing solution code
++ Feature: Added black borders around text in firing solutions, for readability
++ Feature: Enabled firing solutions for offboard phase (firing tags and such)
++ Bug [#3862]: Nighttime Movement Penalty Applies to Airborne VTOLS?
++ Errata: homing artillery now always targets an area, not a mapsheet
++ Bug [#3971]: More Clan LB-X submunition trouble
++ Bug: Princess.getEntityToMove() wasn't considering whether the Entity chose 
+    was valid for the current turn, which could lead to the Princess hanging 
+    during the movement phase in some situations (with no Exceptions thrown)
++ Feature: Implemented TSEMP
++ Feature: Added status effects to the MechDisplay Misc tab for TSEMP
++ Feature: Implemented radical heat sinks
++ Bug: NPE for Gun Emplacements related to Server.java creating a TestTank
+    in receiveEntityAdd
++ RFE [#1210]: Implement Crew-size Benefits/Penalties
++ Added some new methods to Compute.java for calculating Crew size and made
+    it so that entities now set their crew size correctly
++ Added another crew calculation method that I missed
++ Optionized RFE 1210 and added the malus/restrictions for single crew vehicles
++ Adjusted how TSEMP hits are processed.  Now they happen when the weapon is 
+    fired instead or all being processed at the end of the firing phase.  
+    This makes the reports look nicer.
 
 v0.37.2-exp (2014-01-01 17:50 UTC)
 + Feature: Allowing UI components to be customized (skins)
@@ -45,35 +74,6 @@ v0.37.2-exp (2014-01-01 17:50 UTC)
 + Added key binds for previous unit/next unit (Z/C)
 + Added 'Key Binds' panel to Client Settings dialog.  Keybinds can now be 
     edited in game and will be saved to an xml file
-
-v0.37.3-dev (SVN)
-+ Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid
-    targets
-+ Data: Unit Fixes
-+ Bug: Fixed a few instances were CriticalSlot.getIndex() was causing NPEs
-+ Bug: Updated Entity.isTargetable() to return false if position == null, to 
-    prevent some exceptions in the firing solution code
-+ Feature: Added black borders around text in firing solutions, for readability
-+ Feature: Enabled firing solutions for offboard phase (firing tags and such)
-+ Bug [#3862]: Nighttime Movement Penalty Applies to Airborne VTOLS?
-+ Errata: homing artillery now always targets an area, not a mapsheet
-+ Bug [#3971]: More Clan LB-X submunition trouble
-+ Bug: Princess.getEntityToMove() wasn't considering whether the Entity chose 
-    was valid for the current turn, which could lead to the Princess hanging 
-    during the movement phase in some situations (with no Exceptions thrown)
-+ Feature: Implemented TSEMP
-+ Feature: Added status effects to the MechDisplay Misc tab for TSEMP
-+ Feature: Implemented radical heat sinks
-+ Bug: NPE for Gun Emplacements related to Server.java creating a TestTank
-    in receiveEntityAdd
-+ RFE [#1210]: Implement Crew-size Benefits/Penalties
-+ Added some new methods to Compute.java for calculating Crew size and made
-    it so that entities now set their crew size correctly
-+ Added another crew calculation method that I missed
-+ Optionized RFE 1210 and added the malus/restrictions for single crew vehicles
-+ Adjusted how TSEMP hits are processed.  Now they happen when the weapon is 
-    fired instead or all being processed at the end of the firing phase.  
-    This makes the reports look nicer.
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

@@ -1,0 +1,12 @@
+Lyran Commonwealth Light Mechs B
+Scarabus SCB-9T,1
+Wolfhound WLF-5,2
+Stiletto STO-6S,3
+Razorback RZK-10S,4
+Firestarter FS9-M2,5
+Havoc HVC-P6,6
+Talon TLN-6W,5
+Arctic Fox AF1,4
+Wolfhound WLF-2H,3
+Pack Hunter II,2
+Jaguar (Standard),1

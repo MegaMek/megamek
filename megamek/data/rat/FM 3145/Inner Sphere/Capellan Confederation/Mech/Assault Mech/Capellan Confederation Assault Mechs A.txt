@@ -1,0 +1,12 @@
+Capellan Confederation Assault Mechs A
+Emperor EMP-7L,1
+Yu Huang Y-H10G,2
+BattleMaster BLR-4L,3
+Xanthos XNT-4O,4
+Trebaruna TR-XL,5
+Lu Wei Bing LN-4B,6
+Pillager PLG-5Z,5
+Phoenix Hawk IIC 3,4
+Mad Cat Mk II (Standard),3
+Warhammer IIC 4,2
+Hellstar,1

@@ -1,0 +1,12 @@
+Capellan Confederation Light Mechs F
+Raven RVN-4L,1
+Stinger STG-5G,2
+Locust LCT-1Vb,3
+UrbanMech UM-R80,4
+Anubis ABS-3T,5
+Duan Gung D9-G9,6
+Raven RVN-4Lr,5
+Stinger STG-6L,4
+Anubis ABS-5Y,3
+Dola DOL-1A1,2
+Ebony MEB-9,1

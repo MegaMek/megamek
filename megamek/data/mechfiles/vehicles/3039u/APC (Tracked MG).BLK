@@ -78,3 +78,7 @@ Machine Gun
 <Turret Equipment>
 </Turret Equipment>
 
+<transporters>
+TroopSpace: 1
+</transporters>
+

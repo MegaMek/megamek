@@ -1,0 +1,12 @@
+Wolf Empire Frontline Light Mechs
+Locust IIC 6,1
+Parash,2
+Locust IIC 5,3
+Wulfen (Prime),4
+Wulfen (Prime),5
+Locust IIC 6,6
+Fire Falcon Prime,5
+Uller (Kit Fox) Prime,4
+Puma (Adder) Prime,3
+Koshi (Mist Lynx) Prime,2
+Puma (Adder) Prime,1

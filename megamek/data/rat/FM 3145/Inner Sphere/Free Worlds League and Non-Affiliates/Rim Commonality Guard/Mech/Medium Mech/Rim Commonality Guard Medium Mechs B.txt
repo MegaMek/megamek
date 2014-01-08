@@ -1,0 +1,12 @@
+Rim Commonality Guard Medium Mechs B
+Hunchback HBK-6N,1
+Shadow Hawk SHD-7M,2
+Shockwave SKW-4G,3
+Wolverine WVR-9M,4
+Vulcan VT-6M,5
+Strider SR1-O,6
+Phoenix Hawk PXH-1c,5
+Scorpion SCP-10M,4
+Griffin GRF-4R,3
+Blackjack BJ2-O,2
+Black Hawk 2,1

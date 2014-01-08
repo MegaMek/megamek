@@ -1,0 +1,12 @@
+Periphery Light Mechs F
+Crosscut LoggerMech ED-XX "Icabod",1
+Locust LCT-1V,2
+Stinger STG-3R,3
+Wasp WSP-1A,4
+Toro TR-A-1,5
+Locust LCT-1V2,6
+Commando COM-4H,5
+Brigand LDT-1,4
+Stinger STG-5R,3
+Commando COM-2Dr,2
+Wasp WSP-8T,1

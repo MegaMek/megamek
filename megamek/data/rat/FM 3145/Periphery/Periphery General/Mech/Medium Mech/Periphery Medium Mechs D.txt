@@ -1,0 +1,12 @@
+Periphery Medium Mechs D
+Dervish DV-1S,1
+Gladiator GLD-1R,2
+Clint CLNT-3-3T,3
+Griffin GRF-1N,4
+Centurion CN9-Ar,5
+Phoenix Hawk PXH-4W,6
+Lineholder KW1-LH2,5
+Vulcan VT-5M,4
+Shadow Hawk SHD-7M,3
+Dervish DV-6Mr,2
+Griffin GRF-4N,1

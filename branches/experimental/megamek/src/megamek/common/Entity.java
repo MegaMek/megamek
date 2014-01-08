@@ -972,6 +972,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setWeight(float weight) {
         this.weight = weight;
+        // Any time the weight is reset we need to reset the crew size
+        this.crew.setSize(Compute.getFullCrewSize(this));
     }
 
     public boolean isOmni() {
@@ -5155,11 +5157,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN){
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
         // The TSEMP interference effect shouldn't be removed until the start
-        //  of a round where we didn't have any TSEMP hits, since we need the
-        //  effect active during the firing phase
-        } else if (getTsempHitsThisTurn() == 0){
+        //  of a round where we didn't have any TSEMP hits and didn't fire a 
+        //  TSEMP, since we need the effect active during the firing phase
+        } else if (getTsempHitsThisTurn() == 0 && !isFiredTsempThisTurn()){
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
-            
         }
         
         // TSEMPs can fire every other round, so if we didn't fire last 

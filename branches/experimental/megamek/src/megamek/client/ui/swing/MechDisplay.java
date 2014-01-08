@@ -1370,7 +1370,14 @@ public class MechDisplay extends JPanel {
 
             // This code block copied from the MovementPanel class,
             // bad coding practice (duplicate code).
-            int heatCap = en.getHeatCapacity();
+            int heatCap;
+            if (en instanceof Mech){
+                heatCap = ((Mech)en).getHeatCapacity(true,false);
+            } else if (en instanceof Aero){
+                heatCap = ((Aero)en).getHeatCapacity(false);
+            } else {
+                heatCap = en.getHeatCapacity();
+            }
             int heatCapWater = en.getHeatCapacityWithWater();
             if (en.getCoolantFailureAmount() > 0) {
                 heatCap -= en.getCoolantFailureAmount();
@@ -3589,12 +3596,6 @@ public class MechDisplay extends JPanel {
                 if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
                     ((DefaultListModel<String>) narcList.getModel())
                     .addElement(Messages.getString("MechDisplay.TSEMPInterference"));//$NON-NLS-1$
-                }
-                
-                // suffering from TSEMP shutdown?
-                if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
-                    ((DefaultListModel<String>) narcList.getModel())
-                    .addElement(Messages.getString("MechDisplay.TSEMPShutdown"));//$NON-NLS-1$
                 }
                 
                 if (en.hasDamagedRHS()){

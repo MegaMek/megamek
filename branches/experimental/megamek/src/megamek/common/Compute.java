@@ -37,6 +37,7 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ArtilleryCannonWeapon;
+import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1871,6 +1872,7 @@ public class Compute {
         }
 
         int primaryTarget = Entity.NONE;
+        int countTargets = 0;
         for (Enumeration<EntityAction> i = game.getActions(); i
                 .hasMoreElements();) {
             Object o = i.nextElement();
@@ -1879,6 +1881,8 @@ public class Compute {
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction) o;
             if (prevAttack.getEntityId() == attacker.getId()) {
+                // Count how many targets we have for proper secondary modifiers for multi-crew vehicles
+                countTargets++;
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
@@ -1906,6 +1910,23 @@ public class Compute {
                 } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {
                     primaryTarget = prevAttack.getTargetId();
                 }
+            }
+        }
+        
+        if (game.getOptions().booleanOption("tacops_tank_crews") && attacker instanceof Tank) {
+            /*
+             * If we are a tank, and only have 1 crew then we have some special restrictions
+             */
+            if (attacker.getCrew().getSize() == 1) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Vehicles with only 1 crewman may not attack secondary targets");
+            }
+            /*
+             * If we are a tank, and our previous targets are less than the number of crew - 2
+             * we don't have a secondary modifier 
+             */
+            if (countTargets < attacker.getCrew().getSize()-2) {
+                return null; // no modifier
             }
         }
 
@@ -6123,6 +6144,110 @@ public class Compute {
                 break;
         }
         return true;
+    }
+    
+    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
+    public static int getTotalGunnerNeeds(Entity entity) {
+        if(entity instanceof SmallCraft || entity instanceof Jumpship) {
+            int nStandardW = 0;
+            int nCapitalW = 0;
+            for(Mounted m : entity.getTotalWeaponList()) {
+                EquipmentType type = m.getType();
+                if(type instanceof BayWeapon) {
+                    continue;
+                }
+                if(type instanceof WeaponType) {
+                    if(((WeaponType)type).isCapital()) {
+                        nCapitalW++;
+                    } else {
+                        nStandardW++;
+                    }
+                }
+            }
+            return nCapitalW + (int)Math.ceil(nStandardW/6.0);
+        }
+        else if(entity instanceof Tank) {
+            return  (getFullCrewSize(entity) - 1);
+        }
+        else if(entity instanceof Infantry) {
+            return getFullCrewSize(entity);
+        }
+        return 0;
+    }
+
+    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
+    public static int getAeroCrewNeeds(Entity entity) {
+        if(entity instanceof Dropship) {
+            if(((Dropship)entity).isMilitary()) {
+                return 4 + (int)Math.ceil(entity.getWeight()/5000.0);
+            } else {
+                return 3 + (int)Math.ceil(entity.getWeight()/5000.0);
+            }
+        }
+        else if(entity instanceof SmallCraft) {
+            return getTotalDriverNeeds(entity);
+        }
+        else if(entity instanceof Warship || entity instanceof SpaceStation) {
+            return 45 + (int)Math.ceil(entity.getWeight()/5000.0);
+        }
+        else if(entity instanceof Jumpship) {
+            return 6 + (int)Math.ceil(entity.getWeight()/20000.0);
+        }
+        return 0;
+    }
+    
+    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
+    public static int getFullCrewSize(Entity entity) {
+        if(entity instanceof Tank) {
+            return (int)Math.ceil(entity.getWeight() / 15.0);
+        }
+        else if(entity instanceof BattleArmor) {
+            int ntroopers = 0;
+            for(int trooper = 1; trooper < entity.locations(); trooper++) {
+                //less than zero means the suit is destroyed
+                if(entity.getInternal(trooper) >= 0) {
+                    ntroopers++;
+                }
+            }
+            return ntroopers;
+        }
+        else if(entity instanceof Infantry) {
+            return ((Infantry)entity).getSquadN() * ((Infantry)entity).getSquadSize();
+        }
+        else if(entity instanceof Jumpship || entity instanceof SmallCraft) {
+            return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity);
+        }
+        else {
+            return 1;
+        }
+    }
+    
+    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
+    public static int getTotalDriverNeeds(Entity entity) {
+        if(entity instanceof SpaceStation) {
+            return 0;
+        }
+        if(entity instanceof SmallCraft || entity instanceof Jumpship) {
+            //its not at all clear how many pilots dropships and jumpships 
+            //should have, but the old BattleSpace book suggests they should
+            //be able to get by with 2. For warships, lets go with 2 per shift 
+            // so 6.
+            if(entity instanceof Warship) {
+                return 6;
+            }
+            if(entity instanceof SmallCraft) {
+                return 3;
+            }
+            return 2;
+        }
+        if(entity instanceof Mech || entity instanceof Tank || entity instanceof Aero || entity instanceof Protomech) {
+            //only one driver please
+            return 1;
+        }
+        else if(entity instanceof Infantry) {
+            return getFullCrewSize(entity);
+        }
+        return 0;
     }
 
 } // End public class Compute

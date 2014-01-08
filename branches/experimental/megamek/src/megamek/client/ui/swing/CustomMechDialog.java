@@ -52,6 +52,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -1053,10 +1054,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // change entity
             if (client.getGame().getOptions().booleanOption("rpg_gunnery")) {
-                entity.setCrew(new Crew(name, 1, gunneryL, gunneryM, gunneryB,
+                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity), gunneryL, gunneryM, gunneryB,
                         piloting));
             } else {
-                entity.setCrew(new Crew(name, 1, gunnery, piloting));
+                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity), gunnery, piloting));
             }
             entity.getCrew().setArtillery(artillery);
             entity.getCrew().setFatigue(fatigue);

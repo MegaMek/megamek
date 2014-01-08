@@ -119,7 +119,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.ConvFighter;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -2479,7 +2478,6 @@ public class Server implements Runnable {
                 resolveAeroElevationLoss();
                 resolveScheduledNukes();
                 applyBuildingDamage();
-                processTSEMPHits();
                 checkForPSRFromDamage();
                 addReport(resolvePilotingRolls());
                 checkForFlawedCooling();
@@ -17489,136 +17487,6 @@ public class Server implements Runnable {
     }
 
     /**
-     * Called at the end of the firing phase, this method iterates through all
-     * the entities and checks to see if they need to have the effects of TSEMP
-     * resolved.
-     */
-    private void processTSEMPHits(){
-        boolean firstReport = true;
-        for (Entity e : game.getEntitiesVector()){           
-            // If this unit was hit by a TSEMP, process the results
-            if (e.getTsempHitsThisTurn() > 0){
-                // Keep nice spacing
-                if (firstReport){
-                    Report.addNewline(vPhaseReport);
-                    firstReport = false;
-                }
-                // Report that this unit has been hit by TSEMP
-                Report r = new Report(7410);
-                r.subject = e.getId();
-                r.addDesc(e);
-                r.add(e.getTsempHitsThisTurn());
-                vPhaseReport.add(r);
-
-                // TSEMP has no effect against infantry
-                if ((e instanceof Infantry) 
-                        && !(e instanceof BattleArmor)){
-                    // No Effect
-                    r = new Report(7415);
-                    r.subject = e.getId();
-                    vPhaseReport.add(r);
-                    continue;
-                }
-                
-                // Determine roll modifiers
-                int tsempModifiers = 0;
-                if (e.getWeight() >= 200){
-                    // No Effect
-                    r = new Report(7416);
-                    r.subject = e.getId();
-                    r.indent();
-                    vPhaseReport.add(r);
-                    continue;
-                } else if (e.getWeight() >= 100){
-                    tsempModifiers -= 2;
-                }
-                
-                if (e.getEngine().getEngineType() == 
-                        Engine.COMBUSTION_ENGINE){
-                    tsempModifiers -= 1;
-                }
-                
-                int numHits = e.getTsempHitsThisTurn();
-                // Roll for each TSEMP hit
-                for (int hit = 0; hit < numHits; hit++){
-                    // Multiple hits add a +1 for each hit after the first, 
-                    //  up to a max of 4                   
-                    int tsempRoll = Math.max(2, Compute.d6(2) + tsempModifiers + 
-                            Math.min(4, hit));
-                    
-                    // Ugly code to set the target rolls
-                    int shutdownTarget = 13;
-                    int interferenceTarget = 13;
-                    if (e instanceof Mech){
-                        if (((Mech) e).isIndustrial()){
-                            interferenceTarget = 6;
-                            shutdownTarget = 8;
-                        } else {
-                            interferenceTarget = 7;
-                            shutdownTarget = 9;
-                        }            
-                    } else if (e instanceof SupportTank){
-                        interferenceTarget = 5;
-                        shutdownTarget = 7;
-                    } else if (e instanceof Tank){
-                        interferenceTarget = 6;
-                        shutdownTarget = 8;
-                    } else if (e instanceof BattleArmor){
-                        interferenceTarget = 6;
-                        shutdownTarget = 8;
-                    } else if (e instanceof Protomech){
-                        interferenceTarget = 6;
-                        shutdownTarget = 9;
-                    } else if (e instanceof ConvFighter){
-                        interferenceTarget = 6;
-                        shutdownTarget = 8;
-                    } else if (e instanceof Aero){
-                        interferenceTarget = 7;
-                        shutdownTarget = 9;
-                    }
-    
-                    // Create the effect report
-                    if (tsempModifiers == 0){
-                        r = new Report(7411);
-                    } else {
-                        r = new Report(7412);
-                        r.add(tsempModifiers + Math.min(4, hit));
-                    }
-                    r.indent();
-                    r.add(tsempRoll);
-                    r.subject = e.getId();
-                    String tsempEffect;
-    
-                    // Determine the effect
-                    if (tsempRoll >= shutdownTarget){
-                        e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
-                        tsempEffect = 
-                                "<font color='C00000'><b>Shutdown!</b></font>";
-                        e.setShutDown(true);
-                    } else if (tsempRoll >= interferenceTarget){
-                        e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
-                        tsempEffect = "<b>Interference!</b>";
-                    } else {
-                        // No effect roll
-                        tsempEffect = "No Effect!";
-                    }
-                    r.add(tsempEffect);
-                    vPhaseReport.add(r); 
-                }
-            }
-            
-            // Firing a TSEMP adds the interference effect to the attacker
-            if (e.isFiredTsempThisTurn()){
-                if (e.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE){
-                    e.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
-                }
-                if (e.getTsempHitsThisTurn() == 0){
-                    e.addTsempHitThisTurn();
-                }
-            }
-        }
-    }
-    /**
      * Checks to see if any entity takes enough damage that requires them to
      * make a piloting roll
      */
@@ -26011,10 +25879,8 @@ public class Server implements Runnable {
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
                         Server.entityVerifier.mechOption, null);
-            } else if (entity instanceof VTOL) {
-                testEntity = new TestTank((Tank) entity,
-                        Server.entityVerifier.tankOption, null);
-            } else if (entity instanceof Tank) {
+            } else if (entity.getEntityType() == Entity.ETYPE_TANK
+                    && entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT) {
                 testEntity = new TestTank((Tank) entity,
                         Server.entityVerifier.tankOption, null);
             } else if ((entity.getEntityType() == Entity.ETYPE_AERO)

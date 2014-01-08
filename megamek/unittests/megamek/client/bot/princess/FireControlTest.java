@@ -18,6 +18,7 @@ import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Tank;
@@ -317,34 +318,34 @@ public class FireControlTest {
         List<Mounted> testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAc5Incendiary);
         FireControl testFireControl = new FireControl(mockPrincess);
-        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getHeatAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getIncendiaryAmmo(testAmmoList, mockWeaponTypeAC5, 5));
 
         // Test an ammo list with only 1 bin of standard ammo.
         testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAC5Std);
-        Assert.assertNull(testFireControl.getHeatAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertNull(testFireControl.getIncendiaryAmmo(testAmmoList, mockWeaponTypeAC5, 5));
 
         // Test a list with multiple types of ammo.
         testAmmoList = new ArrayList<Mounted>(3);
         testAmmoList.add(mockAmmoAC5Std);
         testAmmoList.add(mockAmmoAc5Incendiary);
         testAmmoList.add(mockAmmoAC5Flak);
-        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getHeatAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getIncendiaryAmmo(testAmmoList, mockWeaponTypeAC5, 5));
 
         // Test LBX
         testAmmoList = new ArrayList<Mounted>(2);
         testAmmoList.add(mockAmmoLB10XCluster);
         testAmmoList.add(mockAmmoLB10XSlug);
-        Assert.assertNull(testFireControl.getHeatAmmo(testAmmoList, mockLB10X, 5));
+        Assert.assertNull(testFireControl.getIncendiaryAmmo(testAmmoList, mockLB10X, 5));
 
         // Test MMLs
         testAmmoList = new ArrayList<Mounted>(3);
         testAmmoList.add(mockAmmoLRM5);
         testAmmoList.add(mockAmmoSRM5);
         testAmmoList.add(mockAmmoInfero5);
-        Assert.assertEquals(mockAmmoInfero5, testFireControl.getHeatAmmo(testAmmoList, mockMML5, 4));
-        Assert.assertEquals(mockAmmoInfero5, testFireControl.getHeatAmmo(testAmmoList, mockMML5, 8));
-        Assert.assertNull(testFireControl.getHeatAmmo(testAmmoList, mockMML5, 10));
+        Assert.assertEquals(mockAmmoInfero5, testFireControl.getIncendiaryAmmo(testAmmoList, mockMML5, 4));
+        Assert.assertEquals(mockAmmoInfero5, testFireControl.getIncendiaryAmmo(testAmmoList, mockMML5, 8));
+        Assert.assertNull(testFireControl.getIncendiaryAmmo(testAmmoList, mockMML5, 10));
     }
 
     @Test
@@ -392,26 +393,27 @@ public class FireControlTest {
         List<Mounted> testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAC5Std);
         FireControl testFireControl = new FireControl(mockPrincess);
-        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5, false));
 
         // Test an ammo list with only 1 bin of incendiary ammo.
         testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAc5Incendiary);
         testFireControl = new FireControl(mockPrincess);
-        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5, false));
 
         // Test a list with multiple types of ammo.
         testAmmoList = new ArrayList<Mounted>(3);
         testAmmoList.add(mockAmmoAC5Std);
         testAmmoList.add(mockAmmoAc5Incendiary);
         testAmmoList.add(mockAmmoAC5Flak);
-        Assert.assertEquals(mockAmmoAc5Incendiary, testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5, true));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockWeaponTypeAC5, 5, false));
 
         // Test LBX
         testAmmoList = new ArrayList<Mounted>(2);
         testAmmoList.add(mockAmmoLB10XCluster);
         testAmmoList.add(mockAmmoLB10XSlug);
-        Assert.assertEquals(mockAmmoLB10XCluster, testFireControl.getAntiVeeAmmo(testAmmoList, mockLB10X, 5));
+        Assert.assertEquals(mockAmmoLB10XCluster, testFireControl.getAntiVeeAmmo(testAmmoList, mockLB10X, 5, false));
 
         // Test MMLs
         testAmmoList = new ArrayList<Mounted>(4);
@@ -419,9 +421,11 @@ public class FireControlTest {
         testAmmoList.add(mockAmmoSRM5);
         testAmmoList.add(mockAmmoInfero5);
         testAmmoList.add(mockAmmoLrm5Frag);
-        Assert.assertEquals(mockAmmoInfero5, testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 4));
-        Assert.assertEquals(mockAmmoInfero5, testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 8));
-        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 10));
+        Assert.assertEquals(mockAmmoInfero5, testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 4, false));
+        Assert.assertEquals(mockAmmoInfero5, testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 8, false));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 4, true));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 8, true));
+        Assert.assertNull(testFireControl.getAntiVeeAmmo(testAmmoList, mockMML5, 10, false));
     }
 
     @Test
@@ -431,64 +435,64 @@ public class FireControlTest {
         List<Mounted> testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAtm5He);
         FireControl testFireControl = new FireControl(mockPrincess);
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 15, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 15, mockTarget, false));
 
         // Test a list with just Standard ammo.
         testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAtm5St);
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget, false));
 
         // Test a list with just ER ammo.
         testAmmoList = new ArrayList<Mounted>(1);
         testAmmoList.add(mockAmmoAtm5Er);
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
 
         // Test a list with all 3 ammo types
         testAmmoList = new ArrayList<Mounted>(3);
         testAmmoList.add(mockAmmoAtm5He);
         testAmmoList.add(mockAmmoAtm5Er);
         testAmmoList.add(mockAmmoAtm5St);
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget, false));
 
         // Test a list with just HE and Standard ammo types.
         testAmmoList = new ArrayList<Mounted>(2);
         testAmmoList.add(mockAmmoAtm5He);
         testAmmoList.add(mockAmmoAtm5St);
-        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget));
+        Assert.assertNull(testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget, false));
 
         // Test a list with just HE and ER ammo types.
         testAmmoList = new ArrayList<Mounted>(2);
         testAmmoList.add(mockAmmoAtm5He);
         testAmmoList.add(mockAmmoAtm5Er);
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5He, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget, false));
 
         // Test a list with just Standard and ER ammo types.
         testAmmoList = new ArrayList<Mounted>(2);
         testAmmoList.add(mockAmmoAtm5St);
         testAmmoList.add(mockAmmoAtm5Er);
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget));
-        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 20, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5Er, testFireControl.getAtmAmmo(testAmmoList, 12, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 6, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 5, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 3, mockTarget, false));
 
         // Test targets that should be hit with infernos.
         Mockito.when(mockTarget.isBuilding()).thenReturn(true);
@@ -496,10 +500,12 @@ public class FireControlTest {
         testAmmoList.add(mockAmmoAtm5Er);
         testAmmoList.add(mockAmmoAtm5St);
         testAmmoList.add(mockAmmoAtm5Inferno);
-        Assert.assertEquals(mockAmmoAtm5Inferno, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Inferno, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, true));
         Mockito.when(mockTarget.isBuilding()).thenReturn(false);
         Mockito.when(mockTarget.getHeat()).thenReturn(9);
-        Assert.assertEquals(mockAmmoAtm5Inferno, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget));
+        Assert.assertEquals(mockAmmoAtm5Inferno, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, false));
+        Assert.assertEquals(mockAmmoAtm5St, testFireControl.getAtmAmmo(testAmmoList, 8, mockTarget, true));
         Mockito.when(mockTarget.getHeat()).thenReturn(0);
     }
 
@@ -532,6 +538,7 @@ public class FireControlTest {
     public void testGetPreferredAmmo() {
         Entity mockShooter = Mockito.mock(BipedMech.class);
         Targetable mockTarget = Mockito.mock(BipedMech.class);
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         FireControl testFireControl = new FireControl(mockPrincess);
 
         ArrayList<Mounted> testAmmoList = new ArrayList<Mounted>(5);
@@ -572,17 +579,20 @@ public class FireControlTest {
 
         // Test shooting an LBX at an airborne target.
         mockTarget = Mockito.mock(VTOL.class);
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         Mockito.when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         Mockito.when(mockTarget.isAirborne()).thenReturn(true);
         Assert.assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockLB10X));
 
         // Test shooting an LBX at a tank.
         mockTarget = Mockito.mock(Tank.class);
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         Mockito.when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         Assert.assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockLB10X));
 
         // Test shooting an AC at infantry.
         mockTarget = Mockito.mock(Infantry.class);
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         Mockito.when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         Assert.assertTrue(
                 mockAmmoAc5Flechette.equals(testFireControl.getPreferredAmmo(mockShooter, mockTarget,
@@ -592,6 +602,7 @@ public class FireControlTest {
 
         // Test a LBX at a heavily damaged target.
         mockTarget = Mockito.mock(BipedMech.class);
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         Mockito.when(mockTarget.getPosition()).thenReturn(new Coords(10, 15));
         Mockito.when(((Entity) mockTarget).getDamageLevel()).thenReturn(Entity.DMG_HEAVY);
         Assert.assertEquals(mockAmmoLB10XCluster, testFireControl.getPreferredAmmo(mockShooter, mockTarget, mockLB10X));
@@ -601,6 +612,11 @@ public class FireControlTest {
         Mockito.when(((Entity) mockTarget).getHeat()).thenReturn(12);
         Assert.assertEquals(mockAmmoInfero5, testFireControl.getPreferredAmmo(mockShooter, mockTarget,
                 mockMML5));
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt()))
+                .thenReturn(EquipmentType.T_ARMOR_HEAT_DISSIPATING);
+        Assert.assertEquals(mockAmmoSRM5, testFireControl.getPreferredAmmo(mockShooter, mockTarget,
+                mockMML5));
+        Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
 
         // Test a normal target.
         Mockito.when(((Entity) mockTarget).getHeat()).thenReturn(4);

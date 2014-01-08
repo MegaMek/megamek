@@ -3556,12 +3556,6 @@ public class MechDisplay extends JPanel {
                     .addElement(Messages.getString("MechDisplay.TSEMPInterference"));//$NON-NLS-1$
                 }
                 
-                // suffering from TSEMP shutdown?
-                if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
-                    ((DefaultListModel<String>) narcList.getModel())
-                    .addElement(Messages.getString("MechDisplay.TSEMPShutdown"));//$NON-NLS-1$
-                }
-                
                 if (en.hasDamagedRHS()){
                     ((DefaultListModel<String>) narcList.getModel())
                     .addElement(Messages.getString("MechDisplay.RHSDamaged"));//$NON-NLS-1$

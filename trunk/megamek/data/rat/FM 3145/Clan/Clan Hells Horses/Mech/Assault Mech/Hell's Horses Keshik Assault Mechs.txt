@@ -1,0 +1,12 @@
+Hell's Horses Keshik Assault Mechs
+Hellstar 3,1
+Cygnus 3,2
+Mad Cat Mk II Enhanced,3
+Hellstar,4
+Mad Cat Mk II Enhanced,5
+Cygnus,6
+Jupiter,5
+Man O' War (Gargoyle) Prime,4
+Gladiator (Executioner) Prime,3
+Gladiator (Executioner) A,2
+Turkina Prime,1

@@ -72,3 +72,7 @@ SRM 2
 <Rear Equipment>
 </Rear Equipment>
 
+<transporters>
+TroopSpace: 1
+</transporters>
+

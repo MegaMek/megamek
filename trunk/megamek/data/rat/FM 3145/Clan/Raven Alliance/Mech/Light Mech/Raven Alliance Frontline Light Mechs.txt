@@ -1,0 +1,12 @@
+Raven Alliance Frontline Light Mechs
+Stinger IIC (Standard),1
+Parash,2
+Jaguar (Standard),3
+Bear Cub,4
+Stinger IIC (Standard),5
+Locust IIC 8,6
+Parash,5
+Uller (Kit Fox) Prime,4
+Uller (Kit Fox) A,3
+Dasher (Fire Moth) Prime,2
+Puma (Adder) Prime,1

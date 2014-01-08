@@ -1,0 +1,12 @@
+Jade Falcon Keshik Medium Mechs
+Shadow Cat Prime,1
+Sun Cobra,2
+Black Hawk,3
+Gyrfalcon 2,4
+Black Hawk (Nova) Prime,5
+Gyrfalcon (Standard),6
+Black Hawk (Nova) A,5
+Arctic Wolf Prime,4
+Black Lanner Prime,3
+Fenris (Ice Ferret) Prime,2
+Ryoken (Stormcrow) B,1

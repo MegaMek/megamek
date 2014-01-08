@@ -1,0 +1,12 @@
+Rasalhague Dominion Second Line Assault Mechs
+Bruin,1
+Warhammer IIC 6,2
+Viking IIC (Standard),3
+Supernova,4
+Night Wolf,5
+Marauder IIC 7,6
+Kodiak,5
+Warhammer IIC 8,4
+Bruin 2,3
+Bruin,2
+Hellstar,1

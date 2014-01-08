@@ -1,0 +1,12 @@
+Hell's Horses Frontline Medium Mechs
+Dasher II 2,1
+Ursus II,2
+Sun Cobra,3
+Lobo,4
+Black Hawk,5
+Arctic Wolf Prime,6
+Black Hawk,5
+Ryoken (Stormcrow) Prime,4
+Fenris (Ice Ferret) Prime,3
+Grendel (Mongrel) Prime,2
+Dragonfly (Viper) Prime,1

@@ -1,0 +1,12 @@
+Sea Fox Frontline Medium Mechs
+Goshawk II,1
+Men Shen MS1-O,2
+Avalanche AVL-1O,3
+Sun Cobra,4
+Black Hawk (Nova) Prime,5
+Arctic Wolf II Prime,6
+Wendigo (Prime),5
+Goshawk II,4
+Grendel (Mongrel) Prime,3
+Shadow Cat Prime,2
+Ryoken (Stormcrow) Prime,1

@@ -1,0 +1,12 @@
+Mercenary Medium Mechs A
+Exhumer EXR-2X,1
+Mongrel MGL-T2,2
+Black Hawk,3
+Dasher II 2,4
+Mad Cat III (Standard),5
+Gravedigger GDR-1D,6
+Black Hawk 3,5
+Stalking Spider II (Standard),4
+Black Hawk 2,3
+Exhumer EXR-3P,2
+Black Hawk (Nova) Prime,1

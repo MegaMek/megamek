@@ -1,0 +1,12 @@
+Magistracy of Canopus Light Mechs B
+Anubis ABS-3T,1
+Raven RVN-4L,2
+Anubis ABS-4C,3
+Stinger STG-6L,4
+Ebony MEB-9,5
+Dola DOL-1A1,6
+Duan Gung D9-G10,5
+Anubis ABS-5Y,4
+Ebony MEB-10,3
+Raven RVN-4Lr,2
+Gun GN-2O,1

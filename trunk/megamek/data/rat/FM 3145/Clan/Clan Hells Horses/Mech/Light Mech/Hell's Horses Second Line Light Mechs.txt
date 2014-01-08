@@ -1,0 +1,12 @@
+Hell's Horses Second Line Light Mechs
+Bear Cub 2,1
+Crimson Hawk,2
+Piranha,3
+UrbanMech IIC,4
+Bear Cub,5
+Incubus II,6
+Crimson Hawk,5
+Locust IIC 7,4
+Parash,3
+Pack Hunter,2
+Vixen (Incubus) 4,1

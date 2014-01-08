@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.37.4-dev (SVN)
 + Data: Unit Fixes
 + Data: Start of FM:3145 RAT's (Mechs only)
++ Bug [#3977]: Unable to load MUL files created in versions prior to 0.37.3
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

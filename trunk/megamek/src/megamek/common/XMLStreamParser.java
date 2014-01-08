@@ -796,7 +796,15 @@ public class XMLStreamParser implements XMLResponder {
                     Crew crew = new Crew(pilotName, 1, gunneryLVal, gunneryMVal,
                             gunneryBVal, pilotVal);
                     
-                    crew.setSize(Integer.parseInt(pilotSize));
+                    if (pilotSize != null && pilotSize.length() > 0) {
+                        int crewSize = 1;
+                        try {
+                            crewSize = Integer.parseInt(pilotSize);
+                        } catch (NumberFormatException e) {
+                            // Do nothing, this field isn't required
+                        }
+                        crew.setSize(crewSize);
+                    }
 
                     if ((null != pilotNickname) && (pilotNickname.length() > 0)) {
                         crew.setNickname(pilotNickname);

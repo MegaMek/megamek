@@ -1527,7 +1527,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getHeatCapacity() {
-        return getHeatCapacity(true);
+        return getHeatCapacity(true, true);
     }
 
     /**
@@ -1547,7 +1547,8 @@ public abstract class Mech extends Entity {
         return "";
     }
 
-    public int getHeatCapacity(boolean includePartialWing) {
+    public int getHeatCapacity(boolean includePartialWing,
+            boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
 
@@ -1583,6 +1584,10 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
+        if (includeRadicalHeatSink
+                && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += Math.ceil(getActiveSinks() * 0.4);
+        }
 
         return capacity;
     }
@@ -1596,7 +1601,7 @@ public abstract class Mech extends Entity {
         if (hasLaserHeatSinks()) {
             return getHeatCapacity();
         }
-        return getHeatCapacity() + Math.min(sinksUnderwater(), 6);
+        return getHeatCapacity(true,false) + Math.min(sinksUnderwater(), 6);
     }
 
     /**

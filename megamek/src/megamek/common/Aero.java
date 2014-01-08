@@ -2487,13 +2487,22 @@ public class Aero extends Entity {
 
     @Override
     public int getHeatCapacity() {
-        return (getHeatSinks() * (getHeatType() + 1));
+        return getHeatCapacity(true);
+    }
+    
+    public int getHeatCapacity(boolean includeRadicalHeatSink){
+        int capacity = (getHeatSinks() * (getHeatType() + 1));
+        if (includeRadicalHeatSink
+                && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += Math.ceil(getHeatSinks() * 0.4);
+        }
+        return capacity;
     }
 
     // If the aero is in the water, it is dead so no worries
     @Override
     public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
+        return getHeatCapacity(false);
     }
 
     @Override

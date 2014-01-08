@@ -763,6 +763,7 @@ Gun Trailer (Siege)|
 Gun Trailer (Thumper)|
 Gun Trailer (Sniper Cannon)|
 Skimmer|
+Mobile Long Tom Artillery (Unofficial) (+ Carriage)|
 Speeder|
 Ground Car|
 Heavy Transport B1|
@@ -2520,9 +2521,7 @@ Harvester HVR-99 AgroMech|
 Centurion CN9-D3D|
 Zeus ZEU-X|
 Atlas AS7-K2 (Jedra)|
-Koshi 2|
 Ryoken II Tassa|
-Koshi (Standard)|
 Hatchetman HCT-5D|
 Lupus B|
 Woodsman A|
@@ -4397,15 +4396,15 @@ Vandal LI-OB|
 Tian-Zong TNZ-N1|
 Catapult II CPLT-L7|
 Mortis MS-1A|
-Anubis ANB-5Z|
 Tian-Zong TNZ-N3|
 Yinghuochong YHC-3Y|
-Anubis ANB-5Y|
 Lu Wei Bing LN-4B|
 Gun GN-2O|
+Anubis ABS-5Y|
 Gun GN-2OB|
 Catapult II CPLT-L7L|
 Vandal LI-O|
+Anubis ABS-5Z|
 Raven II RVN-5X|
 Yinghuochong YHC-3E|
 Mortis MS-1P|

@@ -18,17 +18,16 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import megamek.client.bot.PhysicalOption;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -48,9 +47,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.PhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
 import megamek.common.logging.LogLevel;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
@@ -1286,8 +1282,17 @@ public class FireControl {
         Mounted preferredAmmo = null;
 
         try {
+            boolean fireResistant = false;
             if (target instanceof Entity) {
                 targetEntity = (Entity) target;
+                int armorType = targetEntity.getArmorType(0);
+                if (targetEntity instanceof Mech) {
+                    targetEntity.getArmorType(1);
+                }
+                if (EquipmentType.T_ARMOR_BA_FIRE_RESIST == armorType
+                        || EquipmentType.T_ARMOR_HEAT_DISSIPATING == armorType) {
+                    fireResistant = true;
+                }
             }
 
             // Find the ammo that is valid for this weapon.
@@ -1315,13 +1320,13 @@ public class FireControl {
 
             // ATMs
             if (weaponType instanceof ATMWeapon) {
-                return getAtmAmmo(validAmmo, range, new EntityState(target));
+                return getAtmAmmo(validAmmo, range, new EntityState(target), fireResistant);
             }
 
             // Target is a building.
             if (target instanceof BuildingTarget) {
                 msg.append("\n\tTarget is a building... ");
-                preferredAmmo = getHeatAmmo(validAmmo, weaponType, range);
+                preferredAmmo = getIncendiaryAmmo(validAmmo, weaponType, range);
                 if (preferredAmmo != null) {
                     msg.append("Burn It Down!");
                     return preferredAmmo;
@@ -1329,7 +1334,7 @@ public class FireControl {
 
                 // Entity targets.
             } else if (targetEntity != null) {
-                // Airborne targts
+                // Airborne targets
                 if (targetEntity.isAirborne() || (targetEntity instanceof VTOL)) {
                     msg.append("\n\tTarget is airborne... ");
                     preferredAmmo = getAntiAirAmmo(validAmmo, weaponType, range);
@@ -1343,7 +1348,7 @@ public class FireControl {
                         || (targetEntity instanceof Tank)
                         || (targetEntity instanceof Protomech)) {
                     msg.append("\n\tTarget is BA/Proto/Tank... ");
-                    preferredAmmo = getAntiVeeAmmo(validAmmo, weaponType, range);
+                    preferredAmmo = getAntiVeeAmmo(validAmmo, weaponType, range, fireResistant);
                     if (preferredAmmo != null) {
                         msg.append("We have ways of dealing with that.");
                         return preferredAmmo;
@@ -1368,7 +1373,7 @@ public class FireControl {
                     }
                 }
                 // He's running hot.
-                if (targetEntity.getHeat() >= 9) {
+                if (targetEntity.getHeat() >= 9 && !fireResistant) {
                     msg.append("\n\tTarget is at ").append(targetEntity.getHeat()).append(" heat... ");
                     preferredAmmo = getHeatAmmo(validAmmo, weaponType, range);
                     if (preferredAmmo != null) {
@@ -1436,7 +1441,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range, EntityState target) {
+    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range, EntityState target, boolean fireResistant) {
         Mounted returnAmmo = null;
 
         // Get the Hi-Ex, Ex-Range and Standard ammo bins if we have them.
@@ -1454,7 +1459,7 @@ public class FireControl {
                 stAmmo = ammo;
             } else if ((infernoAmmo == null) && (AmmoType.M_IATM_IIW == type.getMunitionType())) {
                 infernoAmmo = ammo;
-            } else if ((heAmmo != null) && (erAmmo != null) && (stAmmo != null) && (infernoAmmo !=null)) {
+            } else if ((heAmmo != null) && (erAmmo != null) && (stAmmo != null) && (infernoAmmo != null)) {
                 break;
             }
         }
@@ -1504,14 +1509,15 @@ public class FireControl {
         }
 
         if ((returnAmmo == stAmmo) && (infernoAmmo != null)
-            && ((target.getHeat() >= 9) || (target.isBuilding()))) {
+                && ((target.getHeat() >= 9) || target.isBuilding())
+                && !fireResistant) {
             returnAmmo = infernoAmmo;
         }
 
         return returnAmmo;
     }
 
-    protected Mounted getAntiVeeAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    protected Mounted getAntiVeeAmmo(List<Mounted> ammoList, WeaponType weaponType, int range, boolean fireResistant) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -1519,11 +1525,8 @@ public class FireControl {
         for (Mounted ammo : ammoList) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if (AmmoType.M_CLUSTER == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
-                    || AmmoType.M_INFERNO == ammoType.getMunitionType()
-                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
+                    || (AmmoType.M_INFERNO == ammoType.getMunitionType() && !fireResistant)
+                    || (AmmoType.M_INFERNO_IV == ammoType.getMunitionType() && !fireResistant)) {
 
                 // MMLs have additional considerations.
                 if (!(weaponType instanceof MMLWeapon)) {
@@ -1564,9 +1567,6 @@ public class FireControl {
             if (AmmoType.M_FLECHETTE == ammoType.getMunitionType()
                     || AmmoType.M_FRAGMENTATION == ammoType.getMunitionType()
                     || AmmoType.M_CLUSTER == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY_LRM == ammoType.getMunitionType()
-                    || AmmoType.M_INCENDIARY_AC == ammoType.getMunitionType()
                     || AmmoType.M_INFERNO == ammoType.getMunitionType()
                     || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
 
@@ -1600,6 +1600,45 @@ public class FireControl {
     }
 
     protected Mounted getHeatAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+        Mounted returnAmmo = null;
+        Mounted mmlLrm = null;
+        Mounted mmlSrm = null;
+
+        for (Mounted ammo : ammoList) {
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            if (AmmoType.M_INFERNO == ammoType.getMunitionType()
+                    || AmmoType.M_INFERNO_IV == ammoType.getMunitionType()) {
+
+                // MMLs have additional considerations.
+                if (!(weaponType instanceof MMLWeapon)) {
+                    returnAmmo = ammo;
+                    break;
+                }
+                if ((mmlLrm == null) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    mmlLrm = ammo;
+                } else if (mmlSrm == null) {
+                    mmlSrm = ammo;
+                } else if (mmlLrm != null) {
+                    break;
+                }
+            }
+        }
+
+        // MML ammo depends on range.
+        if (weaponType instanceof MMLWeapon) {
+            if (range > 9) { // Out of SRM range
+                returnAmmo = mmlLrm;
+            } else if (range > 6) { // SRM long range.
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
+            } else {
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
+            }
+        }
+
+        return returnAmmo;
+    }
+
+    protected Mounted getIncendiaryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;

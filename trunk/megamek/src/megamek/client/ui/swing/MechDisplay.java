@@ -1389,7 +1389,14 @@ public class MechDisplay extends JPanel {
 
             // This code block copied from the MovementPanel class,
             // bad coding practice (duplicate code).
-            int heatCap = en.getHeatCapacity();
+            int heatCap;
+            if (en instanceof Mech){
+                heatCap = ((Mech)en).getHeatCapacity(true,false);
+            } else if (en instanceof Aero){
+                heatCap = ((Aero)en).getHeatCapacity(false);
+            } else {
+                heatCap = en.getHeatCapacity();
+            }
             int heatCapWater = en.getHeatCapacityWithWater();
             if (en.getCoolantFailureAmount() > 0) {
                 heatCap -= en.getCoolantFailureAmount();

@@ -8,6 +8,8 @@ v0.37.4-dev (SVN)
     into account fire-resistant armor.
 + Bug: TESMP shutdown effect on tanks didn't last as long as it should
 + Bug: Tanks don't report when they automatically startup in the end phase
++ Added code to reduce the utility of firing on ejected mechwarriors/crews by 1000.  This should make Princess much
+    less likely to fire on them.
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

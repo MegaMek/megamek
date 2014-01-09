@@ -706,13 +706,14 @@ public class FireControl {
         double critical_utility = 10.0;
         double kill_utility = 50.0;
         double overheat_disutility = 5.0;
+        double ejected_pilot_disutility = (p.getTarget() instanceof MechWarrior ? 1000.0 : 0.0);
         int overheat = 0;
         if (p.getHeat() > overheat_value) {
             overheat = p.getHeat() - overheat_value;
         }
         p.utility = ((damage_utility * p.getExpectedDamage())
                 + (critical_utility * p.getExpectedCriticals()) + (kill_utility * p
-                .getKillProbability())) - (overheat_disutility * overheat);
+                .getKillProbability())) - (overheat_disutility * overheat) - ejected_pilot_disutility;
     }
 
     /**

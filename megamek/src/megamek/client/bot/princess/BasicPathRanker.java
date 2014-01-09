@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +42,9 @@ import megamek.common.logging.LogLevel;
  */
 public class BasicPathRanker extends PathRanker {
 
-    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
-    private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
-    private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
+    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+    protected final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
+    protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
     private FireControl fireControl;
     private PathEnumerator pathEnumerator;
@@ -210,8 +211,9 @@ public class BasicPathRanker extends PathRanker {
         double pilotingFailure = (1 - successProbability);
         double fallShame = owner.getBehaviorSettings().getFallShameValue();
         double fallMod = pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
-        formula.append("fall mod [").append(fallMod).append(" = ").append(pilotingFailure).append(" * ")
-                .append(fallShame).append("]");
+        formula.append("fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
+                .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
+                .append("]");
         return fallMod;
     }
 

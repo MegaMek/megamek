@@ -4,12 +4,13 @@ v0.37.4-dev (SVN)
 + Data: Unit Fixes
 + Data: Start of FM:3145 RAT's (Mechs only)
 + Bug [#3977]: Unable to load MUL files created in versions prior to 0.37.3
-+ Modified the ammo selection logic for Princess because I miss-understood the way incendiary ammo works and to take
-    into account fire-resistant armor.
++ Modified the ammo selection logic for Princess because I miss-understood the
+    way incendiary ammo works and to take into account fire-resistant armor.
 + Bug: TESMP shutdown effect on tanks didn't last as long as it should
 + Bug: Tanks don't report when they automatically startup in the end phase
-+ Added code to reduce the utility of firing on ejected mechwarriors/crews by 1000.  This should make Princess much
-    less likely to fire on them.
++ Added code to reduce the utility of firing on ejected mechwarriors/crews by
+    1000.  This should make Princess much less likely to fire on them.
+ + Bug: /localLoad not working
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

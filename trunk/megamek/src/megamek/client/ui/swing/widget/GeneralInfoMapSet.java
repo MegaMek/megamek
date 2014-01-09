@@ -496,16 +496,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             elevationL.setVisible(false);
             elevationR.setVisible(false);
         }
-        // if we don't have a game, don't show BV labels (used for mekwars)
-        if (en.getGame() != null) {
-            bvL.setVisible(true);
-            bvR.setVisible(true);
-            bvR.setString(Integer.toString(en.calculateBattleValue()));
-        } else {
-            bvL.setVisible(false);
-            bvR.setVisible(false);
+        bvL.setVisible(true);
+        bvR.setVisible(true);
+        bvR.setString(Integer.toString(en.calculateBattleValue()));
 
-        }
     }
 
     public PMAreasGroup getContentGroup() {

@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -35,6 +34,7 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
@@ -99,6 +99,8 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is instanciated for each client and for each bot running on that
@@ -714,7 +716,7 @@ public class Client implements IClientCommandHandler {
                 player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
-    
+
     /**
      * Reset round deployment packet
      */
@@ -786,12 +788,14 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        ObjectInputStream ois;
+
         try {
-            ois = new ObjectInputStream(new FileInputStream(f));
-            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { f,
-                    ois.readObject() }));
+            XStream xstream = new XStream();
+            game = (IGame) xstream.fromXML(new GZIPInputStream(
+                    new FileInputStream(f)));
+            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] {game}));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Can't find local savegame " + f);
         }
     }
@@ -1154,11 +1158,11 @@ public class Client implements IClientCommandHandler {
                     (IHex) c.getObject(1));
             break;
         case Packet.COMMAND_CHANGE_HEXES:
-            List<Coords> coords = 
+            List<Coords> coords =
                 new ArrayList<Coords>((Set<Coords>)c.getObject(0));
-            List<IHex> hexes = 
-                new ArrayList<IHex>((Set<IHex>)c.getObject(1));            
-            game.getBoard().setHexes(coords, hexes);            
+            List<IHex> hexes =
+                new ArrayList<IHex>((Set<IHex>)c.getObject(1));
+            game.getBoard().setHexes(coords, hexes);
             break;
         case Packet.COMMAND_BLDG_UPDATE:
             receiveBuildingUpdate(c);
@@ -1277,7 +1281,7 @@ public class Client implements IClientCommandHandler {
                 System.err.println("Unable to create savegames directory");
             }
             try {
-                
+
                 BufferedOutputStream fout = new BufferedOutputStream(
                         new FileOutputStream(localFile));
                 ArrayList<Integer> data = (ArrayList<Integer>)c.getObject(1);

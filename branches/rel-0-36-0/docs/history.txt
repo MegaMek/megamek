@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.36.2 (SVN)
++ Bug: /localLoad not working
 
 v0.36.1 (2014-01-01, 17:11 UTC)
 + Bug: PPC capacitor has wrong explosive BV penalty

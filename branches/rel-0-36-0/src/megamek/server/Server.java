@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -1162,7 +1161,7 @@ public class Server implements Runnable {
             }
             getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
-            
+
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
             xstream.toXML(game,gzo);
@@ -26882,19 +26881,12 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_LOAD_GAME:
                 try {
-                    ObjectOutputStream oos = new ObjectOutputStream(
-                            new FileOutputStream((File) packet.getObject(0)));
-                    oos.writeObject(packet.getObject(1));
-                    oos.flush();
-                    oos.close();
-                    if (loadGame((File) packet.getObject(0))) {
-                        resetConnections();
-                    }
+                    setGame((IGame)packet.getObject(0));
+                    resetConnections();
                 } catch (Exception e) {
                     System.out
                             .println("Error loading savegame sent from client");
                 }
-
             case Packet.COMMAND_SQUADRON_ADD:
                 receiveSquadronAdd(packet, connId);
                 resetPlayersDone();

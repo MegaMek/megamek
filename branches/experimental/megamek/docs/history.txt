@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.37.4-dev-exp (SVN)
++ Feature: increased the expressiveness of the skin specifications.  Previously, 
+    edges had a single tiled icon.  Now, edges can have an arbitrary combination 
+    of static and tiled icons.
 
 v0.37.4-dev (SVN)
 

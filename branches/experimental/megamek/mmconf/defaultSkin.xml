@@ -27,10 +27,34 @@
           <corner_bottom_left>monitor_bottom_left.png</corner_bottom_left>
           <corner_bottom_right>monitor_bottom_right.png</corner_bottom_right>
           <!-- Border lines: these images will be tiled -->
-          <line_top>monitor_top_line.png</line_top>
-          <line_right>monitor_right_line.png</line_right>    
-          <line_left>monitor_left_line.png</line_left>    
-          <line_bottom>monitor_bottom_line.png</line_bottom>   
+          <edge>
+            <edgeIcon>
+              <icon>monitor_top_line.png</icon>
+              <tiled>true</tiled>
+            </edgeIcon>
+            <edgeName>top</edgeName>>
+          </edge>
+          <edge>
+            <edgeIcon>
+              <icon>monitor_bottom_line.png</icon>
+              <tiled>true</tiled>
+            </edgeIcon>
+            <edgeName>bottom</edgeName>
+          </edge>
+          <edge>
+            <edgeIcon>
+              <icon>monitor_left_line.png</icon>
+              <tiled>true</tiled>
+            </edgeIcon>
+            <edgeName>left</edgeName>
+          </edge>
+          <edge>
+            <edgeIcon>
+              <icon>monitor_right_line.png</icon>
+              <tiled>true</tiled>
+            </edgeIcon>
+            <edgeName>right</edgeName>
+          </edge>
         </border>
     </UI_Element>
 
@@ -44,10 +68,34 @@
         <corner_bottom_left>button_bottom_left.png</corner_bottom_left>
         <corner_bottom_right>button_bottom_right.png</corner_bottom_right>
         <!-- Border lines: these images will be tiled -->
-        <line_top>button_top_line.png</line_top>
-        <line_right>button_right_line.png</line_right>    
-        <line_left>button_left_line.png</line_left>    
-        <line_bottom>button_bottom_line.png</line_bottom>   
+        <edge>
+          <edgeIcon>
+            <icon>button_top_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>top</edgeName>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>button_bottom_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>bottom</edgeName>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>button_left_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>left</edgeName>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>button_right_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>right</edgeName>
+        </edge>
       </border>
       <!-- Specification of background image -->
       <background_image>monitor_bg.png</background_image>

@@ -15,31 +15,29 @@ public class SkinSpecification {
 	public String bl_corner;
 	public String br_corner;
 	
-	public String top_line;
-	public String right_line;
-	public String bottom_line;
-	public String left_line;
+	public ArrayList<String> topEdge;
+	public ArrayList<Boolean> topShouldTile;
+	public ArrayList<String> rightEdge;
+	public ArrayList<Boolean> rightShouldTile;
+	public ArrayList<String> bottomEdge;
+	public ArrayList<Boolean> bottomShouldTile;
+	public ArrayList<String> leftEdge;
+	public ArrayList<Boolean> leftShouldTile;
 	
 	public ArrayList<String> backgrounds;
 	
 	public SkinSpecification(){
 		tl_corner = tr_corner = bl_corner = br_corner = "";
-		top_line = right_line = bottom_line = left_line = "";
+		topEdge = new ArrayList<String>();
+		rightEdge = new ArrayList<String>();
+		bottomEdge = new ArrayList<String>();
+		leftEdge = new ArrayList<String>();
 		backgrounds = new ArrayList<String>();
+		topShouldTile = new ArrayList<Boolean>();
+		rightShouldTile = new ArrayList<Boolean>();
+		bottomShouldTile = new ArrayList<Boolean>();
+		leftShouldTile = new ArrayList<Boolean>();
 	}
-	
-	public SkinSpecification(String tl, String tr, String bl, String br, 
-			String top, String right, String bottom, String left){
-		tl_corner = tl;
-		tr_corner = tr;
-		bl_corner = bl;
-		br_corner = br;
-		
-		top_line = top;
-		right_line = right;
-		bottom_line = bottom;
-		left_line = left;
-		backgrounds = new ArrayList<String>();
-	}
+
 
 }

@@ -1,3 +1,18 @@
+/*
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007,2008 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.ui.swing.widget;
 
 import java.awt.Component;
@@ -5,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.MediaTracker;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
@@ -12,17 +28,33 @@ import javax.swing.border.EmptyBorder;
 import megamek.common.Configuration;
 
 /**
- * A Border that has an image for each corner as well as an image for the line
- * inbetween each corner.  The image for the line between two corners will be 
- * tiled if it is not large enough to fill the whole space.
+ * A Border that has an image for each corner as well as images for the line
+ * inbetween each corner (an edge).  Edges can consist of multiple possible 
+ * icon and each possible icon can be tiled or static.  The total amount of 
+ * space taken up by tiled icons is determined by subtracting the space of the
+ * static icons and then evenly distributing it amongst each tiled icon.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class MegamekBorder extends EmptyBorder {
 
-    protected ImageIcon tl_corner, tr_corner, bl_corner, br_corner;
-    protected ImageIcon left_line, top_line, right_line, bottom_line;
+	// Abbreviations: tl = top left, tr = top right, 
+	//  bl = bottom left, br = bottom right
+    protected ImageIcon tlCorner, trCorner, blCorner, brCorner;
+    protected ArrayList<ImageIcon> leftLine, topLine, rightLine, bottomLine;
+    // We need to know whether each tile in each edge should be tiled or static
+    public ArrayList<Boolean> leftShouldTile,topShouldTile;
+    public ArrayList<Boolean> rightShouldTile,bottomShouldTile;
+    // Keep track of the total number of space taken up by static (non-tiled)
+    //  icons for each edge
+    protected int leftStaticSpace, topStaticSpace;
+    protected int rightStaticSpace, bottomStaticSpace;
+    // Keep track of the number of tiled icons we have in each edge
+    protected int leftNumTiledIcons, topNumTiledIcons;
+    protected int rightNumTiledIcons, bottomNumTiledIcons;
+    
+    protected Insets insets;
     /**
      * 
      */
@@ -53,95 +85,185 @@ public class MegamekBorder extends EmptyBorder {
     	loadIcons(SkinXMLHandler.getSkin(component));
     }
     
+    /**
+     * Use the given skin specificaton to create ImageIcons for each of the 
+     * files specified in the skin specification.
+     * 
+     * @param skin  The skin specification that specifies which icons should be 
+     * 				used where
+     */
     public void loadIcons(SkinSpecification skin){
         try {
-            java.net.URI imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.tl_corner).toURI();
-            tl_corner = new ImageIcon(imgURL.toURL());
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.tr_corner).toURI();
-            tr_corner = new ImageIcon(imgURL.toURL());
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.bl_corner).toURI();
-            bl_corner = new ImageIcon(imgURL.toURL());
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.br_corner).toURI();
-            br_corner = new ImageIcon(imgURL.toURL());
+			leftStaticSpace = rightStaticSpace = 0;
+			topStaticSpace = bottomStaticSpace = 0;
+			leftNumTiledIcons = rightNumTiledIcons = 0;
+			topNumTiledIcons = bottomNumTiledIcons = 0;
+			
+			java.net.URI imgURL;
+			// Create Top Left Corner Icon
+			imgURL = new File(Configuration.widgetsDir(), skin.tl_corner)
+					.toURI();
+			tlCorner = new ImageIcon(imgURL.toURL());
+			
+			// Create Top  Right Corner Icon
+			imgURL = new File(Configuration.widgetsDir(), skin.tr_corner)
+					.toURI();
+			trCorner = new ImageIcon(imgURL.toURL());
+			
+			// Create Bottom Left Corner Icon
+			imgURL = new File(Configuration.widgetsDir(), skin.bl_corner)
+					.toURI();
+			blCorner = new ImageIcon(imgURL.toURL());
+			
+			// Create Bottom Right Corner Icon
+			imgURL = new File(Configuration.widgetsDir(), skin.br_corner)
+					.toURI();
+			brCorner = new ImageIcon(imgURL.toURL());
             
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.left_line).toURI();
-            left_line = new ImageIcon(imgURL.toURL());
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.right_line).toURI();
-            right_line = new ImageIcon(imgURL.toURL()); 
-            imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    		skin.top_line).toURI();
-            top_line = new ImageIcon(imgURL.toURL()); 
-            imgURL =
-                    new File(Configuration.widgetsDir(),
-                    		skin.bottom_line).toURI();
-            bottom_line = new ImageIcon(imgURL.toURL()); 
+			// Create icons for the left edge
+			leftLine = new ArrayList<ImageIcon>();
+			leftShouldTile = new ArrayList<Boolean>();
+            for (int i = 0; i < skin.leftEdge.size(); i++){
+            	imgURL = new File(Configuration.widgetsDir(),
+            			skin.leftEdge.get(i)).toURI();
+            	leftLine.add(new ImageIcon(imgURL.toURL()));
+            	leftShouldTile.add(skin.leftShouldTile.get(i));
+            	if (!leftShouldTile.get(i)){
+            		leftStaticSpace += leftLine.get(i).getIconHeight();
+            	} else {
+            		leftNumTiledIcons++;
+            	}
+            }
+            
+            // Create icons for the right edge
+            rightLine = new ArrayList<ImageIcon>();
+            rightShouldTile = new ArrayList<Boolean>();
+            for (int i = 0; i < skin.rightEdge.size(); i++){
+            	imgURL = new File(Configuration.widgetsDir(),
+            			skin.rightEdge.get(i)).toURI();
+            	rightLine.add(new ImageIcon(imgURL.toURL()));
+            	rightShouldTile.add(skin.rightShouldTile.get(i));
+            	if (!rightShouldTile.get(i)){
+            		rightStaticSpace += rightLine.get(i).getIconHeight();
+            	} else {
+            		rightNumTiledIcons++;
+            	}
+            }
+            
+            // Create icons for the top edge
+            topLine = new ArrayList<ImageIcon>();
+            topShouldTile = new ArrayList<Boolean>();
+            for (int i = 0; i < skin.topEdge.size(); i++){
+            	imgURL = new File(Configuration.widgetsDir(),
+            			skin.topEdge.get(i)).toURI();
+            	topLine.add(new ImageIcon(imgURL.toURL()));
+            	topShouldTile.add(skin.topShouldTile.get(i));
+            	if (!topShouldTile.get(i)){
+            		topStaticSpace += topLine.get(i).getIconHeight();
+            	} else {
+            		topNumTiledIcons++;
+            	}
+            }
+            
+            // Create icons for the bottom edge
+            bottomLine = new ArrayList<ImageIcon>();
+            bottomShouldTile = new ArrayList<Boolean>();
+            for (int i = 0; i < skin.bottomEdge.size(); i++){
+            	imgURL = new File(Configuration.widgetsDir(),
+            			skin.bottomEdge.get(i)).toURI();
+            	bottomLine.add(new ImageIcon(imgURL.toURL()));
+            	bottomShouldTile.add(skin.bottomShouldTile.get(i));
+            	if (!leftShouldTile.get(i)){
+            		bottomStaticSpace += bottomLine.get(i).getIconHeight();
+            	} else {
+            		bottomNumTiledIcons++;
+            	}
+            }
+            
+			insets = new Insets(0, 0, 0, 0);
+			insets.top = Math.min(tlCorner.getIconHeight(),
+					trCorner.getIconHeight());
+			for (ImageIcon icon : topLine) {
+				insets.top = Math.min(insets.top,
+						icon.getIconHeight());
+			}
+			insets.bottom = Math.min(blCorner.getIconHeight(),
+					brCorner.getIconHeight());
+			for (ImageIcon icon : bottomLine) {
+				insets.bottom = Math.min(insets.bottom,
+						icon.getIconHeight());
+			}
+
+			insets.left = Math.min(tlCorner.getIconWidth(),
+					blCorner.getIconWidth());
+			for (ImageIcon icon : leftLine) {
+				insets.left = Math.min(insets.left,
+						icon.getIconWidth());
+			}
+			insets.right = Math.min(trCorner.getIconWidth(),
+					brCorner.getIconWidth());
+			for (ImageIcon icon : rightLine) {
+				insets.right = Math.min(insets.right,
+						icon.getIconWidth());
+			}
+            
+
         } catch (Exception e){
         	System.out.println("Error: loading icons for " +
         			"a MegamekBorder!");
-        	System.out.println("Error: " + e.getMessage());
+        	e.printStackTrace();
         }      
     }
     
-    
+    /**
+     * Paints the border using the loaded corner icons and edge icons.
+     */
     public void paintBorder(Component c, Graphics g, int x, int y, int width, 
     		int height) {
         g.translate(x, y);
         
-        if (tl_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
-        	paintCorner(c, g, 0, 0, tl_corner);
+        // Draw Top Left Corner Icon
+        if (tlCorner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, 0, 0, tlCorner);
         }
-        if (bl_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
-        	paintCorner(c, g, 0, height - bl_corner.getIconHeight(), bl_corner);
+        
+        // Draw Bottom Left Corner Icon
+        if (blCorner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, 0, height - blCorner.getIconHeight(), blCorner);
         }
-        if (tr_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
-        	paintCorner(c, g, width-tr_corner.getIconWidth(), 0, tr_corner);
+        
+        // Draw Top Right Corner Icon
+        if (trCorner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        	paintCorner(c, g, width-trCorner.getIconWidth(), 0, trCorner);
     	}
-        if (br_corner.getImageLoadStatus() == MediaTracker.COMPLETE){
-        paintCorner(c, g, width-br_corner.getIconWidth(), 
-        		height-br_corner.getIconHeight(), br_corner);
+        
+        // Draw Bottom Right Corner Icon
+        if (brCorner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        paintCorner(c, g, width-brCorner.getIconWidth(), 
+        		height-brCorner.getIconHeight(), brCorner);
         }
         
-        if (top_line.getImageLoadStatus() == MediaTracker.COMPLETE){
-	        paintEdge(c, g, tl_corner.getIconWidth(), 0, 
-	        		width - 
-	        			(tl_corner.getIconWidth() + tr_corner.getIconWidth()), 
-	        		top_line.getIconHeight(), top_line);
-        }
-        if (left_line.getImageLoadStatus() == MediaTracker.COMPLETE){
-	        paintEdge(c, g, 0, tl_corner.getIconHeight(), 
-	        		left_line.getIconWidth(), 
-	        		height - 
-	        			(tl_corner.getIconHeight() + bl_corner.getIconHeight()), 
-	        		left_line);
-        }
-        if (bottom_line.getImageLoadStatus() == MediaTracker.COMPLETE){
-	        paintEdge(c, g, bl_corner.getIconWidth(), 
-	        		height - bottom_line.getIconHeight(), 
-	        		width - 
-	        			(bl_corner.getIconWidth() + br_corner.getIconWidth()), 
-	        		bottom_line.getIconHeight(), bottom_line);
-        }
-        if (right_line.getImageLoadStatus() == MediaTracker.COMPLETE){
-	        paintEdge(c, g, width-right_line.getIconWidth(), 
-	        		tr_corner.getIconHeight(), right_line.getIconWidth(), 
-	        		height - 
-	        			(tr_corner.getIconHeight() + br_corner.getIconHeight()), 
-	        		right_line); 
-        }
+        // Compute the width and height for the border edges       
+        int edgeWidth = width - (insets.left + insets.right);
+        int edgeHeight = height - (insets.top + insets.bottom);
         
+        // Paint top edge icons
+		paintEdge(c, g, topLine, insets.left, 0, edgeWidth, insets.top, false,
+				topShouldTile, topNumTiledIcons, topStaticSpace);
+        
+		// Paint bottom edge icons
+		paintEdge(c, g, bottomLine, insets.left, height - insets.bottom,
+				edgeWidth, insets.bottom, false, bottomShouldTile,
+				bottomNumTiledIcons, bottomStaticSpace);
+
+		// Paint left edge icons
+		paintEdge(c, g, leftLine, 0, insets.top, insets.left, edgeHeight, true,
+				leftShouldTile, leftNumTiledIcons, leftStaticSpace);
+		
+		// Paint right edge icons
+		paintEdge(c, g, rightLine, width - insets.right, insets.top,
+				insets.right, edgeHeight, true, rightShouldTile,
+				rightNumTiledIcons, rightStaticSpace);
     
         g.translate(-x, -y);
     }
@@ -156,17 +278,73 @@ public class MegamekBorder extends EmptyBorder {
         g.dispose();        
     }
     
-    private void paintEdge(Component c, Graphics g, int x, int y, int width, 
-            int height, ImageIcon icon) {
-        g = g.create(x, y, width, height);
-        int tileW = icon.getIconWidth();
+    /**
+     * Paints an edge for the border given a list of icons to paint.  We need
+     * to know whether each icon should be tiled, how many tiled icons there 
+     * are and how much space (width/height) needs to be filled by tiled icons.
+     * 
+     * @param c  The Component to pain on
+     * @param g  The Graphics object to paint with 
+     * @param icons The ImageIcons to draw
+     * @param shouldTile  Denotes whether each icon should be tiled or not
+     * @param numTiledIcons The number of tiled icons we have to draw with
+     * @param staticSpace How much space needs to be filled with tiledi cons
+     */
+    private void paintEdge(Component c, Graphics g, ArrayList<ImageIcon> icons, 
+    		int x, int y, int width, int height, boolean isLeftRight,
+    		ArrayList<Boolean> shouldTile, int numTiledIcons, int staticSpace){
+    	g = g.create(x, y, width, height);
+    	
+    	// Determine how much width/height a tiled icons will get to consume
+    	int tiledWidth = isLeftRight ? width :
+    			(int)((width - staticSpace + 0.0) / numTiledIcons + 0.5);
+		int tiledHeight = isLeftRight ? (int) ((height - staticSpace + 0.0)
+				/ numTiledIcons + 0.5) : height;
+    	
+    	x = 0; 
+    	y = 0;
+    	
+    	// Draw each icon
+    	for (int i = 0; i < icons.size(); i++){
+    		ImageIcon icon = icons.get(i);
+    		if (shouldTile.get(i)){
+    			// Tile icons that should be tiled
+    			paintTiledIcon(c,g,icon,x,y,tiledWidth,tiledHeight);
+    			x+= tiledWidth;
+    			y+= tiledHeight;
+    		} else {
+    			// Draw static icons once
+    			icons.get(i).paintIcon(c, g, x, y);
+    			x+= icon.getIconWidth();
+    			y+= icon.getIconHeight();
+    		}
+    	}
+    	
+    	g.dispose();
+    }
+    
+    /**
+     * Paints a tiled icon.
+     * 
+     * @param c			The Component to paint onto
+     * @param g			The Graphics to paint with
+     * @param icon		The icon to paint
+     * @param sX		The starting x location to paint the icon at
+     * @param sY        The starting y location to paint the icon at
+     * @param width     The width of the space that needs to be filled with 
+     * 					the tiled icon
+     * @param height    The height of the space that needs to be filled with 
+     * 					the tiled icon
+     */
+    private void paintTiledIcon(Component c, Graphics g, ImageIcon icon, 
+    		int sX, int sY, int width, int height){
+		int tileW = icon.getIconWidth();
         int tileH = icon.getIconHeight();
-        for (x = 0; x < width; x += tileW) {
-            for (y = 0; y < height; y += tileH) {
+        for (int x = sX; x < width; x += tileW) {
+            for (int y = sY; y < height; y += tileH) {
                 icon.paintIcon(c, g, x, y);
             }
         }
-        g.dispose();
     }
     
     public Insets getBorderInsets(Component c, Insets insets) {
@@ -177,17 +355,8 @@ public class MegamekBorder extends EmptyBorder {
         return computeInsets(new Insets(0,0,0,0));
     }
     
-    private Insets computeInsets(Insets insets) {
-        insets.top = Math.min(tl_corner.getIconHeight(),
-        		Math.min(top_line.getIconHeight(),tr_corner.getIconHeight()));
-        insets.right = Math.min(tr_corner.getIconWidth(),
-        		Math.min(right_line.getIconWidth(),br_corner.getIconWidth()));
-        insets.bottom = Math.min(bl_corner.getIconHeight(),
-        		Math.min(bottom_line.getIconHeight(),br_corner.getIconHeight()));
-        insets.left = Math.min(tl_corner.getIconWidth(),
-        		Math.min(left_line.getIconWidth(),bl_corner.getIconWidth()));
-
-        return insets;
+    private Insets computeInsets(Insets i) {
+    	return (Insets)(insets.clone());
     }
     
     public boolean isBorderOpaque() {

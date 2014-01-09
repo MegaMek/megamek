@@ -2,6 +2,7 @@ package megamek.client.ui.swing.widget;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,6 +32,11 @@ public class SkinXMLHandler {
 	public static String TL_CORNER = "corner_top_left";
 	public static String BR_CORNER = "corner_bottom_right";
 	public static String BL_CORNER = "corner_bottom_left";
+	public static String EDGE = "edge";
+	public static String EDGE_NAME = "edgeName";
+	public static String EDGE_ICON = "edgeIcon";
+	public static String ICON = "icon";
+	public static String TILED = "tiled";
 	public static String TOP_LINE = "line_top";
 	public static String BOTTOM_LINE = "line_bottom";
 	public static String RIGHT_LINE = "line_right";
@@ -77,40 +83,23 @@ public class SkinXMLHandler {
             skinSpecs = new Hashtable<String, SkinSpecification>(
             		(int)(totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
-            	SkinSpecification skinSpec = new SkinSpecification();
                 // Get the first element of this node.
-                Element unitList = (Element) listOfComponents.item(comp);
+                Element borderList = (Element) listOfComponents.item(comp);
 
                 // Get the border specs
                 Element border = (Element) 
-                		unitList.getElementsByTagName(BORDER).item(0);
+                		borderList.getElementsByTagName(BORDER).item(0);
                 if (border == null) {
                     System.err.println("Missing <" + BORDER +  
                     		"> tag in element #" + comp);
                     continue;
                 }
                 
-                skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
-                		item(0).getTextContent();
-                skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).
-                		item(0).getTextContent();
-                skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).
-                		item(0).getTextContent();
-                skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).
-                		item(0).getTextContent();
-                
-                skinSpec.top_line = border.getElementsByTagName(TOP_LINE).
-                		item(0).getTextContent();
-                skinSpec.bottom_line = border.getElementsByTagName(BOTTOM_LINE).
-                		item(0).getTextContent();
-                skinSpec.right_line = border.getElementsByTagName(RIGHT_LINE).
-                		item(0).getTextContent();
-                skinSpec.left_line = border.getElementsByTagName(LEFT_LINE).
-                		item(0).getTextContent();
+                SkinSpecification skinSpec = parseBorderTag(border);
 
                // Get the border specs
                 NodeList backgrounds = 
-                		unitList.getElementsByTagName(BACKGROUND_IMAGE);
+                		borderList.getElementsByTagName(BACKGROUND_IMAGE);
                 if (backgrounds != null){
                 	for (int bg = 0; bg < backgrounds.getLength(); bg++){
                 		skinSpec.backgrounds.add(
@@ -118,7 +107,7 @@ public class SkinXMLHandler {
                 	}
                 }
                 
-                String name = unitList.getElementsByTagName(NAME).
+                String name = borderList.getElementsByTagName(NAME).
                 		item(0).getTextContent();
 
                 skinSpecs.put(name, skinSpec);
@@ -128,6 +117,79 @@ public class SkinXMLHandler {
         } catch (Exception e) {
             throw new IOException(e);
         }    
+	}
+	
+	/**
+	 *  Create a new SkinSpecification and populate it from the supplied border
+	 *  tag
+	 *  
+	 * @param border
+	 * @return
+	 */
+	private static SkinSpecification parseBorderTag(Element border){
+		SkinSpecification skinSpec = new SkinSpecification();
+		
+		// Parse Corner Icons
+        skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
+        		item(0).getTextContent();
+        skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).
+        		item(0).getTextContent();
+        skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).
+        		item(0).getTextContent();
+        skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).
+        		item(0).getTextContent();
+        
+        // Parse Edge Icons from Edge tag
+        NodeList edgeNodes = border.getElementsByTagName(EDGE);
+        for (int i = 0; i < edgeNodes.getLength(); i++){
+        	// An edge tag will have some number of icons
+        	ArrayList<String> icons = new ArrayList<String>();
+        	// And icon can be tiled or static
+        	ArrayList<Boolean> shouldTile = new ArrayList<Boolean>(); 
+			NodeList edgeIcons = ((Element) edgeNodes.item(i))
+					.getElementsByTagName(EDGE_ICON);
+			// Iterate through each icon/tiled pair
+        	for (int j = 0; j < edgeIcons.getLength(); j++){
+				String icon = ((Element) edgeIcons.item(j))
+						.getElementsByTagName(ICON).item(0).getTextContent();
+				String tiled = ((Element) edgeIcons.item(j))
+						.getElementsByTagName(TILED).item(0).getTextContent();
+				
+				if (icon == null){
+					System.err.println("Missing <" + ICON + "> tag");
+					continue;
+				}
+				if (tiled == null){
+					System.err.println("Missing <" + TILED + "> tag");
+					continue;
+				}
+				icons.add(icon);
+				shouldTile.add(tiled.equalsIgnoreCase("true"));
+        	}
+        	
+        	String edgeName = ((Element) edgeNodes.item(i))
+					.getElementsByTagName(EDGE_NAME).item(0).getTextContent();
+        	
+        	if (edgeName == null){
+        		System.err.println("Missing <" + EDGE_NAME + "> tag");
+        		continue;
+        	}
+        	
+        	if (edgeName.equals("top")){
+        		skinSpec.topEdge = icons;
+        		skinSpec.topShouldTile = shouldTile;
+        	} else if (edgeName.equals("bottom")){
+        		skinSpec.bottomEdge = icons;
+        		skinSpec.bottomShouldTile = shouldTile;
+        	} else if (edgeName.equals("left")){
+        		skinSpec.leftEdge = icons;
+        		skinSpec.leftShouldTile = shouldTile;
+        	} else if (edgeName.equals("right")){
+        		skinSpec.rightEdge = icons;
+        		skinSpec.rightShouldTile = shouldTile;
+        	}
+        }		
+		return skinSpec;		
 	}
 	
 	public static SkinSpecification getSkin(String component){

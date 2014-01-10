@@ -46,7 +46,9 @@ public class TestBattleArmor extends TestEntity {
         STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP,false),
         STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE,false),
         FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST,false),
-        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,false);
+        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,false),
+        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,false),
+        REACTIVE(EquipmentType.T_ARMOR_REACTIVE,false);
 
         /**
          * The type, corresponding to types defined in 

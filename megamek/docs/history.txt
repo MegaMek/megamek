@@ -23,6 +23,11 @@ v0.37.4-dev (SVN)
     updating a few methods in EquipmentType.
 + Feature: Updated BattleArmor.setArmorType to handle setting state for special 
     armor types, like stealth
++ Feature:  BattleArmor BLK files can now specify armor_type and armor_tech 
+    tags which will be read in and written out
++ Added a BAArmor enum to TestBattleArmor.  This works like the AeroArmor enum 
+    in TestAero and is used to define what subset of all armors are legal for 
+    BattleArmor.
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

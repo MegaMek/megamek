@@ -519,14 +519,14 @@ public class TestAero extends TestEntity {
     public void checkCriticalSlotsForEquipment(Entity entity,
             Vector<Mounted> unallocated, Vector<Serializable> allocation,
             Vector<Integer> heatSinks) {
-        int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
             if (m.getLocation() == Entity.LOC_NONE) {
                 if ((m.getType() instanceof AmmoType)
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if ((entity instanceof Mech) && (m.getType().getCriticals(entity) == 0)) {
+                if ((entity instanceof Mech) && 
+                        (m.getType().getCriticals(entity) == 0)) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {
@@ -534,11 +534,9 @@ public class TestAero extends TestEntity {
                     continue;
                 }
                 MiscType mt = (MiscType) m.getType();
-                if (mt.hasFlag(MiscType.F_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
-                    countInternalHeatSinks++;
-                } else {
+                if (!mt.hasFlag(MiscType.F_HEAT_SINK)
+                        && !mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                        && !mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                     unallocated.addElement(m);
                     continue;
                 }

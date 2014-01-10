@@ -3537,14 +3537,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getGoodCriticals(int type, int index, int loc) {
         int operational = 0;
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT){
+            m = getEquipment(index);
+        }
 
         int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
+            // Check to see if this crit mounts the supplied item
+            //  For systems, we can compare the index, but for equipment we
+            //  need to get the Mounted that is mounted in that index and
+            //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)
-                    && (ccs.getIndex() == index) && !ccs.isDestroyed()
-                    && !ccs.isBreached()) {
+                    && !ccs.isDestroyed() && !ccs.isBreached()
+                    && ((type == CriticalSlot.TYPE_SYSTEM && 
+                        (ccs.getIndex() == index)) 
+                        || (type == CriticalSlot.TYPE_EQUIPMENT 
+                            && (ccs.getMount().getType().equals(m.getType())
+                                || ccs.getMount2() != null  && 
+                                    ccs.getMount2().getType().equals(
+                                            m.getType()))))) {
                 operational++;
             }
         }

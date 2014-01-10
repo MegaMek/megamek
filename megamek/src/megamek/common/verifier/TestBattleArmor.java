@@ -146,7 +146,7 @@ public class TestBattleArmor extends TestEntity {
             if(ba.isClan()) {
                 tons += 0.13;
             } else {
-                    tons += 0.08;
+                tons += 0.08;
             }
             tons += ba.getOriginalWalkMP() * .025;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {

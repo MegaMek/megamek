@@ -311,14 +311,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_APOLLO))
+                && (atype != null)
                 && (atype.getAmmoType() == AmmoType.T_MRM);
         boolean bArtemisV = ((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached()
                 && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
-                && !isECMAffected && !bMekTankStealthActive && (atype
-                .getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+                && !isECMAffected && !bMekTankStealthActive
+                && (atype != null)
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // is this attack originating from underwater
@@ -408,7 +410,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
-            if (spotter == null && atype != null
+            if ((spotter == null) && (atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM)
                             || (atype.getAmmoType() == AmmoType.T_MML) || (atype
                             .getAmmoType() == AmmoType.T_NLRM))
@@ -1170,7 +1172,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 ae, true));
 
         TargetRoll weatherToHitMods = new TargetRoll();
-        
+
         // weather mods (not in space)
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
         if ((weatherMod != 0) && !game.getBoard().inSpace()) {
@@ -1232,13 +1234,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if(weatherToHitMods.getValue() > 0) {
-            if(ae.getCrew() != null && ae.getCrew().getOptions().booleanOption("weathered")) {
+            if((ae.getCrew() != null) && ae.getCrew().getOptions().booleanOption("weathered")) {
                 weatherToHitMods.addModifier(-1, "weathered");
             }
             toHit.append(weatherToHitMods);
         }
-        
-        
+
+
         // gravity mods (not in space)
         if (!game.getBoard().inSpace()) {
             int mod = (int) Math.ceil(Math.abs((game.getPlanetaryConditions()
@@ -1509,7 +1511,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 boolean targetTagged = false;
                 // If this is an entity, we can see if it's tagged
                 if (te != null){
-                    targetTagged = te.getTaggedBy() != -1; 
+                    targetTagged = te.getTaggedBy() != -1;
                 } else{ // Non entities will require us to look harder
                     for (TagInfo ti : game.getTagInfo()){
                         if (target.getTargetId() == ti.target.getTargetId()){
@@ -1517,7 +1519,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         }
                     }
                 }
-                
+
                 if (targetTagged){
                     toHit.addModifier(-1,"semiguided ignores spotter " +
                     		"movement & indirect fire penalties");
@@ -2020,7 +2022,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         "Swarm-I at friendly unit with intact sensors");
             }
         }
-        
+
         if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE){
             toHit.addModifier(+2, "attacker has TSEMP interference");
         }
@@ -2028,7 +2030,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // okay!
         return toHit;
     }
-    
+
     /**
      * To-hit number for attacker firing a generic weapon at the target.  Does
      * not factor in any special weapon or ammo considerations, including range
@@ -2037,13 +2039,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-      
+
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        boolean isAttackerInfantry = ae instanceof Infantry;        
-        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);      
+        boolean isAttackerInfantry = ae instanceof Infantry;
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         int targEl;
         if (te == null) {
@@ -2069,11 +2071,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 eistatus = 1;
             }
         }
-        
+
         ToHitData losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
         //toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
         ToHitData toHit = new ToHitData(0, "base");
-    
+
         // taser feedback
         if (ae.getTaserFeedBackRounds() > 0) {
             toHit.addModifier(1, "Taser feedback");
@@ -2343,7 +2345,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // determine some more variables
         int aElev = ae.getElevation();
-        int tElev = target.getElevation();       
+        int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
 
         toHit.append(AbstractAttackAction.nightModifiers(game, target, null,
@@ -2365,7 +2367,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae.isAirborne() && !(ae instanceof Aero)) {
             toHit.addModifier(+2, "dropping");
             toHit.addModifier(+3, "jumping");
-        }       
+        }
 
         // Attacks against adjacent buildings automatically hit.
         if ((distance == 1)
@@ -2450,14 +2452,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     target.getTargetId());
             toHit.append(thTemp);
         }
-        
+
         // attacker terrain
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain, not applicable when delivering minefields or bombs
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             toHit.append(Compute.getTargetTerrainModifier(game, target,
-                    eistatus, inSameBuilding, ae.isUnderwater()));           
+                    eistatus, inSameBuilding, ae.isUnderwater()));
         }
 
         // target in water?
@@ -2509,7 +2511,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(ae.getHeatFiringModifier(), "heat");
         }
 
-        // target immobile      
+        // target immobile
         ToHitData immobileMod = Compute.getImmobileMod(target, -1, -1);
         // grounded dropships are treated as immobile as well for purpose of
         // the mods
@@ -2520,7 +2522,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (immobileMod != null) {
             toHit.append(immobileMod);
         }
-        
+
 
         // attacker prone
         if (ae.isProne()){
@@ -2605,7 +2607,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae.isUnderwater() && targHex.containsTerrain(Terrains.WATER)
                 && (null != te) && te.isSurfaceNaval()) {
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
-        }     
+        }
 
 
         if (target.isAirborne() && (target instanceof Aero)) {
@@ -2635,11 +2637,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-        
+
         if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE){
             toHit.addModifier(+2, "attacker has TSEMP interference");
         }
-        
+
         // okay!
         return toHit;
     }
@@ -2654,10 +2656,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
-        
+
         if (game.getOptions().booleanOption("tacops_tank_crews")
-                && ae instanceof Tank && ae.isUnjammingRAC()
-                && ae.getCrew().getSize() == 1) {
+                && (ae instanceof Tank) && ae.isUnjammingRAC()
+                && (ae.getCrew().getSize() == 1)) {
             return "Vehicles with only 1 crewman may not take other actions while unjamming";
         }
 
@@ -2680,7 +2682,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Tasers can only fire at units.";
             }
         }
-        
+
         if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()){
             return "TSEMP cannon recharging";
         }
@@ -3118,12 +3120,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (isTAG && (te instanceof Infantry)) {
             return "Can not target infantry with TAG.";
         }
-        
+
         // The TAG system cannot target Airborne Aeros.
-        if (isTAG && te != null && (te.isAirborne() || te.isSpaceborne())) {
+        if (isTAG && (te != null) && (te.isAirborne() || te.isSpaceborne())) {
             return "Can not target airborne units with TAG.";
         }
-        
+
         //Airborne units cannot tag and attack
         //http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
         if(ae.isAirborne() && ae.usedTag()) {
@@ -3305,7 +3307,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     Mounted prevWeapon = ae.getEquipment(prevAttack
                             .getWeaponId());
                     if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                            && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) 
+                            && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS))
                             || (weapon.getType().hasFlag(WeaponType.F_INFANTRY)
                                     && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
                         return "Can't fire field guns and small arms at the same time.";
@@ -3441,7 +3443,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
-        Entity spotter = null;     
+        Entity spotter = null;
         if (isIndirect) {
             if ((target instanceof Entity)
                     && !isTargetECMAffected
@@ -3453,8 +3455,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
-                       
-            if (spotter == null && atype != null
+
+            if ((spotter == null) && (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_MML) || (atype
                         .getAmmoType() == AmmoType.T_NLRM))
@@ -3467,7 +3469,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
-            if ((spotter == null) && 
+            if ((spotter == null) &&
                     !(wtype instanceof MekMortarWeapon)
                     && !(wtype instanceof ArtilleryCannonWeapon)) {
                 return "No available spotter";
@@ -3599,7 +3601,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
-            int altitudeLoss = 1; 
+            int altitudeLoss = 1;
             if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
                 altitudeLoss = 2;
             }
@@ -3610,7 +3612,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(altitudeLoss >= ae.getAltitude()) {
                 return "This attack would cause too much altitude loss";
             }
-            
+
             // can only make a strike attack against a single target
             for (Enumeration<EntityAction> i = game.getActions(); i
                     .hasMoreElements();) {
@@ -3655,7 +3657,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-        
+
         //air2air and air2ground cannot be combined by any aerospace units
         if(Compute.isAirToAir(ae, target) || Compute.isAirToGround(ae, target)) {
             for (Enumeration<EntityAction> i = game.getActions(); i
@@ -3663,7 +3665,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
-                }            
+                }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() != ae.getId()) {
                     continue;
@@ -3673,10 +3675,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 if(Compute.isAirToGround(ae, target) && prevAttack.isAirToAir(game)) {
                     return "air-to-air attack already declared";
-                }  
+                }
             }
         }
-        
+
         if ((target.getAltitude() > 8) && Compute.isGroundToAir(ae, target)) {
             return "cannot target aero units beyond altitude 8";
         }

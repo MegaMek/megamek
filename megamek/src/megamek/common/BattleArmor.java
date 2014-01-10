@@ -94,7 +94,7 @@ public class BattleArmor extends Infantry {
      * The cost of this unit. This value should be set when the unit's file is
      * read.
      */
-    private int myCost = -1;
+    protected int myCost = -1;
     /**
      * This unit's weight class
      */
@@ -269,7 +269,7 @@ public class BattleArmor extends Infantry {
         // Instantiate the superclass.
         super();
 
-        setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
+        setArmorType(EquipmentType.T_ARMOR_STANDARD);
         
         // BA are always one squad
         squadn = 1;
@@ -691,44 +691,20 @@ public class BattleArmor extends Infantry {
 
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?
-        //TODO: (Taharqa) for the stable 0.36 release I am going to leave this intact and just 
-        //set the armor type properly as well, but starting in 0.37 we should redo all of this
-        //stuff to just pull stealth modifiers directly from getArmorType() instead of this hack
-        //and armor type should be set directly from the blk file.
+        // FIXME: We used to set armor types by adding the armor as equipment
+        //  Some BA BLK files still do this instead of using armor_type
+        //  This could should remain until all of those units have been removed
         String name = mounted.getType().getInternalName();
         if(BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_BASIC);
-            isStealthy = true;
-            shortStealthMod = 0;
-            mediumStealthMod = 1;
-            longStealthMod = 2;
-            stealthName = name;
-        }
-        if (BattleArmor.STEALTH_PROTOTYPE.equals(name)) {
+        } else if (BattleArmor.STEALTH_PROTOTYPE.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE);
-            isStealthy = true;
-            shortStealthMod = 0;
-            mediumStealthMod = 1;
-            longStealthMod = 2;
-            stealthName = name;
         } else if (BattleArmor.STANDARD_STEALTH_ARMOR.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_STEALTH);
-            isStealthy = true;
-            shortStealthMod = 1;
-            mediumStealthMod = 1;
-            longStealthMod = 2;
-            stealthName = name;
         } else if (BattleArmor.IMPROVED_STEALTH_ARMOR.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_IMP);
-            isStealthy = true;
-            shortStealthMod = 1;
-            mediumStealthMod = 2;
-            longStealthMod = 3;
-            stealthName = name;
         } else if (BattleArmor.MIMETIC_ARMOR.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_MIMETIC);
-            isMimetic = true;
-            stealthName = name;
         } else if (BattleArmor.STANDARD_PROTOTYPE.equals(name)) {
             setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE);
         } else if (BattleArmor.ADVANCED_ARMOR.equals(name)) {
@@ -1602,6 +1578,20 @@ public class BattleArmor extends Infantry {
         buff.append("</armor>");
         buff.append(newline);
 
+        buff.append("<armor_type>");
+        buff.append(newline);
+        buff.append(getArmorType(LOC_SQUAD));
+        buff.append(newline);
+        buff.append("</armor_type>");
+        buff.append(newline);
+        
+        buff.append("<armor_tech>");
+        buff.append(newline);
+        buff.append(this.getArmorTechLevel(LOC_SQUAD));
+        buff.append(newline);
+        buff.append("</armor_tech>");
+        buff.append(newline);
+        
         for (int i = 0; i < locations(); i++) {
             boolean found = false;
             for (Mounted m : getEquipment()) {
@@ -1959,6 +1949,36 @@ public class BattleArmor extends Infantry {
     public void setArmorType(int armType) {
         for (int i = 0; i < 7; i++) {
             armorType[i] = armType;
+        }
+        
+        // Set some special state for certain armor types
+        if(armType == EquipmentType.T_ARMOR_BA_STEALTH_BASIC) {
+            isStealthy = true;
+            shortStealthMod = 0;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = BattleArmor.BASIC_STEALTH_ARMOR;
+        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE) {
+            isStealthy = true;
+            shortStealthMod = 0;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = BattleArmor.STEALTH_PROTOTYPE;
+        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH) {
+            isStealthy = true;
+            shortStealthMod = 1;
+            mediumStealthMod = 1;
+            longStealthMod = 2;
+            stealthName = BattleArmor.STANDARD_STEALTH_ARMOR;
+        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH_IMP) {
+            isStealthy = true;
+            shortStealthMod = 1;
+            mediumStealthMod = 2;
+            longStealthMod = 3;
+            stealthName = BattleArmor.IMPROVED_STEALTH_ARMOR;
+        } else if (armType ==  EquipmentType.T_ARMOR_BA_MIMETIC) {
+            isMimetic = true;
+            stealthName = BattleArmor.MIMETIC_ARMOR;
         }
     }
     

@@ -114,7 +114,7 @@ public class EquipmentType {
             "Prototype Ferro-Aluminum", "BA Standard", 
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)", 
             "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)", 
-            "BA Fire Resistant", "BA Mimetic" };
+            "BA Fire Resistant", "BA Mimetic", "BA Reflective", "BA Reactive"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",

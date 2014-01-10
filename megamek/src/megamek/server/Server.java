@@ -18918,15 +18918,19 @@ public class Server implements Runnable {
             ferroLamellorArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank) || isBattleArmor)
+        if (((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_REFLECTIVE)) {
+                    EquipmentType.T_ARMOR_REFLECTIVE)
+            || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
             reflectiveArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank) || isBattleArmor)
+        if (((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_REACTIVE)) {
+                    EquipmentType.T_ARMOR_REACTIVE)
+                || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
             reactiveArmor = true;
         }
 

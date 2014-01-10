@@ -18907,33 +18907,44 @@ public class Server implements Runnable {
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             ferroLamellorArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
+        if (((te instanceof Mech) || (te instanceof Tank) || isBattleArmor)
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_REFLECTIVE)) {
             reflectiveArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) {
+        if (((te instanceof Mech) || (te instanceof Tank) || isBattleArmor)
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_REACTIVE)) {
             reactiveArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
+        if (((te instanceof Mech) || (te instanceof Tank) || 
+                    (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
             ballisticArmor = true;
         }
 
         // TACs from the hit location table
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1
-                : 0;
+        int crits;
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 
+                HitData.EFFECT_CRITICAL){
+            crits = 1;
+        } else {
+            crits = 0;
+        }
 
         // this is for special crits, like AP and tandem-charge
         int specCrits = 0;

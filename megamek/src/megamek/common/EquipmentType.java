@@ -652,6 +652,18 @@ public class EquipmentType {
             return 0.03f;
         case T_ARMOR_BA_MIMETIC:
             return 0.05f;
+        case T_ARMOR_REFLECTIVE:
+            if (isClan){
+                return 0.03f;
+            } else {
+                return 0.055f;
+            }
+        case T_ARMOR_REACTIVE:
+            if (isClan){
+                return 0.035f;
+            } else {
+                return 0.06f;
+            }
         case T_ARMOR_STANDARD:
         default:
             if(isClan) {

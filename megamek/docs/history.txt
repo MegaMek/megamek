@@ -29,6 +29,12 @@ v0.37.4-dev (SVN)
     in TestAero and is used to define what subset of all armors are legal for 
     BattleArmor.
 + Feature: Implemented BA Reactive and Reflective armor
++ Added a new armor types, T_ARMOR_BA_REACTIVE and T_ARMOR_BA_REFLECTIVE along 
+    with MiscType creation methods for both types.  This is necessary as the 
+    tech lvls and intro dates differ from the 'mech version of the armor
++ EquipmentType and BattleArmor both had defines for BA armor names, they are 
+    now unified
++ Created a separate T_ARMOR_BA_STANDARD instead of sharing T_ARMOR_STANDARD
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

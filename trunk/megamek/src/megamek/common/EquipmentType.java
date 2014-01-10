@@ -79,14 +79,17 @@ public class EquipmentType {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
-    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 28;
-    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 29;
-    public final static int T_ARMOR_BA_STEALTH_BASIC = 30;
-    public final static int T_ARMOR_BA_STEALTH = 31;
-    public final static int T_ARMOR_BA_STEALTH_IMP = 32;
-    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 33;
-    public final static int T_ARMOR_BA_FIRE_RESIST = 34;
-    public final static int T_ARMOR_BA_MIMETIC = 35;
+    public final static int T_ARMOR_BA_STANDARD = 28;
+    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
+    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 30;
+    public final static int T_ARMOR_BA_STEALTH_BASIC = 31;
+    public final static int T_ARMOR_BA_STEALTH = 32;
+    public final static int T_ARMOR_BA_STEALTH_IMP = 33;
+    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
+    public final static int T_ARMOR_BA_FIRE_RESIST = 35;
+    public final static int T_ARMOR_BA_MIMETIC = 36;
+    public final static int T_ARMOR_BA_REFLECTIVE = 37;
+    public final static int T_ARMOR_BA_REACTIVE = 38;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -108,9 +111,9 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
-            "Prototype Ferro-Aluminum", "BA Standard (Prototype)", 
-            "BA Advanced", "BA Stealth (Basic)", "BA Stealth", 
-            "BA Stealth (Improved)", "BA Stealth (Prototype)", 
+            "Prototype Ferro-Aluminum", "BA Standard", 
+            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)", 
+            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)", 
             "BA Fire Resistant", "BA Mimetic" };
 
 
@@ -626,26 +629,26 @@ public class EquipmentType {
     }
     
     public static float getBaArmorWeightPerPoint(int type, boolean isClan) {        
-        switch(type) {
+        switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
             return 0.1f;
         case T_ARMOR_BA_STANDARD_ADVANCED:
             return 0.04f;
         case T_ARMOR_BA_STEALTH:
-            if(isClan) {
+            if (isClan) {
                 return 0.035f;
             }
             return 0.06f;
         case T_ARMOR_BA_STEALTH_BASIC:
-            if(isClan) {
+            if (isClan) {
                 return 0.03f;
             }
             return 0.055f;
         case T_ARMOR_BA_STEALTH_IMP:
-            if(isClan) {
+            if (isClan) {
                 return 0.035f;
             }
-            return 0.06f;  
+            return 0.06f;
         case T_ARMOR_BA_STEALTH_PROTOTYPE:
             return 0.1f;
         case T_ARMOR_BA_FIRE_RESIST:
@@ -653,23 +656,23 @@ public class EquipmentType {
         case T_ARMOR_BA_MIMETIC:
             return 0.05f;
         case T_ARMOR_REFLECTIVE:
-            if (isClan){
+            if (isClan) {
                 return 0.03f;
             } else {
                 return 0.055f;
             }
         case T_ARMOR_REACTIVE:
-            if (isClan){
+            if (isClan) {
                 return 0.035f;
             } else {
                 return 0.06f;
             }
-        case T_ARMOR_STANDARD:
+        case T_ARMOR_BA_STANDARD:
         default:
-            if(isClan) {
+            if (isClan) {
                 return 0.025f;
             }
-            return 0.05f;           
+            return 0.05f;
         }
     }
 

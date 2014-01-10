@@ -1407,6 +1407,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAAdvancedArmor());
         EquipmentType.addType(MiscType.createBAStandardPrototypeArmor());
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
+        EquipmentType.addType(MiscType.createBAReactiveArmor());
+        EquipmentType.addType(MiscType.createBAReflectiveArmor());
         EquipmentType.addType(MiscType.createStealthPrototype());
         EquipmentType.addType(MiscType.createBasicStealth());
         EquipmentType.addType(MiscType.createStandardStealth());
@@ -3015,7 +3017,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createImprovedStealth() {
         MiscType misc = new MiscType();
-
         misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
         misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
         misc.tonnage = 0;
@@ -3031,6 +3032,44 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createBAReactiveArmor() {
+        MiscType misc = new MiscType();
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.addLookupName("BA Reactive Armor ");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+
+    public static MiscType createBAReflectiveArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE, false));
+        misc.addLookupName("BA Reflective Armor ");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+
+    
     public static MiscType createMine() {
         MiscType misc = new MiscType();
 

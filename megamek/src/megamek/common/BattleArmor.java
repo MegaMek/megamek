@@ -157,42 +157,50 @@ public class BattleArmor extends Infantry {
     /**
      * The internal name for advanced.
      */
-    public static final String ADVANCED_ARMOR = "Advanced Armor";
+    public static final String ADVANCED_ARMOR = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED);
 
     /**
      * The internal name for standard Prototype.
      */
-    public static final String STANDARD_PROTOTYPE = "Standard Prototype Armor";
+    public static final String STANDARD_PROTOTYPE = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE);
 
     /**
      * The internal name for stealth Prototype.
      */
-    public static final String STEALTH_PROTOTYPE = "Stealth Prototype";
+    public static final String STEALTH_PROTOTYPE = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE);
 
     /**
      * The internal name for basic Stealth armor.
      */
-    public static final String BASIC_STEALTH_ARMOR = "Basic Stealth";
+    public static final String BASIC_STEALTH_ARMOR = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_BASIC);
 
     /**
      * The internal name for standard Stealth armor.
      */
-    public static final String STANDARD_STEALTH_ARMOR = "Standard Stealth";
+    public static final String STANDARD_STEALTH_ARMOR = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH);
 
     /**
      * The internal name for improved Stealth armor.
      */
-    public static final String IMPROVED_STEALTH_ARMOR = "Improved Stealth";
+    public static final String IMPROVED_STEALTH_ARMOR = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_IMP);
 
     /**
      * The internal name for Mimetic armor.
      */
-    public static final String MIMETIC_ARMOR = "Mimetic Armor";
+    public static final String MIMETIC_ARMOR = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_MIMETIC);
 
     /**
      * The internal name for fire-resistant armor.
      */
-    public static final String FIRE_RESISTANT = "Fire Resistant Armor";
+    public static final String FIRE_RESISTANT = EquipmentType
+            .getArmorTypeName(EquipmentType.T_ARMOR_BA_FIRE_RESIST);
 
     
     /**
@@ -269,7 +277,7 @@ public class BattleArmor extends Infantry {
         // Instantiate the superclass.
         super();
 
-        setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
         
         // BA are always one squad
         squadn = 1;

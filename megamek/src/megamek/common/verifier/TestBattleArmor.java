@@ -47,8 +47,8 @@ public class TestBattleArmor extends TestEntity {
         STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE,false),
         FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST,false),
         MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,false),
-        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,false),
-        REACTIVE(EquipmentType.T_ARMOR_REACTIVE,false);
+        REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,false),
+        REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,false);
 
         /**
          * The type, corresponding to types defined in 
@@ -64,6 +64,10 @@ public class TestBattleArmor extends TestEntity {
         BAArmor(int t, boolean c){
             type = t;
             isClan = c;
+        }
+        
+        public static int getNumBAArmors(){
+            return values().length;
         }
         
         /**

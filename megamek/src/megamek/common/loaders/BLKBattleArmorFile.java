@@ -137,6 +137,14 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         }
 
         t.autoSetInternal();
+        
+        if (dataFile.exists("armor_type")){
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        }
+        
+        if (dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
 
         loadEquipment(t, "Squad", BattleArmor.LOC_SQUAD);
         String[] abbrs = t.getLocationAbbrs();

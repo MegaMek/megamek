@@ -28,6 +28,7 @@ v0.37.4-dev (SVN)
 + Added a BAArmor enum to TestBattleArmor.  This works like the AeroArmor enum 
     in TestAero and is used to define what subset of all armors are legal for 
     BattleArmor.
++ Feature: Implemented BA Reactive and Reflective armor
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

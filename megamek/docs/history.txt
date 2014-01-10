@@ -16,6 +16,7 @@ v0.37.4-dev (SVN)
 + Bug [#3921]: charges and DFAs not working
 + Bug [#3973]: Partial Wings aren't dissipating heat (37.2 exp)
 + Bug: Mechs with Laser heatsinks and RHS have incorrect heat capacity
++ Bug [#3982]: TSEMP should cause interference to firing unit even on miss
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

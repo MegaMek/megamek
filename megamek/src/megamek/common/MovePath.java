@@ -17,7 +17,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -849,6 +848,30 @@ public class MovePath implements Cloneable, Serializable {
                     }
                 }
             }
+            // If we're doing a special movement, like charging or DFA, we will
+            //  have to take extra steps to see if we can finish off the move
+            //  this is because getNextMoves only considers turning and 
+            //  forward/backward movement
+            if (type == MoveStepType.CHARGE || 
+                    type == MoveStepType.DFA){
+                MovePath expandedPath = candidatePath.clone();
+                expandedPath.addStep(type);
+                if (expandedPath.getLastStep().isMovementPossible(game,
+                        startingPos, startingElev)) {
+
+                    if (discovered.containsKey(expandedPath.getKey())) {
+                        continue;
+                    }
+                    candidates.add(expandedPath);
+                    discovered.put(expandedPath.getKey(), expandedPath);
+                    // Make sure the candidate list doesn't get too big
+                    if (candidates.size() > 100) {
+                        candidates.remove(candidates.size() - 1);
+                    }
+                }
+            }
+            
+            
             loopcount++;
             if (((loopcount % 256) == 0) && keepLooping
                     && (candidates.size() > 0)) {

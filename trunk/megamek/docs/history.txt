@@ -10,8 +10,10 @@ v0.37.4-dev (SVN)
 + Bug: Tanks don't report when they automatically startup in the end phase
 + Added code to reduce the utility of firing on ejected mechwarriors/crews by
     1000.  This should make Princess much less likely to fire on them.
- + Bug: /localLoad not working
- + Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
++ Bug: /localLoad not working
++ Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
++ Bug: TSEMP shutdown effect on BA caused NPE
+
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

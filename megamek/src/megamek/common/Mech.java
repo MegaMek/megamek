@@ -1599,7 +1599,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getHeatCapacityWithWater() {
         if (hasLaserHeatSinks()) {
-            return getHeatCapacity();
+            return getHeatCapacity(true,false);
         }
         return getHeatCapacity(true,false) + Math.min(sinksUnderwater(), 6);
     }

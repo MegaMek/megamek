@@ -68,6 +68,19 @@ import megamek.server.Server;
     protected int calcDamagePerHit() {
         return 0;
     }
+    
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        weapon.setFired(true);
+
+        ae.setFiredTsempThisTurn(true);
+        ae.setHasFiredTsemp(true);
+
+        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE){
+            ae.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+        }
+
+        return super.handle(phase, vPhaseReport);
+    }
 
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -75,14 +88,8 @@ import megamek.server.Server;
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
                 nCluster, bldgAbsorbs);
         
-        weapon.setFired(true);
         // Increment the TSEMP hit counter
         entityTarget.addTsempHitThisTurn();
-        ae.setFiredTsempThisTurn(true);
-        ae.setHasFiredTsemp(true);
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE){
-            ae.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
-        }
 
         // Report that this unit has been hit by TSEMP
         Report r = new Report(7410);

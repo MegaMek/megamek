@@ -13,6 +13,7 @@ v0.37.4-dev (SVN)
 + Bug: /localLoad not working
 + Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
 + Bug: TSEMP shutdown effect on BA caused NPE
++ Bug [#3921]: charges and DFAs not working
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

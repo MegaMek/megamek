@@ -116,8 +116,9 @@ import megamek.server.Server;
             tsempModifiers -= 2;
         }
         
-        if (entityTarget.getEngine().getEngineType() == 
-                Engine.COMBUSTION_ENGINE){
+        if (entityTarget.getEngine() != null &&
+                entityTarget.getEngine().getEngineType() == 
+                    Engine.COMBUSTION_ENGINE){
             tsempModifiers -= 1;
         }
         

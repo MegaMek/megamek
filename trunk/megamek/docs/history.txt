@@ -35,6 +35,8 @@ v0.37.4-dev (SVN)
 + EquipmentType and BattleArmor both had defines for BA armor names, they are 
     now unified
 + Created a separate T_ARMOR_BA_STANDARD instead of sharing T_ARMOR_STANDARD
++ Added MiscTypes for separated Clan/IS BattleArmor Armors (Thanks to Hammer, 
+    who did most of the work)
 
 
 v0.37.3 (2014-01-07 02:54 UTC)

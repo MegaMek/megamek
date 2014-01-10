@@ -1404,15 +1404,26 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createNovaCEWS());
 
         // Start BattleArmor equipment
-        EquipmentType.addType(MiscType.createBAAdvancedArmor());
-        EquipmentType.addType(MiscType.createBAStandardPrototypeArmor());
-        EquipmentType.addType(MiscType.createBAFireResistantArmor());
-        EquipmentType.addType(MiscType.createBAReactiveArmor());
-        EquipmentType.addType(MiscType.createBAReflectiveArmor());
-        EquipmentType.addType(MiscType.createStealthPrototype());
-        EquipmentType.addType(MiscType.createBasicStealth());
-        EquipmentType.addType(MiscType.createStandardStealth());
-        EquipmentType.addType(MiscType.createImprovedStealth());
+        EquipmentType.addType(MiscType.createISBAAdvancedArmor());
+        EquipmentType.addType(MiscType.createISBAStandardPrototypeArmor());
+        EquipmentType.addType(MiscType.createISBAFireResistantArmor());
+        EquipmentType.addType(MiscType.createISBAReactiveArmor());
+        EquipmentType.addType(MiscType.createISBAReflectiveArmor());
+        EquipmentType.addType(MiscType.createISBAStealthPrototype());
+        EquipmentType.addType(MiscType.createISBABasicStealth());
+        EquipmentType.addType(MiscType.createISBAStandardStealth());
+        EquipmentType.addType(MiscType.createISBAImprovedStealth());
+        EquipmentType.addType(MiscType.createISBAMimeticCamo());
+        EquipmentType.addType(MiscType.createCLBAAdvancedArmor());
+        EquipmentType.addType(MiscType.createCLBAStandardPrototypeArmor());
+        EquipmentType.addType(MiscType.createCLBAFireResistantArmor());
+        EquipmentType.addType(MiscType.createCLBAReactiveArmor());
+        EquipmentType.addType(MiscType.createCLBAReflectiveArmor());
+        EquipmentType.addType(MiscType.createCLBAStealthPrototype());
+        EquipmentType.addType(MiscType.createCLBABasicStealth());
+        EquipmentType.addType(MiscType.createCLBAStandardStealth());
+        EquipmentType.addType(MiscType.createCLBAImprovedStealth());
+        EquipmentType.addType(MiscType.createCLBAMimeticCamo());
         EquipmentType.addType(MiscType.createMine());
         EquipmentType.addType(MiscType.createBABasicManipulator());
         EquipmentType.addType(MiscType.createBABasicManipulatorMineClearance());
@@ -1430,7 +1441,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAAPMount());
         EquipmentType.addType(MiscType.createCLBAMyomerBooster());
         EquipmentType.addType(MiscType.createSingleHexECM());
-        EquipmentType.addType(MiscType.createMimeticCamo());
+
         EquipmentType.addType(MiscType.createSimpleCamo());
         EquipmentType.addType(MiscType.createParafoil());
         EquipmentType.addType(MiscType.createSearchlight());
@@ -2902,11 +2913,31 @@ public class MiscType extends EquipmentType {
 
     // Start BattleArmor equipment
 
-    public static MiscType createBAStandardPrototypeArmor() {
+    public static MiscType createISBAStandardPrototypeArmor() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_PROTOTYPE;
         misc.setInternalName(BattleArmor.STANDARD_PROTOTYPE);
+        misc.addLookupName("IS " + BattleArmor.STANDARD_PROTOTYPE);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3050;
+        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAStandardPrototypeArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.STANDARD_PROTOTYPE;
+        misc.setInternalName(BattleArmor.STANDARD_PROTOTYPE);
+        misc.addLookupName("Clan " + BattleArmor.STANDARD_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2920,11 +2951,31 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBAAdvancedArmor() {
+    public static MiscType createISBAAdvancedArmor() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.ADVANCED_ARMOR;
         misc.setInternalName(BattleArmor.ADVANCED_ARMOR);
+        misc.addLookupName("IS " + BattleArmor.ADVANCED_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3057;
+        misc.techLevel.put(3057, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAAdvancedArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.ADVANCED_ARMOR;
+        misc.setInternalName(BattleArmor.ADVANCED_ARMOR);
+        misc.addLookupName("Clan " + BattleArmor.ADVANCED_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2938,11 +2989,12 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBAFireResistantArmor() {
+    public static MiscType createCLBAFireResistantArmor() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.FIRE_RESISTANT;
         misc.setInternalName(BattleArmor.FIRE_RESISTANT);
+        misc.addLookupName("Clan " + BattleArmor.FIRE_RESISTANT);
         misc.addLookupName("BA-Fire Resistant Armor");
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -2957,11 +3009,50 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createStealthPrototype() {
+    public static MiscType createISBAFireResistantArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.FIRE_RESISTANT;
+        misc.setInternalName(BattleArmor.FIRE_RESISTANT);
+        misc.addLookupName("BA-Fire Resistant Armor");
+        misc.addLookupName("IS " + BattleArmor.FIRE_RESISTANT);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    public static MiscType createISBAStealthPrototype() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STEALTH_PROTOTYPE;
         misc.setInternalName(BattleArmor.STEALTH_PROTOTYPE);
+        misc.addLookupName("IS " + BattleArmor.STEALTH_PROTOTYPE);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3050;
+        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAStealthPrototype() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.STEALTH_PROTOTYPE;
+        misc.setInternalName(BattleArmor.STEALTH_PROTOTYPE);
+        misc.addLookupName("Clan" + BattleArmor.STEALTH_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2975,11 +3066,34 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBasicStealth() {
+
+    public static MiscType createISBABasicStealth() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
         misc.setInternalName(BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.addLookupName("IS " + BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2710;
+        misc.techLevel.put(2710, TechConstants.T_ALLOWED_ALL);
+        misc.extinctDate = 2770;
+        misc.reintroDate = 3052;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_F, RATING_X, RATING_E };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBABasicStealth() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.addLookupName("Clan " + BattleArmor.BASIC_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2995,11 +3109,34 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createStandardStealth() {
+
+    public static MiscType createISBAStandardStealth() {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
         misc.setInternalName(BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.addLookupName("IS " + BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2720;
+        misc.techLevel.put(2720, TechConstants.T_ALLOWED_ALL);
+        misc.extinctDate = 2770;
+        misc.reintroDate = 3052;
+        misc.techRating = RATING_F;
+        misc.availRating = new int[] { RATING_F, RATING_X, RATING_E };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAStandardStealth() {
+        MiscType misc = new MiscType();
+
+        misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.addLookupName("Clan " + BattleArmor.STANDARD_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -3015,10 +3152,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createImprovedStealth() {
+    public static MiscType createISBAImprovedStealth() {
         MiscType misc = new MiscType();
         misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
         misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
+        misc.addLookupName("IS " + BattleArmor.IMPROVED_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -3031,11 +3169,96 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-
-    public static MiscType createBAReactiveArmor() {
+    
+    public static MiscType createCLBAImprovedStealth() {
         MiscType misc = new MiscType();
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
+        misc.addLookupName("Clan " + BattleArmor.IMPROVED_STEALTH_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3057;
+        misc.techLevel.put(3057, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createISBAMimeticCamo() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = BattleArmor.MIMETIC_ARMOR;
+        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
+        misc.addLookupName("IS " + BattleArmor.MIMETIC_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
+                .or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2800;
+        misc.techLevel.put(2800, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.techRating = RATING_E;
+        return misc;
+    }
+    
+    public static MiscType createCLBAMimeticCamo() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = BattleArmor.MIMETIC_ARMOR;
+        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
+        misc.addLookupName("Clan " + BattleArmor.MIMETIC_ARMOR);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
+                .or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2800;
+        misc.techLevel.put(2800, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.techRating = RATING_E;
+        return misc;
+    }
+
+
+    public static MiscType createISBAReactiveArmor() {
+        MiscType misc = new MiscType();
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.addLookupName("IS "+ EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.addLookupName("BA Reactive Armor ");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAReactiveArmor() {
+        MiscType misc = new MiscType();
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.addLookupName("Clan " + EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_BA_REACTIVE, false));
         misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -3050,11 +3273,37 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBAReflectiveArmor() {
+
+    public static MiscType createISBAReflectiveArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_REFLECTIVE, false));
+        misc.addLookupName("IS " + EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_REFLECTIVE, false));
+        misc.addLookupName("BA Reflective Armor ");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAReflectiveArmor() {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE, false));
+        misc.addLookupName("Clan " + EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_REFLECTIVE, false));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -3250,24 +3499,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createMimeticCamo() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
-        misc.name = BattleArmor.MIMETIC_ARMOR;
-        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
-                .or(F_BA_EQUIPMENT);
-        misc.bv = 0;
-        misc.introDate = 2800;
-        misc.techLevel.put(2800, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.techRating = RATING_E;
-        return misc;
-    }
 
     public static MiscType createSimpleCamo() {
         MiscType misc = new MiscType();

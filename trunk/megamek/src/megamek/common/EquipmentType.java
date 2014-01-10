@@ -79,6 +79,14 @@ public class EquipmentType {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
+    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 28;
+    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 29;
+    public final static int T_ARMOR_BA_STEALTH_BASIC = 30;
+    public final static int T_ARMOR_BA_STEALTH = 31;
+    public final static int T_ARMOR_BA_STEALTH_IMP = 32;
+    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 33;
+    public final static int T_ARMOR_BA_FIRE_RESIST = 34;
+    public final static int T_ARMOR_BA_MIMETIC = 35;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -89,19 +97,6 @@ public class EquipmentType {
     public static final int T_STRUCTURE_REINFORCED = 4;
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
-    
-
-    //BA armor types
-    public final static int T_ARMOR_BA_STANDARD           = 0;
-    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 1;
-    public final static int T_ARMOR_BA_STANDARD_ADVANCED  = 2;
-    public final static int T_ARMOR_BA_STEALTH_BASIC      = 3;
-    public final static int T_ARMOR_BA_STEALTH            = 4;
-    public final static int T_ARMOR_BA_STEALTH_IMP        = 5;
-    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE  = 6;
-    public final static int T_ARMOR_BA_FIRE_RESIST        = 7;
-    public final static int T_ARMOR_BA_MIMETIC            = 8;
-    public final static int T_ARMOR_BA_NUM                = 9;
 
     public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
             "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
@@ -113,16 +108,15 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
-            "Prototype Ferro-Aluminum" };
+            "Prototype Ferro-Aluminum", "BA Standard (Prototype)", 
+            "BA Advanced", "BA Stealth (Basic)", "BA Stealth", 
+            "BA Stealth (Improved)", "BA Stealth (Prototype)", 
+            "BA Fire Resistant", "BA Mimetic" };
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
-
-    public static final String[] baArmorNames = {"Standard", "Standard (Prototype)", "Advanced",
-                 "Stealth (Basic)", "Stealth", "Stealth (Improved)", "Stealth (Prototype)", 
-                 "Fire Resistant", "Mimetic"};
     
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
@@ -137,6 +131,7 @@ public class EquipmentType {
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
             1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1,
             1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12 };
+    
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
@@ -623,18 +618,11 @@ public class EquipmentType {
     }
     
     public static String getBaArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
-            return "UNKNOWN";
-        }
-        return baArmorNames[armorType];
+        return getArmorTypeName(armorType);
     }
 
     public static String getBaArmorTypeName(int armorType, boolean clan) {
-        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
-            return "UNKNOWN";
-        }
-        return clan ? "Clan " + armorNames[armorType] : "IS "
-                + baArmorNames[armorType];
+        return getArmorTypeName(armorType, clan);
     }
     
     public static float getBaArmorWeightPerPoint(int type, boolean isClan) {        
@@ -664,7 +652,7 @@ public class EquipmentType {
             return 0.03f;
         case T_ARMOR_BA_MIMETIC:
             return 0.05f;
-        case T_ARMOR_BA_STANDARD:
+        case T_ARMOR_STANDARD:
         default:
             if(isClan) {
                 return 0.025f;

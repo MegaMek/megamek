@@ -1404,6 +1404,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createNovaCEWS());
 
         // Start BattleArmor equipment
+        EquipmentType.addType(MiscType.createISBAStandardArmor());
+        EquipmentType.addType(MiscType.createCLBAStandardArmor());
         EquipmentType.addType(MiscType.createISBAAdvancedArmor());
         EquipmentType.addType(MiscType.createISBAStandardPrototypeArmor());
         EquipmentType.addType(MiscType.createISBAFireResistantArmor());
@@ -2913,6 +2915,50 @@ public class MiscType extends EquipmentType {
 
     // Start BattleArmor equipment
 
+    public static MiscType createISBAStandardArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
+        misc.addLookupName("IS " + EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2710;
+        misc.techLevel.put(2710, TechConstants.T_IS_TW_NON_BOX);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAStandardArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
+        misc.addLookupName("Clan " + EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2820;
+        misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+
+        return misc;
+    }
+    
     public static MiscType createISBAStandardPrototypeArmor() {
         MiscType misc = new MiscType();
 

@@ -36,7 +36,6 @@ biped
 <Squad Equipment>
 ISSmall Laser
 BARemoteSensorDispenser
-Basic Stealth
 BAArmoredGlove
 BAArmoredGlove
 </Squad Equipment>
@@ -50,5 +49,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Clan Invasion
+TRO 3058 Upgrade
 </source>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

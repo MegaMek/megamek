@@ -31,13 +31,13 @@ biped
 16
 </Armor>
 <Squad Equipment>
+ISDetachableWeaponPack:Body
 ISBAMachine Gun
-ISSRM3:Body
+ISSRM3:DWP
 BA-SRM3 Ammo
 BA-SRM3 Ammo
 BA-SRM3 Ammo
 BAHeavyBattleClaw
-Mimetic Armor
 ISImprovedSensors
 BASearchlight
 </Squad Equipment>
@@ -50,3 +50,13 @@ IS Level 2
 <motion_type>
 leg
 </motion_type>
+
+<source>
+TRO 3075
+</source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

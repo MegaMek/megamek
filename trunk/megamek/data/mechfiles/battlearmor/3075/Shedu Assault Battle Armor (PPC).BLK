@@ -33,9 +33,9 @@ quad
 15
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
-ISSupportPPC
-ISSupportPPC
+ISDetachableWeaponPack:Body
+ISSupportPPC:Body
+ISSupportPPC:Body
 ISBAHeavyMG:DWP
 </Squad Equipment>
 <type>
@@ -47,3 +47,12 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -40,6 +40,14 @@ biped
 10
 </Armor>
 
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
 <Squad Equipment>
 CLBAJumpBooster
 BAAPMount
@@ -49,12 +57,11 @@ BABasicManipulator
 CLMG
 CLMG
 Clan Machine Gun Ammo - Half
-Basic Stealth
 Camo System
 </Squad Equipment>
 
 <type>
-Mixed (Clan Chassis) Experimental
+Mixed (Clan Chassis) Advanced
 </type>
 
 <year>

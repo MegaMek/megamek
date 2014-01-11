@@ -30,6 +30,15 @@ biped
 <Armor>
 11
 </Armor>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
 <Squad Equipment>
 ISDetachableWeaponPack
 ISERSmallLaser:DWP
@@ -41,7 +50,7 @@ Single-Hex ECM
 Mimetic Armor
 </Squad Equipment>
 <type>
-IS Level 4
+IS Level 3
 </type>
 <year>
 3088

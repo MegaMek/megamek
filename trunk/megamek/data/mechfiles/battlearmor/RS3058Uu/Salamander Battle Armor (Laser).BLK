@@ -37,7 +37,6 @@ biped
 CLBAFlamer
 CLERMicroLaser
 CLSRM1OS:Body
-BA-Fire Resistant Armor
 BABattleClawMagnets
 BABattleClawMagnets
 </Squad Equipment>
@@ -51,5 +50,11 @@ Clan Level 2
 Jump
 </motion_type>
 <source>
-Civil War
+TRO 3058U
 </source>
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

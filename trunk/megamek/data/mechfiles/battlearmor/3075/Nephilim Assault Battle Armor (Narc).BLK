@@ -31,11 +31,10 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
+ISDetachableWeaponPack:Body
 ISRocketLauncher2:Body
 ISSupportPPC:DWP
 BAHeavyBattleClaw
-Mimetic Armor
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -83,3 +82,13 @@ IS Level 3
 <motion_type>
 leg
 </motion_type>
+
+<source>
+TRO 3075
+</source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+5
+</armor_tech>

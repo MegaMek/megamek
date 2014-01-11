@@ -13,7 +13,7 @@ BattleArmor
 Rottweiler Battle Armor
 </Name>
 <Model>
-(Upgrade)
+(Close Combat)
 </Model>
 <chassis>
 quad
@@ -31,8 +31,9 @@ quad
 7
 </Armor>
 <Squad Equipment>
-King David Light Gauss Rifle:Body
-Basic Stealth
+BA Machine Gun:Body
+ISBAFlamer:Body
+ISImprovedSensors:Body
 </Squad Equipment>
 <type>
 IS Level 2
@@ -43,3 +44,12 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

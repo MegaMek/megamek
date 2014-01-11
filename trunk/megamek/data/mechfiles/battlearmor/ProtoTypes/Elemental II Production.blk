@@ -40,6 +40,10 @@ biped
 10
 </Armor>
 
+<armor_tech>
+6
+</armor_tech>
+
 <Squad Equipment>
 CLBAAPGaussRifle
 CLBAMyomerBooster
@@ -49,12 +53,13 @@ BABasicManipulator
 </Squad Equipment>
 
 <type>
-Clan Level 4
+Clan Level 3
 </type>
 
 <year>
 3084
 </year>
+
 <source>
 TRO:Prototypes
 </source>

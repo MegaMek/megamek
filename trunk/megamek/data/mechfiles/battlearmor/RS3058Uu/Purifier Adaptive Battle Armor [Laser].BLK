@@ -33,9 +33,9 @@ biped
 <Armor>
 6
 </Armor>
+
 <Squad Equipment>
 IS ER Small Laser
-Mimetic Armor
 BABattleClaw
 </Squad Equipment>
 <type>
@@ -48,5 +48,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Civil War
+TRO 3058 Upgrade
 </source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

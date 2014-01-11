@@ -31,6 +31,11 @@ biped
 <Armor>
 5
 </Armor>
+
+<armor_tech>
+6
+</armor_tech>
+
 <Squad Equipment>
 BABasicManipulator
 BABasicManipulator
@@ -39,7 +44,7 @@ CLERMicroLaser
 </Squad Equipment>
 
 <type>
-Clan Level 4
+Clan Level 3
 </type>
 <year>
 3085

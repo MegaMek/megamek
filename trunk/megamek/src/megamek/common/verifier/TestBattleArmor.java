@@ -37,18 +37,25 @@ public class TestBattleArmor extends TestEntity {
      *
      */
     public static enum BAArmor{
-        STANDARD(EquipmentType.T_ARMOR_STANDARD,false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD,true),
-        STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE,false),
-        STANDARD_ADVANCED(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED,false),
-        STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC,false),
-        STEALTH(EquipmentType.T_ARMOR_BA_STEALTH,false),
-        STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP,false),
-        STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE,false),
-        FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST,false),
-        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,false),
-        REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,false),
-        REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,false);
+        STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,false),   
+        CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,true),
+        STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE,4,false),
+        STANDARD_ADVANCED(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED,5,false),
+        STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC,3,false),
+        CLAN_STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC,3,true),
+        STEALTH(EquipmentType.T_ARMOR_BA_STEALTH,4,false),
+        CLAN_STEALTH(EquipmentType.T_ARMOR_BA_STEALTH,4,true),
+        STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP,5,false),
+        CLAN_STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP,5,true),
+        STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE,4,false),
+        FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST,5,false),
+        CLAN_FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST,5,true),
+        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,7,false),
+        CLAN_MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,7,true),
+        REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,7,false),
+        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,7,true),
+        REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,7,false),
+        CLAN_REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,7,true);
 
         /**
          * The type, corresponding to types defined in 
@@ -57,12 +64,19 @@ public class TestBattleArmor extends TestEntity {
         public int type;
         
         /**
+         * The number of spaces occupied by the armor type. 
+         */
+        public int space;
+        
+        
+        /**
          * Denotes whether this armor is Clan or not.
          */
         public boolean isClan;
         
-        BAArmor(int t, boolean c){
+        BAArmor(int t, int s, boolean c){
             type = t;
+            space = s;
             isClan = c;
         }
         

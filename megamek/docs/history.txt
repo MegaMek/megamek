@@ -37,9 +37,11 @@ v0.37.4-dev (SVN)
 + Created a separate T_ARMOR_BA_STANDARD instead of sharing T_ARMOR_STANDARD
 + Added MiscTypes for separated Clan/IS BattleArmor Armors (Thanks to Hammer, 
     who did most of the work)+
-+ Correct some of the techlevel and dates for the MiscTypes.
++ Correct some of the techlevel and dates for the MiscTypes
 + Bug: TestAero would fail Aeros for mounted bombs, this has been fixed
-
++ Bug: Updated methods getGoodCriticals, getBadCriticals, getDamagedCriticals, and
+    getHitCriticals to work with mounteds due to EQUIPMENT_TYPE critical slots no
+    longer having indexes
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

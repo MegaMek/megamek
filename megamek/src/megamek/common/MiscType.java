@@ -3276,11 +3276,11 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_REFLECTIVE, false));
+                EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
         misc.addLookupName("IS " + EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_REFLECTIVE, false));
+                EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -3298,10 +3298,13 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBAReflectiveArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE, false));
-        misc.addLookupName("Clan " + EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_REFLECTIVE, false));
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
+        misc.addLookupName("Clan "
+                + EquipmentType.getArmorTypeName(
+                        EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 0;

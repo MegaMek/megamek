@@ -3553,12 +3553,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((ccs != null) && (ccs.getType() == type)
                     && !ccs.isDestroyed() && !ccs.isBreached()
                     && ((type == CriticalSlot.TYPE_SYSTEM && 
-                        (ccs.getIndex() == index)) 
+                        (ccs.getIndex() == index))
                         || (type == CriticalSlot.TYPE_EQUIPMENT 
-                            && (ccs.getMount().getType().equals(m.getType())
+                            && (ccs.getMount().equals(m)
                                 || ccs.getMount2() != null  && 
-                                    ccs.getMount2().getType().equals(
-                                            m.getType()))))) {
+                                    ccs.getMount2().equals(m))))) {
                 operational++;
             }
         }
@@ -3570,16 +3569,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT){
+            m = getEquipment(index);
+        }
 
         int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if ((ccs != null) && (ccs.getType() == type)
-                    && (ccs.getIndex() == index)) {
-                if (ccs.isDestroyed() || ccs.isBreached()) {
-                    hits++;
-                }
+                    && (ccs.isDestroyed() || ccs.isBreached())
+                    && ((type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index)
+                    || (type == CriticalSlot.TYPE_EQUIPMENT && (ccs.getMount().equals(m)
+                            || ccs.getMount2() != null && ccs.getMount2().equals(m))))) {
+                hits++;
             }
         }
         return hits;
@@ -3590,15 +3594,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getDamagedCriticals(int type, int index, int loc) {
         int hits = 0;
-        int numCrits = getNumberOfCriticals(loc);
-        for (int i = 0; i < numCrits; i++) {
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT){
+            m = getEquipment(index);
+        }
+
+        int numberOfCriticals = getNumberOfCriticals(loc);
+        for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if ((ccs != null) && (ccs.getType() == type)
-                    && (ccs.getIndex() == index)) {
-                if (ccs.isDamaged()) {
-                    hits++;
-                }
+                    && ccs.isDamaged()
+                    && ((type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index)
+                    || (type == CriticalSlot.TYPE_EQUIPMENT && (ccs.getMount().equals(m)
+                            || ccs.getMount2() != null && ccs.getMount2().equals(m))))) {
+                hits++;
             }
         }
         return hits;
@@ -3609,15 +3619,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;
-        int numCrits = getNumberOfCriticals(loc);
-        for (int i = 0; i < numCrits; i++) {
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT){
+            m = getEquipment(index);
+        }
+
+        int numberOfCriticals = getNumberOfCriticals(loc);
+        for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if ((ccs != null) && (ccs.getType() == type)
-                    && (ccs.getIndex() == index)) {
-                if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
-                    hits++;
-                }
+                    && (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing())
+                    && ((type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index)
+                    || (type == CriticalSlot.TYPE_EQUIPMENT && (ccs.getMount().equals(m)
+                            || ccs.getMount2() != null && ccs.getMount2().equals(m))))) {
+                hits++;
             }
         }
         return hits;

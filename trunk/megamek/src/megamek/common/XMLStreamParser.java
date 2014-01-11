@@ -624,7 +624,7 @@ public class XMLStreamParser implements XMLResponder {
                 bombChoices = ((Aero) entity).getBombChoices();
                 String type = (String) attr.get(TYPE);
                 String load = (String) attr.get(LOAD);
-                bombChoices[Integer.parseInt(type)] = Integer.parseInt(load);
+                bombChoices[BombType.getBombTypeFromInternalName(type)] = Integer.parseInt(load);
             }
             ((Aero) entity).setBombChoices(bombChoices);
         } else if (name.equals(FLUFF)) {

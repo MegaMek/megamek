@@ -584,20 +584,35 @@ public class TestAero extends TestEntity {
             correct = false;
         }
         int numWeapons[] = new int[4];
+        int numBombs = 0;
         
         for (Mounted m : aero.getWeaponList()){
             if (m.getLocation() == Entity.LOC_NONE)
                 continue;
             
-            numWeapons[m.getLocation()]++;
+            if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB) 
+                    || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)){
+                numBombs++;
+            } else {
+                numWeapons[m.getLocation()]++;
+            }
         }
-                
+        
         int avialSpace[] = availableSpace(aero);
         if (avialSpace == null){
             buff.append("Invalid armor type! Armor: " + 
                     EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
+            buff.append("\n");
             return false;
         }       
+        
+        if (numBombs > aero.getMaxBombPoints()){
+            buff.append("Invalid number of bombs! Unit can mount "
+                    + aero.getMaxBombPoints() + " but " + numBombs
+                    + "are present!");
+            buff.append("\n");
+            return false;
+        }
         
         String[] locNames = aero.getLocationNames();
         int loc = Aero.LOC_AFT;
@@ -607,6 +622,7 @@ public class TestAero extends TestEntity {
                 buff.append(locNames[loc] + " has " + numWeapons[loc] + 
                         " weapons but it can only fit " + avialSpace[loc] + 
                         " weapons!");
+                buff.append("\n");
             }
             loc--;
         }        

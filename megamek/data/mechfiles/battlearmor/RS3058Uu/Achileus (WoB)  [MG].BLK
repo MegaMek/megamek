@@ -33,9 +33,13 @@ biped
 <Armor>
 6
 </Armor>
+
+<armor_type>
+32
+</armor_type>
+
 <Squad Equipment>
 BA Machine Gun
-Improved Stealth
 BAAPMount
 BABasicManipulator
 BABasicManipulator
@@ -50,5 +54,8 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Clan Invasion
+TRO 3058U
 </source>
+<armor_tech>
+3
+</armor_tech>

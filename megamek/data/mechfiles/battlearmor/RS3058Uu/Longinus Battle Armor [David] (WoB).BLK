@@ -49,5 +49,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Civil War
+TRO 3058 Upgrade
 </source>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

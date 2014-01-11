@@ -33,7 +33,7 @@ biped
 <Squad Equipment>
 BA Machine Gun
 ISLightTAG:Body
-BAPartialWing
+BAPartialWing:Body
 BABattleClaw
 BABattleClaw
 </Squad Equipment>
@@ -46,3 +46,12 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

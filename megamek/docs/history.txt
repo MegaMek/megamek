@@ -42,6 +42,7 @@ v0.37.4-dev (SVN)
 + Bug: Updated methods getGoodCriticals, getBadCriticals, getDamagedCriticals, and
     getHitCriticals to work with mounteds due to EQUIPMENT_TYPE critical slots no
     longer having indexes
++ Data: Unit fixes and first batch of BA with new Armor Type and Tech Tags.
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

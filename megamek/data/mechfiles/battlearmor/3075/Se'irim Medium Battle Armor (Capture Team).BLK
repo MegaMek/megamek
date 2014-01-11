@@ -36,13 +36,12 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
+ISDetachableWeaponPack:Body
 ISLightMG
 ISLightMG
-ISBATaser:Body:DWP
+ISBATaser:DWP
 BABattleClaw
 BASearchlight
-Basic Stealth
 </Squad Equipment>
 <type>
 IS Level 2
@@ -53,3 +52,12 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

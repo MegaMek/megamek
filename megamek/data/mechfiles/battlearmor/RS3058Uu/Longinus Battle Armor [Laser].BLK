@@ -33,6 +33,7 @@ biped
 <Armor>
 9
 </Armor>
+
 <Squad Equipment>
 ISSmall Laser
 ISSRM2OS:Body
@@ -49,5 +50,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Clan Invasion
+TRO 3058 Upgrade
 </source>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -30,6 +30,11 @@ biped
 <Armor>
 9
 </Armor>
+
+<armor_type>
+28
+</armor_type>
+
 <Squad Equipment>
 ISSRM1
 BASRM1 Ammo
@@ -50,5 +55,8 @@ IS Level 2
 Leg
 </motion_type>
 <source>
-Clan Invasion
+TRO 3058 Upgrade
 </source>
+<armor_tech>
+3
+</armor_tech>

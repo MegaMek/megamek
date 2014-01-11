@@ -35,8 +35,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISSmallLaser
-ISBAJumpBooster
-Improved Stealth
+ISBAJumpBooster:Body
 BABasicManipulator
 BAArmoredGlove
 </Squad Equipment>
@@ -49,3 +48,12 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -30,9 +30,12 @@ biped
 <Armor>
 5
 </Armor>
+
+<armor_type>
+34
+</armor_type>
 <Squad Equipment>
 ISHeavyGL
-Basic Stealth
 BABasicManipulator
 </Squad Equipment>
 <type>
@@ -45,5 +48,8 @@ IS Level 2
 Leg
 </motion_type>
 <source>
-Clan Invasion
+TRO 3058 Upgrade
 </source>
+<armor_tech>
+3
+</armor_tech>

@@ -33,11 +33,11 @@ quad
 15
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
-ISDetachableWeaponPack
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
-ISMagshotGR
+ISMagshotGR:Body
 </Squad Equipment>
 
 <type>
@@ -51,3 +51,12 @@ IS Level 3
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+5
+</armor_tech>

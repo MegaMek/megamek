@@ -31,7 +31,6 @@ biped
 ISSmallPulseLaser
 ISBAMagshotGR:Body
 ISBAMagshotGR:Body
-Improved Stealth
 BABattleClaw
 </Squad Equipment>
 <type>
@@ -43,3 +42,12 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

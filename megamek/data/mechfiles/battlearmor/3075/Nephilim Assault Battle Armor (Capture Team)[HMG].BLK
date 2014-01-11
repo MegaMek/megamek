@@ -31,12 +31,11 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
-ISHeavyMG
-ISBATaser:Body:DWP
+ISDetachableWeaponPack:Body
+ISBAHeavyMG
+ISBATaser:DWP
 ISLRM2OS:Body
 BAHeavyBattleClaw
-Mimetic Armor
 </Squad Equipment>
 <type>
 IS Level 3
@@ -47,3 +46,12 @@ IS Level 3
 <motion_type>
 leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+5
+</armor_tech>

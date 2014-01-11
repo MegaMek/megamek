@@ -35,7 +35,6 @@ ISBAPlasmaRifle
 ISSRM2OS:Body
 ISSRM2OS:Body
 BAHeavyBattleClaw
-Mimetic Armor
 </Squad Equipment>
 <type>
 IS Level 2
@@ -46,3 +45,9 @@ IS Level 2
 <motion_type>
 leg
 </motion_type>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -38,7 +38,6 @@ ISBAFlamer
 BA Machine Gun:Body
 BA Machine Gun:Body
 BABattleClawVibro
-Basic Stealth
 </Squad Equipment>
 <type>
 IS Level 2
@@ -49,3 +48,12 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

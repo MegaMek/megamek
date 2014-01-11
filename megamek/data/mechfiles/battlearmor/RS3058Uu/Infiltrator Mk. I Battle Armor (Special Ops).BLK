@@ -30,10 +30,14 @@ biped
 <Armor>
 5
 </Armor>
+
+<armor_type>
+34
+</armor_type>
+
 <Squad Equipment>
 ISImprovedSensors
 BARemoteSensorDispenser
-Basic Stealth
 BAAPMount
 BABasicManipulator
 </Squad Equipment>
@@ -47,5 +51,8 @@ IS Level 2
 Leg
 </motion_type>
 <source>
-Civil War
+TRO 3058 Upgrade
 </source>
+<armor_tech>
+3
+</armor_tech>

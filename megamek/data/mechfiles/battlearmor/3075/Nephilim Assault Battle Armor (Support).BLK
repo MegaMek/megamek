@@ -32,10 +32,11 @@ biped
 </Armor>
 <Squad Equipment>
 ISSmallLaser
-RL4:Body
-RL4:Body
+ISDetachableWeaponPack:Body
+RL4:DWP
+ISDetachableWeaponPack:Body
+RL4:DWP
 BAHeavyBattleClaw
-Mimetic Armor
 </Squad Equipment>
 <type>
 IS Level 2
@@ -46,3 +47,9 @@ IS Level 2
 <motion_type>
 leg
 </motion_type>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

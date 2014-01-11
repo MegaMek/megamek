@@ -29,7 +29,6 @@ biped
 </Armor>
 <Squad Equipment>
 ISBAPlasmaRifle:Body
-Mimetic Armor
 BABattleClaw
 BABattleClaw
 </Squad Equipment>
@@ -42,3 +41,12 @@ IS
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

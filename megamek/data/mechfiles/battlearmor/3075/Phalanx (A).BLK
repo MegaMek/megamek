@@ -35,7 +35,6 @@ ISKingDavidLightGaussRifle
 ISSRM4:Body
 BA-SRM4 Ammo
 BA-SRM4 Ammo
-Improved Stealth
 BABattleClaw
 BAArmoredGlove
 </Squad Equipment>
@@ -48,3 +47,12 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

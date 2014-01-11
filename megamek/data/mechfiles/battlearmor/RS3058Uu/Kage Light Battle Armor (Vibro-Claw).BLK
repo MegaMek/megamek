@@ -33,8 +33,8 @@ biped
 <Armor>
 5
 </Armor>
+
 <Squad Equipment>
-Basic Stealth
 BABattleClawVibro
 BABattleClawVibro
 BAPartialWing
@@ -49,5 +49,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Jihad
+TRO 3058 Upgrade
 </source>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

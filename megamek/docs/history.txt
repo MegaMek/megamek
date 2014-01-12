@@ -50,6 +50,7 @@ v0.37.4 (2014-01-12 02:20)
 + Bug: Methods in Entity updated 2 commits ago still not quite right,
     re-written for clarity & damageSystem() also re-written to work correctly
     with TYPE_EQUIPMENT
++ Fix Stone's Brigades Filenames due to packaging errors
 
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid

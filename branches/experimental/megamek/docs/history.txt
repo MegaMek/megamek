@@ -5,7 +5,7 @@ v0.37.4-exp (2014-01-12 02:20)
     edges had a single tiled icon.  Now, edges can have an arbitrary combination 
     of static and tiled icons.
 
-v0.37.4-dev (2014-01-12 02:20)
+v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes
 + Data: Start of FM:3145 RAT's (Mechs only)
 + Bug [#3977]: Unable to load MUL files created in versions prior to 0.37.3
@@ -55,6 +55,7 @@ v0.37.4-dev (2014-01-12 02:20)
 + Bug: Methods in Entity updated 2 commits ago still not quite right,
     re-written for clarity & damageSystem() also re-written to work correctly
     with TYPE_EQUIPMENT
++ Fix Stone's Brigades Filenames due to packaging errors
 
 v0.37.3-exp (2014-01-07 02:54 UTC)
 + Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE

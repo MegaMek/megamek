@@ -386,6 +386,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(177);
     public static final BigInteger F_CONVERTIBLE = BigInteger.valueOf(1)
             .shiftLeft(178);
+    public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
+            .shiftLeft(179);
 
 
     // Secondary Flags for Physical Weapons
@@ -1450,6 +1452,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAAPMount());
         EquipmentType.addType(MiscType.createCLBAMyomerBooster());
         EquipmentType.addType(MiscType.createSingleHexECM());
+        EquipmentType.addType(MiscType.createBattleMechNeuralInterfaceUnit());
 
         EquipmentType.addType(MiscType.createSimpleCamo());
         EquipmentType.addType(MiscType.createParafoil());
@@ -5284,6 +5287,24 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+
+    public static MiscType createBattleMechNeuralInterfaceUnit() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "BattleMech Neural Interface Unit";
+        misc.setInternalName("BABattleMechNIU");
+        misc.tonnage = 0.1f;
+        // should take 2 slots
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLEMECH_NIU);
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+
 
     public static MiscType createBABattleClawMagnets() {
         MiscType misc = new MiscType();

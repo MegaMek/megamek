@@ -6,6 +6,55 @@ v0.37.4-dev-exp (SVN)
     of static and tiled icons.
 
 v0.37.4-dev (SVN)
++ Data: Unit Fixes
++ Data: Start of FM:3145 RAT's (Mechs only)
++ Bug [#3977]: Unable to load MUL files created in versions prior to 0.37.3
++ Modified the ammo selection logic for Princess because I miss-understood the
+    way incendiary ammo works and to take into account fire-resistant armor.
++ Bug: TESMP shutdown effect on tanks didn't last as long as it should
++ Bug: Tanks don't report when they automatically startup in the end phase
++ Added code to reduce the utility of firing on ejected mechwarriors/crews by
+    1000.  This should make Princess much less likely to fire on them.
++ Bug: /localLoad not working
++ Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
++ Bug: TSEMP shutdown effect on BA caused NPE
++ Bug [#3921]: charges and DFAs not working
++ Bug [#3973]: Partial Wings aren't dissipating heat (37.2 exp)
++ Bug: Mechs with Laser heatsinks and RHS have incorrect heat capacity
++ Bug [#3982]: TSEMP should cause interference to firing unit even on miss
++ BA had special armor types separate from the armor types for every other unit.  
+    This makes some of the code difficult to work with.  I have consolidated 
+    the BA armor into the armor for the rest of the units.  This required 
+    updating a few methods in EquipmentType.
++ Feature: Updated BattleArmor.setArmorType to handle setting state for special 
+    armor types, like stealth
++ Feature:  BattleArmor BLK files can now specify armor_type and armor_tech 
+    tags which will be read in and written out
++ Added a BAArmor enum to TestBattleArmor.  This works like the AeroArmor enum 
+    in TestAero and is used to define what subset of all armors are legal for 
+    BattleArmor.
++ Feature: Implemented BA Reactive and Reflective armor
++ Added a new armor types, T_ARMOR_BA_REACTIVE and T_ARMOR_BA_REFLECTIVE along 
+    with MiscType creation methods for both types.  This is necessary as the 
+    tech lvls and intro dates differ from the 'mech version of the armor
++ EquipmentType and BattleArmor both had defines for BA armor names, they are 
+    now unified
++ Created a separate T_ARMOR_BA_STANDARD instead of sharing T_ARMOR_STANDARD
++ Added MiscTypes for separated Clan/IS BattleArmor Armors (Thanks to Hammer, 
+    who did most of the work)+
++ Correct some of the techlevel and dates for the MiscTypes
++ Bug: TestAero would fail Aeros for mounted bombs, this has been fixed
++ Bug: Updated methods getGoodCriticals, getBadCriticals, getDamagedCriticals, and
+    getHitCriticals to work with mounteds due to EQUIPMENT_TYPE critical slots no
+    longer having indexes
++ Data: Unit fixes and first batch of BA with new Armor Type and Tech Tags
++ Bug [#3985]: Bombs cannot be loaded via MUL files
+    This fix involved adding 2 new methods to BombType:
+    public static int getBombTypeFromName(String name) and
+    public static int getBombTypeFromInternalName(String name)
++ Bug: Methods in Entity updated 2 commits ago still not quite right,
+    re-written for clarity & damageSystem() also re-written to work correctly
+    with TYPE_EQUIPMENT
 
 v0.37.3-exp (2014-01-07 02:54 UTC)
 + Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE

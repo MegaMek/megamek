@@ -1,0 +1,10 @@
+Periphery Light Mechs A
+Stinger STG-5R,1
+Commando COM-2Dr,2
+Wasp WSP-8T,3
+Cadaver CVR-A1,4
+Firestarter FS9-H,5
+Locust LCT-5T,6
+Storm Raider STM-R1,5
+Panther PNT-10K2,4
+Hollander III BZK-D1,3

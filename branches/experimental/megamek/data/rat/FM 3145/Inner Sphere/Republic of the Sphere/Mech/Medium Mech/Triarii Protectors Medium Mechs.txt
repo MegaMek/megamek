@@ -1,0 +1,12 @@
+Triarii Protectors Medium Mechs
+Scorpion SCP-10M,1
+Cronus CNS-5M,2
+Lineholder KW1-LH3,3
+Dasher II,4
+Targe TRG-1N,5
+Chimera CMA-1S,6
+Eisenfaust EFT-7X,5
+Rook NH-2,4
+Hunchback HBK-7R,3
+Targe TRG-2N,2
+Night Stalker NSR-K3,1

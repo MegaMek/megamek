@@ -1,0 +1,12 @@
+Hell's Horses Second Line Medium Mechs
+Wyvern IIC,1
+Hellhound (Conjurer),2
+Corvis 2,3
+Ursus 2,4
+Shadow Hawk IIC 6,5
+Arctic Wolf,6
+Griffin IIC 3,5
+Great Wyrm 2,4
+Lobo,3
+Dasher II 2,2
+Ursus II,1

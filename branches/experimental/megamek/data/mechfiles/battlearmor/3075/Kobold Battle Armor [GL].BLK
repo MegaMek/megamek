@@ -38,7 +38,6 @@ ISSmallPulseLaser
 </Trooper 1 Equipment>
 <Squad Equipment>
 ISMicroGrenadeLauncher
-Standard Stealth
 BAArmoredGlove
 BAArmoredGlove
 </Squad Equipment>
@@ -51,3 +50,12 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO 3075
+</source>
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

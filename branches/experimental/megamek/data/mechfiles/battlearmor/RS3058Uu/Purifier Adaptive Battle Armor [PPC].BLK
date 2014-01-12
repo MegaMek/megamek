@@ -36,7 +36,6 @@ biped
 <Squad Equipment>
 ISSupportPPC
 BABattleClaw
-Mimetic Armor
 </Squad Equipment>
 <type>
 IS Level 2
@@ -48,5 +47,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Jihad
+TRO 3058 Upgrade
 </source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -35,7 +35,6 @@ biped
 </Armor>
 <Squad Equipment>
 BABattleClaw
-Mimetic Armor
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISCompact Narc
@@ -77,5 +76,11 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Civil War
+TRO 3058 Upgrade
 </source>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

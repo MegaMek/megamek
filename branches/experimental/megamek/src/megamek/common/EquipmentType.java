@@ -79,6 +79,17 @@ public class EquipmentType {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
+    public final static int T_ARMOR_BA_STANDARD = 28;
+    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
+    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 30;
+    public final static int T_ARMOR_BA_STEALTH_BASIC = 31;
+    public final static int T_ARMOR_BA_STEALTH = 32;
+    public final static int T_ARMOR_BA_STEALTH_IMP = 33;
+    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
+    public final static int T_ARMOR_BA_FIRE_RESIST = 35;
+    public final static int T_ARMOR_BA_MIMETIC = 36;
+    public final static int T_ARMOR_BA_REFLECTIVE = 37;
+    public final static int T_ARMOR_BA_REACTIVE = 38;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -89,19 +100,6 @@ public class EquipmentType {
     public static final int T_STRUCTURE_REINFORCED = 4;
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
-    
-
-    //BA armor types
-    public final static int T_ARMOR_BA_STANDARD           = 0;
-    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 1;
-    public final static int T_ARMOR_BA_STANDARD_ADVANCED  = 2;
-    public final static int T_ARMOR_BA_STEALTH_BASIC      = 3;
-    public final static int T_ARMOR_BA_STEALTH            = 4;
-    public final static int T_ARMOR_BA_STEALTH_IMP        = 5;
-    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE  = 6;
-    public final static int T_ARMOR_BA_FIRE_RESIST        = 7;
-    public final static int T_ARMOR_BA_MIMETIC            = 8;
-    public final static int T_ARMOR_BA_NUM                = 9;
 
     public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
             "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
@@ -113,16 +111,15 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
-            "Prototype Ferro-Aluminum" };
+            "Prototype Ferro-Aluminum", "BA Standard", 
+            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)", 
+            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)", 
+            "BA Fire Resistant", "BA Mimetic", "BA Reflective", "BA Reactive"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
-
-    public static final String[] baArmorNames = {"Standard", "Standard (Prototype)", "Advanced",
-                 "Stealth (Basic)", "Stealth", "Stealth (Improved)", "Stealth (Prototype)", 
-                 "Fire Resistant", "Mimetic"};
     
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
@@ -132,11 +129,14 @@ public class EquipmentType {
     public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
             15000, 15000, 25000, /* patchwork */0, 50000, 20000, 3000, 75000,
             100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000 };
+            25000, 15000, 50000, 15000, 25000, 20000, 25000, 10000, 10000, 
+            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000 };
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
-            1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1,
-            1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12 };
+            1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875,
+            0.67, 1, 1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8,
+            1.6, 0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96 };
+    
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
@@ -623,53 +623,58 @@ public class EquipmentType {
     }
     
     public static String getBaArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
-            return "UNKNOWN";
-        }
-        return baArmorNames[armorType];
+        return getArmorTypeName(armorType);
     }
 
     public static String getBaArmorTypeName(int armorType, boolean clan) {
-        if ((armorType < 0) || (armorType >= baArmorNames.length)) {
-            return "UNKNOWN";
-        }
-        return clan ? "Clan " + armorNames[armorType] : "IS "
-                + baArmorNames[armorType];
+        return getArmorTypeName(armorType, clan);
     }
     
     public static float getBaArmorWeightPerPoint(int type, boolean isClan) {        
-        switch(type) {
+        switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
             return 0.1f;
         case T_ARMOR_BA_STANDARD_ADVANCED:
             return 0.04f;
         case T_ARMOR_BA_STEALTH:
-            if(isClan) {
+            if (isClan) {
                 return 0.035f;
             }
             return 0.06f;
         case T_ARMOR_BA_STEALTH_BASIC:
-            if(isClan) {
+            if (isClan) {
                 return 0.03f;
             }
             return 0.055f;
         case T_ARMOR_BA_STEALTH_IMP:
-            if(isClan) {
+            if (isClan) {
                 return 0.035f;
             }
-            return 0.06f;  
+            return 0.06f;
         case T_ARMOR_BA_STEALTH_PROTOTYPE:
             return 0.1f;
         case T_ARMOR_BA_FIRE_RESIST:
             return 0.03f;
         case T_ARMOR_BA_MIMETIC:
             return 0.05f;
+        case T_ARMOR_BA_REFLECTIVE:
+            if (isClan) {
+                return 0.03f;
+            } else {
+                return 0.055f;
+            }
+        case T_ARMOR_BA_REACTIVE:
+            if (isClan) {
+                return 0.035f;
+            } else {
+                return 0.06f;
+            }
         case T_ARMOR_BA_STANDARD:
         default:
-            if(isClan) {
+            if (isClan) {
                 return 0.025f;
             }
-            return 0.05f;           
+            return 0.05f;
         }
     }
 

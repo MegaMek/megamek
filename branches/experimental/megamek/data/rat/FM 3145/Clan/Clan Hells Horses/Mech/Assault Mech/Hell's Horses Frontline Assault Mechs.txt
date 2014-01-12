@@ -1,0 +1,12 @@
+Hell's Horses Frontline Assault Mechs
+Hellstar 2,1
+Hellstar 3,2
+Cygnus 3,3
+Mad Cat Mk II Enhanced,4
+Hellstar,5
+Mad Cat Mk II Enhanced,6
+Cygnus,5
+Jupiter,4
+Man O' War (Gargoyle) Prime,3
+Gladiator (Executioner) Prime,2
+Gladiator (Executioner) A,1

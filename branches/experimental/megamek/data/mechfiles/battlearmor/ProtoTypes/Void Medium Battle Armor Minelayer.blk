@@ -46,7 +46,6 @@ BAAPMount
 BAHeavyBattleClaw
 BAHeavyBattleClaw
 ISMechanicalJumpBooster
-Basic Stealth
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -77,6 +76,14 @@ biped
 <armor>
 5
 </armor>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
 
 <Trooper Count>
 4

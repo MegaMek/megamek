@@ -1,0 +1,12 @@
+Jade Falcon Frontline Light Mechs
+Cougar Prime,1
+Spirit 2,2
+Hellion Prime,3
+Eyrie (Standard),4
+Uller (Kit Fox) Prime,5
+Fire Falcon Prime,6
+Eyrie (Standard),5
+Fire Falcon Prime,4
+Cougar Prime,3
+Dasher (Fire Moth) Prime,2
+Uller (Kit Fox) Prime,1

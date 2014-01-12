@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -35,6 +34,7 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
@@ -100,6 +100,8 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is instanciated for each client and for each bot running on that
@@ -834,12 +836,13 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(new FileInputStream(f));
-            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { f,
-                    ois.readObject() }));
+            XStream xstream = new XStream();
+            game = (IGame) xstream.fromXML(new GZIPInputStream(
+                    new FileInputStream(f)));
+            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] {game}));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Can't find local savegame " + f);
         }
     }
@@ -1476,10 +1479,10 @@ public class Client implements IClientCommandHandler {
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
         ArrayList<Entity> myEntities = game.getPlayerEntities(
                 game.getPlayer(localPlayerNumber), false);
-        Hashtable<String,ArrayList<Integer>> rawNameToId = 
+        Hashtable<String,ArrayList<Integer>> rawNameToId =
                 new Hashtable<String,ArrayList<Integer>>(
                         (int)(myEntities.size()*1.26));
-        
+
         for (Entity e : myEntities){
             String rawName = e.getShortNameRaw();
             ArrayList<Integer> namedIds = rawNameToId.get(rawName);

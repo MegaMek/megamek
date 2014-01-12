@@ -36,9 +36,11 @@ CLLRM15 Ammo
 <Rear Equipment>
 CLMediumPulseLaser
 </Rear Equipment>
+
 <transporters>
-troopsize:5.5
+cargobay:5.5:1
 </transporters>
+
 <Body Equipment>
 ISGuardianECM
 </Body Equipment>
@@ -52,7 +54,7 @@ Mixed (Clan Chassis) Experimental
 0
 </internal_type>
 <armor_type>
-8
+22
 </armor_type>
 <engine_type>
 0

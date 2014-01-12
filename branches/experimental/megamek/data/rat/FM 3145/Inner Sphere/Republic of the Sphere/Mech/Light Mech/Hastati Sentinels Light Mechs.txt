@@ -1,0 +1,12 @@
+Hastati Sentinels Light Mechs
+Spider SDR-8R,1
+Locust LCT-5W2,2
+Nyx NX-80,3
+Arbalest,4
+Jenner IIC 4,5
+Ostscout OTT-11J,6
+Crimson Hawk 3,5
+Locust LCT-6M,4
+Koshi (Standard),3
+Havoc HVC-P6,2
+Jackalope JLP-BD,1

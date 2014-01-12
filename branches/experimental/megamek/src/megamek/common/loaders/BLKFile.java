@@ -451,6 +451,12 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         }
+        
+        // Write out armor_type and armor_tech entries for BA
+        if (t instanceof BattleArmor){
+            blk.writeBlockData("armor_type", t.getArmorType(1));
+            blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
+        }
 
         Vector<Vector<String>> eq = new Vector<Vector<String>>(numLocs);
         

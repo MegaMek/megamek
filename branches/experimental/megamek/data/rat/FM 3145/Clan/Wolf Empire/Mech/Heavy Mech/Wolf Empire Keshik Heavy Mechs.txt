@@ -1,0 +1,12 @@
+Wolf Empire Keshik Heavy Mechs
+Tundra Wolf,1
+Warwolf (Prime),2
+Blood Reaper,3
+Mad Cat (Timber Wolf) Prime,4
+Thor (Summoner) Prime,5
+Tundra Wolf 4,6
+Blood Reaper 2,5
+Mad Cat (Timber Wolf) Prime,4
+Tundra Wolf 3,3
+Blood Reaper,2
+Orion IIC,1

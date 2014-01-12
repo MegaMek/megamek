@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -3312,10 +3311,10 @@ public class Server implements Runnable {
             // Calculate the number of "even" turns to add for this team.
             int numEven = 0;
             if (1 == numTeamsMoving) {
-                // If there's only one team moving, we don't need to bother 
+                // If there's only one team moving, we don't need to bother
                 //  with the evenTracker, just make sure the even turns are
                 //  evenly distributed
-                numEven += teamEvenTurns / min + 0.5;
+                numEven += (teamEvenTurns / min) + 0.5;
             } else if (prevTeam == null) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
@@ -4161,7 +4160,7 @@ public class Server implements Runnable {
         entityUpdate(unit.getId());
 
         // Set the turn mask.  We need to be specific otherwise we run the risk
-        //  of having a unit of another class consume the turn and leave the 
+        //  of having a unit of another class consume the turn and leave the
         //  unloaded unit without a turn
         int turnMask;
         Vector<GameTurn> turnVector = game.getTurnVector();
@@ -4182,7 +4181,7 @@ public class Server implements Runnable {
                 break;
             }
         }
-            
+
         // ok add another turn for the unloaded entity so that it can move
         GameTurn newTurn = new GameTurn.EntityClassTurn(
                 unit.getOwner().getId(),turnMask);
@@ -6907,10 +6906,10 @@ public class Server implements Runnable {
                         addReport(damageEntity(entity, new HitData(
                                 Mech.LOC_RLEG), leapDistance));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 
+                        addReport(criticalEntity(entity, Mech.LOC_LLEG,
                                 false, 0, 0));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 
+                        addReport(criticalEntity(entity, Mech.LOC_RLEG,
                                 false, 0, 0));
                         if (entity instanceof QuadMech) {
                             addReport(damageEntity(entity, new HitData(
@@ -6918,10 +6917,10 @@ public class Server implements Runnable {
                             addReport(damageEntity(entity, new HitData(
                                     Mech.LOC_RARM), leapDistance));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_LARM, 
+                            addReport(criticalEntity(entity, Mech.LOC_LARM,
                                     false, 0, 0));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_RARM, 
+                            addReport(criticalEntity(entity, Mech.LOC_RARM,
                                     false, 0, 0));
                         }
                     }
@@ -7077,7 +7076,7 @@ public class Server implements Runnable {
                         if ((0 == curHex.terrainsPresent())
                                 || (step.getElevation() > 0)) {
                             if (entity instanceof VTOL){
-                                r = new Report(2208); 
+                                r = new Report(2208);
                             } else {
                                 r = new Report(2206);
                             }
@@ -9236,7 +9235,7 @@ public class Server implements Runnable {
                             critRollMod -= 2;
                         }
                         vPhaseReport.addAll(criticalEntity(te,
-                                hit.getLocation(), hit.isRear(), 
+                                hit.getLocation(), hit.isRear(),
                                 critRollMod, 0));
                     }
                 } else if (te instanceof Protomech) {
@@ -12893,7 +12892,7 @@ public class Server implements Runnable {
                 // to be handled differently
                 if (!(target instanceof Infantry)) {
                     addNewLines();
-                    addReport(criticalEntity(te, hit.getLocation(), 
+                    addReport(criticalEntity(te, hit.getLocation(),
                             hit.isRear(), 0, true, false, damage));
                 }
                 if ((target instanceof BattleArmor)
@@ -13177,7 +13176,7 @@ public class Server implements Runnable {
             }
             if (te.hasQuirk("weak_legs")) {
                 addNewLines();
-                addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 
+                addReport(criticalEntity(te, hit.getLocation(), hit.isRear(),
                         0, 0));
             }
         }
@@ -16065,7 +16064,7 @@ public class Server implements Runnable {
                 addReport(destroyEntity(te, "impossible displacement",
                         te instanceof Mech, te instanceof Mech));
             }
-            
+
             // entity isn't DFAing any more
             ae.setDisplacementAttack(null);
         }
@@ -16203,7 +16202,7 @@ public class Server implements Runnable {
             if (entity.hasDamagedRHS() && entity.weaponFired()){
                 entity.heatBuildup += 1;
             }
-            
+
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<Report>();
             if (entity.hasActivatedRadicalHS()){
@@ -16246,7 +16245,7 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 r.add(radicalHSBonus);
                 rhsReports.add(r);
-                
+
                 boolean rhsFailure = rhsRoll < targetNumber;
                 r = new Report(5541);
                 r.indent(2);
@@ -16255,7 +16254,7 @@ public class Server implements Runnable {
                 r.add(rhsRoll);
                 r.choose(rhsFailure);
                 rhsReports.add(r);
-                
+
                 if (rhsFailure){
                     entity.setHasDamagedRHS(true);
                     int loc = Entity.LOC_NONE;
@@ -16270,10 +16269,10 @@ public class Server implements Runnable {
                         throw new IllegalStateException("Server." +
                         		"resolveHeat(): Could not find Radical " +
                         		"Heatsink mount on unit that used RHS!");
-                    } 
+                    }
                     for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
                         CriticalSlot slot = entity.getCritical(loc, s);
-                        if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT 
+                        if ((slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                                 && slot.getMount().getType().hasFlag(
                                         MiscType.F_RADICAL_HEATSINK)){
                             slot.setHit(true);
@@ -16421,9 +16420,9 @@ public class Server implements Runnable {
                 // heat effects: start up
                 if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
                     // only start up if not shut down by taser or a TSEMP
-                    if (entity.getTaserShutdownRounds() == 0 
-                            && entity.getTsempEffect() != 
-                                TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
+                    if ((entity.getTaserShutdownRounds() == 0)
+                            && (entity.getTsempEffect() !=
+                                TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
                         if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
@@ -16654,22 +16653,26 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (!(entity.isManualShutdown())) {
-                        entity.setShutDown(false);
-                    }
                     entity.setBATaserShutdown(false);
-                } else {
+                    if (entity.isShutDown() && !entity.isManualShutdown()
+                            && (entity.getTsempEffect() !=
+                                TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                        entity.setShutDown(false);
+                        r = new Report(5045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
+                    }
+                } else if (entity.isBATaserShutdown()){
                     // if we're shutdown by a BA taser, we might activate
                     // again
-                    if (entity.isBATaserShutdown()) {
-                        int roll = Compute.d6(2);
-                        if (roll >= 8) {
-                            entity.setTaserShutdownRounds(0);
-                            if (!(entity.isManualShutdown())) {
-                                entity.setShutDown(false);
-                            }
-                            entity.setBATaserShutdown(false);
+                    int roll = Compute.d6(2);
+                    if (roll >= 8) {
+                        entity.setTaserShutdownRounds(0);
+                        if (!(entity.isManualShutdown())) {
+                            entity.setShutDown(false);
                         }
+                        entity.setBATaserShutdown(false);
                     }
                 }
 
@@ -16953,9 +16956,9 @@ public class Server implements Runnable {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown()
                     && !entity.isStalled()) {
-                if (entity.getTaserShutdownRounds() == 0 
-                        && entity.getTsempEffect() != 
-                            TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
+                if ((entity.getTaserShutdownRounds() == 0)
+                        && (entity.getTsempEffect() !=
+                            TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
@@ -18904,33 +18907,48 @@ public class Server implements Runnable {
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             ferroLamellorArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_REFLECTIVE)
+            || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
             reflectiveArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) {
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_REACTIVE)
+                || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
             reactiveArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
+        if (((te instanceof Mech) || (te instanceof Tank) || 
+                    (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == 
+                    EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
             ballisticArmor = true;
         }
 
         // TACs from the hit location table
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1
-                : 0;
+        int crits;
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 
+                HitData.EFFECT_CRITICAL){
+            crits = 1;
+        } else {
+            crits = 0;
+        }
 
         // this is for special crits, like AP and tandem-charge
         int specCrits = 0;
@@ -20309,7 +20327,7 @@ public class Server implements Runnable {
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                            hit.isRear(), hit.glancingMod() + critBonus, 
+                            hit.isRear(), hit.glancingMod() + critBonus,
                             damage_orig));
                 }
                 crits = 0;
@@ -20325,7 +20343,7 @@ public class Server implements Runnable {
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), 
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(),
                             hit.isRear(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
@@ -21343,11 +21361,11 @@ public class Server implements Runnable {
                 // All vehicles suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
 
                 // ...and a Crew Killed hit.
@@ -21358,11 +21376,11 @@ public class Server implements Runnable {
                 // 'Mechs suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
 
                 // and four pilot hits.
@@ -21401,7 +21419,7 @@ public class Server implements Runnable {
                 // It takes one crit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
 
                 // Plus a Crew Stunned critical.
@@ -21412,7 +21430,7 @@ public class Server implements Runnable {
                 // 'Mechs suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(),
                         hd.isRear(), 0));
 
                 // and two pilot hits.
@@ -22674,7 +22692,7 @@ public class Server implements Runnable {
                 r.addDesc(en);
                 r.newlines = 0;
                 vDesc.addElement(r);
-                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), false, 
+                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), false,
                         damageCaused));
             }
             en.hitThisRoundByAntiTSM = false;
@@ -22706,7 +22724,7 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits with a die roll modifier.
      */
 
-    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, 
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, int damage) {
         return criticalEntity(en, loc, isRear, critMod, true, false, damage);
     }
@@ -23115,8 +23133,8 @@ public class Server implements Runnable {
 
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
-        if (critType == Tank.CRIT_NONE 
-                && (game.getOptions().booleanOption("vehicles_threshold") 
+        if ((critType == Tank.CRIT_NONE)
+                && (game.getOptions().booleanOption("vehicles_threshold")
                         && !t.getOverThresh())){
             r = new Report(6006);
             r.subject = t.getId();
@@ -23275,7 +23293,7 @@ public class Server implements Runnable {
 
         // Apply modifiers for Anti-penetrative ablation armor
         if ((en.getArmor(loc, isRear) > 0)
-                && (en.getArmorType(loc) == 
+                && (en.getArmorType(loc) ==
                         EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
             critMod -= 2;
         }
@@ -24224,9 +24242,9 @@ public class Server implements Runnable {
                 return vDesc;
             }
         }
-        
+
         // special case. HVACs only explode if there's ammo left or rapid firing
-        if (mounted.getType() instanceof HVACWeapon && 
+        if ((mounted.getType() instanceof HVACWeapon) &&
                 !mounted.curMode().equals("Rapid")) {
             if (mounted.getEntity().getTotalAmmoOfType(
                     mounted.getLinked().getType()) == 0) {
@@ -24366,7 +24384,7 @@ public class Server implements Runnable {
             pilotDamage = 1;
         }
         if (game.getOptions().booleanOption("case_pilot_damage")
-                && (en.locationHasCase(hit.getLocation()) || 
+                && (en.locationHasCase(hit.getLocation()) ||
                         en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
@@ -25879,8 +25897,8 @@ public class Server implements Runnable {
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
                         Server.entityVerifier.mechOption, null);
-            } else if (entity.getEntityType() == Entity.ETYPE_TANK
-                    && entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT) {
+            } else if ((entity.getEntityType() == Entity.ETYPE_TANK)
+                    && (entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT)) {
                 testEntity = new TestTank((Tank) entity,
                         Server.entityVerifier.tankOption, null);
             } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
@@ -25892,7 +25910,7 @@ public class Server implements Runnable {
                 testEntity = new TestAero((Aero) entity,
                         Server.entityVerifier.aeroOption, null);
             }
-            
+
             if (testEntity != null){
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb, !game.getOptions()
@@ -27364,14 +27382,8 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_LOAD_GAME:
                 try {
-                    ObjectOutputStream oos = new ObjectOutputStream(
-                            new FileOutputStream((File) packet.getObject(0)));
-                    oos.writeObject(packet.getObject(1));
-                    oos.flush();
-                    oos.close();
-                    if (loadGame((File) packet.getObject(0))) {
-                        resetConnections();
-                    }
+                    setGame((IGame)packet.getObject(0));
+                    resetConnections();
                 } catch (Exception e) {
                     System.out
                             .println("Error loading savegame sent from client");
@@ -27475,11 +27487,11 @@ public class Server implements Runnable {
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive(mounted)
-                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && 
+                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) &&
                             (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
                     continue;
                 }
-                
+
                 // ignore empty, destroyed, or missing bins
                 if (mounted.getHittableShotsLeft() == 0) {
                     continue;
@@ -27491,7 +27503,7 @@ public class Server implements Runnable {
                 int newRack = atype.getDamagePerShot() * atype.getRackSize();
                 int newDamage = mounted.getExplosionDamage();
                 Mounted mount2 = cs.getMount2();
-                if ((mount2 != null) && (mount2.getType() instanceof AmmoType) 
+                if ((mount2 != null) && (mount2.getType() instanceof AmmoType)
                         && (mount2.getHittableShotsLeft() > 0)) {
                     // must be for same weapontype, so racksize stays
                     atype = (AmmoType)mount2.getType();
@@ -27499,7 +27511,7 @@ public class Server implements Runnable {
                     newDamage += mount2.getExplosionDamage();
                 }
                 if (!mounted.isHit()
-                        && ((rack < newRack) || 
+                        && ((rack < newRack) ||
                                 ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
@@ -30370,10 +30382,10 @@ public class Server implements Runnable {
     private void addReport(Vector<Report> reports) {
         vPhaseReport.addAll(reports);
     }
-    
+
     /**
      * Add a whole lotta Reports to the players report queues as well as the
-     * Master report queue vPhaseReport, indenting each report by the passed 
+     * Master report queue vPhaseReport, indenting each report by the passed
      * value.
      */
     private void addReport(Vector<Report> reports, int indents) {

@@ -1,0 +1,12 @@
+Magistracy of Canopus Light Mechs D
+Wasp WSP-3L,1
+Locust LCT-5V,2
+Duan Gung D9-G9,3
+Wasp WSP-7MAF,4
+Anubis ABS-3T,5
+Raven RVN-4L,6
+Anubis ABS-4C,5
+Stinger STG-6L,4
+Ebony MEB-9,3
+Dola DOL-1A1,2
+Duan Gung D9-G10,1

@@ -9,6 +9,9 @@ v0.37.5-dev (SVN)
     baMountLoc, and BattleArmor defines 4 possible locations: NONE, BODY, LARM, 
     RARM.  Additionally, the :DWP tag can be used in conjunction with a 
     location tag (before only one tag was possible).
++ Added construction data for "machina domini" interface cockpit and gyro none
++ Added construction data for a few support vehicle engine types and chassis
+    modifications
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

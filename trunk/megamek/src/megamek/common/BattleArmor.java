@@ -233,10 +233,18 @@ public class BattleArmor extends Infantry {
     /**
      * The location for mounted equipment on BA
      */
-    public static final int MOUNT_LOC_NONE = 0;
-    public static final int MOUNT_LOC_BODY = 1;
-    public static final int MOUNT_LOC_RARM = 2;
-    public static final int MOUNT_LOC_LARM = 3;
+    public static final int MOUNT_LOC_NONE = -1;
+    public static final int MOUNT_LOC_BODY = 0;
+    public static final int MOUNT_LOC_RARM = 1;
+    public static final int MOUNT_LOC_LARM = 2;
+    
+    public static final String[] MOUNT_LOC_NAMES = { "Body", "Right Arm",
+            "Left Arm" };
+    
+    /**
+     * How many mount locations are possible?
+     */
+    public static final int MOUNT_NUM_LOCS = 3;
     
 
     private boolean exoskeleton = false;
@@ -2045,6 +2053,72 @@ public class BattleArmor extends Infantry {
     
     public int getTotalCrits() {
         return getArmCrits() * 2 + getBodyCrits();
+    }
+    
+    public int getNumCrits(int loc){
+        if (loc == MOUNT_LOC_BODY){
+            return getBodyCrits();
+        } else if (loc == MOUNT_LOC_LARM || loc == MOUNT_LOC_RARM){
+            return getArmCrits();
+        } else {
+            return 0;
+        }
+    }
+    
+    /**
+     * Returns the number of allowed anti-mech weapons the supplied location
+     * can mount.  The body can mount a set number of anti-mech weapons and a 
+     * set number of anti-personnel, however for the arms can mount 2 AP or 
+     * 1 AP and 1 AM.
+     * 
+     * @param loc
+     * @return
+     */
+    public int getNumAllowedAntiMechWeapons(int loc){
+        if (loc == MOUNT_LOC_LARM || loc == MOUNT_LOC_RARM){
+            return 1;
+        } else if (loc == MOUNT_LOC_BODY){
+            if (getChassisType() == CHASSIS_TYPE_QUAD){
+                return 4;
+            } else {
+                return 2;
+            }
+        } else {
+            return 0;
+        }
+    }
+    
+    /**
+     * Returns the number of allowed anti-personnel weapons the location
+     * can mount.  The body can mount a set number of anti-mech weapons and a 
+     * set number of anti-personnel, however the arms can mount 2 AP or 
+     * 1 AP and 1 AM.
+     * 
+     * @param loc
+     * @return
+     */
+    public int getNumAllowedAntiPersonnelWeapons(int loc){
+        if (loc == MOUNT_LOC_LARM || loc == MOUNT_LOC_RARM){
+            boolean hasAntiMech = false;
+            for (Mounted m : getWeaponList()){
+                if (!m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                    hasAntiMech = true;
+                }
+            }
+            if (hasAntiMech){
+                return 1;
+            } else {
+                return 2;
+            }            
+        } else if (loc == MOUNT_LOC_BODY){
+            if (getChassisType() == CHASSIS_TYPE_QUAD){
+                return 4;
+            } else {
+                return 2;
+            }
+        } else {
+            return 0;
+        }
     }
     
     @Override

@@ -672,20 +672,20 @@ public class MechFileParser {
                             try {
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.SWARM_MEK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(EquipmentType
                                         .get(Infantry.SWARM_WEAPON_MEK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.STOP_SWARM),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.LEG_ATTACK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                         ex.getMessage());
@@ -698,20 +698,20 @@ public class MechFileParser {
                             try {
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.SWARM_MEK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(EquipmentType
                                         .get(Infantry.SWARM_WEAPON_MEK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.STOP_SWARM),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                                 ent.addEquipment(
                                         EquipmentType.get(Infantry.LEG_ATTACK),
-                                        BattleArmor.LOC_SQUAD, false, false,
-                                        false);
+                                        BattleArmor.LOC_SQUAD, false,
+                                        BattleArmor.MOUNT_LOC_NONE, false);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                         ex.getMessage());
@@ -728,7 +728,8 @@ public class MechFileParser {
                     try {
                         ent.addEquipment(
                                 EquipmentType.get("InfantryAssaultRifle"),
-                                BattleArmor.LOC_SQUAD, false, false, false);
+                                BattleArmor.LOC_SQUAD, false,
+                                BattleArmor.MOUNT_LOC_NONE, false);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -739,11 +740,14 @@ public class MechFileParser {
         else if ((ent instanceof Infantry) && ((Infantry) ent).canAttackMeks()) {
             try {
                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                        Infantry.LOC_INFANTRY, false, false, false);
+                        Infantry.LOC_INFANTRY, false,
+                        BattleArmor.MOUNT_LOC_NONE, false);
                 ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                        Infantry.LOC_INFANTRY, false, false, false);
+                        Infantry.LOC_INFANTRY, false,
+                        BattleArmor.MOUNT_LOC_NONE, false);
                 ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK),
-                        Infantry.LOC_INFANTRY, false, false, false);
+                        Infantry.LOC_INFANTRY, false,
+                        BattleArmor.MOUNT_LOC_NONE, false);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }

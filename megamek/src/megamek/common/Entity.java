@@ -2700,34 +2700,35 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted) throws LocationFullException {
-        return addEquipment(etype, loc, rearMounted, false, false, false);
+        return addEquipment(etype, loc, rearMounted,
+                BattleArmor.MOUNT_LOC_NONE, false, false);
     }
 
     /**
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc,
-                                boolean rearMounted, boolean bodyMounted, boolean isArmored,
+                                boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted) throws LocationFullException {
-        return addEquipment(etype, loc, rearMounted, bodyMounted, isArmored,
+        return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
                 isTurreted, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
-                                boolean rearMounted, boolean bodyMounted, boolean isArmored,
+                                boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
-        return addEquipment(etype, loc, rearMounted, bodyMounted, isArmored,
+        return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
                 isTurreted, isSponsonTurreted, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
-                                boolean rearMounted, boolean bodyMounted, boolean isArmored,
+                                boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted,
                                 boolean isPintleTurreted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
-        mounted.setBodyMounted(bodyMounted);
+        mounted.setBaMountLoc(baMountLoc);
         mounted.setMechTurretMounted(isTurreted);
         mounted.setSponsonTurretMounted(isSponsonTurreted);
         mounted.setPintleTurretMounted(isPintleTurreted);
@@ -2774,10 +2775,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * indicate whether this is bodymounted for BAs
      */
     public Mounted addEquipment(EquipmentType etype, int loc,
-                                boolean rearMounted, boolean bodyMounted, boolean dwpMounted)
+                                boolean rearMounted, int baMountLoc, boolean dwpMounted)
             throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
-        mounted.setBodyMounted(bodyMounted);
+        mounted.setBaMountLoc(baMountLoc);
         mounted.setDWPMounted(dwpMounted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;

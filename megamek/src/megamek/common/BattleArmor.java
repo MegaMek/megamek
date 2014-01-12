@@ -229,6 +229,15 @@ public class BattleArmor extends Infantry {
     public static final int LOC_TROOPER_4 = 4;
     public static final int LOC_TROOPER_5 = 5;
     public static final int LOC_TROOPER_6 = 6;
+    
+    /**
+     * The location for mounted equipment on BA
+     */
+    public static final int MOUNT_LOC_NONE = 0;
+    public static final int MOUNT_LOC_BODY = 1;
+    public static final int MOUNT_LOC_RARM = 2;
+    public static final int MOUNT_LOC_LARM = 3;
+    
 
     private boolean exoskeleton = false;
 

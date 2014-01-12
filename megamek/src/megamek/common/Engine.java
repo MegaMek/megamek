@@ -65,6 +65,9 @@ public class Engine implements Serializable {
     public final static int FISSION = 7;
     public final static int NONE = 8;
     public final static int MAGLEV = 9;
+    public final static int STEAM = 10;
+    public final static int BATTERY = 11;
+    public final static int SOLAR = 12;
 
     public boolean engineValid;
     private int engineRating;
@@ -192,6 +195,12 @@ public class Engine implements Serializable {
             return NONE;
         } else if (type.toLowerCase().indexOf("maglev") != -1) {
             return MAGLEV;
+        } else if (type.toLowerCase().indexOf("steam") != -1) {
+            return STEAM;
+        } else if (type.toLowerCase().indexOf("battery") != -1) {
+            return BATTERY;
+        } else if (type.toLowerCase().indexOf("solar") != -1) {
+            return SOLAR;
         } else {
             return NORMAL_ENGINE;
         }
@@ -337,6 +346,15 @@ public class Engine implements Serializable {
             case NONE:
                 return Integer.toString(engineRating)
                         + Messages.getString("Engine.None");
+            case STEAM:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Steam");
+            case BATTERY:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Battery");
+            case SOLAR:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Solar");
             default:
                 return Messages.getString("Engine.invalid");
         }

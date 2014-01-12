@@ -154,6 +154,8 @@ public class TestMech extends TestEntity {
             weight = 4.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             weight = 5.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_INTERFACE) {
+            weight = 4.0f;
         }
 
         return weight;
@@ -167,6 +169,8 @@ public class TestMech extends TestEntity {
             retVal *= 1.5;
         } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             retVal *= 2;
+        } else if (mech.getGyroType() == Mech.GYRO_NONE) {
+            retVal = 0;
         }
         retVal = ceil(retVal, getWeightCeilingGyro());
         return retVal;

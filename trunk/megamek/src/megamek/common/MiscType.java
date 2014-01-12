@@ -380,6 +380,13 @@ public class MiscType extends EquipmentType {
             .shiftLeft(174);
     public static final BigInteger F_LIGHT_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
             .shiftLeft(175);
+    public static final BigInteger F_MONOCYCLE = BigInteger.valueOf(1)
+            .shiftLeft(176);
+    public static final BigInteger F_BICYCLE = BigInteger.valueOf(1)
+            .shiftLeft(177);
+    public static final BigInteger F_CONVERTIBLE = BigInteger.valueOf(1)
+            .shiftLeft(178);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1486,6 +1493,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createManipulator());
         EquipmentType.addType(MiscType.createPropChassisModification());
         EquipmentType.addType(MiscType.createUltraLightChassisModification());
+        EquipmentType.addType(MiscType.createMonocycleModification());
+        EquipmentType.addType(MiscType.createBicycleModification());
+        EquipmentType.addType(MiscType.createConvertibleModification());
 
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
         EquipmentType.addType(MiscType.createISHeatDissipating());
@@ -1668,6 +1678,69 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
         misc.techRating = RATING_A;
 
+        return misc;
+    }
+
+    public static MiscType createMonocycleModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Monocycle";
+        misc.setInternalName("MonocycleChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_MONOCYCLE)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_D,
+                EquipmentType.RATING_D, EquipmentType.RATING_D };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_B;
+        return misc;
+    }
+
+    public static MiscType createBicycleModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Bicycle";
+        misc.setInternalName("BicycleChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_BICYCLE)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_A;
+        return misc;
+    }
+
+    public static MiscType createConvertibleModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Convertible";
+        misc.setInternalName("ConvertibleChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CONVERTIBLE)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_A;
         return misc;
     }
 
@@ -2936,7 +3009,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAStandardArmor() {
         MiscType misc = new MiscType();
 
@@ -2958,7 +3031,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createISBAStandardPrototypeArmor() {
         MiscType misc = new MiscType();
 
@@ -2977,7 +3050,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAStandardPrototypeArmor() {
         MiscType misc = new MiscType();
 
@@ -3015,7 +3088,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAAdvancedArmor() {
         MiscType misc = new MiscType();
 
@@ -3092,7 +3165,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAStealthPrototype() {
         MiscType misc = new MiscType();
 
@@ -3133,7 +3206,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBABasicStealth() {
         MiscType misc = new MiscType();
 
@@ -3174,7 +3247,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAStandardStealth() {
         MiscType misc = new MiscType();
 
@@ -3213,7 +3286,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAImprovedStealth() {
         MiscType misc = new MiscType();
         misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
@@ -3231,7 +3304,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createISBAMimeticCamo() {
         MiscType misc = new MiscType();
 
@@ -3251,7 +3324,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         return misc;
     }
-    
+
     public static MiscType createCLBAMimeticCamo() {
         MiscType misc = new MiscType();
 
@@ -3294,7 +3367,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAReactiveArmor() {
         MiscType misc = new MiscType();
         misc.name = EquipmentType
@@ -3340,7 +3413,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAReflectiveArmor() {
         MiscType misc = new MiscType();
 
@@ -3365,7 +3438,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    
+
     public static MiscType createMine() {
         MiscType misc = new MiscType();
 

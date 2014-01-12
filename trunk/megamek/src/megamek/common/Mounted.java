@@ -140,8 +140,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // I need some way of tracking how many missiles are Santa Annas
     private int nSantaAnna = 0;
 
-    // for BA weapons, is this on the body of a trooper?
-    private boolean bodyMounted = false;
+    /**
+     * BA use locations for troopers, so we need a way to keep track of where
+     *  a piece of equipment is moutned on BA
+     */
+    private int baMountLoc;
 
     // for BA weapons, is this in a detachable weapon pack?
     private boolean isDWPMounted = false;
@@ -426,8 +429,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             desc.append(shotsLeft);
             desc.append(")");
         }
-        if (isBodyMounted()) {
+        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
             desc.append(" (Body)");
+        }
+        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+            desc.append(" (Left arm)");
+        }
+        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+            desc.append(" (Right arm)");
         }
         if (isDWPMounted()) {
             desc.append(" (DWP)");
@@ -1312,11 +1321,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isBodyMounted() {
-        return bodyMounted;
-    }
-
-    public void setBodyMounted(boolean bodyMounted) {
-        this.bodyMounted = bodyMounted;
+        return baMountLoc == BattleArmor.MOUNT_LOC_BODY;
     }
 
     public boolean isDWPMounted() {
@@ -1536,5 +1541,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
+    }
+
+    public int getBaMountLoc() {
+        return baMountLoc;
+    }
+
+    public void setBaMountLoc(int baMountLoc) {
+        this.baMountLoc = baMountLoc;
     }
 }

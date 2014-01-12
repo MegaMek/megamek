@@ -117,7 +117,8 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false, false, false, false,
+                        t.addEquipment(etype, nLoc, false,
+                                BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

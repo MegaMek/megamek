@@ -1,6 +1,14 @@
 VERSION HISTORY:
 ----------------
 v0.37.5-dev (SVN)
++ Feature: BattleArmor equipment now tracks which location on the BA suit it is 
+    mounted on.  This isn't completely necessary from a current rules 
+    standpoint, but is required to facilitate consistency in MML (we need to 
+    be able to save the location a user assigns a weapon to).  Mounted used to 
+    only track if the weapon was body mounted, now it has a state variable 
+    baMountLoc, and BattleArmor defines 4 possible locations: NONE, BODY, LARM, 
+    RARM.  Additionally, the :DWP tag can be used in conjunction with a 
+    location tag (before only one tag was possible).
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

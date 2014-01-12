@@ -27,6 +27,7 @@ package megamek.common.loaders;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
@@ -294,7 +295,9 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 }
                 if (etype != null) {
                     try {
-                        Mounted mount = mech.addEquipment(etype, loc, rearMounted, false, false, turretMounted);
+                        Mounted mount = mech.addEquipment(etype, loc,
+                                rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
+                                turretMounted);
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             // vehicular grenade launchers need to have their
                             // facing set

@@ -479,6 +479,18 @@ public class BLKFile {
             if (m.isPintleTurretMounted()) {
                 name = name + "(PT)";
             }
+            if (m.isDWPMounted()){
+                name += ":DWP";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
+                name += ":Body";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                name += ":LArm";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+                name += ":RArm";
+            }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);

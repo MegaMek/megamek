@@ -13,6 +13,8 @@ v0.37.5-dev (SVN)
 + Added construction data for a few support vehicle engine types and chassis
     modifications
 + Added construction data for BattleMech Neural Interface Unit 
++ Feature: Updated BLKFile to write out modifiers to Mounted so BattleArmor can 
+    load properly
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

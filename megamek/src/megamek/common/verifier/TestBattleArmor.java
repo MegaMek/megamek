@@ -24,6 +24,8 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
 
 
 public class TestBattleArmor extends TestEntity {
@@ -100,6 +102,63 @@ public class TestBattleArmor extends TestEntity {
                 }
             }
             return null;
+        }
+    }
+    
+    /**
+     * Checks to see if the supplied <code>Mounted</code> is valid to be mounted
+     * in the given location on the supplied <code>BattleArmor</code>.
+     * 
+     * This method will check that there is available space in the given 
+     * location make sure that weapon mounting restrictions hold.
+     * 
+     * @param ba
+     * @param newMount
+     * @param loc
+     * @return
+     */
+    public static boolean isMountLegal(BattleArmor ba, Mounted newMount, int loc) {
+        int numUsedCrits = 0;
+        int numAntiMechWeapons = 0;
+        int numAntiPersonnelWeapons = 0;
+        for (Mounted m : ba.getEquipment()){
+            if (m.getBaMountLoc() == loc){
+                numUsedCrits += m.getType().getCriticals(ba);
+                if (m.getType() instanceof WeaponType){
+                    if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                        numAntiPersonnelWeapons++;
+                    } else {
+                        numAntiMechWeapons++;
+                    }
+                }
+            }
+        }
+        
+        // Do we have free space to mount this equipment?
+        if ((numUsedCrits + newMount.getType().getCriticals(ba)) 
+                <= ba.getNumCrits(loc)) {
+            // Weapons require extra criticism
+            if (newMount.getType() instanceof WeaponType){
+                if (newMount.getType().hasFlag(WeaponType.F_INFANTRY)){
+                    if ((numAntiPersonnelWeapons + 1) <= 
+                            ba.getNumAllowedAntiPersonnelWeapons(loc)){
+                        return true;
+                    } else {
+                        return false;
+                    }                     
+                } else {
+                    if ((numAntiMechWeapons + 1) <= 
+                            ba.getNumAllowedAntiMechWeapons(loc)){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return false;
         }
     }
     

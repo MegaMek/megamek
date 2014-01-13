@@ -231,6 +231,10 @@ public class EntityListFile {
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
                         mount = slot.getMount();
                     }
+                    
+                    if (mount != null && mount.getType() instanceof BombType) {
+                        continue;
+                    }
 
                     // Destroyed locations on Mechs that contain slots
                     // that are missing but not hit or destroyed must
@@ -625,6 +629,17 @@ public class EntityListFile {
                             output.write("\"/>");
                             output.write(CommonConstants.NL);
                         }
+                    }
+                    for (Mounted m : a.getBombs()) {
+                        if (!(m.getType() instanceof BombType)) {
+                            continue;
+                        }
+                        output.write("         <bomb type=\"");
+                        output.write(m.getType().getShortName());
+                        output.write("\" load=\"");
+                        output.write(String.valueOf(m.getBaseShotsLeft()));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
                     }
                     output.write("      </bombs>");
                     output.write(CommonConstants.NL);

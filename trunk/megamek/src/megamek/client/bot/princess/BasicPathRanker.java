@@ -31,7 +31,6 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.VTOL;

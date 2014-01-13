@@ -11310,7 +11310,6 @@ public class AmmoType extends EquipmentType {
      * @param weaponType The weapon the ammo is to be used with.
      * @return TRUE if the ammmo and weapon are compatible.
      */
-    @SuppressWarnings("SimplifiableIfStatement")
     public static boolean isAmmoValid(Mounted ammo, WeaponType weaponType) {
         if (ammo == null) {
             return false;
@@ -11332,7 +11331,6 @@ public class AmmoType extends EquipmentType {
      * @param weaponType The type of weapon the ammo is to be used with.
      * @return TRUE if the ammo type and wepaon type are compatable.
      */
-    @SuppressWarnings("RedundantIfStatement")
     public static boolean isAmmoValid(AmmoType ammoType, WeaponType weaponType) {
         if (ammoType == null) {
             return false;

@@ -31,17 +31,17 @@ biped
 9
 </Armor>
 <Squad Equipment>
-ISBAFlamer
+ISBAFlamer:LA
 ISSRM4:Body
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BABasicManipulator
-BAAPMount
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BABasicManipulator:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 2

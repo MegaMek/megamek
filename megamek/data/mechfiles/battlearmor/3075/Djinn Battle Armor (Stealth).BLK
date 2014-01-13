@@ -34,10 +34,10 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISDavidLightGaussRifle
+ISDavidLightGaussRifle:RA
 Simple Camo:Body
-BABattleClaw
-BABattleClaw
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

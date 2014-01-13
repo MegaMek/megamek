@@ -31,9 +31,9 @@ biped
 2
 </Armor>
 <Squad Equipment>
-ISDavidLightGaussRifle
-BAArmoredGlove
-BAArmoredGlove
+ISDavidLightGaussRifle:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

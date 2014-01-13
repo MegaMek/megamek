@@ -34,9 +34,9 @@ biped
 7
 </Armor>
 <Squad Equipment>
-ISBAHeavyMG
+ISBAHeavyMG:RA
 ISSRM6OS:Body
-BABattleClaw
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

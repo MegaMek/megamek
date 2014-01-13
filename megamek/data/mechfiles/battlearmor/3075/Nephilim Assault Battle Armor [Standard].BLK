@@ -13,7 +13,7 @@ BattleArmor
 Nephilim Assault Battle Armor
 </Name>
 <Model>
-[Plasma]
+[Standard]
 </Model>
 <chassis>
 biped
@@ -31,10 +31,10 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISBAPlasmaRifle
+ISBAPlasmaRifle:RA
 ISSRM2OS:Body
 ISSRM2OS:Body
-BAHeavyBattleClaw
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

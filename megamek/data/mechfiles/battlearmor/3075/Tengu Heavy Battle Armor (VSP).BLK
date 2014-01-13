@@ -34,10 +34,10 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack
+ISDetachableWeaponPack:LA
 ISSVSPL:DWP
-BABasicManipulator
-BAAPMount
+BABasicManipulator:LA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 3

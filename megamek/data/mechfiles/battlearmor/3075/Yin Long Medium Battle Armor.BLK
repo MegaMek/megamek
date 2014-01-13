@@ -29,8 +29,8 @@ biped
 </Armor>
 <Squad Equipment>
 ISBAPlasmaRifle:Body
-BABattleClaw
-BABattleClaw
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS

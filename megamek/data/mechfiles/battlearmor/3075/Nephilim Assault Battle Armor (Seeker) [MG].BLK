@@ -31,15 +31,14 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISDetachableWeaponPack:Body
-ISBAMachine Gun
-ISSRM3:DWP
-BA-SRM3 Ammo
-BA-SRM3 Ammo
-BA-SRM3 Ammo
-BAHeavyBattleClaw
-ISImprovedSensors
-BASearchlight
+ISBAMachine Gun:RA
+ISSRM3:Body
+BA-SRM3 Ammo:Body
+BA-SRM3 Ammo:Body
+BA-SRM3 Ammo:Body
+BAHeavyBattleClaw:LA
+ISImprovedSensors:Body
+BASearchlight:Body
 </Squad Equipment>
 <type>
 IS Level 2

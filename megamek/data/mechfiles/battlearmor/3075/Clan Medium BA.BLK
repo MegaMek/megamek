@@ -35,12 +35,12 @@ biped
 </Armor>
 <Squad Equipment>
 CLSRM2OS:Body
-CLSRM2OS
-CLBAFlamer
-CLBAJumpBooster
-BASearchlight
-BABasicManipulator
-BABasicManipulator
+CLSRM2OS:LA
+CLBAFlamer:RA
+CLBAJumpBooster:Body
+BASearchlight:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -51,3 +51,15 @@ Clan Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+
+

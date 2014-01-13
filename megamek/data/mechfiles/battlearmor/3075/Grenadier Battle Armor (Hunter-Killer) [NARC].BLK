@@ -31,37 +31,37 @@ biped
 9
 </Armor>
 <Squad Equipment>
-ISFiredrakeIncendiaryNeedler
+ISFiredrakeIncendiaryNeedler:RA
 ISSRM5:Body
-BA-SRM5 Ammo
-BA-SRM5 Ammo
-BA-SRM5 Ammo
-BA-SRM5 Ammo
+BA-SRM5 Ammo:Body
+BA-SRM5 Ammo:Body
+BA-SRM5 Ammo:Body
+BA-SRM5 Ammo:Body
 BABasicManipulator
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 4 Equipment>
 <type>
 IS Level 2

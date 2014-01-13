@@ -183,10 +183,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     saEquip[x] = saEquip[x].replace(":Body", "");
                 } else if  (saEquip[x].contains(":LArm")){
                     mountLoc = BattleArmor.MOUNT_LOC_LARM;
-                    saEquip[x] = saEquip[x].replace(":LArm", "");
+                    saEquip[x] = saEquip[x].replace(":LA", "");
                 } if  (saEquip[x].contains(":RArm")){
                     mountLoc = BattleArmor.MOUNT_LOC_RARM;
-                    saEquip[x] = saEquip[x].replace(":RArm", "");
+                    saEquip[x] = saEquip[x].replace(":RA", "");
                 }
                 boolean dwpMounted = saEquip[x].contains(":DWP");
                 saEquip[x] = saEquip[x].replace(":DWP", "");

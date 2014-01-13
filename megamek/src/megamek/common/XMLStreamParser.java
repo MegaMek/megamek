@@ -624,7 +624,7 @@ public class XMLStreamParser implements XMLResponder {
                 bombChoices = ((Aero) entity).getBombChoices();
                 String type = (String) attr.get(TYPE);
                 String load = (String) attr.get(LOAD);
-                bombChoices[BombType.getBombTypeFromInternalName(type)] = Integer.parseInt(load);
+                bombChoices[BombType.getBombTypeFromInternalName(type)] += Integer.parseInt(load);
             }
             ((Aero) entity).setBombChoices(bombChoices);
         } else if (name.equals(FLUFF)) {
@@ -1783,6 +1783,25 @@ public class XMLStreamParser implements XMLResponder {
 
             } // End finish-location
 
+        } else if (name.equals(BOMBS)) {
+
+            // We should be in the middle of parsing an Entity.
+            if (entity == null) {
+                warning.append("Found end of bomb set, but not parsing an Entity.\n");
+            }
+
+            // Are we in the middle of parsing an Entity's location?
+            else if (bombset == Entity.LOC_NONE) {
+                warning.append("Found end of bomb set, but not parsing a bomb set.\n");
+
+            } else {
+                // Reset the location.
+                bombset = Entity.LOC_NONE;
+
+            } // End finish-location
+
+        } else if (name.equals(BOMB)) {
+            // Do nothing.
         } else if (name.equals(ARMOR)) {
             // Do nothing.
         } else if (name.equals(SLOT)) {

@@ -52,7 +52,6 @@ class RankedPath implements Comparable<RankedPath> {
         return 0;
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) {

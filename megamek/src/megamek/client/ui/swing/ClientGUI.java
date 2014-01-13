@@ -69,6 +69,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -1267,6 +1268,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     entity.setOwner(player);
                     if (reinforce) {
                     	entity.setDeployRound(client.getGame().getRoundCount()+1);
+                    	entity.setGame(client.getGame());
+                    	if (entity instanceof Aero) {
+                    	    ((Aero)entity).applyBombs();
+                    	}
                     }
                 }
                 client.sendAddEntity(loadedUnits);

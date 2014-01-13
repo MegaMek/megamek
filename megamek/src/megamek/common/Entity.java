@@ -2764,6 +2764,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return mounted;
     }
 
+    protected void addBomb(Mounted mounted, int loc)
+            throws LocationFullException {
+        mounted.setBombMounted(true);
+        addEquipment(mounted, loc, false);
+    }
+
     public Mounted addWeaponGroup(EquipmentType etype, int loc)
             throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
@@ -2793,12 +2799,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         addEquipment(mounted, loc, rearMounted);
-    }
-
-    protected void addBomb(Mounted mounted, int loc)
-            throws LocationFullException {
-        mounted.setBombMounted(true);
-        addEquipment(mounted, loc, false);
     }
 
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,

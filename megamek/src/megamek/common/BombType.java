@@ -18,6 +18,7 @@ package megamek.common;
 
 public class BombType extends AmmoType {
 
+    public static final int B_NONE    = -1;
     public static final int B_HE      = 0;
     public static final int B_CLUSTER = 1;
     public static final int B_LG      = 2;
@@ -71,7 +72,7 @@ public class BombType extends AmmoType {
                 return i;
             }
         }
-        return -1;
+        return B_NONE;
     }
     
     public static int getBombTypeFromInternalName(String name) {
@@ -80,7 +81,7 @@ public class BombType extends AmmoType {
                 return i;
             }
         }
-        return -1;
+        return B_NONE;
     }
 
     public static String getBombWeaponName(int type) {

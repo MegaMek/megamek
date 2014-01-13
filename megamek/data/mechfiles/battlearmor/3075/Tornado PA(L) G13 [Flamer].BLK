@@ -31,9 +31,9 @@ biped
 2
 </Armor>
 <Squad Equipment>
-ISBAFlamer
-BAArmoredGlove
-BAArmoredGlove
+ISBAFlamer:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

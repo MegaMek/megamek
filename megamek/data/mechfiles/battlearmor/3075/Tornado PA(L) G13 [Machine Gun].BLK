@@ -31,9 +31,9 @@ biped
 2
 </Armor>
 <Squad Equipment>
-BA Machine Gun
-BAArmoredGlove
-BAArmoredGlove
+BA Machine Gun:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

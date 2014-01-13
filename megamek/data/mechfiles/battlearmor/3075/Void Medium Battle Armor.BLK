@@ -33,11 +33,11 @@ biped
 <Squad Equipment>
 ISSupportPPC:Body
 ISBAJumpBooster:Body
-BABasicManipulator
-BAArmoredGlove
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3067

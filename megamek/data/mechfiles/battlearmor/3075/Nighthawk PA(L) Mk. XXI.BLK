@@ -37,12 +37,11 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Mauser 960 Assault System
-Single-Hex ECM
-Standard Stealth
-BAArmoredGlove
-BAArmoredGlove
-BAExtendedLifeSupport
+Mauser 960 Assault System:RA
+Single-Hex ECM:Body
+BAArmoredGlove:LA
+BAArmoredGlove:LA
+BAExtendedLifeSupport:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -85,7 +84,7 @@ biped
 </armor_tech>
 
 <armor_type>
-28
+32
 </armor_type>
 
 

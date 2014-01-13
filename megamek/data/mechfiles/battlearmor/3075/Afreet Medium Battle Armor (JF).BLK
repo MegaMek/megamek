@@ -34,11 +34,10 @@ biped
 5
 </Armor>
 <Squad Equipment>
-CLBAAPGaussRifle
-BABattleClawVibro
-BABattleClawVibro
-CLBAJumpBooster
-BA-Fire Resistant Armor
+CLBAAPGaussRifle:RA
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+CLBAJumpBooster:Body
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -49,3 +48,13 @@ Clan Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+35	
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

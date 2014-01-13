@@ -37,11 +37,11 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Heavy Grenade Launcher
-Mauser 960 Assault System
-Standard Stealth
-BAArmoredGlove
-BAArmoredGlove
+Heavy Grenade Launcher:LA
+Mauser 960 Assault System:RA
+BAExtendedLifeSupport:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -85,7 +85,7 @@ biped
 </armor_tech>
 
 <armor_type>
-28
+32
 </armor_type>
 
 

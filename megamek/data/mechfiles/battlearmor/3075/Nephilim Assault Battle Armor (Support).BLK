@@ -31,12 +31,10 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISSmallLaser
-ISDetachableWeaponPack:Body
-RL4:DWP
-ISDetachableWeaponPack:Body
-RL4:DWP
-BAHeavyBattleClaw
+ISSmallLaser:RA
+RL4:Body
+RL4:Body
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

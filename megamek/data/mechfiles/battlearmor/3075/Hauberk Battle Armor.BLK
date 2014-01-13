@@ -28,15 +28,15 @@ biped
 11
 </Armor>
 <Squad Equipment>
-ISSmall Laser
+ISSmall Laser:RA
 ISLRM5:Body
-BAISLRM5 Ammo
-BAISLRM5 Ammo
-BAISLRM5 Ammo
-BAISLRM5 Ammo
-BAISLRM5 Ammo
-BAISLRM5 Ammo
-BABattleClaw
+BAISLRM5 Ammo:Body
+BAISLRM5 Ammo:Body
+BAISLRM5 Ammo:Body
+BAISLRM5 Ammo:Body
+BAISLRM5 Ammo:Body
+BAISLRM5 Ammo:Body
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

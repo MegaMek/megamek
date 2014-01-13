@@ -34,12 +34,12 @@ biped
 9
 </Armor>
 <Squad Equipment>
-CLERMicroLaser
+CLERMicroLaser:RA
 CLSRM3OS:Body
-CLBAJumpBooster
-BASearchlight
-BABasicManipulator
-BAHeavyBattleClaw
+CLBAJumpBooster:Body
+BASearchlight:Body
+BABasicManipulator:RA
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -50,3 +50,13 @@ Clan Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

@@ -28,10 +28,10 @@ biped
 11
 </Armor>
 <Squad Equipment>
-ISSmallPulseLaser
+ISSmallPulseLaser:RA
 ISBAMagshotGR:Body
 ISBAMagshotGR:Body
-BABattleClaw
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

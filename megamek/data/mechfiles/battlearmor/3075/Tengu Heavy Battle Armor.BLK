@@ -31,10 +31,10 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISBAPlasmaRifle
-BABasicManipulator
-BABasicManipulator
-BAAPMount
+ISBAPlasmaRifle:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 2

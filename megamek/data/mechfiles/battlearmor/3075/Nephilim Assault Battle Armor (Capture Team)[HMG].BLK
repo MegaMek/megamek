@@ -32,10 +32,10 @@ biped
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:Body
-ISBAHeavyMG
+ISBAHeavyMG:RA
 ISBATaser:DWP
 ISLRM2OS:Body
-BAHeavyBattleClaw
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 3

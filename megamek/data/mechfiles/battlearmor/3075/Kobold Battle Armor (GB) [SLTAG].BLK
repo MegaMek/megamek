@@ -34,12 +34,12 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSmallLaser
-BAArmoredGlove
-BAArmoredGlove
+ISSmallLaser:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISLightTAG
+ISLightTAG:LA
 </Trooper 1 Equipment>
 <type>
 IS Level 2

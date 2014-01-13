@@ -34,11 +34,11 @@ biped
 13
 </Armor>
 <Squad Equipment>
-IS BC3i
-ISLightTAG
-BABasicManipulator
-BABasicManipulator
-BAAPMount
+IS BC3i:Body
+ISLightTAG:LA
+BABasicManipulator:RA
+BABasicManipulator:LA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 4

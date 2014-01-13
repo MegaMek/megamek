@@ -34,12 +34,11 @@ biped
 5
 </Armor>
 <Squad Equipment>
-Clan BA Heavy Machine Gun
-Single-Hex ECM
-CLBAJumpBooster
-BA-Fire Resistant Armor
-BABattleClawVibro
-BABattleClawVibro
+Clan BA Heavy Machine Gun:RA
+Single-Hex ECM:Body
+CLBAJumpBooster:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -51,5 +50,13 @@ Clan Level 2
 Jump
 </motion_type>
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+

@@ -45,12 +45,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLBAMG
-CLSRM3OS
+CLBAMG:RA
 CLSRM3OS:Body
-BASearchlight
-BABasicManipulator
-BABasicManipulator
+CLSRM3OS:Body
+BASearchlight:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>
@@ -66,5 +66,12 @@ Jump
 </motion_type>
 
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

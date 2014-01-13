@@ -41,11 +41,10 @@ quad
 </Armor>
 
 <Squad Equipment>
-Firedrake Needler
-Firedrake Needler
-Firedrake Needler
-Firedrake Needler
-Basic Stealth
+Firedrake Needler:Body
+Firedrake Needler:Body
+Firedrake Needler:Body
+Firedrake Needler:Body
 </Squad Equipment>
 
 <type>
@@ -61,5 +60,12 @@ Leg
 </motion_type>
 
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

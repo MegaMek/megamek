@@ -35,8 +35,8 @@ biped
 34
 </armor_type>
 <Squad Equipment>
-ISHeavyGL
-BABasicManipulator
+ISHeavyGL:LA
+BABasicManipulator:LA
 </Squad Equipment>
 <type>
 IS Level 2

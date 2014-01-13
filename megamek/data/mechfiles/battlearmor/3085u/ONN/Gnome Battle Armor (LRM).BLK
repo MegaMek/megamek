@@ -34,13 +34,13 @@ biped
 14
 </Armor>
 <Squad Equipment>
-CLBAAPGaussRifle
+CLBAAPGaussRifle:RA
 CLLRM4:Body
-BACLLRM4 Ammo
-BACLLRM4 Ammo
-BACLLRM4 Ammo
-BACLLRM4 Ammo
-BAHeavyBattleClaw
+BACLLRM4 Ammo:Body
+BACLLRM4 Ammo:Body
+BACLLRM4 Ammo:Body
+BACLLRM4 Ammo:Body
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -52,5 +52,12 @@ Clan Level 2
 Jump
 </motion_type>
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

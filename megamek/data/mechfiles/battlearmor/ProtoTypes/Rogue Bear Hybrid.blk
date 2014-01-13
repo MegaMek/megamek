@@ -49,14 +49,13 @@ biped
 </armor_tech>
 
 <Squad Equipment>
-CLBAJumpBooster
-BAAPMount
-BAAPMount
-BABasicManipulator
-BABasicManipulator
-CLMG
-CLMG
-Clan Machine Gun Ammo - Half
+CLBAJumpBooster:Body
+BAAPMount:LA
+BAAPMount:RA
+BABasicManipulator:LA
+BABasicManipulator:RA
+CLBALightMG:RA
+CLBALightMG:LA
 Camo System
 </Squad Equipment>
 
@@ -76,6 +75,4 @@ TRO:Prototype
 Leg
 </motion_type>
 
-<History>
-There is no option for 50 rounds of Machine Gun ammo for the Clan Machine Gun.  So had to pick the 100 round option.
-</history>
+

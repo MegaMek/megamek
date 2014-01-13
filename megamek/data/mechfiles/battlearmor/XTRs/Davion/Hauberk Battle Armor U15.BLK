@@ -31,19 +31,18 @@ biped
 11
 </Armor>
 <Squad Equipment>
-ClDetachableWeaponPack
+ClDetachableWeaponPack:LA
 CLERSmallLaser:DWP
-ClDetachableWeaponPack
+ClDetachableWeaponPack:RA
 CLMicroPulseLaser:DWP
-ISDetachableWeaponPack
-ISBAMagshotGR:DWP:Body
+ClDetachableWeaponPack:Body
+ISBAMagshotGR:DWP
 CLSRM2:Body
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-Single-Hex ECM
-Mimetic Armor
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+Single-Hex ECM:Body
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental
@@ -52,8 +51,15 @@ Mixed (IS Chassis) Experimental
 3076
 </year>
 <source>
-Jihad
+XTRO Davion
 </source>
 <motion_type>
 Leg
 </motion_type>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

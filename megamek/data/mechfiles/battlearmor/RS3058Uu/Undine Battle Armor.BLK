@@ -31,9 +31,9 @@ biped
 8
 </Armor>
 <Squad Equipment>
-CLERMicroLaser
+CLERMicroLaser:RA
 CLLRM5OS:Body
-BABattleClaw
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2

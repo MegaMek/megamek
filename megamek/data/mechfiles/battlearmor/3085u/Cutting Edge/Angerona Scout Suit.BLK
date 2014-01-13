@@ -36,13 +36,20 @@ biped
 6
 </Armor>
 
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
-ISLight Recoilless Rifle
-BAAPMount
-BABasicManipulator
-BABasicManipulator
-Camo System
-Improved Stealth
+ISLight Recoilless Rifle:RA
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
+Camo System:Body
 </Squad Equipment>
 
 <type>
@@ -58,5 +65,5 @@ Leg
 </motion_type>
 
 <source>
-Dark Age
+TRO 3085
 </source>

@@ -34,12 +34,12 @@ biped
 10
 </Armor>
 <Squad Equipment>
-Clan BA Machine Gun
-ISImprovedSensors
-BAHeatSensor
-BARemoteSensorDispenser
-BABattleClaw
-BAAPMount
+Clan BA Machine Gun:RA
+ISImprovedSensors:Body
+BAHeatSensor:Body
+BARemoteSensorDispenser:Body
+BABattleClaw:RA
+BAAPMount:LA
 </Squad Equipment>
 <type>
 Clan Level 2

@@ -45,12 +45,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISBAJumpBooster
-BACuttingTorch
-BASpaceOperationsAdaptation
-Basic Stealth
-BABattleClaw
-BAArmoredGlove
+ISBAJumpBooster:Body
+BACuttingTorch:RA
+BASpaceOperationsAdaptation:Body
+BABattleClaw:RA
+BAArmoredGlove:LA
+BAAPMount:LA
 </Squad Equipment>
 
 <type>
@@ -66,5 +66,12 @@ Jump
 </motion_type>
 
 <source>
-Civil War
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

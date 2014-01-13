@@ -39,8 +39,8 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISSmall Laser
-BABattleClaw
+ISSmall Laser:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

@@ -34,12 +34,12 @@ biped
 14
 </Armor>
 <Squad Equipment>
-CLBearhunter Superheavy AC
-CLBearhunter Superheavy AC
+CLBearhunter Superheavy AC:LA
+CLBearhunter Superheavy AC:RA
 Clan Advanced SRM-2:Body
-BA-Advanced SRM-2 Ammo
-BA-Advanced SRM-2 Ammo
-BAHeavyBattleClaw
+BA-Advanced SRM-2 Ammo:Body
+BA-Advanced SRM-2 Ammo:Body
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2

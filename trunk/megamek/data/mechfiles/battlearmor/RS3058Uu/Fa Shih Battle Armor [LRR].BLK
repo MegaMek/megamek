@@ -39,11 +39,11 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISLight Recoilless Rifle
-BA-Magnetic Clamp
-BAAPMount
-BABasicManipulatorMineClearance
-BABasicManipulatorMineClearance
+ISLight Recoilless Rifle:RA
+BA-Magnetic Clamp:Body
+BAAPMount:LA
+BABasicManipulatorMineClearance:LA
+BABasicManipulatorMineClearance:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
 Mine:Body

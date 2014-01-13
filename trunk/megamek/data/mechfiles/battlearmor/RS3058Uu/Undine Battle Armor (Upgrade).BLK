@@ -34,13 +34,13 @@ biped
 8
 </Armor>
 <Squad Equipment>
-CLERMicroLaser
+CLERMicroLaser:RA
 CLLRM3:Body
-BACLLRM3 Ammo
-BACLLRM3 Ammo
-BACLLRM3 Ammo
-BACLLRM3 Ammo
-BABattleClaw
+BACLLRM3 Ammo:Body
+BACLLRM3 Ammo:Body
+BACLLRM3 Ammo:Body
+BACLLRM3 Ammo:Body
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2

@@ -35,8 +35,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISLightTAG
-BABattleClaw
+ISLightTAG:LA
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

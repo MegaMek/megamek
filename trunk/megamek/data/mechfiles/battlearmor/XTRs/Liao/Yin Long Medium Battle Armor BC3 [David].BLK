@@ -32,10 +32,9 @@ biped
 </Armor>
 <Squad Equipment>
 ISDavidLightGaussRifle:Body
-Mimetic Armor
-BABattleClaw
-BABattleClaw
-BattleArmorC3
+BABattleClaw:LA
+BABattleClaw:RA
+BattleArmorC3:Body
 </Squad Equipment>
 <type>
 IS Level 4
@@ -49,3 +48,10 @@ Jihad
 <motion_type>
 Leg
 </motion_type>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

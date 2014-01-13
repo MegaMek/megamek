@@ -30,14 +30,22 @@ biped
 <Armor>
 16
 </Armor>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
 <Squad Equipment>
-CLBAAPGaussRifle
-CLBAAPGaussRifle
+CLBAAPGaussRifle:RA
+CLBAAPGaussRifle:LA
 CLBAAPGaussRifle:Body
 CLBAAPGaussRifle:Body
-BABasicManipulator
-BABasicManipulator
-BA-Fire Resistant Armor
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -49,5 +57,5 @@ Clan Level 2
 Leg
 </motion_type>
 <source>
-Dark Age
+TRO 3085
 </source>

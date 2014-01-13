@@ -45,9 +45,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-Standard Stealth
-BAArmoredGlove
-BAArmoredGlove
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
 <type>
@@ -63,5 +62,12 @@ Jump
 </motion_type>
 
 <source>
-Star League
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

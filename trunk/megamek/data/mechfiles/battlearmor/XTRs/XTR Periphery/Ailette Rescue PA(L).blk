@@ -37,12 +37,12 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISImprovedSensors
-BASpaceOperationsAdaptation
-BAExtendedLifeSupport
-ISMechanicalJumpBooster
-BASalvageArm
-BAArmoredGlove
+ISImprovedSensors:RA
+BASpaceOperationsAdaptation:Body
+BAExtendedLifeSupport:Body
+ISMechanicalJumpBooster:Body
+BASalvageArm:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
 <source>
@@ -68,4 +68,11 @@ biped
 <weightclass>
 0
 </weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
 

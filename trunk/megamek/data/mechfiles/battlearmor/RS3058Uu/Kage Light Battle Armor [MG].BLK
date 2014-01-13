@@ -35,9 +35,10 @@ biped
 </Armor>
 
 <Squad Equipment>
-BAArmoredGlove
-BAArmoredGlove
-BAPartialWing
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAPartialWing:Body
+BAAPMount:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBAMachine Gun

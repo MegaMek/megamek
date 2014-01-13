@@ -34,28 +34,27 @@ biped
 6
 </Armor>
 <Squad Equipment>
-BABattleClaw
-Mimetic Armor
+BABattleClaw:LA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:RA
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:RA
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:RA
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc
-BA-Compact Narc Ammo
-BA-Compact Narc Ammo
+ISCompact Narc:RA
+BA-Compact Narc Ammo:Body
+BA-Compact Narc Ammo:Body
 </Trooper 4 Equipment>
 <type>
 IS Level 2
@@ -67,5 +66,12 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Dark Age
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

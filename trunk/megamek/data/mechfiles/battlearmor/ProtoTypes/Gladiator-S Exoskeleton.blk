@@ -37,23 +37,11 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BAAPMount
-BAAPMount
-BA-Magnetic Clamp
-ISBAJumpBooster
+BAAPMount:RA
+BAAPMount:LA
+BA-Magnetic Clamp:Body
+ISBAJumpBooster:Body
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
 
 <source>
 TRO:Prototypes

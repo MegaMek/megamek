@@ -34,12 +34,12 @@ biped
 10
 </Armor>
 <Squad Equipment>
-CLERMicroLaser
+CLERMicroLaser:RA
 CLSRM2:Body
-BASRM2 Ammo
-BASRM2 Ammo
-BABattleClaw
-BAAPMount
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BABattleClaw:RA
+BAAPMount:LA
 </Squad Equipment>
 <type>
 Clan Level 2

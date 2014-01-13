@@ -35,14 +35,14 @@ biped
 </Armor>
 
 <armor_type>
-32
+33
 </armor_type>
 
 <Squad Equipment>
-ISDavidLightGaussRifle
-BAAPMount
-BABasicManipulator
-BABasicManipulator
+ISDavidLightGaussRifle:RA
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 2
@@ -54,7 +54,7 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-TRO 3058U
+TRO 3058 Upgrade
 </source>
 <armor_tech>
 3

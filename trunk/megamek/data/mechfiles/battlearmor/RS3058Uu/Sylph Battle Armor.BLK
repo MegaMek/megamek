@@ -31,10 +31,10 @@ biped
 5
 </Armor>
 <Squad Equipment>
-CLMicroPulseLaser
+CLMicroPulseLaser:RA
 CLMicro Bomb:Body
-BA-Micro Bomb Ammo
-BABattleClaw
+BA-Micro Bomb Ammo:Body
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2

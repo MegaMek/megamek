@@ -31,21 +31,21 @@ biped
 15
 </Armor>
 <Squad Equipment>
-ISSupportPPC
-ISSupportPPC
+ISSupportPPC:RA
+ISSupportPPC:RA
 ISMRM1:Body
 ISMRM1:Body
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-BAHeavyBattleClaw
-BAAPMount
-BAAPMount
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+BAHeavyBattleClaw:LA
+BAAPMount:Body
+BAAPMount:Body
 </Squad Equipment>
 <type>
 IS Level 2

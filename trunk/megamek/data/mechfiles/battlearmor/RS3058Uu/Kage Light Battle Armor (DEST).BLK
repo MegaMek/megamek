@@ -1,4 +1,4 @@
-#building block data file
+thats#building block data file
 <BlockVersion>
 1
 </BlockVersion>
@@ -34,10 +34,11 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSmall Laser
-BARemoteSensorDispenser
-BAArmoredGlove
-BAArmoredGlove
+ISSmall Laser:RA
+BARemoteSensorDispenser:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 2

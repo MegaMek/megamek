@@ -36,10 +36,10 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISBAFlamer
-BABattleClaw
-BAAPMount
-ISImprovedSensors
+ISBAFlamer:RA
+BABattleClaw:RA
+BAAPMount:LA
+ISImprovedSensors:Body
 </Squad Equipment>
 <type>
 IS Level 2

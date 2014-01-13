@@ -34,8 +34,8 @@ biped
 9
 </Armor>
 <Squad Equipment>
-BA-ISTsunamiHeavyGaussRifle
-BABattleClaw
+BA-ISTsunamiHeavyGaussRifle:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

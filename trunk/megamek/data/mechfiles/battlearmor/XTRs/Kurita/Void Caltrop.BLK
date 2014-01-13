@@ -34,10 +34,9 @@ biped
 7
 </Armor>
 <Squad Equipment>
-CLERSmallLaser
-Improved Stealth
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+CLERSmallLaser:RA
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
 Mine:Body
@@ -62,8 +61,15 @@ Mixed (IS Chassis) Experimental
 3078
 </year>
 <source>
-Jihad
+XTR Kurita
 </source>
 <motion_type>
 Jump
 </motion_type>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

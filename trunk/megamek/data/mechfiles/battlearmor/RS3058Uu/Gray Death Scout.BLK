@@ -36,10 +36,11 @@ biped
 </armor_type>
 
 <Squad Equipment>
-Beagle Active Probe
-ISBAJumpBooster
-BAArmoredGlove
-BAArmoredGlove
+Beagle Active Probe:Body
+ISBAJumpBooster:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 2

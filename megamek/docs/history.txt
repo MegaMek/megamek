@@ -16,6 +16,8 @@ v0.37.5-dev (SVN)
 + Feature: Updated BLKFile to write out modifiers to Mounted so BattleArmor can 
     load properly
 + Bug: Aeros, MUL, Reinforce and Bombs not working right still
++ Bug: TestAero would fail Aeros for mounted bombs, this has been fixed (for 
+    real this time)
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

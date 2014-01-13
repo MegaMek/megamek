@@ -25,7 +25,7 @@ G17
 </year>
 
 <type>
-Mixed (IS Chassis)
+Mixed (IS Chassis) Experimental
 </type>
 
 <motion_type>
@@ -37,13 +37,9 @@ VTOL
 </cruiseMP>
 
 <Squad Equipment>
-Improved Stealth
-BAArmoredGlove
-BAArmoredGlove
-SwarmMek
-StopSwarm
-LegAttack
-Infantry Auto Rifle
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAExtendedLifeSupport
 </Squad Equipment>
 
 <source>
@@ -69,4 +65,11 @@ biped
 <weightclass>
 0
 </weightclass>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

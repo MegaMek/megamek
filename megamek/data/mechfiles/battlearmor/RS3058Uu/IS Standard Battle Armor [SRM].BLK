@@ -35,8 +35,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSRM2OS
-BABattleClaw
+ISSRM2OS:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

@@ -39,11 +39,11 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISLightTAG
-BA-Magnetic Clamp
-BAAPMount
-BABasicManipulatorMineClearance
-BABasicManipulatorMineClearance
+ISLightTAG:RA
+BA-Magnetic Clamp:Body
+BAAPMount:LA
+BABasicManipulatorMineClearance:LA
+BABasicManipulatorMineClearance:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
 Mine:Body

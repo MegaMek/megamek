@@ -40,13 +40,21 @@ biped
 10
 </Armor>
 
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
 Medium Laser:Body
 Medium Laser:Body
-BAAPMount
-BAAPMount
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+BAAPMount:RA
+BAAPMount:LA
+BAHeavyBattleClaw:RA
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 
 <type>

@@ -45,10 +45,9 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLBAAPGaussRifle
+CLBAAPGaussRifle:RA
 CLSRM2OS:Body
-BABattleClaw
-BA-Fire Resistant Armor
+BABattleClaw:LA
 </Squad Equipment>
 
 <type>
@@ -64,5 +63,12 @@ Jump
 </motion_type>
 
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

@@ -41,11 +41,11 @@ Jump
 </jumpingMP>
 
 <Squad Equipment>
-ISMedium Recoilless Rifle
-BAAPMount
-BAHeavyBattleClaw
-BAHeavyBattleClaw
-ISMechanicalJumpBooster
+ISMedium Recoilless Rifle:RA
+BAAPMount:LA
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+ISMechanicalJumpBooster:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

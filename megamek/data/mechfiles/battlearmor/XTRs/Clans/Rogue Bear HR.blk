@@ -41,14 +41,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-BAPartialWing
-BAAPMount
-BABattleClaw
-BABattleClaw
-CLMG
-Clan Machine Gun Ammo - Half
-Basic Stealth
-Camo System
+BAPartialWing:Body
+BAAPMount:RA
+BABattleClaw:LA
+BABattleClaw:RA
+CLBAMG
+Camo System:Body
 </Squad Equipment>
 
 <type>
@@ -67,6 +65,9 @@ XTR Clans
 Leg
 </motion_type>
 
-<History>
-There is no option for 50 rounds of Machine Gun ammo for the Clan Machine Gun.  So had to pick the 100 round option.
-</history>
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

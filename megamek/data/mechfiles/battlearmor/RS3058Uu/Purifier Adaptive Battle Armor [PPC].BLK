@@ -34,8 +34,8 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISSupportPPC
-BABattleClaw
+ISSupportPPC:LA
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

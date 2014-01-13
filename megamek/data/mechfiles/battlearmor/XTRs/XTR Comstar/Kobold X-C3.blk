@@ -37,36 +37,13 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BAArmoredGlove
-BAArmoredGlove
-ISBC3i
-Basic Stealth
-BAArmoredGlove
-BAArmoredGlove
-Basic Stealth
-ISBC3i
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+ISBC3i:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
-<Trooper 6 Equipment>
-</Trooper 6 Equipment>
-
 <source>
-Jihad
+XTR Comstar
 </source>
 
 <chassis>
@@ -88,4 +65,11 @@ biped
 <weightclass>
 1
 </weightclass>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+7
+</armor_tech>
 

@@ -39,8 +39,8 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISBAFlamer
-BABattleClaw
+ISBAFlamer:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

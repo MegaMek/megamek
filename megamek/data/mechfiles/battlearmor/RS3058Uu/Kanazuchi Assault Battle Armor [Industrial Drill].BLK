@@ -31,12 +31,12 @@ biped
 15
 </Armor>
 <Squad Equipment>
-IS Medium Laser
-ISSRM2OS
-ISSRM2OS
-BAIndustrialDrill
-BAAPMount
-BAAPMount
+IS Medium Laser:RA
+ISSRM2OS:Body
+ISSRM2OS:Body
+BAIndustrialDrill:LA
+BAAPMount:Body
+BAAPMount:Body
 </Squad Equipment>
 <type>
 IS Level 2

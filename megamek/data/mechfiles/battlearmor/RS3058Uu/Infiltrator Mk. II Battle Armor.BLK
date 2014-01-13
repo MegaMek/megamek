@@ -39,12 +39,12 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISBAMagshotGR
-Single-Hex ECM
-Parafoil
-BAAPMount
-BABasicManipulator
-BABasicManipulator
+ISBAMagshotGR:RA
+Single-Hex ECM:Body
+Parafoil:Body
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 2

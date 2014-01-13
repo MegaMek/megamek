@@ -34,12 +34,12 @@ biped
 14
 </Armor>
 <Squad Equipment>
-CLMedium Recoilless Rifle
-CLLRM2OS
+CLMedium Recoilless Rifle:RA
+CLLRM2OS:Body
 Clan Advanced SRM-2:Body
-BA-Advanced SRM-2 Ammo
-BA-Advanced SRM-2 Ammo
-BAHeavyBattleClaw
+BA-Advanced SRM-2 Ammo:Body
+BA-Advanced SRM-2 Ammo:Body
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 <type>
 Clan Level 2

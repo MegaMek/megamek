@@ -31,9 +31,11 @@ biped
 11
 </Armor>
 <Squad Equipment>
-ClDetachableWeaponPack
-CLERMediumPulseLaser:DWP:Body
-BAHeavyBattleClaw
+ClDetachableWeaponPack:Body
+CLERMediumPulseLaser:DWP
+BAHeavyBattleClaw:RA
+BAHeavyBattleClaw:LA
+BAAPMount:Body
 BAAPMount:Body
 </Squad Equipment>
 <type>
@@ -43,8 +45,15 @@ Mixed (IS Chassis) Experimental
 3076
 </year>
 <source>
-Jihad
+XTR Gladiators
 </source>
 <motion_type>
 Leg
 </motion_type>
+
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

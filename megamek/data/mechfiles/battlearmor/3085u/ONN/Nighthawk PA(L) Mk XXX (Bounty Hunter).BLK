@@ -45,8 +45,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-BAArmoredGlove
-BAArmoredGlove
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
 <type>
@@ -62,5 +62,12 @@ Leg
 </motion_type>
 
 <source>
-Succession Wars
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+
+</armor_type>
+<armor_tech>
+
+</armor_tech>

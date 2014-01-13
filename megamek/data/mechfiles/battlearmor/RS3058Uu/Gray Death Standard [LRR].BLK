@@ -36,10 +36,10 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISLight Recoilless Rifle
-BABattleClaw
-BAAPMount
-ISImprovedSensors
+ISLight Recoilless Rifle:RA
+BABattleClaw:RA
+BAAPMount:LA
+ISImprovedSensors:Body
 </Squad Equipment>
 <type>
 IS Level 2

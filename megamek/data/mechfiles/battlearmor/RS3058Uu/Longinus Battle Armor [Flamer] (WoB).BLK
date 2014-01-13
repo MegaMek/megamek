@@ -44,10 +44,10 @@ TRO 3058 Upgrade
 </armor_tech>
 
 <Squad Equipment>
-ISBAFlamer
+ISBAFlamer:RA
 ISSRM2OS:Body
-BABattleClaw
-BAAPMount
+BABattleClaw:RA
+BAAPMount:LA
 </Squad Equipment>
 <type>
 IS Level 2

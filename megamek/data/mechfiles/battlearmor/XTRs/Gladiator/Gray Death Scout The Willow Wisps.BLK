@@ -35,10 +35,8 @@ biped
 </Armor>
 <Squad Equipment>
 CLMicroPulseLaser:Body
-BAArmoredGlove
-BAArmoredGlove
-BattleArmorC3
-Improved Stealth
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental
@@ -50,5 +48,12 @@ Mixed (IS Chassis) Experimental
 Jump
 </motion_type>
 <source>
-Jihad
+XTR Gladiators
 </source>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

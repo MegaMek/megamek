@@ -35,8 +35,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-IS ER Small Laser
-BABattleClaw
+IS ER Small Laser:LA
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

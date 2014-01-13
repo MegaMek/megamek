@@ -45,12 +45,11 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISBAMagshotGR
-BABasicManipulator
-BABasicManipulator
-BA-Magnetic Clamp
-Single-Hex ECM
-Standard Stealth
+ISBAMagshotGR:RA
+BABasicManipulator:LA
+BABasicManipulator:RA
+BA-Magnetic Clamp:Body
+Single-Hex ECM:Body
 </Squad Equipment>
 
 <type>
@@ -66,5 +65,12 @@ Jump
 </motion_type>
 
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -40,13 +40,21 @@ biped
 10
 </Armor>
 
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
 ISMediumPulseLaser:Body
 ISBAFlamer:Body
-BAAPMount
-BAAPMount
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+BAAPMount:RA
+BAAPMount:LA
+BAHeavyBattleClaw:RA
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 
 <type>
@@ -62,5 +70,5 @@ Leg
 </motion_type>
 
 <source>
-Dark Age
+TRO 3085
 </source>

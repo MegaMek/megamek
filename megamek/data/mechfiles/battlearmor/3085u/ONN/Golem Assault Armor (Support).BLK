@@ -31,18 +31,17 @@ biped
 18
 </Armor>
 <Squad Equipment>
-BAAPMount
-BAAPMount
+BAAPMount:LA
+BAAPMount:RA
 Clan Advanced SRM-6:Body
-BA-Advanced SRM-6 Ammo
-BA-Advanced SRM-6 Ammo
-BA-Advanced SRM-6 Ammo
-BA-Advanced SRM-6 Ammo
-BA-Advanced SRM-6 Ammo
-BA-Advanced SRM-6 Ammo
-BA-Fire Resistant Armor
-BABasicManipulator
-BABasicManipulator
+BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -54,5 +53,12 @@ Clan Level 2
 Leg
 </motion_type>
 <source>
-Jihad
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

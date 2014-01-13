@@ -34,14 +34,14 @@ biped
 6
 </Armor>
 <armor_type>
-32
+33
 </armor_type>
 
 <Squad Equipment>
-ISSmall Laser
-BAAPMount
-BABasicManipulator
-BABasicManipulator
+ISSmall Laser:RA
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 2

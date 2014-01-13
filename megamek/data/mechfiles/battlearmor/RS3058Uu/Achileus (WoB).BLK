@@ -35,15 +35,15 @@ biped
 </Armor>
 
 <armor_type>
-32
+33
 </armor_type>
 
 <Squad Equipment>
-BAAPMount
-ISImprovedSensors
-Single-Hex ECM
-BABasicManipulator
-BABasicManipulator
+BAAPMount:LA
+ISImprovedSensors:Body
+Single-Hex ECM:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 2
@@ -55,7 +55,7 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-TRO 3058U
+TRO 3058 Upgrade
 </source>
 <armor_tech>
 3

@@ -34,10 +34,10 @@ biped
 7
 </Armor>
 <Squad Equipment>
-ISDavidLightGaussRifle
-BABattleClaw
-BAArmoredGlove
-BattleArmorC3
+ISDavidLightGaussRifle:LA
+BABattleClaw:LA
+BAArmoredGlove:RA
+BattleArmorC3:Body
 </Squad Equipment>
 <type>
 IS Level 4
@@ -49,5 +49,12 @@ IS Level 4
 Jump
 </motion_type>
 <source>
-Jihad
+XTR Gladiators
 </source>
+
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

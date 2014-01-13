@@ -34,11 +34,11 @@ biped
 7
 </Armor>
 <Squad Equipment>
-Clan BA Heavy Machine Gun
-Clan BA Heavy Machine Gun
+Clan BA Heavy Machine Gun:RA
+Clan BA Heavy Machine Gun:LA
 CLSRM1OS:Body
-BABattleClawMagnets
-BABattleClawMagnets
+BABattleClawMagnets:LA
+BABattleClawMagnets:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -50,7 +50,7 @@ Clan Level 2
 Jump
 </motion_type>
 <source>
-TRO 3058U
+TRO 3058 Upgrade
 </source>
 <armor_type>
 35

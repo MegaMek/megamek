@@ -34,10 +34,10 @@ biped
 9
 </Armor>
 <Squad Equipment>
-ISDavidLightGaussRifle
+ISDavidLightGaussRifle:RA
 ISSRM2OS:Body
-BABattleClaw
-BAAPMount
+BABattleClaw:RA
+BAAPMount:LA
 </Squad Equipment>
 <type>
 IS Level 2

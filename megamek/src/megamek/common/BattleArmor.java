@@ -1091,6 +1091,18 @@ public class BattleArmor extends Infantry {
         }
         return false;
     }
+    
+    /**
+     * Returns true if this <code>BattleArmor</code> can use a detachable 
+     * weapon pack.  A <code>BattleArmor</code> must have 2 or more walking MP
+     * and be Medium or heavier to mount DWP.
+     *  
+     * @return
+     */
+    public boolean canMountDWP() {
+         return getOriginalWalkMP() >= 2 
+                 && getWeightClass() >= EntityWeightClass.WEIGHT_MEDIUM;        
+    }
 
     /**
      * Returns the name of the stealth Armor used by the BA. Mostly for

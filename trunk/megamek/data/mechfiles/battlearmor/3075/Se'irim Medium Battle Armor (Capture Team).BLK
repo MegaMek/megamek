@@ -37,11 +37,12 @@ biped
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:Body
-ISLightMG
-ISLightMG
+ISBALightMG:RA
+ISBALightMG:LA
 ISBATaser:DWP
-BABattleClaw
-BASearchlight
+BABattleClaw:RA
+BABattleClaw:LA
+BASearchlight:Body
 </Squad Equipment>
 <type>
 IS Level 2

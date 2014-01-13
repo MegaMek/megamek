@@ -12,6 +12,11 @@ BattleArmor
 <Name>
 Djinn Battle Armor
 </Name>
+
+<model>
+(Standard)
+</model>
+
 <chassis>
 biped
 </chassis>
@@ -31,11 +36,11 @@ biped
 5
 </Armor>
 <Squad Equipment>
-BA Machine Gun
+BA Machine Gun:RA
 ISLightTAG:Body
 BAPartialWing:Body
-BABattleClaw
-BABattleClaw
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

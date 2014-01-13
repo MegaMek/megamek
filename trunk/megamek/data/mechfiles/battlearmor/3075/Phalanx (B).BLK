@@ -32,22 +32,22 @@ biped
 </Armor>
 <Squad Equipment>
 ISSRM4:Body
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BABattleClaw
-BAArmoredGlove
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BABattleClaw:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISBATaser
+ISBATaser:RA
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISBATaser
+ISBATaser:RA
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISBATaser
+ISBATaser:RA
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISBATaser
+ISBATaser:RA
 </Trooper 4 Equipment>
 <type>
 IS Level 3

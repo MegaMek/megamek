@@ -18,6 +18,7 @@ v0.37.5-dev (SVN)
 + Bug: Aeros, MUL, Reinforce and Bombs not working right still
 + Bug: TestAero would fail Aeros for mounted bombs, this has been fixed (for 
     real this time)
++ Data: Some BA with new location tags.
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

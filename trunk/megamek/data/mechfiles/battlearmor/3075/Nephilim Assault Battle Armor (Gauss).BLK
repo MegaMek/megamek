@@ -31,10 +31,10 @@ biped
 16
 </Armor>
 <Squad Equipment>
-ISDavidLightGaussRifle
+ISDavidLightGaussRifle:RA
 ISBAMagshotGR:Body
 ISBAMagshotGR:Body
-BAHeavyBattleClaw
+BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

@@ -34,11 +34,11 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISLight Recoilless Rifle
+ISLight Recoilless Rifle:LA
 ISSRM3OS:Body
-BABasicManipulator
-BABasicManipulator
-BAAPMount
+BABasicManipulator:LA
+BABasicManipulator:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 IS Level 2

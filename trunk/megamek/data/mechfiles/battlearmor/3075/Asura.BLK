@@ -31,9 +31,9 @@ biped
 7
 </Armor>
 <Squad Equipment>
-ISMedium Recoilless Rifle
+ISMedium Recoilless Rifle:RA
 RL4:Body
-BABattleClaw
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2

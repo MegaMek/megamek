@@ -34,13 +34,13 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISMachine Gun
+ISMachine Gun:LA
 ISDetachableWeaponPack:Body
 ISRocketLauncher4:DWP
 ISDetachableWeaponPack:Body
 ISRocketLauncher4:DWP
-BABattleClaw
-BABattleClaw
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

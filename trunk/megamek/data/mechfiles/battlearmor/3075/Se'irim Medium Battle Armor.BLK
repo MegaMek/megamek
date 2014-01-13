@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Se'irim Medium Battle Armor
 </Name>
+<model>
+(Standard)
+</model>
 <chassis>
 biped
 </chassis>
@@ -31,10 +34,10 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISLight Recoilless Rifle
+ISLight Recoilless Rifle:RA
 ISSRM5OS:Body
-BABattleClawVibro
-BASearchlight
+BABattleClawVibro:LA
+BASearchlight:Body
 </Squad Equipment>
 <type>
 IS Level 2

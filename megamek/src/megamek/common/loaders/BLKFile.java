@@ -486,10 +486,10 @@ public class BLKFile {
                 name += ":Body";
             }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
-                name += ":LArm";
+                name += ":LA";
             }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
-                name += ":RArm";
+                name += ":RA";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {

@@ -256,6 +256,17 @@ public class BattleArmor extends Infantry {
         }
         return IS_LOCATION_ABBRS;
     }
+    
+    public String[] getBaMountLocAbbr(){
+        return MOUNT_LOC_NAMES;
+    }
+    
+    public String getBaMountLocAbbr(int loc){
+        if (loc == MOUNT_LOC_NONE) {
+            return "None";
+        }
+        return MOUNT_LOC_NAMES[loc];
+    }
 
     @Override
     public String[] getLocationNames() {

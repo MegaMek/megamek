@@ -19,11 +19,13 @@
 
 package megamek.common.verifier;
 
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 
@@ -160,7 +162,7 @@ public class TestBattleArmor extends TestEntity {
             if (newMount.getType() instanceof WeaponType){
                 if (newMount.getType().hasFlag(WeaponType.F_INFANTRY)){
                     if ((numAntiPersonnelWeapons + 1) <= 
-                            ba.getNumAllowedAntiPersonnelWeapons(loc)){
+                            ba.getNumAllowedAntiPersonnelWeapons(loc,trooper)){
                         return true;
                     } else {
                         return false;
@@ -361,9 +363,142 @@ public class TestBattleArmor extends TestEntity {
         return 0;
     }
     
-    //@Override
-    //public float calculateWeight() {
-    //    return infantry.getWeight();
-    //}
+    /**
+     * Performs the same functionality as <code>TestEntity.getWeightMiscEquip
+     * </code> but only considers equipment mounted on the specified trooper.
+     * That is, only misc equipment that is squad mounted or on the specific 
+     * trooper is added.
+     * 
+     * @param trooper
+     * @return
+     */
+    public float getWeightMiscEquip(int trooper) {
+        float weightSum = 0.0f;
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mt = (MiscType) m.getType();
+            // If this equipment isn't mounted on the squad or this particular
+            //  trooper, skip it
+            if (m.getLocation() != BattleArmor.LOC_SQUAD 
+                    && m.getLocation() != trooper){
+                continue;
+            }
+            
+            // Equipment assigned to this trooper but not mounted shouldn't be
+            //  counted
+            if (m.getLocation() == trooper 
+                    && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+            
+            if (mt.hasFlag(MiscType.F_ENDO_STEEL)
+                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
+                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)
+                    || mt.hasFlag(MiscType.F_REINFORCED)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
+                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
+                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
+                    || mt.hasFlag(MiscType.F_REACTIVE)
+                    || mt.hasFlag(MiscType.F_REFLECTIVE)
+                    || mt.hasFlag(MiscType.F_HARDENED_ARMOR)
+                    || mt.hasFlag(MiscType.F_PRIMITIVE_ARMOR)
+                    || mt.hasFlag(MiscType.F_COMMERCIAL_ARMOR)
+                    || mt.hasFlag(MiscType.F_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(MiscType.F_HEAVY_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(MiscType.F_ANTI_PENETRATIVE_ABLATIVE)
+                    || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
+                    || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
+                    || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
+                    || mt.hasFlag(MiscType.F_HEAT_SINK)
+                    || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                continue;
+            }
+            weightSum += mt.getTonnage(getEntity(), m.getLocation());
+        }
+        return weightSum;
+    }
+    
+    public float getWeightWeapon(int trooper) {
+        float weight = 0.0f;
+        for (Mounted m : getEntity().getWeaponList()) {
+            // If this equipment isn't mounted on the squad or this particular
+            //  trooper, skip it
+            if (m.getLocation() != BattleArmor.LOC_SQUAD 
+                    && m.getLocation() != trooper){
+                continue;
+            }
+            
+            // Equipment assigned to this trooper but not mounted shouldn't be
+            //  counted
+            if (m.getLocation() == trooper 
+                    && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+            
+            WeaponType wt = (WeaponType) m.getType();
+            if (m.isDWPMounted()){
+                weight += wt.getTonnage(getEntity()) * 0.75;
+            } else {
+                weight += wt.getTonnage(getEntity());
+            }
+        }
+        return weight;
+    }
+    
+    public float getWeightAmmo(int trooper) {
+        float weight = 0.0f;
+        for (Mounted m : getEntity().getAmmo()) {
+
+            // If this equipment isn't mounted on the squad or this particular
+            //  trooper, or it's one shot ammo skip it
+            if (m.getLocation() == Entity.LOC_NONE
+                    || (m.getLocation() != BattleArmor.LOC_SQUAD && m
+                            .getLocation() != trooper)) {
+                continue;
+            }
+            
+            // Equipment assigned to this trooper but not mounted shouldn't be
+            //  counted
+            if (m.getLocation() == trooper 
+                    && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+
+            AmmoType mt = (AmmoType) m.getType();
+            weight += mt.getTonnage(getEntity());
+        }
+        return weight;
+    }
+
+    /**
+     * There are some cases where we need to know the weight of an individual
+     * trooper in the BattleArmor squad, this method provides that.
+     * @param trooper
+     * @return
+     */
+    public float calculateWeight(int trooper) {
+        float weight = 0;
+        weight += getWeightStructure();
+        weight += getWeightArmor();
+
+        weight += getWeightMiscEquip(trooper);
+        weight += getWeightWeapon(trooper);
+        weight += getWeightAmmo(trooper);
+
+        return weight;
+    }
+    
+    public float calculateWeight() {
+        float totalWeight = 0.0f;
+        for (int i = 1; i < ba.getTroopers(); i++){
+            totalWeight += calculateWeight(i);
+        }
+        return totalWeight;
+    }
     
 }

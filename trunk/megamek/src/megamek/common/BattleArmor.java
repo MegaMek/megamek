@@ -2120,11 +2120,14 @@ public class BattleArmor extends Infantry {
      * @param loc
      * @return
      */
-    public int getNumAllowedAntiPersonnelWeapons(int loc){
+    public int getNumAllowedAntiPersonnelWeapons(int loc, int trooper){
         if (loc == MOUNT_LOC_LARM || loc == MOUNT_LOC_RARM){
             boolean hasAntiMech = false;
             for (Mounted m : getWeaponList()){
-                if (!m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                if (!m.getType().hasFlag(WeaponType.F_INFANTRY) 
+                        && m.getBaMountLoc() == loc
+                        && (m.getLocation() == LOC_SQUAD 
+                            || m.getLocation() == trooper)){
                     hasAntiMech = true;
                 }
             }

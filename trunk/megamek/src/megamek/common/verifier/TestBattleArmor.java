@@ -118,11 +118,30 @@ public class TestBattleArmor extends TestEntity {
      * @return
      */
     public static boolean isMountLegal(BattleArmor ba, Mounted newMount, int loc) {
+        return isMountLegal(ba, newMount, loc, BattleArmor.LOC_SQUAD);        
+    }
+    
+    /**
+     * Checks to see if the supplied <code>Mounted</code> is valid to be mounted
+     * in the given location on the supplied <code>BattleArmor</code> for the
+     * specified suit in the squad.
+     * 
+     * This method will check that there is available space in the given 
+     * location make sure that weapon mounting restrictions hold.
+     * 
+     * @param ba
+     * @param newMount
+     * @param loc
+     * @param trooper
+     * @return
+     */
+    public static boolean isMountLegal(BattleArmor ba, Mounted newMount,
+            int loc, int trooper) {
         int numUsedCrits = 0;
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         for (Mounted m : ba.getEquipment()){
-            if (m.getBaMountLoc() == loc){
+            if (m.getBaMountLoc() == loc && m.getLocation() == trooper){
                 numUsedCrits += m.getType().getCriticals(ba);
                 if (m.getType() instanceof WeaponType){
                     if (m.getType().hasFlag(WeaponType.F_INFANTRY)){

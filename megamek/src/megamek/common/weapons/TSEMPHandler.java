@@ -127,6 +127,10 @@ import megamek.server.Server;
                 entityTarget.getEngine().getEngineType() == 
                     Engine.COMBUSTION_ENGINE){
             tsempModifiers -= 1;
+        } else if (entityTarget.getEngine() != null &&
+                entityTarget.getEngine().getEngineType() == 
+                Engine.STEAM){
+            tsempModifiers -= 2;
         }
         
         tsempModifiers += Math.min(4, entityTarget.getTsempHitsThisTurn() - 1);

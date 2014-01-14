@@ -50,11 +50,14 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     public final static String BASE_NODE = "entityverifier"; //$NON-NLS-1$
     public final static String BASE_MECH_NODE = "mech"; //$NON-NLS-1$
     public final static String BASE_TANK_NODE = "tank"; //$NON-NLS-1$
+    public final static String BASE_AERO_NODE = "aero"; //$NON-NLS-1$
+    public final static String BASE_BA_NODE = "ba"; //$NON-NLS-1$
 
     private static MechSummaryCache mechSummaryCache = null;
     public TestXMLOption mechOption = new TestXMLOption();
     public TestXMLOption tankOption = new TestXMLOption();
     public TestXMLOption aeroOption = new TestXMLOption();
+    public TestXMLOption baOption = new TestXMLOption();
     
     private boolean loadingVerbosity = false;
     private boolean failsOnly = false;
@@ -169,6 +172,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(tankOption.printOptions());
         System.out.println("\nAero Options:");
         System.out.println(aeroOption.printOptions());
+        System.out.println("\nBattleArmor Options:");
+        System.out.println(baOption.printOptions());
 
         int failures = 0;
         for (int i = 0; i < ms.length; i++) {
@@ -196,7 +201,12 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 tankOption.readXMLOptions(child);
             } else if (child.getName().equals(BASE_MECH_NODE)) {
                 mechOption.readXMLOptions(child);
+            } else if (child.getName().equals(BASE_AERO_NODE)) {
+                aeroOption.readXMLOptions(child);
+            } else if (child.getName().equals(BASE_BA_NODE)) {
+                baOption.readXMLOptions(child);
             }
+            
         }
     }
 

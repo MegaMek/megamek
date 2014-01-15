@@ -44,14 +44,18 @@ biped
 </Armor>
 
 <armor_type>
-3
+37
 </armor_type>
 
+<armor_tech>
+2
+</armor_tech>
+
 <Squad Equipment>
-CLERSmallLaser
-CLBAJumpBooster
-BABasicManipulator
-BABattleClaw
+CLERSmallLaser:RA
+CLBAJumpBooster:Body
+BABasicManipulator:RA
+BABattleClaw:LA
 </Squad Equipment>
 
 <type>
@@ -70,6 +74,4 @@ Jump
 RS3145 NT NU
 </source>
 
-<history>
-BA Reflective Armor not coded. Unit included for completeness
-</history>
+

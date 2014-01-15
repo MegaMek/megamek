@@ -31,11 +31,12 @@ biped
 10
 </Armor>
 <Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
 ISHeavy Recoilless Rifle:DWP
-ISDetachableWeaponPack
+ISDetachableWeaponPack:RA
 ISBAMediumLaser:DWP
-ISDetachableWeaponPack
-Mimetic Armor
+ISDetachableWeaponPack:LA
 </Squad Equipment>
 <type>
 IS Level 3
@@ -49,3 +50,9 @@ TRO:3145 Republic of the Sphere
 <motion_type>
 Leg
 </motion_type>
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+5
+</armor_tech>

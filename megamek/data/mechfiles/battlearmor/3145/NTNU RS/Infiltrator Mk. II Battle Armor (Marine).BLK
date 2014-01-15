@@ -41,12 +41,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-ClMicroPulseLaser
-Standard Stealth
-BABasicManipulator
-BACuttingTorch
-Magnetic Clamp
-BASpaceOperationsAdaptation
+ClMicroPulseLaser:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
+BACuttingTorch:RA
+Magnetic Clamp:Body
+BASpaceOperationsAdaptation:Body
 </Squad Equipment>
 
 <type>
@@ -64,3 +64,10 @@ Jump
 <source>
 RS3145 NT NU
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

@@ -37,27 +37,27 @@ biped
 </Armor>
 
 <Squad Equipment>
-Heavy Battle Claw (w/ Vibro-Claws)
-BA-Fire Resistant Armor
+Heavy Battle Claw (w/ Vibro-Claws):LA
+BABasicManipulator:RA
 BA ECM:Body
 BAExtendedLifeSupport:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-ISCompact Narc
-BACompactNarc Ammo
+ISCompact Narc:RA
+BACompactNarc Ammo:RA
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc
-BACompactNarc Ammo
+ISCompact Narc:RA
+BACompactNarc Ammo:RA
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc
-BACompactNarc Ammo
+ISCompact Narc:RA
+BACompactNarc Ammo:RA
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc
-BACompactNarc Ammo
+ISCompact Narc:RA
+BACompactNarc Ammo:RA
 </Trooper 4 Equipment>
 
 <type>
@@ -73,5 +73,5 @@ Jump
 </motion_type>
 
 <source>
-TRO 3145 DC
+TRO 3145 Draconis Combine
 </source>

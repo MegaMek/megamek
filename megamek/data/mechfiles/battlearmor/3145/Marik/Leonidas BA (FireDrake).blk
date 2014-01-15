@@ -37,27 +37,14 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISFiredrakeIncendiaryNeedler
-BAAPMount
-BAHeavyBattleClaw
-Standard Stealth
+ISFiredrakeIncendiaryNeedler:RA
+BAAPMount:RA
+BAHeavyBattleClaw:LA
 ISAngelECM:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 FWL
+TRO 3145 Free Worlds League
 </source>
 
 <chassis>
@@ -78,4 +65,11 @@ biped
 <weightclass>
 2
 </weightclass>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

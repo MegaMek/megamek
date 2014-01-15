@@ -37,10 +37,10 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BABattleClawVibro
-Basic Stealth
-CLBAMG
-CLBAMG
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+CLBAMG:LA
+CLBAMG:RA
 </Squad Equipment>
 
 <source>
@@ -66,4 +66,11 @@ biped
 <weightclass>
 2
 </weightclass>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
 

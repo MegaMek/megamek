@@ -38,10 +38,11 @@ Jump
 
 <Squad Equipment>
 CLBALightMG:Body
-CLHeavyGL
-CLHeavyGL
-BACuttingTorch
-BABattleClaw
+CLHeavyGL:LA
+CLHeavyGL:RA
+BACuttingTorch:LA
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 
 <source>
@@ -67,4 +68,11 @@ biped
 <weightclass>
 1
 </weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
 

@@ -37,8 +37,8 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BAHeavyBattleClaw
-ISHeavyMortar
+BAHeavyBattleClaw:RA
+ISHeavyMortar:LA
 </Squad Equipment>
 
 <source>
@@ -58,8 +58,12 @@ biped
 </armor>
 
 <armor_type>
-2
+38
 </armor_type>
+
+<armor_tech>
+2
+</armor_tech>
 
 <Trooper Count>
 5
@@ -69,7 +73,5 @@ biped
 3
 </weightclass>
 
-<History>
-Battle Armor Reactive Armor not coded. Unit included for completeness
-</History>
+
 

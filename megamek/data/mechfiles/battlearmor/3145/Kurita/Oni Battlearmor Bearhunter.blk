@@ -37,9 +37,9 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLBearhunter Superheavy AC
-Heavy Battle Claw (w/ Vibro-Claws)
-BA-Fire Resistant Armor
+CLBearhunter Superheavy AC:RA
+Heavy Battle Claw (w/ Vibro-Claws):LA
+BABasicManipulator:RA
 BAExtendedLifeSupport:Body
 BA ECM:Body
 </Squad Equipment>
@@ -57,5 +57,12 @@ Jump
 </motion_type>
 
 <source>
-TRO 3145 DC
+TRO 3145 Draconis Combine
 </source>
+
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+7
+</armor_tech>

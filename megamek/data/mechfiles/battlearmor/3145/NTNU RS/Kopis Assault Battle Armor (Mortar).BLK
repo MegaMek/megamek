@@ -45,10 +45,10 @@ biped
 </armor_type>
 
 <Squad Equipment>
-BAHeavyBattleClaw
-BAHeavyBattleClaw
-ISHeavyMortar
-ISHeavyMortar
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+ISHeavyMortar:Body
+ISHeavyMortar:Body
 </Squad Equipment>
 
 <type>
@@ -67,6 +67,9 @@ Leg
 RS3145 NTNU
 </source>
 
-<history>
-BA Reactive Armor not coded. Unit included for completeness
-</history>
+<armor_type>
+38
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

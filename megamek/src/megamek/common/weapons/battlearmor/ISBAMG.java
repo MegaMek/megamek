@@ -36,6 +36,7 @@ public class ISBAMG extends BAMGWeapon {
         setInternalName("BA Machine Gun");
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");
+        addLookupName("ISBAMG");
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

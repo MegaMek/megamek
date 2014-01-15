@@ -37,33 +37,32 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-Mimetic Armor
-ISHeavyGL
-ISHeavyGL
+ISHeavyGL:Body
+ISHeavyGL:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-ISMine Launcher
-BAMineLauncher Ammo
+ISMine Launcher:Body
+BAMineLauncher Ammo:Body
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
-ISMine Launcher
-BAMineLauncher Ammo
+ISMine Launcher:Body
+BAMineLauncher Ammo:Body
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
-ISMine Launcher
-BAMineLauncher Ammo
+ISMine Launcher:Body
+BAMineLauncher Ammo:Body
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
-ISMine Launcher
-BAMineLauncher Ammo
+ISMine Launcher:Body
+BAMineLauncher Ammo:Body
 </Trooper 4 Equipment>
 
 <source>
-TRO 3145 CC
+TRO 3145 Capellan Confederation
 </source>
 
 <chassis>
@@ -86,3 +85,9 @@ quad
 3
 </weightclass>
 
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

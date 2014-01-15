@@ -37,26 +37,16 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Basic Stealth
+
 Parafoil:Body
-Infantry David Light Gauss Rifle
-ISLightTAG
+ISDavidLightGaussRifle:RA
+ISLightTAG:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 LC
+TRO 3145 Lyran Commonwealth
 </source>
 
 <chassis>
@@ -79,3 +69,9 @@ biped
 2
 </weightclass>
 
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

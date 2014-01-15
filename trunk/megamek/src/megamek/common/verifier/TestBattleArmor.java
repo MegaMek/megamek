@@ -379,13 +379,14 @@ public class TestBattleArmor extends TestEntity {
             // If this equipment isn't mounted on the squad or this particular
             //  trooper, skip it
             if (m.getLocation() != BattleArmor.LOC_SQUAD 
-                    && m.getLocation() != trooper){
+                    && (m.getLocation() != trooper
+                            || trooper == BattleArmor.LOC_SQUAD)){
                 continue;
             }
             
             // Equipment assigned to this trooper but not mounted shouldn't be
-            //  counted
-            if (m.getLocation() == trooper 
+            //  counted, unless it's squad-level equipment
+            if (m.getLocation() == trooper && trooper != BattleArmor.LOC_SQUAD 
                     && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
                 continue;
             }
@@ -429,13 +430,14 @@ public class TestBattleArmor extends TestEntity {
             // If this equipment isn't mounted on the squad or this particular
             //  trooper, skip it
             if (m.getLocation() != BattleArmor.LOC_SQUAD 
-                    && m.getLocation() != trooper){
+                    && (m.getLocation() != trooper
+                            || trooper == BattleArmor.LOC_SQUAD)){
                 continue;
             }
             
             // Equipment assigned to this trooper but not mounted shouldn't be
-            //  counted
-            if (m.getLocation() == trooper 
+            //  counted, unless it's squad-level equipment
+            if (m.getLocation() == trooper && trooper != BattleArmor.LOC_SQUAD 
                     && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
                 continue;
             }
@@ -455,16 +457,16 @@ public class TestBattleArmor extends TestEntity {
         for (Mounted m : getEntity().getAmmo()) {
 
             // If this equipment isn't mounted on the squad or this particular
-            //  trooper, or it's one shot ammo skip it
-            if (m.getLocation() == Entity.LOC_NONE
-                    || (m.getLocation() != BattleArmor.LOC_SQUAD && m
-                            .getLocation() != trooper)) {
+            //  trooper, skip it
+            if (m.getLocation() != BattleArmor.LOC_SQUAD 
+                    && (m.getLocation() != trooper
+                            || trooper == BattleArmor.LOC_SQUAD)){
                 continue;
             }
             
-            // Equipment assigned to this trooper but not mounted shouldn't be
-            //  counted
-            if (m.getLocation() == trooper 
+            /// Equipment assigned to this trooper but not mounted shouldn't be
+            //  counted, unless it's squad-level equipment
+            if (m.getLocation() == trooper && trooper != BattleArmor.LOC_SQUAD 
                     && m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
                 continue;
             }

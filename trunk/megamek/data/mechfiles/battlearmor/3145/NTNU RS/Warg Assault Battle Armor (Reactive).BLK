@@ -40,18 +40,18 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLSmallPulseLaser
-Clan BA Light Machine Gun
-CLSRM2:Body
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-CLSRM2:Body
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BAHeavyBattleClaw
-BABasicManipulator
+CLSmallPulseLaser:RA
+Clan BA Light Machine Gun:LA
+CLAdvancedSRM2:Body
+BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body
+CLAdvancedSRM2:Body
+BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body
+BAHeavyBattleClaw:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>
@@ -70,6 +70,9 @@ Leg
 RS3145 NT NU
 </source>
 
-<history>
-BA Reactive Armor not coded. Unit included for completeness
-</history>
+<armor_type>
+38
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

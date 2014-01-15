@@ -37,19 +37,20 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-BABasicManipulator
+BABasicManipulator:LA
+BABasicManipulator:RA
 ISBATubeArtillery:DWP
-ISDetachableWeaponPack
-BA-Magnetic Clamp
-ISBASmallLaser
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
-ISBATubeArtilleryAmmo
+ISDetachableWeaponPack:Body
+BA-Magnetic Clamp:Body
+ISBASmallLaser:RA
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body
 </Squad Equipment>
 
 <source>
@@ -75,4 +76,11 @@ biped
 <weightclass>
 3
 </weightclass>
+
+<armor_type>
+38
+</armor_type>
+<armor_tech>
+7
+</armor_tech>
 

@@ -37,9 +37,9 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISMedium Recoilless Rifle
-Heavy Battle Claw (w/ Vibro-Claws)
-BA-Fire Resistant Armor
+ISMedium Recoilless Rifle:RA
+Heavy Battle Claw (w/ Vibro-Claws):LA
+BABasicManipulator:RA
 BA ECM:Body
 BAExtendedLifeSupport:Body
 </Squad Equipment>
@@ -57,5 +57,5 @@ Jump
 </motion_type>
 
 <source>
-TRO 3145 DC
+TRO 3145 Draconis Combine
 </source>

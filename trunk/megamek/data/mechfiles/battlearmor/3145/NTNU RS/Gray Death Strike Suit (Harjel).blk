@@ -38,13 +38,14 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISFiredrakeIncendiaryNeedler
-ISLightTAG
+ISFiredrakeIncendiaryNeedler:RA
+ISLightTAG:LA
 ISSRM3:Body
-BASRM3 Ammo
-BASRM3 Ammo
-BASRM3 Ammo
-BABasicManipulator
+BASRM3 Ammo:Body
+BASRM3 Ammo:Body
+BASRM3 Ammo:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>

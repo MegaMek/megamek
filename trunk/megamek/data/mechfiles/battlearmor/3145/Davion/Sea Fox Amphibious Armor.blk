@@ -41,29 +41,17 @@ Submarine
 </jumpingMP>
 
 <Squad Equipment>
-Basic Stealth
-BACuttingTorch
-ISSRM1OS
+BACuttingTorch:RA
+ISSRM1OS:LA
 ISBALightMG:Body
 BAExtendedLifeSupport:Body
-ISMechanicalJumpBooster
-BAArmoredGlove
+ISMechanicalJumpBooster:Body
+BAArmoredGlove:RA
+BAArmoredGlove:LA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 FS
+TRO 3145 Federated Suns
 </source>
 
 <chassis>
@@ -81,4 +69,11 @@ biped
 <weightclass>
 1
 </weightclass>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

@@ -40,11 +40,11 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLBALBX
-CLBALBX
+CLBALBX:LA
+CLBALBX:LA
 CLSRM1OS:Body
-BABasicManipulator
-Fire Resistant Armor
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>
@@ -62,3 +62,10 @@ Jump
 <source>
 RS 3145 NT NU
 </source>
+
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

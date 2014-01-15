@@ -37,14 +37,15 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Basic Stealth
 Parafoil:Body
-Infantry David Light Gauss Rifle
-ISFiredrakeIncendiaryNeedler
+ISDavidLightGaussRifle:RA
+ISFiredrakeIncendiaryNeedler:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <source>
-TRO 3145 LC
+TRO 3145 Lyran Commonwealth
 </source>
 
 <chassis>
@@ -66,4 +67,11 @@ biped
 <weightclass>
 2
 </weightclass>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

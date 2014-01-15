@@ -25,7 +25,7 @@ Kishi Ceremonial Armor
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -37,26 +37,13 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Heavy Battle Claw (w/ Vibro-Claws)
-ISHeavyMG
-ISHeavyMG Ammo (50)
-ISMechanicalJumpBooster
+Heavy Battle Claw (w/ Vibro-Claws):LA
+ISBAHeavyMG:RA
+ISMechanicalJumpBooster:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 DC
+TRO 3145 Draconis Combine
 </source>
 
 <chassis>
@@ -72,7 +59,7 @@ biped
 </armor>
 
 <armor_type>
-3
+37
 </armor_type>
 
 <Trooper Count>
@@ -83,6 +70,6 @@ biped
 1
 </weightclass>
 
-<History>
-BA Reflective Armor not Implemented.  Unit included for completeness
-</history>
+<armor_tech>
+5
+</armor_tech>

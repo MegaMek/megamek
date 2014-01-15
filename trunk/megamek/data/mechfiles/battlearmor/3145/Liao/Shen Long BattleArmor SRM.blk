@@ -37,28 +37,15 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-Mimetic Armor
-ISSRM4
-BASRM4 Ammo
-BASRM4 Ammo
-BASRM4 Ammo
-BASRM4 Ammo
+ISSRM4:Body
+BASRM4 Ammo:Body
+BASRM4 Ammo:Body
+BASRM4 Ammo:Body
+BASRM4 Ammo:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 CC
+TRO 3145 Capellan Confederation
 </source>
 
 <chassis>
@@ -80,4 +67,11 @@ quad
 <weightclass>
 3
 </weightclass>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

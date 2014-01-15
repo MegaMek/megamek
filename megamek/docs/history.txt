@@ -21,6 +21,7 @@ v0.37.5-dev (SVN)
 + Data: Some BA with new location tags.
 + Data: More BA Changes with new tags.
 + Added TSEMP modifier for steam engines
++ Data: Last of the new BA changes. They will need to be looked at in MM for errors.
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

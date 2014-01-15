@@ -37,14 +37,14 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-CLDetachableWeaponPack
-Improved Stealth
+CLDetachableWeaponPack:LA
 CLERMediumPulseLaser:DWP
-BABasicManipulator
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <source>
-TRO 3145 LC
+TRO 3145 Lyran Commonwealth
 </source>
 
 <chassis>
@@ -66,4 +66,11 @@ biped
 <weightclass>
 3
 </weightclass>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
 

@@ -40,10 +40,9 @@ biped
 
 <Squad Equipment>
 ISMediumVSP:DWP
-ISDetachableWeaponPack
-Improved Stealth
-BABattleClaw
-BAArmoredGlove
+ISDetachableWeaponPack:Body
+BABattleClaw:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
 <type>
@@ -61,3 +60,10 @@ Leg
 <source>
 RS3145 NT NU
 </source>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

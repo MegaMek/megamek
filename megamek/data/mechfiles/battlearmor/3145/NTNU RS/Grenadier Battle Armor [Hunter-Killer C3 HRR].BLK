@@ -40,11 +40,10 @@ biped
 </Armor>
 
 <Squad Equipment>
-Heavy Recoilless Rifle
-ISFiredrakeIncendiaryNeedler
-BattleArmorC3
-Standard Stealth
-BABasicManipulator
+Heavy Recoilless Rifle:RA
+ISFiredrakeIncendiaryNeedler:LA
+BattleArmorC3:Body
+BABasicManipulator:LA
 </Squad Equipment>
 
 <type>
@@ -62,3 +61,10 @@ Leg
 <source>
 RS 3145 NT NU
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

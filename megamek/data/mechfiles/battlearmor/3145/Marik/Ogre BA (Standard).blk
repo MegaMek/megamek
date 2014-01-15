@@ -38,38 +38,25 @@ Jump
 
 <Squad Equipment>
 ISSRM2:Body
-BAHeavyBattleClaw
-BAHeavyBattleClaw
-Mimetic Armor
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 FWL
+TRO 3145 Free Worlds League
 </source>
 
 <chassis>
@@ -90,4 +77,11 @@ biped
 <weightclass>
 3
 </weightclass>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 

@@ -37,23 +37,12 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISMediumLaser
+BABattleClaw:LA
+ISMediumLaser:RA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 DC
+TRO 3145 Draconis Combine
 </source>
 
 <chassis>
@@ -69,8 +58,12 @@ Biped
 </armor>
 
 <armor_type>
-3
+37
 </armor_type>
+
+<armor_tech>
+5
+</armor_tech>
 
 <Trooper Count>
 4

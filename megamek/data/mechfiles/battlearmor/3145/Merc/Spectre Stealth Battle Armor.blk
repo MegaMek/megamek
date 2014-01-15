@@ -37,27 +37,14 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-ISDavidLightGaussRifle
+ISDavidLightGaussRifle:LA
 BA-Magnetic Clamp:Body
-ISMechanicalJumpBooster
-Improved Stealth
-BABattleClaw
+ISMechanicalJumpBooster:Body
+BABattleClawVibro:RA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-Dark Age
+TRO 3145 Mercenaries
 </source>
 
 <chassis>

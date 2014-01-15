@@ -30,7 +30,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
     public ISBAHeavyFlamer() {
         super();
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        name = "Heavy Flamer";
+        name = "BA Heavy Flamer";
         setInternalName("IS BA Heavy Flamer");
         heat = 5;
         damage = 4;
@@ -39,7 +39,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         mediumRange = 3;
         longRange = 4;
         extremeRange = 6;
-        tonnage = 1.5f;
+        tonnage = .35f;
         criticals = 1;
         bv = 15;
         cost = 12250;

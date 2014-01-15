@@ -42,10 +42,9 @@ biped
 
 <Squad Equipment>
 ISSmallVSP:Body
-ISFiredrakeIncendiaryNeedler
-ISBAMagshotGR
-Standard Stealth
-BABasicManipulator
+ISFiredrakeIncendiaryNeedler:RA
+ISBAMagshotGR:LA
+BABasicManipulator:LA
 </Squad Equipment>
 
 <type>
@@ -63,3 +62,10 @@ Leg
 <source>
 RS 3145 NT NU
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

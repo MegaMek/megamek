@@ -40,10 +40,9 @@ biped
 </Armor>
 
 <Squad Equipment>
-IS BA Heavy Flamer
+IS BA Heavy Flamer:LA
 IS BA Heavy Flamer:Body
-Standard Stealth
-BABasicManipulator
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>
@@ -61,3 +60,10 @@ Leg
 <source>
 RS 3145 NT NU
 </source>
+
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

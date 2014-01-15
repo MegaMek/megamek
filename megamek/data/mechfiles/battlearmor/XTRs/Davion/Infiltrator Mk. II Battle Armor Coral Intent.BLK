@@ -35,7 +35,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISDavidLightGaussRifle:RA
-BattleArmorC3:body
+BattleArmorC3:Body
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA

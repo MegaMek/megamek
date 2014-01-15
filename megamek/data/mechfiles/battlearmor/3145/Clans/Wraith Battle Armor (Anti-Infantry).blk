@@ -37,10 +37,11 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BABattleClawVibro
-Clan Improved Sensors
-ISFiredrakeIncendiaryNeedler
-ISFiredrakeIncendiaryNeedler
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+Clan Improved Sensors:Body
+ISFiredrakeIncendiaryNeedler:LA
+ISFiredrakeIncendiaryNeedler:RA
 </Squad Equipment>
 
 <source>
@@ -60,8 +61,11 @@ biped
 </armor>
 
 <armor_type>
-2
+38
 </armor_type>
+<armor_tech>
+2
+</armor_tech>
 
 <Trooper Count>
 5
@@ -71,7 +75,5 @@ biped
 2
 </weightclass>
 
-<History>
-Battle Armor Reactive Armor not coded. Unit included for completeness
-</History>
+
 

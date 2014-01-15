@@ -14,7 +14,7 @@ Myomer:Standard
 Gyro:Standard Gyro
 Cockpit:Superheavy Tripod Cockpit
 
-Heat Sinks:21 Double
+Heat Sinks:23 Double
 Base Chassis Heat Sinks:10
 Walk MP:2
 Jump MP:0
@@ -33,21 +33,18 @@ RTL Armor:16
 RTR Armor:16
 RTC Armor:22
 
-Weapons:15
-CLLargePulseLaser, Light Arm
-CLLargePulseLaser, Right Arm
+Weapons:13
+CLERLargeLaser, Left Arm
+CLERLargeLaser, Left Arm
 ISLightPPC, Right Arm
-
 CLERMediumLaser, Right Torso
 CLERSmallLaser, Right Torso
 ISLRM5, Right Torso
 ISSRM2, Right Torso
-
 CLERSmallLaser, Left Torso
 CLERMediumLaser, Left Torso
 ISLRM5, Left Torso
 ISSRM2, Left Torso
-
 CLERSmallLaser, Center Torso
 ISSRM2, Center Torso
 
@@ -60,8 +57,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
+CLERLargeLaser
+CLERLargeLaser
 ISC3SlaveUnit
 Endo-Composite
 

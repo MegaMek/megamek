@@ -324,7 +324,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     m.setMode(newMode);
                 }
             }
-        }    
+        }
         return true;
     }
 
@@ -429,17 +429,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             desc.append(shotsLeft);
             desc.append(")");
         }
-        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
-            desc.append(" (Body)");
-        }
-        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
-            desc.append(" (Left arm)");
-        }
-        if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
-            desc.append(" (Right arm)");
-        }
-        if (isDWPMounted()) {
-            desc.append(" (DWP)");
+        if (getEntity() instanceof BattleArmor) {
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
+                desc.append(" (Body)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+                desc.append(" (Left arm)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+                desc.append(" (Right arm)");
+            }
+            if (isDWPMounted()) {
+                desc.append(" (DWP)");
+            }
         }
         if (isDumping()) {
             desc.append(" (dumping)");
@@ -495,7 +497,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if (destroyed == true 
+        if ((destroyed == true)
                 && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
             if (entity != null){
                 entity.setHasDamagedRHS(true);
@@ -521,7 +523,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if (hit == true 
+        if ((hit == true)
                 && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
             if (entity != null){
                 entity.setHasDamagedRHS(true);
@@ -1263,7 +1265,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (getType() instanceof WeaponType) {
             WeaponType wtype = (WeaponType) getType();
             int heat = wtype.getHeat();
-            
+
             // AR10's have heat based upon the loaded missile
             if (wtype.getName().equals("AR10")){
                 AmmoType ammoType = (AmmoType)getLinked().getType();
@@ -1275,7 +1277,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     return 20;
                 }
             }
-            
+
             if (wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()) {
                 heat = Compute.dialDownHeat(this, wtype);
             }
@@ -1306,7 +1308,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     heat++;
                 }
             }
-            
+
             return heat;
         }
         return 0;

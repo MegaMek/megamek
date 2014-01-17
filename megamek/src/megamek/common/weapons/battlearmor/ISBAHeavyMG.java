@@ -36,7 +36,7 @@ public class ISBAHeavyMG extends BAMGWeapon {
     public ISBAHeavyMG() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Heavy Machine Gun";
+        name = "BA Heavy Machine Gun";
         setInternalName("BA Heavy Machine Gun");
         addLookupName("IS BA Heavy Machine Gun");
         addLookupName("ISBAHeavyMG");

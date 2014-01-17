@@ -26,6 +26,8 @@ v0.37.5-dev (SVN)
 + Data: Unit fixes.
 + Bug [#3990]: Jumping Vehicles roll on the motive crit table but it's not 
     clear why
++ Feature/Data: Battle armor equipment and some fixed units. Some of the data still
+    needs to be checked and corrected. Some fixed units included.
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

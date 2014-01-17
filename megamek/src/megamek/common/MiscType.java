@@ -1453,6 +1453,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLBAMyomerBooster());
         EquipmentType.addType(MiscType.createSingleHexECM());
         EquipmentType.addType(MiscType.createBattleMechNeuralInterfaceUnit());
+        EquipmentType.addType(MiscType.createBAISAngelECM());
+        EquipmentType.addType(MiscType.createBACLAngelECM());
 
         EquipmentType.addType(MiscType.createSimpleCamo());
         EquipmentType.addType(MiscType.createParafoil());
@@ -5301,6 +5303,58 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLEMECH_NIU);
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createBAISAngelECM() {
+        MiscType misc = new MiscType();
+
+        // Don't forget, this will eventually count double for ECCM.
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "BA IS Angel ECM Suite";
+        misc.setInternalName("BAISAngelECMSuite");
+        misc.addLookupName("BA IS Angel ECM Suite");
+        misc.addLookupName("BAISAngelECM");
+        misc.tonnage = .25f;
+        misc.criticals = 3;
+        misc.cost = 750000;
+        misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_BA_EQUIPMENT);
+        misc.bv = 100;
+        misc.setModes(new String[] { "ECM" });
+        misc.setInstantModeSwitch(false);
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.techRating = RATING_F;
+        misc.introDate = 3063;
+        misc.techLevel.put(3063, misc.techLevel.get(3071));
+        misc.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+
+        return misc;
+    }
+    
+    public static MiscType createBACLAngelECM() {
+        MiscType misc = new MiscType();
+
+        // Don't forget, this will eventually count double for ECCM.
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "BA CL Angel ECM Suite";
+        misc.setInternalName("BACLAngelECMSuite");
+        misc.addLookupName("BA CL Angel ECM Suite");
+        misc.addLookupName("BACLAngelECM");
+        misc.tonnage = .15f;
+        misc.criticals = 3;
+        misc.cost = 750000;
+        misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_BA_EQUIPMENT);
+        misc.bv = 100;
+        misc.setModes(new String[] { "ECM" });
+        misc.setInstantModeSwitch(false);
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.techRating = RATING_F;
+        misc.introDate = 3063;
+        misc.techLevel.put(3063, misc.techLevel.get(3071));
+        misc.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
 
         return misc;
     }

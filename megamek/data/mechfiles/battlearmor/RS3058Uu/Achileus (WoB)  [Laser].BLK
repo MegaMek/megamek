@@ -38,7 +38,7 @@ biped
 33
 </armor_type>
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA

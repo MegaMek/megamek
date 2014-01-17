@@ -39,7 +39,7 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 BA-Magnetic Clamp:Body
 BAAPMount:LA
 BABasicManipulatorMineClearance:LA

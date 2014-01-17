@@ -40,14 +40,21 @@ biped
 6
 </Armor>
 
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
-ISBALightMG
-BAArmoredGlove
-BAArmoredGlove
-ISImprovedSensors
-BARemoteSensorDispenser
-Camo System
-Improved Stealth
+ISBALightMG:LA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+ISImprovedSensors:Body
+BARemoteSensorDispenser:Body
+Camo System:Body
 </Squad Equipment>
 
 <type>
@@ -63,5 +70,5 @@ Leg
 </motion_type>
 
 <source>
-Dark Age
+TRO 3085
 </source>

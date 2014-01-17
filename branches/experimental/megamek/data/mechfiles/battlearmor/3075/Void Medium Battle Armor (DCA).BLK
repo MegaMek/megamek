@@ -34,10 +34,10 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSmallLaser
+ISSmallLaser:LA
 ISBAJumpBooster:Body
-BABasicManipulator
-BAArmoredGlove
+BABasicManipulator:RA
+BABasicManipulator:LA
 </Squad Equipment>
 <type>
 IS Level 2

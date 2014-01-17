@@ -43,20 +43,8 @@ CLBAMG:Body
 CLBAMG:Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 LC
+TRO 3145 Lyran Commonwealth
 </source>
 
 <chassis>
@@ -79,6 +67,10 @@ quad
 4
 </weightclass>
 
-<History>
-</history>
+<armor_type>
+30
+</armor_type>
+<armor_tech>
+7
+</armor_tech>
 

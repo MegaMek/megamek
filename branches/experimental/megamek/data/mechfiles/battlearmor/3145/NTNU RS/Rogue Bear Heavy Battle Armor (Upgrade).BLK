@@ -44,19 +44,19 @@ biped
 </Armor>
 
 <armor_type>
-2
+38
 </armor_type>
 
 <Squad Equipment>
-Clan BA Machine Gun
-Clan BA Machine Gun
+Clan BA Machine Gun:LA
+Clan BA Machine Gun:RA
 CLSRM2:Body
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BASRM2 Ammo
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BASRM2 Ammo:Body
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 
 <type>
@@ -75,6 +75,6 @@ Jump
 RS3145 NT NU
 </source>
 
-<history>
-BA Reactive Armor not coded. Unit included for completeness
-</history>
+<armor_tech>
+2
+</armor_tech>

@@ -177,9 +177,18 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
-                boolean bodyMounted = saEquip[x].endsWith(":Body");
-                saEquip[x] = saEquip[x].replace(":Body", "");
-                boolean dwpMounted = saEquip[x].endsWith(":DWP");
+                int mountLoc = BattleArmor.MOUNT_LOC_NONE;
+                if  (saEquip[x].contains(":Body")){
+                    mountLoc = BattleArmor.MOUNT_LOC_BODY;
+                    saEquip[x] = saEquip[x].replace(":Body", "");
+                } else if  (saEquip[x].contains(":LA")){
+                    mountLoc = BattleArmor.MOUNT_LOC_LARM;
+                    saEquip[x] = saEquip[x].replace(":LA", "");
+                } if  (saEquip[x].contains(":RA")){
+                    mountLoc = BattleArmor.MOUNT_LOC_RARM;
+                    saEquip[x] = saEquip[x].replace(":RA", "");
+                }
+                boolean dwpMounted = saEquip[x].contains(":DWP");
                 saEquip[x] = saEquip[x].replace(":DWP", "");
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
@@ -191,7 +200,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false, bodyMounted, dwpMounted);
+                        t.addEquipment(etype, nLoc, false, mountLoc, dwpMounted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

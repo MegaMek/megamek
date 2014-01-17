@@ -40,15 +40,14 @@ biped
 </Armor>
 
 <Squad Equipment>
-Improved Stealth
-BA ECM
-ISLightTag
-ISBALightMG
-BABasicManipulator
+BA ECM:Body
+ISLightTag:LA
+ISBALightMG:RA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>
-IS Level 3
+Clan Level 3
 </type>
 
 <year>
@@ -66,3 +65,12 @@ BA Harjel not coded. Unit included for completeness
 <source>
 RS3145 NT NU
 </source>
+
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+
+

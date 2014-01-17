@@ -117,7 +117,8 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false, false, false, false,
+                        t.addEquipment(etype, nLoc, false,
+                                BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -477,6 +478,18 @@ public class BLKFile {
             }
             if (m.isPintleTurretMounted()) {
                 name = name + "(PT)";
+            }
+            if (m.isDWPMounted()){
+                name += ":DWP";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
+                name += ":Body";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                name += ":LA";
+            }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+                name += ":RA";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {

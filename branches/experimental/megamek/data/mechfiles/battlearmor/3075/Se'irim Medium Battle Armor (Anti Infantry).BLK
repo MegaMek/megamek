@@ -34,10 +34,10 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISBAFlamer
+ISBAFlamer:RA
 BA Machine Gun:Body
 BA Machine Gun:Body
-BABattleClawVibro
+BABattleClawVibro:LA
 </Squad Equipment>
 <type>
 IS Level 2

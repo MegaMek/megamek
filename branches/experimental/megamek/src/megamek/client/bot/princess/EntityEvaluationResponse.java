@@ -63,7 +63,6 @@ public class EntityEvaluationResponse {
         this.myEstimatedPhysicalDamage = myEstimatedPhysicalDamage;
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) {

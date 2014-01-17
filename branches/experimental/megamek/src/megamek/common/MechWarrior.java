@@ -61,6 +61,32 @@ public class MechWarrior extends Infantry {
             }
         }
     }
+    
+    public MechWarrior(Crew crew, IPlayer owner, IGame game) {
+        super();
+        setCrew(crew);
+        setChassis("MechWarrior");
+        setModel(crew.getName());
+        setWeight(1);
+
+        // Generate the display name, then add the original ride's name.
+        StringBuffer newName = new StringBuffer(getDisplayName());
+        displayName = newName.toString();
+
+        // Finish initializing this unit.
+        setOwner(owner);
+        initializeInternal(1, Infantry.LOC_INFANTRY);
+        IGame tmpGame = game;
+        if (tmpGame != null
+                && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
+            try {
+                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                        Infantry.LOC_INFANTRY);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     /*
      * (non-Javadoc)

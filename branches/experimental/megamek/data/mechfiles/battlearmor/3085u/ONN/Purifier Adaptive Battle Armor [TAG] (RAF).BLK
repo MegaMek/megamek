@@ -34,9 +34,8 @@ biped
 6
 </Armor>
 <Squad Equipment>
-ISLightTAG
-BABattleClaw
-Mimetic Armor
+ISLightTAG:RA
+BABattleClaw:LA
 </Squad Equipment>
 <type>
 IS Level 2
@@ -48,5 +47,12 @@ IS Level 2
 Jump
 </motion_type>
 <source>
-Dark Age
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

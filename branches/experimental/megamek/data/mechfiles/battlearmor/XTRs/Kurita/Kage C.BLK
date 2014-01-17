@@ -34,8 +34,9 @@ biped
 6
 </Armor>
 <Squad Equipment>
-Mimetic Armor
-BattleArmorC3
+BattleArmorC3:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 4
@@ -44,10 +45,18 @@ IS Level 4
 3077
 </year>
 <source>
-Jihad
+XTR Kurita
 </source>
 <motion_type>
 Jump
 </motion_type>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
+
 
 

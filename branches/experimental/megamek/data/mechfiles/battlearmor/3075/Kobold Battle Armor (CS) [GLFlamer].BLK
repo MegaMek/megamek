@@ -34,12 +34,12 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISMicroGrenadeLauncher
-BAArmoredGlove
-BAArmoredGlove
+ISMicroGrenadeLauncher:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISBAFlamer
+ISBAFlamer:LA
 </Trooper 1 Equipment>
 <type>
 IS Level 2

@@ -31,12 +31,12 @@ biped
 7
 </Armor>
 <Squad Equipment>
-ISKingDavidLightGaussRifle
+ISKingDavidLightGaussRifle:RA
 ISSRM4:Body
-BA-SRM4 Ammo
-BA-SRM4 Ammo
-BABattleClaw
-BAArmoredGlove
+BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body
+BABattleClaw:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

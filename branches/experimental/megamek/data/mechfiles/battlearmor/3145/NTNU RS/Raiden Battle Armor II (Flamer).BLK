@@ -45,12 +45,16 @@ biped
 </Armor>
 
 <armor_type>
-3
+37
 </armor_type>
 
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
-ISBAFlamer
-BABattleClaw
+ISBAFlamer:LA
+BABattleClaw:RA
 </Squad Equipment>
 
 <type>
@@ -69,6 +73,3 @@ Jump
 RS3145 NT NU
 </source>
 
-<history>
-BA Reflective Armor not coded. Unit included for completeness
-</history>

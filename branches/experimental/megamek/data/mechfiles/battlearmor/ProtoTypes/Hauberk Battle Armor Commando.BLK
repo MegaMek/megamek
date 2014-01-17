@@ -40,14 +40,13 @@ biped
 </armor_tech>
 
 <Squad Equipment>
-ISDetachableWeaponPack
+ISDetachableWeaponPack:RA
 ISERSmallLaser:DWP
-ISDetachableWeaponPack
+ISDetachableWeaponPack:LA
 ISERSmallLaser:DWP
-ISDetachableWeaponPack
-ISSRM2 (OS):DWP
-Single-Hex ECM
-Mimetic Armor
+ISDetachableWeaponPack:Body
+ISBAMagshotGR:DWP
+ISSRM2 (OS):Body
 </Squad Equipment>
 <type>
 IS Level 3

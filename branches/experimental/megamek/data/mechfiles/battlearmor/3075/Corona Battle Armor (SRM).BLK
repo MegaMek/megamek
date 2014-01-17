@@ -31,15 +31,15 @@ biped
 8
 </Armor>
 <Squad Equipment>
-CLHeavy Recoilless Rifle
-CLBAFlamer
+CLHeavy Recoilless Rifle:LA
+CLBAFlamer:RA
 CLSRM5:Body
-BASRM5 Ammo
-BASRM5 Ammo
-BASRM5 Ammo
-BABattleClaw
-BABasicManipulator
-BAAPMount
+BASRM5 Ammo:Body
+BASRM5 Ammo:Body
+BASRM5 Ammo:Body
+BABattleClaw:LA
+BABasicManipulator:RA
+BAAPMount:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -50,3 +50,13 @@ Clan Level 2
 <motion_type>
 Leg
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

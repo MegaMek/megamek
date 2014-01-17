@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
@@ -614,7 +615,9 @@ public class MtfFile implements IMechLoader {
                             mech.addCritical(loc, new CriticalSlot(m));
                             continue;
                         }
-                        m = mech.addEquipment(etype, loc, rearMounted, isArmored, isTurreted);
+                        m = mech.addEquipment(etype, loc, rearMounted,
+                                BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                isTurreted);
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType)etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
@@ -659,7 +662,9 @@ public class MtfFile implements IMechLoader {
                     } else {
                         Mounted mount = null;
                         if (etype2 == null) {
-                            mount = mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
+                            mount = mech.addEquipment(etype, loc, rearMounted,
+                                    BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                    isTurreted);
                         } else {
                             if (etype instanceof AmmoType) {
                                 if (!(etype2 instanceof AmmoType) || (((AmmoType)etype).getAmmoType() != ((AmmoType)etype2).getAmmoType())) {

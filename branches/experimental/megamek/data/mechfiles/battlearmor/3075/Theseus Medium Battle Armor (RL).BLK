@@ -32,11 +32,11 @@ biped
 </Armor>
 <Squad Equipment>
 ISLight Recoilless Rifle:Body
-RL1
-RL1
-RL1
-BABattleClaw
-BABattleClaw
+RL1:RA
+RL1:RA
+RL1:RA
+BABattleClaw:LA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

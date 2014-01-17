@@ -25,7 +25,7 @@ P17
 </year>
 
 <type>
-Mixed (IS Chassis)
+Mixed (IS Chassis) Experimental
 </type>
 
 <motion_type>
@@ -37,36 +37,13 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-BAArmoredGlove
-BAArmoredGlove
-Basic Stealth
-BAAPMount
-BAArmoredGlove
-BAArmoredGlove
-Basic Stealth
-BAAPMount
+CLBAAPGaussRifle:RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
-<Trooper 6 Equipment>
-</Trooper 6 Equipment>
-
 <source>
-Jihad
+XTR Comstar
 </source>
 
 <chassis>
@@ -88,4 +65,11 @@ biped
 <weightclass>
 0
 </weightclass>
+
+<armor_type>
+31
+</armor_type>
+<armor_tech>
+7
+</armor_tech>
 

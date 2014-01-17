@@ -33,12 +33,13 @@ biped
 18
 </Armor>
 <Squad Equipment>
-CLDetachableWeaponPack
-CLHeavy Recoilless Rifle
-CLHeavy Recoilless Rifle
-CLSRM5OS:DWP
-BABasicManipulator
-BABasicManipulator
+CLDetachableWeaponPack:LA
+CLHeavy Recoilless Rifle:DWP
+CLDetachableWeaponPack:RA
+CLHeavy Recoilless Rifle:DWP
+CLSRM5OS:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -49,3 +50,13 @@ Clan Level 2
 <motion_type>
 Leg
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

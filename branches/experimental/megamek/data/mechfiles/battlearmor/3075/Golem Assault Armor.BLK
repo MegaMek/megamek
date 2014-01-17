@@ -36,14 +36,13 @@ biped
 18
 </Armor>
 <Squad Equipment>
-CLBearhunter Superheavy AC
-CLBearhunter Superheavy AC
+CLBearhunter Superheavy AC:LA
+CLBearhunter Superheavy AC:LA
 CLAdvancedSRM5:Body
-BA-Advanced SRM-5 Ammo
-BA-Advanced SRM-5 Ammo
-BA-Fire Resistant Armor
-BABasicManipulator
-BABasicManipulator
+BA-Advanced SRM-5 Ammo:Body
+BA-Advanced SRM-5 Ammo:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -54,3 +53,13 @@ Clan Level 2
 <motion_type>
 Leg
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+35
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

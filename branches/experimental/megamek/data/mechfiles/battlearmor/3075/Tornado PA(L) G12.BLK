@@ -31,9 +31,10 @@ biped
 2
 </Armor>
 <Squad Equipment>
+BAAPMount:RA
 Simple Camo:Body
-BAArmoredGlove
-BAArmoredGlove
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

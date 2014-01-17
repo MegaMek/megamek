@@ -8269,8 +8269,13 @@ public class Server implements Runnable {
                         || curHex.containsTerrain(Terrains.JUNGLE)) {
                     modifier = 1;
                 }
+                r = new Report(2126);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                vPhaseReport.add(r);
                 vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity,
                         modifier, false, -1, true));
+                Report.addNewline(vPhaseReport);
             }
 
         } // End entity-is-jumping

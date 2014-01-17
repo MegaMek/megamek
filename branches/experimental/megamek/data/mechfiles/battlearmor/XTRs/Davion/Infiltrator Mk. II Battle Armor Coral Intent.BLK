@@ -34,12 +34,11 @@ biped
 6
 </Armor>
 <Squad Equipment>
-Mimetic Armor
-ISDavidLightGaussRifle
-BattleArmorC3
-BAAPMount
-BABasicManipulator
-BABasicManipulator
+ISDavidLightGaussRifle:RA
+BattleArmorC3:Body
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 4
@@ -51,5 +50,12 @@ IS Level 4
 Jump
 </motion_type>
 <source>
-Jihad
+XTRO Davion
 </source>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>

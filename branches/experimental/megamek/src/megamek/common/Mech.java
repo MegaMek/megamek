@@ -120,11 +120,13 @@ public abstract class Mech extends Entity {
 
     public static final int GYRO_HEAVY_DUTY = 3;
 
+    public static final int GYRO_NONE = 4;
+
     public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro",
-            "Compact Gyro", "Heavy Duty Gyro" };
+            "Compact Gyro", "Heavy Duty Gyro", "None" };
 
     public static final String[] GYRO_SHORT_STRING = { "Standard", "XL",
-            "Compact", "Heavy Duty" };
+            "Compact", "Heavy Duty", "None" };
 
     // cockpit types
     public static final int COCKPIT_UNKNOWN = -1;
@@ -151,16 +153,18 @@ public abstract class Mech extends Entity {
 
     public static final int COCKPIT_TRIPOD = 10;
 
+    public static final int COCKPIT_INTERFACE = 11;
+
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
-            "Superheavy Tripod Cockpit", "Tripod Cockpit" };
+            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod" , "Tripod" };
+            "Superheavy Tripod" , "Tripod", "Interface" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -4687,7 +4691,7 @@ public abstract class Mech extends Entity {
         } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             costs[i++] = 500000 * (int) Math
                     .ceil((getOriginalWalkMP() * weight) / 100f) * 2;
-        } else {
+        } else if (getGyroType() == Mech.GYRO_STANDARD) {
             costs[i++] = 300000 * (int) Math
                     .ceil((getOriginalWalkMP() * weight) / 100f);
         }
@@ -5653,6 +5657,9 @@ public abstract class Mech extends Entity {
             case GYRO_STANDARD:
                 inName = "GYRO_STANDARD";
                 break;
+            case GYRO_NONE:
+                inName = "GYRO_NONE";
+                break;
             default:
                 inName = "GYRO_UNKNOWN";
         }
@@ -5696,6 +5703,9 @@ public abstract class Mech extends Entity {
                 break;
             case COCKPIT_SUPERHEAVY_TRIPOD:
                 inName = "COCKPIT_SUPERHEAVY_TRIPOD";
+                break;
+            case COCKPIT_INTERFACE:
+                inName = "COCKPIT_INTERFACE";
                 break;
             default:
                 inName = "COCKPIT_UNKNOWN";
@@ -6116,6 +6126,33 @@ public abstract class Mech extends Entity {
         addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_SENSORS));
         setCockpitType(COCKPIT_SMALL);
+        return true;
+    }
+
+    /**
+     * Add the critical slots necessary for a small cockpit. Note: This is part
+     * of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addInterfaceCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 6) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_INTERFACE);
         return true;
     }
 
@@ -7051,6 +7088,9 @@ public abstract class Mech extends Entity {
     public double getGyroMultiplier() {
         if ((getGyroType() == GYRO_HEAVY_DUTY)) {
             return 1.0;
+        }
+        if (getGyroType() == GYRO_NONE) {
+            return 0;
         }
         return 0.5;
     }

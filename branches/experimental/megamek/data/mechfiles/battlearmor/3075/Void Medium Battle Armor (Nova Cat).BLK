@@ -34,13 +34,13 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISBAMagshotGR
+ISBAMagshotGR:LA
 ISBAJumpBooster:Body
-BABasicManipulator
-BAHeavyBattleClawVibro
+BABasicManipulator:LA
+BAHeavyBattleClawVibro:RA
 </Squad Equipment>
 <type>
-IS
+Clan Level 2
 </type>
 <year>
 3069
@@ -55,5 +55,5 @@ TRO 3075
 33
 </armor_type>
 <armor_tech>
-3
+2
 </armor_tech>

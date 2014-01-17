@@ -3,6 +3,31 @@ VERSION HISTORY:
 v0.37.5-exp-dev (SVN)
 
 v0.37.5-dev (SVN)
++ Feature: BattleArmor equipment now tracks which location on the BA suit it is 
+    mounted on.  This isn't completely necessary from a current rules 
+    standpoint, but is required to facilitate consistency in MML (we need to 
+    be able to save the location a user assigns a weapon to).  Mounted used to 
+    only track if the weapon was body mounted, now it has a state variable 
+    baMountLoc, and BattleArmor defines 4 possible locations: NONE, BODY, LARM, 
+    RARM.  Additionally, the :DWP tag can be used in conjunction with a 
+    location tag (before only one tag was possible).
++ Added construction data for "machina domini" interface cockpit and gyro none
++ Added construction data for a few support vehicle engine types and chassis
+    modifications
++ Added construction data for BattleMech Neural Interface Unit 
++ Feature: Updated BLKFile to write out modifiers to Mounted so BattleArmor can 
+    load properly
++ Bug: Aeros, MUL, Reinforce and Bombs not working right still
++ Bug: TestAero would fail Aeros for mounted bombs, this has been fixed (for 
+    real this time)
++ Data: Some BA with new location tags.
++ Data: More BA Changes with new tags.
++ Added TSEMP modifier for steam engines
++ Data: Last of the new BA changes. They will need to be looked at in MM for 
+    errors.
++ Data: Unit fixes.
++ Bug [#3990]: Jumping Vehicles roll on the motive crit table but it's not 
+    clear why
 
 v0.37.4-exp (2014-01-12 02:20)
 + Feature: increased the expressiveness of the skin specifications.  Previously, 

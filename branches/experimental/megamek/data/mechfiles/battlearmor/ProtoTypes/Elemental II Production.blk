@@ -40,16 +40,20 @@ biped
 10
 </Armor>
 
+<armor_type>
+28
+</armor_type>
+
 <armor_tech>
 6
 </armor_tech>
 
 <Squad Equipment>
-CLBAAPGaussRifle
-CLBAMyomerBooster
-InfantryAutoShotgun
-BABasicManipulator
-BABasicManipulator
+CLBAAPGaussRifle:RA
+CLBAMyomerBooster:Body
+BAAPMount:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
 <type>

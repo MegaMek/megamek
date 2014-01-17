@@ -140,8 +140,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // I need some way of tracking how many missiles are Santa Annas
     private int nSantaAnna = 0;
 
-    // for BA weapons, is this on the body of a trooper?
-    private boolean bodyMounted = false;
+    /**
+     * BA use locations for troopers, so we need a way to keep track of where
+     *  a piece of equipment is moutned on BA
+     */
+    private int baMountLoc;
 
     // for BA weapons, is this in a detachable weapon pack?
     private boolean isDWPMounted = false;
@@ -321,7 +324,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     m.setMode(newMode);
                 }
             }
-        }    
+        }
         return true;
     }
 
@@ -426,11 +429,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             desc.append(shotsLeft);
             desc.append(")");
         }
-        if (isBodyMounted()) {
-            desc.append(" (Body)");
-        }
-        if (isDWPMounted()) {
-            desc.append(" (DWP)");
+        if (getEntity() instanceof BattleArmor) {
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
+                desc.append(" (Body)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+                desc.append(" (Left arm)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+                desc.append(" (Right arm)");
+            }
+            if (isDWPMounted()) {
+                desc.append(" (DWP)");
+            }
         }
         if (isDumping()) {
             desc.append(" (dumping)");
@@ -486,7 +497,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if (destroyed == true 
+        if ((destroyed == true)
                 && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
             if (entity != null){
                 entity.setHasDamagedRHS(true);
@@ -512,7 +523,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if (hit == true 
+        if ((hit == true)
                 && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
             if (entity != null){
                 entity.setHasDamagedRHS(true);
@@ -1254,7 +1265,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (getType() instanceof WeaponType) {
             WeaponType wtype = (WeaponType) getType();
             int heat = wtype.getHeat();
-            
+
             // AR10's have heat based upon the loaded missile
             if (wtype.getName().equals("AR10")){
                 AmmoType ammoType = (AmmoType)getLinked().getType();
@@ -1266,7 +1277,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     return 20;
                 }
             }
-            
+
             if (wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes()) {
                 heat = Compute.dialDownHeat(this, wtype);
             }
@@ -1297,7 +1308,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     heat++;
                 }
             }
-            
+
             return heat;
         }
         return 0;
@@ -1312,11 +1323,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isBodyMounted() {
-        return bodyMounted;
-    }
-
-    public void setBodyMounted(boolean bodyMounted) {
-        this.bodyMounted = bodyMounted;
+        return baMountLoc == BattleArmor.MOUNT_LOC_BODY;
     }
 
     public boolean isDWPMounted() {
@@ -1536,5 +1543,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
+    }
+
+    public int getBaMountLoc() {
+        return baMountLoc;
+    }
+
+    public void setBaMountLoc(int baMountLoc) {
+        this.baMountLoc = baMountLoc;
     }
 }

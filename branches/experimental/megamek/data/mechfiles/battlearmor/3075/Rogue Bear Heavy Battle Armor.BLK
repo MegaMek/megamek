@@ -31,15 +31,15 @@ biped
 13
 </Armor>
 <Squad Equipment>
-Clan BA Machine Gun
-Clan BA Machine Gun
+Clan BA Machine Gun:LA
+Clan BA Machine Gun:RA
 CLSRM3:Body
-BASRM3 Ammo
-BASRM3 Ammo
-BASRM3 Ammo
-BASRM3 Ammo
-BABattleClawVibro
-BABattleClawVibro
+BASRM3 Ammo:Body
+BASRM3 Ammo:Body
+BASRM3 Ammo:Body
+BASRM3 Ammo:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -50,3 +50,13 @@ Clan Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<source>
+TRO:3175
+</source>
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

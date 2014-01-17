@@ -45,12 +45,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLBAMG
-BAAPMount
-BACuttingTorch
-BASpaceOperationsAdaptation
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+CLBAMG:RA
+BAAPMount:LA
+BACuttingTorch:LA
+BASpaceOperationsAdaptation:Body
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
 </Squad Equipment>
 
 <type>
@@ -66,5 +66,12 @@ Jump
 </motion_type>
 
 <source>
-Star League
+RS 3085 Unabridged ONN
 </source>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

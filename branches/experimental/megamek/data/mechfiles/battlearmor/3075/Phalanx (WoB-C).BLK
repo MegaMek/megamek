@@ -32,9 +32,9 @@ biped
 </Armor>
 <Squad Equipment>
 ISHeavyMortar:Body
-ISBAMagshotGR
-BABattleClaw
-BAArmoredGlove
+ISBAMagshotGR:RA
+BABattleClaw:LA
+BAArmoredGlove:RA
 </Squad Equipment>
 <type>
 IS Level 2

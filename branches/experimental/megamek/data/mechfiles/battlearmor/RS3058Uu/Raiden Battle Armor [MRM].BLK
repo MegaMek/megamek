@@ -35,12 +35,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISMRM1
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-ISMRM1 Ammo
-BABattleClaw
+ISMRM1:RA
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+ISMRM1 Ammo:Body
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

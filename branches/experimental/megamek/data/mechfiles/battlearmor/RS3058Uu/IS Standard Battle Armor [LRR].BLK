@@ -34,8 +34,8 @@ biped
 9
 </Armor>
 <Squad Equipment>
-ISLight Recoilless Rifle
-BABattleClaw
+ISLight Recoilless Rifle:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

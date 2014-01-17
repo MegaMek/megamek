@@ -34,9 +34,11 @@ biped
 1
 </Armor>
 <Squad Equipment>
-Standard Stealth
-BAArmoredGlove
-BASalvageArm
+InfantryClanMauserIICIAS:LA
+BASalvageArm:RA
+BAArmoredGlove:LA
+BASpaceOperationsAdaptation:Body
+BAExtendedLifeSupport:Body
 </Squad Equipment>
 <type>
 Clan Level 2
@@ -47,3 +49,12 @@ Clan Level 2
 <motion_type>
 Jump
 </motion_type>
+<source>
+TRO:3175
+</source>
+<armor_type>
+32
+</armor_type>
+<armor_tech>
+2
+</armor_tech>

@@ -34,8 +34,8 @@ biped
 9
 </Armor>
 <Squad Equipment>
-BA Machine Gun
-BABattleClaw
+BA Machine Gun:RA
+BABattleClaw:RA
 </Squad Equipment>
 <type>
 IS Level 2

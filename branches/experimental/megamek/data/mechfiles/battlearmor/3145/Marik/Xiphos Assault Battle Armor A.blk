@@ -37,25 +37,13 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISLight Recoilless Rifle
-ISBAMagshotGR
-BABasicManipulator
+ISLight Recoilless Rifle:RA
+ISBAMagshotGR:LA
+BABasicManipulator:RA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <source>
-TRO 3145 FWL
+TRO 3145 Free Worlds League
 </source>
 
 <chassis>
@@ -70,8 +58,12 @@ biped
 </armor>
 
 <armor_type>
-2
+38
 </armor_type>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Trooper Count>
 4
@@ -80,4 +72,6 @@ biped
 <weightclass>
 4
 </weightclass>
+
+
 

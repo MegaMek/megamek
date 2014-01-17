@@ -37,7 +37,7 @@ biped
 ISSmallPulseLaser:LA
 </Trooper 1 Equipment>
 <Squad Equipment>
-ISMicroGrenadeLauncher:RA
+ISBAMicroGrenadeLauncher:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 </Squad Equipment>

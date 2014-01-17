@@ -36,7 +36,7 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 BABattleClaw:RA
 BAAPMount:LA
 ISImprovedSensors:Body

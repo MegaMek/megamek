@@ -39,7 +39,7 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISLightTAG:RA
+ISBALightTAG:RA
 BA-Magnetic Clamp:Body
 BAAPMount:LA
 BABasicManipulatorMineClearance:LA

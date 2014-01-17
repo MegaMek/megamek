@@ -31,7 +31,7 @@ biped
 8
 </Armor>
 <Squad Equipment>
-ISSupportPPC:Body
+ISBASupportPPC:Body
 BABattleClaw:LA
 BABattleClaw:RA
 </Squad Equipment>

@@ -34,8 +34,8 @@ quad
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:Body
-ISSupportPPC:Body
-ISSupportPPC:Body
+ISBASupportPPC:Body
+ISBASupportPPC:Body
 ISBAHeavyMG:DWP
 </Squad Equipment>
 <type>

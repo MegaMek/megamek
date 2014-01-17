@@ -32,7 +32,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:RA
-ISSupportPPC:DWP
+ISBASupportPPC:DWP
 ISRocketLauncher2:Body
 BAHeavyBattleClaw:LA
 </Squad Equipment>

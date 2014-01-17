@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 
@@ -36,10 +37,11 @@ public class ISBALightMG extends BAMGWeapon {
     public ISBALightMG() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Light Machine Gun";
+        name = "BA Light Machine Gun";
         setInternalName("BA Light Machine Gun");
         addLookupName("IS BA Light Machine Gun");
         addLookupName("ISBALightMG");
+        ammoType = AmmoType.T_NA;
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_HALFD6;

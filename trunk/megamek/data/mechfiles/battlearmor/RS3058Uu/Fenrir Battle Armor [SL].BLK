@@ -31,9 +31,9 @@ quad
 5
 </Armor>
 <Squad Equipment>
-ISSmall Laser:Body
-ISSmall Laser:Body
-ISSmall Laser:Body
+ISBASmallLaser:Body
+ISBASmallLaser:Body
+ISBASmallLaser:Body
 </Squad Equipment>
 <type>
 IS Level 2

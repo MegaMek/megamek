@@ -37,9 +37,9 @@ public class ISMediumVariableSpeedPulseLaser extends
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Medium VSP Laser";
         setInternalName("ISMediumVSPLaser");
-        setInternalName("ISMVSPL");
-        setInternalName("ISMediumVariableSpeedLaser");
-        setInternalName("ISMediumVSP");
+        addLookupName("ISMVSPL");
+        addLookupName("ISMediumVariableSpeedLaser");
+        addLookupName("ISMediumVSP");
         heat = 7;
         damage = DAMAGE_VARIABLE;
         toHitModifier = -4;

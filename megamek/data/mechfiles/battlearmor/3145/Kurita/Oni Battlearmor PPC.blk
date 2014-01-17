@@ -37,7 +37,7 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSupportPPC:RA
+ISBASupportPPC:RA
 Heavy Battle Claw (w/ Vibro-Claws):LA
 BABasicManipulator:RA
 BA ECM:Body

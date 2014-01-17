@@ -37,7 +37,7 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSupportPPC:RA
+ISBASupportPPC:RA
 BAAPMount:LA
 ISImprovedSensors:Body
 ISSRM4OS:Body

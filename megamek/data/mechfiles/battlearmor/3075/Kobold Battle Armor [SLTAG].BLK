@@ -39,7 +39,7 @@ BAArmoredGlove:LA
 BAArmoredGlove:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISLightTAG:LA
+ISBALightTAG:LA
 </Trooper 1 Equipment>
 <type>
 IS Level 2

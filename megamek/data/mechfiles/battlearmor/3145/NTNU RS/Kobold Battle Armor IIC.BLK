@@ -41,7 +41,7 @@ biped
 
 <Squad Equipment>
 BA ECM:Body
-ISLightTag:LA
+ISBALightTAG:LA
 ISBALightMG:RA
 BABasicManipulator:RA
 </Squad Equipment>

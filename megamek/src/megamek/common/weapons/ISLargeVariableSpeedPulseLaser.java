@@ -38,9 +38,9 @@ public class ISLargeVariableSpeedPulseLaser extends
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Large VSP Laser";
         setInternalName("ISLargeVSPLaser");
-        setInternalName("ISLVSPL");
-        setInternalName("ISLargeVariableSpeedLaser");
-        setInternalName("ISLargeVSP");
+        addLookupName("ISLVSPL");
+        addLookupName("ISLargeVariableSpeedLaser");
+        addLookupName("ISLargeVSP");
         heat = 10;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

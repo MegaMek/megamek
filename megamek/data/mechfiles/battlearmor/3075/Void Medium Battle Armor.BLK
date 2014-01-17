@@ -31,7 +31,7 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSupportPPC:Body
+ISBASupportPPC:Body
 ISBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA

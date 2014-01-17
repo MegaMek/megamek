@@ -37,7 +37,7 @@ biped
 </Armor>
 <Squad Equipment>
 BA Machine Gun:RA
-ISLightTAG:Body
+ISBALightTAG:Body
 BAPartialWing:Body
 BABattleClaw:LA
 BABattleClaw:RA

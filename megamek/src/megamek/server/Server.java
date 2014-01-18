@@ -18928,15 +18928,15 @@ public class Server implements Runnable {
                     EquipmentType.T_ARMOR_REFLECTIVE)
             || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
-            reflectiveArmor = true;
+            reflectiveArmor = true; // note that BA reflec receives "all of the bonuses but none of the drawbacks"
         }
 
         if (((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_REACTIVE)
                 || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
-            reactiveArmor = true;
+                    EquipmentType.T_ARMOR_BA_REACTIVE)) {
+            reactiveArmor = true; // note that BA reactive receives "all of the bonuses but none of the drawbacks"
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || 
@@ -19570,7 +19570,8 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
-                        && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                        && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                        && !isBattleArmor) { // BA reflec does not receive extra physical damage
                     tmpDamageHold = damage;
                     damage *= 2;
                     r = new Report(6066);
@@ -19578,8 +19579,8 @@ public class Server implements Runnable {
                     r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
-                } else if (reflectiveArmor && areaSatArty) {
-                    tmpDamageHold = damage;
+                } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
+                    tmpDamageHold = damage; // BA reflec does not receive extra AE damage
                     damage *= 2;
                     r = new Report(6087);
                     r.subject = te_n;
@@ -19708,7 +19709,8 @@ public class Server implements Runnable {
                                 - ((te.isHardenedArmorDamaged(hit)) ? 1 : 0);
                     }
                     if (reflectiveArmor
-                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                            && !isBattleArmor) {
                         absorbed = (int) Math.round(Math.ceil(absorbed / 2));
                         damage = tmpDamageHold;
                         tmpDamageHold = 0;
@@ -20340,7 +20342,7 @@ public class Server implements Runnable {
                 for (int i = 0; i < specCrits; i++) {
                     // against BAR or reflective armor, we get a +2 mod
                     int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                    critMod += reflectiveArmor ? 2 : 0;
+                    critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA reflec has no crit penalty
                     if (!hardenedArmor) {
                         // non-hardened armor gets modifiers
                         // the -2 for hardened is handled in the critBonus

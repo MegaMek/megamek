@@ -29,6 +29,7 @@ v0.37.5-dev (SVN)
 + Feature/Data: Battle armor equipment and some fixed units. Some of the data still
     needs to be checked and corrected. Some fixed units included.
 + Bug [#3988]: Fixes to Server for BA reflective/reactive armor
++ Bug: Cougar-XR was missing a jump jet in each leg
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

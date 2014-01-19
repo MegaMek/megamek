@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
@@ -48,6 +49,14 @@ public class ISBAFiredrakeNeedler extends Weapon {
         longRange = 3;
         extremeRange = 4;
         bv = 2;
+        cost = 1500;
+        tonnage = 0.050f;
+        criticals = 1;
+        availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_C };
+        introDate = 3061;
+        techRating = EquipmentType.RATING_D;
+        techLevel.put(3061, techLevel.get(3071));
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
                 .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON);
     }

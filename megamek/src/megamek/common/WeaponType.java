@@ -21,6 +21,7 @@ import megamek.common.weapons.battlearmor.*;
 import megamek.common.weapons.infantry.*;
 
 
+
 // TODO add XML support back in.
 
 /**
@@ -1261,6 +1262,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBASRM6());
         EquipmentType.addType(new CLBASRM6OS());
         EquipmentType.addType(new CLMicroBomb());
+        EquipmentType.addType(new CLBACompactNarc());
         EquipmentType.addType(new ISBAERMediumLaser());
         EquipmentType.addType(new ISBAERSmallLaser());
         EquipmentType.addType(new ISBAFlamer());
@@ -1275,7 +1277,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBASmallLaser());
         EquipmentType.addType(new ISBASmallPulseLaser());
         EquipmentType.addType(new ISBATaser());
-        EquipmentType.addType(new ISCompactNarc());
+        EquipmentType.addType(new ISBACompactNarc());
         EquipmentType.addType(new ISBADavidLightGaussRifle());
         EquipmentType.addType(new ISBAFiredrakeNeedler());
         EquipmentType.addType(new ISBAGrandMaulerGaussCannon());

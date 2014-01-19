@@ -32,6 +32,7 @@ v0.37.5-dev (SVN)
 + Bug: Cougar-XR was missing a jump jet in each leg
 + Bug [#3997]: PSR Needs 2, Rolls 2, Failed.
 + Bug: Potential NPE in TilesetManager
++ Data: More BA equipment and weapons (Compact NARC breaks MML).
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

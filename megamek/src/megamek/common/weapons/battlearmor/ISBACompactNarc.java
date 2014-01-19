@@ -15,14 +15,15 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.weapons.NarcWeapon;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISCompactNarc extends NarcWeapon {
+public class ISBACompactNarc extends NarcWeapon {
     /**
      *
      */
@@ -31,22 +32,27 @@ public class ISCompactNarc extends NarcWeapon {
     /**
      *
      */
-    public ISCompactNarc() {
+    public ISBACompactNarc() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Compact Narc";
-        setInternalName("ISCompactNarc");
-        addLookupName("ISCompact Narc");
+        name = "BA Compact Narc";
+        setInternalName("ISBACompactNarc");
+        addLookupName("ISBACompact Narc");
         heat = 0;
         rackSize = 4;
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
         extremeRange = 8;
-        tonnage = 0.0f;
-        criticals = 0;
         bv = 16;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        tonnage = .15f;
+        criticals = 1;
+        cost = 15000;
+        introDate = 3060;
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 
 }

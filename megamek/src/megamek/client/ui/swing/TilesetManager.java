@@ -531,7 +531,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // check if we have a duplicate image already loaded
         for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
             EntityImage onList = j.next();
-            if (onList.getBase().equals(base) && (onList.tint == tint) && onList.getCamo().equals(camo)) {
+            if (onList.getBase() != null && onList.getBase().equals(base)
+                    && (onList.tint == tint) && onList.getCamo() != null
+                    && onList.getCamo().equals(camo)) {
                 entityImage = onList;
                 break;
             }

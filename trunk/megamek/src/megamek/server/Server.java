@@ -11248,9 +11248,10 @@ public class Server implements Runnable {
                     coord,
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND, getPlayer(playerId)
-                                    .getName(), "ArtyAutoHit Hex, for "
-                                    + getPlayer(playerId).getName()));
+                            SpecialHexDisplay.NO_ROUND, getPlayer(playerId),
+                            "ArtyAutoHit Hex, for "
+                                    + getPlayer(playerId).getName(),
+                            SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }
         endCurrentTurn(null);
     }
@@ -27024,23 +27025,15 @@ public class Server implements Runnable {
     private Packet createSpecialHexDisplayPacket(int toPlayer) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game
                 .getBoard().getSpecialHexDisplayTable();
-        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<Coords, Collection<SpecialHexDisplay>>();
+        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = 
+                new Hashtable<Coords, Collection<SpecialHexDisplay>>();
         LinkedList<SpecialHexDisplay> tempList = null;
         IPlayer player = getPlayer(toPlayer);
         if (player != null) {
-            final String playerName = getPlayer(toPlayer).getName();
-            // System.err.println("building special update list for: "
-            // + playerName + " PlayerNumber " + toPlayer);
-
             for (Coords coord : shdTable.keySet()) {
                 tempList = new LinkedList<SpecialHexDisplay>();
                 for (SpecialHexDisplay shd : shdTable.get(coord)) {
-                    // System.err.println("list item: " + shd.getType()
-                    // + " owner: " + shd.getOwner() + " obscured:"
-                    // + shd.isObscured());
-
-                    if (!shd.isObscured() || shd.isOwner(playerName)) {
-                        // System.err.println("Added");
+                    if (!shd.isObscured(player)) {
                         tempList.add(0, shd);
                     }
                 }
@@ -27049,7 +27042,8 @@ public class Server implements Runnable {
                 }
             }
         }
-        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
+        return new Packet(
+                Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
     private Packet createTagInfoUpdatesPacket() {

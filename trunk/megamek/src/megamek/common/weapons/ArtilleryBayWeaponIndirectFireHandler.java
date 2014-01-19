@@ -96,6 +96,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (!cares(phase)) {
             return true;
         }
+        String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (phase == IGame.Phase.PHASE_TARGETING) {
             if (!handledAmmoAndReport) {
@@ -111,20 +112,17 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
 
-                game.getBoard()
-                        .addSpecialHexDisplay(
-                                aaa.getTarget(game).getPosition(),
-                                new SpecialHexDisplay(
-                                        SpecialHexDisplay.Type.ARTILLERY_INCOMING,
-                                        game.getRoundCount() + aaa.turnsTilHit,
-                                        game.getPlayer(aaa.getPlayerId())
-                                                .getName(),
-                                        "Artillery bay fire Incoming.in "
-                                                + (game.getRoundCount() + aaa.turnsTilHit)
-                                                + " rounds from"
-                                                + game.getPlayer(
-                                                        aaa.getPlayerId())
-                                                        .getName()));
+                artyMsg = "Artillery bay fire Incoming.in "
+                        + (game.getRoundCount() + aaa.turnsTilHit)
+                        + " rounds from"
+                        + game.getPlayer(aaa.getPlayerId()).getName();
+                game.getBoard().addSpecialHexDisplay(
+                        aaa.getTarget(game).getPosition(),
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
+                                        .getRoundCount() + aaa.turnsTilHit,
+                                game.getPlayer(aaa.getPlayerId()), artyMsg,
+                                SpecialHexDisplay.SHD_OBSCURED_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -205,21 +203,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (roll >= toHit.getValue()) {
                 ae.aTracker
                         .setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
-
-                game.getBoard()
-                        .addSpecialHexDisplay(
-                                targetPos,
-                                new SpecialHexDisplay(
-                                        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                                        game.getRoundCount(),
-                                        game.getPlayer(aaa.getPlayerId())
-                                                .getName(),
-                                        "Artillery bay autohit fire Incoming.in "
-                                                + (game.getRoundCount() + aaa.turnsTilHit)
-                                                + " rounds from"
-                                                + game.getPlayer(
-                                                        aaa.getPlayerId())
-                                                        .getName(), false));
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -236,25 +219,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // correct.
             else if (null != bestSpotter) {
                 // only add mods if it's not an automatic success
-                if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
+                if (ae.aTracker.getModifier(weapon, targetPos) 
+                        != TargetRoll.AUTOMATIC_SUCCESS) {
                     ae.aTracker.setModifier(
                             ae.aTracker.getModifier(weapon, targetPos) - 1,
                             targetPos);
-
-                    game.getBoard()
-                            .addSpecialHexDisplay(
-                                    targetPos,
-                                    new SpecialHexDisplay(
-                                            SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
-                                            game.getRoundCount(),
-                                            game.getPlayer(aaa.getPlayerId())
-                                                    .getName(),
-                                            "Artillery bay toHit Adjusted fire Incoming.in "
-                                                    + (game.getRoundCount() + aaa.turnsTilHit)
-                                                    + " rounds from"
-                                                    + game.getPlayer(
-                                                            aaa.getPlayerId())
-                                                            .getName(), false));
                 }
 
             }
@@ -308,20 +277,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         r.add(roll);
         vPhaseReport.addElement(r);
 
-        if (!isFlak) {
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
-                    new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_TARGET, game
-                                    .getRoundCount(), game.getPlayer(
-                                    aaa.getPlayerId()).getName(),
-                            "Artilery bay Target. incoming "
-                                    + game.getRoundCount()
-                                    + " from player ."
-                                    + game.getPlayer(aaa.getPlayerId())
-                                            .getName(), false));
-        }
-
         // do we hit?
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
@@ -341,17 +296,20 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
-
+            artyMsg = "Artillery Hit here by"
+                    + game.getPlayer(aaa.getPlayerId()).getName()
+                    + " (this hex is now an auto-hit). Display this for everyone.";
             game.getBoard().addSpecialHexDisplay(
                     targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(),
-                            "Artillery bay Hit. display this for everyone!"));
+                            game.getRoundCount(), game.getPlayer(aaa
+                                    .getPlayerId()), artyMsg));
 
         } else {
             // direct fire artillery only scatters by one d6
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
+            Coords origPos = targetPos;
             if (phase == IGame.Phase.PHASE_FIRING) {
                 targetPos = Compute.scatterDirectArty(targetPos);
             } else {
@@ -362,13 +320,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
-                    game.getBoard()
-                            .addSpecialHexDisplay(
-                                    targetPos,
-                                    new SpecialHexDisplay(
-                                            SpecialHexDisplay.Type.ARTILLERY_HIT,
-                                            game.getRoundCount(),
-                                            "Artillery bay Scattered Here. Display this for everyone"));
+                    artyMsg = "Artillery missed here by"
+                            + game.getPlayer(aaa.getPlayerId()).getName()
+                            + ". Display this for everyone.";
+                    game.getBoard().addSpecialHexDisplay(
+                            origPos,
+                            new SpecialHexDisplay(
+                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                            .getRoundCount(), game
+                                            .getPlayer(aaa.getPlayerId()),
+                                    artyMsg));
                 } else {
                     r = new Report(3192);
                 }

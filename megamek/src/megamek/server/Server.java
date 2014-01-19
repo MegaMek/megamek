@@ -17913,6 +17913,11 @@ public class Server implements Runnable {
             if ((diceRoll < rollTarget.getValue())
                     || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
                 r.choose(false);
+                // Report the fumble
+                if (game.getOptions().booleanOption("tacops_fumbles")
+                        && (diceRoll == 2)) {
+                    r.messageId = 2306;
+                }
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
@@ -18130,8 +18135,14 @@ public class Server implements Runnable {
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
-                    || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                    || (game.getOptions().booleanOption("tacops_fumbles") && 
+                            (diceRoll == 2))) {
                 r.choose(false);
+                // Report the fumble
+                if (game.getOptions().booleanOption("tacops_fumbles")
+                        && (diceRoll == 2)) {
+                    r.messageId = 2306;
+                }
                 vPhaseReport.add(r);
                 if (moving) {
                     vPhaseReport.addAll(doEntityFallsInto(entity,

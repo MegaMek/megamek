@@ -35,6 +35,7 @@ v0.37.5-dev (SVN)
 + Data: More BA equipment and weapons (Compact NARC breaks MML).
 + Bug [#4001]: Arty Icons and SpecialHexDisplay
 + Bug: Fixed potential NPE in Los highlighting/darkening code
++ Refactored BoardView1.getToolTipText to use a StringBuffer
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

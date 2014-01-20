@@ -85,6 +85,7 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
@@ -1114,6 +1115,20 @@ public class Client implements IClientCommandHandler {
                 data);
         send(packet);
     }
+    
+    public void sendSpecialHexDisplayAppend(Coords c, SpecialHexDisplay shd){
+        Object[] data = {c, shd};
+        Packet packet = new Packet(Packet.COMMAND_SPECIAL_HEX_DISPLAY_APPEND,
+                data);
+        send(packet);
+    }
+    
+    public void sendSpecialHexDisplayDelete(Coords c, SpecialHexDisplay shd){
+        Object[] data = {c, shd};
+        Packet packet = new Packet(Packet.COMMAND_SPECIAL_HEX_DISPLAY_DELETE,
+                data);
+        send(packet);
+    }
 
     /**
      * send all buffered packets on their way this should be called after
@@ -1368,6 +1383,7 @@ public class Client implements IClientCommandHandler {
                 game.getBoard().setSpecialHexDisplayTable(
                         (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
                                 .getObject(0));
+                game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
             case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
                 availableSizes = (Set<BoardDimensions>) c.getObject(0);

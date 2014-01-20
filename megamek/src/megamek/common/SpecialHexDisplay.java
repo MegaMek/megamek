@@ -70,7 +70,18 @@ public class SpecialHexDisplay implements Serializable {
                 return false;
             }
         },
-        PLAYER_NOTE(null);
+        PLAYER_NOTE(new File(Configuration.hexesDir(), 
+                "note.png").toString()) { //$NON-NLS-1$
+            @Override
+            public boolean drawBefore() {
+                return true;
+            }
+
+            @Override
+            public boolean drawAfter() {
+                return true;
+            }
+        };
 
         private transient Image defaultImage;
         private final String defaultImagePath;
@@ -199,6 +210,16 @@ public class SpecialHexDisplay implements Serializable {
         this.owner = owner;
     }
 
+    public void setObscuredLevel(int o){
+        if (o >= SHD_OBSCURED_OWNER && o <= SHD_OBSCURED_ALL){
+            obscured = o;
+        }
+    }
+    
+    public int getObscuredLevel(){
+        return obscured;
+    }
+    
     /**
      * Determines whether this special hex should be obscurred from the given
      * <code>IPlayer</code>.
@@ -267,5 +288,16 @@ public class SpecialHexDisplay implements Serializable {
             return true;
         }
         return false;
+    }
+    
+    public boolean equals(Object o){
+        if (o instanceof SpecialHexDisplay){
+            SpecialHexDisplay other = (SpecialHexDisplay)o;
+            return other.getType() == getType() 
+                    && getOwner().equals(other.getOwner()) 
+                    && getRound() == other.getRound();
+        } else {
+            return false;
+        }
     }
 }

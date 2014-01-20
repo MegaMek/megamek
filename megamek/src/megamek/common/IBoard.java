@@ -270,6 +270,9 @@ public interface IBoard {
 
     public abstract void addSpecialHexDisplay(Coords coords,
             SpecialHexDisplay shd);
+    
+    public abstract void removeSpecialHexDisplay(Coords coords,
+            SpecialHexDisplay shd);
 
     public abstract void setSpecialHexDisplayTable(
             Hashtable<Coords, Collection<SpecialHexDisplay>> shd);

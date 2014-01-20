@@ -1421,9 +1421,21 @@ public class Board implements Serializable, IBoard {
             specialHexes.put(coords, col);
         } else {
             col = specialHexes.get(coords);
+            // It's possible we are updating a SHD that is already entered. 
+            //  If that is the case, we want to remove the original entry.
+            if (col.contains(shd)){
+                col.remove(shd);
+            }
         }
 
         col.add(shd);
+    }
+    
+    public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        Collection<SpecialHexDisplay> col = specialHexes.get(coords);
+        if (col != null){
+            col.remove(shd);
+        }
     }
 
     /*

@@ -7317,7 +7317,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (shdList != null) {
             for (SpecialHexDisplay shd : shdList) {
                 if (!shd.isObscured(localPlayer)) {
-                    txt.append(shd.getInfo());
+                    if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE){
+                        if (localPlayer.equals(shd.getOwner())){
+                            txt.append("Note: ");
+                        } else {
+                            txt.append("Note (" + shd.getOwner().getName()
+                                    + "): ");
+                        }
+                    }
+                    String buf = shd.getInfo();
+                    buf = buf.replaceAll("\\n", "<br>");
+                    txt.append(buf);
                     txt.append("<br>"); //$NON-NLS-1$
                 }
             }

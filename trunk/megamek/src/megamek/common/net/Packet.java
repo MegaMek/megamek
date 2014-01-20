@@ -90,6 +90,8 @@ public class Packet {
     public static final int COMMAND_LOAD_SAVEGAME = 505;
     public static final int COMMAND_LOAD_GAME = 506;
     public static final int COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 510;
+    public static final int COMMAND_SPECIAL_HEX_DISPLAY_APPEND = 511;
+    public static final int COMMAND_SPECIAL_HEX_DISPLAY_DELETE = 512;
     public static final int COMMAND_CUSTOM_INITIATIVE = 520;
     public static final int COMMAND_FORWARD_INITIATIVE = 521;
     public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;

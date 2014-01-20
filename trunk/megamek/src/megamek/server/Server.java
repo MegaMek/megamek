@@ -27409,6 +27409,18 @@ public class Server implements Runnable {
             case Packet.COMMAND_RESET_ROUND_DEPLOYMENT:
                 game.setupRoundDeployment();
                 break;
+            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_DELETE:
+                game.getBoard().removeSpecialHexDisplay(
+                        (Coords) packet.getObject(0),
+                        (SpecialHexDisplay) packet.getObject(1));
+                sendSpecialHexDisplayPackets();
+                break;
+            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_APPEND:
+                game.getBoard().addSpecialHexDisplay(
+                        (Coords) packet.getObject(0),
+                        (SpecialHexDisplay) packet.getObject(1));
+                sendSpecialHexDisplayPackets();
+                break;
         }
     }
 

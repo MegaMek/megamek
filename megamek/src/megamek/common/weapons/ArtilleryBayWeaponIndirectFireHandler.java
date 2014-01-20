@@ -112,9 +112,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
 
-                artyMsg = "Artillery bay fire Incoming.in "
+                artyMsg = "Artillery bay fire Incoming, landing on round "
                         + (game.getRoundCount() + aaa.turnsTilHit)
-                        + " rounds from"
+                        + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
@@ -296,9 +296,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
-            artyMsg = "Artillery Hit here by"
-                    + game.getPlayer(aaa.getPlayerId()).getName()
-                    + " (this hex is now an auto-hit). Display this for everyone.";
+            artyMsg = "Artillery hit here on round " + game.getRoundCount() 
+                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+                    + " (this hex is now an auto-hit)";
             game.getBoard().addSpecialHexDisplay(
                     targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
@@ -320,9 +320,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
-                    artyMsg = "Artillery missed here by"
-                            + game.getPlayer(aaa.getPlayerId()).getName()
-                            + ". Display this for everyone.";
+                    artyMsg = "Artillery missed here on round "
+                            + game.getRoundCount() + ", fired by "
+                            + game.getPlayer(aaa.getPlayerId()).getName();
                     game.getBoard().addSpecialHexDisplay(
                             origPos,
                             new SpecialHexDisplay(

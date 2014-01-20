@@ -7275,7 +7275,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     s = weap.getName();
                     if (aaa.getAmmoId() > -1) {
                         Mounted ammo = ae.getEquipment(aaa.getAmmoId());
-                        s += "(" + ammo.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        s += " (" + ammo.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }
@@ -7284,8 +7284,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             txt.append(Messages.getString(
                     "BoardView1.ArtilleryAttack", new Object[] { s, //$NON-NLS-1$
-                            new Integer(aaa.turnsTilHit),
-                            aaa.toHit(game).getValueAsString() }));
+                            new Integer(aaa.turnsTilHit)}));
             txt.append("<br>"); //$NON-NLS-1$
         }
 
@@ -7312,6 +7311,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 txt.append("<br>"); //$NON-NLS-1$
             }
         }
+        
+        final Collection<SpecialHexDisplay> shdList = game.getBoard()
+                .getSpecialHexDisplay(mcoords);
+        if (shdList != null) {
+            for (SpecialHexDisplay shd : shdList) {
+                if (!shd.isObscured(localPlayer)) {
+                    txt.append(shd.getInfo());
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
+        }        
 
         txt.append("</html>"); //$NON-NLS-1$
         return txt.toString();

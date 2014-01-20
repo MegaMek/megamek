@@ -8255,7 +8255,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("ISDetachableWeaponPack");
-        // FIXME: should be 0.75 x weapon/ammo
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 18000;
@@ -8273,7 +8272,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("CLDetachableWeaponPack");
-        // FIXME: should be 0.75 x weapon/ammo
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 18000;

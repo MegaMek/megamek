@@ -1093,9 +1093,11 @@ public class BattleArmor extends Infantry {
             if (mounted.isDWPMounted()) {
                 if (mounted.isMissing()) {
                     continue;
-                } else if ((mounted.getLinked() != null) && (mounted.getLinked().getUsableShotsLeft() > 0)) {
+                } else if ((mounted.getLinked() != null) && 
+                        (mounted.getLinked().getUsableShotsLeft() > 0)) {
                     return true;
-                } else if ((mounted.getLinked() == null) && !mounted.isMissing()){
+                } else if ((mounted.getLinked() == null) && 
+                        !mounted.isMissing()){
                     return true;
                 }
             }

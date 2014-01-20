@@ -1749,7 +1749,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else {
             src = null;
         }
-        if (src != null) {
+        if (src != null && game.getBoard().contains(src)) {
             Point p = new Point(drawX, drawY);
             GUIPreferences gs = GUIPreferences.getInstance();
             boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);

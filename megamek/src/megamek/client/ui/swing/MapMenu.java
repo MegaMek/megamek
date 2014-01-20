@@ -350,7 +350,7 @@ public class MapMenu extends JPopupMenu {
             finalNote = note;
         }
         JMenuItem item = new JMenuItem(Messages
-                .getString("NoateDialog.action")); //$NON-NLS-1$ 
+                .getString("NoteDialog.action")); //$NON-NLS-1$ 
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 NoteDialog nd = new NoteDialog(gui.frame, finalNote);

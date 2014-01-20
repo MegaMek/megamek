@@ -7088,82 +7088,35 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * The text to be displayed when the mouse is at a certain point TODO: just
-     * use a StringBuffer... This is copied from the AWT version
+     * The text to be displayed when the mouse is at a certain point.
      */
     @Override
     public String getToolTipText(MouseEvent e) {
         // If new instance of mouse event, redraw obscured hexes and elevations.
         repaint();
 
-        int stringsSize = 0;
+        StringBuffer txt = new StringBuffer();
         IHex mhex = null;
-        Point point = e.getPoint();
-
-        // first, we have to determine how much text we are going to have
-        // are we on a hex?
+        final Point point = e.getPoint();
         final Coords mcoords = getCoordsAt(point);
+        final ArrayList<ArtilleryAttackAction> artilleryAttacks = 
+                getArtilleryAttacksAtLocation(mcoords);
+        final Mounted curWeapon = getSelectedArtilleryWeapon();
+        
         if (GUIPreferences.getInstance().getShowMapHexPopup()
                 && game.getBoard().contains(mcoords)) {
             mhex = game.getBoard().getHex(mcoords);
-            stringsSize += 1;
         }
-
-        // check if it's on any entities
-        for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point)) {
-                stringsSize += 4;
-            }
-        }
-
-        // check if it's on any attacks
-        for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(point)) {
-                stringsSize += 1 + aSprite.weaponDescs.size();
-            }
-        }
-
-        // If the hex contains a building, make more space.
-        // Also if it contains other displayable terrain.
-        if (mhex != null) {
-            stringsSize += mhex.displayableTerrainsPresent();
-            if (mhex.containsTerrain(Terrains.BUILDING)) {
-                stringsSize++;
-            }
-            if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-                stringsSize++;
-            }
-            if (mhex.containsTerrain(Terrains.BRIDGE)) {
-                stringsSize++;
-            }
-        }
-
-        stringsSize += game.getNbrMinefields(mcoords);
-
-        // Artillery
-        final ArrayList<ArtilleryAttackAction> artilleryAttacks = getArtilleryAttacksAtLocation(mcoords);
-        stringsSize += artilleryAttacks.size();
-
-        // Artillery fire adjustment
-        final Mounted curWeapon = getSelectedArtilleryWeapon();
-        if (curWeapon != null) {
-            stringsSize++;
-        }
-
-        // if the size is zip, you must a'quit
-        if (stringsSize == 0) {
-            return null;
-        }
-
-        // now we can allocate an array of strings
-        String[] strings = new String[stringsSize];
-        int stringsIndex = 0;
+        
+        txt.append("<html>"); //$NON-NLS-1$
 
         // are we on a hex?
         if (mhex != null) {
-            strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
-                    + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
-            stringsIndex += 1;
+            txt.append(Messages.getString("BoardView1.Hex") + //$NON-NLS-1$ 
+                    mcoords.getBoardNum()); 
+            txt.append(Messages.getString("BoardView1.level") + //$NON-NLS-1$ 
+                    mhex.getElevation()); 
+            txt.append("<br>"); //$NON-NLS-1$
 
             // cycle through the terrains and report types found
             // this will skip buildings and other constructed units
@@ -7175,11 +7128,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     int ttl = mhex.getTerrain(terType).getLevel();
                     String name = Terrains.getDisplayName(terType, ttl);
                     if (tf > 0) {
-                        name = name + " (" + tf + ")";
+                        name = name + " (" + tf + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     if (null != name) {
-                        strings[stringsIndex] = name;
-                        stringsIndex += 1;
+                        txt.append(name);
+                        txt.append("<br>"); //$NON-NLS-1$
                     }
                 }
             }
@@ -7196,8 +7149,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
                 buf.append(bldg.getCurrentCF(mcoords));
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
+                txt.append(buf.toString());
+                txt.append("<br>"); //$NON-NLS-1$
             }
             if (mhex.containsTerrain(Terrains.BUILDING)) {
                 // Get the building.
@@ -7218,10 +7171,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     buf.append(bldg.getBasement(mcoords).getDesc());
                     if (bldg.getBasementCollapsed(mcoords)) {
                         buf.append(Messages
-                                .getString("BoardView1.BldgBasementCollapsed"));
+                                .getString("BoardView1.BldgBasementCollapsed")); //$NON-NLS-1$
                     }
-                    strings[stringsIndex] = buf.toString();
-                    stringsIndex += 1;
+                    txt.append(buf.toString());
+                    txt.append("<br>"); //$NON-NLS-1$
                 }
             }
 
@@ -7237,60 +7190,67 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
                 buf.append(bldg.getCurrentCF(mcoords));
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
+                txt.append(buf.toString());
+                txt.append("<br>"); //$NON-NLS-1$
             }
 
             if (game.containsMinefield(mcoords)) {
                 Vector<Minefield> minefields = game.getMinefields(mcoords);
                 for (int i = 0; i < minefields.size(); i++) {
                     Minefield mf = minefields.elementAt(i);
-                    String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    String owner = " (" //$NON-NLS-1$
+                    + game.getPlayer(mf.getPlayerId()).getName() 
+                    + ")"; //$NON-NLS-1$
 
                     switch (mf.getType()) {
-                        case (Minefield.TYPE_CONVENTIONAL):
-                            strings[stringsIndex] = mf.getName()
+                    case (Minefield.TYPE_CONVENTIONAL):
+                        txt.append(mf.getName()
+                                + Messages.getString("BoardView1.minefield") //$NON-NLS-1$
+                                + "(" + mf.getDensity() + ")" + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_COMMAND_DETONATED):
+                        txt.append(mf.getName()
+                                + Messages.getString("BoardView1.minefield") //$NON-NLS-1$
+                                + "(" + mf.getDensity() + ")" + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_VIBRABOMB):
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            txt.append(mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            break;
-                        case (Minefield.TYPE_COMMAND_DETONATED):
-                            strings[stringsIndex] = mf.getName()
+                                            .getString("BoardView1.minefield") //$NON-NLS-1$
+                                    + "(" + mf.getDensity() + ")" + "(" //$NON-NLS-1$
+                                    + mf.getSetting() + ") " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        } else {
+                            txt.append(mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            break;
-                        case (Minefield.TYPE_VIBRABOMB):
-                            if (mf.getPlayerId() == localPlayer.getId()) {
-                                strings[stringsIndex] = mf.getName()
-                                        + Messages
-                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            } else {
-                                strings[stringsIndex] = mf.getName()
-                                        + Messages
-                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                            break;
-                        case (Minefield.TYPE_ACTIVE):
-                            strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            break;
-                        case (Minefield.TYPE_INFERNO):
-                            strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            break;
+                                            .getString("BoardView1.minefield") //$NON-NLS-1$
+                                    + "(" + mf.getDensity() + ")" + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
+                        break;
+                    case (Minefield.TYPE_ACTIVE):
+                        txt.append(mf.getName()
+                                + Messages.getString("BoardView1.minefield") //$NON-NLS-1$
+                                + "(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_INFERNO):
+                        txt.append(mf.getName()
+                                + Messages.getString("BoardView1.minefield") //$NON-NLS-1$
+                                + "(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
                     }
-                    stringsIndex++;
+                    txt.append("<br>"); //$NON-NLS-1$
                 }
             }
+        
         }
         // check if it's on any entities
         for (EntitySprite eSprite : entitySprites) {
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
-                System.arraycopy(entityStrings, 0, strings, stringsIndex,
-                        entityStrings.length);
-                stringsIndex += entityStrings.length;
+                for (String entString : entityStrings){
+                    txt.append(entString);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
             }
         }
 
@@ -7298,9 +7258,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
-                System.arraycopy(attackStrings, 0, strings, stringsIndex,
-                        attackStrings.length);
-                stringsIndex += 1 + aSprite.weaponDescs.size();
+                for (String attString : attackStrings){
+                    txt.append(attString);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
             }
         }
 
@@ -7314,17 +7275,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     s = weap.getName();
                     if (aaa.getAmmoId() > -1) {
                         Mounted ammo = ae.getEquipment(aaa.getAmmoId());
-                        s += "(" + ammo.getName() + ")";
+                        s += "(" + ammo.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }
             if (s == null) {
                 s = Messages.getString("BoardView1.Artillery");
             }
-            strings[stringsIndex++] = Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[] { s,
+            txt.append(Messages.getString(
+                    "BoardView1.ArtilleryAttack", new Object[] { s, //$NON-NLS-1$
                             new Integer(aaa.turnsTilHit),
-                            aaa.toHit(game).getValueAsString() });
+                            aaa.toHit(game).getValueAsString() }));
+            txt.append("<br>"); //$NON-NLS-1$
         }
 
         // check artillery fire adjustment
@@ -7340,23 +7302,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                strings[stringsIndex++] = Messages
-                        .getString("BoardView1.ArtilleryAutohit");
+                txt.append(Messages
+                        .getString("BoardView1.ArtilleryAutohit")); //$NON-NLS-1$
+                txt.append("<br>"); //$NON-NLS-1$
             } else {
-                strings[stringsIndex++] = Messages.getString(
-                        "BoardView1.ArtilleryAdjustment",
-                        new Object[] { new Integer(amod) });
+                txt.append(Messages.getString(
+                        "BoardView1.ArtilleryAdjustment", //$NON-NLS-1$
+                        new Object[] { new Integer(amod) }));
+                txt.append("<br>"); //$NON-NLS-1$
             }
         }
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html>");
-        for (String str : strings) {
-            sb.append(str);
-            sb.append("<br>");
-        }
-        sb.append("</html>");
-        return sb.toString();
+        txt.append("</html>"); //$NON-NLS-1$
+        return txt.toString();
     }
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(

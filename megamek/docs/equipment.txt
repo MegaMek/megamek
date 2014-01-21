@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,3071-Inner Sphere,3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -345,7 +345,7 @@ W,3050-Inner Sphere3071-Inner Sphere,3050-IS_TW_Non_Box3071-IS_TW_Non_Box,ISC3Ma
 W,3100-Inner Sphere3071-Inner Sphere3073-Inner Sphere,3100-IS_Advanced3071-IS_Experimental3073-IS_Experimental,ISC3MasterBoostedSystemUnit,IS C3 Computer Boosted,ISC3MasterComputerBoosted,C3 Master Boosted System with TAG,
 W,3054-Clan3071-Clan,3054-Clan_TW3071-Clan_TW,CLLightTAG,Clan Light TAG,
 W,3071-Clan2600-Clan,3071-Clan_TW2600-Clan_TW,CLTAG,Clan TAG,
-W,3053-Inner Sphere3071-Inner Sphere,3053-IS_TW_Non_Box3071-IS_TW_Non_Box,IS BA Light TAG,
+W,3053-Inner Sphere3071-Inner Sphere,3053-IS_TW_Non_Box3071-IS_TW_Non_Box,IS BA Light TAG,ISBALightTAG,
 W,3054-Clan3071-Clan,3054-Clan_TW3071-Clan_TW,CLBALightTAG,Clan BA Light TAG,
 W,3068-Inner Sphere3071-Inner Sphere,3068-IS_TW_Non_Box3071-IS_TW_Non_Box,ISMML3,IS MML-3,
 W,3068-Inner Sphere3071-Inner Sphere,3068-IS_TW_Non_Box3071-IS_TW_Non_Box,ISMML5,IS MML-5,

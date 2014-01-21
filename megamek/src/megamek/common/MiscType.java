@@ -3611,7 +3611,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
-        misc.addLookupName("IS BA ECM");
+        misc.setInternalName("IS BA ECM");
         misc.addLookupName("ISBAECM");
         misc.tonnage = .1f;
         misc.criticals = 1;
@@ -3636,7 +3636,8 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
-        misc.addLookupName("CL BA ECM");
+        misc.setInternalName("CL BA ECM");
+        misc.addLookupName("CLBAECM");
         misc.tonnage = .075f;
         misc.criticals = 1;
         misc.cost = 50000;

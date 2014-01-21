@@ -36,8 +36,8 @@ public class ISBALightTAG extends TAGWeapon {
         super();
         this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Light TAG";
+        setInternalName("ISBALightTAG");
         this.addLookupName("IS BA Light TAG");
-        this.addLookupName("ISBALightTAG");
         this.tonnage = 0.035f;
         this.criticals = 1;
         this.hittable = true;

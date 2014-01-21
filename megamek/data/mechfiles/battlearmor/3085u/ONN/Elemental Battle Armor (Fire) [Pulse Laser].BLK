@@ -45,8 +45,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLMicroPulseLaser:RA
-CLSRM2OS:Body
+CLBAMicroPulseLaser:RA
+CLBASRM2OS:Body
 BABattleClaw:LA
 </Squad Equipment>
 

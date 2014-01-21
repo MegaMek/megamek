@@ -13,19 +13,19 @@ BattleArmor
 </UnitType>
 
 <Name>
-Cuchulainn Support Armor
+Achileus Light Battle Armor
 </Name>
 
 <Model>
-(Clan Model)
+(WoB) 1
 </Model>
 
 <year>
-3134
+3064
 </year>
 
 <type>
-Clan Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -33,18 +33,46 @@ Jump
 </motion_type>
 
 <cruiseMP>
-2
+1
 </cruiseMP>
 
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
-CLDetachableWeaponPack:LA
-CLBAERMediumPulseLaser:DWP
+BAAPMount:LA
+ISImprovedSensors:Body
+null:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
+Infantry Auto Rifle
 </Squad Equipment>
 
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
 <source>
-TRO 3145 Lyran Commonwealth
+TRO 3058 Upgrade
 </source>
 
 <chassis>
@@ -52,25 +80,18 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-12
+6
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>
-3
+1
 </weightclass>
-
-<armor_type>
-33
-</armor_type>
-<armor_tech>
-2
-</armor_tech>
 

@@ -41,7 +41,7 @@ biped
 
 <Squad Equipment>
 ISDetachableWeaponPack:Body
-ISSRM3:DWP
+ISBASRM3:DWP
 BA-SRM3 Ammo:Body
 BA-SRM3 Ammo:Body
 ISBALightTAG:RA

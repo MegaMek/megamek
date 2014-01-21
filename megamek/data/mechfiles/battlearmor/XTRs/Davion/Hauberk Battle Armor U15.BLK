@@ -34,15 +34,15 @@ biped
 ClDetachableWeaponPack:LA
 CLERSmallLaser:DWP
 ClDetachableWeaponPack:RA
-CLMicroPulseLaser:DWP
+CLBAMicroPulseLaser:DWP
 ClDetachableWeaponPack:Body
 ISBAMagshotGR:DWP
-CLSRM2:Body
+CLBASRM2:Body
 BASRM2 Ammo:Body
 BASRM2 Ammo:Body
 BASRM2 Ammo:Body
 BASRM2 Ammo:Body
-Single-Hex ECM:Body
+IS BA ECM:Body
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental

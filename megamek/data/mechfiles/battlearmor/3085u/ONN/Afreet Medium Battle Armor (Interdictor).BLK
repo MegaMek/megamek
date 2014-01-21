@@ -35,7 +35,7 @@ biped
 </Armor>
 <Squad Equipment>
 Clan BA Heavy Machine Gun:RA
-Single-Hex ECM:Body
+CL BA ECM:Body
 CLBAJumpBooster:Body
 BABattleClawVibro:LA
 BABattleClawVibro:RA

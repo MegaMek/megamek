@@ -41,7 +41,7 @@ biped
 <Squad Equipment>
 BAAPMount:LA
 ISImprovedSensors:Body
-Single-Hex ECM:Body
+IS BA ECM:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

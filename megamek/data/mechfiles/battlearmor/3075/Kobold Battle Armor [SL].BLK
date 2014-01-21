@@ -37,7 +37,7 @@ biped
 ISSmallPulseLaser:LA
 </Trooper 1 Equipment>
 <Squad Equipment>
-ISSmallLaser:RA
+ISBASmallLaser:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 </Squad Equipment>

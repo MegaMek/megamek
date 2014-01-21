@@ -37,22 +37,22 @@ biped
 BABattleClaw:LA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 4 Equipment>

@@ -47,7 +47,7 @@ biped
 <Squad Equipment>
 ISBAJumpBooster:Body
 BACuttingTorch:RA
-BASpaceOperationsAdaptation:Body
+ISBASpaceOperationsAdaptation:Body
 BABattleClaw:RA
 BAArmoredGlove:LA
 BAAPMount:LA

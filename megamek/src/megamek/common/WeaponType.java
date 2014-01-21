@@ -1276,6 +1276,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAPlasmaRifle());
         EquipmentType.addType(new ISBASmallLaser());
         EquipmentType.addType(new ISBASmallPulseLaser());
+        EquipmentType.addType(new ISBASmallVariableSpeedPulseLaser());
+        EquipmentType.addType(new ISBAMediumVariableSpeedPulseLaser());
         EquipmentType.addType(new ISBATaser());
         EquipmentType.addType(new ISBACompactNarc());
         EquipmentType.addType(new ISBADavidLightGaussRifle());
@@ -1323,6 +1325,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAMRM3OS());
         EquipmentType.addType(new ISBAMRM4OS());
         EquipmentType.addType(new ISBAMRM5OS());
+        EquipmentType.addType(new ISBARL1());
+        EquipmentType.addType(new ISBARL2());
+        EquipmentType.addType(new ISBARL3());
+        EquipmentType.addType(new ISBARL4());
+        EquipmentType.addType(new ISBARL5());
 
         // Unofficial BA Weapons
         EquipmentType.addType(new CLBABearhunterSuperheavyACi());

@@ -31,7 +31,7 @@ quad
 5
 </Armor>
 <Squad Equipment>
-ISSmallVSPLaser:Body
+ISBASmallVSP:Body
 ISHeavyGL:Body
 </Squad Equipment>
 <type>

@@ -41,12 +41,12 @@ biped
 </Armor>
 
 <Squad Equipment>
-ClMicroPulseLaser:LA
+CLBAMicroPulseLaser:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
 BACuttingTorch:RA
 Magnetic Clamp:Body
-BASpaceOperationsAdaptation:Body
+ISBASpaceOperationsAdaptation:Body
 </Squad Equipment>
 
 <type>

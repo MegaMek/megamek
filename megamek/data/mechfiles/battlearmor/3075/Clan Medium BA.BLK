@@ -34,8 +34,8 @@ biped
 9
 </Armor>
 <Squad Equipment>
-CLSRM2OS:Body
-CLSRM2OS:LA
+CLBASRM2OS:Body
+CLBASRM2OS:LA
 CLBAFlamer:RA
 CLBAJumpBooster:Body
 BASearchlight:LA

@@ -31,10 +31,10 @@ quad
 15
 </Armor>
 <Squad Equipment>
-ISSmallLaser:Body
-ISSmallLaser:Body
-ISSRM3OS:Body
-ISSRM3OS:Body
+ISBASmallLaser:Body
+ISBASmallLaser:Body
+ISBASRM3OS:Body
+ISBASRM3OS:Body
 </Squad Equipment>
 <type>
 IS Level 2

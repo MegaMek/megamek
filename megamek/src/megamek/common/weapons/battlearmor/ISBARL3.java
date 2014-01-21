@@ -36,6 +36,7 @@ public class ISBARL3 extends RLWeapon {
         name = "BA Rocket Launcher 3";
         setInternalName("BA RL3");
         addLookupName("BA RL 3");
+        addLookupName("BARL3");
         addLookupName("ISBARocketLauncher3");
         addLookupName("IS BA RLauncher-3");
         rackSize = 3;

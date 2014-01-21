@@ -52,7 +52,7 @@ biped
 </armor_tech>
 
 <Squad Equipment>
-CLERSmallLaser:RA
+CLBAERSmallLaser:RA
 CLBAJumpBooster:Body
 BABasicManipulator:RA
 BABattleClaw:LA

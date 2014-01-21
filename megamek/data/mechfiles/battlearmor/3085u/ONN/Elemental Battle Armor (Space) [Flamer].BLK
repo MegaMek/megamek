@@ -48,7 +48,7 @@ biped
 CLBAFlamer:RA
 BAAPMount:LA
 BACuttingTorch:LA
-BASpaceOperationsAdaptation:Body
+CLBASpaceOperationsAdaptation:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 </Squad Equipment>

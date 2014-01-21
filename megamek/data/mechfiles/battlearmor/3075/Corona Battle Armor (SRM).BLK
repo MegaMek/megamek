@@ -31,9 +31,9 @@ biped
 8
 </Armor>
 <Squad Equipment>
-CLHeavy Recoilless Rifle:LA
+CLBAHeavy Recoilless Rifle:LA
 CLBAFlamer:RA
-CLSRM5:Body
+CLBASRM5:Body
 BASRM5 Ammo:Body
 BASRM5 Ammo:Body
 BASRM5 Ammo:Body

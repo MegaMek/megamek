@@ -40,9 +40,9 @@ biped
 
 <Squad Equipment>
 BA Machine Gun:RA
-Single-Hex ECM:Body
-Parafoil:Body
-ISImprovedSensors:Body
+IS BA ECM:Body
+BAParafoil:Body
+ISBAImprovedSensors:Body
 BAAPMount:RA
 BAAPMount:LA
 BABasicManipulator:LA

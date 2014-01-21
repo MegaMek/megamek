@@ -49,7 +49,7 @@ ISBAMagshotGR:RA
 BABasicManipulator:LA
 BABasicManipulator:RA
 BA-Magnetic Clamp:Body
-Single-Hex ECM:Body
+IS BA ECM:Body
 </Squad Equipment>
 
 <type>

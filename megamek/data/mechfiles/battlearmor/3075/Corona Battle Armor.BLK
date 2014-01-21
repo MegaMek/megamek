@@ -28,7 +28,7 @@ biped
 8
 </Armor>
 <Squad Equipment>
-CLMediumPulseLaser:Body
+CLBAMediumPulseLaser:Body
 BABattleClaw:LA
 BABasicManipulator:RA
 BAAPMount:RA

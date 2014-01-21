@@ -38,6 +38,7 @@ public class ISBALRM3 extends LRMWeapon {
         addLookupName("IS BA LRM-3");
         addLookupName("IS BA LRM3");
         addLookupName("IS BA LRM 3");
+        addLookupName("ISBALRM3");
         rackSize = 3;
         minimumRange = 6;
         bv = 29;

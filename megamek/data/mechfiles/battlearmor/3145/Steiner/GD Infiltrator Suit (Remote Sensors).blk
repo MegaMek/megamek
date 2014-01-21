@@ -37,7 +37,7 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Parafoil:Body
+BAParafoil:Body
 ISBAKingDavidLightGaussRifle:RA
 BARemoteSensorDispenser:LA
 BABasicManipulator:LA

@@ -32,7 +32,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISFiredrakeIncendiaryNeedler:RA
-ISSRM5:Body
+ISBASRM5:Body
 BA-SRM5 Ammo:Body
 BA-SRM5 Ammo:Body
 BA-SRM5 Ammo:Body
@@ -40,25 +40,25 @@ BA-SRM5 Ammo:Body
 BABasicManipulator
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISCompact Narc:Body
+ISBACompact Narc:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc:Body
+ISBACompact Narc:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc:Body
+ISBACompact Narc:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc:Body
+ISBACompact Narc:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body
 BA-Compact Narc Ammo:Body

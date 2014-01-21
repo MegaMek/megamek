@@ -37,8 +37,8 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISDetachableWeaponPack:LA
-CLERMediumPulseLaser:DWP
+CLDetachableWeaponPack:LA
+CLBAERMediumPulseLaser:DWP
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

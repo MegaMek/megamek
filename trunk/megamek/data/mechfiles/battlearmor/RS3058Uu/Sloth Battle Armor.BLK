@@ -28,8 +28,8 @@ quad
 5
 </Armor>
 <Squad Equipment>
-ISSmallLaser:Body
-ISSmallLaser:Body
+ISBASmallLaser:Body
+ISBASmallLaser:Body
 ISMine Launcher:Body
 </Squad Equipment>
 <type>

@@ -44,19 +44,19 @@ BAExtendedLifeSupport:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BACompactNarc Ammo:RA
 </Trooper 1 Equipment>
 <Trooper 2 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BACompactNarc Ammo:RA
 </Trooper 2 Equipment>
 <Trooper 3 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BACompactNarc Ammo:RA
 </Trooper 3 Equipment>
 <Trooper 4 Equipment>
-ISCompact Narc:RA
+ISBACompact Narc:RA
 BACompactNarc Ammo:RA
 </Trooper 4 Equipment>
 

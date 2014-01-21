@@ -34,8 +34,8 @@ biped
 14
 </Armor>
 <Squad Equipment>
-CLMicroPulseLaser:RA
-CLMicroPulseLaser:LA
+CLBAMicroPulseLaser:RA
+CLBAMicroPulseLaser:LA
 Clan Advanced SRM-2:Body
 BA-Advanced SRM-2 Ammo:Body
 BA-Advanced SRM-2 Ammo:Body

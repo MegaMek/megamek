@@ -41,7 +41,7 @@ BAPartialWing:Body
 BAAPMount:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-Single-Hex ECM
+IS BA ECM
 </Trooper 1 Equipment>
 <type>
 IS Level 2

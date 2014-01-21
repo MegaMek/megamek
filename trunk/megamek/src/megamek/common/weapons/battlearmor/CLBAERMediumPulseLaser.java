@@ -37,6 +37,7 @@ public class CLBAERMediumPulseLaser extends PulseLaserWeapon {
         techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Medium Pulse Laser";
         setInternalName("BACLERMediumPulseLaser");
+        addLookupName("CLBAERMediumPulseLaser");
         addLookupName("BA Clan ER Pulse Med Laser");
         addLookupName("BA Clan ER Medium Pulse Laser");
         heat = 6;

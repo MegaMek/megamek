@@ -3612,6 +3612,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.addLookupName("IS BA ECM");
+        misc.addLookupName("ISBAECM");
         misc.tonnage = .1f;
         misc.criticals = 1;
         misc.cost = 50000;
@@ -4983,12 +4984,13 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Improved Sensors";
-        misc.addLookupName("IS Improved Sensors");
         misc.setInternalName(Sensor.ISIMPROVED);
-        misc.tonnage = 0.065f;
+        misc.addLookupName("IS BA Improved Sensors");
+        misc.addLookupName("ISBAImprovedSensors");
+                misc.tonnage = 0.065f;
         misc.criticals = 1;
         misc.cost = 35000;
-        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
         misc.introDate = 3051;
         misc.techLevel.put(3051, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
@@ -5003,11 +5005,12 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.CLIMPROVED);
-        misc.addLookupName("Clan Improved Sensors");
+        misc.addLookupName("Clan BA Improved Sensors");
+        misc.addLookupName("CLBAImprovedSensors");
         misc.tonnage = 0.045f;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
         misc.introDate = 2890;
         misc.techLevel.put(2890, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_D, RATING_C };

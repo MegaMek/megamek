@@ -42,8 +42,8 @@ biped
 
 <Squad Equipment>
 ISBAMicroGrenadeLauncher:RA
-ISRocketLauncher4:LA
-ISRocketLauncher5:Body
+BA RL4:LA
+BA RL 5:Body
 BABattleClaw:RA
 </Squad Equipment>
 

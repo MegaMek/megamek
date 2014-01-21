@@ -37,11 +37,11 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BA ECM:Body
+CL BA ECM:Body
 BABattleClaw:LA
 BABattleClaw:RA
-CLHeavyGL:LA
-CLHeavyGL:RA
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
 BACuttingTorch:LA
 </Squad Equipment>
 

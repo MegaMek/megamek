@@ -34,9 +34,9 @@ biped
 </Armor>
 <Squad Equipment>
 CLDetachableWeaponPack:LA
-CLHeavy Recoilless Rifle:DWP
+CLBAHeavy Recoilless Rifle:DWP
 CLDetachableWeaponPack:RA
-CLHeavy Recoilless Rifle:DWP
+CLBAHeavy Recoilless Rifle:DWP
 CLSRM5OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA

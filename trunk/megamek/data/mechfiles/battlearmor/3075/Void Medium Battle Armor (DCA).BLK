@@ -34,7 +34,7 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSmallLaser:LA
+ISBASmallLaser:LA
 ISBAJumpBooster:Body
 BABasicManipulator:RA
 BABasicManipulator:LA

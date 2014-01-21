@@ -45,10 +45,10 @@ biped
 </Armor>
 
 <Squad Equipment>
-CLMicroPulseLaser:RA
+CLBAMicroPulseLaser:RA
 BAAPMount:LA
 BACuttingTorch:LA
-BASpaceOperationsAdaptation:Body
+CLBASpaceOperationsAdaptation:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 </Squad Equipment>

@@ -40,8 +40,8 @@ biped
 
 <Squad Equipment>
 ISBAMagshotGR:RA
-Single-Hex ECM:Body
-Parafoil:Body
+IS BA ECM:Body
+BAParafoil:Body
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA

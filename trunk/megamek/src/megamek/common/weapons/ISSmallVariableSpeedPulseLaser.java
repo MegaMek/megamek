@@ -37,7 +37,7 @@ public class ISSmallVariableSpeedPulseLaser extends
         super();
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Small VSP Laser";
-        addLookupName("ISSmallVSPLaser");
+        setInternalName("ISSmallVSPLaser");
         addLookupName("ISSVSPL");
         addLookupName("ISSmallVariableSpeedLaser");
         addLookupName("ISSmallVSP");

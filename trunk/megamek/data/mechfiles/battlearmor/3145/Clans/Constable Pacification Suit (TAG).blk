@@ -37,8 +37,8 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-CLHeavyGL:LA
-CLHeavyGL:RA
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
 BACuttingTorch:LA
 BABattleClaw:LA
 BABattleClaw:RA

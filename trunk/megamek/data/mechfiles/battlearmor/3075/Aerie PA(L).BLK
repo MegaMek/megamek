@@ -34,7 +34,7 @@ biped
 InfantryClanMauserIICIAS:LA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BASpaceOperationsAdaptation:Body
+CLBASpaceOperationsAdaptation:Body
 BAExtendedLifeSupport:Body
 </Squad Equipment>
 <type>

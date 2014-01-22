@@ -2268,8 +2268,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
-        misc.introDate = 3062;
-        misc.techLevel.put(3062, misc.techLevel.get(3071));
+        misc.introDate = 3060;
+        misc.techLevel.put(3060, misc.techLevel.get(3071));
 
         return misc;
     }

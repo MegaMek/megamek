@@ -47,8 +47,8 @@ public class ISImprovedNarc extends NarcWeapon {
         this.criticals = 3;
         this.bv = 75;
         this.cost = 250000;
-        introDate = 3062;
-        techLevel.put(3062, techLevel.get(3071));
+        introDate = 3061;
+        techLevel.put(3061, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }

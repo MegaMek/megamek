@@ -16,6 +16,10 @@ ConvFighter
 Planetlifter Air Transport
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 50
 </Tonnage>
@@ -60,7 +64,7 @@ IS Level 1
 </type>
 
 <year>
-2320
+2598
 </year>
 
 <source>

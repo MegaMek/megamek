@@ -57,10 +57,14 @@ public class MechViewPanel extends JPanel {
     public final static int DEFAULT_HEIGHT = 600;
     
     public MechViewPanel() {
-    	this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    	this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);
     }
     
     public MechViewPanel(int width, int height) {
+        this(width,height,true);
+    }
+    
+    public MechViewPanel(int width, int height, boolean noBorder) {
  
         setBackground(Color.WHITE);
         
@@ -76,7 +80,9 @@ public class MechViewPanel extends JPanel {
         lblMek.setText("");
         lblMek.setVerticalAlignment(SwingConstants.TOP);
         scrMek = new JScrollPane(txtMek);
-        scrMek.setBorder(null);
+        if (noBorder){
+            scrMek.setBorder(null);
+        }
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         scrMek.setPreferredSize(new Dimension(width, height));
         scrMek.setMinimumSize(new Dimension(width, height));

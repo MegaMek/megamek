@@ -37,7 +37,7 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-BAHeatSensor:RA
+ISBAHeatSensor:RA
 IS BA Heavy Flamer:LA
 BABasicManipulator:RA
 </Squad Equipment>

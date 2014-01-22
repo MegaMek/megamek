@@ -41,9 +41,9 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISMicroGrenadeLauncher:RA
-ISRocketLauncher4:LA
-ISRocketLauncher5:Body
+ISBAMicroGrenadeLauncher:RA
+BA RL4:LA
+BA RL 5:Body
 BABattleClaw:RA
 </Squad Equipment>
 

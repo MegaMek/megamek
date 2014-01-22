@@ -34,7 +34,7 @@ biped
 4
 </Armor>
 <Squad Equipment>
-CLMicroPulseLaser:Body
+CLBAMicroPulseLaser:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 </Squad Equipment>

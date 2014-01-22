@@ -37,12 +37,12 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-CLHeavyGL:LA
-CLHeavyGL:RA
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
 BABattleClaw:LA
 BABattleClaw:RA
 BACuttingTorch:LA
-Clan Improved Sensors:Body
+CLBAImprovedSensors:Body
 </Squad Equipment>
 
 <source>

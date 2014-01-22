@@ -38,8 +38,8 @@ Jump
 
 <Squad Equipment>
 CLBALightMG:Body
-CLHeavyGL:LA
-CLHeavyGL:RA
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
 BACuttingTorch:LA
 BABattleClaw:LA
 BABattleClaw:RA

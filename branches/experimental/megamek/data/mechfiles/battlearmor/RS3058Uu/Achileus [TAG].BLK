@@ -38,13 +38,13 @@ biped
 33
 </armor_type>
 <Squad Equipment>
-ISLightTAG:RA
+ISBALightTAG:RA
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>
 <type>
-IS Level 2
+IS Level 3
 </type>
 <year>
 3059
@@ -56,5 +56,5 @@ Jump
 TRO 3058 Upgrade
 </source>
 <armor_tech>
-3
+5
 </armor_tech>

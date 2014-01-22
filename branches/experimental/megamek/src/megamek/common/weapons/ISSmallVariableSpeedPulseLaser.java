@@ -38,9 +38,9 @@ public class ISSmallVariableSpeedPulseLaser extends
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Small VSP Laser";
         setInternalName("ISSmallVSPLaser");
-        setInternalName("ISSVSPL");
-        setInternalName("ISSmallVariableSpeedLaser");
-        setInternalName("ISSmallVSP");
+        addLookupName("ISSVSPL");
+        addLookupName("ISSmallVariableSpeedLaser");
+        addLookupName("ISSmallVSP");
         heat = 3;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

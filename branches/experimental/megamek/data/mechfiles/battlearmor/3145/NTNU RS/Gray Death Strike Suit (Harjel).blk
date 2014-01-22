@@ -39,8 +39,8 @@ biped
 
 <Squad Equipment>
 ISFiredrakeIncendiaryNeedler:RA
-ISLightTAG:LA
-ISSRM3:Body
+ISBALightTAG:LA
+ISBASRM3:Body
 BASRM3 Ammo:Body
 BASRM3 Ammo:Body
 BASRM3 Ammo:Body

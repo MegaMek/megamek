@@ -31,7 +31,7 @@ biped
 5
 </Armor>
 <Squad Equipment>
-CLLightRecoillessRifle:RA
+CLBALightRecoillessRifle:RA
 CLImprovedSensors:Body
 CLBAJumpBooster:Body
 BABattleClawVibro:LA

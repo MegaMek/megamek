@@ -34,8 +34,8 @@ biped
 10
 </Armor>
 <Squad Equipment>
-CLERMicroLaser:RA
-CLSRM2:Body
+CLBAERMicroLaser:RA
+CLBASRM2:Body
 BASRM2 Ammo:Body
 BASRM2 Ammo:Body
 BABattleClaw:RA

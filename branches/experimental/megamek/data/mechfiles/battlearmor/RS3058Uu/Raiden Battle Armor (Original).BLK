@@ -45,7 +45,7 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 ISSRM1OS:RA
 BABattleClaw:RA
 </Squad Equipment>

@@ -34,7 +34,7 @@ biped
 5
 </Armor>
 <Squad Equipment>
-ISSmallLaser:RA
+ISBASmallLaser:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 </Squad Equipment>

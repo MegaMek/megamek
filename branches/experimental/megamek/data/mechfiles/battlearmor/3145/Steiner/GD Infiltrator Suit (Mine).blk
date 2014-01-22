@@ -38,8 +38,8 @@ Jump
 
 <Squad Equipment>
 
-Parafoil:Body
-ISDavidLightGaussRifle:RA
+BAParafoil:Body
+ISBAKingDavidLightGaussRifle:RA
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

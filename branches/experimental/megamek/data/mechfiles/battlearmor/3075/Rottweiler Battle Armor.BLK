@@ -28,7 +28,7 @@ quad
 7
 </Armor>
 <Squad Equipment>
-ISSmallLaser:Body
+ISBASmallLaser:Body
 ISFiredrakeIncendiaryNeedler:Body
 ISImprovedSensors:Body
 </Squad Equipment>

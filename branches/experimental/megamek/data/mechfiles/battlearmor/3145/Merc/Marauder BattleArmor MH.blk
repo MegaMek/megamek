@@ -37,10 +37,10 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-ISSupportPPC:RA
-ISSupportPPC:RA
+ISBASupportPPC:RA
+ISBASupportPPC:RA
 ISLight Recoilless Rifle:Body
-ISLightTAG:Body
+ISBALightTAG:Body
 BAAPMount:RA
 BAAPMount:LA
 BA-Magnetic Clamp:Body

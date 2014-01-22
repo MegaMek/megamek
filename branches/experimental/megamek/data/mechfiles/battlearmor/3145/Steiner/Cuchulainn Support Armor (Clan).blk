@@ -38,7 +38,7 @@ Jump
 
 <Squad Equipment>
 CLDetachableWeaponPack:LA
-CLERMediumPulseLaser:DWP
+CLBAERMediumPulseLaser:DWP
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

@@ -37,12 +37,12 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-CLHeavyGL:LA
-CLHeavyGL:RA
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
 BACuttingTorch:LA
 BABattleClaw:LA
 BABattleClaw:RA
-Clan SRM-1:Body
+CLBASRM1:Body
 BASRM1 Ammo:Body
 BASRM1 Ammo:Body
 BASRM1 Ammo:Body

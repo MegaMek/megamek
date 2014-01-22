@@ -11248,9 +11248,10 @@ public class Server implements Runnable {
                     coord,
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND, getPlayer(playerId)
-                                    .getName(), "ArtyAutoHit Hex, for "
-                                    + getPlayer(playerId).getName()));
+                            SpecialHexDisplay.NO_ROUND, getPlayer(playerId),
+                            "ArtyAutoHit Hex, for "
+                                    + getPlayer(playerId).getName(),
+                            SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }
         endCurrentTurn(null);
     }
@@ -17913,6 +17914,11 @@ public class Server implements Runnable {
             if ((diceRoll < rollTarget.getValue())
                     || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
                 r.choose(false);
+                // Report the fumble
+                if (game.getOptions().booleanOption("tacops_fumbles")
+                        && (diceRoll == 2)) {
+                    r.messageId = 2306;
+                }
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
@@ -18130,8 +18136,14 @@ public class Server implements Runnable {
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
-                    || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                    || (game.getOptions().booleanOption("tacops_fumbles") && 
+                            (diceRoll == 2))) {
                 r.choose(false);
+                // Report the fumble
+                if (game.getOptions().booleanOption("tacops_fumbles")
+                        && (diceRoll == 2)) {
+                    r.messageId = 2306;
+                }
                 vPhaseReport.add(r);
                 if (moving) {
                     vPhaseReport.addAll(doEntityFallsInto(entity,
@@ -18928,15 +18940,15 @@ public class Server implements Runnable {
                     EquipmentType.T_ARMOR_REFLECTIVE)
             || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
-            reflectiveArmor = true;
+            reflectiveArmor = true; // note that BA reflec receives "all of the bonuses but none of the drawbacks"
         }
 
         if (((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_REACTIVE)
                 || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
-            reactiveArmor = true;
+                    EquipmentType.T_ARMOR_BA_REACTIVE)) {
+            reactiveArmor = true; // note that BA reactive receives "all of the bonuses but none of the drawbacks"
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || 
@@ -19570,7 +19582,8 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
-                        && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                        && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                        && !isBattleArmor) { // BA reflec does not receive extra physical damage
                     tmpDamageHold = damage;
                     damage *= 2;
                     r = new Report(6066);
@@ -19578,8 +19591,8 @@ public class Server implements Runnable {
                     r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
-                } else if (reflectiveArmor && areaSatArty) {
-                    tmpDamageHold = damage;
+                } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
+                    tmpDamageHold = damage; // BA reflec does not receive extra AE damage
                     damage *= 2;
                     r = new Report(6087);
                     r.subject = te_n;
@@ -19708,7 +19721,8 @@ public class Server implements Runnable {
                                 - ((te.isHardenedArmorDamaged(hit)) ? 1 : 0);
                     }
                     if (reflectiveArmor
-                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                            && !isBattleArmor) {
                         absorbed = (int) Math.round(Math.ceil(absorbed / 2));
                         damage = tmpDamageHold;
                         tmpDamageHold = 0;
@@ -20340,7 +20354,7 @@ public class Server implements Runnable {
                 for (int i = 0; i < specCrits; i++) {
                     // against BAR or reflective armor, we get a +2 mod
                     int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                    critMod += reflectiveArmor ? 2 : 0;
+                    critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA reflec has no crit penalty
                     if (!hardenedArmor) {
                         // non-hardened armor gets modifiers
                         // the -2 for hardened is handled in the critBonus
@@ -27011,23 +27025,15 @@ public class Server implements Runnable {
     private Packet createSpecialHexDisplayPacket(int toPlayer) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game
                 .getBoard().getSpecialHexDisplayTable();
-        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<Coords, Collection<SpecialHexDisplay>>();
+        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = 
+                new Hashtable<Coords, Collection<SpecialHexDisplay>>();
         LinkedList<SpecialHexDisplay> tempList = null;
         IPlayer player = getPlayer(toPlayer);
         if (player != null) {
-            final String playerName = getPlayer(toPlayer).getName();
-            // System.err.println("building special update list for: "
-            // + playerName + " PlayerNumber " + toPlayer);
-
             for (Coords coord : shdTable.keySet()) {
                 tempList = new LinkedList<SpecialHexDisplay>();
                 for (SpecialHexDisplay shd : shdTable.get(coord)) {
-                    // System.err.println("list item: " + shd.getType()
-                    // + " owner: " + shd.getOwner() + " obscured:"
-                    // + shd.isObscured());
-
-                    if (!shd.isObscured() || shd.isOwner(playerName)) {
-                        // System.err.println("Added");
+                    if (!shd.isObscured(player)) {
                         tempList.add(0, shd);
                     }
                 }
@@ -27036,7 +27042,8 @@ public class Server implements Runnable {
                 }
             }
         }
-        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
+        return new Packet(
+                Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
     private Packet createTagInfoUpdatesPacket() {
@@ -27401,6 +27408,18 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_RESET_ROUND_DEPLOYMENT:
                 game.setupRoundDeployment();
+                break;
+            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_DELETE:
+                game.getBoard().removeSpecialHexDisplay(
+                        (Coords) packet.getObject(0),
+                        (SpecialHexDisplay) packet.getObject(1));
+                sendSpecialHexDisplayPackets();
+                break;
+            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_APPEND:
+                game.getBoard().addSpecialHexDisplay(
+                        (Coords) packet.getObject(0),
+                        (SpecialHexDisplay) packet.getObject(1));
+                sendSpecialHexDisplayPackets();
                 break;
         }
     }

@@ -41,7 +41,7 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSupportPPC:Body
+ISBASupportPPC:Body
 ISBAMachine Gun:Body
 BABattleClaw:LA
 BABattleClawVibro:RA

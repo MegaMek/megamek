@@ -168,12 +168,18 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(startingHexes - artyAutoHitHexes.size());
             p.addArtyAutoHitHex(coords);
-            clientgui.getClient().getGame().getBoard().addSpecialHexDisplay(
-                    coords,
-                    new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND, p.getName(),
-                            "Artilery autohit, for player " + p.getName()));
+            clientgui
+                    .getClient()
+                    .getGame()
+                    .getBoard()
+                    .addSpecialHexDisplay(
+                            coords,
+                            new SpecialHexDisplay(
+                                    SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                                    SpecialHexDisplay.NO_ROUND, p,
+                                    "Artilery autohit, for player "
+                                            + p.getName(),
+                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
             clientgui.getBoardView().refreshDisplayables();
         }
     }

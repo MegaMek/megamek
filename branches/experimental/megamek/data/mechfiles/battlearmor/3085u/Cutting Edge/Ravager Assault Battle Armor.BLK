@@ -38,8 +38,8 @@ biped
 
 <Squad Equipment>
 ISHeavy Recoilless Rifle:RA
-RL1:Body
-RL1:Body
+BARL1:Body
+BARL1:Body
 BABattleClaw:LA
 </Squad Equipment>
 <type>

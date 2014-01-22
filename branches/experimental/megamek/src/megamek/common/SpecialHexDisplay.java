@@ -30,7 +30,8 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT(new File(Configuration.hexesDir(), "artyauto.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_AUTOHIT(new File(Configuration.hexesDir(), 
+                "artyauto.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
@@ -41,7 +42,8 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED(new File(Configuration.hexesDir(), "artyadj.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_ADJUSTED(new File(Configuration.hexesDir(), 
+                "artyadj.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
@@ -52,20 +54,34 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING(new File(Configuration.hexesDir(), "artyinc.gif").toString()), //$NON-NLS-1$
-        ARTILLERY_TARGET(new File(Configuration.hexesDir(), "artytarget.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_INCOMING(new File(Configuration.hexesDir(), 
+                "artyinc.gif").toString()), //$NON-NLS-1$
+        ARTILLERY_TARGET(new File(Configuration.hexesDir(), 
+                "artytarget.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT(new File(Configuration.hexesDir(), "artyhit.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_HIT(new File(Configuration.hexesDir(), 
+                "artyhit.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        PLAYER_NOTE(null);
+        PLAYER_NOTE(new File(Configuration.hexesDir(), 
+                "note.png").toString()) { //$NON-NLS-1$
+            @Override
+            public boolean drawBefore() {
+                return true;
+            }
+
+            @Override
+            public boolean drawAfter() {
+                return true;
+            }
+        };
 
         private transient Image defaultImage;
         private final String defaultImagePath;
@@ -98,43 +114,40 @@ public class SpecialHexDisplay implements Serializable {
         }
     }
 
+    /**
+     * Defines that only the owner can see an obscured display.
+     */
+    public static int SHD_OBSCURED_OWNER = 0;
+    /**
+     * Defines that only the owner and members of his team can see an obscured
+     * display.
+     */
+    public static int SHD_OBSCURED_TEAM = 1;
+    /**
+     * Defines that everyone can see an obscured display.
+     */
+    public static int SHD_OBSCURED_ALL = 2;
+    
+    
     private String info;
     private Type type;
     private int round;
 
-    private String owner = null;
+    private IPlayer owner = null;
 
-    private boolean obscured = true;
+    private int obscured = SHD_OBSCURED_ALL;
 
     public static int NO_ROUND = -99;
 
-    public SpecialHexDisplay(Type type) {
-        this.type = type;
-        round = NO_ROUND;
-        info = "type only constructor";
-    }
-
-    public SpecialHexDisplay(Type type, String info) {
-        this.type = type;
-        this.info = info;
-        round = NO_ROUND;
-    }
-
-    public SpecialHexDisplay(Type type, int round, String info) {
-        this.type = type;
-        this.info = info;
-        this.round = round;
-    }
-
-    public SpecialHexDisplay(Type type, int round, String owner, String info) {
+    public SpecialHexDisplay(Type type, int round, IPlayer owner, String info) {
         this.type = type;
         this.info = info;
         this.round = round;
         this.owner = owner;
     }
 
-    public SpecialHexDisplay(Type type, int round, String owner, String info,
-            boolean obscured) {
+    public SpecialHexDisplay(Type type, int round, IPlayer owner, String info,
+            int obscured) {
         this.type = type;
         this.info = info;
         this.round = round;
@@ -189,19 +202,45 @@ public class SpecialHexDisplay implements Serializable {
         this.type = type;
     }
 
-    public String getOwner() {
+    public IPlayer getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(IPlayer owner) {
         this.owner = owner;
     }
 
-    public boolean isObscured() {
+    public void setObscuredLevel(int o){
+        if (o >= SHD_OBSCURED_OWNER && o <= SHD_OBSCURED_ALL){
+            obscured = o;
+        }
+    }
+    
+    public int getObscuredLevel(){
         return obscured;
     }
+    
+    /**
+     * Determines whether this special hex should be obscurred from the given
+     * <code>IPlayer</code>.
+     * 
+     * @param other
+     * @return
+     */
+    public boolean isObscured(IPlayer other) {
+        if (obscured == SHD_OBSCURED_OWNER && other != null 
+                && owner.equals(other)){
+            return false;
+        } else if (obscured == SHD_OBSCURED_TEAM && other != null 
+                && owner.getTeam() == other.getTeam()){
+            return false;
+        } else if (obscured == SHD_OBSCURED_ALL){
+            return false;
+        }
+        return true;
+    }
 
-    public void setObscured(boolean obscured) {
+    public void setObscured(int obscured) {
         this.obscured = obscured;
     }
 
@@ -211,28 +250,31 @@ public class SpecialHexDisplay implements Serializable {
      * @return
      */
     public boolean drawNow(IGame.Phase phase, int curRound,
-            String playerChecking) {
+            IPlayer playerChecking) {
         boolean shouldDisplay = thisRound(curRound)
                 || (pastRound(curRound) && type.drawBefore())
                 || (futureRound(curRound) && type.drawAfter());
 
         if (phase.isBefore(IGame.Phase.PHASE_OFFBOARD)
-                && ((type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT))) {
-            //System.err
-            //        .println("//hack to display atry targets the round after the hit.");
+                && ((type == Type.ARTILLERY_TARGET) 
+                        || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
-
-        if (isObscured() && !isOwner(playerChecking)) {
-            //System.err.println("player " + playerChecking + " on turn: "
-            //        + round + " Special type: " + type + " NOT drawing: "
-            //        + shouldDisplay + " details: " + info);
+        
+        // Arty icons for the owner are drawn in BoardView1.drawArtillery
+        //  and shouldn't be drawn twice
+        if (isOwner(playerChecking)
+                && (type == Type.ARTILLERY_AUTOHIT
+                        || type == Type.ARTILLERY_ADJUSTED
+                        || type == Type.ARTILLERY_INCOMING 
+                        || type == Type.ARTILLERY_TARGET)){
             return false;
         }
 
-        //System.err.println("player " + playerChecking + " on turn: " + round
-        //        + " Special type: " + type + " drawing: " + shouldDisplay
-        //        + " details: " + info);
+        // Only display obscured hexes to owner
+        if (isObscured(playerChecking)) {
+            return false;
+        }
 
         return shouldDisplay;
     }
@@ -241,14 +283,21 @@ public class SpecialHexDisplay implements Serializable {
      * @param toPlayer
      * @return
      */
-    public boolean isOwner(String toPlayer) {
+    public boolean isOwner(IPlayer toPlayer) {
         if ((owner == null) || owner.equals(toPlayer)) {
-            /*if (owner == null) {
-                System.err.println("Owner of special hex " + info + "is null!");
-            }*/
             return true;
         }
-
         return false;
+    }
+    
+    public boolean equals(Object o){
+        if (o instanceof SpecialHexDisplay){
+            SpecialHexDisplay other = (SpecialHexDisplay)o;
+            return other.getType() == getType() 
+                    && getOwner().equals(other.getOwner()) 
+                    && getRound() == other.getRound();
+        } else {
+            return false;
+        }
     }
 }

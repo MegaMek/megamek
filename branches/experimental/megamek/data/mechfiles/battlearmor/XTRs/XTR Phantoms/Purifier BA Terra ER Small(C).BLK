@@ -34,7 +34,7 @@ biped
 10
 </Armor>
 <Squad Equipment>
-Clan ER Small Laser:LA
+CLBAERSmallLaser:LA
 BABattleClaw:RA
 </Squad Equipment>
 <type>

@@ -38,9 +38,9 @@ Jump
 
 <Squad Equipment>
 
-Parafoil:Body
-ISDavidLightGaussRifle:RA
-ISImprovedSensors:RA
+BAParafoil:Body
+ISBAKingDavidLightGaussRifle:RA
+ISBAImprovedSensors:RA
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

@@ -38,7 +38,7 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
@@ -52,4 +52,3 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
-v

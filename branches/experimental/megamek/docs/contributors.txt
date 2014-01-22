@@ -199,6 +199,10 @@
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>
 
+  Icons and Images
+      FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)
+        data/images/hexes/note.png (modified for formatting, from http://www.iconspedia.com/icon/note-icon-21517.html)
+
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of 
      BattleTech, a source of fun and inspiration to us all.

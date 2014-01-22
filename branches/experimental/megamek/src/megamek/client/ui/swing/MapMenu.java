@@ -18,6 +18,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -43,6 +44,7 @@ import megamek.common.Mech;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -195,6 +197,13 @@ public class MapMenu extends JPopupMenu {
 
             }
         }
+        
+        menu = createSpecialHexDisplayMenu();
+        if (menu.getItemCount() > 0) {
+            this.add(menu);
+            itemCount++;
+        }
+        
         return itemCount > 0;
     }
 
@@ -309,6 +318,64 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    /**
+     * Create various menus related to <code>SpecialHexDisplay</code>.
+     * @return
+     */
+    private JMenu createSpecialHexDisplayMenu() {
+        JMenu menu = new JMenu("Special Hex Display");
+        
+        final Collection<SpecialHexDisplay> shdList = game.getBoard()
+                .getSpecialHexDisplay(coords);
+        
+        SpecialHexDisplay note = null;
+        if (shdList != null){
+            for(SpecialHexDisplay shd : shdList){
+                if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE 
+                        && shd.getOwner().equals(client.getLocalPlayer())){
+                    note = shd;
+                    break;
+                }
+            }
+        }
+        
+
+        
+        final SpecialHexDisplay finalNote;
+        if (note == null){
+            finalNote = new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.PLAYER_NOTE,
+                    SpecialHexDisplay.NO_ROUND, client.getLocalPlayer(), "");
+        } else {
+            finalNote = note;
+        }
+        JMenuItem item = new JMenuItem(Messages
+                .getString("NoteDialog.action")); //$NON-NLS-1$ 
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                NoteDialog nd = new NoteDialog(gui.frame, finalNote);
+                nd.setVisible(true);
+                if (nd.isAccepted()){
+                    client.sendSpecialHexDisplayAppend(coords, finalNote);
+                }
+            }
+        });
+        menu.add(item);
+        
+        if (note != null){
+            item = new JMenuItem(Messages
+                    .getString("NoteDialog.delete")); //$NON-NLS-1$ 
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    client.sendSpecialHexDisplayDelete(coords, finalNote);
+                }
+            });
+        }   
+        menu.add(item);
+
+        return menu;
+    }
+    
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
         // add select options

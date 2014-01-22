@@ -32,7 +32,7 @@ public class ISBAMG extends BAMGWeapon {
     public ISBAMG() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "Machine Gun";
+        name = "BA Machine Gun";
         setInternalName("BA Machine Gun");
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");

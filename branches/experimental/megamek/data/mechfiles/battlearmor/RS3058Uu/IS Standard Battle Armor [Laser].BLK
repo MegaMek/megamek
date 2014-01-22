@@ -34,7 +34,7 @@ biped
 9
 </Armor>
 <Squad Equipment>
-ISSmall Laser:RA
+ISBASmallLaser:RA
 BABattleClaw:RA
 </Squad Equipment>
 <type>

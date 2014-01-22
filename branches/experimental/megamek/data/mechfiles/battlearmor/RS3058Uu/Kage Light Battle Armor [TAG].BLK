@@ -41,7 +41,7 @@ BAPartialWing:Body
 BAAPMount:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISLightTAG
+ISBALightTAG
 </Trooper 1 Equipment>
 <type>
 IS Level 2

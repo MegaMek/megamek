@@ -34,7 +34,7 @@ biped
 9
 </Armor>
 <Squad Equipment>
-CLMicroPulseLaser:RA
+CLBAMicroPulseLaser:RA
 CLBAJumpBooster:Body
 BASearchlight:LA
 BAHeavyBattleClawVibro:LA

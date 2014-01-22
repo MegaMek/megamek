@@ -182,7 +182,17 @@ public class TestAero extends TestEntity {
             if (loc < 0){
                 loc = Aero.LOC_AFT;
             }
-        }  
+        }
+        
+        // XXL engines take up extra space in the aft
+        if (a.getEngine() != null 
+                && a.getEngine().getEngineType() == Engine.XXL_ENGINE){
+            if (a.getEngine().hasFlag(Engine.CLAN_ENGINE)){
+                availSpace[Aero.LOC_AFT] -= 2;
+            } else {
+                availSpace[Aero.LOC_AFT] -= 4;
+            }
+        }
         return availSpace;
     }
     

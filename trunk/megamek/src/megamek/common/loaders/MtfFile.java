@@ -671,7 +671,7 @@ public class MtfFile implements IMechLoader {
                                     throw new EntityLoadingException("Can't combine ammo for different weapons in one slot");
                                 }
                             } else {
-                                if ((!(etype instanceof MiscType) && (etype2 instanceof MiscType)) || !(etype.equals(etype2))) {
+                                if (!(etype.equals(etype2)) || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK) && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK )))) {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }

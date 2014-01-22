@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-Planetlifter
+Planetlifter Tactical Support
 </Name>
 
 <Model>
-Tactical Support
+(Standard)
 </Model>
 
 <Tonnage>
@@ -66,11 +66,11 @@ ISArrowIV Ammo
 </fuel>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <year>
-3072
+3082
 </year>
 
 <source>

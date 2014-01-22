@@ -16,6 +16,10 @@ Tank
 Mauna Kea Command Vessel
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <year>
 2463
 </year>

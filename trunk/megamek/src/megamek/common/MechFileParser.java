@@ -663,6 +663,23 @@ public class MechFileParser {
                         .countWorkingMisc(MiscType.F_ARMORED_GLOVE);
                 int tBattleClawCount = ent
                         .countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
+                hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
+                for (Mounted m : ent.getWeaponList()){
+                    if (m.getType().getInternalName()
+                            .equals(Infantry.SWARM_WEAPON_MEK)) {
+                        hasSwarm = true;
+                    } else if (m.getType().getInternalName()
+                            .equals(Infantry.SWARM_MEK)) {
+                        hasSwarmStart = true;
+                    } else if (m.getType().getInternalName()
+                            .equals(Infantry.STOP_SWARM)) {
+                        hasSwarmStop = true;
+                    } else if (m.getType().getInternalName()
+                            .equals(Infantry.LEG_ATTACK)) {
+                        hasLegAttack = true;
+                    }
+                }
                 switch (ent.getWeightClass()) {
                     case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
                     case EntityWeightClass.WEIGHT_LIGHT:
@@ -670,22 +687,30 @@ public class MechFileParser {
                                 || (tBasicManipulatorCount > 1)
                                 || (tBattleClawCount > 0)) {
                             try {
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.SWARM_MEK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(EquipmentType
-                                        .get(Infantry.SWARM_WEAPON_MEK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.STOP_SWARM),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.LEG_ATTACK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
+                                if (!hasSwarmStart) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.SWARM_MEK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasSwarm) {
+                                    ent.addEquipment(EquipmentType
+                                            .get(Infantry.SWARM_WEAPON_MEK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasSwarmStop) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.STOP_SWARM),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasLegAttack) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.LEG_ATTACK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                         ex.getMessage());
@@ -696,22 +721,30 @@ public class MechFileParser {
                         if ((tBasicManipulatorCount > 1)
                                 || (tBattleClawCount > 0)) {
                             try {
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.SWARM_MEK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(EquipmentType
-                                        .get(Infantry.SWARM_WEAPON_MEK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.STOP_SWARM),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
-                                ent.addEquipment(
-                                        EquipmentType.get(Infantry.LEG_ATTACK),
-                                        BattleArmor.LOC_SQUAD, false,
-                                        BattleArmor.MOUNT_LOC_NONE, false);
+                                if (!hasSwarmStart) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.SWARM_MEK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasSwarm) {
+                                    ent.addEquipment(EquipmentType
+                                            .get(Infantry.SWARM_WEAPON_MEK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasSwarmStop) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.STOP_SWARM),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
+                                if (!hasLegAttack) {
+                                    ent.addEquipment(
+                                            EquipmentType.get(Infantry.LEG_ATTACK),
+                                            BattleArmor.LOC_SQUAD, false,
+                                            BattleArmor.MOUNT_LOC_NONE, false);
+                                }
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                         ex.getMessage());

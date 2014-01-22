@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.37.5-exp-dev (SVN)
++ Bug: Infantry and BattleArmor didn't have a jump button
 
 v0.37.5-dev (SVN)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 

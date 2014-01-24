@@ -58,6 +58,11 @@ v0.37.5-dev (SVN)
     BattleArmor.MOUNT_LOC_BODY instead of BattleArmor.MOUNT_LOC_NONE, which was 
     causing the :Body tag to get added to all Mounteds that were saved to BLK 
     files.
++ Added support for keeping track of the number of shots per crit for BA ammo
++ BLKFile now encodes a :ShotN#  string for BA Ammo, where N is the number of 
+    shots in the crit 
++ BLKBattleArmor now parses the :ShotN# string to set the shots per crit
++ TestBattleArmor now accounts for ammo weight based on KG per shot
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

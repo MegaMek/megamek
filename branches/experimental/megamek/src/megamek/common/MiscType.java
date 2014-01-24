@@ -2268,8 +2268,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
-        misc.introDate = 3062;
-        misc.techLevel.put(3062, misc.techLevel.get(3071));
+        misc.introDate = 3060;
+        misc.techLevel.put(3060, misc.techLevel.get(3071));
 
         return misc;
     }
@@ -3385,9 +3385,9 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REACTIVE, false));
+                EquipmentType.T_ARMOR_BA_REACTIVE, true));
         misc.addLookupName("Clan " + EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REACTIVE, false));
+                EquipmentType.T_ARMOR_BA_REACTIVE, true));
         misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
@@ -3432,10 +3432,10 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
+                EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
         misc.addLookupName("Clan "
                 + EquipmentType.getArmorTypeName(
-                        EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
+                        EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;

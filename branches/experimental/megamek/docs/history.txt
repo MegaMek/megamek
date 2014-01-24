@@ -46,6 +46,21 @@ v0.37.5-dev (SVN)
 + Data: More BA Equipment stuff.
 + Data: Name Fixes for Various BA Equipment and Unit file Fixes.
 + Data: More Units and Equipment fixes.
++ Data: Unit Corrections per Official Errata to MUL.
++ Feature: Updated TestAero to properly account for the space taken up by XXL 
+    engines
++ Bug [#3991]: Dagger DAR4-XP armor type
++ Updated MechFileParser so that only one instance of Start/Stop Swarm, 
+    Leg Attack, etc get added to BA
++ Bug: BA Clan Reactive/Reflective armor had some data errors (internal names 
+    were set improperly)
++ Bug: TechConstants.isLegal didn't consider T_ALL_IS and T_ALL_CLAN for 
+    equipmentTechLvl
++ Bug [#4005]: VTOL Turrets always show target out of Arc
++ Bug: Mounted.baMountLocation was being initialized as 
+    BattleArmor.MOUNT_LOC_BODY instead of BattleArmor.MOUNT_LOC_NONE, which was 
+    causing the :Body tag to get added to all Mounteds that were saved to BLK 
+    files.
 
 v0.37.4-exp (2014-01-12 02:20)
 + Feature: increased the expressiveness of the skin specifications.  Previously, 

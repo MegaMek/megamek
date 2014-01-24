@@ -144,6 +144,11 @@ public class TechConstants {
 
         // If none of the catch-alls above are true, we go to specific cases
 
+        // If the equipment is allowed to all clan and the entity is clan...
+        if ((equipmentTechlevel == T_ALL_IS) && !isClan(entityTechlevel)){
+            return true;
+        }
+        
         // IS box set can be in any IS
         if ((equipmentTechlevel == T_INTRO_BOXSET)
                 && ((entityTechlevel == T_IS_TW_NON_BOX)
@@ -178,6 +183,12 @@ public class TechConstants {
                         || (entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
             return true;
         }
+        
+        // If the equipment is allowed to all clan and the entity is clan...
+        if ((equipmentTechlevel == T_ALL_CLAN) && isClan(entityTechlevel)){
+            return true;
+        }
+        
         // clan advanced stuff can be in clan advanced or higher
         if ((equipmentTechlevel == T_CLAN_ADVANCED)
                 && ((entityTechlevel == T_CLAN_EXPERIMENTAL)

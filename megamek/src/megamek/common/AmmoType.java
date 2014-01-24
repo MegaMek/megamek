@@ -11069,7 +11069,8 @@ public class AmmoType extends EquipmentType {
             }
 
             // Reduce base number of shots to reflect the munition's weight.
-            munition.shots = base.shots / weight;
+            munition.shots = Math.max(1, base.shots / weight);
+            munition.kgPerShot = base.kgPerShot * weight;
 
             // copy base ammoType
             munition.ammoType = base.ammoType;

@@ -144,7 +144,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * BA use locations for troopers, so we need a way to keep track of where
      *  a piece of equipment is moutned on BA
      */
-    private int baMountLoc;
+    private int baMountLoc = BattleArmor.MOUNT_LOC_NONE;
 
     // for BA weapons, is this in a detachable weapon pack?
     private boolean isDWPMounted = false;

@@ -33,6 +33,12 @@ import megamek.common.WeaponType;
 public class TestBattleArmor extends TestEntity {
     
     /**
+     * BattleArmor can have a variable number of shots per slot of ammo, this
+     * variable defines the maximum number of shots per slot they can have.
+     */
+    public static int NUM_SHOTS_PER_CRIT = 4;
+    
+    /**
      * An enumeration that keeps track of the legal armors for BattleArmor.  
      * Each entry consists of the type, which 
      * corresponds to the types defined in <code>EquipmentType</code>.

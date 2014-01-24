@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import megamek.common.ASFBay;
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
@@ -490,6 +491,12 @@ public class BLKFile {
             }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
                 name += ":RA";
+            }
+            // For BattleArmor, we need to save how many shots are in this 
+            //  location
+            if ((t instanceof BattleArmor) 
+                    && (m.getType() instanceof AmmoType)){
+                name += ":Shots" + m.getBaseShotsLeft() + "#";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {

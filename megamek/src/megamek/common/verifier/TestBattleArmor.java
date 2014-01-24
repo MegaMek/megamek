@@ -472,7 +472,7 @@ public class TestBattleArmor extends TestEntity {
             }
 
             AmmoType mt = (AmmoType) m.getType();
-            weight += mt.getTonnage(getEntity());
+            weight += (mt.getKgPerShot() * m.getBaseShotsLeft())/1000.0;
         }
         return weight;
     }

@@ -311,6 +311,7 @@ public class AmmoType extends EquipmentType {
     protected long munitionType;
     protected int shots;
     private double kgPerShot = -1;
+
     // ratio for capital ammo
     private double ammoRatio;
     /**
@@ -402,6 +403,10 @@ public class AmmoType extends EquipmentType {
 
     public boolean isCapital() {
         return capital;
+    }
+    
+    public double getKgPerShot() {
+        return kgPerShot;
     }
 
     /**

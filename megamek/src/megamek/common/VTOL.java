@@ -29,11 +29,12 @@ public class VTOL extends Tank {
 
     public static final int LOC_ROTOR = 5;
     public static final int LOC_TURRET = 6;
+    public static final int LOC_TURRET_2 = 7;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "RO", "TU" };
+            "RO", "TU", "TU2" };
     private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
-            "Left", "Rear", "Rotor", "Turret" };
+            "Left", "Rear", "Rotor", "Turret", "Turret 2" };
 
     // critical hits
     public static final int CRIT_COPILOT = 15;
@@ -55,6 +56,10 @@ public class VTOL extends Tank {
     @Override
     public int getLocTurret() {
         return LOC_TURRET;
+    }
+    
+    public int getLocTurret2() {
+        return LOC_TURRET_2;
     }
 
     /*

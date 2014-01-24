@@ -53,6 +53,7 @@ v0.37.5-dev (SVN)
     were set improperly)
 + Bug: TechConstants.isLegal didn't consider T_ALL_IS and T_ALL_CLAN for 
     equipmentTechLvl
++ Bug [#4005]: VTOL Turrets always show target out of Arc
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

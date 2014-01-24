@@ -110,6 +110,10 @@ public class Crew implements Serializable {
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
 
+    /**
+     * Defines the maximum value a Crew can have in any skill
+     */
+    static public final int MAX_SKILL = 8;
     /** Creates a nameless P5/G4 crew of the given size.
      *
      * @param size the crew size.

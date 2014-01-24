@@ -688,7 +688,8 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if ((gunVal < 0) || (gunVal > 8)) {
+                    if ((gunVal < 0) 
+                            || (gunVal > Crew.MAX_SKILL)) {
                         warning.append("Found invalid gunnery value: ")
                                 .append(gunnery).append(".\n");
                         return;
@@ -701,7 +702,8 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if ((pilotVal < 0) || (pilotVal > 8)) {
+                    if ((pilotVal < 0) 
+                            || (pilotVal > Crew.MAX_SKILL)) {
                         warning.append("Found invalid piloting value: ")
                                 .append(piloting).append(".\n");
                         return;
@@ -744,7 +746,8 @@ public class XMLStreamParser implements XMLResponder {
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if ((gunneryLVal < 0) || (gunneryLVal > 7)) {
+                        if ((gunneryLVal < 0) 
+                                || (gunneryLVal > Crew.MAX_SKILL)) {
                             warning.append("Found invalid piloting value: ")
                                     .append(gunneryL).append(".\n");
                             return;
@@ -756,7 +759,8 @@ public class XMLStreamParser implements XMLResponder {
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if ((gunneryMVal < 0) || (gunneryMVal > 7)) {
+                        if ((gunneryMVal < 0) 
+                                || (gunneryMVal > Crew.MAX_SKILL)) {
                             warning.append("Found invalid piloting value: ")
                                     .append(gunneryM).append(".\n");
                             return;
@@ -768,7 +772,8 @@ public class XMLStreamParser implements XMLResponder {
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if ((gunneryBVal < 0) || (gunneryBVal > 7)) {
+                        if ((gunneryBVal < 0) 
+                                || (gunneryBVal > Crew.MAX_SKILL)) {
                             warning.append("Found invalid piloting value: ")
                                     .append(gunneryB).append(".\n");
                             return;
@@ -782,7 +787,8 @@ public class XMLStreamParser implements XMLResponder {
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if ((artVal < 0) || (artVal > 7)) {
+                        if ((artVal < 0) 
+                                || (artVal > Crew.MAX_SKILL)) {
                             warning.append("Found invalid artillery value: ")
                                     .append(artillery).append(".\n");
                             return;

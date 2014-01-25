@@ -78,6 +78,8 @@ v0.37.5-dev (SVN)
     painful to use.  I changed the dropdown for category selection to a 
     JTreeView.
 + Bug [#3966]: Tripod cockpit BV modifier
++ Fixed MechDisplay not changing the displayed location in the systems tab 
+   when used from MekWars
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

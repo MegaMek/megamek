@@ -77,6 +77,7 @@ v0.37.5-dev (SVN)
 + Feature: With the addition of more camos in MM, it the camo dialog has become 
     painful to use.  I changed the dropdown for category selection to a 
     JTreeView.
++ Bug [#3966]: Tripod cockpit BV modifier
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

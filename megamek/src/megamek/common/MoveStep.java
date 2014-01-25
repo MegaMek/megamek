@@ -1742,9 +1742,12 @@ public class MoveStep implements Serializable {
                     return;
                 }
 
-                // space stations can only turn
+                // space stations can only turn and launch space craft
                 if ((entity instanceof SpaceStation)
-                        && !((type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT))) {
+                        && !((type == MoveStepType.TURN_LEFT) 
+                                || (type == MoveStepType.TURN_RIGHT) 
+                                || (type == MoveStepType.LAUNCH)
+                                || (type == MoveStepType.UNDOCK))) {
                     return;
                 }
 

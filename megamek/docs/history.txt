@@ -67,6 +67,7 @@ v0.37.5-dev (SVN)
 + Bug [#3420]: Pilots from MekHQ w/o Artillery skill do not import properly
 + Bug [#3960]: Player Disconnected, Could Not Reconnect.
 + Bug [#4000]: Default Icon for Ultra Light and Super Heavy Mechs
++ Bug [#3976]: Aerospace Launch/Recovery Bugs
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

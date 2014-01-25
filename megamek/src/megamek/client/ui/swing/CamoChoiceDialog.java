@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -166,7 +165,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
             while (catNames.hasNext()) {
                 String catName = catNames.next();
                 if (catName != null){
-                    String[] names = catNames.next().split(Pattern.quote(File.separator));
+                    String[] names = catNames.next().split("/");
                     addCategoryToTree(root,names);
                 }
             }
@@ -346,7 +345,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         }
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
-        String [] names = category.split(Pattern.quote(File.separator));
+        String [] names = category.split(Pattern.quote("/"));
         DefaultMutableTreeNode node = 
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){
@@ -380,7 +379,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         filename = entity.getCamoFileName() == null ? player.getCamoFileName() : entity.getCamoFileName();
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
-        String [] names = category.split(Pattern.quote(File.separator));
+        String [] names = category.split(Pattern.quote("/"));
         DefaultMutableTreeNode node = 
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){
@@ -637,7 +636,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                         category += name;
                         if (!name.equals(IPlayer.NO_CAMO) 
                                 && !name.equals(IPlayer.ROOT_CAMO)){
-                            category += File.separator;
+                            category += "/";
                         }                        
                     }
                 }

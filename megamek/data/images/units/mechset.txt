@@ -50,10 +50,12 @@
 # As of v0.29.61, mechset files can include other mechset files.
 
 # these 18 must be in here
+exact "default_ultra_light" "defaults/default_ultra_light.gif"
 exact "default_light" "defaults/default_light.gif"
 exact "default_medium" "defaults/default_medium.gif"
 exact "default_heavy" "defaults/default_heavy.gif"
 exact "default_assault" "defaults/default_assault.gif"
+exact "default_super_heavy_mech" "defaults/default_super_heavy_mech.gif"
 exact "default_quad" "defaults/default_quad.gif"
 exact "default_tracked" "defaults/default_tracked.gif"
 exact "default_tracked_heavy" "defaults/default_tracked_heavy.gif"

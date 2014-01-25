@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -165,7 +166,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
             while (catNames.hasNext()) {
                 String catName = catNames.next();
                 if (catName != null){
-                    String[] names = catNames.next().split(File.separator);
+                    String[] names = catNames.next().split(Pattern.quote(File.separator));
                     addCategoryToTree(root,names);
                 }
             }
@@ -345,7 +346,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         }
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
-        String [] names = category.split(File.separator);
+        String [] names = category.split(Pattern.quote(File.separator));
         DefaultMutableTreeNode node = 
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){
@@ -379,7 +380,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         filename = entity.getCamoFileName() == null ? player.getCamoFileName() : entity.getCamoFileName();
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
-        String [] names = category.split(File.separator);
+        String [] names = category.split(Pattern.quote(File.separator));
         DefaultMutableTreeNode node = 
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){

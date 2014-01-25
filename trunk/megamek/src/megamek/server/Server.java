@@ -25791,9 +25791,8 @@ public class Server implements Runnable {
 
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
-            if (((r.type == Report.PLAYER) && (p.getId() != r.player))
-                    || omitCheck
-                    || ((entity != null) && !entity.hasSeenEntity(p))) {
+            if (omitCheck || ((entity != null) && !entity.hasSeenEntity(p)) 
+                    || ((r.type == Report.PLAYER) && (p.getId() != r.player))) {
                 // Trying out new code for double blind
                 // && !canSee(p, entity))) {
                 if (r.isValueObscured(j)) {

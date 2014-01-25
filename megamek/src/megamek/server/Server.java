@@ -10881,6 +10881,7 @@ public class Server implements Runnable {
         int oldElev = entity.getElevation();
         // move the entity into the new location gently
         entity.setPosition(dest);
+        entity.setElevation(entity.elevationOccupied(destHex));
         Building bldg = game.getBoard().getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
@@ -18004,8 +18005,8 @@ public class Server implements Runnable {
                 if (entity.hasUMU()) {
                     return vPhaseReport;
                 }
-                game.addPSR(new PilotingRollData(entity.getId(),
-                        TargetRoll.AUTOMATIC_FAIL, "lost buoyancy"));
+                //game.addPSR(new PilotingRollData(entity.getId(),
+                //        TargetRoll.AUTOMATIC_FAIL, "lost buoyancy"));
             }
         }
         // add all cumulative mods from other rolls to each PSR
@@ -18136,7 +18137,7 @@ public class Server implements Runnable {
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
-                    || (game.getOptions().booleanOption("tacops_fumbles") && 
+                    || (game.getOptions().booleanOption("tacops_fumbles") &&
                             (diceRoll == 2))) {
                 r.choose(false);
                 // Report the fumble
@@ -18924,43 +18925,43 @@ public class Server implements Runnable {
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == 
+                && (te.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == 
+                && (te.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             ferroLamellorArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_REFLECTIVE)
-            || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_BA_REFLECTIVE)) {
+        if ((((te instanceof Mech) || (te instanceof Tank))
+                && (te.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_REFLECTIVE))
+            || (isBattleArmor && (te.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_BA_REFLECTIVE))) {
             reflectiveArmor = true; // note that BA reflec receives "all of the bonuses but none of the drawbacks"
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank))
-                && (te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_REACTIVE)
-                || (isBattleArmor && te.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_BA_REACTIVE)) {
+        if ((((te instanceof Mech) || (te instanceof Tank))
+                && (te.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_REACTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_BA_REACTIVE))) {
             reactiveArmor = true; // note that BA reactive receives "all of the bonuses but none of the drawbacks"
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank) || 
+        if (((te instanceof Mech) || (te instanceof Tank) ||
                     (te instanceof Aero))
-                && (te.getArmorType(hit.getLocation()) == 
+                && (te.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
             ballisticArmor = true;
         }
 
         // TACs from the hit location table
         int crits;
-        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) ==
                 HitData.EFFECT_CRITICAL){
             crits = 1;
         } else {
@@ -23772,7 +23773,6 @@ public class Server implements Runnable {
         r.subject = entity.getId();
         r.add(entity.getShortName());
         r.add(entity.getLocationAbbr(loc));
-        r.newlines = 0;
         vDesc.addElement(r);
 
         if (entity instanceof Tank) {
@@ -25791,7 +25791,7 @@ public class Server implements Runnable {
 
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
-            if (omitCheck || ((entity != null) && !entity.hasSeenEntity(p)) 
+            if (omitCheck || ((entity != null) && !entity.hasSeenEntity(p))
                     || ((r.type == Report.PLAYER) && (p.getId() != r.player))) {
                 // Trying out new code for double blind
                 // && !canSee(p, entity))) {
@@ -27024,7 +27024,7 @@ public class Server implements Runnable {
     private Packet createSpecialHexDisplayPacket(int toPlayer) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game
                 .getBoard().getSpecialHexDisplayTable();
-        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = 
+        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 =
                 new Hashtable<Coords, Collection<SpecialHexDisplay>>();
         LinkedList<SpecialHexDisplay> tempList = null;
         IPlayer player = getPlayer(toPlayer);

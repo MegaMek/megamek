@@ -3374,6 +3374,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3110, TechConstants.T_IS_ADVANCED);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
@@ -3396,6 +3397,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(3110, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
@@ -3420,6 +3422,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.introDate = 3074;
         misc.techLevel.put(3074, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3110, TechConstants.T_IS_ADVANCED);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
@@ -3444,6 +3447,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(3110, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 

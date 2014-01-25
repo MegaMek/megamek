@@ -53,5 +53,6 @@ public class ISTAG extends TAGWeapon {
         reintroDate = 3044;
         availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
+        this.flags = flags.andNot(F_BA_WEAPON);
     }
 }

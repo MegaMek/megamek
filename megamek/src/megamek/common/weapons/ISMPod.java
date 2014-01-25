@@ -38,10 +38,11 @@ public class ISMPod extends MPodWeapon {
         name = "M-Pod";
         setInternalName("ISMPod");
         addLookupName("ISM-Pod");
-        introDate = 3064;
+        introDate = 3060;
         techRating = RATING_C;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3064, TechConstants.T_IS_TW_NON_BOX);
 
     }
 }

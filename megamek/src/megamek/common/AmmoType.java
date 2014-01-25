@@ -127,7 +127,10 @@ public class AmmoType extends EquipmentType {
     public static final int T_SRM_PRIMITIVE = 97;
     public static final int T_BA_TUBE = 98;
     public static final int T_IATM = 99;
-    public static final int NUM_TYPES = 100;
+    public static final int T_LMASS = 100;
+    public static final int T_MMASS = 101;
+    public static final int T_HMASS = 102;
+    public static final int NUM_TYPES = 103;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -1063,6 +1066,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createStingrayAmmo());
         EquipmentType.addType(AmmoType.createPiranhaAmmo());
         EquipmentType.addType(AmmoType.createKrakenMAmmo());
+        EquipmentType.addType(AmmoType.createHeavyMassDriverAmmo());
+        EquipmentType.addType(AmmoType.createMediumMassDriverAmmo());
+        EquipmentType.addType(AmmoType.createLightMassDriverAmmo());
 
         base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
@@ -9386,6 +9392,75 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+	 private static AmmoType createLightMassDriverAmmo() {
+	        AmmoType ammo = new AmmoType();
+
+	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+	        ammo.name = "Light Mass Driver Ammo";
+	        ammo.setInternalName("Ammo Light Mass Driver");
+	        ammo.addLookupName("LightMassDriver Ammo");
+	        ammo.damagePerShot = 60;
+	        ammo.ammoType = AmmoType.T_LMASS;
+	        ammo.shots = 1;
+	        ammo.bv = 0;
+	        ammo.cost = 150000;
+	        ammo.ammoRatio = 30;
+	        ammo.capital = true;
+	        ammo.availRating = new int[]{EquipmentType.RATING_E,
+	                EquipmentType.RATING_X, EquipmentType.RATING_E};
+	        ammo.introDate = 2715;
+	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+	        ammo.techRating = RATING_D;
+
+	        return ammo;
+	    }
+
+	    private static AmmoType createMediumMassDriverAmmo() {
+	        AmmoType ammo = new AmmoType();
+
+	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+	        ammo.name = "Medium Mass Driver Ammo";
+	        ammo.setInternalName("Ammo Medium Mass Driver");
+	        ammo.addLookupName("MediumMassDriver Ammo");
+	        ammo.damagePerShot = 100;
+	        ammo.ammoType = AmmoType.T_MMASS;
+	        ammo.shots = 1;
+	        ammo.bv = 0;
+	        ammo.cost = 300000;
+	        ammo.ammoRatio = 30;
+	        ammo.capital = true;
+	        ammo.availRating = new int[]{EquipmentType.RATING_E,
+	                EquipmentType.RATING_X, EquipmentType.RATING_E};
+	        ammo.introDate = 2715;
+	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+	        ammo.techRating = RATING_D;
+
+	        return ammo;
+	    }
+
+	    private static AmmoType createHeavyMassDriverAmmo() {
+	        AmmoType ammo = new AmmoType();
+
+	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+	        ammo.name = "Heavy Mass Driver Ammo";
+	        ammo.setInternalName("Ammo Heavy Mass Driver");
+	        ammo.addLookupName("HeavyMassDriver Ammo");
+	        ammo.damagePerShot = 140;
+	        ammo.ammoType = AmmoType.T_HMASS;
+	        ammo.shots = 1;
+	        ammo.bv = 0;
+	        ammo.cost = 600000;
+	        ammo.ammoRatio = 30;
+	        ammo.capital = true;
+	        ammo.availRating = new int[]{EquipmentType.RATING_E,
+	                EquipmentType.RATING_X, EquipmentType.RATING_E};
+	        ammo.introDate = 2715;
+	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+	        ammo.techRating = RATING_D;
+
+	        return ammo;
+	    }
 
     private static AmmoType createKrakenMAmmo() {
         AmmoType ammo = new AmmoType();

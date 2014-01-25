@@ -27,6 +27,7 @@ Explorer JumpShip
 3
 </Armor>
 <Nose Equipment>
+ISMobileHPG
 </Nose Equipment>
 <Front Left Side Equipment>
 </Front Left Side Equipment>
@@ -66,7 +67,6 @@ IS Level 2
 <transporters>
 SmallCraftBay:4:2
 CargoBay:247:1
-HPG
 </transporters>
 <docking_collar>
 0

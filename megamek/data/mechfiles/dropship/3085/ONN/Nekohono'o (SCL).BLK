@@ -234,6 +234,7 @@ ISERPPC
 </Right Side Equipment>
 
 <Aft Equipment> 
+NC3
 
 SCL2
 
@@ -345,8 +346,6 @@ SmallCraftBay:9:2
 BattleArmorBay:27:2
 
 CargoBay:1583:2
-
-NC3
 
 </transporters>
 

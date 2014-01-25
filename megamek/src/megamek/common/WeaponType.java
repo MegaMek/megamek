@@ -1385,6 +1385,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new StingrayWeapon());
         EquipmentType.addType(new SwordfishWeapon());
         EquipmentType.addType(new MantaRayWeapon());
+        EquipmentType.addType(new HeavyMassDriver());
+        EquipmentType.addType(new MediumMassDriver());
+        EquipmentType.addType(new LightMassDriver());
+        
 
         // bomb-related weapons
         EquipmentType.addType(new AAAMissileWeapon());

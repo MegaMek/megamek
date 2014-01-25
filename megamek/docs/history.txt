@@ -80,6 +80,9 @@ v0.37.5-dev (SVN)
 + Bug [#3966]: Tripod cockpit BV modifier
 + Fixed MechDisplay not changing the displayed location in the systems tab 
    when used from MekWars
++ Bug: displacement was not setting elevation when displacement did not result
+   in a fall, which resulted in lost buoyancy PSR fails when pushing into water
++ Fixed newlines in breach message
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes
@@ -90,7 +93,7 @@ v0.37.4 (2014-01-12 02:20)
 + Bug: TESMP shutdown effect on tanks didn't last as long as it should
 + Bug: Tanks don't report when they automatically startup in the end phase
 + Added code to reduce the utility of firing on ejected mechwarriors/crews by
-    1000.  This should make Princess much less likely to fire on them.
+    1000. This should make Princess much less likely to fire on them.
 + Bug: /localLoad not working
 + Bug [#3981]: NPE in WeaponAttackAction.toHit with Apollo and ArtV
 + Bug: TSEMP shutdown effect on BA caused NPE
@@ -98,13 +101,13 @@ v0.37.4 (2014-01-12 02:20)
 + Bug [#3973]: Partial Wings aren't dissipating heat (37.2 exp)
 + Bug: Mechs with Laser heatsinks and RHS have incorrect heat capacity
 + Bug [#3982]: TSEMP should cause interference to firing unit even on miss
-+ BA had special armor types separate from the armor types for every other unit.  
++ BA had special armor types separate from the armor types for every other unit.
     This makes some of the code difficult to work with.  I have consolidated 
     the BA armor into the armor for the rest of the units.  This required 
     updating a few methods in EquipmentType.
 + Feature: Updated BattleArmor.setArmorType to handle setting state for special 
     armor types, like stealth
-+ Feature:  BattleArmor BLK files can now specify armor_type and armor_tech 
++ Feature: BattleArmor BLK files can now specify armor_type and armor_tech 
     tags which will be read in and written out
 + Added a BAArmor enum to TestBattleArmor.  This works like the AeroArmor enum 
     in TestAero and is used to define what subset of all armors are legal for 
@@ -120,9 +123,9 @@ v0.37.4 (2014-01-12 02:20)
     who did most of the work)+
 + Correct some of the techlevel and dates for the MiscTypes
 + Bug: TestAero would fail Aeros for mounted bombs, this has been fixed
-+ Bug: Updated methods getGoodCriticals, getBadCriticals, getDamagedCriticals, and
-    getHitCriticals to work with mounteds due to EQUIPMENT_TYPE critical slots no
-    longer having indexes
++ Bug: Updated methods getGoodCriticals, getBadCriticals, getDamagedCriticals,
+    and getHitCriticals to work with mounteds due to EQUIPMENT_TYPE critical
+    slots no longer having indexes
 + Data: Unit fixes and first batch of BA with new Armor Type and Tech Tags
 + Bug [#3985]: Bombs cannot be loaded via MUL files
     This fix involved adding 2 new methods to BombType:
@@ -196,11 +199,12 @@ v0.37.1 (2013-12-29, 19:26 UTC)
 + Bug: Firing small arms then trying to fire field guns would lead to a 
     'infantry can't fire small arms and field guns in the same turn' message, 
     however firing a field gun then small arms didn't receive this message
-+ Bug: Improved Ferro-Aluminum, Ferro-Carbide, and Lamellor Ferro-Carbide armor multipliers incorrect
-    I took a moment to re-work how the clan armors for these specialty types is worked as well, instead of
-    using a special multiplier and multiple if statements for them I used a single if statement with an
-    additive of 0.08 (clan multipler for FF anf FA is 1.2 vs. 1.12, and the rest of these are additions on
-    top of that) to the I.S. multipler.
++ Bug: Improved Ferro-Aluminum, Ferro-Carbide, and Lamellor Ferro-Carbide armor
+    multipliers incorrect I took a moment to re-work how the clan armors for
+    these specialty types is worked as well, instead of using a special
+    multiplier and multiple if statements for them I used a single if statement
+    with an additive of 0.08 (clan multipler for FF anf FA is 1.2 vs. 1.12, and
+    the rest of these are additions on top of that) to the I.S. multipler.
 + Data: Unit Fixes.
 + Adjusted the too many units loading message: added a specific message for 
     infantry, so it makes more sense.  Also fixed a bug where instead of 
@@ -442,7 +446,6 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug: Clan Heat-Dissipating armor not available
 + Data: Start of Units from RS 3145 NTNU and some unit and RAT Fixes.
 + Bug: [#3956] Bot hangs on Divide By Zero error 0.37-dev
-
 
 v0.36.0 (2013-10-25, 00:26 UTC+2)
 + Bug [#3892]: Ejected MechWarrior Takes Sprite of a 'mech from previous game

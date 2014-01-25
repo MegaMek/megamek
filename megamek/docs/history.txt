@@ -26,8 +26,8 @@ v0.37.5-dev (SVN)
 + Data: Unit fixes.
 + Bug [#3990]: Jumping Vehicles roll on the motive crit table but it's not 
     clear why
-+ Feature/Data: Battle armor equipment and some fixed units. Some of the data still
-    needs to be checked and corrected. Some fixed units included.
++ Feature/Data: Battle armor equipment and some fixed units. Some of the data
+    still needs to be checked and corrected. Some fixed units included.
 + Bug [#3988]: Fixes to Server for BA reflective/reactive armor
 + Bug: Cougar-XR was missing a jump jet in each leg
 + Bug [#3997]: PSR Needs 2, Rolls 2, Failed.
@@ -69,8 +69,11 @@ v0.37.5-dev (SVN)
 + Bug [#4000]: Default Icon for Ultra Light and Super Heavy Mechs
 + Bug [#3976]: Aerospace Launch/Recovery Bugs
 + Data: New Camo Pack - Thanks to SeaVea
-+ Construction data ONLY for Naval Mass Drivers (need to be coded to work as a weapon)
++ Construction data ONLY for Naval Mass Drivers (need to be coded to work as a
+    weapon)
 + Unit file Fixes.
++ Fixed protomech AC AP crit modifiers per a recent ruling on the rules question
+   forum (http://bg.battletech.com/forums/index.php/topic,34101.msg800042.html)
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

@@ -109,13 +109,13 @@ public class HitData {
         if (inType.getRackSize() == 2) {
             specCritMod = -4;
         } else if (inType.getRackSize() == 4) {
-            specCritMod = -4;
+            specCritMod = -3;
         } else if (inType.getRackSize() == 5) {
             specCritMod = -3;
         } else if (inType.getRackSize() == 6) {
             specCritMod = -3;
         } else if (inType.getRackSize() == 8) {
-            specCritMod = -3;
+            specCritMod = -2;
         } else if (inType.getRackSize() == 10) {
             specCritMod = -2;
         } else if (inType.getRackSize() == 15) {

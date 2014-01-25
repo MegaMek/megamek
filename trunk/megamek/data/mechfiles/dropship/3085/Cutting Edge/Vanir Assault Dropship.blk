@@ -163,7 +163,12 @@ Clan AMS
 Clan AMS Ammo:216
 (R) Piranha
 (R) Piranha
-(R) Piranha Ammo:30
+(R) Piranha
+(R) Piranha Ammo:45
+(R) Stingray
+(R) Stingray
+(R) Stingray
+(R) Stingray Ammo:30
 (R) CLERLargeLaser
 (R) CLERLargeLaser
 (R) CLERLargeLaser
@@ -185,6 +190,7 @@ Clan AMS Ammo:216
 
 <Right Side Equipment>
 (B) Piranha
+Piranha
 Piranha
 Piranha Ammo:45
 (B) Stingray
@@ -213,7 +219,12 @@ Clan AMS
 Clan AMS Ammo:216
 (R) Piranha
 (R) Piranha
-(R) Piranha Ammo:30
+(R) Piranha
+(R) Piranha Ammo:45
+(R) Stingray
+(R) Stingray
+(R) Stingray
+(R) Stingray Ammo:30
 (R) CLERLargeLaser
 (R) CLERLargeLaser
 (R) CLERLargeLaser

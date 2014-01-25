@@ -749,7 +749,7 @@ public class SharedUtility {
         }
 
         if (!leftMap && (lastStep != null) && (lastStep.getType() == MoveStepType.RECOVER)) {
-            md.addStep(MoveStepType.RECOVER, lastStep.getRecoveryUnit());
+            md.addStep(MoveStepType.RECOVER, lastStep.getRecoveryUnit(), -1);
         }
 
         return md;

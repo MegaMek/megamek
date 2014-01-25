@@ -61,6 +61,19 @@ v0.37.5-dev (SVN)
     BattleArmor.MOUNT_LOC_BODY instead of BattleArmor.MOUNT_LOC_NONE, which was 
     causing the :Body tag to get added to all Mounteds that were saved to BLK 
     files.
++ Added support for keeping track of the number of shots per crit for BA ammo
++ BLKFile now encodes a :ShotN#  string for BA Ammo, where N is the number of 
+    shots in the crit 
++ BLKBattleArmor now parses the :ShotN# string to set the shots per crit
++ TestBattleArmor now accounts for ammo weight based on KG per shot
++ Bug: MunitionMutator didn't properly handle mutating BA ammo
++ Bug [#3420]: Pilots from MekHQ w/o Artillery skill do not import properly
++ Bug [#3960]: Player Disconnected, Could Not Reconnect.
++ Bug [#4000]: Default Icon for Ultra Light and Super Heavy Mechs
++ Bug [#3976]: Aerospace Launch/Recovery Bugs
++ Data: New Camo Pack - Thanks to SeaVea
++ Construction data ONLY for Naval Mass Drivers (need to be coded to work as a weapon)
++ Unit file Fixes.
 
 v0.37.4-exp (2014-01-12 02:20)
 + Feature: increased the expressiveness of the skin specifications.  Previously, 

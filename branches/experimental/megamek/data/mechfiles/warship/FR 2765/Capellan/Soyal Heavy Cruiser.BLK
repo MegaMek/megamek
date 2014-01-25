@@ -1,0 +1,210 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Soyal Heavy Cruiser
+</Name>
+<Model>
+</Model>
+
+<Tonnage>
+1500000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+140
+138
+138
+138
+138
+132
+</Armor>
+
+<Nose Equipment>
+#(B) MediumMassDriver
+# MediumMassDriver Ammo:15
+(B) HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:40
+</Nose Equipment>
+
+<Front Left Side Equipment>
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+KillerWhale
+KillerWhale
+KillerWhale Ammo:60
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+KillerWhale
+KillerWhale
+KillerWhale Ammo:60
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+KillerWhale
+KillerWhale
+KillerWhale Ammo:60
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+(B) NAC30
+NAC30 Ammo:30
+(B) NAC20
+NAC20 Ammo:20
+NL45
+NL45
+NL45
+NL45
+KillerWhale
+KillerWhale
+KillerWhale Ammo:60
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:40
+NL45
+NL45
+NL45
+NL45
+</Aft Equipment>
+
+<structural_integrity>
+120
+</structural_integrity>
+
+<heatsinks>
+779
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+62500
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+2731
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:12:3
+SmallCraftBay:10:2
+BattleMechBay:48:2
+CargoBay:184422:2
+</transporters>
+
+<docking_collar>
+2
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+21
+</escape_pod>
+
+<life_boat>
+21
+</life_boat>
+
+<crew>
+591
+</crew>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+28
+</marines>
+
+<history>
+Mass Drivers not coded in MM. Unit included for completeness
+</history>

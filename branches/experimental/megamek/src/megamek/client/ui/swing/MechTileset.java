@@ -57,10 +57,12 @@ import megamek.common.Warship;
  * @author Ben
  */
 public class MechTileset {
+    private String ULTRA_LIGHT_STRING = "default_ultra_light"; //$NON-NLS-1$
     private String LIGHT_STRING = "default_light"; //$NON-NLS-1$
     private String MEDIUM_STRING = "default_medium"; //$NON-NLS-1$
     private String HEAVY_STRING = "default_heavy"; //$NON-NLS-1$
     private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
+    private String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech"; //$NON-NLS-1$
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
     private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
     private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
@@ -102,10 +104,12 @@ public class MechTileset {
     private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
     private String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
 
+    private MechEntry default_ultra_light;
     private MechEntry default_light;
     private MechEntry default_medium;
     private MechEntry default_heavy;
     private MechEntry default_assault;
+    private MechEntry default_super_heavy_mech;
     private MechEntry default_quad;
     private MechEntry default_tracked;
     private MechEntry default_tracked_heavy;
@@ -249,6 +253,10 @@ public class MechTileset {
                 return default_medium;
             } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                 return default_heavy;
+            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+                return default_ultra_light;
+            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+                return default_super_heavy_mech;
             } else {
                 return default_assault;
             }
@@ -420,10 +428,12 @@ public class MechTileset {
         }
         r.close();
 
+        default_ultra_light = exact.get(ULTRA_LIGHT_STRING.toUpperCase());
         default_light = exact.get(LIGHT_STRING.toUpperCase());
         default_medium = exact.get(MEDIUM_STRING.toUpperCase());
         default_heavy = exact.get(HEAVY_STRING.toUpperCase());
         default_assault = exact.get(ASSAULT_STRING.toUpperCase());
+        default_super_heavy_mech = exact.get(SUPER_HEAVY_MECH_STRING.toUpperCase());
         default_quad = exact.get(QUAD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());

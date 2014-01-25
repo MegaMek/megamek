@@ -85,6 +85,7 @@
      Nathan Erwin <nderwin@users.sourceforge.net>
      David Armendariz <darm88@users.sourceforge.net>
      Nicholas Walczak <arlith@users.sourceforge.net>
+     Dave Nawton <hammer-gs@users.sourceforge.net>
      Eddy Cullen <screamingwns@users.sourceforge.net>
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
      
@@ -124,6 +125,7 @@
      Jellico
      Brock Peterman <bh-21@users.sourceforge.net>
      DarkISI
+     Dave Nawton <hammer-gs@users.sourceforge.net>
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -185,12 +187,17 @@
      Swiftsure
      Stingr4y
      RJM
+     SteveRestless
+     
+  Camo Pack
+  	 SeaVea
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
      Nicholas "starbird7" Ristow
      Magnus Kerensky <mkerensky@users.sourceforge.net>
      Netzilla and Xotl (Classic Battletech Forums)
+     Dave Nawton <hammer-gs@users.sourceforge.net>
 
   Translations
      Jörg Harder <joergharder@t-online.de>

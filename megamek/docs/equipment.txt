@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,3071-Inner Sphere,3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -2806,8 +2806,8 @@ M,3071-Inner Sphere3061-Inner Sphere,3071-IS_TW_Non_Box3061-IS_TW_Non_Box,BA Mim
 M,3057-Clan,3057-Clan_Unofficial,BA Advanced,Clan BA Advanced,
 M,2860-Clan,2860-Clan_Unofficial,BA Standard (Prototype),Clan BA Standard (Prototype),
 M,3058-(Unknown Technology Base),3058-All_Clan,BA Fire Resistant,Clan BA Fire Resistant,BA-Fire Resistant Armor,
-M,3075-Clan,3075-Clan_Experimental,IS BA Reactive,Clan IS BA Reactive,BA Reactive Armor ,
-M,3075-Clan,3075-Clan_Experimental,IS BA Reflective,Clan IS BA Reflective,BA Reflective Armor ,
+M,3075-Clan,3075-Clan_Experimental,Clan BA Reactive,Clan Clan BA Reactive,BA Reactive Armor ,
+M,3075-Clan,3075-Clan_Experimental,Clan BA Reflective,Clan Clan BA Reflective,BA Reflective Armor ,
 M,3050-Clan,3050-Clan_Unofficial,BA Stealth (Prototype),ClanBA Stealth (Prototype),
 M,2820-Clan,2820-Clan_TW,BA Stealth (Basic),Clan BA Stealth (Basic),
 M,2720-Clan,2720-Clan_TW,BA Stealth,Clan BA Stealth,

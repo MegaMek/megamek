@@ -74,6 +74,9 @@ v0.37.5-dev (SVN)
 + Unit file Fixes.
 + Fixed protomech AC AP crit modifiers per a recent ruling on the rules question
    forum (http://bg.battletech.com/forums/index.php/topic,34101.msg800042.html)
++ Feature: With the addition of more camos in MM, it the camo dialog has become 
+    painful to use.  I changed the dropdown for category selection to a 
+    JTreeView.
 
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes

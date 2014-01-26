@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain
++ Bug: wrong elevation when displacing onto negative elevation terrain
++ Bug: wrong elevation when assault dropping onto non-elevation 0 terrain
++ Bug: wrong elevation after DFAing on non-elevation 0 terrain
 
 v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 

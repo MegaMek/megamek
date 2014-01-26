@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+v0.37.6-exp-dev (SVN)
+
+v0.37.6-dev (SVN)
+
 v0.37.5-exp (2014-01-26 16:55 UTC)
 + Bug: Infantry and BattleArmor didn't have a jump button
 

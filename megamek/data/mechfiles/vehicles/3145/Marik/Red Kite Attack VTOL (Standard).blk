@@ -78,13 +78,13 @@ CLMediumChemLaser
 </Rear Equipment>
 
 <Rotor Equipment>
-CLMediumChemLaser
-CLMediumChemLaser
-CLMediumChemLaser
-CLMediumChemLaser
 </Rotor Equipment>
 
 <Turret Equipment>
+CLMediumChemLaser
+CLMediumChemLaser
+CLMediumChemLaser
+CLMediumChemLaser
 </Turret Equipment>
 
 <source>
@@ -92,6 +92,6 @@ TRO 3145 FWL
 </source>
 
 <tonnage>
-27.0
+25.0
 </tonnage>
 

@@ -1365,7 +1365,7 @@ public class MechDisplay extends JPanel {
                 }
             }
             if (en.hasDamagedRHS() && hasFiredWeapons){
-                currentHeatBuildup++; 
+                currentHeatBuildup++;
             }
 
             // This code block copied from the MovementPanel class,
@@ -1385,8 +1385,8 @@ public class MechDisplay extends JPanel {
             }
             if (en.hasActivatedRadicalHS()){
                 if (en instanceof Mech){
-                    heatCap += ((Mech)en).getActiveSinks(); 
-                    heatCapWater += ((Mech)en).getActiveSinks(); 
+                    heatCap += ((Mech)en).getActiveSinks();
+                    heatCapWater += ((Mech)en).getActiveSinks();
                 } else if (en instanceof Aero){
                     heatCap += ((Aero)en).getHeatSinks();
                     heatCapWater += ((Aero)en).getHeatSinks();
@@ -3096,7 +3096,7 @@ public class MechDisplay extends JPanel {
         }
 
         public void valueChanged(ListSelectionEvent event) {
-            if (event.getValueIsAdjusting() || (clientgui == null)) {
+            if (event.getValueIsAdjusting()) {
                 return;
             }
             if (event.getSource().equals(unitList)) {
@@ -3112,7 +3112,8 @@ public class MechDisplay extends JPanel {
                         .removeAllElements();
                 m_chMode.setEnabled(false);
                 displaySlots();
-            } else if (event.getSource().equals(slotList)) {
+            } else if (event.getSource().equals(slotList) && (clientgui != null)) {
+
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted m = getSelectedEquipment();
@@ -3591,13 +3592,13 @@ public class MechDisplay extends JPanel {
                     ((DefaultListModel<String>) narcList.getModel())
                             .addElement("+" + en.getTaserInterference() + " " + Messages.getString("MechDisplay.TaserInterference"));//$NON-NLS-1$
                 }
-                
+
                 // suffering from TSEMP Interference?
                 if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
                     ((DefaultListModel<String>) narcList.getModel())
                     .addElement(Messages.getString("MechDisplay.TSEMPInterference"));//$NON-NLS-1$
                 }
-                
+
                 if (en.hasDamagedRHS()){
                     ((DefaultListModel<String>) narcList.getModel())
                     .addElement(Messages.getString("MechDisplay.RHSDamaged"));//$NON-NLS-1$

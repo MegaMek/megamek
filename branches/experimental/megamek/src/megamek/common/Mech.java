@@ -164,7 +164,7 @@ public abstract class Mech extends Entity {
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod" , "Tripod", "Interface" };
+            "Superheavy Tripod", "Tripod", "Interface" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -1603,9 +1603,9 @@ public abstract class Mech extends Entity {
     @Override
     public int getHeatCapacityWithWater() {
         if (hasLaserHeatSinks()) {
-            return getHeatCapacity(true,false);
+            return getHeatCapacity(true, false);
         }
-        return getHeatCapacity(true,false) + Math.min(sinksUnderwater(), 6);
+        return getHeatCapacity(true, false) + Math.min(sinksUnderwater(), 6);
     }
 
     /**
@@ -4572,7 +4572,8 @@ public abstract class Mech extends Entity {
                 || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+        } else if ((getCockpitType() == Mech.COCKPIT_TRIPOD)
+                || (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD)) {
             cockpitMod = 1.1;
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
@@ -5967,28 +5968,30 @@ public abstract class Mech extends Entity {
             Mounted m = cs.getMount();
             StringBuilder toReturn = new StringBuilder();
             if (m.isRearMounted()) {
-                toReturn.append(m.getType().getInternalName()).append(" (R)").append(armoredText);
+                toReturn.append(m.getType().getInternalName()).append(" (R)")
+                        .append(armoredText);
             }
             if (m.isMechTurretMounted()) {
-                toReturn.append(m.getType().getInternalName()).append(" (T)").append(armoredText);
+                toReturn.append(m.getType().getInternalName()).append(" (T)")
+                        .append(armoredText);
             }
             if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
                 switch (m.getFacing()) {
                     case 1:
-                        toReturn.append(m.getType().getInternalName()).append(" (FR)").append(
-                                armoredText);
+                        toReturn.append(m.getType().getInternalName())
+                                .append(" (FR)").append(armoredText);
                     case 2:
-                        toReturn.append(m.getType().getInternalName()).append(" (RR)").append(
-                                armoredText);
+                        toReturn.append(m.getType().getInternalName())
+                                .append(" (RR)").append(armoredText);
                         // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        toReturn.append(m.getType().getInternalName()).append(" (RL)").append(
-                                armoredText);
+                        toReturn.append(m.getType().getInternalName())
+                                .append(" (RL)").append(armoredText);
                     case 5:
-                        toReturn.append(m.getType().getInternalName()).append(" (FL)").append(
-                                armoredText);
+                        toReturn.append(m.getType().getInternalName())
+                                .append(" (FL)").append(armoredText);
                     default:
                         break;
                 }
@@ -5998,7 +6001,8 @@ public abstract class Mech extends Entity {
             // they can't be armored or rear or turret mounted or VGLs, so we
             // just need the internalname
             if (cs.getMount2() != null) {
-                toReturn.append("|").append(cs.getMount2().getType().getInternalName());
+                toReturn.append("|").append(
+                        cs.getMount2().getType().getInternalName());
             }
             return toReturn.toString();
         } else {
@@ -7980,8 +7984,7 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isEjectionPossible() {
         return (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
-                && getCrew().isActive()
-                && !hasQuirk("no_eject");
+                && getCrew().isActive() && !hasQuirk("no_eject");
     }
 
     /**
@@ -8007,7 +8010,9 @@ public abstract class Mech extends Entity {
             }
             Mounted m = cs.getMount();
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_HAND_WEAPON) && type.hasSubType(MiscType.S_CLAW)) {
+            if ((type instanceof MiscType)
+                    && type.hasFlag(MiscType.F_HAND_WEAPON)
+                    && type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }

@@ -17,34 +17,42 @@ package megamek.client.ui.swing;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -65,17 +73,25 @@ import megamek.common.util.DirectoryItems;
  * @author James Damour
  * @version 1
  */
-public class CamoChoiceDialog extends JDialog {
+public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
 
     private static final long serialVersionUID = 9220162367683378065L;
 
+    /**
+     * Split pane for table and tree view.
+     */
+    public JSplitPane splitPane;
+    
     private JFrame frame;
     private DirectoryItems camos;
-    private JScrollPane scrCamo;
+    /**
+     * Scroll panes for the camo table and the categories tree view
+     */
+    private JScrollPane scrCamo, scrCategories;
     JButton sourceButton;
     private JButton btnCancel;
     private JButton btnSelect;
-    private JComboBox<String> comboCategories;
+    private JTree treeCategories;
     private CamoTableModel camoModel;
     private CamoTableMouseAdapter camoMouseAdapter;
     private JTable tableCamo;
@@ -125,29 +141,37 @@ public class CamoChoiceDialog extends JDialog {
         tableCamo.setRowHeight(76);
         tableCamo.getColumnModel().getColumn(0).setCellRenderer(camoModel.getRenderer());
         tableCamo.addMouseListener(camoMouseAdapter);
+        scrCamo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrCamo.setViewportView(tableCamo);
+        scrCamo.setMinimumSize(new Dimension(240,240));
 
-        comboCategories = new JComboBox<String>();
-        DefaultComboBoxModel<String> categoryModel = new DefaultComboBoxModel<String>();
-        categoryModel.addElement(IPlayer.NO_CAMO);
+        treeCategories = new JTree();
+        treeCategories.getSelectionModel().setSelectionMode
+        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+  
+        scrCategories = new JScrollPane();
+        scrCategories.setViewportView(treeCategories);
+        scrCategories.setMinimumSize(new Dimension(240,240));
+        setMinimumSize(new Dimension(480,240));
+        
+        
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(IPlayer.ROOT_CAMO);
+        root.add(new DefaultMutableTreeNode(IPlayer.NO_CAMO));
         if (camos != null) {
             if (camos.getItemNames("").hasNext()) { //$NON-NLS-1$
-                categoryModel.addElement(IPlayer.ROOT_CAMO);
+                root.add(new DefaultMutableTreeNode(IPlayer.ROOT_CAMO));
             }
-            Iterator<String> names = camos.getCategoryNames();
-            while (names.hasNext()) {
-                String name = names.next();
-                if (!"".equals(name)) { //$NON-NLS-1$
-                    categoryModel.addElement(name);
+            Iterator<String> catNames = camos.getCategoryNames();
+            while (catNames.hasNext()) {
+                String catName = catNames.next();
+                if (catName != null){
+                    String[] names = catNames.next().split("/");
+                    addCategoryToTree(root,names);
                 }
             }
         }
-        comboCategories.setModel(categoryModel);
-        comboCategories.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                comboCategoriesItemStateChanged(evt);
-            }
-        });
+        treeCategories.setModel(new DefaultTreeModel(root));
+        treeCategories.addTreeSelectionListener(this);
 
         btnSelect = new JButton();
         btnSelect.setText(Messages.getString("CamoChoiceDialog.Select"));
@@ -165,43 +189,81 @@ public class CamoChoiceDialog extends JDialog {
             }
         });
 
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                scrCategories, scrCamo);
+        splitPane.setResizeWeight(0.5);
+        
+        
         //set layout
         setLayout(new GridBagLayout());
         GridBagConstraints c;
 
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        add(scrCamo, c);
+        getContentPane().add(splitPane, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        getContentPane().add(comboCategories, c);
-
-
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 1;
         c.weightx = 0.5;
         getContentPane().add(btnSelect, c);
 
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 2;
-        c.weightx = 0.5;
+        c.gridx++;
         getContentPane().add(btnCancel, c);
 
         pack();
+        this.setLocationRelativeTo(parent);
+    }
+    
+    /**
+     * This recursive method is a hack: DirectoryItems flattens the directory
+     * structure, but it provides useful functionality, so this method will
+     * reconstruct the directory structure for the JTree.
+     * 
+     * @param node
+     * @param names
+     */
+    private void addCategoryToTree(DefaultMutableTreeNode node, 
+            String [] names){
+        
+        // Shouldn't happen
+        if (names.length == 0){
+            return; 
+        }
+
+        boolean matched = false;
+        for (Enumeration<DefaultMutableTreeNode> e = node.children(); 
+                e.hasMoreElements();){
+            DefaultMutableTreeNode childNode = e.nextElement();
+            String nodeName = (String)childNode.getUserObject();
+            if (nodeName.equals(names[0])){
+                if (names.length > 1){
+                    addCategoryToTree(childNode,
+                            Arrays.copyOfRange(names, 1, names.length));
+                    matched = true;
+                } else {
+                    // I guess we're done?  This shouldn't happen, as there 
+                    //  shouldn't be duplicates 
+                }
+            }
+        }
+        
+        // If we didn't match, lets create nodes for each name
+        if (!matched){
+            DefaultMutableTreeNode root = node;
+            for (int i = 0; i < names.length; i++){
+                DefaultMutableTreeNode newNode = 
+                        new DefaultMutableTreeNode(names[i]);
+                root.add(newNode);
+                root = newNode;
+            }
+        } 
     }
 
     private void cancel() {
@@ -232,12 +294,6 @@ public class CamoChoiceDialog extends JDialog {
         }
         select = true;
         setVisible(false);
-    }
-
-    private void comboCategoriesItemStateChanged(ItemEvent evt) {
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            fillTable((String) evt.getItem());
-        }
     }
 
     public String getCategory() {
@@ -276,6 +332,7 @@ public class CamoChoiceDialog extends JDialog {
     	if(camoModel.getRowCount() > 0) {
     		tableCamo.setRowSelectionInterval(0, 0);
     	}
+    	scrCamo.repaint();
     }
 
     public void setPlayer(IPlayer p) {
@@ -286,7 +343,22 @@ public class CamoChoiceDialog extends JDialog {
         if (sourceButton != null) {
     	sourceButton.setIcon(generateIcon(category, filename));
         }
-    	comboCategories.getModel().setSelectedItem(category);
+        // This cumbersome code takes the category name and transforms it into
+        //  a TreePath so it can be selected in the dialog
+        String [] names = category.split(Pattern.quote("/"));
+        DefaultMutableTreeNode node = 
+                (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
+        for (int i = 0; i < names.length; i++){
+            for (Enumeration<DefaultMutableTreeNode> e = node.children();
+                    e.hasMoreElements();){
+                DefaultMutableTreeNode child = e.nextElement();
+                if (names[i].equals(child.getUserObject())){
+                    node = child;
+                    break;
+                }
+            }
+        }
+        treeCategories.setSelectionPath(new TreePath(node.getPath()));
     	fillTable(category);
     	int rowIndex = 0;
     	for(int i = 0; i < camoModel.getRowCount(); i++) {
@@ -305,7 +377,22 @@ public class CamoChoiceDialog extends JDialog {
         }
         category = entity.getCamoCategory() == null ? player.getCamoCategory() : entity.getCamoCategory();
         filename = entity.getCamoFileName() == null ? player.getCamoFileName() : entity.getCamoFileName();
-    	comboCategories.getModel().setSelectedItem(category);
+        // This cumbersome code takes the category name and transforms it into
+        //  a TreePath so it can be selected in the dialog
+        String [] names = category.split(Pattern.quote("/"));
+        DefaultMutableTreeNode node = 
+                (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
+        for (int i = 0; i < names.length; i++){
+            for (Enumeration<DefaultMutableTreeNode> enm = node.children();
+                    enm.hasMoreElements();){
+                DefaultMutableTreeNode child = enm.nextElement();
+                if (names[i].equals(child.getUserObject())){
+                    node = child;
+                    break;
+                }
+            }
+        }
+        treeCategories.setSelectionPath(new TreePath(node.getPath()));
     	fillTable(category);
     	int rowIndex = 0;
     	for(int i = 0; i < camoModel.getRowCount(); i++) {
@@ -534,6 +621,28 @@ public class CamoChoiceDialog extends JDialog {
 
     public boolean isSelect() {
         return select;
+    }
+
+    @Override
+    public void valueChanged(TreeSelectionEvent ev) {
+        if (ev.getSource().equals(treeCategories)) {
+            TreePath[] paths = treeCategories.getSelectionPaths();
+            for (TreePath path : paths){
+                Object [] values = path.getPath();
+                String category = "";
+                for (int i = 1; i < values.length; i++){
+                    if (values[i] != null){
+                        String name = (String)((DefaultMutableTreeNode)values[i]).getUserObject();
+                        category += name;
+                        if (!name.equals(IPlayer.NO_CAMO) 
+                                && !name.equals(IPlayer.ROOT_CAMO)){
+                            category += "/";
+                        }                        
+                    }
+                }
+                fillTable(category);
+            }
+        }   
     }
 
 }

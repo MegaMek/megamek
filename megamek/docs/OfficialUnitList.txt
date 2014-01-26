@@ -25,7 +25,7 @@ Cobra Transport VTOL (M.A.S.H.)|
 Darter Scout Car (ECM)|
 Marsden II MBT II (Primitive)|
 DI Morgan Assault Tank|
-Mauna Kea Command Vessel|
+Mauna Kea Command Vessel (Standard)|
 Puma Assault Tank PAT-005b|
 Crow Scout Helicopter (C3)|
 Bellona Hover Tank (Laser)|
@@ -76,6 +76,7 @@ Thumper Artillery Vehicle|
 Darter Scout Car (BAP)|
 Fury Command Tank (Royal)|
 Turhan Urban Combat Vehicle (C3)|
+Ripper Infantry Transport (Royal)|
 Demon Tank (Royal)|
 Mauna Kea Command Vessel (LB-X)|
 Mauna Kea Command Vessel (LRM)|
@@ -364,7 +365,7 @@ Lightning Attack Hovercraft (ERML)|
 Cyrano Gunship (ML)|
 Magi Infantry Support Vehicle (UCSV)|
 Ripper Infantry Transport (SPL)|
-Ripper Infantry Transport|
+Ripper Infantry Transport (Standard)|
 Beagle Hover Scout|
 Chaparral Missile Artillery Tank (MG)|
 Puma Assault Tank PAT-005|
@@ -500,6 +501,7 @@ Pegasus Scout Hover Tank X-Pulse|
 Hephaestus Jump Tank|
 Sokar Urban Combat Unit|
 Vedette Medium Tank V7|
+Cavalry Attack Helicopter (Infiltrator)|
 Enyo Strike Tank ER Pulse|
 Vidar Heavy Defense Tank|
 Hephaestus Jump Tank (AP)|
@@ -1654,6 +1656,8 @@ Winchester Cruiser|
 Wagon Wheel Frigate|
 Pinto Corvette|
 Stefan Amaris (BattleShip)|
+Black Lion I-Battlecruiser|
+Soyal Heavy Cruiser|
 Sylvester Transport|
 Mako Corvette|
 Tharkad Battlecruiser (WoB)|
@@ -1685,6 +1689,7 @@ Afreet Medium Battle Armor (Jade Falcon)|
 Kobold Battle Armor [SL]|
 Corona Battle Armor|
 Corona Battle Armor (SRM)|
+Nephilim Assault Battle Armor [Standard]|
 Grenadier Battle Armor (Hunter-Killer) [MagShot]|
 Rottweiler Battle Armor (Upgrade)|
 Kobold Battle Armor [SL/Flamer]|
@@ -1699,7 +1704,7 @@ Afreet Medium Battle Armor|
 Phalanx Battle Armor (WoB-B)|
 Kobold Battle Armor (GB) [GL/TAG]|
 Void Medium Battle Armor|
-Se'irim Medium Battle Armor|
+Se'irim Medium Battle Armor (Standard)|
 Hauberk II Battle Armor|
 Kobold Battle Armor (CS) [SL]|
 Theseus Medium Battle Armor (RL)|
@@ -1723,7 +1728,7 @@ Grenadier Battle Armor [Flamer]|
 Nephilim Assault Battle Armor (Gauss)|
 Hauberk Battle Armor|
 Kobold Battle Armor (CS) [GL/TAG]|
-Djinn Battle Armor|
+Djinn Battle Armor (Standard)|
 Golem Assault Armor (Fast Assault)|
 Nephilim Assault Battle Armor (Seeker) [MG]|
 Rottweiler Battle Armor|
@@ -1745,7 +1750,6 @@ Kobold Battle Armor [GL/Flamer]|
 Kobold Battle Armor [SL/TAG]|
 Shedu Assault Battle Armor|
 Phalanx Battle Armor (WoB-A)|
-Nephilim Assault Battle Armor [Plasma]|
 Grenadier Battle Armor (Hunter-Killer) [NARC]|
 Aerie PA(L) (Salvage)|
 Golem Assault Armor (Rock Golem)|
@@ -1845,6 +1849,7 @@ Fa Shih Battle Armor [Flamer]|
 IS Standard Battle Armor [MG]|
 Achileus Light Battle Armor [MG]|
 Gnome Battle Armor (Upgrade) [MRR]|
+Achileus Light Battle Armor (WoB) 1|
 Cavalier Battle Armor [SRM]|
 Elemental Battle Armor [HMG]|
 Infiltrator Mk. I Battle Armor "Waddle"|
@@ -1959,7 +1964,7 @@ Shen Long Battle Armor [David Light Gauss]|
 Shen Long Battle Armor [MRM]|
 Shen Long Battle Armor [HGL]|
 Shen Long Battle Armor [SRM]|
-Amazon Battle Armor [Sup PPC]|
+Amazon Battle Armor [Support PPC]|
 Constable Pacification Suit (ECM)|
 Buraq Fast Battle Armor (Support)|
 Wraith Battle Armor (Standard)|
@@ -5512,7 +5517,7 @@ Guardian Fighter D|
 Medium Strike Fighter (Steinadler)|
 Light Strike Fighter Owl II|
 'MechBuster (LB-X)|
-Planetlifter Air Transport|
+Planetlifter Air Transport (Standard)|
 Light Strike Fighter Owl|
 Guardian Fighter C|
 Heavy Strike Fighter Inseki|
@@ -5527,7 +5532,7 @@ Raubvogel Aerobomber AB-18C|
 SeaBuster Strike Fighter (Production)|
 Drake Medium Stealth Fighter|
 Drake Medium Strike Fighter|
-Planetlifter Tactical Support|
+Planetlifter Tactical Support (Standard)|
 Planetlifter Support Aircraft|
 Tsuru VIP Aircraft|
 Stork Light Refueling Craft (Original)|
@@ -5540,7 +5545,7 @@ Invader|
 Odyssey Jumpship|
 Invader PPC|
 Monolith Jumpship (Clan)|
-Tramp LF Clan|
+Tramp Jumpship (LF) (Clan)|
 Hunter Jumpship (Lithium-Fusion)|
 Merchant Jumpship (Clan)|
 Hunter Jumpship|

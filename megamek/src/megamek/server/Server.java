@@ -10881,7 +10881,7 @@ public class Server implements Runnable {
         int oldElev = entity.getElevation();
         // move the entity into the new location gently
         entity.setPosition(dest);
-        entity.setElevation(entity.elevationOccupied(destHex));
+        entity.setElevation(entity.calcElevation(srcHex, destHex));
         Building bldg = game.getBoard().getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
@@ -15818,8 +15818,7 @@ public class Server implements Runnable {
 
             } else {
                 // same effect as successful DFA
-                ae.setElevation(ae.elevationOccupied(game.getBoard().getHex(
-                        daa.getTargetPos())));
+                ae.setElevation(ae.calcElevation(game.getBoard().getHex(ae.getPosition()), game.getBoard().getHex(daa.getTargetPos())));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
                         daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
                                 "executed death from above")));
@@ -16122,8 +16121,8 @@ public class Server implements Runnable {
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
-        ae.setElevation(ae.elevationOccupied(game.getBoard().getHex(
-                daa.getTargetPos())));
+        ae.setElevation(ae.calcElevation(game.getBoard().getHex(ae.getPosition()),
+                game.getBoard().getHex(daa.getTargetPos())));
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(
                 ae,
@@ -30541,8 +30540,7 @@ public class Server implements Runnable {
         IHex hex = game.getBoard().getHex(entity.getPosition());
         int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
                 .terrainLevel(Terrains.BLDG_ELEV) : 0;
-        entity.setElevation((entity.elevationOccupied(hex) - hex.floor())
-                + bldgElev);
+        entity.setElevation((0 - hex.floor()) + bldgElev);
 
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if (bldg != null) {

@@ -1,9 +1,9 @@
 VERSION HISTORY:
 ----------------
-v0.37.5-exp-dev (SVN)
+v0.37.5-exp (2014-01-26 16:55 UTC)
 + Bug: Infantry and BattleArmor didn't have a jump button
 
-v0.37.5-dev (SVN)
+v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 
     mounted on.  This isn't completely necessary from a current rules 
     standpoint, but is required to facilitate consistency in MML (we need to 
@@ -86,6 +86,7 @@ v0.37.5-dev (SVN)
 + Bug: displacement was not setting elevation when displacement did not result
    in a fall, which resulted in lost buoyancy PSR fails when pushing into water
 + Fixed newlines in breach message
++ Bug: CamoChoiceDialog not working when no subfolders exist in camo folder
 
 v0.37.4-exp (2014-01-12 02:20)
 + Feature: increased the expressiveness of the skin specifications.  Previously, 

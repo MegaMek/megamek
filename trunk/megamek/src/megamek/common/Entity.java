@@ -300,12 +300,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
-    
+
     /**
      * Keeps track of whether this Entity was hit by a TSEMP this turn.
      */
     private int tsempHitsThisTurn = 0;
-    
+
     /**
      * Keeps track of the current TSEMP effect on this entity
      */
@@ -315,14 +315,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Keeps track of whether this Entity fired a TSEMP this turn
      */
     private boolean firedTsempThisTurn = false;
-    
+
     /**
      * Keeps track of whether this Entity has ever fired a TSEMP.  This is used
      * to avoid having to iterate over all weapons looking for TSEMPs to reset
      * at the start of every round.
      */
     private boolean hasFiredTsemp= false;
-    
+
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
@@ -637,14 +637,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private int impThisTurnHeatHelp = 0;
 
     protected boolean military;
-    
+
     /**
-     * Keeps track of whether or not this Entity has a critically hit radical 
+     * Keeps track of whether or not this Entity has a critically hit radical
      * heat sink.  Using a flag will prevent having to iterate over all of the
      * Entity's mounted equipment
      */
     protected boolean hasDamagedRHS = false;
-    
+
     /**
      * Keeps track of the number of consecutive turns a radical heat sink has
      * been used.
@@ -905,7 +905,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         setManualShutdown(false);
         // Can't startup if a taser shutdown or a TSEMP shutdown
-        if (getTaserShutdownRounds() == 0 
+        if ((getTaserShutdownRounds() == 0)
                 && (getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
             setShutDown(false);
             setStartupThisPhase(true);
@@ -973,7 +973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setWeight(float weight) {
         this.weight = weight;
         // Any time the weight is reset we need to reset the crew size
-        this.crew.setSize(Compute.getFullCrewSize(this));
+        crew.setSize(Compute.getFullCrewSize(this));
     }
 
     public boolean isOmni() {
@@ -1173,7 +1173,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isTargetable() {
         return !destroyed && !doomed && deployed && !isOffBoard() &&
-                conveyance == Entity.NONE && !captured && position != null;
+                (conveyance == Entity.NONE) && !captured && (position != null);
     }
 
     public boolean isProne() {
@@ -2137,8 +2137,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns the elevation that this entity would be on if it were placed into
-     * the specified hex. Hovercraft, naval vessels, and hydrofoils move on the
+     * Returns the absolute elevation above ground level 0 that this entity
+     * would be on if it were placed into the specified hex.
+     * Hovercraft, naval vessels, and hydrofoils move on the
      * surface of the water
      */
     public int elevationOccupied(IHex hex) {
@@ -3145,7 +3146,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean weaponFired(){
         boolean fired = false;
-        for (int loc = 0; loc < locations() && !fired; loc++){
+        for (int loc = 0; (loc < locations()) && !fired; loc++){
             fired |= weaponFiredFrom(loc);
         }
         return fired;
@@ -3553,9 +3554,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
                     if (!ccs.isDestroyed() && !ccs.isBreached()) {
-                        if (type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index) {
+                        if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                             operational++;
-                        } else if (type == CriticalSlot.TYPE_EQUIPMENT && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                        } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
                             operational++;
                         }
                     }
@@ -3584,9 +3585,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
                 if (ccs.isDestroyed() || ccs.isBreached()) {
-                    if (type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index) {
+                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if (type == CriticalSlot.TYPE_EQUIPMENT && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
                         hits++;
                     }
                 }
@@ -3608,16 +3609,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
-            
+
             //  Check to see if this crit mounts the supplied item
             //  For systems, we can compare the index, but for equipment we
             //  need to get the Mounted that is mounted in that index and
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
                 if (ccs.isDamaged()) {
-                    if (type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index) {
+                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if (type == CriticalSlot.TYPE_EQUIPMENT && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
                         hits++;
                     }
                 }
@@ -3646,9 +3647,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
                 if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
-                    if (type == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == index) {
+                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if (type == CriticalSlot.TYPE_EQUIPMENT && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
                         hits++;
                     }
                 }
@@ -5042,7 +5043,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         CriticalSlot orig = getCritical(loc, slot);
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot cs = getCritical(loc, i);
-            if (cs != null && cs.getType() == orig.getType()) {
+            if ((cs != null) && (cs.getType() == orig.getType())) {
                 Mounted csMount = cs.getMount();
                 if ((csMount != null) && csMount.equals(orig.getMount())) {
                     cs.setHit(true);
@@ -5173,41 +5174,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
         }
-        
+
         // If we are effected by the TSEMP Shutdown effect, we should remove
         // it now, so we can startup during the end phase
         if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN){
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
         // The TSEMP interference effect shouldn't be removed until the start
-        //  of a round where we didn't have any TSEMP hits and didn't fire a 
+        //  of a round where we didn't have any TSEMP hits and didn't fire a
         //  TSEMP, since we need the effect active during the firing phase
-        } else if (getTsempHitsThisTurn() == 0 && !isFiredTsempThisTurn()){
+        } else if ((getTsempHitsThisTurn() == 0) && !isFiredTsempThisTurn()){
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
         }
-        
-        // TSEMPs can fire every other round, so if we didn't fire last 
+
+        // TSEMPs can fire every other round, so if we didn't fire last
         //  round and the TSEMP isn't one-shot, reset it's fired state
         if (!isFiredTsempThisTurn() && hasFiredTsemp()){
             for (Mounted m : getWeaponList()){
-                if (m.getType().hasFlag(WeaponType.F_TSEMP) 
-                        && !m.getType().hasFlag(WeaponType.F_ONESHOT) 
+                if (m.getType().hasFlag(WeaponType.F_TSEMP)
+                        && !m.getType().hasFlag(WeaponType.F_ONESHOT)
                         && m.isFired()){
                     m.setFired(false);
                 }
-            } 
+            }
         }
-        
+
         // Reset TSEMP hits
         tsempHitsThisTurn = 0;
         // Reset TSEMP firing flag
         setFiredTsempThisTurn(false);
-        
+
         // Decrement the number of consecutive turns if not used last turn
         if (!hasActivatedRadicalHS()){
             setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
         }
         // Reset used RHS flag
-        deactivateRadicalHS();        
+        deactivateRadicalHS();
     }
 
     /**
@@ -9200,8 +9201,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             System.err.println(getDisplayName() + " in hex "
                     + HexTarget.coordsToId(getPosition())
                     + " is at invalid elevation: " + getElevation());
-            setElevation(elevationOccupied(game.getBoard()
-                    .getHex(getPosition())));
+            setElevation(0 - game.getBoard()
+                    .getHex(getPosition()).depth());
             System.err.println("   moved to elevation " + getElevation());
             return true;
         }
@@ -12619,8 +12620,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (type == CriticalSlot.TYPE_EQUIPMENT){
                 m = getEquipment(slot);
             }
-            if ((type == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == slot)
-                    || (type == CriticalSlot.TYPE_EQUIPMENT
+            if (((type == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == slot))
+                    || ((type == CriticalSlot.TYPE_EQUIPMENT)
                     && (m.equals(cs.getMount()) || m.equals(cs.getMount2())))) {
                 if (nhits < hits) {
                     cs.setHit(true);
@@ -12675,7 +12676,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void addTsempHitThisTurn() {
-        this.tsempHitsThisTurn++;
+        tsempHitsThisTurn++;
     }
 
     public int getTsempEffect() {
@@ -12699,12 +12700,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setHasFiredTsemp(boolean hasFiredTSEMP) {
-        this.hasFiredTsemp = hasFiredTSEMP;
+        hasFiredTsemp = hasFiredTSEMP;
     }
 
     public boolean hasActivatedRadicalHS() {
         for (Mounted m : getMisc()){
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK) 
+            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)
                     && m.curMode().equals("On")){
                 return true;
             }

@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -81,7 +82,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
      * Split pane for table and tree view.
      */
     public JSplitPane splitPane;
-    
+
     private JFrame frame;
     private DirectoryItems camos;
     /**
@@ -141,20 +142,20 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         tableCamo.setRowHeight(76);
         tableCamo.getColumnModel().getColumn(0).setCellRenderer(camoModel.getRenderer());
         tableCamo.addMouseListener(camoMouseAdapter);
-        scrCamo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrCamo.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrCamo.setViewportView(tableCamo);
         scrCamo.setMinimumSize(new Dimension(240,240));
 
         treeCategories = new JTree();
         treeCategories.getSelectionModel().setSelectionMode
         (TreeSelectionModel.SINGLE_TREE_SELECTION);
-  
+
         scrCategories = new JScrollPane();
         scrCategories.setViewportView(treeCategories);
         scrCategories.setMinimumSize(new Dimension(240,240));
         setMinimumSize(new Dimension(480,240));
-        
-        
+
+
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(IPlayer.ROOT_CAMO);
         root.add(new DefaultMutableTreeNode(IPlayer.NO_CAMO));
         if (camos != null) {
@@ -164,8 +165,8 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
             Iterator<String> catNames = camos.getCategoryNames();
             while (catNames.hasNext()) {
                 String catName = catNames.next();
-                if (catName != null){
-                    String[] names = catNames.next().split("/");
+                if ((catName != null) && !catName.equals("")){
+                    String[] names = catName.split("/");
                     addCategoryToTree(root,names);
                 }
             }
@@ -192,8 +193,8 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 scrCategories, scrCamo);
         splitPane.setResizeWeight(0.5);
-        
-        
+
+
         //set layout
         setLayout(new GridBagLayout());
         GridBagConstraints c;
@@ -218,27 +219,27 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         getContentPane().add(btnCancel, c);
 
         pack();
-        this.setLocationRelativeTo(parent);
+        setLocationRelativeTo(parent);
     }
-    
+
     /**
      * This recursive method is a hack: DirectoryItems flattens the directory
      * structure, but it provides useful functionality, so this method will
      * reconstruct the directory structure for the JTree.
-     * 
+     *
      * @param node
      * @param names
      */
-    private void addCategoryToTree(DefaultMutableTreeNode node, 
+    private void addCategoryToTree(DefaultMutableTreeNode node,
             String [] names){
-        
+
         // Shouldn't happen
         if (names.length == 0){
-            return; 
+            return;
         }
 
         boolean matched = false;
-        for (Enumeration<DefaultMutableTreeNode> e = node.children(); 
+        for (Enumeration<DefaultMutableTreeNode> e = node.children();
                 e.hasMoreElements();){
             DefaultMutableTreeNode childNode = e.nextElement();
             String nodeName = (String)childNode.getUserObject();
@@ -248,22 +249,22 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                             Arrays.copyOfRange(names, 1, names.length));
                     matched = true;
                 } else {
-                    // I guess we're done?  This shouldn't happen, as there 
-                    //  shouldn't be duplicates 
+                    // I guess we're done?  This shouldn't happen, as there
+                    //  shouldn't be duplicates
                 }
             }
         }
-        
+
         // If we didn't match, lets create nodes for each name
         if (!matched){
             DefaultMutableTreeNode root = node;
             for (int i = 0; i < names.length; i++){
-                DefaultMutableTreeNode newNode = 
+                DefaultMutableTreeNode newNode =
                         new DefaultMutableTreeNode(names[i]);
                 root.add(newNode);
                 root = newNode;
             }
-        } 
+        }
     }
 
     private void cancel() {
@@ -346,7 +347,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
         String [] names = category.split(Pattern.quote("/"));
-        DefaultMutableTreeNode node = 
+        DefaultMutableTreeNode node =
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){
             for (Enumeration<DefaultMutableTreeNode> e = node.children();
@@ -380,7 +381,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         // This cumbersome code takes the category name and transforms it into
         //  a TreePath so it can be selected in the dialog
         String [] names = category.split(Pattern.quote("/"));
-        DefaultMutableTreeNode node = 
+        DefaultMutableTreeNode node =
                 (DefaultMutableTreeNode)treeCategories.getModel().getRoot();
         for (int i = 0; i < names.length; i++){
             for (Enumeration<DefaultMutableTreeNode> enm = node.children();
@@ -634,15 +635,15 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                     if (values[i] != null){
                         String name = (String)((DefaultMutableTreeNode)values[i]).getUserObject();
                         category += name;
-                        if (!name.equals(IPlayer.NO_CAMO) 
+                        if (!name.equals(IPlayer.NO_CAMO)
                                 && !name.equals(IPlayer.ROOT_CAMO)){
                             category += "/";
-                        }                        
+                        }
                     }
                 }
                 fillTable(category);
             }
-        }   
+        }
     }
 
 }

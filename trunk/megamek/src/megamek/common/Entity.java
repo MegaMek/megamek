@@ -1471,7 +1471,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns the elevation of this entity.
+     * Returns the elevation of this entity, relative to the current Hex's
+     * surface
      */
     public int getElevation() {
         if (Entity.NONE != getTransportId()) {

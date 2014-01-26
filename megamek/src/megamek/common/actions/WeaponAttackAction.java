@@ -3400,6 +3400,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "attacker must be at least at elevation 1";
             } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
                 return "must target hex with bombs";
+            } else if (ae.getElevation() != 1){
+                return "must be exactly 1 elevation above targeted hex";
             }
         }
 

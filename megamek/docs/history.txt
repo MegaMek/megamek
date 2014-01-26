@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.5-dev (SVN)
+v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 
     mounted on.  This isn't completely necessary from a current rules 
     standpoint, but is required to facilitate consistency in MML (we need to 

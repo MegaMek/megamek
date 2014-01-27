@@ -295,7 +295,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         if (weap.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay && (((bayDamage + damage) <= 700) || weap.hasFlag(WeaponType.F_MASS_DRIVER)) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;

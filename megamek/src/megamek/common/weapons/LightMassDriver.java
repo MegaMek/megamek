@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class LightMassDriver extends NavalGaussWeapon {
+public class LightMassDriver extends MassDriverWeapon {
     /**
      * 
      */
@@ -41,21 +41,19 @@ public class LightMassDriver extends NavalGaussWeapon {
         this.ammoType = AmmoType.T_LMASS;
         this.shortRange = 12;
         this.mediumRange = 24;
-        this.longRange = 36;
-        this.extremeRange = 48;
+        this.longRange = 40;
         this.tonnage = 100000;
         this.bv = 0;
         this.cost = 500000000;
         this.shortAV = 60;
         this.medAV = 60;
         this.longAV = 60;
-        this.extAV = 60;
         techRating = RATING_D;
         availRating = new int[] { RATING_E, RATING_X, RATING_E };
         introDate = 2715;
         techLevel.put(2715, techLevel.get(3071));
         this.techLevel.put(2715, TechConstants.T_IS_EXPERIMENTAL);
-        this.maxRange = RANGE_EXT;
+        this.maxRange = RANGE_LONG;
         
     }
 }

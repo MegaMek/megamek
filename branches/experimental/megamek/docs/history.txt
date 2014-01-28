@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.37.6-exp-dev (SVN)
++ Added new art assets for borders and updated the defaultSkin.xml to use them
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

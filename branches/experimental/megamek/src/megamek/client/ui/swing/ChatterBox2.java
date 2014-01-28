@@ -201,7 +201,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         slidingUp = false;
         slidingDown = true;
-        bv.chatterBoxActive = false;
+        bv.setChatterBoxActive(false);
     }
 
     private void stopSliding() {
@@ -350,7 +350,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
                 || (y > (yOffset + height))) {
-        	bv.chatterBoxActive = false;
+        	bv.setChatterBoxActive(false);
             return false;
         }
         isHit = true;
@@ -361,7 +361,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         	return true;
         }
         
-        bv.chatterBoxActive = true;
+        bv.setChatterBoxActive(true);
         if (isDown()){
         	slideUp();
         }
@@ -461,7 +461,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         // Message box
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
-        if (message != null && bv.chatterBoxActive) {
+        if (message != null && bv.getChatterBoxActive()) {
             printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
@@ -683,7 +683,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-    	if (!bv.chatterBoxActive){
+    	if (!bv.getChatterBoxActive()){
     		return;
     	}
     	
@@ -778,14 +778,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     client.sendChat(message);
                     clearMessage();
                     cb.setMessage("");
-                    bv.chatterBoxActive = false;
-                } else {
-                	bv.chatterBoxActive = false;
                 }
+                bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
             	clearMessage();
-            	bv.chatterBoxActive = false;
+            	bv.setChatterBoxActive(false);
             	slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:

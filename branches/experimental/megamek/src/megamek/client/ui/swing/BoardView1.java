@@ -346,7 +346,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Keeps track of whether we have an active ChatterBox2
      */
-    public boolean chatterBoxActive = false;
+    private boolean chatterBoxActive = false;
 
     /**
      * Construct a new board view for the specified game
@@ -446,7 +446,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         			@Override
         			public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
         					return false;
         				} else {
@@ -456,8 +456,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         			
 					@Override
 					public void performAction() {
-						if (!chatterBoxActive){
-							chatterBoxActive = true;
+						if (!getChatterBoxActive()){
+							setChatterBoxActive(true);
 							for (IDisplayable disp : displayables){
 			            		if (disp instanceof ChatterBox2){
 			            			((ChatterBox2)disp).slideUp();
@@ -475,7 +475,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         			@Override
         			public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
         					return false;
         				} else {
@@ -485,8 +485,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         			
 					@Override
 					public void performAction() {
-						if (!chatterBoxActive){
-							chatterBoxActive = true;
+						if (!getChatterBoxActive()){
+							setChatterBoxActive(true);
 							for (IDisplayable disp : displayables){
 			            		if (disp instanceof ChatterBox2){
 			            			((ChatterBox2)disp).slideUp();
@@ -505,7 +505,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 					@Override
 					public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE
         						|| selectedEntity == null){
         					return false;
@@ -529,7 +529,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 					@Override
 					public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
 							return false;
 						} else {
@@ -552,7 +552,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 					@Override
 					public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
 							return false;
 						} else {
@@ -575,7 +575,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 		        	@Override
 					public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
 							return false;
 						} else {
@@ -598,7 +598,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 		        	@Override
 					public boolean shouldPerformAction(){
-        				if (chatterBoxActive || !bv.isVisible()
+        				if (getChatterBoxActive() || !bv.isVisible()
         						|| game.getPhase() == Phase.PHASE_LOUNGE){
 							return false;
 						} else {

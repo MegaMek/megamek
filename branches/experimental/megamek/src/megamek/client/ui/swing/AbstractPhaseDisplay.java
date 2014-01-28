@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URI;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -30,6 +31,8 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.GameBoardChangeEvent;
@@ -69,16 +72,27 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
     protected ClientGUI clientgui;
     
-    ImageIcon backgroundIcon;
+    ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay() {
+    	SkinSpecification pdSkinSpec = 
+        		SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        
         try {
-            java.net.URI imgURL = 
-                    new File(Configuration.widgetsDir(),
-                    "tile.gif").toURI();
-            backgroundIcon = new ImageIcon(imgURL.toURL());
+        	if (pdSkinSpec.backgrounds.size() > 0){
+            	File file = new File(Configuration.widgetsDir(), 
+            			pdSkinSpec.backgrounds.get(0));
+    			URI imgURL = file.toURI();
+    			if (!file.exists()){
+    				System.err.println("PhaseDisplay Error: icon doesn't exist: "
+    						+ file.getAbsolutePath());
+    			} else {
+    				backgroundIcon = new ImageIcon(imgURL.toURL());
+    			}
+        	}
         } catch (Exception e){
-            
+        	System.out.println("Error loading PhaseDisplay background image!");
+        	System.out.println(e.getMessage());
         }
         
         setBorder(new MegamekBorder("PhaseDisplayBorder"));
@@ -119,6 +133,10 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
     
     protected void paintComponent(Graphics g) {
+    	if (backgroundIcon == null){
+    		super.paintComponent(g);
+    		return;
+    	}
         int w = getWidth();
         int h = getHeight();
         int iW = backgroundIcon.getIconWidth();

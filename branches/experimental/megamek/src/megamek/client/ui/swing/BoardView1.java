@@ -888,8 +888,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         }
 
-        // Used to pad the board edge
-        g.translate(HEX_W, HEX_H);
+        
+        if (useIsometric()){
+        	// Used to pad the board edge
+        	g.translate(HEX_W, HEX_H);
+    	}
         
         if (useIsometric()) {
             drawHexes(g, g.getClipBounds());
@@ -981,8 +984,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
         
-       // Undo the previous translation
-        g.translate(-HEX_W, -HEX_H);
+        if (useIsometric()){
+	        // Undo the previous translation
+	        g.translate(-HEX_W, -HEX_H);
+        }
         
         // draw all the "displayables"
         Rectangle rect = new Rectangle();
@@ -7498,8 +7503,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         vbar = scrollpane.getVerticalScrollBar();
-        
         hbar = scrollpane.getHorizontalScrollBar();
+        
         if (!scrollBars){
         	vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
         	hbar.setPreferredSize(new Dimension(hbar.getWidth(),0));

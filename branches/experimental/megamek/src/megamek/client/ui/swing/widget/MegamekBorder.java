@@ -215,7 +215,7 @@ public class MegamekBorder extends EmptyBorder {
     			}
             	bottomLine.add(new ImageIcon(imgURL.toURL()));
             	bottomShouldTile.add(skin.bottomShouldTile.get(i));
-            	if (!leftShouldTile.get(i)){
+            	if (!bottomShouldTile.get(i)){
             		bottomStaticSpace += bottomLine.get(i).getIconWidth();
             	} else {
             		bottomNumTiledIcons++;

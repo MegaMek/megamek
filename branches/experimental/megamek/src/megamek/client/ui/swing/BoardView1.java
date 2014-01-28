@@ -211,6 +211,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     IGame game;
 
     private Dimension boardSize;
+    private Dimension preferredSize = new Dimension(0,0);
 
     // we keep track of the rectangle we drew, and keep a separate image of just
     // the hexes, so we don't have to paint each hex individually during each
@@ -887,6 +888,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         }
 
+        // Used to pad the board edge
+        g.translate(HEX_W, HEX_H);
+        
         if (useIsometric()) {
             drawHexes(g, g.getClipBounds());
         } else {
@@ -976,6 +980,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setColor(rulerStartColor);
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
+        
+       // Undo the previous translation
+        g.translate(-HEX_W, -HEX_H);
+        
         // draw all the "displayables"
         Rectangle rect = new Rectangle();
         rect.x = -getX();
@@ -985,7 +993,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
             disp.draw(g, rect);
-        }
+        }        
     }
 
     /**
@@ -7089,11 +7097,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return (int) ((scale * HEX_W) / 2.0);
     }
 
-//    @Override
-//    public Dimension getPreferredSize() {
-//        return clientgui.frame
-//    	//return boardSize;
-//    }
+    @Override 
+    public void setPreferredSize(Dimension d){
+    	super.setPreferredSize(d);
+    	preferredSize = new Dimension(d);
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+    	// If the board is small, we want the preferred size to fill the whole
+    	//  ScrollPane viewport, for purposes of drawing the tiled background
+    	//  icon. 
+    	// However, we also need the scrollable client to be as big as the
+    	//  board plus the pad size.
+    	return new Dimension(
+    			Math.max(boardSize.width + 2 * HEX_W,preferredSize.width), 
+    			Math.max(boardSize.height + 2 * HEX_W,preferredSize.height));
+    }
 
     /**
      * Have the player select an Entity from the entities at the given coords.
@@ -7407,13 +7427,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
     
     public Component getComponent(boolean scrollBars) {
-        if (scrollpane != null) {
+        // If we're already configured, return the scrollpane
+    	if (scrollpane != null) {
             return scrollpane;
         }
         
         SkinSpecification bvSkinSpec = 
         		SkinXMLHandler.getSkin(SkinXMLHandler.BOARDVIEW);
         
+        // Setup background icons
         try {
             java.net.URI imgURL;
             File file;

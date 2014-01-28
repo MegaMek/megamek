@@ -23,6 +23,8 @@ v0.37.6-exp-dev (SVN)
     definitely fix it or not.
 + Bug: Hotkeys were still active when various dialos in the File menu were open
 + UnitOverview now draws in the upper right corner regardless of board size
++ Bug: Fixed an issue with not being able to scroll across the whole board
++ Feature: Added a hex's width/height worth of padding to each edge of the board
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

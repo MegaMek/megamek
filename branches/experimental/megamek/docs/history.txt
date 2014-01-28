@@ -15,6 +15,12 @@ v0.37.6-exp-dev (SVN)
     (background[0] for the tiled icon, background[0] for the transparency 
     background).  It also is robust to not having an icon loaded.
 + Bug: Note icon wasn't being initialized, so it didn't appear on the board
++ Bug: I noticed sometimes the scrolling keys (WASD) didn't seem to be 
+    responding and toggling the ChatterBox would fix this.  I'm guessing this 
+    has to due with the state of BoardView1.chatterBoxActive getting out of 
+    sync.  To fix this, added code in ClientGUI to set the chatterbox to active 
+    whenever the phase is changed.  I this should help, but I don't know if it 
+    definitely fix it or not.
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

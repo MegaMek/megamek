@@ -1509,6 +1509,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 //  and the equals function of Player isn't powerful enough.
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
+            // Make sure the ChatterBox starts out deactived.
+            bv.setChatterBoxActive(false);            
 
             // Swap to this phase's panel.
             switchPanel(getClient().getGame().getPhase());

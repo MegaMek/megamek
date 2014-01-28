@@ -980,10 +980,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Rectangle rect = new Rectangle();
         rect.x = -getX();
         rect.y = -getY();
-        rect.width = Math.min(scrollpane.getViewport().getViewRect().width,
-                boardSize.width);
-        rect.height = Math.min(scrollpane.getViewport().getViewRect().height,
-                boardSize.height);
+        rect.width = scrollpane.getViewport().getViewRect().width;
+        rect.height = scrollpane.getViewport().getViewRect().height;
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
             disp.draw(g, rect);

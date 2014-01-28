@@ -21,6 +21,7 @@ v0.37.6-exp-dev (SVN)
     sync.  To fix this, added code in ClientGUI to set the chatterbox to active 
     whenever the phase is changed.  I this should help, but I don't know if it 
     definitely fix it or not.
++ Bug: Hotkeys were still active when various dialos in the File menu were open
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

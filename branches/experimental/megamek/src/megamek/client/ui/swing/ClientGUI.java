@@ -209,6 +209,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Current Selected entity
      */
     private int selectedEntityNum = Entity.NONE;
+    
+    /**
+     * Flag that indicates whether hotkeys should be ignored or not.  This is 
+     * used for disabling hot keys when various dialogs are displayed.
+     */
+    private boolean ignoreHotKeys = false;
 
     /**
      * Construct a client which will display itself in a new frame. It will not
@@ -601,6 +607,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             JFileChooser fc = new JFileChooser("./savegames");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
@@ -618,10 +625,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 path = path.replace(" ", "|");
                 client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
             }
+            ignoreHotKeys = false;
         }
         if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+        	ignoreHotKeys = true;
+        	String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
             client.sendChat("/save " + filename);
+            ignoreHotKeys = false;
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showAbout();
@@ -633,16 +643,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             showHelp();
         }
         if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             doSaveUnit();
+            ignoreHotKeys = false;
         }
         if ("fileUnitsOpen".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             loadListFile();
+            ignoreHotKeys = false;
         }
         if ("fileUnitsClear".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             deleteAllUnits(client);
         }
         if ("fileUnitsReinforce".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             loadListFile(client.getLocalPlayer(), true);
+            ignoreHotKeys = false;
         }
         if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
@@ -657,11 +673,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             showRoundReport();
         }
         if ("fileBoardSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSave();
+        	ignoreHotKeys = true;
+        	boardSave();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAs".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSaveAs();
+        	ignoreHotKeys = true;
+        	boardSaveAs();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSaveAsImage();
+        	ignoreHotKeys = true;
+        	boardSaveAsImage();
+            ignoreHotKeys = false;
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
@@ -1866,7 +1888,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * @return
      */
     public boolean shouldIgnoreHotKeys(){
-    	return (gameOptionsDialog != null && gameOptionsDialog.isVisible())
+    	return ignoreHotKeys 
+    			|| (gameOptionsDialog != null && gameOptionsDialog.isVisible())
     			|| (about != null && about.isVisible()) 
     			|| (help != null && help.isVisible()) 
     			|| (setdlg != null && setdlg.isVisible());

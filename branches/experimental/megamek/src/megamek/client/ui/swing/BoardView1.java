@@ -725,6 +725,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
+        SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();

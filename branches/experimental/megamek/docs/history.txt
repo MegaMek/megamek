@@ -14,6 +14,7 @@ v0.37.6-exp-dev (SVN)
 + Updated the background icon code for BV1, it now loads them from the skin spec
     (background[0] for the tiled icon, background[0] for the transparency 
     background).  It also is robust to not having an icon loaded.
++ Bug: Note icon wasn't being initialized, so it didn't appear on the board
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

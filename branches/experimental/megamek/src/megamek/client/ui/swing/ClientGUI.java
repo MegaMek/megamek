@@ -30,6 +30,8 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -96,7 +98,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener {
+public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
@@ -132,7 +134,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // keep me
     ChatterBox cb;
     public ChatterBox2 cb2;
-    public IBoardView bv;
+    public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
     public MechDisplay mechD;
@@ -216,6 +218,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public ClientGUI(Client client, MegaMekController c) {
         super(new BorderLayout());
+        this.addComponentListener(this);
         this.client = client;
         controller = c;
         loadSoundClip();
@@ -344,6 +347,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
             bv = new BoardView1(client.getGame(), controller);
+            bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
@@ -1865,5 +1869,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     			|| (help != null && help.isVisible()) 
     			|| (setdlg != null && setdlg.isVisible());
     }
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		bv.setPreferredSize(getSize());		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+	}
 
 }

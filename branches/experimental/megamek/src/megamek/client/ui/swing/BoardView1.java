@@ -45,6 +45,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -54,6 +55,7 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -83,10 +85,13 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Aero;
 import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -211,8 +216,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the hexes, so we don't have to paint each hex individually during each
     // redraw, but only when the visible hexes actually change
     private Rectangle drawRect;
+    
+    /**
+     * An image representation of the board area used in non-isometric
+     * rendering.  With isometric turned off, the image for the current view
+     * is generated and then reused to render the board view.
+     */
     private Image boardImage;
+    
+    /**
+     * The graphics object of <code>boardImage</code>, used in non-isometric
+     * rendering.
+     */
     private Graphics boardGraph;
+    
     private boolean redrawWholeBoard = false;
 
     // scrolly stuff:
@@ -269,7 +286,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the player who owns this BoardView's client
     private IPlayer localPlayer = null;
 
-    // should we mark deployment hexes for an entity?
+    /**
+     * Stores the currently deploying entity, used for highlighting deployment
+     * hexes.
+     */
     private Entity en_Deployer = null;
 
     // should be able to turn it off(board editor)
@@ -319,6 +339,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
     
+    ImageIcon bvBgIcon = null;
+    ImageIcon scrollPaneBgIcon = null;
+    
     
     /**
      * Keeps track of whether we have an active ChatterBox2
@@ -331,7 +354,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public BoardView1(final IGame game, final MegaMekController controller) 
     		throws java.io.IOException {
         this.game = game;
-
+        
         tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -838,7 +861,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @Override
     public synchronized void paintComponent(Graphics g) {
-
+    	
         if (!isTileImagesLoaded()) {
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
@@ -848,6 +871,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // wait 1 second, then repaint
             repaint(1000);
             return;
+        }
+        
+        if (bvBgIcon != null){
+	        int w = getWidth();
+	        int h = getHeight();
+	        int iW = bvBgIcon.getIconWidth();
+	        int iH = bvBgIcon.getIconHeight();
+	        for (int x = g.getClipBounds().x; x < w; x+=iW){
+	            for (int y = g.getClipBounds().y; y < h; y+=iH){
+	                g.drawImage(bvBgIcon.getImage(), x, y, 
+	                        bvBgIcon.getImageObserver());
+	            }
+        }
         }
 
         if (useIsometric()) {
@@ -1515,7 +1551,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
         int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-
+        
         if (!useIsometric()) {
             // clear, if we need to
             if (view.x < (21 * scale)) {
@@ -1540,7 +1576,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         // draw some hexes.
         if (useIsometric()) {
-            g.clearRect(view.x, view.y, view.width, view.height);
+            //g.clearRect(view.x, view.y, view.width, view.height);
             // When using isometric rendering, hexes within a given row
             // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
@@ -7054,10 +7090,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return (int) ((scale * HEX_W) / 2.0);
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return boardSize;
-    }
+//    @Override
+//    public Dimension getPreferredSize() {
+//        return clientgui.frame
+//    	//return boardSize;
+//    }
 
     /**
      * Have the player select an Entity from the entities at the given coords.
@@ -7374,10 +7411,65 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (scrollpane != null) {
             return scrollpane;
         }
-
+        
+        SkinSpecification bvSkinSpec = 
+        		SkinXMLHandler.getSkin(SkinXMLHandler.BOARDVIEW);
+        
+        try {
+            java.net.URI imgURL;
+            File file;
+            if (bvSkinSpec.backgrounds.size() > 0){
+            	file = new File(Configuration.widgetsDir(), 
+            			bvSkinSpec.backgrounds.get(0));
+    			imgURL = file.toURI();
+    			if (!file.exists()){
+    				System.err.println("BoardView1 Error: icon doesn't exist: "
+    						+ file.getAbsolutePath());
+    			} else {
+    				bvBgIcon = new ImageIcon(imgURL.toURL());
+    			}
+            }
+            if (bvSkinSpec.backgrounds.size() > 1){
+            	file = new File(Configuration.widgetsDir(), 
+            			bvSkinSpec.backgrounds.get(1));
+    			imgURL = file.toURI();
+    			if (!file.exists()){
+    				System.err.println("BoardView1 Error: icon doesn't exist: "
+    						+ file.getAbsolutePath());
+    			} else {
+    				scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
+    			}
+            }
+        } catch (Exception e){
+        	System.out.println("Error loading BoardView background images!");
+        	System.out.println(e.getMessage());
+        }
+        
         // Place the board viewer in a set of scrollbars.
-        scrollpane = new JScrollPane(this);
-        scrollpane.setBorder(new MegamekBorder("BoardViewBorder"));
+        scrollpane = new JScrollPane(this){
+            
+        	/**
+			 * 
+			 */
+			private static final long serialVersionUID = 5973610449428194319L;
+
+			protected void paintComponent(Graphics g) {
+        		if (scrollPaneBgIcon == null){
+        			super.paintComponent(g);
+        		}
+                int w = getWidth();
+                int h = getHeight();
+                int iW = scrollPaneBgIcon.getIconWidth();
+                int iH = scrollPaneBgIcon.getIconHeight();
+                for (int x = 0; x < w; x+=iW){
+                    for (int y = 0; y < h; y+=iH){
+                        g.drawImage(scrollPaneBgIcon.getImage(), x, y, 
+                        		scrollPaneBgIcon.getImageObserver());
+                    }
+                }
+            }
+        };
+        scrollpane.setBorder(new MegamekBorder(bvSkinSpec));
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
         // IDisplayables that are drawn in fixed positions in the viewport

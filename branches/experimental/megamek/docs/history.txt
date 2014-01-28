@@ -2,6 +2,18 @@ VERSION HISTORY:
 ----------------
 v0.37.6-exp-dev (SVN)
 + Added new art assets for borders and updated the defaultSkin.xml to use them
++ Testing out some changes to BoardView1.  Instead of just drawing a gray 
+    background for the board, it now draws a tiled icon.  This works for 
+    isometric view but is still not working for non-iso.  Also, to deal with 
+    transparency on the borders, I added a background icon to the scrollpane 
+    that houses the board view.  
++ To facilitate having a background icon for the board view, the size of the 
+    BoardView1 component has been changed.  Now, it is set to match the window
+    size and the ClientGUI implements the ComponentListener interface to update
+    the BoardView1 component size when the window is resized.  
++ Updated the background icon code for BV1, it now loads them from the skin spec
+    (background[0] for the tiled icon, background[0] for the transparency 
+    background).  It also is robust to not having an icon loaded.
 
 v0.37.6-dev (SVN)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

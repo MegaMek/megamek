@@ -21,8 +21,29 @@ import org.w3c.dom.NodeList;
  */
 public class SkinXMLHandler {
 	
+	/**
+	 * The XML name tag value for the default component border
+	 */
 	public static String defaultUIElement = "defaultElement";
+	
+	/**
+	 * The XML name tag value for the default component border
+	 */
 	public static String defaultButton = "defaultButton";
+	
+	/**
+	 * The XML name tag value for the BoardView border
+	 */
+	public static String BOARDVIEW = "BoardViewBorder";
+	
+	/**
+	 * The XML name tag value for the PhaseDisplay border
+	 */
+	public static String PHASEDISPLAY = "PhaseDisplayBorder";
+	
+	/**
+	 * The file name for the default Skin XML file, found in the config dir.
+	 */
 	public static String defaultSkinXML = "defaultSkin.xml";
 	
 	public static String UI_ELEMENT = "UI_Element";

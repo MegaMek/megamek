@@ -848,6 +848,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         TimerSingleton.getInstance().killTimer();
         
+        controller.removeAllActions();
         controller.clientgui = null;
     }
 

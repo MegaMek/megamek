@@ -167,6 +167,12 @@ public class MegaMekController implements KeyEventDispatcher {
 		}
 	}
 	
+	public synchronized void removeAllActions(){
+		for (ArrayList<CommandAction> actions : cmdActionMap.values()){
+			actions.clear();
+		}
+	}
+	
 	/**
 	 * Start a new repeating timer task for the given 
 	 * <code>KeyCommandBind</code>.  If the given <code>KeyCommandBind</code>

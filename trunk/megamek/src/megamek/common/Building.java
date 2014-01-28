@@ -485,7 +485,7 @@ public class Building implements Serializable {
             System.err.println("hex has basement that already collapsed");
             return;
         }
-        Report r = new Report(2112);
+        Report r = new Report(2112, Report.PUBLIC);
         r.add(getName());
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
@@ -506,7 +506,7 @@ public class Building implements Serializable {
     public boolean rollBasement(Coords coords, IBoard board, Vector<Report> vPhaseReport) {
         if (basement.get(coords) == BasementType.UNKNOWN) {
             IHex hex = board.getHex(coords);
-            Report r = new Report(2111);
+            Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());
             int basementRoll = Compute.d6(2);

@@ -8,6 +8,7 @@ v0.37.6-dev (SVN)
 + Data: Unit Fix and some Camo Folder Reorganization and additions included Naval Schemes.
 + Feature: Naval Mass Driver Implemented.  FR 2765 Units added.
 + Bug: Bad lookup names Single Hex ECM causing NPE on Small Craft
++ Bug: Building basement reports (2111,2112) have no subject, but weren't public
 
 v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 

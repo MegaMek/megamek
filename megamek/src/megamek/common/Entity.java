@@ -9880,8 +9880,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
                 && !hasActiveECM() && isMilitary()) {
             try {
+                String prefix = "IS";
+                if (isClan()) {
+                    prefix = "CL";
+                }
                 this.addEquipment(
-                        EquipmentType.get(BattleArmor.SINGLE_HEX_ECM),
+                        EquipmentType.get(prefix+BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
             } catch (LocationFullException ex) {
                 // ignore

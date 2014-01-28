@@ -51,6 +51,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.RangeType;
+import megamek.common.SpaceStation;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.TagInfo;
@@ -908,6 +909,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(4, "Anti-ship missile at a small target");
         }
 
+        if (wtype.hasFlag(WeaponType.F_MASS_DRIVER)) {
+            toHit.addModifier(2, "Mass Driver to-hit Penalty");
+        }
+        
         if (target.isAirborne() && (target instanceof Aero)) {
 
             Aero a = (Aero) target;
@@ -3400,6 +3405,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "attacker must be at least at elevation 1";
             } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
                 return "must target hex with bombs";
+            } else if (ae.getElevation() != 1){
+                return "must be exactly 1 elevation above targeted hex";
             }
         }
 
@@ -3902,6 +3909,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if ((wtype instanceof GaussWeapon) && wtype.hasModes()
                 && weapon.curMode().equals("Powered Down")) {
             return "Weapon is powered down";
+        }
+
+        if ((target.getTargetType() == Targetable.TYPE_ENTITY) && wtype.hasFlag(WeaponType.F_MASS_DRIVER) && (ae instanceof SpaceStation)) {
+        	int dist = ae.getPosition().distance(target.getPosition());
+        	if (!ae.getPosition().translated(ae.getFacing(), distance).equals(target.getPosition())) {
+        	return "Mass Driver is not firing to front";
+        	}
         }
 
         return null;

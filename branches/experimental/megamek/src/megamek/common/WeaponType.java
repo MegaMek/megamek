@@ -126,6 +126,9 @@ public class WeaponType extends EquipmentType {
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
+    
+    //Naval Mass Drivers
+    public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -157,7 +160,8 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_AR10 = 20;
     public static final int CLASS_SCREEN = 21;
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
-    public static final int NUM_CLASSES = 23;
+    public static final int CLASS_CAPITAL_MD = 23;
+    public static final int NUM_CLASSES = 24;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -519,6 +523,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Capital AC Bay");
             case (CLASS_CAPITAL_GAUSS):
                 return EquipmentType.get("Capital Gauss Bay");
+            case (CLASS_CAPITAL_MD):
+        		return EquipmentType.get("Capital Mass Driver Bay");
             case (CLASS_CAPITAL_MISSILE):
                 return EquipmentType.get("Capital Missile Bay");
             case (CLASS_AR10):
@@ -1423,6 +1429,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapitalGaussBayWeapon());
         EquipmentType.addType(new CapitalPPCBayWeapon());
         EquipmentType.addType(new CapitalMissileBayWeapon());
+        EquipmentType.addType(new CapitalMDBayWeapon());
         EquipmentType.addType(new AR10BayWeapon());
         EquipmentType.addType(new ScreenLauncherBayWeapon());
         EquipmentType.addType(new SCCBayWeapon());

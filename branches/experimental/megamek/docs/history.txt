@@ -3,6 +3,13 @@ VERSION HISTORY:
 v0.37.6-exp-dev (SVN)
 
 v0.37.6-dev (SVN)
++ Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain
++ Bug: wrong elevation when displacing onto negative elevation terrain
++ Bug: wrong elevation when assault dropping onto non-elevation 0 terrain
++ Bug: wrong elevation after DFAing on non-elevation 0 terrain
++ Data: Unit Fix and some Camo Folder Reorganization and additions included Naval Schemes.
++ Feature: Naval Mass Driver Implemented.  FR 2765 Units added.
++ Bug: Bad lookup names Single Hex ECM causing NPE on Small Craft
 
 v0.37.5-exp (2014-01-26 16:55 UTC)
 + Bug: Infantry and BattleArmor didn't have a jump button

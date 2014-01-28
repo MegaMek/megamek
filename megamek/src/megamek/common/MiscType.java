@@ -3617,6 +3617,7 @@ public class MiscType extends EquipmentType {
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.setInternalName("IS BA ECM");
         misc.addLookupName("ISBAECM");
+        misc.addLookupName("IS" + BattleArmor.SINGLE_HEX_ECM);
         misc.tonnage = .1f;
         misc.criticals = 1;
         misc.cost = 50000;
@@ -3642,6 +3643,7 @@ public class MiscType extends EquipmentType {
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.setInternalName("CL BA ECM");
         misc.addLookupName("CLBAECM");
+        misc.addLookupName("CL" + BattleArmor.SINGLE_HEX_ECM);
         misc.tonnage = .075f;
         misc.criticals = 1;
         misc.cost = 50000;

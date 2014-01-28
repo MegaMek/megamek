@@ -7,6 +7,7 @@ v0.37.6-dev (SVN)
 + Bug: wrong elevation after DFAing on non-elevation 0 terrain
 + Data: Unit Fix and some Camo Folder Reorganization and additions included Naval Schemes.
 + Feature: Naval Mass Driver Implemented.  FR 2765 Units added.
++ Bug: Bad lookup names Single Hex ECM causing NPE on Small Craft
 
 v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 

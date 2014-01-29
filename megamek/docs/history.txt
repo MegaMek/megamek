@@ -17,6 +17,11 @@ v0.37.6-dev (SVN)
 + Bug: LoS highlighting never considered spotlights for night fighting.  Now, 
     if there is a unit that is illuminated in a hex, it will take that into 
     account.
++ Bug: MechSummaryCache was storing BattleArmor tonnage as individual trooper 
+    weight, which is different from the unit table in the ChatLounge (where it 
+    is displayed as 1 ton per trooper).  The 1 on per trooper is what is 
+    important for transportation reasons, so I've changed MechSummaryCache to 
+    be consistent with the unit table in the ChatLounge.
 
 v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 

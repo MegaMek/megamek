@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+v0.37.7-exp-dev (SVN)
+
+v0.37.7-dev (SVN)
+
 v0.37.6-exp (2014-01-29 01:43 UTC)
 + Added new art assets for borders and updated the defaultSkin.xml to use them
 + Testing out some changes to BoardView1.  Instead of just drawing a gray 

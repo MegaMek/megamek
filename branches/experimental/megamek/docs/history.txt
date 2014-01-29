@@ -38,6 +38,15 @@ v0.37.6-dev (SVN)
 + Data: Unit Fix and some Camo Folder Reorganization and additions included Naval Schemes.
 + Feature: Naval Mass Driver Implemented.  FR 2765 Units added.
 + Bug: Bad lookup names Single Hex ECM causing NPE on Small Craft
++ Bug: Building basement reports (2111,2112) have no subject, but weren't public
++ Bug: LoS darkening stopped at the max dist, now hexes beyond the max dist are 
+    darkened
++ Bug: LoS highlighting/darkening computes LoSEffects in order to work, before 
+    these were computed outside of the max dist check, which could lead to 
+    wasted computation.  Now it is done within the max dist check.
++ Bug: LoS highlighting never considered spotlights for night fighting.  Now, 
+    if there is a unit that is illuminated in a hex, it will take that into 
+    account.
 
 v0.37.5-exp (2014-01-26 16:55 UTC)
 + Bug: Infantry and BattleArmor didn't have a jump button

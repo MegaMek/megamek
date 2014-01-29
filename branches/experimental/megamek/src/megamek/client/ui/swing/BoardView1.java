@@ -1850,6 +1850,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else {
             src = null;
         }
+        // Code for LoS darkening/highlighting
         if (src != null && game.getBoard().contains(src)) {
             Point p = new Point(drawX, drawY);
             GUIPreferences gs = GUIPreferences.getInstance();
@@ -1871,7 +1872,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         new Color(150, 95, 150, highlight_alpha),
                         new Color(40, 40, 150, highlight_alpha) };
 
-                final int max_dist = 30;
+                boolean targetIlluminated = false;
+                for (Entity target : game.getEntitiesVector(c)){
+                    targetIlluminated |= target.isIlluminated();
+                }
+                
+                final int max_dist;
+                // We don't want to have to compute a LoSEffects yet, as that
+                //  can be expensive on large viewing areas
+                if (selectedEntity != null){
+                    max_dist = game.getPlanetaryConditions().getVisualRange(
+                            selectedEntity, targetIlluminated);
+                } else {
+                    max_dist = 60;
+                }
+                
                 final int d[] = { 4, 7, 10, 13, max_dist };
 
                 final Color transparent_gray = new Color(0, 0, 0,
@@ -1884,29 +1899,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 int visualRange = 30;
                 int minSensorRange = 0;
-                int maxSensorRange = 0;
-                LosEffects los = getLosEffects(src, c);
-                if (null != selectedEntity) {
-                    // TODO: how do we make adjustments for target spotlights
-                    // illuminating intervening terrain?
-                    visualRange = Compute.getVisualRange(game, selectedEntity,
-                            los, false);
-                    int bracket = Compute.getSensorRangeBracket(selectedEntity,
-                            null);
-                    int range = Compute.getSensorRangeByBracket(game,
-                            selectedEntity, null, los);
-
-                    maxSensorRange = bracket * range;
-                    minSensorRange = Math.max((bracket - 1) * range, 0);
-                    if (game.getOptions().booleanOption(
-                            "inclusive_sensor_range")) {
-                        minSensorRange = 0;
-                    }
-                }
+                int maxSensorRange = 0;               
 
                 if (dist == 0) {
                     drawHexBorder(p, boardGraph, selected_color, pad, lw);
                 } else if (dist < max_dist) {
+                    LosEffects los = getLosEffects(src, c);
+                    if (null != selectedEntity) {
+                        visualRange = Compute.getVisualRange(game, 
+                                selectedEntity, los, targetIlluminated);
+                        int bracket = Compute.getSensorRangeBracket(
+                                selectedEntity, null);
+                        int range = Compute.getSensorRangeByBracket(game,
+                                selectedEntity, null, los);
+
+                        maxSensorRange = bracket * range;
+                        minSensorRange = Math.max((bracket - 1) * range, 0);
+                        if (game.getOptions().booleanOption(
+                                "inclusive_sensor_range")) {
+                            minSensorRange = 0;
+                        }
+                    }
                     if (!los.canSee() || (dist > visualRange)) {
                         if (darken) {
                             if (game.getOptions().booleanOption(
@@ -1926,6 +1939,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 break;
                             }
                         }
+                    }
+                } else {
+                    // Max dist should be >= visual dist, this hex can't be seen
+                    if (darken) {
+                        drawHexLayer(p, boardGraph, transparent_gray);
                     }
                 }
             }

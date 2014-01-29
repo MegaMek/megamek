@@ -891,7 +891,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         if (useIsometric()){
         	// Used to pad the board edge
-        	g.translate(HEX_W, HEX_H);
+        	//g.translate(HEX_W, HEX_H);
     	}
         
         if (useIsometric()) {
@@ -986,7 +986,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         if (useIsometric()){
 	        // Undo the previous translation
-	        g.translate(-HEX_W, -HEX_H);
+	        //g.translate(-HEX_W, -HEX_H);
         }
         
         // draw all the "displayables"

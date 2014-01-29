@@ -24,7 +24,6 @@ v0.37.6-exp-dev (SVN)
 + Bug: Hotkeys were still active when various dialos in the File menu were open
 + UnitOverview now draws in the upper right corner regardless of board size
 + Bug: Fixed an issue with not being able to scroll across the whole board
-+ Feature: Added a hex's width/height worth of padding to each edge of the board
 + Bug: Registered CommandActions in MegaMekController were never being 
     unregistered, which mean that if multiple games were started from the same 
     MegaMek instance, the keybinds wouldn't always work right.  Now, in 

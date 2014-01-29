@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.6-exp-dev (SVN)
+v0.37.6-exp (2014-01-29 01:43 UTC)
 + Added new art assets for borders and updated the defaultSkin.xml to use them
 + Testing out some changes to BoardView1.  Instead of just drawing a gray 
     background for the board, it now draws a tiled icon.  This works for 
@@ -29,7 +29,7 @@ v0.37.6-exp-dev (SVN)
     MegaMek instance, the keybinds wouldn't always work right.  Now, in 
     ClientGUI.die() all of the registered actions are removed.
 
-v0.37.6-dev (SVN)
+v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain
 + Bug: wrong elevation when displacing onto negative elevation terrain
 + Bug: wrong elevation when assault dropping onto non-elevation 0 terrain

@@ -1849,7 +1849,6 @@ Fa Shih Battle Armor [Flamer]|
 IS Standard Battle Armor [MG]|
 Achileus Light Battle Armor [MG]|
 Gnome Battle Armor (Upgrade) [MRR]|
-Achileus Light Battle Armor (WoB) 1|
 Cavalier Battle Armor [SRM]|
 Elemental Battle Armor [HMG]|
 Infiltrator Mk. I Battle Armor "Waddle"|

@@ -33,7 +33,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
 
     private static final long serialVersionUID = 8938385222775928559L;
     int twist;
-    public double utility; // calculated elsewhere
+
+    private double utility; // calculated elsewhere
     private Princess owner;
     private Targetable target;
 
@@ -135,10 +136,10 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
             }
             if (twist == -1) {
                 ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                        FireControl.correct_facing(get(0).getShooter().getFacing() - 1)));
+                                             FireControl.correct_facing(get(0).getShooter().getFacing() - 1)));
             } else if (twist == +1) {
                 ret.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                        FireControl.correct_facing(get(0).getShooter().getFacing() + 1)));
+                                             FireControl.correct_facing(get(0).getShooter().getFacing() + 1)));
             }
             for (WeaponFireInfo f : this) {
                 ret.add(f.getWeaponAttackAction());
@@ -158,9 +159,9 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
             return "Empty FiringPlan!";
         }
         String ret = new String("Firing Plan for "
-                + get(0).getShooter().getChassis() + " at "
-                + get(0).getTarget().getDisplayName() + " "
-                + Integer.toString(size()) + " weapons fired \n");
+                                        + get(0).getShooter().getChassis() + " at "
+                                        + get(0).getTarget().getDisplayName() + " "
+                                        + Integer.toString(size()) + " weapons fired \n");
         if (detailed) {
             for (WeaponFireInfo wfi : this) {
                 ret += wfi.getDebugDescription() + "\n";
@@ -173,5 +174,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
         ret += "Kill Probability=" + Double.toString(getKillProbability())
                 + "\n";
         return ret;
+    }
+
+    public double getUtility() {
+        return utility;
+    }
+
+    public void setUtility(double utility) {
+        this.utility = utility;
     }
 }

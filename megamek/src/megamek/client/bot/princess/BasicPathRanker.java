@@ -29,6 +29,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.TargetRoll;
@@ -158,7 +159,7 @@ public class BasicPathRanker extends PathRanker {
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range) *
-                        damageDiscount);
+                                                              damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
@@ -211,21 +212,45 @@ public class BasicPathRanker extends PathRanker {
         double fallShame = owner.getBehaviorSettings().getFallShameValue();
         double fallMod = pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
         formula.append("fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
-                .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
-                .append("]");
+               .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
+               .append("]");
         return fallMod;
     }
 
-    protected double calculateDamagePotential(Entity enemy, EntityState shooterState, MovePath path, IGame game) {
+    protected LosEffects calcLosEffects(IGame game, int shooterId, Targetable target) {
+        return LosEffects.calculateLos(game, shooterId, target);
+    }
+
+    protected double calculateDamagePotential(Entity enemy, EntityState shooterState, MovePath path,
+                                              EntityState targetState, int distance, IGame game) {
+
+        // If they don't have the range, they can't do damage.
+        int maxRange = enemy.getMaxWeaponRange();
+        if (distance > maxRange) {
+            return 0;
+        }
+
+        //  If they don't have LoS, they can't do damage.
+        LosEffects losEffects = calcLosEffects(game, enemy.getId(), path.getEntity());
+        if (!losEffects.canSee()) {
+            return 0;
+        }
+
+        if (targetState == null) {
+            targetState = new EntityState(path);
+        }
+
         return getFireControl().guessBestFiringPlanUnderHeatWithTwists(enemy, shooterState, path.getEntity(),
-                new EntityState(path), (enemy.getHeatCapacity() - enemy.heat) + 5, game).utility;
+                                                                       targetState,
+                                                                       (enemy.getHeatCapacity() - enemy.heat) + 5,
+                                                                       game).getUtility();
     }
 
     protected double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
 
         // if they can kick me, and probably hit, they probably will.
         PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
-                new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner);
+                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner);
 
         if (theirKick.prob_to_hit <= 0.5) {
             return 0.0;
@@ -233,21 +258,36 @@ public class BasicPathRanker extends PathRanker {
         return theirKick.expected_damage_on_hit * theirKick.prob_to_hit;
     }
 
-    protected double calculateMyDamagePotential(MovePath path, Entity enemy, IGame game) {
+    protected double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, IGame game) {
+        Entity me = path.getEntity();
+
+        // If I don't have range, I can't do damage.
+        int maxRange = me.getMaxWeaponRange();
+        if (distance > maxRange) {
+            return 0;
+        }
+
+        // If I don't have LoS, I can't do damage.  ToDo: Account for indirect fire.
+        LosEffects losEffects = calcLosEffects(game, me.getId(), enemy);
+        if (!losEffects.canSee()) {
+            return 0;
+        }
+
         FiringPlan myFiringPlan;
         if (path.getEntity() instanceof Aero) {
-            myFiringPlan = fireControl.guessFullAirToGroundPlan(path.getEntity(), enemy,
-                    new EntityState(enemy), path, game, false);
+            myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
+                                                                     new EntityState(enemy), path, game, false);
         } else {
-            myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
-                    new EntityState(path), enemy, null, game);
+            myFiringPlan = getFireControl().guessBestFiringPlanWithTwists(path.getEntity(),
+                                                                          new EntityState(path), enemy, null, game);
         }
-        return myFiringPlan.utility;
+        return myFiringPlan.getUtility();
     }
 
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
-                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK, game, owner);
+                                               new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
+                                               game, owner);
         if (myKick.prob_to_hit <= 0.5) {
             return 0;
         }
@@ -258,18 +298,24 @@ public class BasicPathRanker extends PathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
+        int distance = enemy.getPosition().distance(path.getFinalCoords());
+
         // How much damage can they do to me?
-        double theirDamagePotential = calculateDamagePotential(enemy, null, path, game);
+        double theirDamagePotential = calculateDamagePotential(enemy, null, path, null, distance, game);
 
         // if they can kick me, and probably hit, they probably will.
-        theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
+        if (distance <= 1) {
+            theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
+        }
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
 
         // How much damage can I do to them?
-        returnResponse.setMyEstimatedDamage(calculateMyDamagePotential(path, enemy, game));
+        returnResponse.setMyEstimatedDamage(calculateMyDamagePotential(path, enemy, distance, game));
 
         // How much physical damage can I do to them?
-        returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+        if (distance <= 1) {
+            returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+        }
 
         return returnResponse;
     }
@@ -283,8 +329,8 @@ public class BasicPathRanker extends PathRanker {
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = distToEnemy * aggression;
         formula.append(" - aggressionMod [").append(LOG_DECIMAL.format(aggressionMod)).append(" = ")
-                .append(LOG_DECIMAL.format(distToEnemy)).append(" * ").append(LOG_DECIMAL.format(aggression))
-                .append("]");
+               .append(LOG_DECIMAL.format(distToEnemy)).append(" * ").append(LOG_DECIMAL.format(aggression))
+               .append("]");
         return aggressionMod;
     }
 
@@ -299,8 +345,8 @@ public class BasicPathRanker extends PathRanker {
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
         double herdingMod = distanceToAllies * herding;
         formula.append(" - herdingMod [").append(LOG_DECIMAL.format(herdingMod)).append(" = ")
-                .append(LOG_DECIMAL.format(distanceToAllies)).append(" * ").append(LOG_DECIMAL.format(herding))
-                .append("]");
+               .append(LOG_DECIMAL.format(distanceToAllies)).append(" * ").append(LOG_DECIMAL.format(herding))
+               .append("]");
         return herdingMod;
     }
 
@@ -328,8 +374,8 @@ public class BasicPathRanker extends PathRanker {
         }
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         formula.append(" - facingMod [").append(LOG_DECIMAL.format(facingMod)).append(" = max(")
-                .append(LOG_INT.format(0)).append(", ").append(LOG_INT.format(50)).append(" * {")
-                .append(LOG_INT.format(facingDiff)).append(" - ").append(LOG_INT.format(1)).append("})]");
+               .append(LOG_INT.format(0)).append(", ").append(LOG_INT.format(50)).append(" * {")
+               .append(LOG_INT.format(facingDiff)).append(" - ").append(LOG_INT.format(1)).append("})]");
         return facingMod;
     }
 
@@ -340,8 +386,8 @@ public class BasicPathRanker extends PathRanker {
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod = newDistanceToHome * selfPreservation;
             formula.append(" - selfPreservationMod [").append(LOG_DECIMAL.format(selfPreservationMod))
-                    .append(" = ").append(LOG_DECIMAL.format(newDistanceToHome)).append(" * ")
-                    .append(LOG_DECIMAL.format(selfPreservation)).append("]");
+                   .append(" = ").append(LOG_DECIMAL.format(newDistanceToHome)).append(" * ")
+                   .append(LOG_DECIMAL.format(selfPreservation)).append("]");
             return selfPreservationMod;
         }
         return 0.0;
@@ -411,8 +457,9 @@ public class BasicPathRanker extends PathRanker {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
-                        new EntityState(path), target, null, game);
-                double myDamagePotential = myFiringPlan.utility;
+                                                                                    new EntityState(path), target,
+                                                                                    null, game);
+                double myDamagePotential = myFiringPlan.getUtility();
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
                 }
@@ -440,10 +487,10 @@ public class BasicPathRanker extends PathRanker {
             double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
             double braveryMod = successProbability * ((maximumDamageDone * braveryValue) - expectedDamageTaken);
             formula.append(" + braveryMod [").append(LOG_DECIMAL.format(braveryMod)).append(" = ")
-                    .append(LOG_PERCENT.format(successProbability)).append(" * ((")
-                    .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-                    .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-                    .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
+                   .append(LOG_PERCENT.format(successProbability)).append(" * ((")
+                   .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
+                   .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
+                   .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
             utility += braveryMod;
 
             //noinspection StatementWithEmptyBody
@@ -498,7 +545,7 @@ public class BasicPathRanker extends PathRanker {
                 for (Entity f : friends) {
                     double damage = fireControl
                             .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
-                                    null, (e.getHeatCapacity() - e.heat) + 5, game)
+                                                                    null, (e.getHeatCapacity() - e.heat) + 5, game)
                             .getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;

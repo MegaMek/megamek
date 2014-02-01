@@ -1,8 +1,10 @@
 VERSION HISTORY:
 ----------------
 v0.37.7-dev (SVN)
-+ Added code to Princess to not compute a full firing plan if a target is out or range or out of LoS.  This should
-    hopefully speed up her path ranking a little bit.
++ Added code to Princess to not compute a full firing plan if a target is out 
+    or range or out of LoS.  This should hopefully speed up her path ranking a 
+    little bit.
++ Bug [#4013]: TSM and leg destroyed - version 0.37.6-MW-r10432
 + Bug [#4024] Cruise Missile Ammo misnamed
 + Bug [#4023]  Cruise Missile Launcher/Ammo different Tech Levels.
 + Bug Some BA weapons Fixed

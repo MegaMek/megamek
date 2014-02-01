@@ -9,6 +9,8 @@ v0.37.7-dev (SVN)
 + Bug [#4023]  Cruise Missile Launcher/Ammo different Tech Levels.
 + Bug Some BA weapons Fixed
 + Data: Unit Fixes, Camo Additions
++ Bug: TestAero had some references to Mech, including that that made validation
+    fail on zero crit armors
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

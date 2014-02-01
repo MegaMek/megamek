@@ -1267,7 +1267,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBASRM5OS());
         EquipmentType.addType(new CLBASRM6());
         EquipmentType.addType(new CLBASRM6OS());
-        EquipmentType.addType(new CLMicroBomb());
+        EquipmentType.addType(new CLBAMicroBomb());
         EquipmentType.addType(new CLBACompactNarc());
         EquipmentType.addType(new ISBAERMediumLaser());
         EquipmentType.addType(new ISBAERSmallLaser());

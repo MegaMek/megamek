@@ -32,7 +32,7 @@ biped
 </Armor>
 <Squad Equipment>
 CLBAMicroPulseLaser:RA
-CLMicro Bomb:Body
+CLBAMicro Bomb:Body
 BA-Micro Bomb Ammo:Body
 BABattleClaw:RA
 </Squad Equipment>

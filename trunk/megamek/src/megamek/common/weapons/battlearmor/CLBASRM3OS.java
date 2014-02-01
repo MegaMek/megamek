@@ -34,7 +34,9 @@ public class CLBASRM3OS extends SRMWeapon {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 3 (OS)";
-        setInternalName("CLBASRM3OS");
+        setInternalName("CLBASRM3 (OS)");
+        addLookupName("Clan BA SRM 3 (OS)");
+        addLookupName("Clan BA OS SRM-3");
         rackSize = 3;
         shortRange = 3;
         mediumRange = 6;

@@ -7008,10 +7008,11 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.techRating = RATING_E;
+        ammo.cost = 500;
+        ammo.techRating = RATING_F;
         ammo.introDate = 3060;
         ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_D};
+        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
 
         return ammo;
     }
@@ -10260,6 +10261,7 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
         ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -10282,6 +10284,7 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
         ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -10291,7 +10294,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "Cruise Missile/50 Ammo";
+        ammo.name = "Cruise Missile/90 Ammo";
         ammo.setInternalName("ISCruiseMissile90Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 90;
@@ -10304,6 +10307,7 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
         ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -10326,6 +10330,7 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
         ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         ammo.techRating = RATING_E;
 
         return ammo;

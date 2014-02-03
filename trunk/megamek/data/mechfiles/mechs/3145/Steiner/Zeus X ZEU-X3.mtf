@@ -1,0 +1,152 @@
+Version:1.0
+Zeus X
+ZEU-X3
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3089
+Source:TRO 3145 LC
+Rules Level:4
+
+Mass:80
+Engine:400 XXL Engine(IS)
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:5
+Jump MP:8
+
+Armor:Standard(IS/Clan)
+LA Armor:23
+RA Armor:23
+LT Armor:26
+RT Armor:26
+CT Armor:37
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:5
+ER PPC, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Improved Jump Jet
+IS Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Improved Jump Jet
+IS Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

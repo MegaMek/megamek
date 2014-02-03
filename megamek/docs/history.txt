@@ -19,6 +19,12 @@ v0.37.7-dev (SVN)
 + Bug: Updates to TestBattleArmor: isMountLegal wasn't counting squad 
     equipment, and it wasn't properly counting crits for spreadable mounts
 + Bug [#4029]: Bot hangs on killshot 0.37.7-dev
++ Bug: Clan BA use a <Point Equipment> tag while IS BA use <Squad Equipment>, 
+    since the location abbreviations are different.  MML uses the location 
+    abbreviations when writing the tags, however the BA BLK reader was always 
+    looking for <Squad Equipment>.  This has been changed so that the BLK reader
+    will look for the proper tag name based on tech type.  Note: this *will* 
+    break Clan BA that use <Squad Equipment> tags.
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

@@ -18,6 +18,7 @@ v0.37.7-dev (SVN)
 + Bug: Changes to BA armor.
 + Bug: Updates to TestBattleArmor: isMountLegal wasn't counting squad 
     equipment, and it wasn't properly counting crits for spreadable mounts
++ Bug [#4029]: Bot hangs on killshot 0.37.7-dev
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

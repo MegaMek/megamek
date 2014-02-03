@@ -3005,12 +3005,11 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
-        misc.addLookupName("IS " + EquipmentType
+        misc.setInternalName("IS " + EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
         misc.tonnage = 0;
         misc.criticals = 0;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3027,12 +3026,11 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
-        misc.setInternalName(EquipmentType
-                .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
-        misc.addLookupName("Clan " + EquipmentType
+        misc.setInternalName("Clan " + EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD));
         misc.tonnage = 0;
         misc.criticals = 0;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3048,10 +3046,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_PROTOTYPE;
-        misc.setInternalName(BattleArmor.STANDARD_PROTOTYPE);
-        misc.addLookupName("IS " + BattleArmor.STANDARD_PROTOTYPE);
+        misc.setInternalName("IS " + BattleArmor.STANDARD_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3067,10 +3065,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_PROTOTYPE;
-        misc.setInternalName(BattleArmor.STANDARD_PROTOTYPE);
-        misc.addLookupName("Clan " + BattleArmor.STANDARD_PROTOTYPE);
+        misc.setInternalName("Clan " + BattleArmor.STANDARD_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3086,10 +3084,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.ADVANCED_ARMOR;
-        misc.setInternalName(BattleArmor.ADVANCED_ARMOR);
-        misc.addLookupName("IS " + BattleArmor.ADVANCED_ARMOR);
+        misc.setInternalName("IS " + BattleArmor.ADVANCED_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3105,10 +3103,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.ADVANCED_ARMOR;
-        misc.setInternalName(BattleArmor.ADVANCED_ARMOR);
-        misc.addLookupName("Clan " + BattleArmor.ADVANCED_ARMOR);
+        misc.setInternalName("Clan " + BattleArmor.ADVANCED_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3124,11 +3122,11 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.FIRE_RESISTANT;
-        misc.setInternalName(BattleArmor.FIRE_RESISTANT);
-        misc.addLookupName("Clan " + BattleArmor.FIRE_RESISTANT);
+        misc.setInternalName("Clan " + BattleArmor.FIRE_RESISTANT);
         misc.addLookupName("BA-Fire Resistant Armor");
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3144,11 +3142,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.FIRE_RESISTANT;
-        misc.setInternalName(BattleArmor.FIRE_RESISTANT);
-        misc.addLookupName("BA-Fire Resistant Armor");
-        misc.addLookupName("IS " + BattleArmor.FIRE_RESISTANT);
+        misc.setInternalName("IS " + BattleArmor.FIRE_RESISTANT);
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3163,10 +3160,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STEALTH_PROTOTYPE;
-        misc.setInternalName(BattleArmor.STEALTH_PROTOTYPE);
-        misc.addLookupName("IS " + BattleArmor.STEALTH_PROTOTYPE);
+        misc.setInternalName("IS " + BattleArmor.STEALTH_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3182,10 +3179,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STEALTH_PROTOTYPE;
-        misc.setInternalName(BattleArmor.STEALTH_PROTOTYPE);
-        misc.addLookupName("Clan" + BattleArmor.STEALTH_PROTOTYPE);
+        misc.setInternalName("Clan" + BattleArmor.STEALTH_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3202,10 +3199,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.BASIC_STEALTH_ARMOR);
-        misc.addLookupName("IS " + BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.setInternalName("IS " + BattleArmor.BASIC_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 3;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3223,10 +3220,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.BASIC_STEALTH_ARMOR);
-        misc.addLookupName("Clan " + BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.setInternalName("Clan " + BattleArmor.BASIC_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 3;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3243,10 +3240,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.STANDARD_STEALTH_ARMOR);
-        misc.addLookupName("IS " + BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.setInternalName("IS " + BattleArmor.STANDARD_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3264,10 +3261,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.STANDARD_STEALTH_ARMOR);
-        misc.addLookupName("Clan " + BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.setInternalName("Clan " + BattleArmor.STANDARD_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 4;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3284,10 +3281,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createISBAImprovedStealth() {
         MiscType misc = new MiscType();
         misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
-        misc.addLookupName("IS " + BattleArmor.IMPROVED_STEALTH_ARMOR);
+        misc.setInternalName("IS " + BattleArmor.IMPROVED_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3302,10 +3299,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBAImprovedStealth() {
         MiscType misc = new MiscType();
         misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
-        misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
-        misc.addLookupName("Clan " + BattleArmor.IMPROVED_STEALTH_ARMOR);
+        misc.setInternalName("Clan " + BattleArmor.IMPROVED_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 5;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3322,10 +3319,10 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = BattleArmor.MIMETIC_ARMOR;
-        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
-        misc.addLookupName("IS " + BattleArmor.MIMETIC_ARMOR);
+        misc.setInternalName("IS " + BattleArmor.MIMETIC_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
@@ -3342,10 +3339,10 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
         misc.name = BattleArmor.MIMETIC_ARMOR;
-        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
-        misc.addLookupName("Clan " + BattleArmor.MIMETIC_ARMOR);
+        misc.setInternalName("Clan " + BattleArmor.MIMETIC_ARMOR);
         misc.tonnage = 0;
-        misc.criticals = 0;
+        misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
@@ -3362,13 +3359,12 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REACTIVE, false));
-        misc.addLookupName("IS "+ EquipmentType.getArmorTypeName(
+        misc.setInternalName("IS "+ EquipmentType.getArmorTypeName(
                     EquipmentType.T_ARMOR_BA_REACTIVE, false));
         misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3385,13 +3381,12 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REACTIVE, true));
-        misc.addLookupName("Clan " + EquipmentType.getArmorTypeName(
+        misc.setInternalName("Clan " + EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REACTIVE, true));
         misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3410,13 +3405,12 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
-        misc.addLookupName("IS " + EquipmentType.getArmorTypeName(
+        misc.setInternalName("IS " + EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
@@ -3434,14 +3428,13 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        misc.setInternalName(EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
-        misc.addLookupName("Clan "
-                + EquipmentType.getArmorTypeName(
+
+        misc.setInternalName("Clan " + EquipmentType.getArmorTypeName(
                         EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
         misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
+        misc.spreadable = true;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;

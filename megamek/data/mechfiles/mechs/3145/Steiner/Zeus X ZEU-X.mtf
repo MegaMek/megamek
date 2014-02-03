@@ -1,0 +1,153 @@
+Version:1.0
+Zeus X
+ZEU-X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3064
+Source:TRO 3145 LC
+Rules Level:4
+
+Mass:80
+Engine:400 XXL Engine(IS)
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Patchwork
+LA Armor:Reactive(Inner Sphere):26
+RA Armor:Reactive(Inner Sphere):26
+LT Armor:Standard(IS/Clan):26
+RT Armor:Standard(IS/Clan):26
+CT Armor:Standard(IS/Clan):38
+HD Armor:Standard(IS/Clan):9
+LL Armor:Reactive(Inner Sphere):34
+RL Armor:Reactive(Inner Sphere):34
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:4
+Medium X-Pulse Laser, Center Torso
+Medium X-Pulse Laser, Center Torso
+MRM 30, Right Arm
+LB 20-X AC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+IS Reactive
+IS Reactive
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+MRM 30
+MRM 30
+MRM 30
+MRM 30
+MRM 30
+IS Reactive
+IS Reactive
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISMediumXPulseLaser
+
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS LB 20-X AC Ammo
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumXPulseLaser
+-Empty-
+
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reactive
+IS Reactive
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reactive
+IS Reactive
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -12,6 +12,8 @@ v0.37.7-dev (SVN)
 + Bug: TestAero had some references to Mech, including that that made validation
     fail on zero crit armors
 + Data: New Unit images - Thanks Deadborder and SteveRestless.
++ Data: Commits to address [#3999].  This will taking multiple commits to fix.
++ Bug [#4011] Military Space Stations not turning correctly
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

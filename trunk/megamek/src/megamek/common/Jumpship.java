@@ -55,6 +55,9 @@ public class Jumpship extends Aero {
 
     // lithium fusion
     boolean hasLF = false;
+    
+    // Battlestation
+    private boolean isBattleStation  = false;
 
     // HPG
     private boolean hasHPG = false;
@@ -115,6 +118,15 @@ public class Jumpship extends Aero {
     public boolean hasHPG() {
         return hasHPG;
     }
+    
+	public void setBattleStation(boolean b) {
+		isBattleStation = b;
+		
+	}
+	
+	public boolean isBattleStation() {
+        return isBattleStation;
+    }
 
     public void setLF(boolean b) {
         hasLF = b;
@@ -123,7 +135,7 @@ public class Jumpship extends Aero {
     public boolean hasLF() {
         return hasLF;
     }
-
+    
     public void setEscapePods(int n) {
         escapePods = n;
     }
@@ -139,8 +151,8 @@ public class Jumpship extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
-
-    public void setNCrew(int crew) {
+    
+        public void setNCrew(int crew) {
         nCrew = crew;
     }
 
@@ -1076,6 +1088,10 @@ public class Jumpship extends Aero {
         // thrust. So once you
         // get 1 thrust point, you have to spend it before you can accumulate
         // more
+        if (isDeployed() && isBattleStation() == true) {
+        	setAccumulatedThrust(1);
+        }
+        
         if (isDeployed() && (getAccumulatedThrust() < 1.0)) {
             setAccumulatedThrust(getAccumulatedThrust() + stationThrust);
         }

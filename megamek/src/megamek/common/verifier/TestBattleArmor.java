@@ -149,8 +149,14 @@ public class TestBattleArmor extends TestEntity {
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         for (Mounted m : ba.getEquipment()){
-            if (m.getBaMountLoc() == loc && m.getLocation() == trooper){
-                numUsedCrits += m.getType().getCriticals(ba);
+            if (m.getBaMountLoc() == loc 
+                    && (m.getLocation() == trooper 
+                        || m.getLocation() == BattleArmor.LOC_SQUAD)){
+                if (m.getType().isSpreadable()){
+                    numUsedCrits++;
+                } else {
+                    numUsedCrits += m.getType().getCriticals(ba);
+                }
                 if (m.getType() instanceof WeaponType){
                     if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
                         numAntiPersonnelWeapons++;
@@ -162,8 +168,13 @@ public class TestBattleArmor extends TestEntity {
         }
         
         // Do we have free space to mount this equipment?
-        if ((numUsedCrits + newMount.getType().getCriticals(ba)) 
-                <= ba.getNumCrits(loc)) {
+        int newCrits;
+        if (newMount.getType().isSpreadable()){
+            newCrits = 1;
+        } else {
+            newCrits = newMount.getType().getCriticals(ba);
+        }
+        if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
             if (newMount.getType() instanceof WeaponType){
                 if (newMount.getType().hasFlag(WeaponType.F_INFANTRY)){

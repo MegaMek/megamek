@@ -16,6 +16,8 @@ v0.37.7-dev (SVN)
 + Bug [#4011] Military Space Stations not turning correctly
 + Data: Unit Stuff
 + Bug: Changes to BA armor.
++ Bug: Updates to TestBattleArmor: isMountLegal wasn't counting squad 
+    equipment, and it wasn't properly counting crits for spreadable mounts
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

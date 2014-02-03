@@ -3179,7 +3179,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.STEALTH_PROTOTYPE;
-        misc.setInternalName("Clan" + BattleArmor.STEALTH_PROTOTYPE);
+        misc.setInternalName("Clan " + BattleArmor.STEALTH_PROTOTYPE);
         misc.tonnage = 0;
         misc.criticals = 4;
         misc.spreadable = true;

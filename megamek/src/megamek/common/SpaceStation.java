@@ -21,6 +21,7 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class SpaceStation extends Jumpship {
+	
 
     /**
      *
@@ -151,5 +152,7 @@ public class SpaceStation extends Jumpship {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
     }
+
+
 
 }

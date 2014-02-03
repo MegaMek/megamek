@@ -23530,9 +23530,18 @@ public class Server implements Runnable {
                 if (slot.isArmored()) {
                     r = new Report(6710);
                     r.subject = en.getId();
-                    if (en instanceof Mech) {
-                        r.add(((Mech) en).getSystemName(slot.getIndex()));
-                    }
+                    if (slot.getType() == CriticalSlot.TYPE_SYSTEM){
+                        // Pretty sure that only 'mechs have system crits,
+                        //  but just in case....
+                        if (en instanceof Mech) {
+                            r.add(((Mech) en).getSystemName(slot.getIndex()));
+                        }
+                    } else {
+                        // Shouldn't be null, but we'll be careful... 
+                        if (slot.getMount() != null){
+                            r.add(slot.getMount().getName());
+                        }
+                    }                    
                     vDesc.addElement(r);
                     slot.setArmored(false);
                     hits--;

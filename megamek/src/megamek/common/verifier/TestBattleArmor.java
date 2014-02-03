@@ -33,6 +33,16 @@ import megamek.common.WeaponType;
 public class TestBattleArmor extends TestEntity {
     
     /**
+     * Keeps track of the number of free MP a Bipedal BA gets.
+     */
+    public static int BIPED_FREE_MP = 1;
+    
+    /**
+     * Keeps track of the number of free MP a Quad BA gets.
+     */
+    public static int QUAD_FREE_MP = 2;
+    
+    /**
      * BattleArmor can have a variable number of shots per slot of ammo, this
      * variable defines the maximum number of shots per slot they can have.
      */
@@ -252,6 +262,14 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public float getWeightStructure() {
         float tons = 0;
+        
+        int walkMP = ba.getOriginalWalkMP();
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
+            walkMP -= QUAD_FREE_MP;
+        } else {
+            walkMP -= BIPED_FREE_MP;
+        }
+        int jumpMP = ba.getOriginalJumpMP();
         switch(ba.getWeightClass()) {
         case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
             if(ba.isClan()) {
@@ -259,14 +277,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                 tons += 0.08;
             }
-            tons += ba.getOriginalWalkMP() * .025;
+            tons += walkMP * .025;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .045;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .03;
+                tons += jumpMP * .045;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .03;
             } else {
-                tons += ba.getOriginalJumpMP() * .025;
+                tons += jumpMP * .025;
             }
             break;
         case EntityWeightClass.WEIGHT_LIGHT:
@@ -275,14 +292,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.1;
             }
-            tons += ba.getOriginalWalkMP()  * .03;
+            tons += walkMP  * .03;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .045;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .04;
+                tons += jumpMP * .045;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .04;
             } else {
-                tons += ba.getOriginalJumpMP() * .025;
+                tons += jumpMP * .025;
             }
             break;
         case EntityWeightClass.WEIGHT_MEDIUM:
@@ -291,14 +307,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.175;
             }
-            tons += ba.getOriginalWalkMP()  * .04;
+            tons += walkMP * .04;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .085;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .06;
+                tons += jumpMP * .085;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .06;
             } else {
-                tons += ba.getOriginalJumpMP() * .05;
+                tons += jumpMP * .05;
             }
             break;
         case EntityWeightClass.WEIGHT_HEAVY:
@@ -307,12 +322,11 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.3;
             }
-            tons += ba.getOriginalWalkMP()  * .08;
+            tons += walkMP  * .08;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .16;
-            }
-            else {
-                tons += ba.getOriginalJumpMP() * .125;
+                tons += jumpMP * .16;
+            } else {
+                tons += jumpMP * .125;
             }
             break;
         case EntityWeightClass.WEIGHT_ASSAULT:
@@ -321,8 +335,8 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.55;
             }
-            tons += ba.getOriginalWalkMP()  * .16;       
-            tons += ba.getOriginalJumpMP() * .25;
+            tons += walkMP * .16;       
+            tons += jumpMP * .25;
             break;
         }
         return tons;

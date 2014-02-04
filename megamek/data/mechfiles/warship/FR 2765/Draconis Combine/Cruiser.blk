@@ -1,0 +1,233 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Cruiser
+</Name>
+<Model>
+</Model>
+
+<Tonnage>
+500000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+64
+58
+58
+58
+58
+52
+</Armor>
+
+<Nose Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+WhiteShark
+WhiteShark
+WhiteShark
+WhiteShark Ammo:30
+WhiteShark
+WhiteShark
+WhiteShark
+WhiteShark Ammo:30
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+WhiteShark
+WhiteShark
+WhiteShark
+WhiteShark Ammo:30
+WhiteShark
+WhiteShark
+WhiteShark
+WhiteShark Ammo:30
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:30
+</Aft Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<heatsinks>
+1891
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2325
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:6:2
+CargoBay:10000:1
+CargoBay:53600:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+150
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+320
+</crew>
+
+<marines>
+90
+</marines>
+
+<passengers>
+500
+</passengers>

@@ -1,0 +1,240 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Narukami Destroyer
+</Name>
+<Model>
+(Block I)
+</Model>
+<Tonnage>
+670000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+75
+75
+75
+70
+70
+65
+</Armor>
+<Nose Equipment>
+HeavyNPPC
+HeavyNPPC
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+</Nose Equipment>
+
+<Front Left Side Equipment>
+MediumNPPC
+MediumNPPC
+NAC20
+NAC20
+NAC30
+NAC20 Ammo:100
+NAC30 Ammo:50
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+MediumNPPC
+MediumNPPC
+NAC20
+NAC20
+NAC30
+NAC20 Ammo:100
+NAC30 Ammo:50
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NAC35
+NAC35
+NAC35 Ammo:100
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NAC35
+NAC35
+NAC35 Ammo:100
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NAC20
+NAC20
+NAC30
+NAC20 Ammo:100
+NAC30 Ammo:50
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+NAC20
+NAC20
+NAC30
+NAC20 Ammo:100
+NAC30 Ammo:50
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<heatsinks>
+1300
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2380
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:12:6
+CargoBay:53483:1
+</transporters>
+
+<docking_collar>
+3
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+45
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+305
+</crew>
+
+<passengers>
+0
+</passengers>

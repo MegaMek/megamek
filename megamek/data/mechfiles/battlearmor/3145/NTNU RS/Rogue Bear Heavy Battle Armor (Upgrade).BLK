@@ -47,7 +47,7 @@ biped
 38
 </armor_type>
 
-<Squad Equipment>
+<Point Equipment>
 Clan BA Machine Gun:LA
 Clan BA Machine Gun:RA
 CLBASRM2:Body
@@ -57,7 +57,7 @@ BASRM2 Ammo:Body
 BASRM2 Ammo:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

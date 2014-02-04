@@ -33,7 +33,7 @@ biped
 <Armor>
 14
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBAAPGaussRifle:RA
 CLBALRM4:Body
 BACLLRM4 Ammo:Body
@@ -41,7 +41,7 @@ BACLLRM4 Ammo:Body
 BACLLRM4 Ammo:Body
 BACLLRM4 Ammo:Body
 BAHeavyBattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

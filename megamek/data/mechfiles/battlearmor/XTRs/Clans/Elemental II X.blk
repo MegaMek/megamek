@@ -36,13 +36,13 @@ Jump
 2
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 CLDetachableWeaponPack:Body
 BAAPMount:LA
 CLBAMyomerBooster:Body
 CLBALightMG:RA
 Clan Micro Pulse Laser:DWP
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 XTR:Clans

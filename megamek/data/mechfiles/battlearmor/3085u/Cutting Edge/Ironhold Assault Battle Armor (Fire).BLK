@@ -39,14 +39,14 @@ biped
 2
 </armor_tech>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAAPGaussRifle:RA
 CLBAAPGaussRifle:LA
 CLBAAPGaussRifle:Body
 CLBAAPGaussRifle:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

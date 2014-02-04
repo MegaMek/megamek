@@ -35,7 +35,7 @@ biped
 <Armor>
 18
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBearhunter Superheavy AC:LA
 CLBearhunter Superheavy AC:LA
 CLAdvancedSRM5:Body
@@ -43,7 +43,7 @@ BA-Advanced SRM-5 Ammo:Body
 BA-Advanced SRM-5 Ammo:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

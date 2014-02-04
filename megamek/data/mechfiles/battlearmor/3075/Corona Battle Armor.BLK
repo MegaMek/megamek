@@ -27,12 +27,12 @@ biped
 <Armor>
 8
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBAMediumPulseLaser:Body
 BABattleClaw:LA
 BABasicManipulator:RA
 BAAPMount:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

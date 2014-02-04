@@ -33,14 +33,14 @@ biped
 <Armor>
 9
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLERMicroLaser:RA
 CLSRM3OS:Body
 CLBAJumpBooster:Body
 BASearchlight:Body
 BABasicManipulator:RA
 BAHeavyBattleClaw:LA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

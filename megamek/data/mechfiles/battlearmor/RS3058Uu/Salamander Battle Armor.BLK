@@ -30,13 +30,13 @@ biped
 <Armor>
 7
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBAFlamer:RA
 CLBAFlamer:LA
 CLSRM1OS:Body
 BABattleClawMagnets:RA
 BABattleClawMagnets:LA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

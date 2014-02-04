@@ -30,7 +30,7 @@ biped
 <Armor>
 8
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBAHeavy Recoilless Rifle:LA
 CLBAFlamer:RA
 CLBASRM5:Body
@@ -40,7 +40,7 @@ BASRM5 Ammo:Body
 BABattleClaw:LA
 BABasicManipulator:RA
 BAAPMount:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

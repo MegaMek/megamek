@@ -33,11 +33,11 @@ biped
 <Armor>
 6
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 BattleArmorC3:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 IS Level 4
 </type>

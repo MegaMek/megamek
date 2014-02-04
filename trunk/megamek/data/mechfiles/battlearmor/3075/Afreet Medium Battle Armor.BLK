@@ -30,13 +30,13 @@ biped
 <Armor>
 5
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBALightRecoillessRifle:RA
 CLImprovedSensors:Body
 CLBAJumpBooster:Body
 BABattleClawVibro:LA
 BABattleClawVibro:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

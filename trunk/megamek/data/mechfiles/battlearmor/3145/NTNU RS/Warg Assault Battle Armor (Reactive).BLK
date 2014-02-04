@@ -39,7 +39,7 @@ biped
 16
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 CLSmallPulseLaser:RA
 Clan BA Light Machine Gun:LA
 CLAdvancedSRM2:Body
@@ -52,7 +52,7 @@ BAAdvanced SRM2 Ammo:Body
 BAAdvanced SRM2 Ammo:Body
 BAHeavyBattleClaw:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

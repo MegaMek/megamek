@@ -31,14 +31,14 @@ biped
 <Armor>
 5
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 BABasicManipulator:LA
 BABasicManipulator:RA
 CLBAMyomerBooster:Body
 CLBALightMG:RA
 CLBALightMG:LA
 BASearchlight:Body
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 4

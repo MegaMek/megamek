@@ -48,7 +48,7 @@ biped
 6
 </armor_tech>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAJumpBooster:Body
 BAAPMount:LA
 BAAPMount:RA
@@ -57,7 +57,7 @@ BABasicManipulator:RA
 CLBALightMG:RA
 CLBALightMG:LA
 Camo System
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Mixed (Clan Chassis) Advanced

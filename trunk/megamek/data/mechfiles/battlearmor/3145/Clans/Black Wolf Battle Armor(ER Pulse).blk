@@ -36,10 +36,10 @@ Jump
 1
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 BAHeavyBattleClaw:RA
 CLBAERSmallPulseLaser:LA
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 TRO 3145 Clans

@@ -34,10 +34,10 @@ biped
 6
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 ISBALightTAG:LA
 BABattleClaw:LA
-</Squad Equipment>
+</Point Equipment>
 <type>
 IS Level 2
 </type>

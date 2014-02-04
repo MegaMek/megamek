@@ -19,6 +19,8 @@
 
 package megamek.common.verifier;
 
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -27,7 +29,9 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.util.StringUtil;
 
 
 public class TestBattleArmor extends TestEntity {
@@ -209,7 +213,7 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
     }
-    
+
     private BattleArmor ba;
     
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,
@@ -361,27 +365,321 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        return null;
+        return "";
     }
 
     @Override
     public String printWeightControls() {
-        return null;
+        return "";
+    }
+    
+    public String printWeightArmor() {
+        String armorName = EquipmentType.getArmorTypeName(
+                ba.getArmorType(BattleArmor.LOC_SQUAD),
+                TechConstants.isClan(
+                        ba.getArmorTechLevel(BattleArmor.LOC_SQUAD)));
+        
+        return StringUtil.makeLength(
+                "Armor: " + Integer.toString(getTotalOArmor()) + " "
+                        + armorName, getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+    }
+    
+    public String printArmorPlacement() {
+        StringBuffer buff = new StringBuffer();
+        buff.append("Armor Placement:\n");
+        for (int loc = 1; loc < getEntity().locations(); loc++) {
+            buff.append(printArmorLocation(loc)).append("\n");
+        }
+        return buff.toString();
+    }
+    
+    public String printArmorLocation(int loc) {
+        return StringUtil.makeLength(getEntity().getLocationAbbr(loc) + ":", 10)
+                + StringUtil.makeLength(getEntity().getOInternal(loc), 4)
+                + StringUtil.makeLength(getEntity().getOArmor(loc), 6) + "  ";
     }
 
+    /**
+     * Checks to see if this unit has valid armor assignment.
+     * 
+     * @param buff
+     * @return
+     */
+    public boolean correctArmor(StringBuffer buff) {
+        boolean correct = true;
+        int maxArmorPoints = ba.getMaximumArmorPoints();
+        for (int loc = 0; loc < ba.locations(); loc++) {
+            if (ba.getOArmor(loc) > maxArmorPoints) {
+                buff.append(printArmorLocation(loc))
+                        .append(printArmorLocProp(loc,
+                                maxArmorPoints)).append("\n");
+                correct = false;
+            }
+        }
+        return correct ;
+    }
+    
+    public String printArmorLocProp(int loc, int wert) {
+        return " is greater than " + Integer.toString(wert) + "!";
+    }
+    
+    public boolean correctMovement(StringBuffer buff) {
+        if (ba.getOriginalWalkMP() > ba.getMaximumWalkMP()){
+            buff.append("Walk MP is " + ba.getOriginalWalkMP()
+                    + " but maximum is " + ba.getMaximumWalkMP() + "!");
+            return false;
+        }
+        
+        if (ba.getOriginalJumpMP() > ba.getMaximumJumpMP()){
+            buff.append("Jump MP is " + ba.getOriginalWalkMP()
+                    + " but maximum is " + ba.getMaximumWalkMP() + "!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                && ba.hasWorkingMisc(MiscType.F_PARTIAL_WING)){
+            buff.append("BattleArmor may not mount a jump booster " +
+            		"and a partial wing!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER) 
+                && ba.hasMyomerBooster()){
+            buff.append("BattleArmor may not mount a mechanical jump booster " +
+                    "and a myomer booster!");
+            return false;
+        }
+        
+        if (ba.hasMyomerBooster() 
+                && ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                    == EquipmentType.T_ARMOR_BA_MIMETIC){
+            buff.append("BattleArmor may not mount a myomer booster " +
+                    "and mimetic armor!");
+            return false;
+        }
+        
+        if (ba.hasMyomerBooster() 
+                && (ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_BASIC
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_IMP
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE)){
+            buff.append("BattleArmor may not mount a myomer booster " +
+                    "and stealth armor!");
+            return false;
+        }
+        
+        if (ba.countWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER) > 1){
+            buff.append("BattleArmor may only mount 1 " +
+            		"mechanical jump booster!");
+            return false;
+        }
+        
+        if (ba.countWorkingMisc(MiscType.F_MASC) > 1){
+            buff.append("BattleArmor may only mount 1 " +
+                    "myomer booster!");
+            return false;
+        }
+        
+        
+        return true;
+    }
+    
+    public boolean correctCriticals(StringBuffer buff) {
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        getUnallocatedEquipment(ba, unallocated);
+        boolean correct = true;
+
+        if (!unallocated.isEmpty()) {
+            buff.append("Unallocated Equipment:\n");
+            for (Mounted mount : unallocated) {
+                buff.append(mount.getType().getInternalName()).append("\n");
+            }
+            correct = false;
+        }
+        
+        int critsUsed[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int  numAPWeapons[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int  numAMWeapons[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        // Count used crits, AM/AP weaps for each squad member and location
+        for (Mounted m : ba.getEquipment()){
+            // Ignore unmounted equipment, we'll deal with that elsewhere
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+            int critSize;
+            if (m.getType().isSpreadable()){
+                critSize = 1;
+            } else {
+                critSize = m.getType().getCriticals(ba);
+            }
+            
+            // Check for valid BA weapon
+            if ((m.getType() instanceof WeaponType) 
+                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)){
+                buff.append(m.getName() + " is not a BattleArmor weapon!\n");
+                correct = false;
+            }
+            
+            // Check for valid BA equipment
+            if ((m.getType() instanceof MiscType) 
+                    && !m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)){
+                buff.append(m.getName() + " is not BattleArmor equipment!\n");
+                correct = false;
+            }
+            
+            if (m.getLocation() != BattleArmor.LOC_SQUAD){
+                critsUsed[m.getLocation()][m.getBaMountLoc()] += critSize;
+                if ((m.getType() instanceof WeaponType)){
+                    if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                        numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
+                    } else {
+                        numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
+                    }
+                }
+            } else {
+                for (int t = 0; t <= ba.getTroopers(); t++){
+                    critsUsed[t][m.getBaMountLoc()] += critSize;
+                    if ((m.getType() instanceof WeaponType)){
+                        if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                            numAPWeapons[t][m.getBaMountLoc()]++;
+                        } else {
+                            numAMWeapons[t][m.getBaMountLoc()]++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Now check to make sure the counts are valid
+        for (int t = 0; t <= ba.getTroopers(); t++){
+            for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++){
+                if (critsUsed[t][loc] > ba.getNumCrits(loc)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + " has "
+                            + critsUsed[t][loc]
+                            + " used criticals, but only has "
+                            + ba.getNumCrits(loc) + " available criticsl!\n");
+                    correct = false;
+                }
+                if (numAMWeapons[t][loc] > 
+                        ba.getNumAllowedAntiMechWeapons(loc)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + "has "
+                            + numAMWeapons[t][loc]
+                            + " anti-mech weapons, but only "
+                            + ba.getNumAllowedAntiMechWeapons(loc) 
+                            + " are allowed!\n");
+                    correct = false;
+                }
+                if (numAPWeapons[t][loc] > 
+                        ba.getNumAllowedAntiPersonnelWeapons(loc, t)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + "has "
+                            + numAPWeapons[t][loc]
+                            + " anti-personnel weapons, but only "
+                            + ba.getNumAllowedAntiPersonnelWeapons(loc, t)
+                            + " are allowed!\n");
+                    correct = false;
+                }
+            }
+        }
+        
+        return correct;
+    }
+    
+    public void getUnallocatedEquipment(Entity entity, 
+            Vector<Mounted> unallocated) {
+        for (Mounted m : entity.getEquipment()) {
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
+                if ((m.getType() instanceof AmmoType)
+                        && (m.getUsableShotsLeft() <= 1)) {
+                    continue;
+                }
+                if ((m.getType().getCriticals(entity) == 0)) {
+                    continue;
+                }
+                unallocated.addElement(m);
+            }
+        }
+    }
+    
+    public boolean correctManipulators(StringBuffer buff){
+        return true;
+    }
+    
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        return false;
+        return correctEntity(buff, true);
     }
 
     @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        return false;
+        boolean correct = true;
+        if (skip()) {
+            return true;
+        }
+        if (!correctWeight(buff)) {
+            buff.insert(0, printTechLevel() + printShortMovement());
+            buff.append(printWeightCalculation());
+            correct = false;
+        }
+        
+        if (showCorrectArmor() && !correctArmor(buff)) {
+            correct = false;
+        }
+        if (showCorrectCritical() && !correctCriticals(buff)) {
+            correct = false;
+        }
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
+            correct = false;
+        }
+        if (hasIllegalTechLevels(buff, ignoreAmmo)) {
+            correct = false;
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
+            correct = false;
+        }
+        
+        correct &= correctManipulators(buff);
+        
+        correct &= correctMovement(buff);
+        
+        return correct;
     }
 
     @Override
     public StringBuffer printEntity() {
-        return null;
+        StringBuffer buff = new StringBuffer();
+        buff.append("BattleArmor: ").append(ba.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");        
+        buff.append(printTechLevel());
+        buff.append(printSource());
+        buff.append(printShortMovement());
+        if (correctWeight(buff, true, true)) {
+            buff.append("Weight: ").append(getWeight()).append(" (")
+                    .append(calculateWeight()).append(")\n");
+        }
+        buff.append(printWeightCalculation()).append("\n");
+        buff.append(printArmorPlacement());
+        correctArmor(buff);
+        buff.append(printLocations());
+        correctCriticals(buff);
+        printFailedEquipment(buff);
+        return buff;
+    }
+    
+    public String printWeightCalculation() {
+        return  printWeightArmor()
+                + "Equipment:\n"
+                + printMiscEquip() + printWeapon() + printAmmo();
     }
 
     @Override

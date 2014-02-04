@@ -28,6 +28,7 @@ v0.37.7-dev (SVN)
 + Bug: TestBattleArmor wasn't accounting for free MP when computing BA weight
 + Data: Changes to Clan Battle Armor tags.
 + Bug: Updated max MP tracking methods in BattleArmor to account for equipment
++ Implemented TestBattleArmor and updated EntityVerifier to verify BattleArmor
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

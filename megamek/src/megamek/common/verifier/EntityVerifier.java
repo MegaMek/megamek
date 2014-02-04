@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
 import megamek.common.Aero;
+import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -102,7 +103,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         } else if ((entity instanceof Tank) && 
                 !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, tankOption, fileString);
-        }else if (entity.getEntityType() == Entity.ETYPE_AERO
+        } else if (entity.getEntityType() == Entity.ETYPE_AERO
                 && entity.getEntityType() != 
                         Entity.ETYPE_DROPSHIP
                 && entity.getEntityType() != 
@@ -113,7 +114,10 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                         Entity.ETYPE_JUMPSHIP
                 && entity.getEntityType() != 
                         Entity.ETYPE_SPACE_STATION) {
-            testEntity = new TestAero((Aero)entity, aeroOption, null);
+            testEntity = new TestAero((Aero)entity, aeroOption, fileString);
+        } else if (entity instanceof BattleArmor){
+            testEntity = new TestBattleArmor((BattleArmor) entity, baOption,
+                    fileString);
         } else {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);
@@ -179,7 +183,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
                     || ms[i].getUnitType().equals("Tank")
-                    || ms[i].getUnitType().equals("Aero")) {
+                    || ms[i].getUnitType().equals("Aero")
+                    || ms[i].getUnitType().equals("BattleArmor")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {

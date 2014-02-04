@@ -1956,7 +1956,14 @@ public class BattleArmor extends Infantry {
                 max = 3;
             }
         }
-        //TODO: adjust for other equipment
+        
+        // Partial wings and jump boosters add 1 jump MP and can increase it 
+        //  over the max and they cannot be used together
+        if (hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                || hasWorkingMisc(MiscType.F_PARTIAL_WING)){
+            max++;
+        }
+        
         return max;
     }
     
@@ -1975,6 +1982,27 @@ public class BattleArmor extends Infantry {
         if(chassisType == CHASSIS_TYPE_QUAD) {
             max += 2;
         }
+        
+        // Mechanical jump boosters add 1 MP and can increase it over the max
+        if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)){
+            max++;
+        }
+        
+        if (hasMyomerBooster()){
+            switch (getWeightClass()){
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+            case EntityWeightClass.WEIGHT_LIGHT:
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                max += 2;
+                break;
+            case EntityWeightClass.WEIGHT_HEAVY:
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                max++;
+                break;
+            }
+        }
+        
+      
         return max;
     }
     

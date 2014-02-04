@@ -1283,7 +1283,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         public void setValueAt(Object value, int row, int col) {
             switch (col) {
             case COL_QTY:
-                qty[row] = Integer.parseInt((String) value) + 1;
+                qty[row] = Integer.parseInt((String) value);
                 fireTableCellUpdated(row, col);
                 break;
             default:

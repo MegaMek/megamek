@@ -48,13 +48,13 @@ biped
 6
 </armor_tech>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAAPGaussRifle:RA
 CLBAMyomerBooster:Body
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 3

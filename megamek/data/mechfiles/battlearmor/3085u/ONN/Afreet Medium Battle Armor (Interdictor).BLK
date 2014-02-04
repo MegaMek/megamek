@@ -33,13 +33,13 @@ biped
 <Armor>
 5
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 Clan BA Heavy Machine Gun:RA
 CL BA ECM:Body
 CLBAJumpBooster:Body
 BABattleClawVibro:LA
 BABattleClawVibro:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

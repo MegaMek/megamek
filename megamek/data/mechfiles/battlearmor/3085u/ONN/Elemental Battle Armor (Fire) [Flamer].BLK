@@ -44,11 +44,11 @@ biped
 10
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAFlamer:RA
 CLBASRM2OS:Body
 BABattleClaw:LA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

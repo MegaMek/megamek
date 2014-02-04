@@ -30,7 +30,7 @@ biped
 <Armor>
 13
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 Clan BA Machine Gun:LA
 Clan BA Machine Gun:RA
 CLSRM3:Body
@@ -40,7 +40,7 @@ BASRM3 Ammo:Body
 BASRM3 Ammo:Body
 BABattleClawVibro:LA
 BABattleClawVibro:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

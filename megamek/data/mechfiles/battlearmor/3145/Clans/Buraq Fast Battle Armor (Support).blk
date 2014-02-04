@@ -36,7 +36,7 @@ Jump
 5
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAMyomerBooster:Body
 Clan Advanced SRM 2:Body
 BAAdvancedSRM2 Ammo:Body
@@ -44,7 +44,7 @@ BAAdvancedSRM2 Ammo:Body
 BAAdvancedSRM2 Ammo:Body
 BAAdvancedSRM2 Ammo:Body
 CLLightTAG:Body
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 TRO 3145 Clans

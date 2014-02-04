@@ -36,14 +36,14 @@ Jump
 3
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 CLBALightMG:Body
 CLBAHeavyGL:LA
 CLBAHeavyGL:RA
 BACuttingTorch:LA
 BABattleClaw:LA
 BABattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 TRO 3145 Clans

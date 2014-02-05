@@ -39,6 +39,7 @@ v0.37.7-dev (SVN)
   CriticalSlot of 0
 + Data: New Images
 + Changed Name in MANIPULATOR_TYPE_STRINGS to match Internal Names in MiscType.
++ Added tag to BA Manipulators.
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

@@ -2751,12 +2751,22 @@ public abstract class Mech extends Entity {
         addCritical(loc, cs);
         return mounted;
     }
-
+    
     /**
      * Mounts the specified weapon in the specified location.
      */
     @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+            throws LocationFullException {
+        addEquipment(mounted,loc,rearMounted,-1);
+    }
+
+    /**
+     * Mounts the specified weapon in the specified location.
+     */
+    @Override
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted, 
+            int critSlot)
             throws LocationFullException {
         // if there's no actual location, then don't add criticals
         if (loc == LOC_NONE) {
@@ -2766,12 +2776,12 @@ public abstract class Mech extends Entity {
 
         // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
-        int slots = mounted.getType().getCriticals(this);
+        int reqSlots = mounted.getType().getCriticals(this);
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
-            slots = 1;
+            reqSlots = 1;
         }
         if (isSuperHeavy()) {
-            slots = (int) Math.ceil(((double) slots / 2.0f));
+            reqSlots = (int) Math.ceil(((double) reqSlots / 2.0f));
         }
         // gauss and AC weapons on omni arms means no arm actuators, so we
         // remove them
@@ -2792,12 +2802,13 @@ public abstract class Mech extends Entity {
         }
 
         // check criticals for space
-        if (getEmptyCriticals(loc) < slots) {
+        if (getEmptyCriticals(loc) < reqSlots) {
             throw new LocationFullException(mounted.getName()
                     + " does not fit in " + getLocationAbbr(loc) + " on "
                     + getDisplayName()
                     + "\n        free criticals in location: "
-                    + getEmptyCriticals(loc) + ", criticals needed: " + slots);
+                    + getEmptyCriticals(loc) + ", criticals needed: " 
+                    + reqSlots);
         }
         // add it
         if (getEquipmentNum(mounted) == -1) {
@@ -2805,11 +2816,57 @@ public abstract class Mech extends Entity {
         }
 
         // add criticals
-
-        for (int i = 0; i < slots; i++) {
-            CriticalSlot cs = new CriticalSlot(mounted);
-            addCritical(loc, cs);
+        if (critSlot == -1){
+            for (int i = 0; i < reqSlots; i++) {
+                CriticalSlot cs = new CriticalSlot(mounted);
+                addCritical(loc, cs);
+            }
+        } else {
+            // Need to ensure that we have enough contiguous critical slots
+            int iterations = 0;
+            while (getContiguousNumberOfCrits(loc, critSlot) < reqSlots &&
+                    iterations < getNumberOfCriticals(loc)){
+                critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
+                iterations++;
+            }
+            if (iterations >= getNumberOfCriticals(loc)){
+                throw new LocationFullException(mounted.getName()
+                        + " does not fit in " + getLocationAbbr(loc) + " on "
+                        + getDisplayName() 
+                        + "\n    needs "
+                        + getEmptyCriticals(loc) 
+                        + " free contiguous criticals");
+            }
+            for (int i = 0; i < reqSlots; i++) {
+                CriticalSlot cs = new CriticalSlot(mounted);
+                addCritical(loc, cs, critSlot);
+                critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
+            }
         }
+    }
+    
+    /**
+     * This method will return the number of contiguous criticals in the given
+     * location, starting at the given critical slot
+     * 
+     * @param unit          Unit to check critical slots on
+     * @param location      The location on the unit to check slots on
+     * @param startingSlot  The critical slot to start at
+     * @return
+     */
+    private int getContiguousNumberOfCrits(int loc, int startingSlot){
+        
+        int numCritSlots = getNumberOfCriticals(loc);
+        int contiguousCrits = 0;
+        
+        for (int slot = startingSlot; slot < numCritSlots; slot++) {
+            if (getCritical(loc, slot) == null) {
+                contiguousCrits++;
+            } else {
+               break;
+            }
+        }
+        return contiguousCrits;
     }
 
     /**

@@ -75,12 +75,12 @@ public class BattleArmor extends Infantry {
     // These must match the internal names set in MiscType for these 
     //  manipulators
     public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
-            "Armored Glove", "Basic Manipulator",
-            "Basic Manipulator (Mine Clearance)", "Battle Claw",
-            "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
-            "Heavy Battle Claw", "Heavy Battle Claw (Magnets)", 
-            "Heavy Battle Claw (Vibro-Claws)",
-            "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
+            "BAArmoredGlove", "BABasicManipulator",
+            "BABasicManipulatorMineClearance", "BABattleClaw",
+            "BABattleClawMagnets", "BABattleClawVibro",
+            "BAHeavyBattleClaw", "BAHeavyBattleClawMagnets", 
+            "BAHeavyBattleClawVibro",
+            "BASalvageArm", "BACargoLifter", "BAIndustrialDrill" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;

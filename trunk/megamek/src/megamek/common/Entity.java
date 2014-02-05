@@ -3446,6 +3446,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false; // no slot available :(
     }
+    
+    /**
+     * Adds a critical to a critical slot, first trying the supplied slot 
+     * number, and continuing from there if it's full
+     *
+     * @return true if there was room for the critical
+     */
+    public boolean addCritical(int loc, CriticalSlot cs, int slotNumber) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            if (getCritical(loc, slotNumber) == null) {
+                crits[loc][slotNumber] = cs;
+                return true;
+            }
+            slotNumber = (slotNumber + 1) % getNumberOfCriticals(loc);
+        }
+        return false; // no slot available :(
+    }
 
     /**
      * Attempts to set the given slot to the given critical. If the desired slot

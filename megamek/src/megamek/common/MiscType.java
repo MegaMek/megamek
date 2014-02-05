@@ -5264,7 +5264,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Armored Glove";
-        misc.setInternalName("BAArmoredGlove");
+        misc.setInternalName("BAArmoredGlove"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5285,7 +5285,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Basic Manipulator";
-        misc.setInternalName("BABasicManipulator");
+        misc.setInternalName("BABasicManipulator"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5306,7 +5306,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Basic Manipulator (w/ Mine Clearance)";
-        misc.setInternalName("BABasicManipulatorMineClearance");
+        misc.setInternalName("BABasicManipulatorMineClearance"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.015f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5328,7 +5328,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Battle Claw";
-        misc.setInternalName("BABattleClaw");
+        misc.setInternalName("BABattleClaw"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.015f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5419,7 +5419,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Battle Magnetic Claw";
-        misc.setInternalName("BABattleClawMagnets");
+        misc.setInternalName("BABattleClawMagnets"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.035f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5440,7 +5440,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Battle Vibro Claw";
-        misc.setInternalName("BABattleClawVibro");
+        misc.setInternalName("BABattleClawVibro"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.050f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5461,7 +5461,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Cargo Lifter";
-        misc.setInternalName("BACargoLifter");
+        misc.setInternalName("BACargoLifter"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.03f;
         misc.criticals = 0;
         misc.cost = 250;
@@ -5483,7 +5483,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Heavy Battle Claw";
-        misc.setInternalName("BAHeavyBattleClaw");
+        misc.setInternalName("BAHeavyBattleClaw"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.020f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5505,7 +5505,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Heavy Battle Magnetic Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Magnets)");
-        misc.setInternalName("BAHeavyBattleClawMagnets");
+        misc.setInternalName("BAHeavyBattleClawMagnets"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.040f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -5527,7 +5527,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Heavy Battle Vibro Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Vibro-Claws)");
-        misc.setInternalName("BAHeavyBattleClawVibro");
+        misc.setInternalName("BAHeavyBattleClawVibro"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.060f;
         misc.criticals = 0;
         misc.hittable = false;

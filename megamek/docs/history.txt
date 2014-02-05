@@ -38,6 +38,7 @@ v0.37.7-dev (SVN)
   which adds a Mounted to the location in the specific critical slot. The previous method calls this one with a 
   CriticalSlot of 0
 + Data: New Images
++ Changed Name in MANIPULATOR_TYPE_STRINGS to match Internal Names in MiscType.
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

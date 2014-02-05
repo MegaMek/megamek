@@ -58,7 +58,6 @@ public class BattleArmor extends Infantry {
     private static final String[] CLAN_LOCATION_NAMES =
         { "Point", "Trooper 1", "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
 
-    // these only used by custom ba dialog
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
     public static final int MANIPULATOR_BASIC = 2;
@@ -67,14 +66,21 @@ public class BattleArmor extends Infantry {
     public static final int MANIPULATOR_BATTLE_MAGNET = 5;
     public static final int MANIPULATOR_BATTLE_VIBRO = 6;
     public static final int MANIPULATOR_HEAVY_BATTLE = 7;
-    public static final int MANIPULATOR_HEAVY_BATTLE_VIBRO = 8;
-    public static final int MANIPULATOR_SALVAGE_ARM = 9;
-    public static final int MANIPULATOR_CARGO_LIFTER = 10;
-    public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
+    public static final int MANIPULATOR_HEAVY_BATTLE_MAGNET = 8;
+    public static final int MANIPULATOR_HEAVY_BATTLE_VIBRO = 9;
+    public static final int MANIPULATOR_SALVAGE_ARM = 10;
+    public static final int MANIPULATOR_CARGO_LIFTER = 11;
+    public static final int MANIPULATOR_INDUSTRIAL_DRILL = 12;
 
-    // these only used by custom ba dialog
-    public static final String[] MANIPULATOR_TYPE_STRINGS =
-        { "None", "Armored Glove", "Basic Manipulator", "Basic Manipulator (Mine Clearance)", "Battle Claw", "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)", "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)", "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
+    // These must match the internal names set in MiscType for these 
+    //  manipulators
+    public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
+            "Armored Glove", "Basic Manipulator",
+            "Basic Manipulator (Mine Clearance)", "Battle Claw",
+            "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
+            "Heavy Battle Claw", "Heavy Battle Claw (Magnets)", 
+            "Heavy Battle Claw (Vibro-Claws)",
+            "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;

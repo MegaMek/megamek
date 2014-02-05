@@ -5269,7 +5269,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_ARMORED_GLOVE)
-                .or(F_AP_MOUNT);
+                .or(F_AP_MOUNT).or(F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.introDate = 2110;
         misc.cost = 2500;

@@ -109,12 +109,12 @@ public class TestBattleArmor extends TestEntity {
         }
         
         /**
-         * Given an armor type, return the <code>AeroArmor</code> instance that
+         * Given an armor type, return the <code>BAArmor</code> instance that
          * represents that type.
          * 
          * @param t  The armor type.
          * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given 
+         * @return   The <code>BAArmor</code> that correspondes to the given 
          *              type or null if no match was found.
          */
         public static BAArmor getArmor(int t, boolean c){
@@ -176,13 +176,13 @@ public class TestBattleArmor extends TestEntity {
         }
         
         /**
-         * Given an armor type, return the <code>AeroArmor</code> instance that
-         * represents that type.
+         * Given an manipulator internal name, return the 
+         * <code>BAManipulator</code> instance that
+         * represents that internal name.
          * 
-         * @param t  The armor type.
-         * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given 
-         *              type or null if no match was found.
+         * @param name  The internal name.
+         * @return      The <code>BAManipulator</code> that correspondes to 
+         *              the given internal name or null if no match was found.
          */
         public static BAManipulator getManipulator(String name){
             for (BAManipulator m : values()){

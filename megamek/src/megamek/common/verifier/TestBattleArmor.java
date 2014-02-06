@@ -674,6 +674,7 @@ public class TestBattleArmor extends TestEntity {
         return correct;
     }
     
+    
     public void getUnallocatedEquipment(Entity entity, 
             Vector<Mounted> unallocated) {
         for (Mounted m : entity.getEquipment()) {
@@ -691,7 +692,50 @@ public class TestBattleArmor extends TestEntity {
     }
     
     public boolean correctManipulators(StringBuffer buff){
-        return true;
+        boolean correct = true;
+        int numLAManipulators = 0;
+        int numRAManipulators = 0;
+        BAManipulator laManipType = BAManipulator.NONE;
+        BAManipulator raManipType = BAManipulator.NONE;
+        for (Mounted m : ba.getEquipment()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
+                if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                    numLAManipulators++;
+                    laManipType = BAManipulator.getManipulator(m.getName());
+                } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+                    numRAManipulators++;
+                    raManipType = BAManipulator.getManipulator(m.getName());
+                } else {
+                    buff.append(m.getName() + "mounted in "
+                            + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()]
+                            + ", but manipulators must be mounted in arms!");
+                    correct = false;
+                }
+            }
+        }
+        
+        if (numLAManipulators > 1){
+            buff.append("Found more than 1 manipulator in the left arm!");
+            correct = false;
+        }
+        
+        if (numRAManipulators > 1){
+            buff.append("Found more than 1 manipulator in the right arm!");
+            correct = false;
+        }
+        
+        if ((laManipType.pairMounted || raManipType.pairMounted) 
+                && (laManipType.type != raManipType.type)){
+            if (laManipType.pairMounted){
+                buff.append("Left Arm manipulator must be mounted as a " +
+                		"pair, but the right arm manipulator doesn't match! ");
+            } else {
+                buff.append("Right Arm manipulator must be mounted as a " +
+                        "pair, but the left arm manipulator doesn't match! "); 
+            }
+            correct = false;
+        }
+        return correct;
     }
     
     @Override

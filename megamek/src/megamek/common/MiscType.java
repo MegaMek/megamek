@@ -5305,7 +5305,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
-        misc.name = "Basic Manipulator (w/ Mine Clearance)";
+        misc.name = "Basic Manipulator (Mine Clearance)";
         misc.setInternalName("BABasicManipulatorMineClearance"); // This value MUST match the name in BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.tonnage = 0.015f;
         misc.criticals = 0;

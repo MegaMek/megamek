@@ -158,7 +158,9 @@ public class TestBattleArmor extends TestEntity {
         /**
          * The name of this manipulator
          */
-        public String name;
+        public String internalName;
+        
+        public String displayName;
         
         /**
          * Denotes whether this armor is Clan or not.
@@ -167,7 +169,8 @@ public class TestBattleArmor extends TestEntity {
         
         BAManipulator(int t, boolean p){
             type = t;
-            name = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
+            internalName = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
+            displayName = BattleArmor.MANIPULATOR_NAME_STRINGS[t];
             pairMounted = p;
         }
         
@@ -186,7 +189,8 @@ public class TestBattleArmor extends TestEntity {
          */
         public static BAManipulator getManipulator(String name){
             for (BAManipulator m : values()){
-                if (m.name.equals(name)){
+                if (m.internalName.equals(name) 
+                        || m.displayName.equals(name)){
                     return m;
                 }
             }

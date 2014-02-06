@@ -72,8 +72,12 @@ public class BattleArmor extends Infantry {
     public static final int MANIPULATOR_CARGO_LIFTER = 11;
     public static final int MANIPULATOR_INDUSTRIAL_DRILL = 12;
 
-    // These must match the internal names set in MiscType for these 
-    //  manipulators
+    /**
+     * A list of the internal names for the different manipulator types.  
+     * The indices in this collection correspond to the MANIPULATOR defines
+     * in <code>BattleArmor</code>.  These names should match the internal 
+     * name for the manipulator's MiscType entry.
+     */
     public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
             "BAArmoredGlove", "BABasicManipulator",
             "BABasicManipulatorMineClearance", "BABattleClaw",
@@ -81,6 +85,20 @@ public class BattleArmor extends Infantry {
             "BAHeavyBattleClaw", "BAHeavyBattleClawMagnets", 
             "BAHeavyBattleClawVibro",
             "BASalvageArm", "BACargoLifter", "BAIndustrialDrill" };
+    
+    /**
+     * A list of the display names for the different manipulator types.  
+     * The indices in this collection correspond to the MANIPULATOR defines
+     * in <code>BattleArmor</code>.  These names should match the  
+     * name for the manipulator's MiscType entry.
+     */
+    public static final String[] MANIPULATOR_NAME_STRINGS = { "None",
+            "Armored Glove", "Basic Manipulator",
+            "Basic Manipulator (Mine Clearance)", "Battle Claw",
+            "Battle Magnetic Claw", "Battle Vibro Claw",
+            "Heavy Battle Claw", "Heavy Battle Magnetic Claw",
+            "Heavy Battle Vibro Claw", "Salvage Arm", "Cargo Lifter",
+            "Industrial Drill" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;
@@ -2196,5 +2214,69 @@ public class BattleArmor extends Infantry {
     public boolean hasMagneticClamps(){
         return countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
     }
+    
+    /**
+     * Returns the <code>EquipmentType</code> internal name for the manipulator
+     * mounted in the left arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public String getLeftManipulatorName(){
+        Mounted m = getLeftManipulator();
+        if (m == null){
+            return MANIPULATOR_TYPE_STRINGS[MANIPULATOR_NONE];
+        } else {
+            return m.getType().getInternalName();
+        }
+    }
+    
+    /**
+     * Returns the <code>EquipmentType</code> internal name for the manipulator
+     * mounted in the right arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public String getRightManipulatorName(){
+        Mounted m = getRightManipulator();
+        if (m == null){
+            return MANIPULATOR_TYPE_STRINGS[MANIPULATOR_NONE];
+        } else {
+            return m.getType().getInternalName();
+        }
+    }
+    
+    /**
+     * Returns the <code>Mounted</code> for the manipulator
+     * mounted in the left arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public Mounted getLeftManipulator(){
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR) 
+                    && m.getBaMountLoc() == MOUNT_LOC_LARM){
+                return m;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the <code>Mounted</code> for the manipulator
+     * mounted in the right arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public Mounted getRightManipulator(){
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR) 
+                    && m.getBaMountLoc() == MOUNT_LOC_RARM){
+                return m;
+            }
+        }
+        return null;
+    }
+    
+
     
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -40,6 +40,7 @@ v0.37.7-dev (SVN)
 + Data: New Images
 + Changed Name in MANIPULATOR_TYPE_STRINGS to match Internal Names in MiscType.
 + Added tag to BA Manipulators.
++ Feature: TestBattleArmor now checks validity of manipulators on BA
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

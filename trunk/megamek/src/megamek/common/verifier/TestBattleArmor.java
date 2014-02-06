@@ -128,6 +128,73 @@ public class TestBattleArmor extends TestEntity {
     }
     
     /**
+     * An enumeration that keeps track of the legal manipulators for 
+     * BattleArmor.
+     * 
+     * @author arlith
+     *
+     */
+    public static enum BAManipulator{
+        NONE(BattleArmor.MANIPULATOR_NONE,false),   
+        ARMORED_GLOVE(BattleArmor.MANIPULATOR_ARMORED_GLOVE,false),
+        BASIC(BattleArmor.MANIPULATOR_BASIC,false),
+        BASIC_MINE_CLEARANCE(BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE,true),
+        BATTLE(BattleArmor.MANIPULATOR_BATTLE,false),
+        BATTLE_MAGNET(BattleArmor.MANIPULATOR_BATTLE_MAGNET,true),
+        BATTLE_VIBRO(BattleArmor.MANIPULATOR_BATTLE_VIBRO,false),
+        CARGO_LIFTER(BattleArmor.MANIPULATOR_CARGO_LIFTER,true),
+        HEAVY_BATTLE(BattleArmor.MANIPULATOR_HEAVY_BATTLE,false),
+        HEAVY_BATTLE_MAGNET(BattleArmor.MANIPULATOR_HEAVY_BATTLE_MAGNET,true),
+        HEAVY_BATTLE_VIBRO(BattleArmor.MANIPULATOR_HEAVY_BATTLE_VIBRO,false),
+        SALVAGE_ARM(BattleArmor.MANIPULATOR_SALVAGE_ARM,false),
+        DRILL(BattleArmor.MANIPULATOR_INDUSTRIAL_DRILL,false);
+
+        /**
+         * The type, corresponding to types defined in 
+         * <code>EquipmentType</code>.
+         */
+        public int type;
+        
+        /**
+         * The name of this manipulator
+         */
+        public String name;
+        
+        /**
+         * Denotes whether this armor is Clan or not.
+         */
+        public boolean pairMounted;
+        
+        BAManipulator(int t, boolean p){
+            type = t;
+            name = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
+            pairMounted = p;
+        }
+        
+        public static int getNumBAArmors(){
+            return values().length;
+        }
+        
+        /**
+         * Given an armor type, return the <code>AeroArmor</code> instance that
+         * represents that type.
+         * 
+         * @param t  The armor type.
+         * @param c  Whether this armor type is Clan or not.
+         * @return   The <code>AeroArmor</code> that correspondes to the given 
+         *              type or null if no match was found.
+         */
+        public static BAManipulator getManipulator(String name){
+            for (BAManipulator m : values()){
+                if (m.name.equals(name)){
+                    return m;
+                }
+            }
+            return null;
+        }
+    }
+    
+    /**
      * Checks to see if the supplied <code>Mounted</code> is valid to be mounted
      * in the given location on the supplied <code>BattleArmor</code>.
      * 
@@ -163,6 +230,10 @@ public class TestBattleArmor extends TestEntity {
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         for (Mounted m : ba.getEquipment()){
+            // Manipulators don't take up slots in BA
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
+                continue;
+            }
             if (m.getBaMountLoc() == loc 
                     && (m.getLocation() == trooper 
                         || m.getLocation() == BattleArmor.LOC_SQUAD)){
@@ -512,6 +583,10 @@ public class TestBattleArmor extends TestEntity {
         for (Mounted m : ba.getEquipment()){
             // Ignore unmounted equipment, we'll deal with that elsewhere
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+            // Manipulators don't take up slots in BA
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
                 continue;
             }
             int critSize;

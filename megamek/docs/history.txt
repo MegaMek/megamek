@@ -46,6 +46,7 @@ v0.37.7-dev (SVN)
 + Bug: Clan BA Reactive and Reflective armor had the wrong internal name.  
     They also both specified duplicate additional lookup names.
 + Bug: IS BA Reactive and Reflective armor had the wrong internal name.
++ Added code to MechView so that BA armors don't show in equipment
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

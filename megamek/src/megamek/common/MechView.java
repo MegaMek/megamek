@@ -684,6 +684,11 @@ public class MechView {
                     || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reactive") != -1) //$NON-NLS-1$
+                    || (name.indexOf("BA Stealth") != -1) //$NON-NLS-1$
+                    || (name.indexOf("BA Fire Resistant") != -1) //$NON-NLS-1$
+                    || (name.indexOf("BA Mimetic") != -1) //$NON-NLS-1$
+                    || (name.indexOf("BA Standard") != -1) //$NON-NLS-1$
+                    || (name.indexOf("BA Advanced") != -1) //$NON-NLS-1$
                     || (name.indexOf("Reflective") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
                 // These items are displayed elsewhere, so skip them here.

@@ -70,6 +70,7 @@ v0.37.7-dev (SVN)
     troopers)
 + Bug: DetachableWeaponsPack MiscType for Clan and IS had criticals of 0 
     instead of 1
++ Data: First round of BA fixes (There are still errors in here)
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

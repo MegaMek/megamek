@@ -39,18 +39,18 @@ Leg
 <Squad Equipment>
 BABasicManipulator:LA
 BABasicManipulator:RA
-ISBATubeArtillery:DWP
+ISBATubeArtillery:DWP:Body
 ISDetachableWeaponPack:Body
 BA-Magnetic Clamp:Body
 ISBASmallLaser:RA
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
-ISBATubeArtilleryAmmo:Body
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
+ISBATubeArtilleryAmmo:Body:Shots1#
 </Squad Equipment>
 
 <source>

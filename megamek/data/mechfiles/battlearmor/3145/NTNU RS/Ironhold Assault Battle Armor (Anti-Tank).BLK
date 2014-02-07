@@ -42,7 +42,7 @@ biped
 <Point Equipment>
 CLBALBX:LA
 CLBALBX:LA
-CLSRM1OS:Body
+CLBASRM1OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

@@ -39,7 +39,7 @@ VTOL
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAExtendedLifeSupport
+BAExtendedLifeSupport:Body
 </Squad Equipment>
 
 <source>

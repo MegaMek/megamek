@@ -37,22 +37,22 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISSRM2:Body
+ISBASRM2:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
 </Squad Equipment>
 
 <source>

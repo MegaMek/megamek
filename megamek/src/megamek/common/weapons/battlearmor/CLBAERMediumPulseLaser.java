@@ -59,7 +59,7 @@ public class CLBAERMediumPulseLaser extends PulseLaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3059;
         techLevel.put(3059, techLevel.get(3071));
-        techLevel.put(3082, TechConstants.T_CLAN_TW);
+        techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
     }
 }

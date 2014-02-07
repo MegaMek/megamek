@@ -35,7 +35,7 @@ biped
 </Armor>
 <Point Equipment>
 Clan BA Machine Gun:RA
-CLSRM5OS:Body
+CLBASRM5OS:Body
 CLBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA

@@ -33,8 +33,16 @@ Jump
 </motion_type>
 
 <cruiseMP>
-2
+1
 </cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
 
 <Squad Equipment>
 ISImprovedSensors:RA
@@ -43,7 +51,23 @@ BAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BASalvageArm:LA
 BAArmoredGlove:RA
+Infantry Auto Rifle
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 XTR Periphery
@@ -54,7 +78,7 @@ biped
 </chassis>
 
 <jumpingMP>
-1
+0
 </jumpingMP>
 
 <armor>
@@ -68,11 +92,4 @@ biped
 <weightclass>
 0
 </weightclass>
-
-<armor_type>
-28
-</armor_type>
-<armor_tech>
-2
-</armor_tech>
 

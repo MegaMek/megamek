@@ -32,8 +32,8 @@ biped
 </Armor>
 <Squad Equipment>
 ISBAPlasmaRifle:RA
-ISSRM2OS:Body
-ISSRM2OS:Body
+ISBASRM2OS:Body
+ISBASRM2OS:Body
 BAHeavyBattleClaw:LA
 </Squad Equipment>
 <type>

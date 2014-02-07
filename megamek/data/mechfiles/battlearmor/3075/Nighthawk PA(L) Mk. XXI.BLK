@@ -37,10 +37,9 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-Mauser 960 Assault System:RA
 IS BA ECM:Body
 BAArmoredGlove:LA
-BAArmoredGlove:LA
+BAArmoredGlove:RA
 BAExtendedLifeSupport:Body
 </Squad Equipment>
 

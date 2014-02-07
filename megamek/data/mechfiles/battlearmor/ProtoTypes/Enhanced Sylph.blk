@@ -44,7 +44,7 @@ biped
 BABasicManipulator:LA
 BABasicManipulator:RA
 CLBAMyomerBooster:Body
-CLERMicroLaser:RA
+CLBAERMicroLaser:RA
 </Point Equipment>
 
 <type>

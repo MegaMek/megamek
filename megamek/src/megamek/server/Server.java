@@ -22681,7 +22681,6 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.indent(2);
                 r.add(stealth.getType().getName());
-                r.newlines = 0;
                 vDesc.addElement(r);
                 stealth.setMode("Off");
             }
@@ -23537,11 +23536,11 @@ public class Server implements Runnable {
                             r.add(((Mech) en).getSystemName(slot.getIndex()));
                         }
                     } else {
-                        // Shouldn't be null, but we'll be careful... 
+                        // Shouldn't be null, but we'll be careful...
                         if (slot.getMount() != null){
                             r.add(slot.getMount().getName());
                         }
-                    }                    
+                    }
                     vDesc.addElement(r);
                     slot.setArmored(false);
                     hits--;

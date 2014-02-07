@@ -31,6 +31,7 @@ import java.util.Vector;
 import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.common.Aero;
+import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -45,6 +46,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -521,8 +523,9 @@ public class MegaMek {
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                                || ((entity instanceof Tank) ||
-                                        (entity instanceof Aero))) {
+                                || (entity instanceof Tank) 
+                                || (entity instanceof Aero)
+                                || (entity instanceof BattleArmor)) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity,
@@ -546,6 +549,11 @@ public class MegaMek {
                                             Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero)entity,
                                         entityVerifier.aeroOption, null);
+                            } 
+                            if (entity instanceof BattleArmor){
+                                testEntity = new TestBattleArmor(
+                                        (BattleArmor) entity, 
+                                        entityVerifier.baOption, null);
                             }
 
                             if (testEntity != null) {

@@ -32,15 +32,19 @@ v0.37.7-dev (SVN)
 + Bug [#4027]: Setting Number of Components to Search
 + Bug BA Weapon fixes
 + Data some new and corrected units.
-+ Added Entity.addCritical(int, CriticalSlot, int) that allows a CriticalSlot to be added 
-  to a specific slot number (before it could only be done to the first empty slot)
-+ Updated Mech.addEquipment(Mounted, int, boolean): now there is Mech.addEquipment(Mounted, int, boolean, int)
-  which adds a Mounted to the location in the specific critical slot. The previous method calls this one with a 
-  CriticalSlot of 0
++ Added Entity.addCritical(int, CriticalSlot, int) that allows a CriticalSlot 
+    to be added to a specific slot number (before it could only be done to the 
+    first empty slot)
++ Updated Mech.addEquipment(Mounted, int, boolean): now there is 
+    Mech.addEquipment(Mounted, int, boolean, int) which adds a Mounted to the 
+    location in the specific critical slot. The previous method calls this one 
+    with a CriticalSlot of 0
 + Data: New Images
 + Changed Name in MANIPULATOR_TYPE_STRINGS to match Internal Names in MiscType.
 + Added tag to BA Manipulators.
 + Feature: TestBattleArmor now checks validity of manipulators on BA
++ Bug: Clan BA Reactive and Reflective armor had the wrong internal name.  
+    They also both specified duplicate additional lookup names.
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

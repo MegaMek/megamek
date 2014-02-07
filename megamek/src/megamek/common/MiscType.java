@@ -3361,7 +3361,6 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
         misc.setInternalName("IS "+ EquipmentType.getArmorTypeName(
                     EquipmentType.T_ARMOR_BA_REACTIVE, false));
-        misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3381,9 +3380,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        misc.setInternalName("Clan " + EquipmentType.getArmorTypeName(
+        misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REACTIVE, true));
-        misc.addLookupName("BA Reactive Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3407,7 +3405,6 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
         misc.setInternalName("IS " + EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
-        misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3429,9 +3426,8 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
 
-        misc.setInternalName("Clan " + EquipmentType.getArmorTypeName(
+        misc.setInternalName(EquipmentType.getArmorTypeName(
                         EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
-        misc.addLookupName("BA Reflective Armor ");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;

@@ -74,6 +74,7 @@ import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
@@ -16290,7 +16291,7 @@ public class Server implements Runnable {
             }
 
             // put in ASF heat build-up first because there are few differences
-            if (entity instanceof Aero) {
+            if ((entity instanceof Aero) && !(entity instanceof ConvFighter)) {
                 // If this aero is part of a squadron, we will deal with its
                 // heat with the fighter squadron
                 if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {

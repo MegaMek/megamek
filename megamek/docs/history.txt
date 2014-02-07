@@ -71,6 +71,7 @@ v0.37.7-dev (SVN)
 + Bug: DetachableWeaponsPack MiscType for Clan and IS had criticals of 0 
     instead of 1
 + Data: First round of BA fixes (There are still errors in here)
++ Bug [#4014]: Conventional Aeros Building Up Heat 0.37.6-exp
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

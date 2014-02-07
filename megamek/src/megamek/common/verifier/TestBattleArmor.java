@@ -513,6 +513,14 @@ public class TestBattleArmor extends TestEntity {
         }
         
         if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                && (ba.getMovementMode() != EntityMovementMode.INF_JUMP
+                    || ba.getJumpMP() < 1)){
+            buff.append("BattleArmor with jump boosters " +
+                    "must have jump jets with a least 1MP!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
                 && ba.hasWorkingMisc(MiscType.F_PARTIAL_WING)){
             buff.append("BattleArmor may not mount a jump booster " +
             		"and a partial wing!");

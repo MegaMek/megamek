@@ -1552,4 +1552,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setBaMountLoc(int baMountLoc) {
         this.baMountLoc = baMountLoc;
     }
+    
+    /**
+     * Returns true if this Mounted is a one-shot launcher of some kind 
+     * otherwise returns false.
+     * 
+     * @return
+     */
+    public boolean isOneShot(){
+        return getType().hasFlag(WeaponType.F_ONESHOT);
+    }
 }

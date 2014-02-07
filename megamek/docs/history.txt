@@ -59,6 +59,10 @@ v0.37.7-dev (SVN)
 + Bug: BA Myomer booster cost wasn't being calculated correctly
 + Bug [#4010]: Line break issue with stealth armor that stops functioning
 + Bug [#4006]: Facing after fall
++ Updates for BA one-shot ammo: Added a convenience method to Mounted that 
+    returns true if the Mounted is for a OS launcher, made it so ammo linked to 
+    an OS launcher doesn't show in the MechView, and also made it so ammo 
+    linked to an OS launcher doesn't get saved to BLK files
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

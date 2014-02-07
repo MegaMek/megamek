@@ -745,33 +745,14 @@ public class BattleArmor extends Infantry {
      * Mounts the specified equipment in the specified location.
      */
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+            throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
 
-        // Is the item a stealth equipment?
-        // TODO: what's the *real* extreme range modifier?
-        // FIXME: We used to set armor types by adding the armor as equipment
-        //  Some BA BLK files still do this instead of using armor_type
-        //  This could should remain until all of those units have been removed
+        // Is the item a camo system equipment?
         String name = mounted.getType().getInternalName();
-        if(BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_BASIC);
-        } else if (BattleArmor.STEALTH_PROTOTYPE.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE);
-        } else if (BattleArmor.STANDARD_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH);
-        } else if (BattleArmor.IMPROVED_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_IMP);
-        } else if (BattleArmor.MIMETIC_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_MIMETIC);
-        } else if (BattleArmor.STANDARD_PROTOTYPE.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE);
-        } else if (BattleArmor.ADVANCED_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED);
-        } else if (BattleArmor.FIRE_RESISTANT.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_FIRE_RESIST);
-        } else if (BattleArmor.CAMO_SYSTEM.equals(name)) {
+        if (BattleArmor.CAMO_SYSTEM.equals(name)) {
             hasCamoSystem = true;
             camoName = name;
         }
@@ -784,7 +765,8 @@ public class BattleArmor extends Infantry {
         if (mounted.getType() instanceof ISPopUpMineLauncher) {
             if (loc == BattleArmor.LOC_SQUAD) {
                 for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
-                    this.addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), loc);
+                    addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), 
+                            loc);
                 }
             }
         }
@@ -1727,8 +1709,7 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * return if this BA has laser reflective armo
-     * TODO: implement game rules
+     * return if this BA has laser reflective armor
      *
      * @return
      */
@@ -1743,7 +1724,6 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has reactive armor
-     *TODO: implement game rules
      * @return
      */
     public boolean isReactive() {

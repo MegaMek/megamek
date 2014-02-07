@@ -24908,7 +24908,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
             int height, PilotingRollData roll) {
-        return doEntityFall(entity, fallPos, height, Compute.d6(1), roll, false);
+        return doEntityFall(entity, fallPos, height, Compute.d6(1)-1, roll, false);
     }
 
     /**

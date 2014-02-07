@@ -34,10 +34,10 @@ biped
 </Armor>
 <Point Equipment>
 CLDetachableWeaponPack:LA
-CLBAHeavy Recoilless Rifle:DWP
+CLBAHeavy Recoilless Rifle:DWP:LA
 CLDetachableWeaponPack:RA
-CLBAHeavy Recoilless Rifle:DWP
-CLSRM5OS:Body
+CLBAHeavy Recoilless Rifle:DWP:RA
+CLBASRM5OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

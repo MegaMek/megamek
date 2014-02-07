@@ -33,11 +33,11 @@ biped
 <Squad Equipment>
 ISBAMagshotGR:LA
 ISFiredrakeIncendiaryNeedler:RA
-ISSRM5:Body
-BA-SRM5 Ammo:Body
-BA-SRM5 Ammo:Body
-BA-SRM5 Ammo:Body
-BA-SRM5 Ammo:Body
+ISBASRM5:Body
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
 BABasicManipulator:RA
 </Squad Equipment>
 <type>

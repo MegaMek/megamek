@@ -35,8 +35,8 @@ biped
 </Armor>
 <Point Equipment>
 CLBAFlamer:RA
-CLERMicroLaser:LA
-CLSRM1OS:Body
+CLBAERMicroLaser:LA
+CLBASRM1OS:Body
 BABattleClawMagnets:LA
 BABattleClawMagnets:RA
 </Point Equipment>

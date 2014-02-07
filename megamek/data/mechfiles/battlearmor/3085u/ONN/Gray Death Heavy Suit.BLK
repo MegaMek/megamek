@@ -39,7 +39,7 @@ biped
 <Squad Equipment>
 ISBASupportPPC:RA
 BAAPMount:LA
-ISImprovedSensors:Body
+ISBAImprovedSensors:Body
 ISBASRM4OS:Body
 ISBASRM4OS:Body
 BABasicManipulator:LA

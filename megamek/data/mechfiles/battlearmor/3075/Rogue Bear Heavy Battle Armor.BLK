@@ -33,11 +33,11 @@ biped
 <Point Equipment>
 Clan BA Machine Gun:LA
 Clan BA Machine Gun:RA
-CLSRM3:Body
-BASRM3 Ammo:Body
-BASRM3 Ammo:Body
-BASRM3 Ammo:Body
-BASRM3 Ammo:Body
+CLBASRM3:Body
+BASRM3 Ammo:Body:Shots1#
+BASRM3 Ammo:Body:Shots1#
+BASRM3 Ammo:Body:Shots1#
+BASRM3 Ammo:Body:Shots1#
 BABattleClawVibro:LA
 BABattleClawVibro:RA
 </Point Equipment>

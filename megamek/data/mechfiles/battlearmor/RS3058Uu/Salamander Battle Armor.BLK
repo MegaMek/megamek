@@ -33,7 +33,7 @@ biped
 <Point Equipment>
 CLBAFlamer:RA
 CLBAFlamer:LA
-CLSRM1OS:Body
+CLBASRM1OS:Body
 BABattleClawMagnets:RA
 BABattleClawMagnets:LA
 </Point Equipment>

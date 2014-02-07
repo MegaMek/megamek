@@ -34,12 +34,12 @@ biped
 8
 </Armor>
 <Point Equipment>
-CLERMicroLaser:RA
-CLLRM3:Body
-BACLLRM3 Ammo:Body
-BACLLRM3 Ammo:Body
-BACLLRM3 Ammo:Body
-BACLLRM3 Ammo:Body
+CLBAERMicroLaser:RA
+CLBALRM3:Body
+BACLLRM3 Ammo:Body:Shots1#
+BACLLRM3 Ammo:Body:Shots1#
+BACLLRM3 Ammo:Body:Shots1#
+BACLLRM3 Ammo:Body:Shots1#
 BABattleClaw:RA
 </Point Equipment>
 <type>

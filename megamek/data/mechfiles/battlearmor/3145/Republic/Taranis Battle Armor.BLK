@@ -33,10 +33,10 @@ biped
 <Squad Equipment>
 BABasicManipulator:LA
 BABasicManipulator:RA
-ISHeavy Recoilless Rifle:DWP
-ISDetachableWeaponPack:RA
-ISBAMediumLaser:DWP
+ISHeavy Recoilless Rifle:DWP:LA
 ISDetachableWeaponPack:LA
+ISBAMediumLaser:DWP:RA
+ISDetachableWeaponPack:RA
 </Squad Equipment>
 <type>
 IS Level 3

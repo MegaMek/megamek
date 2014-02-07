@@ -29,9 +29,9 @@ biped
 </Armor>
 <Squad Equipment>
 Clan Advanced SRM 3:Body
-BAAdvancedSRM3 Ammo:Body
-BAAdvancedSRM3 Ammo:Body
-BAAdvancedSRM3 Ammo:Body
+BA-Advanced SRM-3 Ammo:Shots1#
+BA-Advanced SRM-3 Ammo:Shots1#
+BA-Advanced SRM-3 Ammo:Shots1#
 ISBALightTAG:RA
 BABattleClaw:LA
 BABattleClaw:RA

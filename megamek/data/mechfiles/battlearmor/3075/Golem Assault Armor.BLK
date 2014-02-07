@@ -39,8 +39,8 @@ biped
 CLBearhunter Superheavy AC:LA
 CLBearhunter Superheavy AC:LA
 CLAdvancedSRM5:Body
-BA-Advanced SRM-5 Ammo:Body
-BA-Advanced SRM-5 Ammo:Body
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

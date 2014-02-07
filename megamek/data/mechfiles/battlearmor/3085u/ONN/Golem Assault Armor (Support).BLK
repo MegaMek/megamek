@@ -34,12 +34,12 @@ biped
 BAAPMount:LA
 BAAPMount:RA
 Clan Advanced SRM-6:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

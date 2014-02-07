@@ -41,8 +41,8 @@ biped
 
 <Point Equipment>
 BA ECM:Body
-ISBALightTAG:LA
-ISBALightMG:RA
+CLBALightTAG:LA
+CLBALightMG:RA
 BABasicManipulator:RA
 </Point Equipment>
 

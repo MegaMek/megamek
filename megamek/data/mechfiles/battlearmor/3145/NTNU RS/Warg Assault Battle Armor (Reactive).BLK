@@ -40,16 +40,16 @@ biped
 </Armor>
 
 <Point Equipment>
-CLSmallPulseLaser:RA
+CLBASmallPulseLaser:RA
 Clan BA Light Machine Gun:LA
 CLAdvancedSRM2:Body
-BAAdvanced SRM2 Ammo:Body
-BAAdvanced SRM2 Ammo:Body
-BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body:Shots1#
+BAAdvanced SRM2 Ammo:Body:Shots1#
+BAAdvanced SRM2 Ammo:Body:Shots1#
 CLAdvancedSRM2:Body
-BAAdvanced SRM2 Ammo:Body
-BAAdvanced SRM2 Ammo:Body
-BAAdvanced SRM2 Ammo:Body
+BAAdvanced SRM2 Ammo:Body:Shots1#
+BAAdvanced SRM2 Ammo:Body:Shots1#
+BAAdvanced SRM2 Ammo:Body:Shots1#
 BAHeavyBattleClaw:LA
 BABasicManipulator:RA
 </Point Equipment>

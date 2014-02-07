@@ -33,8 +33,8 @@ biped
 <Point Equipment>
 CLERSmallLaser:RA
 Clan Advanced SRM-2:Body
-BA-Advanced SRM-2 Ammo
-BA-Advanced SRM-2 Ammo
+BA-Advanced SRM-2 Ammo:Shots1#
+BA-Advanced SRM-2 Ammo:Shots1#
 BAHeavyBattleClaw:RA
 </Point Equipment>
 <type>

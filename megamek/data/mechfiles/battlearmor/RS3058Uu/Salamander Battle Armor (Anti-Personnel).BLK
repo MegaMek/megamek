@@ -36,7 +36,7 @@ biped
 <Point Equipment>
 Clan BA Heavy Machine Gun:RA
 Clan BA Heavy Machine Gun:LA
-CLSRM1OS:Body
+CLBASRM1OS:Body
 BABattleClawMagnets:LA
 BABattleClawMagnets:RA
 </Point Equipment>

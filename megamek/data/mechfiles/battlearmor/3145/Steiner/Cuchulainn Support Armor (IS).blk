@@ -38,7 +38,7 @@ Jump
 
 <Point Equipment>
 CLDetachableWeaponPack:LA
-CLBAERMediumPulseLaser:DWP
+CLBAERMediumPulseLaser:DWP:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

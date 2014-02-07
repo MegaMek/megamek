@@ -37,13 +37,13 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-CLSRM5:Body
-BASRM5 Ammo:Body
-BASRM5 Ammo:Body
-BASRM5 Ammo:Body
-BASRM5 Ammo:Body
-BASRM5 Ammo:Body
-BASRM5 Ammo:Body
+CLBASRM5:Body
+BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots1#
 </Squad Equipment>
 
 <source>

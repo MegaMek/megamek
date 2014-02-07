@@ -2082,7 +2082,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         misc.introDate = 3072;
         misc.techLevel.put(3072, misc.techLevel.get(3071));
-        misc.techLevel.put(3085, TechConstants.T_CLAN_TW);
+        misc.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_F;
 
         return misc;
@@ -5157,6 +5157,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Light Active Probe";
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.setInternalName(Sensor.ISBALIGHT_AP);
+        misc.addLookupName("ISBAActiveProbe");
         misc.tonnage = 0.25f;
         misc.criticals = 2;
         misc.cost = 50000;
@@ -8263,6 +8264,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3073;
         misc.techLevel.put(3073, misc.techLevel.get(3071));
+        misc.techLevel.put(3073, TechConstants.T_IS_TW_NON_BOX);
         misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
         return misc;
     }
@@ -8280,6 +8282,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3072;
         misc.techLevel.put(3072, misc.techLevel.get(3071));
+        misc.techLevel.put(3080, TechConstants.T_CLAN_TW);
         misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
         return misc;
     }
@@ -8433,7 +8436,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3070;
         misc.techLevel.put(3070, misc.techLevel.get(3071));
-        misc.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        misc.techLevel.put(3084, TechConstants.T_IS_ADVANCED);
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER)
                 .or(F_BA_EQUIPMENT);
         return misc;
@@ -8446,7 +8449,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3084;
-        misc.techLevel.put(3084, TechConstants.T_CLAN_TW);
+        misc.techLevel.put(3084, TechConstants.T_CLAN_ADVANCED);
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER)
                 .or(F_BA_EQUIPMENT);
         return misc;

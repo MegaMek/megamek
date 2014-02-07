@@ -8257,7 +8257,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("ISDetachableWeaponPack");
         misc.tonnage = 0;
-        misc.criticals = 0;
+        misc.criticals = 1;
         misc.cost = 18000;
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
@@ -8274,7 +8274,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("CLDetachableWeaponPack");
         misc.tonnage = 0;
-        misc.criticals = 0;
+        misc.criticals = 1;
         misc.cost = 18000;
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };

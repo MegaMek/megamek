@@ -36,14 +36,14 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISSRM1:RA
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
+ISBASRM1:RA
+BASRM1 Ammo:Body:Shots1#
+BASRM1 Ammo:Body:Shots1#
+BASRM1 Ammo:Body:Shots1#
+BASRM1 Ammo:Body:Shots1#
 BABattleClaw:RA
 BAAPMount:LA
-ISImprovedSensors:Body
+ISBAImprovedSensors:Body
 </Squad Equipment>
 <type>
 IS Level 2

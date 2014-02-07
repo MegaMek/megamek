@@ -10,19 +10,19 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Afreet Medium Battle Armor
+Kage Light Battle Armor
 </Name>
 <Model>
-(Hells's Horses)
+C
 </Model>
 <chassis>
 biped
 </chassis>
 <weightclass>
-2
+1
 </weightclass>
 <Trooper Count>
-5
+4
 </Trooper Count>
 <cruiseMP>
 1
@@ -31,31 +31,32 @@ biped
 3
 </jumpingMP>
 <Armor>
-5
+6
 </Armor>
 <Point Equipment>
-CLBearhunter Superheavy AC:RA
-CLBASRM3OS:Body
-CLBAJumpBooster:Body
-BABattleClawVibro:LA
-BABattleClawVibro:RA
+BattleArmorC3:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
 </Point Equipment>
 <type>
-Clan Level 2
+IS Level 4
 </type>
 <year>
-3072
+3077
 </year>
+<source>
+XTR Kurita
+</source>
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-TRO:3175
-</source>
 <armor_type>
-28
+36
 </armor_type>
 <armor_tech>
-2
+3
 </armor_tech>
+
+
+

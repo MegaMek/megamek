@@ -37,11 +37,11 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-ISMRM5:Body
-ISMRM5 Ammo:Body
-ISMRM5 Ammo:Body
-ISMRM5 Ammo:Body
-ISMRM5 Ammo:Body
+ISBAMRM5:Body
+ISBAMRM5 Ammo:Body:Shots1#
+ISBAMRM5 Ammo:Body:Shots1#
+ISBAMRM5 Ammo:Body:Shots1#
+ISBAMRM5 Ammo:Body:Shots1#
 </Squad Equipment>
 
 <source>

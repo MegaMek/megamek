@@ -41,7 +41,7 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISSmallVSP:Body
+ISBASmallVSP:Body
 ISFiredrakeIncendiaryNeedler:RA
 ISBAMagshotGR:LA
 BABasicManipulator:LA

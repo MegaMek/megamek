@@ -37,7 +37,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:LA
-ISMediumLaser:DWP
+ISBAMediumLaser:DWP
 BABasicManipulator:LA
 BAAPMount:RA
 </Squad Equipment>

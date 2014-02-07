@@ -32,7 +32,7 @@ biped
 </Armor>
 <Squad Equipment>
 ClDetachableWeaponPack:Body
-CLERMediumPulseLaser:DWP
+CLBAERMediumPulseLaser:DWP:Body
 BAHeavyBattleClaw:RA
 BAHeavyBattleClaw:LA
 BAAPMount:Body

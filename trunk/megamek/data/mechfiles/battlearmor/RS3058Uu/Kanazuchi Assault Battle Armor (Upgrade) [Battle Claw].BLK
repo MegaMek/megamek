@@ -33,16 +33,16 @@ biped
 <Squad Equipment>
 ISBASupportPPC:RA
 ISBASupportPPC:RA
-ISMRM1:Body
-ISMRM1:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
-ISMRM1 Ammo:Body
+ISBAMRM1:Body
+ISBAMRM1:Body
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots1#
 BAHeavyBattleClaw:LA
 BAAPMount:Body
 BAAPMount:Body

@@ -36,9 +36,9 @@ biped
 <Squad Equipment>
 ISMachine Gun:LA
 ISDetachableWeaponPack:Body
-ISRocketLauncher4:DWP
+ISBARocketLauncher4:DWP
 ISDetachableWeaponPack:Body
-ISRocketLauncher4:DWP
+ISBARocketLauncher4:DWP
 BABattleClaw:LA
 BABattleClaw:RA
 </Squad Equipment>

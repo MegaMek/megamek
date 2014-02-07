@@ -37,6 +37,7 @@ public class CLBASRM6OS extends SRMWeapon {
         setInternalName("CLBASRM6 (OS)");
         addLookupName("Clan BA OS SRM-6");
         addLookupName("Clan BA SRM 6 (OS)");
+        addLookupName("CLBASRM6OS");
         heat = 4;
         rackSize = 6;
         shortRange = 3;

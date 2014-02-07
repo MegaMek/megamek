@@ -28,7 +28,7 @@ biped
 11
 </Armor>
 <Squad Equipment>
-ISSmallPulseLaser:RA
+ISBASmallPulseLaser:RA
 ISBAMagshotGR:Body
 ISBAMagshotGR:Body
 BABattleClaw:LA

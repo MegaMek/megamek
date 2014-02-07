@@ -52,7 +52,7 @@ biped
 </armor_tech>
 
 <Point Equipment>
-CLSmallPulseLaser:RA
+CLBASmallPulseLaser:RA
 CLBAJumpBooster:Body
 BABasicManipulator:RA
 BABattleClaw:LA

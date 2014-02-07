@@ -10,10 +10,10 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Longinus Battle Armor
+Void Medium Battle Armor
 </Name>
 <Model>
-[David]
+Caltrop
 </Model>
 <chassis>
 biped
@@ -25,35 +25,50 @@ biped
 4
 </Trooper Count>
 <cruiseMP>
-1
+3
 </cruiseMP>
 <jumpingMP>
-3
+1
 </jumpingMP>
 <Armor>
-9
+7
 </Armor>
-
 <Squad Equipment>
-ISBADavidLightGaussRifle:RA
-ISBASRM2OS:Body
-BABattleClaw:RA
-BAAPMount:LA
+CLBAERSmallLaser:RA
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
 </Squad Equipment>
+<Trooper 1 Equipment>
+Mine:Body
+Mine:Body
+</Trooper 1 Equipment>
+<Trooper 2 Equipment>
+Mine:Body
+Mine:Body
+</Trooper 2 Equipment>
+<Trooper 3 Equipment>
+Mine:Body
+Mine:Body
+</Trooper 3 Equipment>
+<Trooper 4 Equipment>
+Mine:Body
+Mine:Body
+</Trooper 4 Equipment>
 <type>
-IS Level 2
+Mixed (IS Chassis) Experimental
 </type>
 <year>
-3063
+3078
 </year>
+<source>
+XTR Kurita
+</source>
 <motion_type>
 Jump
 </motion_type>
-<source>
-TRO 3058 Upgrade
-</source>
+
 <armor_type>
-30
+33
 </armor_type>
 <armor_tech>
 3

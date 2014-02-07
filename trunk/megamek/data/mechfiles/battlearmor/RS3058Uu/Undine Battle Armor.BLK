@@ -31,8 +31,8 @@ biped
 8
 </Armor>
 <Point Equipment>
-CLERMicroLaser:RA
-CLLRM5OS:Body
+CLBAERMicroLaser:RA
+CLBALRM5OS:Body
 BABattleClaw:RA
 </Point Equipment>
 <type>

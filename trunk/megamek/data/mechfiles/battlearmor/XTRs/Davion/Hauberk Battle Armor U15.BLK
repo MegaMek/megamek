@@ -32,16 +32,16 @@ biped
 </Armor>
 <Squad Equipment>
 ClDetachableWeaponPack:LA
-CLERSmallLaser:DWP
+CLERSmallLaser:DWP:LA
 ClDetachableWeaponPack:RA
-CLBAMicroPulseLaser:DWP
+CLBAMicroPulseLaser:DWP:RA
 ClDetachableWeaponPack:Body
-ISBAMagshotGR:DWP
+ISBAMagshotGR:DWP:Body
 CLBASRM2:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots1#
 IS BA ECM:Body
 </Squad Equipment>
 <type>

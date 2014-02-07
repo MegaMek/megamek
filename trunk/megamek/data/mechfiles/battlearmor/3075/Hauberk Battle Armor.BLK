@@ -29,13 +29,13 @@ biped
 </Armor>
 <Squad Equipment>
 ISBASmallLaser:RA
-ISLRM5:Body
-BAISLRM5 Ammo:Body
-BAISLRM5 Ammo:Body
-BAISLRM5 Ammo:Body
-BAISLRM5 Ammo:Body
-BAISLRM5 Ammo:Body
-BAISLRM5 Ammo:Body
+ISBALRM5:Body
+BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots1#
 BABattleClaw:LA
 </Squad Equipment>
 <type>

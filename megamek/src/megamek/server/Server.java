@@ -199,6 +199,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -25934,6 +25935,9 @@ public class Server implements Runnable {
                     && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                 testEntity = new TestAero((Aero) entity,
                         Server.entityVerifier.aeroOption, null);
+            }else if (entity instanceof BattleArmor){
+                testEntity = new TestBattleArmor((BattleArmor) entity, 
+                        entityVerifier.baOption, null);
             }
 
             if (testEntity != null){

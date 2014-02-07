@@ -63,6 +63,8 @@ v0.37.7-dev (SVN)
     returns true if the Mounted is for a OS launcher, made it so ammo linked to 
     an OS launcher doesn't show in the MechView, and also made it so ammo 
     linked to an OS launcher doesn't get saved to BLK files
++ Bug: TestBattleArmor wasn't being used in all of the places it should be, now
+    it is used wherever TestMech, TestTank, and TestAero are
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

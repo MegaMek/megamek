@@ -614,6 +614,18 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
             
+            // Ensure that jump boosters are mounted in the body
+            if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER) 
+                    && m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY){
+                buff.append("Jump Boosters must be mounted in the body!");
+            }
+            
+            // Ensure partial wing are mounted in the body
+            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING) 
+                    && m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY){
+                buff.append("Partial wing must be mounted in the body!");
+            }
+            
             if (m.getLocation() != BattleArmor.LOC_SQUAD){
                 critsUsed[m.getLocation()][m.getBaMountLoc()] += critSize;
                 if ((m.getType() instanceof WeaponType)){

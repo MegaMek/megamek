@@ -56,6 +56,7 @@ v0.37.7-dev (SVN)
     the case and the code that allows this has been removed.
 + Moved Popup mines to BA weapons folder.
 + New Images.
++ Bug: BA Myomer booster cost wasn't being calculated correctly
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

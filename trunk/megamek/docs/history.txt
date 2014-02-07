@@ -49,6 +49,7 @@ v0.37.7-dev (SVN)
 + Added code to MechView so that BA armors don't show in equipment
 + Added checks in TestBattleArmor to make sure jump boosters and partial wings
     are body mounted on BA
++ Bug: Fixed an ArrayIndexOutOfBounds in TestBattleArmor.correctManipulators
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

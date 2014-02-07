@@ -718,9 +718,11 @@ public class TestBattleArmor extends TestEntity {
                     numRAManipulators++;
                     raManipType = BAManipulator.getManipulator(m.getName());
                 } else {
-                    buff.append(m.getName() + "mounted in "
-                            + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()]
-                            + ", but manipulators must be mounted in arms!");
+                    if (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE){
+                        buff.append(m.getName() + "mounted in "
+                                + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()]
+                                + ", but manipulators must be mounted in arms!");
+                    }
                     correct = false;
                 }
             }

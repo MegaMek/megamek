@@ -635,6 +635,11 @@ public class MechView {
         sAmmo.append("<table cellspacing=0 cellpadding=1 border=0>");
         sAmmo.append("<tr><th align='left'>Ammo</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Shots</th></tr>");
         for (Mounted mounted : entity.getAmmo()) {
+            // Ignore ammo for one-shot launchers
+            if (mounted.getLinkedBy() != null 
+                    && mounted.getLinkedBy().isOneShot()){
+                continue;
+            }
             if (mounted.isDestroyed()) {
                 sAmmo.append("<tr bgcolor='red'>");
             } else if (mounted.getUsableShotsLeft() < 1) {

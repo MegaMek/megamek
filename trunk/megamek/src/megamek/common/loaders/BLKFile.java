@@ -470,6 +470,13 @@ public class BLKFile {
             if (m.isWeaponGroup()){
                 continue;
             }
+            
+            // Ignore ammo for one-shot launchers
+            if (m.getLinkedBy() != null 
+                    && m.getLinkedBy().isOneShot()){
+                continue;
+            }
+            
             String name = m.getType().getInternalName();
             if (m.isSponsonTurretMounted()) {
                 name = name + "(ST)";

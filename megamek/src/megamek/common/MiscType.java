@@ -3359,7 +3359,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        misc.setInternalName("IS "+ EquipmentType.getArmorTypeName(
+        misc.setInternalName(EquipmentType.getArmorTypeName(
                     EquipmentType.T_ARMOR_BA_REACTIVE, false));
         misc.tonnage = 0;
         misc.criticals = 7;
@@ -3403,7 +3403,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        misc.setInternalName("IS " + EquipmentType.getArmorTypeName(
+        misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
         misc.tonnage = 0;
         misc.criticals = 7;

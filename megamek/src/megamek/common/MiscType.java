@@ -815,6 +815,8 @@ public class MiscType extends EquipmentType {
                 if (entity instanceof Protomech) {
                     costValue = Math.round(entity.getEngine().getRating()
                             * 1000 * entity.getWeight() * 0.025f);
+                } else if (entity instanceof BattleArmor) {
+                    costValue = entity.getOriginalWalkMP() * 75000;
                 } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {

@@ -437,6 +437,10 @@ public class TestBattleArmor extends TestEntity {
     public int getCountHeatSinks() {
         return 0;
     }
+    
+    public float getWeight() {
+        return ba.getTrooperWeight() * ba.getTroopers();
+    }
 
     @Override
     public String printWeightMisc() {
@@ -446,6 +450,11 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public String printWeightControls() {
         return "";
+    }
+    
+    public String printWeightStructure(){
+        return StringUtil.makeLength("Structure: ", getPrintSize() + 9)
+                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
     }
     
     public String printWeightArmor() {
@@ -768,6 +777,34 @@ public class TestBattleArmor extends TestEntity {
         return correct;
     }
     
+    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+        float weightSum = calculateWeight();
+        float weight = getWeight();
+        boolean correct = true;
+        String baDesig = ba.getLocationAbbr(BattleArmor.LOC_SQUAD);
+        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
+            buff.append(baDesig + "Weight: ").append(calculateWeight())
+                    .append(" is greater than ").append(getWeight())
+                    .append("\n");
+            correct = false;
+        }
+        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
+            buff.append("Weight: ").append(calculateWeight())
+                    .append(" is less than ").append(getWeight()).append("\n");
+            correct = false;
+        }
+        
+        for (int t = 1; t < ba.getTroopers(); t++){
+            float trooperWeight = calculateWeight(t);
+            if (trooperWeight > ba.getTrooperWeight()){
+                buff.append("Trooper " + t + " Weight: " + trooperWeight
+                        + " is greater than " + ba.getTrooperWeight() + "\n");
+                correct = false;
+            }
+        }
+        return correct;
+    }
+    
     @Override
     public boolean correctEntity(StringBuffer buff) {
         return correctEntity(buff, true);
@@ -830,9 +867,10 @@ public class TestBattleArmor extends TestEntity {
     }
     
     public String printWeightCalculation() {
-        return  printWeightArmor()
+        return  printWeightStructure() +
+                printWeightArmor()
                 + "Equipment:\n"
-                + printMiscEquip() + printWeapon() + printAmmo();
+                + printWeapon() + printAmmo() + printMiscEquip();
     }
 
     @Override

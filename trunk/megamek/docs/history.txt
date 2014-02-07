@@ -50,6 +50,7 @@ v0.37.7-dev (SVN)
 + Added checks in TestBattleArmor to make sure jump boosters and partial wings
     are body mounted on BA
 + Bug: Fixed an ArrayIndexOutOfBounds in TestBattleArmor.correctManipulators
++ Updated TestBattleArmor to ensure that a BA with jump boosters has jump MP
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

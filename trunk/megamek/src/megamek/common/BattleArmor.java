@@ -18,8 +18,8 @@ import java.text.NumberFormat;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**

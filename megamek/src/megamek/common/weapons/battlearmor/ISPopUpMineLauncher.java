@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -23,6 +23,9 @@ import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PopUpMineLauncherHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**

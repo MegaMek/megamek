@@ -53,13 +53,13 @@ import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAC5;
-import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.

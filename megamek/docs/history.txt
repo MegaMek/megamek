@@ -47,6 +47,8 @@ v0.37.7-dev (SVN)
     They also both specified duplicate additional lookup names.
 + Bug: IS BA Reactive and Reflective armor had the wrong internal name.
 + Added code to MechView so that BA armors don't show in equipment
++ Added checks in TestBattleArmor to make sure jump boosters and partial wings
+    are body mounted on BA
   
 
 v0.37.6 (2014-01-29 01:43 UTC)

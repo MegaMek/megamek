@@ -33,10 +33,10 @@ biped
 <Armor>
 10
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 Clan Small Pulse Laser:LA
 BABattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Mixed (IS Chassis) Experimental
 </type>

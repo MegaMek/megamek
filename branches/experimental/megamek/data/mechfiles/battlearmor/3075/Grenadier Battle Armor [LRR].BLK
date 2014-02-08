@@ -33,13 +33,13 @@ biped
 <Squad Equipment>
 ISLight Recoilless Rifle:LA
 ISBASRM4:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
 BABasicManipulator:RA
 BAAPMount:RA
 </Squad Equipment>

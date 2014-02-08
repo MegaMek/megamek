@@ -18,8 +18,8 @@ import java.text.NumberFormat;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -58,7 +58,6 @@ public class BattleArmor extends Infantry {
     private static final String[] CLAN_LOCATION_NAMES =
         { "Point", "Trooper 1", "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
 
-    // these only used by custom ba dialog
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
     public static final int MANIPULATOR_BASIC = 2;
@@ -67,14 +66,39 @@ public class BattleArmor extends Infantry {
     public static final int MANIPULATOR_BATTLE_MAGNET = 5;
     public static final int MANIPULATOR_BATTLE_VIBRO = 6;
     public static final int MANIPULATOR_HEAVY_BATTLE = 7;
-    public static final int MANIPULATOR_HEAVY_BATTLE_VIBRO = 8;
-    public static final int MANIPULATOR_SALVAGE_ARM = 9;
-    public static final int MANIPULATOR_CARGO_LIFTER = 10;
-    public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
+    public static final int MANIPULATOR_HEAVY_BATTLE_MAGNET = 8;
+    public static final int MANIPULATOR_HEAVY_BATTLE_VIBRO = 9;
+    public static final int MANIPULATOR_SALVAGE_ARM = 10;
+    public static final int MANIPULATOR_CARGO_LIFTER = 11;
+    public static final int MANIPULATOR_INDUSTRIAL_DRILL = 12;
 
-    // these only used by custom ba dialog
-    public static final String[] MANIPULATOR_TYPE_STRINGS =
-        { "None", "Armored Glove", "Basic Manipulator", "Basic Manipulator (Mine Clearance)", "Battle Claw", "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)", "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)", "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
+    /**
+     * A list of the internal names for the different manipulator types.  
+     * The indices in this collection correspond to the MANIPULATOR defines
+     * in <code>BattleArmor</code>.  These names should match the internal 
+     * name for the manipulator's MiscType entry.
+     */
+    public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
+            "BAArmoredGlove", "BABasicManipulator",
+            "BABasicManipulatorMineClearance", "BABattleClaw",
+            "BABattleClawMagnets", "BABattleClawVibro",
+            "BAHeavyBattleClaw", "BAHeavyBattleClawMagnets", 
+            "BAHeavyBattleClawVibro",
+            "BASalvageArm", "BACargoLifter", "BAIndustrialDrill" };
+    
+    /**
+     * A list of the display names for the different manipulator types.  
+     * The indices in this collection correspond to the MANIPULATOR defines
+     * in <code>BattleArmor</code>.  These names should match the  
+     * name for the manipulator's MiscType entry.
+     */
+    public static final String[] MANIPULATOR_NAME_STRINGS = { "None",
+            "Armored Glove", "Basic Manipulator",
+            "Basic Manipulator (Mine Clearance)", "Battle Claw",
+            "Battle Magnetic Claw", "Battle Vibro Claw",
+            "Heavy Battle Claw", "Heavy Battle Magnetic Claw",
+            "Heavy Battle Vibro Claw", "Salvage Arm", "Cargo Lifter",
+            "Industrial Drill" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;
@@ -721,33 +745,14 @@ public class BattleArmor extends Infantry {
      * Mounts the specified equipment in the specified location.
      */
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+            throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
 
-        // Is the item a stealth equipment?
-        // TODO: what's the *real* extreme range modifier?
-        // FIXME: We used to set armor types by adding the armor as equipment
-        //  Some BA BLK files still do this instead of using armor_type
-        //  This could should remain until all of those units have been removed
+        // Is the item a camo system equipment?
         String name = mounted.getType().getInternalName();
-        if(BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_BASIC);
-        } else if (BattleArmor.STEALTH_PROTOTYPE.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE);
-        } else if (BattleArmor.STANDARD_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH);
-        } else if (BattleArmor.IMPROVED_STEALTH_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STEALTH_IMP);
-        } else if (BattleArmor.MIMETIC_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_MIMETIC);
-        } else if (BattleArmor.STANDARD_PROTOTYPE.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE);
-        } else if (BattleArmor.ADVANCED_ARMOR.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED);
-        } else if (BattleArmor.FIRE_RESISTANT.equals(name)) {
-            setArmorType(EquipmentType.T_ARMOR_BA_FIRE_RESIST);
-        } else if (BattleArmor.CAMO_SYSTEM.equals(name)) {
+        if (BattleArmor.CAMO_SYSTEM.equals(name)) {
             hasCamoSystem = true;
             camoName = name;
         }
@@ -760,7 +765,8 @@ public class BattleArmor extends Infantry {
         if (mounted.getType() instanceof ISPopUpMineLauncher) {
             if (loc == BattleArmor.LOC_SQUAD) {
                 for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
-                    this.addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), loc);
+                    addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), 
+                            loc);
                 }
             }
         }
@@ -1703,8 +1709,7 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * return if this BA has laser reflective armo
-     * TODO: implement game rules
+     * return if this BA has laser reflective armor
      *
      * @return
      */
@@ -1719,7 +1724,6 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has reactive armor
-     *TODO: implement game rules
      * @return
      */
     public boolean isReactive() {
@@ -1956,7 +1960,14 @@ public class BattleArmor extends Infantry {
                 max = 3;
             }
         }
-        //TODO: adjust for other equipment
+        
+        // Partial wings and jump boosters add 1 jump MP and can increase it 
+        //  over the max and they cannot be used together
+        if (hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                || hasWorkingMisc(MiscType.F_PARTIAL_WING)){
+            max++;
+        }
+        
         return max;
     }
     
@@ -1975,6 +1986,27 @@ public class BattleArmor extends Infantry {
         if(chassisType == CHASSIS_TYPE_QUAD) {
             max += 2;
         }
+        
+        // Mechanical jump boosters add 1 MP and can increase it over the max
+        if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)){
+            max++;
+        }
+        
+        if (hasMyomerBooster()){
+            switch (getWeightClass()){
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+            case EntityWeightClass.WEIGHT_LIGHT:
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                max += 2;
+                break;
+            case EntityWeightClass.WEIGHT_HEAVY:
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                max++;
+                break;
+            }
+        }
+        
+      
         return max;
     }
     
@@ -2162,5 +2194,69 @@ public class BattleArmor extends Infantry {
     public boolean hasMagneticClamps(){
         return countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
     }
+    
+    /**
+     * Returns the <code>EquipmentType</code> internal name for the manipulator
+     * mounted in the left arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public String getLeftManipulatorName(){
+        Mounted m = getLeftManipulator();
+        if (m == null){
+            return MANIPULATOR_TYPE_STRINGS[MANIPULATOR_NONE];
+        } else {
+            return m.getType().getInternalName();
+        }
+    }
+    
+    /**
+     * Returns the <code>EquipmentType</code> internal name for the manipulator
+     * mounted in the right arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public String getRightManipulatorName(){
+        Mounted m = getRightManipulator();
+        if (m == null){
+            return MANIPULATOR_TYPE_STRINGS[MANIPULATOR_NONE];
+        } else {
+            return m.getType().getInternalName();
+        }
+    }
+    
+    /**
+     * Returns the <code>Mounted</code> for the manipulator
+     * mounted in the left arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public Mounted getLeftManipulator(){
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR) 
+                    && m.getBaMountLoc() == MOUNT_LOC_LARM){
+                return m;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the <code>Mounted</code> for the manipulator
+     * mounted in the right arm of this <code>BattleArmor</code> squad.
+     * 
+     * @return
+     */
+    public Mounted getRightManipulator(){
+        for (Mounted m : getMisc()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR) 
+                    && m.getBaMountLoc() == MOUNT_LOC_RARM){
+                return m;
+            }
+        }
+        return null;
+    }
+    
+
     
 } // End public class BattleArmor extends Infantry implements Serializable

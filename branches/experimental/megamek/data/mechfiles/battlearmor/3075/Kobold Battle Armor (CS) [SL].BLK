@@ -34,7 +34,7 @@ biped
 5
 </Armor>
 <Trooper 1 Equipment>
-ISSmallPulseLaser:LA
+ISBASmallPulseLaser:LA
 </Trooper 1 Equipment>
 <Squad Equipment>
 ISBASmallLaser:RA

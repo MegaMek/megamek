@@ -31,8 +31,8 @@ quad
 5
 </Armor>
 <Squad Equipment>
-ISERSmallLaser:Body
-ISERSmallLaser:Body
+ISBAERSmallLaser:Body
+ISBAERSmallLaser:Body
 IS BA ECM:Body
 </Squad Equipment>
 <type>

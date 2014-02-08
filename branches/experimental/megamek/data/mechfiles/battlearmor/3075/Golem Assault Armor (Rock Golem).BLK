@@ -32,15 +32,15 @@ biped
 <Armor>
 18
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLDetachableWeaponPack:LA
-CLBAHeavy Recoilless Rifle:DWP
+CLBAHeavy Recoilless Rifle:DWP:LA
 CLDetachableWeaponPack:RA
-CLBAHeavy Recoilless Rifle:DWP
-CLSRM5OS:Body
+CLBAHeavy Recoilless Rifle:DWP:RA
+CLBASRM5OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

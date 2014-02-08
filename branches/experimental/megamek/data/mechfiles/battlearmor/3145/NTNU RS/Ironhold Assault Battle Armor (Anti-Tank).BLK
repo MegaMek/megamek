@@ -39,13 +39,13 @@ biped
 16
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 CLBALBX:LA
 CLBALBX:LA
-CLSRM1OS:Body
+CLBASRM1OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

@@ -29,7 +29,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
@@ -535,7 +534,7 @@ public class TestAero extends TestEntity {
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if ((entity instanceof Mech) && 
+                if ((entity instanceof Aero) && 
                         (m.getType().getCriticals(entity) == 0)) {
                     continue;
                 }
@@ -803,17 +802,9 @@ public class TestAero extends TestEntity {
                 if (slot == null) {
                     j = getEntity().getNumberOfCriticals(i);                    
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                    if (isMech()) {
-                        buff.append(Integer.toString(j));
-                        buff.append(". ");
-                        buff.append(((Mech) getEntity()).getSystemName(slot
-                                .getIndex()));
-                        buff.append("\n");
-                    } else {
                         buff.append(Integer.toString(j)
                                 + ". UNKNOWN SYSTEM NAME");
                         buff.append("\n");
-                    }
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     EquipmentType e = getEntity().getEquipmentType(slot);
                     buff.append(Integer.toString(j) + ". "

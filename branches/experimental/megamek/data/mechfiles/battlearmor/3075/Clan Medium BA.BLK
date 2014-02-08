@@ -33,7 +33,7 @@ biped
 <Armor>
 9
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 CLBASRM2OS:Body
 CLBASRM2OS:LA
 CLBAFlamer:RA
@@ -41,7 +41,7 @@ CLBAJumpBooster:Body
 BASearchlight:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

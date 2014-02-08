@@ -30,11 +30,11 @@ biped
 <Armor>
 8
 </Armor>
-<Squad Equipment>
-CLERMicroLaser:RA
-CLLRM5OS:Body
+<Point Equipment>
+CLBAERMicroLaser:RA
+CLBALRM5OS:Body
 BABattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

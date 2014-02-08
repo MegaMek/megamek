@@ -40,14 +40,14 @@ biped
 10
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 BAPartialWing:Body
 BAAPMount:RA
 BABattleClaw:LA
 BABattleClaw:RA
 CLBAMG
 Camo System:Body
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Mixed (Clan Chassis) Experimental

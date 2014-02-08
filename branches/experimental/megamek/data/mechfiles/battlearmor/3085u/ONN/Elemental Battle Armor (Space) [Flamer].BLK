@@ -44,14 +44,14 @@ biped
 10
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAFlamer:RA
 BAAPMount:LA
 BACuttingTorch:LA
 CLBASpaceOperationsAdaptation:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

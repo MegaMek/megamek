@@ -50,8 +50,8 @@ public class CLBASRM6 extends SRMWeapon {
         cost = 30000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
-        introDate = 2824;
-        techLevel.put(2824, techLevel.get(3071));
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_F;
     }

@@ -30,19 +30,19 @@ biped
 <Armor>
 18
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 BAAPMount:LA
 BAAPMount:RA
 Clan Advanced SRM-6:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
-BA-Advanced SRM-6 Ammo:Body
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
+BA-Advanced SRM-6 Ammo:Shots1#
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

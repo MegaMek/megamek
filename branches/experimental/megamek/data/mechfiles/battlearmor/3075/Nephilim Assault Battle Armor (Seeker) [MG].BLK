@@ -33,11 +33,11 @@ biped
 <Squad Equipment>
 ISBAMachine Gun:RA
 ISBASRM3:Body
-BA-SRM3 Ammo:Body
-BA-SRM3 Ammo:Body
-BA-SRM3 Ammo:Body
+BA-SRM3 Ammo:Body:Shots1#
+BA-SRM3 Ammo:Body:Shots1#
+BA-SRM3 Ammo:Body:Shots1#
 BAHeavyBattleClaw:LA
-ISImprovedSensors:Body
+ISBAImprovedSensors:Body
 BASearchlight:Body
 </Squad Equipment>
 <type>

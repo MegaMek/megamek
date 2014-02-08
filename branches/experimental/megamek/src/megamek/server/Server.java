@@ -74,6 +74,7 @@ import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
@@ -199,6 +200,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -16289,7 +16291,7 @@ public class Server implements Runnable {
             }
 
             // put in ASF heat build-up first because there are few differences
-            if (entity instanceof Aero) {
+            if ((entity instanceof Aero) && !(entity instanceof ConvFighter)) {
                 // If this aero is part of a squadron, we will deal with its
                 // heat with the fighter squadron
                 if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {
@@ -22681,7 +22683,6 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.indent(2);
                 r.add(stealth.getType().getName());
-                r.newlines = 0;
                 vDesc.addElement(r);
                 stealth.setMode("Off");
             }
@@ -23530,8 +23531,17 @@ public class Server implements Runnable {
                 if (slot.isArmored()) {
                     r = new Report(6710);
                     r.subject = en.getId();
-                    if (en instanceof Mech) {
-                        r.add(((Mech) en).getSystemName(slot.getIndex()));
+                    if (slot.getType() == CriticalSlot.TYPE_SYSTEM){
+                        // Pretty sure that only 'mechs have system crits,
+                        //  but just in case....
+                        if (en instanceof Mech) {
+                            r.add(((Mech) en).getSystemName(slot.getIndex()));
+                        }
+                    } else {
+                        // Shouldn't be null, but we'll be careful...
+                        if (slot.getMount() != null){
+                            r.add(slot.getMount().getName());
+                        }
                     }
                     vDesc.addElement(r);
                     slot.setArmored(false);
@@ -24900,7 +24910,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
             int height, PilotingRollData roll) {
-        return doEntityFall(entity, fallPos, height, Compute.d6(1), roll, false);
+        return doEntityFall(entity, fallPos, height, Compute.d6(1)-1, roll, false);
     }
 
     /**
@@ -25926,6 +25936,9 @@ public class Server implements Runnable {
                     && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                 testEntity = new TestAero((Aero) entity,
                         Server.entityVerifier.aeroOption, null);
+            }else if (entity instanceof BattleArmor){
+                testEntity = new TestBattleArmor((BattleArmor) entity, 
+                        entityVerifier.baOption, null);
             }
 
             if (testEntity != null){

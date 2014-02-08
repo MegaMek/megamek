@@ -34,7 +34,10 @@ public class CLBASRM3OS extends SRMWeapon {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 3 (OS)";
-        setInternalName("CLBASRM3OS");
+        setInternalName("CLBASRM3 (OS)");
+        addLookupName("Clan BA SRM 3 (OS)");
+        addLookupName("Clan BA OS SRM-3");
+        addLookupName("CLBASRM3OS");
         rackSize = 3;
         shortRange = 3;
         mediumRange = 6;
@@ -43,10 +46,12 @@ public class CLBASRM3OS extends SRMWeapon {
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 7500;
+        tonnage = .06f;
+        criticals = 2;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2824;
-        techLevel.put(2824, techLevel.get(3071));
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_F;
     }

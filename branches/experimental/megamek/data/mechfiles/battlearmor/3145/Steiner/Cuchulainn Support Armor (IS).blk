@@ -36,12 +36,12 @@ Jump
 2
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 CLDetachableWeaponPack:LA
-CLBAERMediumPulseLaser:DWP
+CLBAERMediumPulseLaser:DWP:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth

@@ -53,13 +53,13 @@ import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAC5;
-import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -3469,6 +3469,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 crits[loc][i] = cs;
                 return true;
             }
+        }
+        return false; // no slot available :(
+    }
+    
+    /**
+     * Adds a critical to a critical slot, first trying the supplied slot 
+     * number, and continuing from there if it's full
+     *
+     * @return true if there was room for the critical
+     */
+    public boolean addCritical(int loc, CriticalSlot cs, int slotNumber) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            if (getCritical(loc, slotNumber) == null) {
+                crits[loc][slotNumber] = cs;
+                return true;
+            }
+            slotNumber = (slotNumber + 1) % getNumberOfCriticals(loc);
         }
         return false; // no slot available :(
     }

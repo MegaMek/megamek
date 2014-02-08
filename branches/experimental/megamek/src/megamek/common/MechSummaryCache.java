@@ -40,6 +40,7 @@ import java.util.zip.ZipFile;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -391,10 +392,11 @@ public class MechSummaryCache {
             ms.setCockpitType(-2);
         }
 
-        // we can only test meks and vehicles right now
+        // we can only test meks, vehicles, ASF, and Battlearmor right now
         if ((e instanceof Mech)
                 || ((e instanceof Tank) && !(e instanceof GunEmplacement))
-                || (e instanceof Aero)) {
+                || (e instanceof Aero)
+                || (e instanceof BattleArmor)) {
             TestEntity testEntity = null;
             if (e instanceof Mech) {
                 testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
@@ -415,6 +417,9 @@ public class MechSummaryCache {
                             Entity.ETYPE_SPACE_STATION) {
                 testEntity = new TestAero((Aero)e, 
                         entityVerifier.mechOption, null);
+            } else if (e instanceof BattleArmor){
+                testEntity = new TestBattleArmor((BattleArmor) e, 
+                        entityVerifier.baOption, null);
             }
             if (testEntity != null &&
                     !testEntity.correctEntity(new StringBuffer())) {

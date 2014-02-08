@@ -35,7 +35,7 @@ biped
 </Armor>
 <Squad Equipment>
 ISLight Recoilless Rifle:RA
-ISSRM5OS:Body
+ISBASRM5OS:Body
 BABattleClawVibro:LA
 BASearchlight:Body
 </Squad Equipment>

@@ -1,4 +1,4 @@
-#building block data file
+ #building block data file
 <BlockVersion>
 1
 </BlockVersion>
@@ -43,14 +43,17 @@ IS Level 4
 3073
 </year>
 <source>
-Jihad
+XTR Mercs
 </source>
 <internal_type>
 0
 </internal_type>
 <armor_type>
-8
+22
 </armor_type>
+<armor_tech>
+7
+</armor_tech>
 <engine_type>
 2
 </engine_type>

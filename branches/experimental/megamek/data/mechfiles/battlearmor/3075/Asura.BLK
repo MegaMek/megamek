@@ -2,54 +2,98 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Asura Medium Battle Armor
 </Name>
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
-<cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-7
-</Armor>
-<Squad Equipment>
-ISMedium Recoilless Rifle:RA
-RL4:Body
-BABattleClaw:LA
-</Squad Equipment>
-<type>
-IS Level 2
-</type>
+
+<Model>
+
+</Model>
+
 <year>
 3072
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Jump
 </motion_type>
-<source>
-TRO 3075
-</source>
+
+<cruiseMP>
+1
+</cruiseMP>
+
 <armor_type>
 30
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+Medium Recoilless Rifle:RA
+BABattleClaw:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BA RL4:Body
+BARL4 Ammo:Body:Shots1#
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

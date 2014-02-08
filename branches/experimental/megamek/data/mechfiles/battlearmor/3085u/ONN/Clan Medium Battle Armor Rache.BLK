@@ -44,14 +44,14 @@ biped
 10
 </Armor>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAMG:RA
-CLSRM3OS:Body
-CLSRM3OS:Body
+CLBASRM3OS:Body
+CLBASRM3OS:Body
 BASearchlight:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
-</Squad Equipment>
+</Point Equipment>
 
 <type>
 Clan Level 2

@@ -33,14 +33,14 @@ biped
 <Armor>
 5
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 ISBAMagshotGR:LA
 ISBAJumpBooster:Body
 BABasicManipulator:LA
 BAHeavyBattleClawVibro:RA
-</Squad Equipment>
+</Point Equipment>
 <type>
-Clan Level 2
+IS Level 2
 </type>
 <year>
 3069

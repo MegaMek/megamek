@@ -33,9 +33,9 @@ biped
 <Armor>
 6
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 BABattleClaw:LA
-</Squad Equipment>
+</Point Equipment>
 <Trooper 1 Equipment>
 ISBACompact Narc:LA
 BA-Compact Narc Ammo

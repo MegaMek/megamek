@@ -19,6 +19,8 @@
 
 package megamek.common.verifier;
 
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -27,10 +29,22 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.util.StringUtil;
 
 
 public class TestBattleArmor extends TestEntity {
+    
+    /**
+     * Keeps track of the number of free MP a Bipedal BA gets.
+     */
+    public static int BIPED_FREE_MP = 1;
+    
+    /**
+     * Keeps track of the number of free MP a Quad BA gets.
+     */
+    public static int QUAD_FREE_MP = 2;
     
     /**
      * BattleArmor can have a variable number of shots per slot of ammo, this
@@ -95,18 +109,89 @@ public class TestBattleArmor extends TestEntity {
         }
         
         /**
-         * Given an armor type, return the <code>AeroArmor</code> instance that
+         * Given an armor type, return the <code>BAArmor</code> instance that
          * represents that type.
          * 
          * @param t  The armor type.
          * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given 
+         * @return   The <code>BAArmor</code> that correspondes to the given 
          *              type or null if no match was found.
          */
         public static BAArmor getArmor(int t, boolean c){
             for (BAArmor a : values()){
                 if (a.type == t && a.isClan == c){
                     return a;
+                }
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * An enumeration that keeps track of the legal manipulators for 
+     * BattleArmor.
+     * 
+     * @author arlith
+     *
+     */
+    public static enum BAManipulator{
+        NONE(BattleArmor.MANIPULATOR_NONE,false),   
+        ARMORED_GLOVE(BattleArmor.MANIPULATOR_ARMORED_GLOVE,false),
+        BASIC(BattleArmor.MANIPULATOR_BASIC,false),
+        BASIC_MINE_CLEARANCE(BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE,true),
+        BATTLE(BattleArmor.MANIPULATOR_BATTLE,false),
+        BATTLE_MAGNET(BattleArmor.MANIPULATOR_BATTLE_MAGNET,true),
+        BATTLE_VIBRO(BattleArmor.MANIPULATOR_BATTLE_VIBRO,false),
+        CARGO_LIFTER(BattleArmor.MANIPULATOR_CARGO_LIFTER,true),
+        HEAVY_BATTLE(BattleArmor.MANIPULATOR_HEAVY_BATTLE,false),
+        HEAVY_BATTLE_MAGNET(BattleArmor.MANIPULATOR_HEAVY_BATTLE_MAGNET,true),
+        HEAVY_BATTLE_VIBRO(BattleArmor.MANIPULATOR_HEAVY_BATTLE_VIBRO,false),
+        SALVAGE_ARM(BattleArmor.MANIPULATOR_SALVAGE_ARM,false),
+        DRILL(BattleArmor.MANIPULATOR_INDUSTRIAL_DRILL,false);
+
+        /**
+         * The type, corresponding to types defined in 
+         * <code>EquipmentType</code>.
+         */
+        public int type;
+        
+        /**
+         * The name of this manipulator
+         */
+        public String internalName;
+        
+        public String displayName;
+        
+        /**
+         * Denotes whether this armor is Clan or not.
+         */
+        public boolean pairMounted;
+        
+        BAManipulator(int t, boolean p){
+            type = t;
+            internalName = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
+            displayName = BattleArmor.MANIPULATOR_NAME_STRINGS[t];
+            pairMounted = p;
+        }
+        
+        public static int getNumBAArmors(){
+            return values().length;
+        }
+        
+        /**
+         * Given an manipulator internal name, return the 
+         * <code>BAManipulator</code> instance that
+         * represents that internal name.
+         * 
+         * @param name  The internal name.
+         * @return      The <code>BAManipulator</code> that correspondes to 
+         *              the given internal name or null if no match was found.
+         */
+        public static BAManipulator getManipulator(String name){
+            for (BAManipulator m : values()){
+                if (m.internalName.equals(name) 
+                        || m.displayName.equals(name)){
+                    return m;
                 }
             }
             return null;
@@ -149,8 +234,18 @@ public class TestBattleArmor extends TestEntity {
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         for (Mounted m : ba.getEquipment()){
-            if (m.getBaMountLoc() == loc && m.getLocation() == trooper){
-                numUsedCrits += m.getType().getCriticals(ba);
+            // Manipulators don't take up slots in BA
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
+                continue;
+            }
+            if (m.getBaMountLoc() == loc 
+                    && (m.getLocation() == trooper 
+                        || m.getLocation() == BattleArmor.LOC_SQUAD)){
+                if (m.getType().isSpreadable()){
+                    numUsedCrits++;
+                } else {
+                    numUsedCrits += m.getType().getCriticals(ba);
+                }
                 if (m.getType() instanceof WeaponType){
                     if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
                         numAntiPersonnelWeapons++;
@@ -162,8 +257,13 @@ public class TestBattleArmor extends TestEntity {
         }
         
         // Do we have free space to mount this equipment?
-        if ((numUsedCrits + newMount.getType().getCriticals(ba)) 
-                <= ba.getNumCrits(loc)) {
+        int newCrits;
+        if (newMount.getType().isSpreadable()){
+            newCrits = 1;
+        } else {
+            newCrits = newMount.getType().getCriticals(ba);
+        }
+        if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
             if (newMount.getType() instanceof WeaponType){
                 if (newMount.getType().hasFlag(WeaponType.F_INFANTRY)){
@@ -188,7 +288,7 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
     }
-    
+
     private BattleArmor ba;
     
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,
@@ -241,6 +341,14 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public float getWeightStructure() {
         float tons = 0;
+        
+        int walkMP = ba.getOriginalWalkMP();
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
+            walkMP -= QUAD_FREE_MP;
+        } else {
+            walkMP -= BIPED_FREE_MP;
+        }
+        int jumpMP = ba.getOriginalJumpMP();
         switch(ba.getWeightClass()) {
         case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
             if(ba.isClan()) {
@@ -248,14 +356,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                 tons += 0.08;
             }
-            tons += ba.getOriginalWalkMP() * .025;
+            tons += walkMP * .025;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .045;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .03;
+                tons += jumpMP * .045;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .03;
             } else {
-                tons += ba.getOriginalJumpMP() * .025;
+                tons += jumpMP * .025;
             }
             break;
         case EntityWeightClass.WEIGHT_LIGHT:
@@ -264,14 +371,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.1;
             }
-            tons += ba.getOriginalWalkMP()  * .03;
+            tons += walkMP  * .03;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .045;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .04;
+                tons += jumpMP * .045;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .04;
             } else {
-                tons += ba.getOriginalJumpMP() * .025;
+                tons += jumpMP * .025;
             }
             break;
         case EntityWeightClass.WEIGHT_MEDIUM:
@@ -280,14 +386,13 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.175;
             }
-            tons += ba.getOriginalWalkMP()  * .04;
+            tons += walkMP * .04;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .085;
-            }
-            else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
-                tons += ba.getOriginalJumpMP() * .06;
+                tons += jumpMP * .085;
+            } else if(ba.getMovementMode() == EntityMovementMode.VTOL) {
+                tons += jumpMP * .06;
             } else {
-                tons += ba.getOriginalJumpMP() * .05;
+                tons += jumpMP * .05;
             }
             break;
         case EntityWeightClass.WEIGHT_HEAVY:
@@ -296,12 +401,11 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.3;
             }
-            tons += ba.getOriginalWalkMP()  * .08;
+            tons += walkMP  * .08;
             if(ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                tons += ba.getOriginalJumpMP() * .16;
-            }
-            else {
-                tons += ba.getOriginalJumpMP() * .125;
+                tons += jumpMP * .16;
+            } else {
+                tons += jumpMP * .125;
             }
             break;
         case EntityWeightClass.WEIGHT_ASSAULT:
@@ -310,8 +414,8 @@ public class TestBattleArmor extends TestEntity {
             } else {
                     tons += 0.55;
             }
-            tons += ba.getOriginalWalkMP()  * .16;       
-            tons += ba.getOriginalJumpMP() * .25;
+            tons += walkMP * .16;       
+            tons += jumpMP * .25;
             break;
         }
         return tons;
@@ -333,30 +437,440 @@ public class TestBattleArmor extends TestEntity {
     public int getCountHeatSinks() {
         return 0;
     }
+    
+    public float getWeight() {
+        return ba.getTrooperWeight() * ba.getTroopers();
+    }
 
     @Override
     public String printWeightMisc() {
-        return null;
+        return "";
     }
 
     @Override
     public String printWeightControls() {
-        return null;
+        return "";
+    }
+    
+    public String printWeightStructure(){
+        return StringUtil.makeLength("Structure: ", getPrintSize() + 9)
+                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+    }
+    
+    public String printWeightArmor() {
+        String armorName = EquipmentType.getArmorTypeName(
+                ba.getArmorType(BattleArmor.LOC_SQUAD),
+                TechConstants.isClan(
+                        ba.getArmorTechLevel(BattleArmor.LOC_SQUAD)));
+        
+        return StringUtil.makeLength(
+                "Armor: " + Integer.toString(getTotalOArmor()) + " "
+                        + armorName, getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+    }
+    
+    public String printArmorPlacement() {
+        StringBuffer buff = new StringBuffer();
+        buff.append("Armor Placement:\n");
+        for (int loc = 1; loc < getEntity().locations(); loc++) {
+            buff.append(printArmorLocation(loc)).append("\n");
+        }
+        return buff.toString();
+    }
+    
+    public String printArmorLocation(int loc) {
+        return StringUtil.makeLength(getEntity().getLocationAbbr(loc) + ":", 10)
+                + StringUtil.makeLength(getEntity().getOInternal(loc), 4)
+                + StringUtil.makeLength(getEntity().getOArmor(loc), 6) + "  ";
     }
 
+    /**
+     * Checks to see if this unit has valid armor assignment.
+     * 
+     * @param buff
+     * @return
+     */
+    public boolean correctArmor(StringBuffer buff) {
+        boolean correct = true;
+        int maxArmorPoints = ba.getMaximumArmorPoints();
+        for (int loc = 0; loc < ba.locations(); loc++) {
+            if (ba.getOArmor(loc) > maxArmorPoints) {
+                buff.append(printArmorLocation(loc))
+                        .append(printArmorLocProp(loc,
+                                maxArmorPoints)).append("\n");
+                correct = false;
+            }
+        }
+        return correct ;
+    }
+    
+    public String printArmorLocProp(int loc, int wert) {
+        return " is greater than " + Integer.toString(wert) + "!";
+    }
+    
+    public boolean correctMovement(StringBuffer buff) {
+        if (ba.getOriginalWalkMP() > ba.getMaximumWalkMP()){
+            buff.append("Walk MP is " + ba.getOriginalWalkMP()
+                    + " but maximum is " + ba.getMaximumWalkMP() + "!");
+            return false;
+        }
+        
+        if (ba.getOriginalJumpMP() > ba.getMaximumJumpMP()){
+            buff.append("Jump MP is " + ba.getOriginalWalkMP()
+                    + " but maximum is " + ba.getMaximumWalkMP() + "!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                && (ba.getMovementMode() != EntityMovementMode.INF_JUMP
+                    || ba.getJumpMP() < 1)){
+            buff.append("BattleArmor with jump boosters " +
+                    "must have jump jets with a least 1MP!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_PARTIAL_WING) 
+                && (ba.getMovementMode() != EntityMovementMode.INF_JUMP
+                    || ba.getJumpMP() < 1)){
+            buff.append("BattleArmor with a partial wing " +
+                    "must have jump jets with a least 1MP!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER) 
+                && ba.hasWorkingMisc(MiscType.F_PARTIAL_WING)){
+            buff.append("BattleArmor may not mount a jump booster " +
+            		"and a partial wing!");
+            return false;
+        }
+        
+        if (ba.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER) 
+                && ba.hasMyomerBooster()){
+            buff.append("BattleArmor may not mount a mechanical jump booster " +
+                    "and a myomer booster!");
+            return false;
+        }
+        
+        if (ba.hasMyomerBooster() 
+                && ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                    == EquipmentType.T_ARMOR_BA_MIMETIC){
+            buff.append("BattleArmor may not mount a myomer booster " +
+                    "and mimetic armor!");
+            return false;
+        }
+        
+        if (ba.hasMyomerBooster() 
+                && (ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_BASIC
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_IMP
+                    || ba.getArmorType(BattleArmor.LOC_SQUAD) 
+                        == EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE)){
+            buff.append("BattleArmor may not mount a myomer booster " +
+                    "and stealth armor!");
+            return false;
+        }
+        
+        if (ba.countWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER) > 1){
+            buff.append("BattleArmor may only mount 1 " +
+            		"mechanical jump booster!");
+            return false;
+        }
+        
+        if (ba.countWorkingMisc(MiscType.F_MASC) > 1){
+            buff.append("BattleArmor may only mount 1 " +
+                    "myomer booster!");
+            return false;
+        }
+        
+        
+        return true;
+    }
+    
+    public boolean correctCriticals(StringBuffer buff) {
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        getUnallocatedEquipment(ba, unallocated);
+        boolean correct = true;
+
+        if (!unallocated.isEmpty()) {
+            buff.append("Unallocated Equipment:\n");
+            for (Mounted mount : unallocated) {
+                buff.append(mount.getType().getInternalName()).append("\n");
+            }
+            correct = false;
+        }
+        
+        int critsUsed[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int  numAPWeapons[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int  numAMWeapons[][] = 
+                new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        // Count used crits, AM/AP weaps for each squad member and location
+        for (Mounted m : ba.getEquipment()){
+            // Ignore unmounted equipment, we'll deal with that elsewhere
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE){
+                continue;
+            }
+            // Manipulators don't take up slots in BA
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
+                continue;
+            }
+            int critSize;
+            if (m.getType().isSpreadable()){
+                critSize = 1;
+            } else {
+                critSize = m.getType().getCriticals(ba);
+            }
+            
+            // Check for valid BA weapon
+            if ((m.getType() instanceof WeaponType) 
+                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)){
+                buff.append(m.getName() + " is not a BattleArmor weapon!\n");
+                correct = false;
+            }
+            
+            // Check for valid BA equipment
+            if ((m.getType() instanceof MiscType) 
+                    && !m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)){
+                buff.append(m.getName() + " is not BattleArmor equipment!\n");
+                correct = false;
+            }
+            
+            // Ensure that jump boosters are mounted in the body
+            if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER) 
+                    && m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY){
+                buff.append("Jump Boosters must be mounted in the body!");
+            }
+            
+            // Ensure partial wing are mounted in the body
+            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING) 
+                    && m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY){
+                buff.append("Partial wing must be mounted in the body!");
+            }
+            
+            if (m.getLocation() != BattleArmor.LOC_SQUAD){
+                critsUsed[m.getLocation()][m.getBaMountLoc()] += critSize;
+                if ((m.getType() instanceof WeaponType)){
+                    if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                        numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
+                    } else {
+                        numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
+                    }
+                }
+            } else {
+                for (int t = 0; t <= ba.getTroopers(); t++){
+                    critsUsed[t][m.getBaMountLoc()] += critSize;
+                    if ((m.getType() instanceof WeaponType)){
+                        if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                            numAPWeapons[t][m.getBaMountLoc()]++;
+                        } else {
+                            numAMWeapons[t][m.getBaMountLoc()]++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Now check to make sure the counts are valid
+        for (int t = 0; t <= ba.getTroopers(); t++){
+            for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++){
+                if (critsUsed[t][loc] > ba.getNumCrits(loc)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + " has "
+                            + critsUsed[t][loc]
+                            + " used criticals, but only has "
+                            + ba.getNumCrits(loc) + " available criticsl!\n");
+                    correct = false;
+                }
+                if (numAMWeapons[t][loc] > 
+                        ba.getNumAllowedAntiMechWeapons(loc)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + "has "
+                            + numAMWeapons[t][loc]
+                            + " anti-mech weapons, but only "
+                            + ba.getNumAllowedAntiMechWeapons(loc) 
+                            + " are allowed!\n");
+                    correct = false;
+                }
+                if (numAPWeapons[t][loc] > 
+                        ba.getNumAllowedAntiPersonnelWeapons(loc, t)){
+                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                            + ba.getLocationAbbr(t) + "has "
+                            + numAPWeapons[t][loc]
+                            + " anti-personnel weapons, but only "
+                            + ba.getNumAllowedAntiPersonnelWeapons(loc, t)
+                            + " are allowed!\n");
+                    correct = false;
+                }
+            }
+        }
+        
+        return correct;
+    }
+    
+    
+    public void getUnallocatedEquipment(Entity entity, 
+            Vector<Mounted> unallocated) {
+        for (Mounted m : entity.getEquipment()) {
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
+                if ((m.getType() instanceof AmmoType)
+                        && (m.getUsableShotsLeft() <= 1)) {
+                    continue;
+                }
+                if ((m.getType().getCriticals(entity) == 0)) {
+                    continue;
+                }
+                unallocated.addElement(m);
+            }
+        }
+    }
+    
+    public boolean correctManipulators(StringBuffer buff){
+        boolean correct = true;
+        int numLAManipulators = 0;
+        int numRAManipulators = 0;
+        BAManipulator laManipType = BAManipulator.NONE;
+        BAManipulator raManipType = BAManipulator.NONE;
+        for (Mounted m : ba.getEquipment()){
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
+                if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                    numLAManipulators++;
+                    laManipType = BAManipulator.getManipulator(m.getName());
+                } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+                    numRAManipulators++;
+                    raManipType = BAManipulator.getManipulator(m.getName());
+                } else {
+                    if (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE){
+                        buff.append(m.getName() + "mounted in "
+                                + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()]
+                                + ", but manipulators must be mounted in arms!");
+                    }
+                    correct = false;
+                }
+            }
+        }
+        
+        if (numLAManipulators > 1){
+            buff.append("Found more than 1 manipulator in the left arm!");
+            correct = false;
+        }
+        
+        if (numRAManipulators > 1){
+            buff.append("Found more than 1 manipulator in the right arm!");
+            correct = false;
+        }
+        
+        if ((laManipType.pairMounted || raManipType.pairMounted) 
+                && (laManipType.type != raManipType.type)){
+            if (laManipType.pairMounted){
+                buff.append("Left Arm manipulator must be mounted as a " +
+                		"pair, but the right arm manipulator doesn't match! ");
+            } else {
+                buff.append("Right Arm manipulator must be mounted as a " +
+                        "pair, but the left arm manipulator doesn't match! "); 
+            }
+            correct = false;
+        }
+        return correct;
+    }
+    
+    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+        float weightSum = calculateWeight();
+        float weight = getWeight();
+        boolean correct = true;
+        String baDesig = ba.getLocationAbbr(BattleArmor.LOC_SQUAD);
+        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
+            buff.append(baDesig + "Weight: ").append(calculateWeight())
+                    .append(" is greater than ").append(getWeight())
+                    .append("\n");
+            correct = false;
+        }
+        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
+            buff.append("Weight: ").append(calculateWeight())
+                    .append(" is less than ").append(getWeight()).append("\n");
+            correct = false;
+        }
+        
+        for (int t = 1; t < ba.getTroopers(); t++){
+            float trooperWeight = calculateWeight(t);
+            if (trooperWeight > ba.getTrooperWeight()){
+                buff.append("Trooper " + t + " Weight: " + trooperWeight
+                        + " is greater than " + ba.getTrooperWeight() + "\n");
+                correct = false;
+            }
+        }
+        return correct;
+    }
+    
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        return false;
+        return correctEntity(buff, true);
     }
 
     @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        return false;
+        boolean correct = true;
+        if (skip()) {
+            return true;
+        }
+        if (!correctWeight(buff)) {
+            buff.insert(0, printTechLevel() + printShortMovement());
+            buff.append(printWeightCalculation());
+            correct = false;
+        }
+        
+        if (showCorrectArmor() && !correctArmor(buff)) {
+            correct = false;
+        }
+        if (showCorrectCritical() && !correctCriticals(buff)) {
+            correct = false;
+        }
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
+            correct = false;
+        }
+        if (hasIllegalTechLevels(buff, ignoreAmmo)) {
+            correct = false;
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
+            correct = false;
+        }
+        
+        correct &= correctManipulators(buff);
+        
+        correct &= correctMovement(buff);
+        
+        return correct;
     }
 
     @Override
     public StringBuffer printEntity() {
-        return null;
+        StringBuffer buff = new StringBuffer();
+        buff.append("BattleArmor: ").append(ba.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");        
+        buff.append(printTechLevel());
+        buff.append(printSource());
+        buff.append(printShortMovement());
+        if (correctWeight(buff, true, true)) {
+            buff.append("Weight: ").append(getWeight()).append(" (")
+                    .append(calculateWeight()).append(")\n");
+        }
+        buff.append(printWeightCalculation()).append("\n");
+        buff.append(printArmorPlacement());
+        correctArmor(buff);
+        buff.append(printLocations());
+        correctCriticals(buff);
+        printFailedEquipment(buff);
+        return buff;
+    }
+    
+    public String printWeightCalculation() {
+        return  printWeightStructure() +
+                printWeightArmor()
+                + "Equipment:\n"
+                + printWeapon() + printAmmo() + printMiscEquip();
     }
 
     @Override

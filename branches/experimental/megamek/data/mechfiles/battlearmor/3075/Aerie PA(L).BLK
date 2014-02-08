@@ -2,57 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Aerie PA(L)
 </Name>
-<chassis>
-biped
-</chassis>
-<weightclass>
-0
-</weightclass>
-<Trooper Count>
-5
-</Trooper Count>
-<cruiseMP>
-2
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-1
-</Armor>
-<Squad Equipment>
-InfantryClanMauserIICIAS:LA
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-CLBASpaceOperationsAdaptation:Body
-BAExtendedLifeSupport:Body
-</Squad Equipment>
-<type>
-Clan Level 2
-</type>
+
+<Model>
+
+</Model>
+
 <year>
 3067
 </year>
+
+<type>
+Clan Level 2
+</type>
+
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-TRO:3175
-</source>
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 32
 </armor_type>
+
 <armor_tech>
 2
 </armor_tech>
+
+<Point Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+CLBASpaceOperationsAdaptation:Body
+BAExtendedLifeSupport:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO:3175
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+

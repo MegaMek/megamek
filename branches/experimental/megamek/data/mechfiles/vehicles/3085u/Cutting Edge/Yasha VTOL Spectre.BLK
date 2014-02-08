@@ -64,8 +64,12 @@ Dark Age
 </internal_type>
 
 <armor_type>
-8
+22
 </armor_type>
+
+<armor_tech>
+7
+</armor_tech>
 
 <engine_type>
 2

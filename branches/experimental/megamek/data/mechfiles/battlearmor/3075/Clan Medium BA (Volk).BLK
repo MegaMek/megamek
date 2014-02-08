@@ -2,61 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Clan Medium Battle Armor
 </Name>
+
 <Model>
 (Volk)
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-5
-</Trooper Count>
-<cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-9
-</Armor>
-<Squad Equipment>
-CLERMicroLaser:RA
-CLSRM3OS:Body
-CLBAJumpBooster:Body
-BASearchlight:Body
-BABasicManipulator:RA
-BAHeavyBattleClaw:LA
-</Squad Equipment>
-<type>
-Clan Level 2
-</type>
+
 <year>
 3071
 </year>
+
+<type>
+Clan Level 2
+</type>
+
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-TRO:3175
-</source>
+<cruiseMP>
+1
+</cruiseMP>
+
 <armor_type>
 28
 </armor_type>
+
 <armor_tech>
 2
 </armor_tech>
+
+<Point Equipment>
+Clan Ammo SRM-3:LA:Shots1#
+CLBAJumpBooster:Body
+BASearchlight:LA
+BABasicManipulator:RA
+BAHeavyBattleClaw:LA
+CLBAERMicroLaser:RA
+Clan BA SRM 3 (OS):Body
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO:3175
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

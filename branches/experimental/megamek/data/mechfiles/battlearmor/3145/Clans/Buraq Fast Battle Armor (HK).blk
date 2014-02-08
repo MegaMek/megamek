@@ -36,12 +36,12 @@ Jump
 5
 </cruiseMP>
 
-<Squad Equipment>
+<Point Equipment>
 CLBAMyomerBooster:Body
-Searchlight:Body
+BASearchlight:Body
 CLBAImprovedSensors:Body
 CLBearhunter Superheavy AC:Body
-</Squad Equipment>
+</Point Equipment>
 
 <source>
 TRO 3145 Clans

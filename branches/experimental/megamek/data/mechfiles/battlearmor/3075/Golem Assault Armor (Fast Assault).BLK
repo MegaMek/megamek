@@ -33,14 +33,14 @@ biped
 <Armor>
 18
 </Armor>
-<Squad Equipment>
+<Point Equipment>
 Clan BA Machine Gun:RA
-CLSRM5OS:Body
+CLBASRM5OS:Body
 CLBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 BAAPMount:LA
-</Squad Equipment>
+</Point Equipment>
 <type>
 Clan Level 2
 </type>

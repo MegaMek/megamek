@@ -31,9 +31,9 @@ biped
 15
 </Armor>
 <Squad Equipment>
-IS Medium Laser:RA
-ISSRM2OS:Body
-ISSRM2OS:Body
+ISBAMediumLaser:RA
+ISBASRM2OS:Body
+ISBASRM2OS:Body
 BAHeavyBattleClaw:RA
 BAAPMount:Body
 BAAPMount:Body

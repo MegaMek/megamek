@@ -149,7 +149,7 @@ public class BipedMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if ((heat >= 9) && hasTSM()) {
+            if ((heat >= 9) && hasTSM() && legsDestroyed == 0) {
                 wmp += 2;
             }
         }

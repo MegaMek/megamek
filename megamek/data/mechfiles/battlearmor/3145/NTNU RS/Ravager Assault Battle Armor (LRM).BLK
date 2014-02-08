@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -15,57 +16,80 @@ BattleArmor
 Ravager Assault Battle Armor
 </Name>
 
-<model>
+<Model>
 (LRM)
-</model>
-
-<chassis>
-biped
-</chassis>
-
-<weightclass>
-4
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-2
-</cruiseMP>
-<Armor>
-18
-</Armor>
-
-<Squad Equipment>
-ISLight Recoilless Rifle:RA
-ISBALRM3:Body
-BABattleClaw:LA
-BAISLRM3 Ammo:Body:Shots8#
-</Squad Equipment>
-
-<type>
-IS Level 2
-</type>
+</Model>
 
 <year>
 3130
 </year>
 
-<source>
-RS3145 NT NU
-</source>
+<type>
+IS Level 2
+</type>
 
 <motion_type>
 Leg
 </motion_type>
 
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
-28
+30
 </armor_type>
+
 <armor_tech>
-3
+1
 </armor_tech>
 
+<Squad Equipment>
+Light Recoilless Rifle:RA
+BA LRM 3:Body
+BABattleClaw:LA
+IS BA Ammo LRM-3:Body:Shots4#
+IS BA Ammo LRM-3:Body:Shots4#
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+RS3145 NT NU
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
 

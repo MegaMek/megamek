@@ -43,7 +43,8 @@ ISBATubeArtillery:DWP:Body
 ISDetachableWeaponPack:Body
 BA-Magnetic Clamp:Body
 ISBASmallLaser:RA
-ISBATubeArtilleryAmmo:Body:Shots8#
+ISBATubeArtilleryAmmo:Body:Shots4#
+ISBATubeArtilleryAmmo:Body:Shots4#
 </Squad Equipment>
 
 <source>

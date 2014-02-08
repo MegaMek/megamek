@@ -33,7 +33,8 @@ biped
 <Squad Equipment>
 ISBALightTAG:LA
 ISBASRM4:Body
-BA-SRM4 Ammo:Body:Shots7#
+BA-SRM4 Ammo:Body:Shots4#
+BA-SRM4 Ammo:Body:Shots3#
 BABasicManipulator:RA
 BAAPMount:RA
 </Squad Equipment>

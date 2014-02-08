@@ -77,6 +77,7 @@ v0.37.7-dev (SVN)
 + Changes in BA Weapons/Misc Type/Ammo Type for the new units.
 + Bug [#4035]: MegaMek hangs when firing Thumper Cannon 0.37.7-dev
 + TestBattleArmor now checks to make sure each slot of ammo has at most 4 shots
++ BA Fixes
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

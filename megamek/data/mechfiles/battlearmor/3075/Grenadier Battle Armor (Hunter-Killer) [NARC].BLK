@@ -2,71 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Grenadier Battle Armor
 </Name>
+
 <Model>
 (Hunter-Killer) [NARC]
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-2
-</cruiseMP>
-<Armor>
-9
-</Armor>
-<Squad Equipment>
-ISFiredrakeIncendiaryNeedler:RA
-ISBASRM5:Body
-BA-SRM4 Ammo:Body:Shots4#
-BABasicManipulator
-</Squad Equipment>
-<Trooper 1 Equipment>
-ISBACompact Narc:Body
-BA-Compact Narc Ammo:Body:Shots3#
-</Trooper 1 Equipment>
-<Trooper 2 Equipment>
-ISBACompact Narc:Body
-BA-Compact Narc Ammo:Body:Shots3#
-</Trooper 2 Equipment>
-<Trooper 3 Equipment>
-ISBACompact Narc:Body
-BA-Compact Narc Ammo:Body:Shots3#
-</Trooper 3 Equipment>
-<Trooper 4 Equipment>
-ISBACompact Narc:Body
-BA-Compact Narc Ammo:Body:Shots3#
-</Trooper 4 Equipment>
-<type>
-IS Level 2
-</type>
+
 <year>
 3075
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Leg
 </motion_type>
-<source>
-TRO 3075
-</source>
+
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 32
 </armor_type>
+
 <armor_tech>
-3
+1
 </armor_tech>
+
+<Squad Equipment>
+Firedrake Needler:RA
+BA SRM 5:Body
+BABasicManipulator
+ISBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots3#
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:Body
+BA-SRM5 Ammo:Body:Shots4#
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

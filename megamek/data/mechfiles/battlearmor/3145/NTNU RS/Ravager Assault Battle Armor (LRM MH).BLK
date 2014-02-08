@@ -43,7 +43,8 @@ biped
 ISLight Recoilless Rifle:RA
 ISBALRM3:Body
 BABattleClaw:LA
-BAISLRM3 Ammo:Body:Shots8#
+BAISLRM3 Ammo:Body:Shots4#
+BAISLRM3 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <type>

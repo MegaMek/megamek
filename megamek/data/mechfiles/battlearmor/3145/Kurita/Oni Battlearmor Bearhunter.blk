@@ -2,67 +2,98 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Oni Battle Armor
 </Name>
 
-<model>
+<Model>
 [Bearhunter]
-</model>
-
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-3
-</cruiseMP>
-<jumpingMP>
-0
-</jumpingMP>
-<Armor>
-10
-</Armor>
-
-<Squad Equipment>
-CLBearhunter Superheavy AC:RA
-Heavy Battle Claw (w/ Vibro-Claws):LA
-BABasicManipulator:RA
-BAExtendedLifeSupport:Body
-BA ECM:Body
-</Squad Equipment>
-
-<type>
-Mixed (IS Chassis) Experimental
-</type>
+</Model>
 
 <year>
 3134
 </year>
 
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
 <motion_type>
 Jump
 </motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<Squad Equipment>
+CLBearhunter Superheavy AC:RA
+BAHeavyBattleClawVibro
+BABasicManipulator
+IS BA ECM:Body
+BAExtendedLifeSupport:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Draconis Combine
 </source>
 
-<armor_type>
-35
-</armor_type>
-<armor_tech>
-7
-</armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

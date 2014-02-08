@@ -41,9 +41,7 @@ biped
 ISFiredrakeIncendiaryNeedler:RA
 ISBALightTAG:LA
 ISBASRM3:Body
-BASRM3 Ammo:Body
-BASRM3 Ammo:Body
-BASRM3 Ammo:Body
+BASRM3 Ammo:Body:Shots3#
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>
@@ -51,6 +49,14 @@ BABasicManipulator:RA
 <type>
 IS Level 4
 </type>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
 
 <year>
 3130

@@ -6997,7 +6997,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createBAMicroBombAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "Micro Bomb Ammo";
         ammo.shortName = "Micro Bomb";
         ammo.setInternalName("BA-Micro Bomb Ammo");
@@ -7741,6 +7741,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "MRM 1";
         ammo.setInternalName("IS MRM 1 Ammo");
         ammo.addLookupName("ISMRM1 Ammo");
+        ammo.addLookupName("ISBAMRM1 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MRM;
@@ -7765,6 +7766,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "MRM 2";
         ammo.setInternalName("IS MRM 2 Ammo");
         ammo.addLookupName("ISMRM2 Ammo");
+        ammo.addLookupName("ISBAMRM2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MRM;
@@ -7789,6 +7791,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "MRM 3";
         ammo.setInternalName("IS MRM 3 Ammo");
         ammo.addLookupName("ISMRM3 Ammo");
+        ammo.addLookupName("ISBAMRM3 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MRM;
@@ -7813,6 +7816,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "MRM 4";
         ammo.setInternalName("IS MRM 4 Ammo");
         ammo.addLookupName("ISMRM4 Ammo");
+        ammo.addLookupName("ISBAMRM4 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MRM;
@@ -7837,6 +7841,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "MRM 5";
         ammo.setInternalName("IS MRM 5 Ammo");
         ammo.addLookupName("ISMRM5 Ammo");
+        ammo.addLookupName("ISBAMRM5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MRM;

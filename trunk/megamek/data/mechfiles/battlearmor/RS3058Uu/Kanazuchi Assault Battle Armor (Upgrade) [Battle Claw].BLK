@@ -35,14 +35,7 @@ ISBASupportPPC:RA
 ISBASupportPPC:RA
 ISBAMRM1:Body
 ISBAMRM1:Body
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots8#
 BAHeavyBattleClaw:LA
 BAAPMount:Body
 BAAPMount:Body

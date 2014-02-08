@@ -46,19 +46,8 @@ Jump
 
 <Squad Equipment>
 BA Heavy Machine Gun:RA
-ISBASRM6OS
-BABattleClaw:LA
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
 ISBASRM6OS:Body
-IS Ammo SRM-6:LA:Shots1#
-IS BA Advanced
-IS BA Advanced:LA
-IS BA Advanced:LA
-IS BA Advanced:RA
-IS BA Advanced:RA
+BABattleClaw:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

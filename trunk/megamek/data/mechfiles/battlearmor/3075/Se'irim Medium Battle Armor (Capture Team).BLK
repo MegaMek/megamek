@@ -39,7 +39,7 @@ biped
 ISDetachableWeaponPack:Body
 ISBALightMG:RA
 ISBALightMG:LA
-ISBATaser:DWP
+ISBATaser:DWP:Body
 BABattleClaw:RA
 BABattleClaw:LA
 BASearchlight:Body

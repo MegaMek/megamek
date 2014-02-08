@@ -33,7 +33,7 @@ biped
 <Squad Equipment>
 ISDetachableWeaponPack:Body
 ISBAHeavyMG:RA
-ISBATaser:DWP
+ISBATaser:DWP:Body
 ISBALRM2OS:Body
 BAHeavyBattleClaw:LA
 </Squad Equipment>

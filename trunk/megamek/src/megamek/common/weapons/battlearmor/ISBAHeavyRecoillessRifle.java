@@ -40,6 +40,8 @@ public class ISBAHeavyRecoillessRifle extends Weapon {
         name = "Heavy Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISHeavy Recoilless Rifle");
+        addLookupName("ISBAHeavy Recoilless Rifle");
+        addLookupName("ISBAHeavyRecoillessRifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;

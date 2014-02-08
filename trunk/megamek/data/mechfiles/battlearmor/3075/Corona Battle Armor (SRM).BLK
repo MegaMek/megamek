@@ -49,9 +49,7 @@ Infantry Auto Rifle
 CLBAHeavy Recoilless Rifle:LA
 CLBAFlamer:RA
 CLBASRM5:Body
-BA-SRM5 Ammo:Body:Shots1#
-BA-SRM5 Ammo:Body:Shots1#
-BA-SRM5 Ammo:Body:Shots1#
+BA-SRM5 Ammo:Body:Shots3#
 BAAPMount:RA
 BABasicManipulator:LA
 BABattleClaw:RA

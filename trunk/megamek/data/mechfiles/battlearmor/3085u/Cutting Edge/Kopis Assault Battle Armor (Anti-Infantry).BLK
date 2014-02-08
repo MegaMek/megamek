@@ -49,7 +49,7 @@ biped
 </armor_tech>
 
 <Squad Equipment>
-ISMediumPulseLaser:Body
+ISBAMediumPulseLaser:Body
 ISBAFlamer:Body
 BAAPMount:RA
 BAAPMount:LA

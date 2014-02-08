@@ -40,6 +40,7 @@ public class CLBAHeavyRecoillessRifle extends Weapon {
         name = "Heavy Recoilless Rifle";
         setInternalName("CLBAHeavy Recoilless Rifle");
         addLookupName("CLBAHeavy Recoilless Rifle");
+        addLookupName("CLBAHeavyRecoillessRifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;
@@ -48,7 +49,7 @@ public class CLBAHeavyRecoillessRifle extends Weapon {
         longRange = 7;
         extremeRange = 10;
         bv = 22;
-        tonnage = 0.375f;
+        tonnage = 0.325f;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 5000;

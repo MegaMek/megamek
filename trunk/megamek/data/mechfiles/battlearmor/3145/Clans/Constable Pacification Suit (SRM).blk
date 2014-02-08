@@ -43,10 +43,7 @@ BACuttingTorch:LA
 BABattleClaw:LA
 BABattleClaw:RA
 CLBASRM1:Body
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
-BASRM1 Ammo:Body
+BASRM1 Ammo:Body:Shots4#
 </Point Equipment>
 
 <source>

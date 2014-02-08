@@ -33,7 +33,8 @@ public class ISBAMediumLaser extends LaserWeapon {
     public ISBAMediumLaser() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        setInternalName("BA Medium Laser");
+        name = "BA Medium Laser";
+        setInternalName(name);
         addLookupName("IS BA Medium Laser");
         addLookupName("ISBAMediumLaser");
         damage = 5;

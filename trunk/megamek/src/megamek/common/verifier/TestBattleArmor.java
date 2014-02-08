@@ -639,6 +639,14 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
             
+            if ((m.getType() instanceof AmmoType)
+                    && m.getBaseShotsLeft() > 4){
+                buff.append(m.getName() + "has " + m.getBaseShotsLeft() 
+                        + " shots, but BattleArmor may only have at most " +
+                        "4 shots per slot.");
+                correct = false;
+            }
+            
             // Ensure that jump boosters are mounted in the body
             if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER) 
                     && m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY){

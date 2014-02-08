@@ -45,7 +45,7 @@ BAPartialWing:Body
 BAAPMount:RA
 BABattleClaw:LA
 BABattleClaw:RA
-CLBAMG
+CLBAMG:Body
 Camo System:Body
 </Point Equipment>
 

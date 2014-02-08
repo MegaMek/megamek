@@ -36,7 +36,7 @@ quad
 ISDetachableWeaponPack:Body
 ISBASupportPPC:Body
 ISBASupportPPC:Body
-ISBAHeavyMG:DWP
+ISBAHeavyMG:DWP:Body
 </Squad Equipment>
 <type>
 IS Level 3

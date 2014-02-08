@@ -40,7 +40,7 @@ biped
 </Armor>
 
 <Point Equipment>
-BA ECM:Body
+CLBAECM:Body
 CLBALightTAG:LA
 CLBALightMG:RA
 BABasicManipulator:RA

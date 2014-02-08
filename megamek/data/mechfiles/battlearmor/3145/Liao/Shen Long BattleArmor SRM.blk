@@ -38,10 +38,7 @@ Leg
 
 <Squad Equipment>
 ISBASRM4:Body
-BASRM4 Ammo:Body:Shots1#
-BASRM4 Ammo:Body:Shots1#
-BASRM4 Ammo:Body:Shots1#
-BASRM4 Ammo:Body:Shots1#
+BASRM4 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <source>

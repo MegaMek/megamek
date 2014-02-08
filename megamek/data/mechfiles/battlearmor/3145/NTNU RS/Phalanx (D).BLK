@@ -39,14 +39,14 @@ biped
 </Armor>
 
 <Squad Equipment>
-ISMediumVSP:DWP
+ISBAMediumVSP:DWP:Body
 ISDetachableWeaponPack:Body
 BABattleClaw:LA
 BAArmoredGlove:RA
 </Squad Equipment>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <year>

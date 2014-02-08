@@ -34,11 +34,11 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISMachine Gun:LA
+ISBAMachine Gun:LA
 ISDetachableWeaponPack:Body
-ISBARocketLauncher4:DWP
+ISBARocketLauncher4:DWP:Body
 ISDetachableWeaponPack:Body
-ISBARocketLauncher4:DWP
+ISBARocketLauncher4:DWP:Body
 BABattleClaw:LA
 BABattleClaw:RA
 </Squad Equipment>

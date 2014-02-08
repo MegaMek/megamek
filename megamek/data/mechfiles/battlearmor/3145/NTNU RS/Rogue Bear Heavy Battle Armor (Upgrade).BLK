@@ -51,10 +51,7 @@ biped
 Clan BA Machine Gun:LA
 Clan BA Machine Gun:RA
 CLBASRM2:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
-BASRM2 Ammo:Body
+BASRM2 Ammo:Body:Shots4#
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 </Point Equipment>

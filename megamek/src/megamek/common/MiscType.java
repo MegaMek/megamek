@@ -2082,7 +2082,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         misc.introDate = 3072;
         misc.techLevel.put(3072, misc.techLevel.get(3071));
-        misc.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3084, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_F;
 
         return misc;
@@ -3604,7 +3604,6 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSingleHexECM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.setInternalName("IS BA ECM");
         misc.addLookupName("ISBAECM");
@@ -3619,7 +3618,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.introDate = 2720;
-        misc.techLevel.put(2720, misc.techLevel.get(3071));
+        misc.techLevel.put(2720, TechConstants.T_IS_TW_NON_BOX);
         misc.extinctDate = 2788;
         misc.reintroDate = 3057;
         misc.availRating = new int[] { RATING_E, RATING_F, RATING_F };
@@ -5369,6 +5368,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAISAngelECMSuite");
         misc.addLookupName("BA IS Angel ECM Suite");
         misc.addLookupName("BAISAngelECM");
+        misc.addLookupName("ISBAAngelECM");
         misc.tonnage = .25f;
         misc.criticals = 3;
         misc.cost = 750000;
@@ -5395,6 +5395,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BACLAngelECMSuite");
         misc.addLookupName("BA CL Angel ECM Suite");
         misc.addLookupName("BACLAngelECM");
+        misc.addLookupName("CLBAAngelECM");
         misc.tonnage = .15f;
         misc.criticals = 3;
         misc.cost = 750000;

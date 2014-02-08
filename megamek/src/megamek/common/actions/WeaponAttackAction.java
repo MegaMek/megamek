@@ -3911,10 +3911,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Weapon is powered down";
         }
 
-        if ((target.getTargetType() == Targetable.TYPE_ENTITY) && wtype.hasFlag(WeaponType.F_MASS_DRIVER) && (ae instanceof SpaceStation)) {
-        	int dist = ae.getPosition().distance(target.getPosition());
-        	if (!ae.getPosition().translated(ae.getFacing(), distance).equals(target.getPosition())) {
-        	return "Mass Driver is not firing to front";
+        if ((target.getTargetType() == Targetable.TYPE_ENTITY) 
+                && wtype.hasFlag(WeaponType.F_MASS_DRIVER) 
+                && (ae instanceof SpaceStation)) {
+        	if (!ae.getPosition().translated(ae.getFacing(), distance).equals(
+        	        target.getPosition())) {
+        	    return "Mass Driver is not firing to front";
         	}
         }
 

@@ -31,12 +31,13 @@ biped
 4
 </jumpingMP>
 <Armor>
-4
+3
 </Armor>
 <Squad Equipment>
 CLBAMicroPulseLaser:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+ISBAJumpBooster:Body
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental

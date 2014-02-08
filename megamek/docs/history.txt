@@ -72,6 +72,9 @@ v0.37.7-dev (SVN)
     instead of 1
 + Data: First round of BA fixes (There are still errors in here)
 + Bug [#4014]: Conventional Aeros Building Up Heat 0.37.6-exp
++ Data: First round of BA fixes (There are still errors in here)
++ Data: Next Round of BA Unit fixes.
++ Changes in BA Weapons/Misc Type/Ammo Type for the new units.
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

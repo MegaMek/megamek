@@ -36,10 +36,7 @@ biped
 
 <Squad Equipment>
 ISBAMRM1:RA
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots4#
 BABattleClaw:RA
 </Squad Equipment>
 <type>

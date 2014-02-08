@@ -40,19 +40,7 @@ Jump
 ISBASRM2:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
-BASRM2 Ammo:Body:Shots1#
+BASRM2 Ammo:Body:Shots8#
 </Squad Equipment>
 
 <source>

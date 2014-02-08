@@ -42,7 +42,7 @@ Submarine
 
 <Squad Equipment>
 BACuttingTorch:RA
-ISSRM1OS:LA
+ISBASRM1OS:LA
 ISBALightMG:Body
 BAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body

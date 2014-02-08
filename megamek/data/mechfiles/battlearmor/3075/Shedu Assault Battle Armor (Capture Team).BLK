@@ -34,9 +34,9 @@ quad
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:Body
-ISBATaser:DWP
+ISBATaser:DWP:Body
 ISDetachableWeaponPack:Body
-ISBATaser:DWP
+ISBATaser:DWP:Body
 ISBAMagshotGR:Body
 </Squad Equipment>
 

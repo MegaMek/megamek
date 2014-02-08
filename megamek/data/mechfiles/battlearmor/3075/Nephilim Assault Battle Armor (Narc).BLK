@@ -32,45 +32,39 @@ biped
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:RA
-ISBASupportPPC:DWP
+ISBASupportPPC:DWP:RA
 ISBARocketLauncher2:Body
 BAHeavyBattleClaw:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 4 Equipment>
 
 <Trooper 5 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 5 Equipment>
 
 <Trooper 6 Equipment>
 ISBACompact Narc:Body
-BACompactNarc Ammo:Body:Shots1#
-BACompactNarc Ammo:Body:Shots1#
+BACompactNarc Ammo:Body:Shots2#
 </Trooper 6 Equipment>
 
 <type>

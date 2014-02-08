@@ -34,7 +34,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -77,7 +76,6 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         String artyMsg;
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         Coords targetPos = target.getPosition();
         boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
         boolean asfFlak = target instanceof Aero;
@@ -156,13 +154,12 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
             artyMsg = "Artillery Hit here by"
-                    + game.getPlayer(aaa.getPlayerId()).getName()
+                    + ae.getOwner().getName()
                     + " (this hex is now an auto-hit). Display this for everyone.";
             game.getBoard().addSpecialHexDisplay(
                     targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa
-                                    .getPlayerId()), artyMsg));
+                            game.getRoundCount(), ae.getOwner(), artyMsg));
 
         } else {
             Coords origPos = targetPos;
@@ -173,14 +170,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 if (!isFlak) {
                     r = new Report(3195);
                     artyMsg = "Artillery missed here by"
-                            + game.getPlayer(aaa.getPlayerId()).getName()
+                            + ae.getOwner().getName()
                             + ". Display this for everyone.";
                     game.getBoard().addSpecialHexDisplay(
                             origPos,
                             new SpecialHexDisplay(
                                     SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                            .getRoundCount(), game
-                                            .getPlayer(aaa.getPlayerId()),
+                                            .getRoundCount(), ae.getOwner(),
                                     artyMsg));
                 } else {
                     r = new Report(3192);

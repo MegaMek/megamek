@@ -41,7 +41,8 @@ ISBASRM2:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 IS BA ECM:Body
-BASRM2 Ammo:Body:Shots8#
+BASRM2 Ammo:Body:Shots4#
+BASRM2 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <source>

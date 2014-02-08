@@ -38,7 +38,9 @@ Leg
 
 <Squad Equipment>
 CLBALRM4:Body
-BACLLRM4 Ammo:Body:Shots10#
+BACLLRM4 Ammo:Body:Shots4#
+BACLLRM4 Ammo:Body:Shots4#
+BACLLRM4 Ammo:Body:Shots2#
 </Squad Equipment>
 
 <source>

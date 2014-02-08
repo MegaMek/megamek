@@ -50,7 +50,7 @@ public class ISBAHeavyRecoillessRifle extends Weapon {
         longRange = 7;
         extremeRange = 10;
         bv = 22;
-        tonnage = 0.375f;
+        tonnage = 0.325f;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);

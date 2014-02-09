@@ -640,10 +640,10 @@ public class TestBattleArmor extends TestEntity {
             }
             
             if ((m.getType() instanceof AmmoType)
-                    && m.getBaseShotsLeft() > 4){
+                    && m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT){
                 buff.append(m.getName() + "has " + m.getBaseShotsLeft() 
                         + " shots, but BattleArmor may only have at most " +
-                        "4 shots per slot.");
+                        NUM_SHOTS_PER_CRIT + " shots per slot.");
                 correct = false;
             }
             

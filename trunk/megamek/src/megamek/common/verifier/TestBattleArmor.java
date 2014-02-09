@@ -724,13 +724,30 @@ public class TestBattleArmor extends TestEntity {
             Vector<Mounted> unallocated) {
         for (Mounted m : entity.getEquipment()) {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
-                if ((m.getType() instanceof AmmoType)
-                        && (m.getUsableShotsLeft() <= 1)) {
+                // OS-launcher ammo doesn't take up a slot
+                if ((m.getType() instanceof AmmoType) 
+                        && (m.getLinkedBy() != null) 
+                        && m.getLinkedBy().getType().hasFlag(
+                                WeaponType.F_ONESHOT)) {
                     continue;
                 }
+                
+                // Equipment taking up no slots doesn't need to be mounted
                 if ((m.getType().getCriticals(entity) == 0)) {
                     continue;
                 }
+                
+                // Weapons mounted in a DWP don't get assigned a location
+                if ((m.getLinked() != null 
+                        && m.getLinked().getType().hasFlag(
+                               MiscType.F_DETACHABLE_WEAPON_PACK))
+                   || (m.getLinkedBy() != null 
+                           && m.getLinkedBy().getType().hasFlag(
+                                   MiscType.F_DETACHABLE_WEAPON_PACK))){
+                    continue;
+                }
+                
+                // Anything else is unassigned equipment
                 unallocated.addElement(m);
             }
         }

@@ -31,6 +31,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -75,6 +77,12 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -1150,6 +1158,43 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             okay = true;
             clientgui.chatlounge.refreshEntities();
         }
+        
+        // Check validity of unit after customization
+        EntityVerifier verifier = new EntityVerifier(
+                new File(Configuration.unitsDir(),
+                        EntityVerifier.CONFIG_FILENAME));
+        TestEntity testEntity = null;
+        if (entity instanceof Mech) {
+            testEntity = new TestMech((Mech) entity, verifier.mechOption,
+                    null);
+        } else if (entity instanceof Tank){
+            testEntity = new TestTank((Tank) entity, verifier.tankOption,
+                    null);
+        }else if (entity.getEntityType() == Entity.ETYPE_AERO
+                && entity.getEntityType() != 
+                        Entity.ETYPE_DROPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SMALL_CRAFT
+                && entity.getEntityType() != 
+                        Entity.ETYPE_FIGHTER_SQUADRON
+                && entity.getEntityType() != 
+                        Entity.ETYPE_JUMPSHIP
+                && entity.getEntityType() != 
+                        Entity.ETYPE_SPACE_STATION) {
+            testEntity = new TestAero((Aero)entity, 
+                    verifier.mechOption, null);
+        } else if (entity instanceof BattleArmor){
+            testEntity = new TestBattleArmor((BattleArmor) entity, 
+                    verifier.baOption, null);
+        }
+    
+        if (testEntity != null &&
+                !testEntity.correctEntity(new StringBuffer())) {
+            entity.setDesignValid(false);
+        } else {
+            entity.setDesignValid(true);
+        }
+            
         setVisible(false);
         Entity nextOne = null;
         if (actionEvent.getSource().equals(butPrev)) {

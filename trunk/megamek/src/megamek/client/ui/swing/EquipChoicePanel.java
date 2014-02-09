@@ -53,6 +53,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -799,6 +800,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
+                // BattleArmor always have a certain number of shots per slot
+                if (entity instanceof BattleArmor){
+                    shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                }
                 for (int i = 0; i <= shotsPerTon; i++){
                     m_num_shots.addItem(i);
                 }

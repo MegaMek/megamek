@@ -744,6 +744,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
+                    newWeap.setAPMMounted(true);
                 } catch (LocationFullException ex){
                     // This shouldn't happen for BA...
                     ex.printStackTrace();

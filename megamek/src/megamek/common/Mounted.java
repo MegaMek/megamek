@@ -146,8 +146,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     private int baMountLoc = BattleArmor.MOUNT_LOC_NONE;
 
-    // for BA weapons, is this in a detachable weapon pack?
+    /**
+     *  For BA weapons, is this in a detachable weapon pack?
+     */
     private boolean isDWPMounted = false;
+    
+    /**
+     * Does this Mounted represent a weapon that is mounted in an anti-personnel
+     * weapon mount?
+     */
+    private boolean isAPMMounted = false;
 
     // for Armored components
     private boolean armoredComponent = false;
@@ -1332,6 +1340,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setDWPMounted(boolean dwpMounted) {
         isDWPMounted = dwpMounted;
+    }
+    
+    public boolean isAPMMounted() {
+        return isAPMMounted;
+    }
+
+    public void setAPMMounted(boolean apmMounted) {
+        isAPMMounted = apmMounted;
     }
 
     public boolean isWeaponGroup() {

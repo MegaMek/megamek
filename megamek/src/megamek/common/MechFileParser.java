@@ -294,6 +294,23 @@ public class MechFileParser {
                             "Unable to match DWP to weapon for "+ent.getShortName());
                 }
             }
+            
+            // Link AP weapons to their AP Mount, when applicable
+            if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                    // Can only link APM mounted weapons that aren't linked
+                    if (!mWeapon.isAPMMounted() 
+                            || mWeapon.getLinkedBy() != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                }
+            }
 
             // Link Artemis IV fire-control systems to their missle racks.
             if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType()

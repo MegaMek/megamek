@@ -193,6 +193,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 boolean dwpMounted = saEquip[x].contains(":DWP");
                 saEquip[x] = saEquip[x].replace(":DWP", "");
                 
+                boolean apmMounted = saEquip[x].contains(":APM");
+                saEquip[x] = saEquip[x].replace(":APM", "");
+                
                 int numShots = 0;
                 if (saEquip[x].contains(":Shots")){
                     String shotString = saEquip[x].substring(
@@ -220,6 +223,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                                 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
                         }
+                        m.setAPMMounted(apmMounted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

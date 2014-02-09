@@ -24,12 +24,14 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
@@ -39,8 +41,10 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -49,11 +53,13 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This class builds the Equipment Panel for use in MegaMek and MekHQ
  *
  * @author Dylan Myers (ralgith-erian@users.sourceforge.net)
+ * @author arlith
  * @since 2012-05-20
  */
 public class EquipChoicePanel extends JPanel implements Serializable {
@@ -64,6 +70,19 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private int[] entityCorrespondance;
 
     private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
+    /**
+     * An <code>ArrayList</code> to keep track of all of the 
+     * <code>APWeaponChoicePanels</code> that were added, so we can apply 
+     * their choices when the dialog is closed.
+     */
+    private ArrayList<APWeaponChoicePanel> m_vAPMounts = 
+            new ArrayList<APWeaponChoicePanel>();
+    /**
+     * Panel for adding components related to selecting which anti-personnel
+     * weapons are mounted in an AP Mount (armored gloves are also considered 
+     * AP mounts)
+     **/
+    private JPanel panAPMounts = new JPanel();
     private JPanel panMunitions = new JPanel();
 
     private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
@@ -121,7 +140,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         GridBagLayout g = new GridBagLayout();
         setLayout(g);
-//        GridBagConstraints c = new GridBagConstraints();
 
         // **EQUIPMENT TAB**//
         // Auto-eject checkbox and conditional ejections.
@@ -173,11 +191,27 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(choC3, GBC.eol());
             refreshC3();
         }
-
+        
+        // Setup AP mounts
+        if ((entity instanceof BattleArmor) 
+                && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)){
+            setupAPMounts();
+            panAPMounts.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createEmptyBorder(), Messages
+                    .getString("CustomMechDialog.APMountPanelTitle"),
+                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
+            
+            add(panAPMounts,GBC.eop().anchor(GridBagConstraints.CENTER));
+        }
+        
         // Can't set up munitions on infantry.
         if (!((entity instanceof Infantry) && !((Infantry) entity)
                 .hasFieldGun()) || (entity instanceof BattleArmor)) {
             setupMunitions();
+            panMunitions.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createEmptyBorder(), Messages
+                    .getString("CustomMechDialog.MunitionsPanelTitle"),
+                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panMunitions,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -185,7 +219,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // set up Santa Annas if using nukes
         if (((entity instanceof Dropship) || (entity instanceof Jumpship))
                 && clientgui.getClient().getGame().getOptions().booleanOption(
-                        "at2_nukes")) {
+                        "at2_nukes")) { //$NON-NLS-1$
             setupSantaAnna();
             add(panSantaAnna,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -252,6 +286,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             mech.setCondEjectHeadshot(condEjectHeadshot);
         }
 
+        // update AP weapon selections
+        for (APWeaponChoicePanel apChoicePanel : m_vAPMounts) {
+            apChoicePanel.applyChoice();
+        }
+        
         // update munitions selections
         for (final Object newVar2 : m_vMunitions) {
             ((MunitionChoicePanel) newVar2).applyChoice();
@@ -368,6 +407,53 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 panSantaAnna.add(sacp, GBC.eol());
                 m_vSantaAnna.add(sacp);
             }
+        }
+    }
+    
+    /**
+     * Setup the layout of <code>panAPMounts</code>, which contains components
+     * for selecting which anti-personnel weapons are mounted in an AP mount. 
+     */
+    private void setupAPMounts() {
+        GridBagLayout gbl = new GridBagLayout();
+        panAPMounts.setLayout(gbl);
+        
+        ArrayList<WeaponType> apWeapTypes = new ArrayList<WeaponType>(100);
+        Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
+        while (allTypes.hasMoreElements()){
+            EquipmentType eq = allTypes.nextElement();
+            
+            // If it's not an infantry weapon, we don't care
+            if (!(eq instanceof InfantryWeapon)){
+                continue;
+            }
+            
+            // Check to see if the tech level of the equipment is legal
+            if (!TechConstants.isLegal(entity.getTechLevel(), 
+                    eq.getTechLevel(entity.getTechLevelYear()), false,
+                    entity.isMixedTech())){
+                continue;
+            }
+            
+            // Check to see if we've got a valid infantry weapon
+            InfantryWeapon infWeap = (InfantryWeapon)eq;
+            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
+                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
+                    && (infWeap.getCrew() < 2)){
+                apWeapTypes.add(infWeap);
+            }
+        }
+        
+        for (Mounted m : entity.getMisc()){
+            if (!m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                continue;
+            }
+            APWeaponChoicePanel apcp;
+            apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
+            
+            panAPMounts.add(apcp, GBC.eol());
+            m_vAPMounts.add(apcp);
         }
     }
 
@@ -566,6 +652,109 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             public void setEnabled(boolean enabled) {
                 m_choice.setEnabled(enabled);
             }
+        }
+        
+        /**
+         * A panel that houses a label and a combo box that allows for selecting
+         * which anti-personnel weapon is mounted in an AP mount.
+         * 
+         * @author arlith
+         *
+         */
+        class APWeaponChoicePanel extends JPanel {
+            
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 6189888202192403704L;
+
+            private Entity entity;
+            
+            private ArrayList<WeaponType> m_APWeaps;
+
+            private JComboBox<String> m_choice;
+
+            private Mounted m_APmounted;
+
+            APWeaponChoicePanel(Entity e, Mounted m, 
+                    ArrayList<WeaponType> weapons) {
+                entity = e;
+                m_APWeaps = weapons;
+                m_APmounted = m;
+                EquipmentType  curType = null;
+                if (m != null && m.getLinked() != null){
+                    curType = m.getLinked().getType();
+                }
+                m_choice = new JComboBox<String>();
+                m_choice.addItem("None");
+                m_choice.setSelectedIndex(0);
+                Iterator<WeaponType> it = m_APWeaps.iterator();
+                for (int x = 1; it.hasNext(); x++) {
+                    WeaponType weap = it.next();
+                    m_choice.addItem(weap.getName());
+                    if (curType != null && 
+                            weap.getInternalName() == 
+                                curType.getInternalName()) {
+                        m_choice.setSelectedIndex(x);
+                    }
+                }
+
+                String sDesc = "";
+                if (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE){
+                    sDesc += " (" 
+                            + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()] 
+                            + ')';
+                } else {
+                    sDesc = "None";
+                }
+                JLabel lLoc = new JLabel(sDesc);
+                GridBagLayout g = new GridBagLayout();
+                setLayout(g);
+                add(lLoc, GBC.std());
+                add(m_choice, GBC.std());
+                
+            }
+
+            public void applyChoice() {
+                int n = m_choice.getSelectedIndex();
+                WeaponType apType = null;
+                if (n > 0 && n <= m_APWeaps.size()){
+                    // Need to account for the "None" selection
+                    apType = m_APWeaps.get(n-1);
+                }
+                
+                // Remove any currently mounted AP weapon
+                if (m_APmounted.getLinked() != null 
+                        && m_APmounted.getLinked().getType() != apType){
+                    entity.getEquipment().remove(m_APmounted.getLinked());
+                    entity.getWeaponList().remove(m_APmounted.getLinked());
+                }
+                
+                // Did the selection not change, or no weapon was selected
+                if ((m_APmounted.getLinked() != null 
+                        && m_APmounted.getLinked().getType() == apType)
+                        || n == 0){
+                    return;
+                }
+                    
+                // Add the newly mounted weapon
+                try{
+                    Mounted newWeap =  entity.addEquipment(apType, 
+                            m_APmounted.getLocation());
+                    m_APmounted.setLinked(newWeap);
+                    newWeap.setLinked(m_APmounted);
+                } catch (LocationFullException ex){
+                    // This shouldn't happen for BA...
+                    ex.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                m_choice.setEnabled(enabled);
+            }
+
         }
 
         class MunitionChoicePanel extends JPanel {

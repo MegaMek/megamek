@@ -756,17 +756,6 @@ public class MechFileParser {
                     default:
                         break;
                 }
-                // if it has AP mount, also add an infantry rifle
-                if (ent.countWorkingMisc(MiscType.F_AP_MOUNT) > 0) {
-                    try {
-                        ent.addEquipment(
-                                EquipmentType.get("InfantryAssaultRifle"),
-                                BattleArmor.LOC_SQUAD, false,
-                                BattleArmor.MOUNT_LOC_NONE, false);
-                    } catch (LocationFullException ex) {
-                        throw new EntityLoadingException(ex.getMessage());
-                    }
-                }
             }
         }
         // physical attacks for conventional infantry

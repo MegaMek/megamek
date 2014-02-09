@@ -78,6 +78,10 @@ v0.37.7-dev (SVN)
 + Bug [#4035]: MegaMek hangs when firing Thumper Cannon 0.37.7-dev
 + TestBattleArmor now checks to make sure each slot of ammo has at most 4 shots
 + BA Fixes
++ Bug: TestBattleArmor wasn't dealing with slot assignments for BA OS ammo
++ Bug: TestBattleArmor wasn't dealing iwth slot assignments for equipmeint 
+    mounted in DWP's (the equipment in the DWP would fail validation because 
+    it was considered unallocatd equipment)
 
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain

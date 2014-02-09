@@ -1917,7 +1917,7 @@ public class Compute {
             /*
              * If we are a tank, and only have 1 crew then we have some special restrictions
              */
-            if (attacker.getCrew().getSize() == 1) {
+            if (countTargets > 0 && attacker.getCrew().getSize() == 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Vehicles with only 1 crewman may not attack secondary targets");
             }

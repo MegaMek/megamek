@@ -45,6 +45,11 @@ ISBASupportPPC:Body
 ISBAMachine Gun:Body
 BABattleClaw:LA
 BABattleClawVibro:RA
+IS BA Advanced:RA
+IS BA Advanced:Body
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
 </Squad Equipment>
 
 <type>
@@ -64,7 +69,7 @@ RS 3085 Unabridged ONN
 </source>
 
 <armor_type>
-28
+30
 </armor_type>
 <armor_tech>
 2

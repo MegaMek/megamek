@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,58 +20,75 @@ Clan Medium Battle Armor
 "Rache"
 </Model>
 
-<chassis>
-biped
-</chassis>
-
-<weightclass>
-2
-</weightclass>
-
-<Trooper Count>
-5
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-4
-</jumpingMP>
-
-<Armor>
-10
-</Armor>
-
-<Point Equipment>
-CLBAMG:RA
-CLBASRM3OS:Body
-CLBASRM3OS:Body
-BASearchlight:Body
-BABasicManipulator:LA
-BABasicManipulator:RA
-</Point Equipment>
-
-<type>
-Clan Level 2
-</type>
-
 <year>
 3077
 </year>
+
+<type>
+Clan Level 4
+</type>
 
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-RS 3085 Unabridged ONN
-</source>
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 28
 </armor_type>
+
 <armor_tech>
-2
+8
 </armor_tech>
+
+<Point Equipment>
+CLBAMG:LA
+CLBASRM3 (OS):Body
+CLBASRM3 (OS):RA
+BABasicManipulator:LA
+BABasicManipulator:RA
+CLBAJumpBooster:Body
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+RS 3085 Unabridged ONN
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+4
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

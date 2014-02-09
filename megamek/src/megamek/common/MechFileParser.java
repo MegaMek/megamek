@@ -305,7 +305,7 @@ public class MechFileParser {
                     }
 
                     // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
+                    if (mWeapon.getBaMountLoc() == m.getBaMountLoc()) {
                         m.setLinked(mWeapon);
                         break;
                     }

@@ -238,14 +238,11 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
                 continue;
             }
+            
             if (m.getBaMountLoc() == loc 
                     && (m.getLocation() == trooper 
                         || m.getLocation() == BattleArmor.LOC_SQUAD)){
-                if (m.getType().isSpreadable()){
-                    numUsedCrits++;
-                } else {
-                    numUsedCrits += m.getType().getCriticals(ba);
-                }
+                
                 if (m.getType() instanceof WeaponType){
                     if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
                         numAntiPersonnelWeapons++;
@@ -253,6 +250,20 @@ public class TestBattleArmor extends TestEntity {
                         numAntiMechWeapons++;
                     }
                 }
+                
+                // AP Weapons mounted in an AP Mount don't take up slots
+                if (m.isAPMMounted() && m.getLinkedBy() != null 
+                        && m.getLinkedBy().getType().hasFlag(
+                                MiscType.F_AP_MOUNT)){
+                    continue;
+                }
+                
+                if (m.getType().isSpreadable()){
+                    numUsedCrits++;
+                } else {
+                    numUsedCrits += m.getType().getCriticals(ba);
+                }
+                
             }
         }
         
@@ -618,6 +629,8 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
                 continue;
             }
+            
+            
             int critSize;
             if (m.getType().isSpreadable()){
                 critSize = 1;
@@ -625,9 +638,16 @@ public class TestBattleArmor extends TestEntity {
                 critSize = m.getType().getCriticals(ba);
             }
             
+            // AP Weapons that are mounted in an AP Mount don't take up slots
+            if (m.isAPMMounted() && m.getLinkedBy() != null 
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_AP_MOUNT)){
+                critSize = 0;
+            }
+            
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType) 
-                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)){
+                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)
+                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)){
                 buff.append(m.getName() + " is not a BattleArmor weapon!\n");
                 correct = false;
             }

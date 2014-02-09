@@ -97,6 +97,7 @@ v0.37.7-dev (SVN)
     needs to have an :AWP tag added to it.  Added a new state to Mounted, 
     isAWPMounted along with a getter and setter.  MechFileParser.postLoadInit
     was updated to link AP Mounts with APM Mounted equipment in the same loc.
++ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
     
 
 v0.37.6 (2014-01-29 01:43 UTC)

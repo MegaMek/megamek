@@ -38,10 +38,9 @@ biped
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAPartialWing:Body
-BAAPMount:RA
 </Squad Equipment>
 <Trooper 1 Equipment>
-ISBASmallLaser
+ISBASmallLaser:RA
 </Trooper 1 Equipment>
 <type>
 IS Level 2

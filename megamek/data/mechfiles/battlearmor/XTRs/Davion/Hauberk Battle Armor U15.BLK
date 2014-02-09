@@ -2,61 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Hauberk Battle Armor
 </Name>
+
 <Model>
 U15
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-2
-</cruiseMP>
-<Armor>
-11
-</Armor>
-<Squad Equipment>
-ClDetachableWeaponPack:LA
-CLBAERSmallLaser:DWP:LA
-ClDetachableWeaponPack:RA
-CLBAMicroPulseLaser:DWP:RA
-ClDetachableWeaponPack:Body
-ISBAMagshotGR:DWP:Body
-CLBASRM2:Body
-BASRM2 Ammo:Body:Shots4#
-IS BA ECM:Body
-</Squad Equipment>
-<type>
-Mixed (IS Chassis) Experimental
-</type>
+
 <year>
 3076
 </year>
-<source>
-XTRO Davion
-</source>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
 <motion_type>
 Leg
 </motion_type>
 
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 36
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+CLDetachableWeaponPack:LA
+CLBAERSmallLaser:DWP
+CLDetachableWeaponPack:RA
+CLBAMicroPulseLaser:DWP
+CLDetachableWeaponPack:Body
+ISBAMagshotGR:DWP
+CLBASRM2:Body
+BA-SRM2 Ammo:Body:Shots4#
+CL BA ECM:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTRO Davion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

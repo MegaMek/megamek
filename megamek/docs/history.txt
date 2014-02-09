@@ -89,8 +89,9 @@ v0.37.7-dev (SVN)
 + Feature: BattleArmor with an AP Mount or Armored glove can now configure what,
     if any, anti-personnel weapon is mounted
 + Bug: Selecting # of shots for BattleArmor was bugged in CustomMechDialog
-+ Feature: CustomMechDialog now verifiers entities after customizatoin, when 
++ Feature: CustomMechDialog now verifiers entities after customization, when 
     applicable
++ Data: BA Unit Fixes
 
     
 

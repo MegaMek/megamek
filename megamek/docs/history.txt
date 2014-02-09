@@ -92,7 +92,11 @@ v0.37.7-dev (SVN)
 + Feature: CustomMechDialog now verifiers entities after customization, when 
     applicable
 + Data: BA Unit Fixes
-
++ Feature: Added a way to specify if a weapon in a BLK file is mounted in an AP 
+    mount.  This works the same way as DWP's: the weapon entry in the BLK file
+    needs to have an :AWP tag added to it.  Added a new state to Mounted, 
+    isAWPMounted along with a getter and setter.  MechFileParser.postLoadInit
+    was updated to link AP Mounts with APM Mounted equipment in the same loc.
     
 
 v0.37.6 (2014-01-29 01:43 UTC)

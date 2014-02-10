@@ -16,7 +16,6 @@ package megamek.client.bot.princess;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +23,16 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.*;
+import megamek.common.Aero;
+import megamek.common.Building;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.MovePath;
+import megamek.common.MoveStep;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
 import megamek.common.util.StringUtil;
 
@@ -360,7 +368,7 @@ public class PathRanker {
             msg.append(edgeCoords.toFriendlyString());
 
             int distance = edgeCoords.distance(position);
-            msg.append(" dist = ").append(DecimalFormat.getInstance().format(distance));
+            msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
 
             owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
             return distance;
@@ -419,9 +427,9 @@ public class PathRanker {
 
         // If we're not jumping, check each building to see if it will collapse if it has a basement.
         float mass = path.getEntity().getWeight() + 10;
-        Enumeration steps = path.getSteps();
+        Enumeration<MoveStep> steps = path.getSteps();
         while (steps.hasMoreElements()) {
-            MoveStep step = (MoveStep) steps.nextElement();
+            MoveStep step = steps.nextElement();
             Building building = game.getBoard().getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;
@@ -435,7 +443,7 @@ public class PathRanker {
     }
 
     public Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
-        if (friends == null || friends.isEmpty()) {
+        if ((friends == null) || friends.isEmpty()) {
             return null;
         }
 
@@ -453,7 +461,7 @@ public class PathRanker {
                 continue;
             }
             Coords friendPosition = friend.getPosition();
-            if (friendPosition == null || !game.getBoard().contains(friendPosition)) {
+            if ((friendPosition == null) || !game.getBoard().contains(friendPosition)) {
                 continue;
             }
 

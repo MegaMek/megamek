@@ -47,8 +47,8 @@ Leg
 <Squad Equipment>
 CLDetachableWeaponPack:Body
 BACLERMediumPulseLaser:DWP
-BAHeavyBattleClaw
-BAHeavyBattleClaw
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
 BAAPMount:Body
 InfantryAutoRifle:Body:APM
 BAAPMount:Body

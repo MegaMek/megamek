@@ -1204,8 +1204,6 @@ public class Tank extends Entity {
             } else if (((etype instanceof MiscType) && (etype
                     .hasFlag(MiscType.F_ECM)
                     || etype.hasFlag(MiscType.F_AP_POD)
-                    || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                    || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
@@ -1692,8 +1690,6 @@ public class Tank extends Entity {
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype
                     .hasFlag(MiscType.F_WATCHDOG))
                     || mtype.hasFlag(MiscType.F_AP_POD)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)

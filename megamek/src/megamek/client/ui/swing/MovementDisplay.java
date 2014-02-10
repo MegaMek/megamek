@@ -158,7 +158,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_THRUST = "MoveThrust"; //$NON-NLS-1$
     public static final String MOVE_YAW = "MoveYaw"; //$NON-NLS-1$
     public static final String MOVE_END_OVER = "MoveEndOver"; //$NON-NLS-1$
-    
+
     public static final String MOVE_ENVELOPE = "MoveEnvelope";
 
     // buttons
@@ -1192,7 +1192,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (ce == null) {
             return;
         }
-        
+
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
 
@@ -1254,7 +1254,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-        
+
         clientgui.bv.clearMovementEnvelope();
     }
 
@@ -1354,9 +1354,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
-        
+
         // Should we nag about taking fall damage with mechanical jump boosters?
-        if (cmd.shouldMechanicalJumpCauseFallDamage() && 
+        if (cmd.shouldMechanicalJumpCauseFallDamage() &&
                 GUIPreferences.getInstance().getNagForMechanicalJumpFallDamage()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1479,8 +1479,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // will still have steps added to the movepath.
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
-        
-        if (cmd.willCrushBuildings() && 
+
+        if (cmd.willCrushBuildings() &&
                 GUIPreferences.getInstance().getNagForCrushingBuildings()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1518,20 +1518,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
-        } else if (((gear == GEAR_LAND) || (gear == GEAR_JUMP)) && 
-                ce().getJumpType() == Mech.JUMP_BOOSTER){
+        } else if (((gear == GEAR_LAND) || (gear == GEAR_JUMP)) &&
+                (ce().getJumpType() == Mech.JUMP_BOOSTER)){
             //Jumps with mechanical jump boosters are special
             Coords src;
             if (cmd.getLastStep() != null){
                 src = cmd.getLastStep().getPosition();
             }else{
                 src = ce().getPosition();
-            }            
+            }
             int dir = src.direction(dest);
             int facing = ce().getFacing();
             //Adjust dir based upon facing
             // Java does mod different from how we want...
-            dir = ((dir - facing) % 6 + 6) % 6;
+            dir = (((dir - facing) % 6) + 6) % 6;
             switch (dir)
             {
                 case 0:
@@ -1541,23 +1541,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,src.direction(dest),ce().getFacing());
                     break;
                 case 2:
-                    // TODO: backwards lateral shifts are switched: 
+                    // TODO: backwards lateral shifts are switched:
                     //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS,src.direction(dest),ce().getFacing());
                     break;
                 case 3:
                     cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS,src.direction(dest),ce().getFacing());
-                    break;                    
+                    break;
                 case 4:
-                    // TODO: backwards lateral shifts are switched: 
-                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa                    
+                    // TODO: backwards lateral shifts are switched:
+                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS,src.direction(dest),ce().getFacing());
                     break;
                 case 5:
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,src.direction(dest),ce().getFacing());
-                    break;                    
+                    break;
             }
-                
+
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {
@@ -1565,16 +1565,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (gear == GEAR_CHARGE) {
             cmd.findPathTo(dest, MoveStepType.CHARGE);
             // The path planner shouldn't actually add the charge step
-            if (cmd.getFinalCoords().equals(dest) && 
-                    cmd.getLastStep().getType() != MoveStepType.CHARGE){
+            if (cmd.getFinalCoords().equals(dest) &&
+                    (cmd.getLastStep().getType() != MoveStepType.CHARGE)){
                 cmd.removeLastStep();
                 cmd.addStep(MoveStepType.CHARGE);
             }
         } else if (gear == GEAR_DFA) {
             cmd.findPathTo(dest, MoveStepType.DFA);
             // The path planner shouldn't actually add the DFA step
-            if (cmd.getFinalCoords().equals(dest) && 
-                    cmd.getLastStep().getType() != MoveStepType.DFA){
+            if (cmd.getFinalCoords().equals(dest) &&
+                    (cmd.getLastStep().getType() != MoveStepType.DFA)){
                 cmd.removeLastStep();
                 cmd.addStep(MoveStepType.DFA);
             }
@@ -1631,10 +1631,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         Coords currPosition = cmd != null ? cmd.getFinalCoords()
                 : ce != null ? ce.getPosition() : null;
-        
+
         if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
             if (!b.getCoords().equals(currPosition)
-                    || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {                
+                    || shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 clientgui.getBoardView().cursor(b.getCoords());
                 // either turn or move
                 if (ce != null) {
@@ -1947,7 +1947,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         .isOnlyPavement() && (cmd.getMpUsed() <= (ce
                         .getWalkMP() + 1))))
                 && !(clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_tank_crews") && cmd.getMpUsed() > 0 && ce instanceof Tank));
+                        "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank)));
     }
 
     private void updateSearchlightButton() {
@@ -2305,18 +2305,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     }
 
-    private void updateDockButton() {
-
-        final Entity ce = ce();
-
-        if (null == ce) {
-            return;
-        }
-
-        updateRecoveryButton();
-
-    }
-
     private void updateDropButton() {
 
         final Entity ce = ce();
@@ -2586,11 +2574,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         else {
             choice = mountableUnits.get(0);
         }
-        
+
         if (!(ce instanceof Infantry)) {
 	        Vector<Integer> bayChoices = new Vector<Integer>();
 	        for (Transporter t : choice.getTransports()) {
-	        	if (t.canLoad(ce) && t instanceof Bay) {
+	        	if (t.canLoad(ce) && (t instanceof Bay)) {
 	        		bayChoices.add(((Bay) t).getBayNumber());
 	        	}
 	        }
@@ -2610,7 +2598,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 	                        retVal, null);
 	        	ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
             	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(ce); 
+            	clientgui.getClient().sendUpdateEntity(ce);
 	        } else {
 	        	ce.setTargetBay(-1); // Safety set!
 	        }
@@ -2624,7 +2612,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private Entity getLoadedUnit() {
         Entity choice = null;
-        
+
         Vector<Entity> choices = new Vector<Entity>();
         Enumeration<Entity> entities = clientgui.getClient().getGame()
                 .getEntities(ce().getPosition());
@@ -2635,7 +2623,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 choices.addElement(other);
             }
         }
-        
+
         // Handle error condition.
         if (choices.size() == 0) {
             System.err
@@ -2657,16 +2645,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             SharedUtility.getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
         } // End have-choices
-        
+
         // Only one choice.
         else {
             choice = choices.get(0);
         }
-        
+
         if (!(choice instanceof Infantry)) {
 	        Vector<Integer> bayChoices = new Vector<Integer>();
 	        for (Transporter t : ce().getTransports()) {
-                if (t.canLoad(choice) && t instanceof Bay) {
+                if (t.canLoad(choice) && (t instanceof Bay)) {
                     bayChoices.add(((Bay) t).getBayNumber());
                 }
             }
@@ -2686,7 +2674,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 	                        retVal, null);
 	        	choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
             	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(choice); 
+            	clientgui.getClient().sendUpdateEntity(choice);
 	        } else {
 	        	choice.setTargetBay(-1); // Safety set!
 	        }
@@ -2943,7 +2931,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = 
+        TreeMap<Integer, Vector<Integer>> choices =
                 new TreeMap<Integer, Vector<Integer>>();
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
@@ -2958,7 +2946,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     .println("MovementDisplay#getLaunchedUnits() called without loaded units."); //$NON-NLS-1$
             return choices;
         }
-        
+
         // cycle through the fighter bays and then the small craft bays
         int bayNum = 1;
         int i = 0;
@@ -3005,22 +2993,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if (numChoices > (doors * 2) &&
-                        GUIPreferences.getInstance().getNagForLaunchDoors()){                                        
+                if ((numChoices > (doors * 2)) &&
+                        GUIPreferences.getInstance().getNagForLaunchDoors()){
                     int aerosPerDoor = numChoices/ doors;
                     int remainder = numChoices % doors;
                     //Determine PSRs
                     StringBuilder psrs = new StringBuilder();
                     for (int choice = 0; choice < numChoices; choice++){
                         int modifier = aerosPerDoor - 2;
-                        if (choice/aerosPerDoor >= doors-1){
+                        if ((choice/aerosPerDoor) >= (doors-1)){
                             modifier += remainder;
                         }
                         modifier += currentFighters.get(choice).getCrew().getPiloting();
                         String damageMsg = Messages.getString(
-                                "MovementDisplay.LaunchFighterDialog.controlroll", //$NON-NLS-1$ 
+                                "MovementDisplay.LaunchFighterDialog.controlroll", //$NON-NLS-1$
                                 new Object[] { names[choice], modifier});
-                        psrs.append("\t" + damageMsg + "\n");                        
+                        psrs.append("\t" + damageMsg + "\n");
                     }
                     ConfirmDialog nag = new ConfirmDialog(
                             clientgui.frame,
@@ -3049,7 +3037,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     currentFighters.remove(unitsLaunched[l - 1]);
                 }
             }
-            
+
             bayNum++;
         }
         return choices;
@@ -3111,8 +3099,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                         		collar.getType(), collarNum }),
                                 question, names);
                         choiceDialog.setVisible(true);
-                        if (choiceDialog.getChoices() != null && 
-                                choiceDialog.getChoices().length > (1)) {
+                        if ((choiceDialog.getChoices() != null) &&
+                                (choiceDialog.getChoices().length > (1))) {
                             ConfirmDialog nag = new ConfirmDialog(
                                     clientgui.frame,
                                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -3708,21 +3696,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    
+
     public void computeMovementEnvelope(){
         Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
         mvEnvData.put(ce().getPosition(), mp);
         computeMovementEnvelope(mvEnvData,ce().getPosition());
-        Hashtable<Coords,Integer> mvEnvMP = new Hashtable<Coords,Integer>((int)(mvEnvData.size() * 1.25 + 1));
+        Hashtable<Coords,Integer> mvEnvMP = new Hashtable<Coords,Integer>((int)((mvEnvData.size() * 1.25) + 1));
         for (Coords c : mvEnvData.keySet()){
             mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
         }
         clientgui.bv.setMovementEnvelope(mvEnvMP,
-                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);        
+                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);
     }
-    
-    public void computeMovementEnvelope(Hashtable<Coords,MovePath> mvEnvData, 
+
+    public void computeMovementEnvelope(Hashtable<Coords,MovePath> mvEnvData,
             Coords loc){
         // Determine the maximum MP we can spend
         int maxMP;
@@ -3733,24 +3721,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else {
             if (clientgui.getClient().getGame().getOptions().
                     booleanOption("tacops_sprint")){
-                maxMP = ce().getSprintMP();    
+                maxMP = ce().getSprintMP();
             } else {
-                maxMP = ce().getRunMP();   
-            }            
+                maxMP = ce().getRunMP();
+            }
         }
-        
+
         MovePath mp = mvEnvData.get(loc);
         if (mp == null){
             System.out.println("Error computing movement envelope: " +
             		"no move path for given location!");
             return;
         }
-        
+
         boolean jumping = gear == GEAR_JUMP;
         if (mp.countMp(jumping) >= maxMP){
             return;
         }
-            
+
         MoveStepType stepType = (gear == GEAR_BACKUP) ?
                 MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         HashSet<Coords> nextSteps = new HashSet<Coords>();
@@ -3766,20 +3754,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (storedPath == null){
                 if (newPath.countMp(jumping) <= maxMP){
                     mvEnvData.put(c, newPath);
-                    nextSteps.add(c);                    
+                    nextSteps.add(c);
                 }
             } else if (storedPath.countMp(jumping) > newPath.countMp(jumping)){
                 mvEnvData.put(c, newPath);
                 computeMovementEnvelope(mvEnvData,c);
             }
         }
-        
+
         for (Coords c : nextSteps){
             computeMovementEnvelope(mvEnvData,c);
         }
-        
+
     }
-    
+
     //
     // ActionListener
     //
@@ -3819,7 +3807,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             .getLastStep().isOnlyPavement() && (cmd.getMpUsed() <= (ce
                             .getWalkMP() + 1))))
                     || (clientgui.getClient().getGame().getOptions().booleanOption(
-                            "tacops_tank_crews") && cmd.getMpUsed() > 0 && ce instanceof Tank)
+                            "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear
@@ -4302,7 +4290,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
             }
         } else if (ev.getActionCommand().equals(MOVE_ENVELOPE)){
-            computeMovementEnvelope();            
+            computeMovementEnvelope();
         }
         updateProneButtons();
         updateRACButton();

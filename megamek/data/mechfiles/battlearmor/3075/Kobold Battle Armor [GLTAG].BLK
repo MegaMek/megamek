@@ -37,6 +37,7 @@ biped
 ISBAMicroGrenadeLauncher:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBALightTAG:LA

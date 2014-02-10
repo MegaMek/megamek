@@ -47,6 +47,7 @@ biped
 <Point Equipment>
 CLBAFlamer:RA
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BACuttingTorch:LA
 CLBASpaceOperationsAdaptation:Body
 BAHeavyBattleClaw:LA

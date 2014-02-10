@@ -39,6 +39,7 @@ ISBALightTAG:LA
 BABasicManipulator:RA
 BABasicManipulator:LA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 4

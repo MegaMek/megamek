@@ -46,8 +46,8 @@ Jump
 
 <Squad Equipment>
 ISMedium Recoilless Rifle:RA
-BAHeavyBattleClawVibro
-BABasicManipulator
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
 IS BA ECM:Body
 BAExtendedLifeSupport:Body
 SwarmMek

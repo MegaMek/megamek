@@ -37,6 +37,7 @@ biped
 ISBADavidLightGaussRifle:RA
 BABattleClaw:LA
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 IS BattleArmor C3i:Body
 </Squad Equipment>
 <type>

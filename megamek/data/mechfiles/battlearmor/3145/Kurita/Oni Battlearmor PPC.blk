@@ -46,14 +46,10 @@ Jump
 
 <Squad Equipment>
 BA Support PPC:RA
-BAHeavyBattleClawVibro
-BABasicManipulator
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
 IS BA ECM:Body
 BAExtendedLifeSupport:Body
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
 Clan BA Fire Resistant:Body
 Clan BA Fire Resistant:Body
 Clan BA Fire Resistant:LA

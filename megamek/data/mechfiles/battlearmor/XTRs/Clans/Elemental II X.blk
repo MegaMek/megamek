@@ -40,6 +40,7 @@ Jump
 CLDetachableWeaponPack:Body
 Clan BA Micro Pulse Laser:Body:DWP
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 CLBAMyomerBooster:Body
 CLBALightMG:RA
 </Point Equipment>

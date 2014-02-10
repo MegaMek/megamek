@@ -39,6 +39,7 @@ biped
 <Squad Equipment>
 ISBASupportPPC:LA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 ISBAImprovedSensors:RA
 ISBASRM4OS:Body
 ISBASRM4OS:Body

@@ -50,8 +50,8 @@ CLAdvancedSRM2:Body
 BA-Advanced SRM-2 Ammo:Body:Shots3#
 CLAdvancedSRM2:Body
 BA-Advanced SRM-2 Ammo:Body:Shots3#
-BAHeavyBattleClaw
-BABasicManipulator
+BAHeavyBattleClaw:LA
+BABasicManipulator:RA
 Clan BA Reactive:LA
 Clan BA Reactive:LA
 Clan BA Reactive:RA
@@ -59,8 +59,6 @@ Clan BA Reactive:LA
 Clan BA Reactive:RA
 Clan BA Reactive:RA
 Clan BA Reactive:LA
-BABasicManipulator:LA
-BAHeavyBattleClaw:RA
 </Point Equipment>
 
 <Trooper 1 Equipment>

@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Centaur Battle Armor
+Kopis Assault Battle Armor
 </Name>
 
 <Model>
-(Standard)
+(AI Mk II)
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ Centaur Battle Armor
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -33,26 +33,30 @@ Leg
 </motion_type>
 
 <cruiseMP>
-2
+1
 </cruiseMP>
 
 <armor_type>
-38
+30
 </armor_type>
 
 <armor_tech>
-7
+11
 </armor_tech>
 
 <Squad Equipment>
-BABasicManipulator
-BABasicManipulator
-ISBATubeArtillery:DWP
-ISDetachableWeaponPack:Body
-BA-Magnetic Clamp:Body
-BA Small Laser:RA
-ISBATubeArtilleryAmmo:Body:Shots4#
-ISBATubeArtilleryAmmo:Body:Shots4#
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+Grenade Launcher:LA
+Grenade Launcher:RA
+Heavy Recoilless Rifle:Body
+Heavy Recoilless Rifle:Body
+ISImprovedSensors:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
+IS BA Advanced:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -68,7 +72,7 @@ ISBATubeArtilleryAmmo:Body:Shots4#
 </Trooper 4 Equipment>
 
 <source>
-TRO 3145 Repubilc
+RS3145 NTNU
 </source>
 
 <chassis>
@@ -80,7 +84,7 @@ biped
 </jumpingMP>
 
 <armor>
-7
+10
 </armor>
 
 <Trooper Count>
@@ -88,6 +92,6 @@ biped
 </Trooper Count>
 
 <weightclass>
-3
+4
 </weightclass>
 

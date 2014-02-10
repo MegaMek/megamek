@@ -1031,17 +1031,11 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-    	/*
-         * TODO: Evaluate, does this need to be here? This function in the other
-    	 * Entity subclasses does not check for crew being alive. I've commented
-    	 * this out for now. If it does need to be here, then it needs a check
-    	 * for !ignorePilot added to it.
-    	 */
-    	/*if (getCrew().isDead()) {
-            return 0;
-        }*/
         if (useManualBV) {
             return manualBV;
+        }
+        if (isCarcass() && !ignorePilot) {
+            return 0;
         }
         bvText = new StringBuffer(
                 "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
@@ -1210,6 +1204,8 @@ public class Tank extends Entity {
             } else if (((etype instanceof MiscType) && (etype
                     .hasFlag(MiscType.F_ECM)
                     || etype.hasFlag(MiscType.F_AP_POD)
+                    || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                    || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
@@ -1696,7 +1692,11 @@ public class Tank extends Entity {
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype
                     .hasFlag(MiscType.F_WATCHDOG))
                     || mtype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
+                    || mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)

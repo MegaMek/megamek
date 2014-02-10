@@ -14,14 +14,13 @@
  */
 package megamek.common;
 
+import java.util.Vector;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)

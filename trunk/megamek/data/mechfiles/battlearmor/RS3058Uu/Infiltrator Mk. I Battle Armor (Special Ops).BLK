@@ -39,6 +39,7 @@ biped
 ISImprovedSensors:Body
 BARemoteSensorDispenser:Body
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BABasicManipulator:LA
 </Squad Equipment>
 <type>

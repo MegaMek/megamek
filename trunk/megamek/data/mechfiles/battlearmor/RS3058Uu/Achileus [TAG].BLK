@@ -40,6 +40,7 @@ biped
 <Squad Equipment>
 ISBALightTAG:RA
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

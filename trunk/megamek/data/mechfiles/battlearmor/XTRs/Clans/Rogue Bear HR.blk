@@ -43,6 +43,7 @@ biped
 <Point Equipment>
 BAPartialWing:Body
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 BABattleClaw:LA
 BABattleClaw:RA
 CLBAMG:Body
@@ -62,7 +63,7 @@ XTR Clans
 </source>
 
 <motion_type>
-Leg
+Jump
 </motion_type>
 
 <armor_type>

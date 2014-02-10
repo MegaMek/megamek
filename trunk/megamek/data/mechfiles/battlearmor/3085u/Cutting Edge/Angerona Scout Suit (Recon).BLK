@@ -55,6 +55,7 @@ BAArmoredGlove:RA
 ISImprovedSensors:Body
 BARemoteSensorDispenser:Body
 Camo System:Body
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 
 <type>

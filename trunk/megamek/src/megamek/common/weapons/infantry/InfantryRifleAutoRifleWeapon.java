@@ -38,6 +38,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         addLookupName("InfantryAssaultRifle");
         addLookupName("Auto Rifle");
         addLookupName("Infantry Automatic Rifle");
+        addLookupName("InfantryAutoRifle");
         ammoType = AmmoType.T_NA;
         cost = 80;
         bv = 1.59;

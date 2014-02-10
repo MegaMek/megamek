@@ -46,8 +46,8 @@ Jump
 
 <Squad Equipment>
 CLBearhunter Superheavy AC:RA
-BAHeavyBattleClawVibro
-BABasicManipulator
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
 IS BA ECM:Body
 BAExtendedLifeSupport:Body
 SwarmMek

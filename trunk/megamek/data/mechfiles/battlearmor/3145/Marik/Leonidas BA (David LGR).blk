@@ -39,6 +39,7 @@ Jump
 <Squad Equipment>
 ISBADavidLightGaussRifle:RA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 BAHeavyBattleClaw:LA
 ISBAAngelECM:Body
 </Squad Equipment>

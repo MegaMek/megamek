@@ -41,6 +41,7 @@ ISBAMagshotGR:RA
 ISBALightMG:Body
 ISBAJumpBooster:Body
 BAArmoredGlove:LA
+InfantryAutoRifle:LA:APM
 </Squad Equipment>
 
 <source>

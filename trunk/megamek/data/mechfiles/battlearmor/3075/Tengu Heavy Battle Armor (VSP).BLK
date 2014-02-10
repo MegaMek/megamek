@@ -38,6 +38,7 @@ ISDetachableWeaponPack:LA
 ISBASVSPL:DWP:LA
 BABasicManipulator:LA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 3

@@ -45,14 +45,9 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BAHeavyBattleClawVibro
-BABasicManipulator
-IS BA ECM:Body
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
 BAExtendedLifeSupport:Body
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
 Clan BA Fire Resistant:Body
 Clan BA Fire Resistant:Body
 Clan BA Fire Resistant:LA

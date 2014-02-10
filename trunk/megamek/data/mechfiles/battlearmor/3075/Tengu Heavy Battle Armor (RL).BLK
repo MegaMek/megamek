@@ -48,8 +48,8 @@ Leg
 BA Machine Gun:LA
 BA RL4:Body
 BA RL4:Body
-BABattleClaw
-BABattleClaw
+BABattleClaw:RA
+BABattleClaw:LA
 IS BA Advanced:RA
 IS BA Advanced:RA
 IS BA Advanced:LA

@@ -47,7 +47,7 @@ Leg
 <Squad Equipment>
 Firedrake Needler:RA
 BA SRM 5:Body
-BABasicManipulator
+BABasicManipulator:RA
 ISBACompactNarc:LA
 BA-Compact Narc Ammo:LA:Shots3#
 IS BA Stealth:RA

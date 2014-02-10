@@ -37,6 +37,7 @@ BA-SRM4 Ammo:Body:Shots4#
 BA-SRM4 Ammo:Body:Shots3#
 BABasicManipulator:RA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

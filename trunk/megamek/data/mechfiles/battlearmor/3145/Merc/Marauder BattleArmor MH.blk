@@ -42,7 +42,9 @@ ISBASupportPPC:LA
 ISLight Recoilless Rifle:Body
 ISBALightTAG:Body
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BA-Magnetic Clamp:Body
 </Squad Equipment>
 

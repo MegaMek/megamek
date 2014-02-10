@@ -47,9 +47,10 @@ Leg
 <Squad Equipment>
 ISDetachableWeaponPack:LA
 BA Medium Laser:DWP
-BABasicManipulator
-BABasicManipulator
+BABasicManipulator:LA
+BABasicManipulator:RA
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 IS BA Advanced:Body
 IS BA Advanced:Body
 IS BA Advanced:Body

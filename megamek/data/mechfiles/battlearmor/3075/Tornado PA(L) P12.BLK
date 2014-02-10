@@ -35,6 +35,7 @@ BAAPMount:RA
 Simple Camo:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

@@ -38,9 +38,9 @@ public class InfantryRifleClanMauser960LaserWeapon extends InfantryWeapon {
         addLookupName("ClanInfantryMauser960");
         ammoType = AmmoType.T_NA;
         cost = 8000;
-        bv = 0.84;
+        bv = 4.75;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.35;
+        infantryDamage = 0.93;
         infantryRange = 2;
         introDate = 2700;
         techLevel.put(2700,techLevel.get(3071));

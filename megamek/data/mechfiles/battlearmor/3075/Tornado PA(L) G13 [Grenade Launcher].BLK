@@ -34,6 +34,7 @@ biped
 ISHeavyGL:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+InfantryAutoRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

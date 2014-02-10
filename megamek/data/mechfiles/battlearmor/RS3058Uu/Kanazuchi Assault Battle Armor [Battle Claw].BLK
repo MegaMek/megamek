@@ -36,7 +36,9 @@ ISBASRM2OS:Body
 ISBASRM2OS:Body
 BAHeavyBattleClaw:RA
 BAAPMount:Body
+InfantryAutoRifle:Body:APM
 BAAPMount:Body
+InfantryAutoRifle:Body:APM
 </Squad Equipment>
 <type>
 IS Level 2

@@ -42,6 +42,7 @@ biped
 ISLight Recoilless Rifle:RA
 BA-Magnetic Clamp:Body
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
 </Squad Equipment>

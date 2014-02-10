@@ -51,7 +51,9 @@ biped
 <Point Equipment>
 CLBAJumpBooster:Body
 BAAPMount:LA
+InfantryAutoRifle:LA:APM
 BAAPMount:RA
+InfantryAutoRifle:RA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 CLBALightMG:RA
@@ -72,7 +74,7 @@ TRO:Prototype
 </source>
 
 <motion_type>
-Leg
+Jump
 </motion_type>
 
 

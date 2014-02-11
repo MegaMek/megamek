@@ -652,6 +652,13 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
             
+            //Check for BA Use of Support Weapons
+            if ((m.getType() instanceof WeaponType) 
+                  	 && m.getType().hasFlag(WeaponType.F_INF_SUPPORT)){
+                      buff.append(m.getName() + " is a support weapon and BattleArmor cannot mount support weapons!\n");
+                      correct = false;
+                  }
+            
             // Check for valid BA equipment
             if ((m.getType() instanceof MiscType) 
                     && !m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)){

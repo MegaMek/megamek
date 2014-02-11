@@ -454,6 +454,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Marks an entity as having been deployed
      */
     private boolean deployed = false;
+    
+    /**
+     * Tracks if this entity was never deployed
+     */
+    private boolean neverDeployed = true;
 
     /**
      * The unit number of this entity. All entities which are members of the
@@ -7777,6 +7782,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setDeployed(boolean deployed) {
         this.deployed = deployed;
+        if (deployed) {
+            this.neverDeployed = false;
+        }
     }
 
     /**
@@ -7784,6 +7792,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isDeployed() {
         return deployed;
+    }
+    
+    /**
+     * Checks to see if entity was never deployed
+     */
+    public boolean wasNeverDeployed() {
+        return neverDeployed;
     }
 
     /**

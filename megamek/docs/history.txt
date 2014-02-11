@@ -12,6 +12,10 @@ v0.37.8-dev (SVN)
     InfantryWeapons.  This is because, each AP Mount has the potential to have
     an AP weapon in it.  It also matches the current TM errata.
 + TestBattleArmor now considers unallocated infantry weapons to be illegal
++ Feature: BLK encoding now adds the :APM tag for AP Mounted weapons
++ TestBattleArmor was improperly counting APM mounted Infantry weapons as 
+    unallocated
++ APM related bugs in MechFileParser
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

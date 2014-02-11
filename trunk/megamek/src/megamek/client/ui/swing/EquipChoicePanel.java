@@ -441,6 +441,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if (infWeap.hasFlag(WeaponType.F_INFANTRY)
                     && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
                     && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
+                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)
                     && (infWeap.getCrew() < 2)){
                 apWeapTypes.add(infWeap);
             }

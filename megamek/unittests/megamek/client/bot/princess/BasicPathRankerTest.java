@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
@@ -843,14 +844,20 @@ public class BasicPathRankerTest {
 
         Entity enemyMech = Mockito.mock(BipedMech.class);
         Mockito.when(enemyMech.getPosition()).thenReturn(new Coords(10, 10));
+        Mockito.when(enemyMech.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(enemyMech.isImmobile()).thenReturn(false);
         enemyList.add(enemyMech);
 
         Entity enemyTank = Mockito.mock(Tank.class);
         Mockito.when(enemyTank.getPosition()).thenReturn(new Coords(10, 15));
+        Mockito.when(enemyTank.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(enemyTank.isImmobile()).thenReturn(false);
         enemyList.add(enemyTank);
 
         Entity enemyBA = Mockito.mock(BattleArmor.class);
         Mockito.when(enemyBA.getPosition()).thenReturn(new Coords(15, 15));
+        Mockito.when(enemyBA.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(enemyBA.isImmobile()).thenReturn(false);
         enemyList.add(enemyBA);
 
         Coords position = new Coords(0, 0);
@@ -864,6 +871,30 @@ public class BasicPathRankerTest {
 
         Entity expected = enemyMech;
         Entity actual = testRanker.findClosestEnemy(me, position, mockGame);
+        Assert.assertEquals(expected, actual);
+
+        // Add in an unmoved mech.
+        Entity unmovedMech = Mockito.mock(BipedMech.class);
+        Mockito.when(unmovedMech.getPosition()).thenReturn(new Coords(9, 9)); // Now the closest by position.
+        Mockito.when(unmovedMech.isSelectableThisTurn()).thenReturn(true);
+        Mockito.when(unmovedMech.isImmobile()).thenReturn(false);
+        Mockito.when(unmovedMech.getWalkMP(Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+               .thenReturn(6); // Movement should cause it to be further away.
+        enemyList.add(unmovedMech);
+        expected = enemyMech;
+        actual = testRanker.findClosestEnemy(me, position, mockGame);
+        Assert.assertEquals(expected, actual);
+
+        // Add in an aero unit right on top of me.
+        Entity mockAero = Mockito.mock(ConvFighter.class);
+        Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.getPosition()).thenReturn(new Coords(1, 1)); // Right on top of me, but being an aero, it
+        // shouldn't count.
+        Mockito.when(mockAero.isSelectableThisTurn()).thenReturn(false);
+        Mockito.when(mockAero.isImmobile()).thenReturn(false);
+        enemyList.add(mockAero);
+        expected = enemyMech;
+        actual = testRanker.findClosestEnemy(me, position, mockGame);
         Assert.assertEquals(expected, actual);
     }
 

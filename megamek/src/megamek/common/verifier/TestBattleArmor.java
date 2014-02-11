@@ -32,6 +32,7 @@ import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 
 public class TestBattleArmor extends TestEntity {
@@ -239,31 +240,26 @@ public class TestBattleArmor extends TestEntity {
                 continue;
             }
             
+            // AP weapons don't take up slots in BA (the AP Mount does)
+            if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
+                continue;
+            }
+            
             if (m.getBaMountLoc() == loc 
                     && (m.getLocation() == trooper 
                         || m.getLocation() == BattleArmor.LOC_SQUAD)){
                 
                 if (m.getType() instanceof WeaponType){
-                    if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
-                        numAntiPersonnelWeapons++;
-                    } else {
-                        numAntiMechWeapons++;
-                    }
+                    numAntiMechWeapons++;
                 }
-                
-                // AP Weapons mounted in an AP Mount don't take up slots
-                if (m.isAPMMounted() && m.getLinkedBy() != null 
-                        && m.getLinkedBy().getType().hasFlag(
-                                MiscType.F_AP_MOUNT)){
-                    continue;
-                }
-                
+                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                    numAntiPersonnelWeapons++;
+                }             
                 if (m.getType().isSpreadable()){
                     numUsedCrits++;
                 } else {
                     numUsedCrits += m.getType().getCriticals(ba);
                 }
-                
             }
         }
         
@@ -277,21 +273,19 @@ public class TestBattleArmor extends TestEntity {
         if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
             if (newMount.getType() instanceof WeaponType){
-                if (newMount.getType().hasFlag(WeaponType.F_INFANTRY)){
-                    if ((numAntiPersonnelWeapons + 1) <= 
-                            ba.getNumAllowedAntiPersonnelWeapons(loc,trooper)){
-                        return true;
-                    } else {
-                        return false;
-                    }                     
+                if ((numAntiMechWeapons + 1) <= 
+                        ba.getNumAllowedAntiMechWeapons(loc)){
+                    return true;
                 } else {
-                    if ((numAntiMechWeapons + 1) <= 
-                            ba.getNumAllowedAntiMechWeapons(loc)){
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return false;
                 }
+            } else if (newMount.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                if ((numAntiPersonnelWeapons + 1) <= 
+                        ba.getNumAllowedAntiPersonnelWeapons(loc,trooper)){
+                    return true;
+                } else {
+                    return false;
+                }                     
             } else {
                 return true;
             }
@@ -689,21 +683,19 @@ public class TestBattleArmor extends TestEntity {
             if (m.getLocation() != BattleArmor.LOC_SQUAD){
                 critsUsed[m.getLocation()][m.getBaMountLoc()] += critSize;
                 if ((m.getType() instanceof WeaponType)){
-                    if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
-                        numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
-                    } else {
-                        numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
-                    }
+                    numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
+                }
+                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                    numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
             } else {
                 for (int t = 0; t <= ba.getTroopers(); t++){
                     critsUsed[t][m.getBaMountLoc()] += critSize;
                     if ((m.getType() instanceof WeaponType)){
-                        if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
-                            numAPWeapons[t][m.getBaMountLoc()]++;
-                        } else {
-                            numAMWeapons[t][m.getBaMountLoc()]++;
-                        }
+                        numAMWeapons[t][m.getBaMountLoc()]++;
+                    }
+                    if (m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                        numAPWeapons[t][m.getBaMountLoc()]++;
                     }
                 }
             }
@@ -760,7 +752,8 @@ public class TestBattleArmor extends TestEntity {
                 }
                 
                 // Equipment taking up no slots doesn't need to be mounted
-                if ((m.getType().getCriticals(entity) == 0)) {
+                if ((m.getType().getCriticals(entity) == 0) 
+                        && !(m.getType() instanceof InfantryWeapon)) {
                     continue;
                 }
                 

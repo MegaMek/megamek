@@ -97,10 +97,17 @@ v0.37.7-dev (SVN)
     needs to have an :AWP tag added to it.  Added a new state to Mounted, 
     isAWPMounted along with a getter and setter.  MechFileParser.postLoadInit
     was updated to link AP Mounts with APM Mounted equipment in the same loc.
-+ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
++ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game 
+    option
 + Data: More BA Unit Fixes
 + Bug [#4038]: Magscan option missing popup description 0.37.7-dev
-+ Bug [#4037]: A bunch of units showing up under the weight class "Ultra Light/PA(L)/Exoskeleton 0.37.7-dev
++ Bug [#4037]: A bunch of units showing up under the weight class 
+    "Ultra Light/PA(L)/Exoskeleton 0.37.7-dev
++ Bug: BattleArmor weight classes weren't working properly in MechSelectorDialog
+    MechSummary.getTons() was changed to return the number of troopers for BA
+    to give a better idea of how much storage spaces was required for the squad
+    This created issues and required the MechSummary to keep track of suit 
+    weight for BattleArmor
     
 
 v0.37.6 (2014-01-29 01:43 UTC)

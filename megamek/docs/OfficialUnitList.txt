@@ -13,7 +13,6 @@ Flatbed Truck (LRM)|
 Burke Defense Tank (Royal)|
 Galleon Light Tank GAL-200(RL)|
 Rotunda Scout Vehicle RND-J-1-11 (RL)|
-Ripper Infantry Transport (Royal)|
 Cobra Transport VTOL (Command)|
 Jifty Transportable Field Repair Unit JI-50 (ML)|
 Thumper Artillery Vehicle TAV-2|
@@ -1572,6 +1571,7 @@ Condottiere Assault Craft|
 Mark VII-C|
 S7-P Bus 'Scarab'|
 Bus S-7A|
+Ares Mark IX|
 Atreus Battleship|
 Zechetinu II Corvette|
 Impavido Destroyer|
@@ -1658,6 +1658,9 @@ Pinto Corvette|
 Stefan Amaris (BattleShip)|
 Black Lion I-Battlecruiser|
 Soyal Heavy Cruiser|
+Cruiser|
+Narukami Destroyer (Block I)|
+Narukami Destroyer (Block II)|
 Sylvester Transport|
 Mako Corvette|
 Tharkad Battlecruiser (WoB)|
@@ -1780,8 +1783,8 @@ Gray Death Scout The Willow Wisps|
 Ailette Rescue PA(L)|
 Kage Light Battle Armor C|
 Void Medium Battle Armor Caltrop|
-Fenrir Battle Armor "Longshot"|
 Gray Death Strike|
+Fenrir Battle Armor "Longshot"|
 Purifier Battle Armor Terra Small Pulse(C)|
 Purifier Battle Armor Terra Medium Recoiless(C)|
 Purifier Battle Armor Terra ER Small(C)|
@@ -1954,8 +1957,8 @@ Infiltrator Mk. II Battle Armor (Marine)|
 Kopis Assault Battle Armor (AI Mk IIr)|
 Thunderbird Battle Armor [Upgrade](Pulse Laser)|
 Gray Death Strike (Harjel)|
-Ravager Assault Battle Armor (LRM)|
 Kopis Assault Battle Armor (AI Mk II)|
+Ravager Assault Battle Armor (LRM)|
 Shen Long Battle Armor [MG]|
 Shen Long Battle Armor [Flamer]|
 Amazon Battle Armor [MRR]|
@@ -2506,7 +2509,6 @@ Exterminator EXT-4A|
 Hector HOR-1C|
 Hector HOR-1B|
 Legionnaire LGN-2D Raul|
-Zeus ZEU-X3|
 Pack Hunter II Isis|
 Hatchetman HCT-5DD|
 Catapult CPLT-C2|
@@ -2516,7 +2518,6 @@ Black Hawk|
 Mad Cat III Dark Age|
 Catapult CPLT-K2K|
 Yu Huang Carson|
-Zeus ZEU-X2|
 Mad Cat III (Eve)|
 Dig Lord MiningMech RCL-4|
 Black Hawk 2|
@@ -2524,7 +2525,6 @@ Mad Cat III 2|
 Cattlemaster RA-4 HerderMech|
 Harvester HVR-99 AgroMech|
 Centurion CN9-D3D|
-Zeus ZEU-X|
 Atlas AS7-K2 (Jedra)|
 Ryoken II Tassa|
 Hatchetman HCT-5D|
@@ -4015,6 +4015,7 @@ Spindrift Aquatic SecurityMech SDT-1A|
 Pendragon PDG-1R|
 Apollo APL-4M|
 Dola DOL-1A1|
+Ti Ts'ang DDC TSG-9DDC|
 Axman AXM-6T|
 Hunchback HBK-6N|
 Pandarus LFA-1A|
@@ -4024,7 +4025,6 @@ Barghest BGS-4T|
 Wolfhound WLF-2H|
 Mad Cat Mk II Enhanced|
 Patron MilitiaMech PTN-2M|
-Ti Ts'angs DDC TSG9-DDC|
 Shadow Hawk SHD-5D (Sandy)|
 Mad Cat (Timber Wolf) Bounty Hunter 2|
 Javelin JVN-11D Farrell|
@@ -4230,11 +4230,13 @@ Wendigo C|
 Phoenix Hawk L PXH-11K2|
 Firestarter FS9-M4|
 Gauntlet GTL-1OA|
+Zeus X ZEU-X4|
 Mongrel MGL-T1|
 Viking IIC (Standard)|
 Storm Raider STM-R2|
 Gotterdammerung GTD-20S|
 Ursa URA-2C|
+Zeus X ZEU-X|
 Scourge SCG-WD1|
 Gauntlet GTL-1O|
 Mongrel MGL-T2|
@@ -4243,6 +4245,8 @@ Scourge SCG-WF1|
 Storm Raider STM-R3|
 Ursa URA-2A|
 Storm Raider STM-R4|
+Zeus X ZEU-X2|
+Zeus X ZEU-X3|
 Jaguar (Standard)|
 King Crab KGC-009|
 Firestarter FS9-M2|
@@ -4509,6 +4513,7 @@ Bushwacker BSW-S2r|
 Commando COM-2Dr|
 Longbow LGB-8V|
 Gunslinger GUN-2ERDr|
+Raptor RTX1-OU|
 Ha Otoko 3|
 Men Shen MS1-OU|
 Warlord BLR-2Dr|
@@ -4552,7 +4557,6 @@ Hatamoto-Chi HTM-28Tr|
 Uller (Kit Fox) U|
 Enforcer III ENF-7C3BS|
 Hammerhands HMH-6E|
-Raptor RTX-1OU|
 Akuma AKU-2XC|
 Deva C-DVA-OU Exanimus|
 Rakshasa MDG-1Ar|

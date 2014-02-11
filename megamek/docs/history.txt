@@ -1,10 +1,17 @@
 VERSION HISTORY:
 ----------------
 v0.37.8-dev (SVN)
-+ Added state variable Entity.neverDeployed and new method for it boolean Entity.wasNeverDeployed()
++ Added state variable Entity.neverDeployed and new method for it boolean 
+    Entity.wasNeverDeployed()
 + Feature Request [#1224] Princess stop chasing the Fighters!
-    Also modified the code for finding the nearest enemy to assume that unmoved units will move away.
-+ Added some more BA Equipment, prevent Support Weapons from being added to mounts, and some unit fixes
+    Also modified the code for finding the nearest enemy to assume that unmoved
+    units will move away.
++ Added some more BA Equipment, prevent Support Weapons from being added to 
+    mounts, and some unit fixes
++ Adjusted TestBattleArmor: AP Mounts are now counted as AP weapons, instead of
+    InfantryWeapons.  This is because, each AP Mount has the potential to have
+    an AP weapon in it.  It also matches the current TM errata.
++ TestBattleArmor now considers unallocated infantry weapons to be illegal
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

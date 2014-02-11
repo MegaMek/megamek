@@ -483,7 +483,7 @@ W,3053-Inner Sphere3071-Inner Sphere,3053-IS_TW_Non_Box3071-IS_TW_Non_Box,Sunbea
 W,3071-Inner Sphere3058-Inner Sphere,3071-IS_TW_Non_Box3058-IS_TW_Non_Box,TK Enforcer Auto Pistol,InfantryTKEnforcerAutopistol,
 W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Tranq Gun,InfantryTranquilizerGun,
 W,3071-Inner Sphere3058-Inner Sphere,3071-IS_TW_Non_Box3058-IS_TW_Non_Box,White Dwarf Holdout Laser Pistol,InfantryNambuAutopistol,
-W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Infantry Auto Rifle,InfantryAssaultRifle,Auto Rifle,Infantry Automatic Rifle,
+W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Infantry Auto Rifle,InfantryAssaultRifle,Auto Rifle,Infantry Automatic Rifle,InfantryAutoRifle,
 W,3071-IS/Clan2290-IS/Clan,3071-(allowed to all)2290-(allowed to all),Infantry Blazer Rifle,InfantryBlazerRifle,
 W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Infantry Sniper Rifle,InfantryBoltActionSniperRifle,
 W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Infantry Bolt Action Rifle,InfantryBoltActionRifle,

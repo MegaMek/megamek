@@ -43,7 +43,7 @@ biped
 <Point Equipment>
 BAPartialWing:Body
 BAAPMount:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 BABattleClaw:LA
 BABattleClaw:RA
 CLBAMG:Body

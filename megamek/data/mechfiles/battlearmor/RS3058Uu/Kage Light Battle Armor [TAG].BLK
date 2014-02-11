@@ -39,7 +39,7 @@ BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAPartialWing:Body
 BAAPMount:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBALightTAG:LA

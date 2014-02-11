@@ -48,7 +48,7 @@ biped
 ISBAHeavyMG:RA
 ISBAMachine Gun:LA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BA-Magnetic Clamp:Body
 BABattleClaw:LA
 </Squad Equipment>

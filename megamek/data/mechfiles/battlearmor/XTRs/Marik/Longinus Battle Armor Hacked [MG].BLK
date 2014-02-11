@@ -37,7 +37,7 @@ biped
 ISBAMachine Gun:RA
 BABattleClaw:LA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 IS BattleArmor C3i:Body
 </Squad Equipment>
 <type>

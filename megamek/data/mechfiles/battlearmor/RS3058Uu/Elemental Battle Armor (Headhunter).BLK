@@ -40,7 +40,7 @@ CLBAHeatSensor:Body
 BARemoteSensorDispenser:Body
 BABattleClaw:RA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 </Point Equipment>
 <type>
 Clan Level 2

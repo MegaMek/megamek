@@ -35,7 +35,7 @@ ISHeavyMortar:Body
 ISBAMagshotGR:RA
 BABattleClaw:LA
 BAArmoredGlove:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

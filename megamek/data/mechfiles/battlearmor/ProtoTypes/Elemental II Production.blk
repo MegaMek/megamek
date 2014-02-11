@@ -52,7 +52,7 @@ biped
 CLBAAPGaussRifle:RA
 CLBAMyomerBooster:Body
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>

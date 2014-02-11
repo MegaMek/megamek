@@ -52,7 +52,7 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

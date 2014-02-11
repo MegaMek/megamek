@@ -38,7 +38,7 @@ ISBASmallLaser:RA
 BARemoteSensorDispenser:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

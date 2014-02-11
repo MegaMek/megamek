@@ -48,7 +48,7 @@ BAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BAArmoredGlove:RA
 BAArmoredGlove:LA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <source>

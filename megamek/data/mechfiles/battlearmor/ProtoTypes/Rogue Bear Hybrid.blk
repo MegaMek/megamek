@@ -51,9 +51,9 @@ biped
 <Point Equipment>
 CLBAJumpBooster:Body
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BAAPMount:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 CLBALightMG:RA

@@ -38,7 +38,7 @@ biped
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAPartialWing:Body
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBAFlamer:RA

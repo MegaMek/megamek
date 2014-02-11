@@ -39,8 +39,8 @@ Jump
 <Squad Equipment>
 BAAPMount:RA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:LA:APM
+InfantryAssaultRifle:RA:APM
 BA-Magnetic Clamp:Body
 ISMechanicalJumpBooster:Body
 </Squad Equipment>

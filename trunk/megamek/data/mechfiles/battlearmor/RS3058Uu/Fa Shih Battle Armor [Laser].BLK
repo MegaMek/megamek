@@ -42,7 +42,7 @@ biped
 ISBASmallLaser:RA
 BA-Magnetic Clamp:Body
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
 </Squad Equipment>

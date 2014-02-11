@@ -41,7 +41,7 @@ biped
 <Squad Equipment>
 BA Machine Gun:RA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

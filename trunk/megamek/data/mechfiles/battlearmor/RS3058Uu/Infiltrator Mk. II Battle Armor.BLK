@@ -43,7 +43,7 @@ ISBAMagshotGR:RA
 IS BA ECM:Body
 BAParafoil:Body
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

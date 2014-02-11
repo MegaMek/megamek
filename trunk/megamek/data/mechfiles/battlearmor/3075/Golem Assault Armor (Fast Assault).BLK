@@ -51,7 +51,7 @@ CLBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 </Point Equipment>
 
 <Trooper 1 Equipment>

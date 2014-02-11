@@ -36,9 +36,9 @@ ISBASRM2OS:Body
 ISBASRM2OS:Body
 BAIndustrialDrill:LA
 BAAPMount:Body
-InfantryAutoRifle:Body:APM
+InfantryAssaultRifle:Body:APM
 BAAPMount:Body
-InfantryAutoRifle:Body:APM
+InfantryAssaultRifle:Body:APM
 </Squad Equipment>
 <type>
 IS Level 2

@@ -51,7 +51,7 @@ BAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BASalvageArm:LA
 BAArmoredGlove:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

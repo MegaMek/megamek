@@ -99,6 +99,7 @@ v0.37.7-dev (SVN)
     was updated to link AP Mounts with APM Mounted equipment in the same loc.
 + Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
 + Data: More BA Unit Fixes
++ Bugs [#4038]: Magscan option missing popup description 0.37.7-dev
     
 
 v0.37.6 (2014-01-29 01:43 UTC)

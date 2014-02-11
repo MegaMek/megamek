@@ -291,7 +291,8 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match DWP to weapon for "+ent.getShortName());
+                            "Unable to match DWP to weapon for " 
+                                    + ent.getShortName());
                 }
             }
             
@@ -305,10 +306,16 @@ public class MechFileParser {
                     }
 
                     // check location
-                    if (mWeapon.getBaMountLoc() == m.getBaMountLoc()) {
+                    if (mWeapon.getLocation() == m.getLocation()) {
                         m.setLinked(mWeapon);
                         break;
                     }
+                }
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException(
+                            "Unable to match AP Mount to weapon for " 
+                                    + ent.getShortName());
                 }
             }
 

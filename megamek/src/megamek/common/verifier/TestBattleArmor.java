@@ -747,8 +747,9 @@ public class TestBattleArmor extends TestEntity {
                 }
 
                 // Equipment taking up no slots doesn't need to be mounted
-                if ((m.getType().getCriticals(entity) == 0)
-                        && !(m.getType() instanceof InfantryWeapon)) {
+                if ((m.getType().getCriticals(entity) == 0) 
+                        && !((m.getType() instanceof InfantryWeapon) 
+                                && !m.isAPMMounted())) {
                     continue;
                 }
 

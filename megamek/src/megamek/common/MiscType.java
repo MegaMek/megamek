@@ -388,6 +388,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(178);
     public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
             .shiftLeft(179);
+    public static final BigInteger F_SQUAD_SUPPORT = BigInteger.valueOf(1)
+            .shiftLeft(180);
 
 
     // Secondary Flags for Physical Weapons
@@ -1485,6 +1487,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLaserMicrophone());
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createShotgunMicrophone());
+        EquipmentType.addType(MiscType.createBASquadMount());
+        EquipmentType.addType(MiscType.createISBAMineDispenser());
+        
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
@@ -3463,6 +3468,25 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+      
+    
+    public static MiscType createISBAMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        misc.name = "Mine Dispenser";
+        misc.setInternalName("ISBAMineDispenser");
+        misc.cost = 20000;
+        misc.tonnage = 0.05f;
+        misc.criticals = 2;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_VEHICLE_MINE_DISPENSER).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 8; // because it includes 2 mines
+        misc.introDate = 3062;
+        misc.techLevel.put(3062, misc.techLevel.get(3071));
+        misc.techRating = RATING_D;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        return misc;
+    }
 
     public static MiscType createISVehicularMineDispenser() {
         MiscType misc = new MiscType();
@@ -3473,8 +3497,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 20000;
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER)
-                .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.introDate = 3062;
         misc.techLevel.put(3062, misc.techLevel.get(3071));
@@ -5597,6 +5620,26 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2870;
         misc.techLevel.put(2870, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_C };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createBASquadMount() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Squad Support Weapon Mount";
+        misc.setInternalName("BASSWMount");
+        misc.tonnage = 0.005f;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_SQUAD_SUPPORT);
+        misc.bv = 0;
+        misc.cost = 5000;
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
 
         return misc;

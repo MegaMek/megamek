@@ -49,8 +49,7 @@ public class ISBAPlasmaRifle extends Weapon {
         tonnage = 0.3f;
         criticals = 2;
         cost = 28000;
-        flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_ENERGY)
-                .or(F_PLASMA);
+        flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_PLASMA).or(F_ENERGY).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         introDate = 3065;
         techLevel.put(3065, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_D };

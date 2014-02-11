@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,3071-Inner Sphere,3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -701,7 +701,7 @@ W,3071-Inner Sphere1950-Inner Sphere,3071-IS_TW_Non_Box1950-IS_TW_Non_Box,BA Lig
 W,3071-Inner Sphere1950-Inner Sphere,3071-IS_TW_Non_Box1950-IS_TW_Non_Box,Light Recoilless Rifle,ISLight Recoilless Rifle,ISBALight Recoilless Rifle,ISBALightRecoillessRifle,
 W,3071-Inner Sphere1950-Inner Sphere,3071-IS_TW_Non_Box1950-IS_TW_Non_Box,Medium Recoilless Rifle,ISMedium Recoilless Rifle,ISBAMedium Recoilless Rifle,ISBAMediumRecoillessRifle,
 W,2100-Inner Sphere3071-Inner Sphere,2100-IS_TW_Non_Box3071-IS_TW_Non_Box,BA Micro Grenade Launcher,ISBAMicroGrenadeLauncher,
-W,3071-Inner Sphere3062-Inner Sphere,3071-IS_TW_Non_Box3062-IS_TW_Non_Box,BAMineLauncher,ISMine Launcher,
+W,3050-Inner Sphere3071-Inner Sphere,3050-IS_TW_Non_Box3071-IS_TW_Non_Box,BAMineLauncher,ISMine Launcher,
 W,3071-Inner Sphere3056-Inner Sphere,3071-IS_TW_Non_Box3056-IS_TW_Non_Box,Tsunami BA Heavy Gauss Rifle,BA-ISTsunamiHeavyGaussRifle,
 W,3050-Inner Sphere3071-Inner Sphere,3050-IS_TW_Non_Box3071-IS_TW_Non_Box,BA SRM 1,IS BA SRM-1,ISBASRM1,IS BA SRM 1,
 W,3050-Inner Sphere3071-Inner Sphere,3050-IS_Box_Set3071-IS_Box_Set,BA SRM 2,IS BA SRM-2,ISBASRM2,IS BA SRM 2,
@@ -1160,7 +1160,7 @@ A,2300-Clan3067-Clan,2300-Clan_TW3067-Clan_TW,Clan Ammo LRM-20,CLLRM20 Ammo,Clan
 A,3067-Clan3060-Clan,3067-Clan_TW3060-Clan_TW,BA-Micro Bomb Ammo,BAMicroBomb Ammo,
 A,3067-Clan2380-Clan,3067-Clan_TW2380-Clan_TW,Clan Torpedo/LRM5 Ammo,CLTorpedoLRM5 Ammo,
 A,3067-IS/Clan2825-IS/Clan,3067-(allowed to all)2825-(allowed to all),BA-Compact Narc Ammo,BACompactNarc Ammo,
-A,3067-Inner Sphere3062-Inner Sphere,3067-IS_TW_Non_Box3062-IS_TW_Non_Box,BA-Mine Launcher Ammo,BAMineLauncher Ammo,
+A,3050-Inner Sphere3067-Inner Sphere,3050-IS_TW_Non_Box3067-IS_TW_Non_Box,BA-Mine Launcher Ammo,BAMineLauncher Ammo,
 A,3067-Clan3058-Clan,3067-Clan_TW3058-Clan_TW,BA-Advanced SRM-1 Ammo,BAAdvanced SRM1 Ammo,BAAdvancedSRM1 Ammo,
 A,3067-Clan3058-Clan,3067-Clan_TW3058-Clan_TW,BA-Advanced SRM-2 Ammo,BA-Advanced SRM-2 Ammo OS,BAAdvancedSRM2 Ammo,BAAdvanced SRM2 Ammo,
 A,3067-Clan3058-Clan,3067-Clan_TW3058-Clan_TW,BA-Advanced SRM-3 Ammo,BAAdvanced SRM3 Ammo,BAAdvancedSRM3 Ammo,
@@ -2868,6 +2868,8 @@ M,3051-Inner Sphere3071-Inner Sphere,3051-IS_TW_Non_Box3071-IS_TW_Non_Box,ISBAFu
 M,2300-IS/Clan3071-IS/Clan,2300-(allowed to all)3071-(allowed to all),BALaserMicrophone,
 M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),BAPowerpack,
 M,2000-IS/Clan3071-IS/Clan,2000-(allowed to all)3071-(allowed to all),BAShotgunMicrophone,
+M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),BASSWMount,
+M,3071-Inner Sphere3062-Inner Sphere,3071-IS_Advanced3062-IS_Advanced,ISBAMineDispenser,
 M,1950-IS/Clan,1950-(allowed to all),Tractor,
 M,1950-IS/Clan,1950-(allowed to all),Trailer,
 M,1950-IS/Clan,1950-(allowed to all),Armored Chassis,

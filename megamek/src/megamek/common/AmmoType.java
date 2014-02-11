@@ -7078,8 +7078,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3062;
-        ammo.techLevel.put(3062, ammo.techLevel.get(3067));
+        ammo.cost = 15000;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 

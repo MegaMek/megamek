@@ -13,23 +13,23 @@ BattleArmor
 </UnitType>
 
 <Name>
-Void Medium Battle Armor
+Sloth Battle Armor
 </Name>
 
 <Model>
-Caltrop
+
 </Model>
 
 <year>
-3078
+3050
 </year>
 
 <type>
-Mixed (IS Chassis) Experimental
+IS Level 2
 </type>
 
 <motion_type>
-Jump
+Leg
 </motion_type>
 
 <cruiseMP>
@@ -37,62 +37,50 @@ Jump
 </cruiseMP>
 
 <armor_type>
-33
+28
 </armor_type>
 
 <armor_tech>
-2
+3
 </armor_tech>
 
 <Squad Equipment>
-CLBAERSmallLaser:RA
-BAHeavyBattleClaw:LA
-BAHeavyBattleClaw:RA
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
+BA Small Laser:Body
+BA Small Laser:Body
+BAMineLauncher:Body
+InfantryERMediumLaser:Body
+BA-Mine Launcher Ammo:Body:Shots1#
+BA-Mine Launcher Ammo:Body:Shots1#
+BA-Mine Launcher Ammo:Body:Shots1#
+BA-Mine Launcher Ammo:Body:Shots1#
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 4 Equipment>
 
 <source>
-XTR Kurita
+TRO 3058 Upgrade
 </source>
 
 <chassis>
-biped
+quad
 </chassis>
 
 <jumpingMP>
-1
+0
 </jumpingMP>
 
 <armor>
-7
+5
 </armor>
 
 <Trooper Count>
@@ -100,6 +88,6 @@ biped
 </Trooper Count>
 
 <weightclass>
-2
+3
 </weightclass>
 

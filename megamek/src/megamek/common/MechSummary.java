@@ -278,7 +278,7 @@ public class MechSummary implements Serializable {
 
     public int getWeightClass() {
     	if (isSupport()) {
-    		return EntityWeightClass.getSupportWeightClass(m_nTons, m_sUnitType);
+    		return EntityWeightClass.getSupportWeightClass(m_nTons, m_sUnitSubType);
     	}
         return EntityWeightClass.getWeightClass(m_nTons, m_sUnitType);
     }

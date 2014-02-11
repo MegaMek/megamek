@@ -38,11 +38,13 @@ Leg
 
 <Squad Equipment>
 ISBASupportPPC:RA
-ISBASupportPPC:RA
+ISBASupportPPC:LA
 ISLight Recoilless Rifle:Body
 ISBALightTAG:Body
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BA-Magnetic Clamp:Body
 </Squad Equipment>
 

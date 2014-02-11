@@ -36,11 +36,45 @@ Leg
 3
 </cruiseMP>
 
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
 <Squad Equipment>
 CLBAAPGaussRifle:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+Infantry Auto Rifle:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Clan BA Stealth (Basic):Body
+Clan BA Stealth (Basic):LA
+Clan BA Stealth (Basic):Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
 
 <source>
 XTR Comstar
@@ -65,11 +99,4 @@ biped
 <weightclass>
 0
 </weightclass>
-
-<armor_type>
-31
-</armor_type>
-<armor_tech>
-7
-</armor_tech>
 

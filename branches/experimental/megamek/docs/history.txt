@@ -1,8 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.37.7-exp-dev (SVN)
+v0.37.7-exp (2014-02-11 02:57 UTC)
 
-v0.37.7-dev (SVN)
+v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 
     or range or out of LoS.  This should hopefully speed up her path ranking a 
     little bit.
@@ -74,6 +74,46 @@ v0.37.7-dev (SVN)
     instead of 1
 + Data: First round of BA fixes (There are still errors in here)
 + Bug [#4014]: Conventional Aeros Building Up Heat 0.37.6-exp
++ Data: First round of BA fixes (There are still errors in here)
++ Data: Next Round of BA Unit fixes.
++ Changes in BA Weapons/Misc Type/Ammo Type for the new units.
++ Bug [#4035]: MegaMek hangs when firing Thumper Cannon 0.37.7-dev
++ TestBattleArmor now checks to make sure each slot of ammo has at most 4 shots
++ BA Fixes
++ Bug: TestBattleArmor wasn't dealing with slot assignments for BA OS ammo
++ Bug: TestBattleArmor wasn't dealing with slot assignments for equipmeint 
+    mounted in DWP's (the equipment in the DWP would fail validation because 
+    it was considered unallocatd equipment)
++ BattleArmor with AP Mounts and Armored gloves no longer get automatically 
+    assigned an infantry autorifle
++ Bug [#4019]: BA that specify AP weapons in the datafile should not get an 
+    infantry auto rifle automatically
++ Feature: BattleArmor with an AP Mount or Armored glove can now configure what,
+    if any, anti-personnel weapon is mounted
++ Bug: Selecting # of shots for BattleArmor was bugged in CustomMechDialog
++ Feature: CustomMechDialog now verifiers entities after customization, when 
+    applicable
++ Data: BA Unit Fixes
++ Feature: Added a way to specify if a weapon in a BLK file is mounted in an AP 
+    mount.  This works the same way as DWP's: the weapon entry in the BLK file
+    needs to have an :AWP tag added to it.  Added a new state to Mounted, 
+    isAWPMounted along with a getter and setter.  MechFileParser.postLoadInit
+    was updated to link AP Mounts with APM Mounted equipment in the same loc.
++ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game 
+    option
++ Data: More BA Unit Fixes
++ Bug [#4038]: Magscan option missing popup description 0.37.7-dev
++ Bug [#4037]: A bunch of units showing up under the weight class 
+    "Ultra Light/PA(L)/Exoskeleton 0.37.7-dev
++ Bug: BattleArmor weight classes weren't working properly in MechSelectorDialog
+    MechSummary.getTons() was changed to return the number of troopers for BA
+    to give a better idea of how much storage spaces was required for the squad
+    This created issues and required the MechSummary to keep track of suit 
+    weight for BattleArmor
++ Bug: For some reason BA with InfantryAutoRifle were having that piece of 
+    equipment fail to load.  I replaced InfantryAutoRifle with 
+    InfantryAssaultRifle and the equipment now loads
+    
 
 v0.37.6-exp (2014-01-29 01:43 UTC)
 + Added new art assets for borders and updated the defaultSkin.xml to use them

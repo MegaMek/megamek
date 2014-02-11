@@ -39,6 +39,7 @@ ISBASRM3OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

@@ -43,6 +43,7 @@ Jump
 <Squad Equipment>
 ISMedium Recoilless Rifle:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 ISMechanicalJumpBooster:Body

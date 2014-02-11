@@ -33,15 +33,11 @@ biped
 <Squad Equipment>
 ISLight Recoilless Rifle:LA
 ISBASRM4:Body
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots4#
+BA-SRM4 Ammo:Body:Shots3#
 BABasicManipulator:RA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

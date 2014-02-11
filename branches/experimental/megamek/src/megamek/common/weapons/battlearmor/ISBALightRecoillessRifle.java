@@ -40,6 +40,8 @@ public class ISBALightRecoillessRifle extends Weapon {
         name = "Light Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISLight Recoilless Rifle");
+        addLookupName("ISBALight Recoilless Rifle");
+        addLookupName("ISBALightRecoillessRifle");
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

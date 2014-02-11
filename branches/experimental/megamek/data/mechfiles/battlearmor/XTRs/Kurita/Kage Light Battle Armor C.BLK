@@ -37,6 +37,7 @@ biped
 BattleArmorC3:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+InfantryAssaultRifle:RA:APM
 </Point Equipment>
 <type>
 IS Level 4

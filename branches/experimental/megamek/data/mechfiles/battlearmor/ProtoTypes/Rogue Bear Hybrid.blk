@@ -51,12 +51,14 @@ biped
 <Point Equipment>
 CLBAJumpBooster:Body
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 CLBALightMG:RA
 CLBALightMG:LA
-Camo System
+Camo System:Body
 </Point Equipment>
 
 <type>
@@ -72,7 +74,7 @@ TRO:Prototype
 </source>
 
 <motion_type>
-Leg
+Jump
 </motion_type>
 
 

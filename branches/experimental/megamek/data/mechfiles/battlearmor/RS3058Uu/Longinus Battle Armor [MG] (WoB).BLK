@@ -39,6 +39,7 @@ BA Machine Gun:RA
 ISBASRM2OS:Body
 BABattleClaw:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 <type>
 IS Level 2

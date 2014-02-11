@@ -40,7 +40,7 @@ ISBAActiveProbe:Body
 ISBAJumpBooster:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 2

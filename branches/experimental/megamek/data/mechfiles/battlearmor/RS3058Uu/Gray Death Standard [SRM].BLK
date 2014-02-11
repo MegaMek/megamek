@@ -37,12 +37,10 @@ biped
 
 <Squad Equipment>
 ISBASRM1:RA
-BASRM1 Ammo:Body:Shots1#
-BASRM1 Ammo:Body:Shots1#
-BASRM1 Ammo:Body:Shots1#
-BASRM1 Ammo:Body:Shots1#
+BASRM1 Ammo:Body:Shots4#
 BABattleClaw:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 ISBAImprovedSensors:Body
 </Squad Equipment>
 <type>

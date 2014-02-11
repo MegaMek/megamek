@@ -2,61 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Golem Assault Armor
 </Name>
+
 <Model>
 (Fast Assault)
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-5
-</Trooper Count>
+
+<year>
+3070
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
 <cruiseMP>
 1
 </cruiseMP>
-<jumpingMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
 2
-</jumpingMP>
-<Armor>
-18
-</Armor>
+</armor_tech>
+
 <Point Equipment>
-Clan BA Machine Gun:RA
+CLBAMG:RA
 CLBASRM5OS:Body
 CLBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 </Point Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3070
-</year>
-<motion_type>
-Leg
-</motion_type>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 TRO:3175
 </source>
-<armor_type>
-28
-</armor_type>
-<armor_tech>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 2
-</armor_tech>
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

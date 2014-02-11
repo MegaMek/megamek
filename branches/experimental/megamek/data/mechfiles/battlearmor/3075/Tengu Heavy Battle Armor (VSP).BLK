@@ -31,13 +31,14 @@ biped
 2
 </jumpingMP>
 <Armor>
-13
+12
 </Armor>
 <Squad Equipment>
 ISDetachableWeaponPack:LA
-ISBASVSPL:DWP
+ISBASVSPL:DWP:LA
 BABasicManipulator:LA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 3

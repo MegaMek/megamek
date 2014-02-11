@@ -47,6 +47,7 @@ biped
 <Squad Equipment>
 ISLight Recoilless Rifle:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 Camo System:Body

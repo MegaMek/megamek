@@ -238,14 +238,11 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
                 continue;
             }
+            
             if (m.getBaMountLoc() == loc 
                     && (m.getLocation() == trooper 
                         || m.getLocation() == BattleArmor.LOC_SQUAD)){
-                if (m.getType().isSpreadable()){
-                    numUsedCrits++;
-                } else {
-                    numUsedCrits += m.getType().getCriticals(ba);
-                }
+                
                 if (m.getType() instanceof WeaponType){
                     if (m.getType().hasFlag(WeaponType.F_INFANTRY)){
                         numAntiPersonnelWeapons++;
@@ -253,6 +250,20 @@ public class TestBattleArmor extends TestEntity {
                         numAntiMechWeapons++;
                     }
                 }
+                
+                // AP Weapons mounted in an AP Mount don't take up slots
+                if (m.isAPMMounted() && m.getLinkedBy() != null 
+                        && m.getLinkedBy().getType().hasFlag(
+                                MiscType.F_AP_MOUNT)){
+                    continue;
+                }
+                
+                if (m.getType().isSpreadable()){
+                    numUsedCrits++;
+                } else {
+                    numUsedCrits += m.getType().getCriticals(ba);
+                }
+                
             }
         }
         
@@ -425,7 +436,7 @@ public class TestBattleArmor extends TestEntity {
     public float getWeightArmor() {
         return ba.getOArmor(1)
                 * EquipmentType.getBaArmorWeightPerPoint(ba.getArmorType(1),
-                        ba.isClan());
+                        TechConstants.isClan(ba.getArmorTechLevel(1)));
     }
     
     @Override
@@ -618,6 +629,8 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)){
                 continue;
             }
+            
+            
             int critSize;
             if (m.getType().isSpreadable()){
                 critSize = 1;
@@ -625,9 +638,16 @@ public class TestBattleArmor extends TestEntity {
                 critSize = m.getType().getCriticals(ba);
             }
             
+            // AP Weapons that are mounted in an AP Mount don't take up slots
+            if (m.isAPMMounted() && m.getLinkedBy() != null 
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_AP_MOUNT)){
+                critSize = 0;
+            }
+            
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType) 
-                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)){
+                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)
+                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)){
                 buff.append(m.getName() + " is not a BattleArmor weapon!\n");
                 correct = false;
             }
@@ -636,6 +656,14 @@ public class TestBattleArmor extends TestEntity {
             if ((m.getType() instanceof MiscType) 
                     && !m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)){
                 buff.append(m.getName() + " is not BattleArmor equipment!\n");
+                correct = false;
+            }
+            
+            if ((m.getType() instanceof AmmoType)
+                    && m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT){
+                buff.append(m.getName() + "has " + m.getBaseShotsLeft() 
+                        + " shots, but BattleArmor may only have at most " +
+                        NUM_SHOTS_PER_CRIT + " shots per slot.");
                 correct = false;
             }
             
@@ -716,13 +744,30 @@ public class TestBattleArmor extends TestEntity {
             Vector<Mounted> unallocated) {
         for (Mounted m : entity.getEquipment()) {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
-                if ((m.getType() instanceof AmmoType)
-                        && (m.getUsableShotsLeft() <= 1)) {
+                // OS-launcher ammo doesn't take up a slot
+                if ((m.getType() instanceof AmmoType) 
+                        && (m.getLinkedBy() != null) 
+                        && m.getLinkedBy().getType().hasFlag(
+                                WeaponType.F_ONESHOT)) {
                     continue;
                 }
+                
+                // Equipment taking up no slots doesn't need to be mounted
                 if ((m.getType().getCriticals(entity) == 0)) {
                     continue;
                 }
+                
+                // Weapons mounted in a DWP don't get assigned a location
+                if ((m.getLinked() != null 
+                        && m.getLinked().getType().hasFlag(
+                               MiscType.F_DETACHABLE_WEAPON_PACK))
+                   || (m.getLinkedBy() != null 
+                           && m.getLinkedBy().getType().hasFlag(
+                                   MiscType.F_DETACHABLE_WEAPON_PACK))){
+                    continue;
+                }
+                
+                // Anything else is unassigned equipment
                 unallocated.addElement(m);
             }
         }

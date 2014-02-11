@@ -49,10 +49,12 @@ biped
 </armor_tech>
 
 <Squad Equipment>
-ISBAMedium Laser:Body
-ISBAMedium Laser:Body
+ISBAMediumLaser:Body
+ISBAMediumLaser:Body
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BAHeavyBattleClaw:RA
 BAHeavyBattleClaw:LA
 </Squad Equipment>

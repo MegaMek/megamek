@@ -42,6 +42,7 @@ ISBAFlamer:RA
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 <type>
 IS Level 2

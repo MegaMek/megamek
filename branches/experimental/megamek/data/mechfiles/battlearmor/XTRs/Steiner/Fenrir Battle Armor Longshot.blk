@@ -32,16 +32,10 @@ quad
 </Armor>
 <Squad Equipment>
 CLBALRM4:Body
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
+BACLLRM4 Ammo:Body:Shots4#
 CLBALRM4:Body
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
-BACLLRM4 Ammo:Body:Shots1#
-BattleArmorC3
+BACLLRM4 Ammo:Body:Shots4#
+BattleArmorC3:Body
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental

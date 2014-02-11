@@ -32,6 +32,7 @@ CLBAMediumPulseLaser:Body
 BABattleClaw:LA
 BABasicManipulator:RA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Point Equipment>
 <type>
 Clan Level 2

@@ -39,6 +39,7 @@ Jump
 <Squad Equipment>
 ISImprovedSensors:RA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 BAHeavyBattleClaw:LA
 ISBAAngelECM:Body
 </Squad Equipment>

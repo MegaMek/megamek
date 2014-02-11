@@ -43,14 +43,8 @@ biped
 ISLight Recoilless Rifle:RA
 ISBALRM3:Body
 BABattleClaw:LA
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
-BAISLRM3 Ammo:Body:Shots1#
+BAISLRM3 Ammo:Body:Shots4#
+BAISLRM3 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <type>
@@ -70,7 +64,7 @@ RS3145 NT NU
 </source>
 
 <armor_type>
-28
+30
 </armor_type>
 <armor_tech>
 3

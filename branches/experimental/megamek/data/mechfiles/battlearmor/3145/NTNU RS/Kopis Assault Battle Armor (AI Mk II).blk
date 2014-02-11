@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Ravager Assault Battle Armor
+Kopis Assault Battle Armor
 </Name>
 
 <Model>
-(LRM)
+(AI Mk II)
 </Model>
 
 <year>
@@ -33,7 +33,7 @@ Leg
 </motion_type>
 
 <cruiseMP>
-2
+1
 </cruiseMP>
 
 <armor_type>
@@ -41,19 +41,21 @@ Leg
 </armor_type>
 
 <armor_tech>
-1
+11
 </armor_tech>
 
 <Squad Equipment>
-Light Recoilless Rifle:RA
-BA LRM 3:Body
-BABattleClaw:LA
-IS BA Ammo LRM-3:Body:Shots4#
-IS BA Ammo LRM-3:Body:Shots4#
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+Grenade Launcher:LA
+Grenade Launcher:RA
+Heavy Recoilless Rifle:Body
+Heavy Recoilless Rifle:Body
+ISImprovedSensors:LA
 IS BA Advanced:RA
 IS BA Advanced:LA
-IS BA Advanced:LA
-IS BA Advanced:Body
+IS BA Advanced:RA
+IS BA Advanced:RA
 IS BA Advanced:LA
 </Squad Equipment>
 
@@ -70,7 +72,7 @@ IS BA Advanced:LA
 </Trooper 4 Equipment>
 
 <source>
-RS3145 NT NU
+RS3145 NTNU
 </source>
 
 <chassis>
@@ -82,7 +84,7 @@ biped
 </jumpingMP>
 
 <armor>
-18
+10
 </armor>
 
 <Trooper Count>

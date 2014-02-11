@@ -40,13 +40,9 @@ biped
 CLBASmallPulseLaser:RA
 Clan BA Light Machine Gun:LA
 CLBASRM3:Body
-BASRM3 Ammo:Body:Shots1#
-BASRM3 Ammo:Body:Shots1#
-BASRM3 Ammo:Body:Shots1#
+BASRM3 Ammo:Body:Shots3#
 CLBASRM3:Body
-BASRM3 Ammo:Body:Shots1#
-BASRM3 Ammo:Body:Shots1#
-BASRM3 Ammo:Body:Shots1#
+BASRM3 Ammo:Body:Shots3#
 BAHeavyBattleClaw:LA
 BABasicManipulator:RA
 </Point Equipment>

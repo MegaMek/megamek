@@ -36,22 +36,36 @@ Leg
 2
 </cruiseMP>
 
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
 <Squad Equipment>
-BABasicManipulator:LA
-BABasicManipulator:RA
-ISBATubeArtillery:DWP:Body
+BABasicManipulator
+BABasicManipulator
+ISBATubeArtillery:DWP
 ISDetachableWeaponPack:Body
 BA-Magnetic Clamp:Body
-ISBASmallLaser:RA
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
-ISBATubeArtilleryAmmo:Body:Shots1#
+BA Small Laser:RA
+ISBATubeArtilleryAmmo:Body:Shots4#
+ISBATubeArtilleryAmmo:Body:Shots4#
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Repubilc
@@ -76,11 +90,4 @@ biped
 <weightclass>
 3
 </weightclass>
-
-<armor_type>
-38
-</armor_type>
-<armor_tech>
-7
-</armor_tech>
 

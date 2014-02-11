@@ -42,6 +42,7 @@ biped
 BA Machine Gun:RA
 BA-Magnetic Clamp:Body
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
 </Squad Equipment>

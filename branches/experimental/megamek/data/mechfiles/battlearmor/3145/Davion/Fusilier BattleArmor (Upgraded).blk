@@ -40,6 +40,7 @@ Jump
 ISBAPlasmaRifle:RA
 ISBALightMG:Body
 BAArmoredGlove:LA
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 
 <source>

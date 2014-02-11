@@ -41,6 +41,7 @@ IS BA ECM:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAExtendedLifeSupport:Body
+InfantryMauser960:RA:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

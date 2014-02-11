@@ -32,10 +32,7 @@ quad
 </Armor>
 <Squad Equipment>
 ISBASRM4:Body
-BASRM-4 Ammo:Shots1#
-BASRM-4 Ammo:Shots1#
-BASRM-4 Ammo:Shots1#
-BASRM-4 Ammo:Shots1#
+BASRM-4 Ammo:Shots4#:Body
 </Squad Equipment>
 <type>
 IS Level 2

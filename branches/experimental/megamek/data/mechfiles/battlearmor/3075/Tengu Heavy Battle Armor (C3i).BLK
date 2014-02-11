@@ -31,7 +31,7 @@ biped
 2
 </jumpingMP>
 <Armor>
-13
+12
 </Armor>
 <Squad Equipment>
 IS BC3i:Body
@@ -39,6 +39,7 @@ ISBALightTAG:LA
 BABasicManipulator:RA
 BABasicManipulator:LA
 BAAPMount:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 4

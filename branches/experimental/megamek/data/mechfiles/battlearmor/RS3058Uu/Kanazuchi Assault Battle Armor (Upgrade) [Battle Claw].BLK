@@ -32,20 +32,12 @@ biped
 </Armor>
 <Squad Equipment>
 ISBASupportPPC:RA
-ISBASupportPPC:RA
+ISBASupportPPC:LA
 ISBAMRM1:Body
 ISBAMRM1:Body
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
-ISMRM1 Ammo:Body:Shots1#
+ISMRM1 Ammo:Body:Shots4#
+ISMRM1 Ammo:Body:Shots4#
 BAHeavyBattleClaw:LA
-BAAPMount:Body
-BAAPMount:Body
 </Squad Equipment>
 <type>
 IS Level 2

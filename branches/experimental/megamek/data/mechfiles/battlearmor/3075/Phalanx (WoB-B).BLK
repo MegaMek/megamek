@@ -36,6 +36,7 @@ BA-SRM4 Ammo:Body
 BA-SRM4 Ammo:Body
 BABattleClaw:LA
 BAArmoredGlove:RA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBATaser:RA

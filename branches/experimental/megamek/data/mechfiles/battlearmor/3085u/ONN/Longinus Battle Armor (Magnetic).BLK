@@ -46,8 +46,9 @@ biped
 
 <Squad Equipment>
 ISBAHeavyMG:RA
-ISBAMachine Gun:RA
+ISBAMachine Gun:LA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 BA-Magnetic Clamp:Body
 BABattleClaw:LA
 </Squad Equipment>
@@ -69,7 +70,7 @@ RS 3085 Unabridged ONN
 </source>
 
 <armor_type>
-28
+30
 </armor_type>
 <armor_tech>
 3

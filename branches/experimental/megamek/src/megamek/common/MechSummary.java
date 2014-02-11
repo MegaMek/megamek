@@ -58,6 +58,10 @@ public class MechSummary implements Serializable {
     private String engineName;
     private int gyroType;
     private String myomerName;
+    /**
+     * For BattleArmor, we want to know the weight of an individual suit.
+     */
+    private float suitWeight;
     
 
     /** Stores the type of internal structure on this unit **/
@@ -277,10 +281,16 @@ public class MechSummary implements Serializable {
     }
 
     public int getWeightClass() {
+        float tons;
+        if (getUnitType().equals("BattleArmor")){
+            tons = getSuitWeight();
+        } else {
+            tons = getTons();
+        }
     	if (isSupport()) {
-    		return EntityWeightClass.getSupportWeightClass(m_nTons, m_sUnitType);
+    		return EntityWeightClass.getSupportWeightClass(m_nTons, m_sUnitSubType);
     	}
-        return EntityWeightClass.getWeightClass(m_nTons, m_sUnitType);
+        return EntityWeightClass.getWeightClass(tons, getUnitType());
     }
 
     public int getWalkMp() {
@@ -414,6 +424,14 @@ public class MechSummary implements Serializable {
 
     public void setMyomerName(String myomerName) {
         this.myomerName = myomerName;
+    }
+
+    public float getSuitWeight() {
+        return suitWeight;
+    }
+
+    public void setSuitWeight(float suitWeight) {
+        this.suitWeight = suitWeight;
     }
 
     @Override

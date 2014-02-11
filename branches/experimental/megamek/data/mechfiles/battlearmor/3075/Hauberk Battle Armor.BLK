@@ -30,12 +30,8 @@ biped
 <Squad Equipment>
 ISBASmallLaser:RA
 ISBALRM5:Body
-BAISLRM5 Ammo:Body:Shots1#
-BAISLRM5 Ammo:Body:Shots1#
-BAISLRM5 Ammo:Body:Shots1#
-BAISLRM5 Ammo:Body:Shots1#
-BAISLRM5 Ammo:Body:Shots1#
-BAISLRM5 Ammo:Body:Shots1#
+BAISLRM5 Ammo:Body:Shots4#
+BAISLRM5 Ammo:Body:Shots2#
 BABattleClaw:LA
 </Squad Equipment>
 <type>

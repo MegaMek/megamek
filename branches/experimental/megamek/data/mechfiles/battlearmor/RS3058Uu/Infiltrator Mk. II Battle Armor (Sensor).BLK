@@ -45,6 +45,8 @@ BAParafoil:Body
 ISBAImprovedSensors:Body
 BAAPMount:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+InfantryAssaultRifle:RA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>

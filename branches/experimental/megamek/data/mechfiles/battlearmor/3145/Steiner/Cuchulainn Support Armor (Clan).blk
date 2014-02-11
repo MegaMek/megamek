@@ -25,7 +25,7 @@ Cuchulainn Support Armor
 </year>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
 
 <motion_type>
@@ -36,12 +36,40 @@ Jump
 2
 </cruiseMP>
 
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
 <Point Equipment>
-CLDetachableWeaponPack:LA
-CLBAERMediumPulseLaser:DWP:LA
+CLDetachableWeaponPack:RA
+BACLERMediumPulseLaser:DWP
 BABasicManipulator:LA
 BABasicManipulator:RA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):Body
 </Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth
@@ -60,17 +88,10 @@ biped
 </armor>
 
 <Trooper Count>
-5
+4
 </Trooper Count>
 
 <weightclass>
 3
 </weightclass>
-
-<armor_type>
-33
-</armor_type>
-<armor_tech>
-2
-</armor_tech>
 

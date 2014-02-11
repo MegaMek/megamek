@@ -29,13 +29,12 @@ biped
 </Armor>
 <Squad Equipment>
 Clan Advanced SRM 3:Body
-BA-Advanced SRM-3 Ammo:Shots1#
-BA-Advanced SRM-3 Ammo:Shots1#
-BA-Advanced SRM-3 Ammo:Shots1#
+BA-Advanced SRM-3 Ammo:Body:Shots3#
 ISBALightTAG:RA
 BABattleClaw:LA
 BABattleClaw:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental

@@ -38,12 +38,8 @@ Leg
 
 <Squad Equipment>
 CLBASRM5:Body
-BASRM5 Ammo:Body:Shots1#
-BASRM5 Ammo:Body:Shots1#
-BASRM5 Ammo:Body:Shots1#
-BASRM5 Ammo:Body:Shots1#
-BASRM5 Ammo:Body:Shots1#
-BASRM5 Ammo:Body:Shots1#
+BASRM5 Ammo:Body:Shots4#
+BASRM5 Ammo:Body:Shots2#
 </Squad Equipment>
 
 <source>

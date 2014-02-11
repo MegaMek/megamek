@@ -39,6 +39,7 @@ biped
 ISBASmallLaser:RA
 BABattleClaw:RA
 BAAPMount:LA
+InfantryAssaultRifle:LA:APM
 ISImprovedSensors:Body
 </Squad Equipment>
 <type>

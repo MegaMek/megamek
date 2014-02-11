@@ -41,14 +41,14 @@ biped
 
 <Point Equipment>
 CLBALBX:LA
-CLBALBX:LA
+CLBALBX:RA
 CLBASRM1OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Point Equipment>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
 
 <year>

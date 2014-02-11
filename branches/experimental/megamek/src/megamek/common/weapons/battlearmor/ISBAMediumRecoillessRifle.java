@@ -40,6 +40,8 @@ public class ISBAMediumRecoillessRifle extends Weapon {
         name = "Medium Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISMedium Recoilless Rifle");
+        addLookupName("ISBAMedium Recoilless Rifle");
+        addLookupName("ISBAMediumRecoillessRifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;

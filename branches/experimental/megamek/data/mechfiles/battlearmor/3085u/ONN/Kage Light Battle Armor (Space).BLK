@@ -50,7 +50,7 @@ BACuttingTorch:RA
 ISBASpaceOperationsAdaptation:Body
 BABattleClaw:RA
 BAArmoredGlove:LA
-BAAPMount:LA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <type>

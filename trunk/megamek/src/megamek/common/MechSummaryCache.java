@@ -346,6 +346,9 @@ public class MechSummaryCache {
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
         ms.setTons(e.getWeight());
+        if (e instanceof BattleArmor){
+            ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
+        }
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((long) e.getCost(false));

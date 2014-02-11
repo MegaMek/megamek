@@ -38,7 +38,7 @@ ISBADavidLightGaussRifle:LA
 BABattleClaw:LA
 BAArmoredGlove:RA
 BattleArmorC3:Body
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 IS Level 4

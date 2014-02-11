@@ -41,7 +41,7 @@ BAArmoredGlove:LA
 BAArmoredGlove:RA
 ISBADavidLightGaussRifle:LA
 ISBADavidLightGaussRifle:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <source>

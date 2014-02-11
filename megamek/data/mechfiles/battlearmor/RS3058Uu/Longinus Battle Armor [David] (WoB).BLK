@@ -38,7 +38,7 @@ ISBADavidLightGaussRifle:RA
 ISBASRM2OS:Body
 BABattleClaw:RA
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 <type>
 IS Level 2

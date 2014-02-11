@@ -50,9 +50,9 @@ BACLERMediumPulseLaser:DWP
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 BAAPMount:Body
-InfantryAutoRifle:Body:APM
+InfantryAssaultRifle:Body:APM
 BAAPMount:Body
-InfantryAutoRifle:Body:APM
+InfantryAssaultRifle:Body:APM
 IS BA Advanced:Body
 IS BA Advanced:RA
 IS BA Advanced:LA

@@ -38,7 +38,7 @@ CLBAMicroPulseLaser:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 ISBAJumpBooster:Body
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 <type>
 Mixed (IS Chassis) Experimental

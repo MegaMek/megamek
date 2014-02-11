@@ -52,9 +52,9 @@ biped
 ISBAMediumPulseLaser:Body
 ISBAFlamer:Body
 BAAPMount:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 BAAPMount:LA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 BAHeavyBattleClaw:RA
 BAHeavyBattleClaw:LA
 </Squad Equipment>

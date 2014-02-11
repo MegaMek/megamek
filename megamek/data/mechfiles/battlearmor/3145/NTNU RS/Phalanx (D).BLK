@@ -43,7 +43,7 @@ ISBAMediumVSP:DWP:Body
 ISDetachableWeaponPack:Body
 BABattleClaw:LA
 BAArmoredGlove:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
 <type>

@@ -42,7 +42,7 @@ ISBASmallLaser:RA
 BAAPMount:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
-InfantryAutoRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 <type>
 IS Level 2

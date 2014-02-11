@@ -50,7 +50,7 @@ CLBAFlamer:RA
 CLBASRM5:Body
 BA-SRM5 Ammo:Body:Shots3#
 BAAPMount:RA
-InfantryAutoRifle:RA:APM
+InfantryAssaultRifle:RA:APM
 BABasicManipulator:LA
 BABattleClaw:RA
 </Point Equipment>

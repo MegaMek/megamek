@@ -108,6 +108,9 @@ v0.37.7-dev (SVN)
     to give a better idea of how much storage spaces was required for the squad
     This created issues and required the MechSummary to keep track of suit 
     weight for BattleArmor
++ Bug: For some reason BA with InfantryAutoRifle were having that piece of 
+    equipment fail to load.  I replaced InfantryAutoRifle with 
+    InfantryAssaultRifle and the equipment now loads
     
 
 v0.37.6 (2014-01-29 01:43 UTC)

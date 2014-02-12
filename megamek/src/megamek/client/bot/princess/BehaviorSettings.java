@@ -80,17 +80,17 @@ public class BehaviorSettings {
             4.5,
             5};
     protected static final double[] HERD_MENTALITY_VALUES = new double[]{
-            0.05,
             0.1,
             0.2,
-            0.3,
             0.4,
-            0.5,
             0.6,
-            0.7,
             0.8,
-            0.9,
-            1.0};
+            1.0,
+            1.2,
+            1.4,
+            1.6,
+            1.8,
+            2.0};
 
     private String description = BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 
@@ -448,7 +448,6 @@ public class BehaviorSettings {
     /**
      * How close to I want to get to my enemies?
      *
-     *
      * @param index The index[0-10] of the hyper aggression value desired.
      * @return The hyper aggression value at the given index.
      */
@@ -498,7 +497,6 @@ public class BehaviorSettings {
 
     /**
      * How worried about enemy damage am I?
-     *
      *
      * @param index The index [0-10] of the self preservation value desired.
      * @return The self preservation value at the specified index.

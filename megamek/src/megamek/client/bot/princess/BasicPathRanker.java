@@ -70,10 +70,6 @@ public class BasicPathRanker extends PathRanker {
         return fireControl;
     }
 
-//    public PathEnumerator getPathEnumerator() {
-//        return pathEnumerator;
-//    }
-
     public void setFireControl(FireControl fireControl) {
         this.fireControl = fireControl;
     }

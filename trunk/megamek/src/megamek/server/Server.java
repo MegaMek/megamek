@@ -7304,6 +7304,7 @@ public class Server implements Runnable {
                 }
 
                 // Now do the skill check.
+                entity.setFacing(curFacing);
                 doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
                         rollTarget, true);
 
@@ -24745,7 +24746,7 @@ public class Server implements Runnable {
             entity.setProne(true);
         }
         entity.setPosition(fallPos);
-        entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
+        entity.setFacing((entity.getFacing() + (facing)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
 
@@ -25937,7 +25938,7 @@ public class Server implements Runnable {
                 testEntity = new TestAero((Aero) entity,
                         Server.entityVerifier.aeroOption, null);
             }else if (entity instanceof BattleArmor){
-                testEntity = new TestBattleArmor((BattleArmor) entity, 
+                testEntity = new TestBattleArmor((BattleArmor) entity,
                         entityVerifier.baOption, null);
             }
 

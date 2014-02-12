@@ -18,6 +18,7 @@ v0.37.8-dev (SVN)
 + APM related bugs in MechFileParser
 + Tweaked Herd Mentality values again as Princess still shows a tendency to spread out too much when running a mix of
     fast and slow units.
++ Bug [#4006]: Facing after fall while moving was wrong
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

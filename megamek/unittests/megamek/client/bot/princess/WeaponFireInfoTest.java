@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -47,12 +48,11 @@ public class WeaponFireInfoTest {
     private WeaponType mockWeaponType;
     private WeaponAttackAction mockWeaponAttackAction;
     private Princess mockPrincess;
+    private FireControl mockFireControl;
 
     @Before
     public void setUp() {
         mockGame = Mockito.mock(IGame.class);
-
-        mockPrincess = Mockito.mock(Princess.class);
 
         mockToHitSix = Mockito.mock(ToHitData.class);
         Mockito.when(mockToHitSix.getValue()).thenReturn(6);
@@ -62,6 +62,16 @@ public class WeaponFireInfoTest {
 
         mockToHitThirteen = Mockito.mock(ToHitData.class);
         Mockito.when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
+
+        mockFireControl = Mockito.mock(FireControl.class);
+        Mockito.when(mockFireControl.guessToHitModifier(Mockito.any(Entity.class), Mockito.any(EntityState.class),
+                                                        Mockito.any(Targetable.class), Mockito.any(EntityState.class),
+                                                        Mockito.any(Mounted.class), Mockito.any(IGame.class),
+                                                        Mockito.any(Princess.class)))
+               .thenReturn(mockToHitEight);
+
+        mockPrincess = Mockito.mock(Princess.class);
+        Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
 
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
@@ -136,8 +146,13 @@ public class WeaponFireInfoTest {
     public void testInitDamage() {
         final double DELTA = 0.00001;
 
-        WeaponFireInfo testWeaponFireInfo = Mockito.spy(new WeaponFireInfo(mockShooter, mockShooterState, mockTarget,
-                mockTargetState, mockWeapon, mockGame, mockPrincess));
+        WeaponFireInfo testWeaponFireInfo = Mockito.spy(new WeaponFireInfo(mockPrincess));
+        testWeaponFireInfo.setShooter(mockShooter);
+        testWeaponFireInfo.setShooterState(mockShooterState);
+        testWeaponFireInfo.setTarget(mockTarget);
+        testWeaponFireInfo.setTargetState(mockTargetState);
+        testWeaponFireInfo.setWeapon(mockWeapon);
+        testWeaponFireInfo.setGame(mockGame);
 
         // Test a medium laser vs light target with a to hit roll of 6.
         setupMediumLaser();

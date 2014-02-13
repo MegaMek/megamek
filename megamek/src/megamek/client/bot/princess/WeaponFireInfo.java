@@ -60,7 +60,8 @@ public class WeaponFireInfo {
     /**
      * For unit testing.
      */
-    protected WeaponFireInfo() {
+    protected WeaponFireInfo(Princess owner) {
+        this.owner = owner;
     }
 
     /**
@@ -248,14 +249,14 @@ public class WeaponFireInfo {
     }
 
     protected ToHitData calcToHit() {
-        return FireControl.guessToHitModifier(getShooter(), getShooterState(), getTarget(), getTargetState(),
-                getWeapon(), getGame(), owner);
+        return owner.getFireControl().guessToHitModifier(getShooter(), getShooterState(), getTarget(), getTargetState(),
+                                                         getWeapon(), getGame(), owner);
     }
 
     protected ToHitData calcToHit(MovePath shooterPath, boolean assumeUnderFlightPath) {
-        return FireControl.guessAirToGroundStrikeToHitModifier(getShooter(), getTarget(), getTargetState(),
-                shooterPath, getWeapon(), getGame(),
-                assumeUnderFlightPath);
+        return owner.getFireControl().guessAirToGroundStrikeToHitModifier(getShooter(), getTarget(), getTargetState(),
+                                                                          shooterPath, getWeapon(), getGame(),
+                                                                          assumeUnderFlightPath);
     }
 
     public IGame getGame() {
@@ -310,7 +311,7 @@ public class WeaponFireInfo {
 
     protected WeaponAttackAction buildWeaponAttackAction() {
         return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
-                getShooter().getEquipmentNum(getWeapon()));
+                                      getShooter().getEquipmentNum(getWeapon()));
     }
 
     protected double computeExpectedDamage() {
@@ -327,8 +328,10 @@ public class WeaponFireInfo {
         final String METHOD_NAME = "initDamage(MovePath, boolean)";
 
         StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                .append(" firing ").append(getWeapon().getDesc()).append(" at ").append(getTarget().getDisplayName())
-                .append(":");
+                                                                         .append(" firing ").append(getWeapon()
+                                                                                                            .getDesc
+                                                                                                                    ()).append(" at ").append(getTarget().getDisplayName())
+                                                                         .append(":");
 
         try {
             // Set up the attack action and calculate the chance to hit.
@@ -345,7 +348,7 @@ public class WeaponFireInfo {
             // If we can't hit, set everything zero and return..
             if (getToHit().getValue() > 12) {
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
-                        .append(getToHit().getValue()).toString());
+                                                                      .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setHeat(0);
@@ -409,7 +412,8 @@ public class WeaponFireInfo {
                     // If the armor can be breached, but the location not destroyed...
                 } else if (getExpectedDamageOnHit() > (targetArmor)) {
                     setExpectedCriticals(getExpectedCriticals() +
-                            (hitLocationProbability * getProbabilityToHit() * expectedCriticalHitCount));
+                                                 (hitLocationProbability * getProbabilityToHit() *
+                                                         expectedCriticalHitCount));
                 }
             }
         } finally {
@@ -426,7 +430,7 @@ public class WeaponFireInfo {
                 return getAction();
             }
             setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
-                    getShooter().getEquipmentNum(getWeapon())));
+                                             getShooter().getEquipmentNum(getWeapon())));
             if (getAction() == null) {
                 setProbabilityToHit(0);
                 return null;

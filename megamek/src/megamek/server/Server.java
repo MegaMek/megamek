@@ -25023,6 +25023,12 @@ public class Server implements Runnable {
                         r.add(m.getName());
                         addReport(r);
                         m.setPendingDump(false);
+                        // Also dump all of the ammo in the DWP
+                        for (Mounted ammo : entity.getAmmo()){
+                            if (m.equals(ammo.getLinkedBy())){
+                                ammo.setMissing(true);
+                            }
+                        }
                     }
                 }
             }

@@ -24,6 +24,7 @@ v0.37.8-dev (SVN)
 + Bug [#4041]: DWP drop declaration repeated every end phase 0.37.8-dev
 + Started refactoring the FireControl class for readability and testability.
 + Bug [#4032]: Dropship penalized for atmospheric operations in a vacuum
++ Removed unused AmmoType.canClearMinefield2()
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

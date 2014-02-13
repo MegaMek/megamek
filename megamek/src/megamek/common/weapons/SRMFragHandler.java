@@ -61,6 +61,7 @@ public class SRMFragHandler extends SRMHandler {
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                && !(weapon.isSquadSupportWeapon())
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }

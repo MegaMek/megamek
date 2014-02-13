@@ -606,9 +606,14 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        int critsUsed[][] = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
-        int numAPWeapons[][] = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
-        int numAMWeapons[][] = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int critsUsed[][] = new int[ba.getTroopers() + 1]
+                [BattleArmor.MOUNT_NUM_LOCS];
+        int numAPWeapons[][] = new int[ba.getTroopers() + 1]
+                [BattleArmor.MOUNT_NUM_LOCS];
+        int numAMWeapons[][] = new int[ba.getTroopers() + 1]
+                [BattleArmor.MOUNT_NUM_LOCS];
+        int numSSWMs = 0;
+        Mounted squadSupportWeapon = null;
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted m : ba.getEquipment()) {
             // Ignore unmounted equipment, we'll deal with that elsewhere
@@ -632,6 +637,12 @@ public class TestBattleArmor extends TestEntity {
                     && m.getLinkedBy().getType().hasFlag(MiscType.F_AP_MOUNT)) {
                 critSize = 0;
             }
+            
+            if ((m.getType() instanceof WeaponType) 
+                    && m.isSquadSupportWeapon()) {
+                numSSWMs++;
+                squadSupportWeapon = m;
+            }
 
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType)
@@ -644,8 +655,8 @@ public class TestBattleArmor extends TestEntity {
             // Check for BA Use of Support Weapons
             if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
-                buff.append(m.getName()
-                        + " is a support weapon and BattleArmor cannot mount support weapons!\n");
+                buff.append(m.getName() + " is a support weapon and " +
+                		"BattleArmor cannot mount support weapons!\n");
                 correct = false;
             }
 
@@ -697,6 +708,25 @@ public class TestBattleArmor extends TestEntity {
                 }
             }
         }
+        
+        if (numSSWMs > 1){
+            buff.append("Squad has " + numSSWMs + " squad support " +
+            		"weapon mounts, but only 1 is allowed!");
+            correct = false;
+        }
+        
+        if (squadSupportWeapon != null){
+            WeaponType sswType = (WeaponType)squadSupportWeapon.getType();
+            for (Mounted ammo : ba.getAmmo()){
+                if (ammo.isSquadSupportWeapon() && 
+                        !AmmoType.isAmmoValid(ammo, sswType)){
+                    buff.append(ammo.getName() + " is squad support weapon " +
+                    		"mounted, but it is not a legal ammo type for " +
+                    		"the squad support weapon!");
+                    correct = false;
+                }
+            }
+        }
 
         // Now check to make sure the counts are valid
         for (int t = 0; t <= ba.getTroopers(); t++) {
@@ -709,7 +739,8 @@ public class TestBattleArmor extends TestEntity {
                             + ba.getNumCrits(loc) + " available criticsl!\n");
                     correct = false;
                 }
-                if (numAMWeapons[t][loc] > ba.getNumAllowedAntiMechWeapons(loc)) {
+                if (numAMWeapons[t][loc] > 
+                        ba.getNumAllowedAntiMechWeapons(loc)) {
                     buff.append(ba.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + "has "
                             + numAMWeapons[t][loc]
@@ -1014,6 +1045,12 @@ public class TestBattleArmor extends TestEntity {
             WeaponType wt = (WeaponType) m.getType();
             if (m.isDWPMounted()) {
                 weight += wt.getTonnage(getEntity()) * 0.75;
+            } else if (m.isSquadSupportWeapon()){
+                if (ba.isClan()){
+                    weight += wt.getTonnage(getEntity()) * 0.4;
+                } else {
+                    weight += wt.getTonnage(getEntity()) * 0.5;
+                }
             } else {
                 weight += wt.getTonnage(getEntity());
             }
@@ -1040,14 +1077,20 @@ public class TestBattleArmor extends TestEntity {
                     && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
                 continue;
             }
-            float dwpModifier = 1;
+            float modifier = 1;
             // Ammo mounted in a DWP has its weight reduced by 25%
             if (m.getLinkedBy() != null && m.getLinkedBy().isDWPMounted()){
-                dwpModifier = 0.75f;
+                modifier = 0.75f;
+            } else if (m.isSquadSupportWeapon()) {
+                if (ba.isClan()){
+                    modifier = 0.4f;
+                } else {
+                    modifier = 0.5f;
+                }
             }
             AmmoType mt = (AmmoType) m.getType();
             weight += (mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0
-                    * dwpModifier;
+                    * modifier;
         }
         return weight;
     }

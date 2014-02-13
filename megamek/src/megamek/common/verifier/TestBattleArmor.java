@@ -761,6 +761,13 @@ public class TestBattleArmor extends TestEntity {
                                 .hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
                     continue;
                 }
+                
+                // Ammo mounted in a DWP doesn't get assigned a location
+                if ((m.getType() instanceof AmmoType) 
+                        && (m.getLinkedBy() != null) 
+                        && m.getLinkedBy().isDWPMounted() ) {
+                    continue;
+                }
 
                 // Anything else is unassigned equipment
                 unallocated.addElement(m);
@@ -788,6 +795,9 @@ public class TestBattleArmor extends TestEntity {
                                 + "mounted in "
                                 + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()]
                                 + ", but manipulators must be mounted in arms!");
+                    } else {
+                        buff.append(m.getName()
+                                + " not allocated!\n");  
                     }
                     correct = false;
                 }
@@ -1018,19 +1028,26 @@ public class TestBattleArmor extends TestEntity {
             // If this equipment isn't mounted on the squad or this particular
             // trooper, skip it
             if ((m.getLocation() != BattleArmor.LOC_SQUAD)
-                    && ((m.getLocation() != trooper) || (trooper == BattleArmor.LOC_SQUAD))) {
+                    && ((m.getLocation() != trooper) 
+                            || (trooper == BattleArmor.LOC_SQUAD))) {
                 continue;
             }
 
-            // / Equipment assigned to this trooper but not mounted shouldn't be
+            // Equipment assigned to this trooper but not mounted shouldn't be
             // counted, unless it's squad-level equipment
-            if ((m.getLocation() == trooper) && (trooper != BattleArmor.LOC_SQUAD)
+            if ((m.getLocation() == trooper) 
+                    && (trooper != BattleArmor.LOC_SQUAD)
                     && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
                 continue;
             }
-
+            float dwpModifier = 1;
+            // Ammo mounted in a DWP has its weight reduced by 25%
+            if (m.getLinkedBy() != null && m.getLinkedBy().isDWPMounted()){
+                dwpModifier = 0.75f;
+            }
             AmmoType mt = (AmmoType) m.getType();
-            weight += (mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0;
+            weight += (mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0
+                    * dwpModifier;
         }
         return weight;
     }

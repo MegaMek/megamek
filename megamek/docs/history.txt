@@ -22,6 +22,7 @@ v0.37.8-dev (SVN)
 + show damage level should be a client setting, not a game option
 + Bug [#4040]: Unable to match AP weapon mount for BA 0.37.8-dev
 + Bug [#4041]: DWP drop declaration repeated every end phase 0.37.8-dev
++ Started refactoring the FireControl class for readability and testability.
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

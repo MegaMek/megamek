@@ -162,6 +162,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     // called shots status, sort of like another mode
     private CalledShot called = new CalledShot();
+    
+    /**
+     * Flag that keeps track of whether this <code>Mounted</code> is mounted as
+     * a squad support weapon on <code>BattleArmor</code>.
+     */
+    private boolean squadSupportWeapon;
 
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
@@ -1577,5 +1583,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public boolean isOneShot(){
         return getType().hasFlag(WeaponType.F_ONESHOT);
+    }
+
+    public boolean isSquadSupportWeapon() {
+        return squadSupportWeapon;
+    }
+
+    public void setSquadSupportWeapon(boolean squadSupportWeapon) {
+        this.squadSupportWeapon = squadSupportWeapon;
     }
 }

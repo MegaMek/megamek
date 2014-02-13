@@ -25022,7 +25022,7 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         r.add(m.getName());
                         addReport(r);
-                        m.setDumping(false);
+                        m.setPendingDump(false);
                     }
                 }
             }

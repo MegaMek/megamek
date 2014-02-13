@@ -54,110 +54,149 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * FireControl selects which weapons a unit wants to fire and at whom Pay
- * attention to the difference between "guess" and "get". Guess will be much
- * faster, but inaccurate
+ * FireControl selects which weapons a unit wants to fire and at whom Pay attention to the difference between "guess"
+ * and "get". Guess will be much faster, but inaccurate
  */
 public class FireControl {
 
-    private static Princess owner;
+    private final Princess owner;
 
     public FireControl(Princess owningPrincess) {
         owner = owningPrincess;
     }
 
+    protected ToHitData getAttackerMovementModifier(IGame game, int shooterId,
+                                                    EntityMovementType shooterMoveType) {
+        return Compute.getAttackerMovementModifier(game, shooterId, shooterMoveType);
+    }
+
+    protected ToHitData getTargetMovementModifier(int hexesMoved, boolean jumping, boolean vtol, IGame game) {
+        return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
+    }
+
+    protected static final String TH_ATT_PRONE = "attacker prone";
+    protected static final String TH_TAR_IMMOBILE = "target immobile";
+    protected static final String TH_TAR_SKID = "target skidded";
+    protected static final String TH_TAR_NO_MOVE = "target didn't move";
+    protected static final String TH_TAR_SPRINT = "target sprinted";
+    protected static final String TH_WOODS = "woods";
+    protected static final String TH_TAR_PRONE_RANGE = "target prone and at range";
+    protected static final String TH_TAR_PRONE_ADJ = "target prone and adjacent";
+    protected static final String TH_TAR_BA = "battle armor target";
+    protected static final String TH_TAR_MW = "ejected mechwarrior target";
+    protected static final String TH_TAR_INF = "infantry target";
+    protected static final String TH_ANTI_AIR = "anti-aircraft quirk";
+    protected static final String TH_TAR_LOW_PROFILE = "narrow/low profile target";
+
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
      */
-    public static ToHitData guessToHitModifierHelper_AnyAttack(Entity shooter,
-                                                               EntityState shooter_state, Targetable target,
-                                                               EntityState target_state, IGame game) {
-        final String METHOD_NAME = "guessToHitModifierHelper_AnyAttack(Entity, EntityState, Targetable, EntityState, " +
-                "IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    public ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
+                                                          EntityState shooterState,
+                                                          Targetable target,
+                                                          EntityState targetState,
+                                                          IGame game) {
 
-        try {
-            if (shooter_state == null) {
-                shooter_state = new EntityState(shooter);
-            }
-            if (target_state == null) {
-                target_state = new EntityState(target);
-            }
-
-            ToHitData tohit = new ToHitData();
-            // If people are moving or lying down, there are consequences
-            tohit.append(Compute.getAttackerMovementModifier(game, shooter.getId(),
-                                                             shooter_state.getMovementType()));
-            tohit.append(Compute.getTargetMovementModifier(
-                    target_state.getHexesMoved(), target_state.isJumping(), target instanceof VTOL, game));
-            if (shooter_state.isProne()) {
-                tohit.addModifier(2, "attacker prone");
-            }
-            if (target_state.isImmobile()) {
-                tohit.addModifier(-4, "target immobile");
-            }
-            if (target_state.getMovementType() == EntityMovementType.MOVE_SKID) {
-                tohit.addModifier(2, "target skidded");
-            }
-            if (game.getOptions().booleanOption("tacops_standing_still") && (target_state.getMovementType() ==
-                    EntityMovementType.MOVE_NONE)
-                    && !target_state.isImmobile()
-                    && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof
-                    GunEmplacement))) {
-                tohit.addModifier(-1, "target didn't move");
-            }
-
-            // did the target sprint?
-            if (target_state.getMovementType() == EntityMovementType.MOVE_SPRINT) {
-                tohit.addModifier(-1, "target sprinted");
-            }
-
-            // terrain modifiers, since "compute" won't let me do these remotely
-            IHex target_hex = game.getBoard().getHex(target_state.getPosition());
-            int woodslevel = target_hex.terrainLevel(Terrains.WOODS);
-            if (target_hex.terrainLevel(Terrains.JUNGLE) > woodslevel) {
-                woodslevel = target_hex.terrainLevel(Terrains.JUNGLE);
-            }
-            if (woodslevel == 1) {
-                tohit.addModifier(1, " woods");
-            }
-            if (woodslevel == 2) {
-                tohit.addModifier(2, " woods");
-            }
-            if (woodslevel == 3) {
-                tohit.addModifier(3, " woods");
-            }
-            int distance = shooter_state.getPosition().distance(target_state.getPosition());
-            if (target_state.isProne() && (distance > 1)) {
-                tohit.addModifier(1, "target prone and at range");
-            } else if (target_state.isProne() && (distance == 1)) {
-                tohit.addModifier(-2, "target prone and adjacent");
-            }
-            boolean isShooterInfantry = (shooter instanceof Infantry);
-
-            if ((!isShooterInfantry) && (target instanceof BattleArmor)) {
-                tohit.addModifier(1, " battle armor target");
-            } else if ((!isShooterInfantry) && ((target instanceof Infantry))) {
-                tohit.addModifier(1, " infantry target");
-            }
-            if ((!isShooterInfantry) && (target instanceof MechWarrior)) {
-                tohit.addModifier(2, " ejected mechwarrior target");
-            }
-
-            return tohit;
-        } finally {
-            owner.methodEnd(FireControl.class, METHOD_NAME);
+        if (shooterState == null) {
+            shooterState = new EntityState(shooter);
         }
+        if (targetState == null) {
+            targetState = new EntityState(target);
+        }
+        Entity targetEntity = null;
+        if (target instanceof Entity) {
+            targetEntity = (Entity) target;
+        }
+
+        ToHitData toHitData = new ToHitData();
+
+        // If people are moving or lying down, there are consequences
+        toHitData.append(getAttackerMovementModifier(game, shooter.getId(), shooterState.getMovementType()));
+        toHitData.append(getTargetMovementModifier(targetState.getHexesMoved(), targetState.isJumping(),
+                                                   target instanceof VTOL, game));
+        if (shooterState.isProne()) {
+            toHitData.addModifier(2, TH_ATT_PRONE);
+        }
+        if (targetState.isImmobile()) {
+            toHitData.addModifier(-4, TH_TAR_IMMOBILE);
+        }
+        if (game.getOptions().booleanOption("tacops_standing_still")
+                && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
+                && !targetState.isImmobile()
+                && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof
+                GunEmplacement))) {
+            toHitData.addModifier(-1, TH_TAR_NO_MOVE);
+        }
+
+        // did the target sprint?
+        if (targetState.getMovementType() == EntityMovementType.MOVE_SPRINT) {
+            toHitData.addModifier(-1, TH_TAR_SPRINT);
+        }
+
+        // terrain modifiers, since "compute" won't let me do these remotely
+        IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
+        if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
+            woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
+        }
+        if (woodsLevel == 1) {
+            toHitData.addModifier(1, TH_WOODS);
+        }
+        if (woodsLevel == 2) {
+            toHitData.addModifier(2, TH_WOODS);
+        }
+        if (woodsLevel == 3) {
+            toHitData.addModifier(3, TH_WOODS);
+        }
+
+        // todo handle smoke.
+        // todo handle partial cover.
+
+        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        if (targetState.isProne() && (distance > 1)) {
+            toHitData.addModifier(1, TH_TAR_PRONE_RANGE);
+        } else if (targetState.isProne() && (distance == 1)) {
+            toHitData.addModifier(-2, TH_TAR_PRONE_ADJ);
+        }
+
+        if (targetState.getMovementType() == EntityMovementType.MOVE_SKID) {
+            toHitData.addModifier(2, TH_TAR_SKID);
+        }
+
+        boolean isShooterInfantry = (shooter instanceof Infantry);
+        if (!isShooterInfantry) {
+            if (target instanceof BattleArmor) {
+                toHitData.addModifier(1, TH_TAR_BA);
+            } else if (target instanceof MechWarrior) {
+                toHitData.addModifier(2, TH_TAR_MW);
+            } else if (target instanceof Infantry) {
+                toHitData.addModifier(1, TH_TAR_INF);
+            }
+        }
+
+        if (shooter.hasQuirk("anti_air") && (target.isAirborne() || target.isAirborneVTOLorWIGE())) {
+            toHitData.addModifier(-2, TH_ANTI_AIR);
+        }
+
+        // todo improved targetting (range), variable range targetting, poor targetting (range), accurate, inaccurate
+
+        if (targetEntity != null) {
+            if (targetEntity.hasQuirk("low_profile")) {
+                toHitData.addModifier(1, TH_TAR_LOW_PROFILE);
+            }
+        }
+
+        return toHitData;
     }
 
     /**
      * Makes a rather poor guess as to what the to hit modifier will be with a
      * physical attack.
      */
-    public static ToHitData guessToHitModifier_Physical(Entity shooter,
-                                                        EntityState shooter_state, Targetable target,
-                                                        EntityState target_state, PhysicalAttackType attack_type,
-                                                        IGame game) {
+    public ToHitData guessToHitModifier_Physical(Entity shooter,
+                                                 EntityState shooter_state, Targetable target,
+                                                 EntityState target_state, PhysicalAttackType attack_type,
+                                                 IGame game) {
         final String METHOD_NAME = "guessToHitModifier(Entity, EntityState, Targetable, EntityState, " +
                 "PhysicalAttackType, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
@@ -180,8 +219,8 @@ public class FireControl {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't hit that far");
             }
 
-            tohit.append(guessToHitModifierHelper_AnyAttack(shooter, shooter_state,
-                                                            target, target_state, game));
+            tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooter_state,
+                                                              target, target_state, game));
             // check if target is within arc
             int arc = 0;
             if (attack_type == PhysicalAttackType.LEFT_PUNCH) {
@@ -298,9 +337,9 @@ public class FireControl {
      * Does not actually place unit into desired position, because that is
      * exceptionally slow. Most of this is copied from WeaponAttack.
      */
-    public static ToHitData guessToHitModifier(Entity shooter,
-                                               EntityState shooter_state, Targetable target,
-                                               EntityState target_state, Mounted mw, IGame game, Princess owner) {
+    public ToHitData guessToHitModifier(Entity shooter,
+                                        EntityState shooter_state, Targetable target,
+                                        EntityState target_state, Mounted mw, IGame game, Princess owner) {
         final String METHOD_NAME = "guessToHitModifier(Entity, EntityState, Targetable, EntityState, Mounted, IGame)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 
@@ -359,8 +398,8 @@ public class FireControl {
             // Base to hit is gunnery skill
             ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(),
                                             "gunnery skill");
-            tohit.append(guessToHitModifierHelper_AnyAttack(shooter, shooter_state,
-                                                            target, target_state, game));
+            tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooter_state,
+                                                              target, target_state, game));
             // There is kindly already a class that will calculate line of sight for
             // me
             LosEffects loseffects = LosEffects.calculateLos(game, shooter.getId(),
@@ -475,11 +514,11 @@ public class FireControl {
      * Makes an educated guess as to the to hit modifier by an aerospace unit
      * flying on a ground map doing a strike attack on a unit
      */
-    public static ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
-                                                                Targetable target, EntityState target_state,
-                                                                MovePath shooter_path,
-                                                                Mounted mw, IGame game,
-                                                                boolean assume_under_flight_plan) {
+    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
+                                                         Targetable target, EntityState target_state,
+                                                         MovePath shooter_path,
+                                                         Mounted mw, IGame game,
+                                                         boolean assume_under_flight_plan) {
         final String METHOD_NAME = "guessAirToGroundStrikeToHitModifier(Entity, Targetable, EntityState, MovePath, " +
                 "Mounted, IGame, boolean)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
@@ -512,8 +551,8 @@ public class FireControl {
             // Base to hit is gunnery skill
             ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(),
                                             "gunnery skill");
-            tohit.append(guessToHitModifierHelper_AnyAttack(shooter, shooter_state,
-                                                            target, target_state, game));
+            tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooter_state,
+                                                              target, target_state, game));
             // Additional penalty due to strike attack
             tohit.addModifier(+2, "strike attack");
 
@@ -531,8 +570,8 @@ public class FireControl {
      * @param target_state used for targets position
      * @return
      */
-    public static boolean isTargetUnderMovePath(MovePath p,
-                                                EntityState target_state) {
+    public boolean isTargetUnderMovePath(MovePath p,
+                                         EntityState target_state) {
         final String METHOD_NAME = "isTargetUnderMovePath(MovePath, EntityState)";
         owner.methodBegin(FireControl.class, METHOD_NAME);
 

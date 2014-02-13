@@ -55,7 +55,8 @@ public class PhysicalInfo {
     PhysicalInfo(Entity sshooter, EntityState shooter_state,
                  Targetable ttarget, EntityState target_state,
                  PhysicalAttackType atype, IGame game, Princess owner) {
-        final String METHOD_NAME = "PhysicalInfo(Entity, EntityState, Targetable, EntityState, PhysicalAttackType, IGame)";
+        final String METHOD_NAME = "PhysicalInfo(Entity, EntityState, Targetable, EntityState, PhysicalAttackType, " +
+                "IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
         this.owner = owner;
 
@@ -69,10 +70,10 @@ public class PhysicalInfo {
                 target_state = new EntityState(ttarget);
             }
             attack_type = atype;
-            to_hit = FireControl.guessToHitModifier_Physical(shooter, shooter_state,
-                    target, target_state, attack_type, game);
+            to_hit = owner.getFireControl().guessToHitModifier_Physical(shooter, shooter_state,
+                                                                        target, target_state, attack_type, game);
             int fromdir = target_state.getPosition()
-                    .direction(shooter_state.getPosition());
+                                      .direction(shooter_state.getPosition());
             damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;
             if ((atype == PhysicalAttackType.LEFT_PUNCH)
                     || (atype == PhysicalAttackType.RIGHT_PUNCH)) {
@@ -114,12 +115,12 @@ public class PhysicalInfo {
                 // target.getId(),
                 // armid);
                 action = new PunchAttackAction(shooter.getId(),
-                        target.getTargetType(), target.getTargetId(), armid,
-                        false, false);
+                                               target.getTargetType(), target.getTargetId(), armid,
+                                               false, false);
                 to_hit = ((PunchAttackAction) action).toHit(game);
                 if (sshooter instanceof BipedMech) {
                     max_damage = PunchAttackAction.getDamageFor(shooter, armid,
-                            target instanceof Infantry);
+                                                                target instanceof Infantry);
                 } else {
                     max_damage = 0;
                 }
@@ -130,10 +131,10 @@ public class PhysicalInfo {
                 // target.getId(),
                 // legid);
                 action = new KickAttackAction(shooter.getId(),
-                        target.getTargetType(), target.getTargetId(), legid);
+                                              target.getTargetType(), target.getTargetId(), legid);
                 to_hit = ((KickAttackAction) action).toHit(game);
                 max_damage = KickAttackAction.getDamageFor(shooter, legid,
-                        target instanceof Infantry);
+                                                           target instanceof Infantry);
             }
             initDamage();
         } finally {
@@ -176,7 +177,7 @@ public class PhysicalInfo {
                                 damage_direction, hitloc);
                     }
                     int target_armor = mtarget.getArmor(hitloc,
-                            (damage_direction == 3 ? true : false));
+                                                        (damage_direction == 3 ? true : false));
                     int target_internals = mtarget.getInternal(hitloc);
                     if (target_armor < 0) {
                         target_armor = 0; // ignore NA or Destroyed cases
@@ -230,7 +231,7 @@ public class PhysicalInfo {
                 option_integer = PhysicalOption.KICK_LEFT;
             }
             PhysicalOption physical_attack = new PhysicalOption(shooter,
-                    target, 0, option_integer, null);
+                                                                target, 0, option_integer, null);
             return physical_attack;
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);

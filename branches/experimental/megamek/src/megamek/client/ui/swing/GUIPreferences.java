@@ -82,6 +82,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 //    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR3 = "AdvancedFovHighlightColor3";
 //    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR4 = "AdvancedFovHighlightColor4";
 
+    public static final String ANTIALIASING = "AntiAliasing";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -211,6 +212,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 10);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 10);
 
+        store.setDefault(ANTIALIASING, true);
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -285,6 +287,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
+    }
+    
+    public boolean getAntiAliasing() {
+    	return store.getBoolean(ANTIALIASING);
     }
 
     public boolean getAutoEndFiring() {
@@ -597,6 +603,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
 
+    public void setAntiAliasing(boolean state){
+    	store.setValue(ANTIALIASING, state);
+    }
+    
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
     }

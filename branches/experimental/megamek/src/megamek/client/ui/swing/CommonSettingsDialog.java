@@ -78,6 +78,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showWrecks;
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
+    private JCheckBox chkAntiAliasing;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
     private JComboBox<String> unitStartChar;
@@ -385,7 +386,15 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showMapsheets);
         comps.add(row);
-
+        
+        chkAntiAliasing = new JCheckBox(Messages.getString(
+        		"CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
+        chkAntiAliasing.setToolTipText(Messages.getString(
+        		"CommonSettingsDialog.antiAliasingToolTip"));
+        row = new ArrayList<JComponent>();
+        row.add(chkAntiAliasing);
+        comps.add(row);
+        
         return createSettingsPanel(comps);
     }
 
@@ -450,6 +459,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         displayLocale.setSelectedIndex(index);
 
         showMapsheets.setSelected(gs.getShowMapsheets());
+        
+        chkAntiAliasing.setSelected(gs.getAntiAliasing());
 
         File dir = new File("data" + File.separator + "images" + File.separator
                 + "hexes" + File.separator);
@@ -530,6 +541,9 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .getSelectedIndex()]);
 
         gs.setShowMapsheets(showMapsheets.isSelected());
+        
+        gs.setAntiAliasing(chkAntiAliasing.isSelected());
+
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]

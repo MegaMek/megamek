@@ -30,6 +30,7 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -229,7 +230,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The graphics object of <code>boardImage</code>, used in non-isometric
      * rendering.
      */
-    private Graphics boardGraph;
+    private Graphics2D boardGraph;
     
     private boolean redrawWholeBoard = false;
 
@@ -863,6 +864,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @Override
     public synchronized void paintComponent(Graphics g) {
+    	
+    	if (GUIPreferences.getInstance().getAntiAliasing()){
+    		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }    	
     	
         if (!isTileImagesLoaded()) {
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
@@ -1546,7 +1552,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
-        Graphics boardGraph = entireBoard.getGraphics();
+        Graphics2D boardGraph = (Graphics2D)entireBoard.getGraphics();
+        if (GUIPreferences.getInstance().getAntiAliasing()){
+            boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
         drawRect = new Rectangle(0, 0);
         drawHexes(boardGraph, new Rectangle(boardSize));
         boardGraph.dispose();
@@ -7781,7 +7791,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (boardGraph != null) {
                 boardGraph.dispose();
             }
-            boardGraph = boardImage.getGraphics();
+            // Create a handle to the graphics object of the image, so we can
+            //  draw on the boardImage
+            boardGraph = (Graphics2D)boardImage.getGraphics();
+            boardGraph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+            if (GUIPreferences.getInstance().getAntiAliasing()){
+	            boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	                    RenderingHints.VALUE_ANTIALIAS_ON);
+            }
             boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
             drawHexes(boardGraph, drawRect);
             redrawWholeBoard = false;

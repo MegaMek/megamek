@@ -1,6 +1,10 @@
 VERSION HISTORY:
 ----------------
 v0.37.8-exp-dev (SVN)
++ Feature: Added the ability to specify the anti-aliasing rendering hint for the
+    drawing in BoardView1.  The usage of anti-aliasing is parameterized in the
+    client settings dialog.  This smooths out the lines a bit without a 
+    noticeable impact on performance (but again, it's parameterized).
 
 v0.37.8-dev (SVN)
 

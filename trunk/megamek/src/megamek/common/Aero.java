@@ -2379,8 +2379,11 @@ public class Aero extends Entity {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
+        int atmoCond = game.getPlanetaryConditions().getAtmosphere();
         // add in atmospheric effects later
-        if (!game.getBoard().inSpace() && isAirborne()) {
+        if (!(game.getBoard().inSpace() 
+                || atmoCond == PlanetaryConditions.ATMO_VACUUM) 
+                && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             // check type

@@ -16,13 +16,14 @@ v0.37.8-dev (SVN)
 + TestBattleArmor was improperly counting APM mounted Infantry weapons as 
     unallocated
 + APM related bugs in MechFileParser
-+ Tweaked Herd Mentality values again as Princess still shows a tendency to spread out too much when running a mix of
-    fast and slow units.
++ Tweaked Herd Mentality values again as Princess still shows a tendency to 
+    spread out too much when running a mix of fast and slow units.
 + Bug [#4006]: Facing after fall while moving was wrong
 + show damage level should be a client setting, not a game option
 + Bug [#4040]: Unable to match AP weapon mount for BA 0.37.8-dev
 + Bug [#4041]: DWP drop declaration repeated every end phase 0.37.8-dev
 + Started refactoring the FireControl class for readability and testability.
++ Bug [#4032]: Dropship penalized for atmospheric operations in a vacuum
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

@@ -456,6 +456,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
             }
+            if (isSquadSupportWeapon()) {
+                desc.append(" (SSWM)");
+            }
+            if (isAPMMounted()) {
+                desc.append(" (APM)");
+            }
         }
         if (isDumping()) {
             desc.append(" (dumping)");

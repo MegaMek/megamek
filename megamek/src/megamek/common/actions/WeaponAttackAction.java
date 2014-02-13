@@ -2662,6 +2662,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHoming = false;
         ToHitData toHit = null;
 
+        if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)){
+            if (!((BattleArmor)ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)){
+                return "Squad support mounted weapons cannot fire if " +
+                		"Trooper 1 is dead!";
+            }
+        }
+        
         if (game.getOptions().booleanOption("tacops_tank_crews")
                 && (ae instanceof Tank) && ae.isUnjammingRAC()
                 && (ae.getCrew().getSize() == 1)) {

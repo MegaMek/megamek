@@ -173,6 +173,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // do more than 1 hit
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                && !(weapon.isSquadSupportWeapon())
                 && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) ae)

@@ -311,12 +311,6 @@ public class MechFileParser {
                         break;
                     }
                 }
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match AP Mount to weapon for " 
-                                    + ent.getShortName());
-                }
             }
 
             // Link Artemis IV fire-control systems to their missle racks.

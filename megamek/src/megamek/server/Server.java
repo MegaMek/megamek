@@ -25649,7 +25649,6 @@ public class Server implements Runnable {
             Vector<Entity> vEntities) {
         Vector<Entity> vCanSee = new Vector<Entity>();
         Vector<Entity> vMyEntities = new Vector<Entity>();
-        Vector<Entity> vAllEntities = game.getEntitiesVector();
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
 
         // If they can see all, return the input list
@@ -25659,7 +25658,7 @@ public class Server implements Runnable {
 
         // If they're an observer, they can see anything seen by any enemy.
         if (pViewer.isObserver()) {
-            vMyEntities.addAll(vAllEntities);
+            vMyEntities.addAll(vEntities);
             for (Entity a : vMyEntities) {
                 for (Entity b : vMyEntities) {
                     if (a.isEnemyOf(b) && Compute.canSee(game, b, a)) {
@@ -25673,8 +25672,7 @@ public class Server implements Runnable {
 
         // If they aren't an observer and can't see all, create the list of
         // "friendly" units.
-        for (int x = 0; x < vAllEntities.size(); x++) {
-            Entity e = vAllEntities.elementAt(x);
+        for (Entity e : vEntities) {
             if ((e.getOwner() == pViewer)
                     || (bTeamVision && !e.getOwner().isEnemyOf(pViewer))) {
                 vMyEntities.addElement(e);
@@ -25683,9 +25681,7 @@ public class Server implements Runnable {
 
         // Then, break down the list by whether they're friendly,
         // or whether or not any friendly unit can see them.
-        for (int x = 0; x < vEntities.size(); x++) {
-            Entity e = vEntities.elementAt(x);
-
+        for (Entity e : vEntities) {
             // If it's their own unit, obviously, they can see it.
             if (vMyEntities.contains(e)) {
                 vCanSee.addElement(e);
@@ -25697,27 +25693,42 @@ public class Server implements Runnable {
                 continue;
             }
 
-            for (int y = 0; y < vMyEntities.size(); y++) {
-                Entity e2 = vMyEntities.elementAt(y);
-
+            for (Entity spotter : vMyEntities) {
                 // If they're off-board, skip it; they can't see anything.
-                if (e2.isOffBoard()) {
+                if (spotter.isOffBoard()) {
                     continue;
                 }
 
-                // Otherwise, if they can see the entity in question, or the
-                // entity that is transporting it...
-                if (Compute.canSee(game, e2, e)
-                        || ((e.getTransportId() != Entity.NONE) && Compute
-                                .canSee(game, e2,
-                                        game.getEntity(e.getTransportId())))) {
-                    vCanSee.addElement(e);
+                // Otherwise, if they can see the entity in question
+                if (Compute.canSee(game, spotter, e)) {
+                    addVisibleEntity(vCanSee, e);
                     break;
                 }
             }
         }
 
         return vCanSee;
+    }
+    
+    /**
+     * Recursive method to add an <code>Entity</code> and all of its 
+     * transported units to the list of units visible to a particular player.
+     * It is important to ensure that if a unit is in the list of visible units
+     * then all of its transported units (and their transported units, and so 
+     * on) are also considered visible, otherwise it can lead to issues.   This
+     * method also ensures that no duplicate Entities are added.
+     * 
+     * @param vCanSee  A collection of units that can be see
+     * @param e        An Entity that is seen and needs to be added to the 
+     *                  collection of seen entities.  All of 
+     */
+    private void addVisibleEntity(Vector<Entity> vCanSee, Entity e){
+        if (!vCanSee.contains(e)){
+            vCanSee.add(e);
+        }
+        for (Entity transported : e.getLoadedUnits()){
+            addVisibleEntity(vCanSee, transported);
+        }        
     }
 
     /**

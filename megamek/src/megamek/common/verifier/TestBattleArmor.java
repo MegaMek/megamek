@@ -715,6 +715,13 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
         
+        if (numSSWMs > 0 
+                && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
+            buff.append("Quad BattleArmor cannot use squad support " +
+            		"weapon mounts!");
+            correct = false;
+        }
+        
         if (squadSupportWeapon != null){
             WeaponType sswType = (WeaponType)squadSupportWeapon.getType();
             for (Mounted ammo : ba.getAmmo()){
@@ -1046,6 +1053,8 @@ public class TestBattleArmor extends TestEntity {
             if (m.isDWPMounted()) {
                 weight += wt.getTonnage(getEntity()) * 0.75;
             } else if (m.isSquadSupportWeapon()){
+                // Add the 5KG for the squad support weapon mount
+                weight += 0.05;
                 if (ba.isClan()){
                     weight += wt.getTonnage(getEntity()) * 0.4;
                 } else {

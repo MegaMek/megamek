@@ -29714,7 +29714,7 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        if (entity.getCrew().isDoomed()) {
+        if (entity.getCrew().isDoomed() || entity.getCrew().isDead()) {
             return vDesc;
         }
 

@@ -3372,7 +3372,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_IS_EXPERIMENTAL);
@@ -3393,7 +3393,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -3416,7 +3416,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         misc.bv = 0;
         misc.introDate = 3074;
         misc.techLevel.put(3074, TechConstants.T_IS_EXPERIMENTAL);
@@ -3439,7 +3439,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);

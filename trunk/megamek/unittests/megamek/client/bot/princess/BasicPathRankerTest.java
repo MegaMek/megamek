@@ -156,9 +156,11 @@ public class BasicPathRankerTest {
 
         TargetRoll mockTargetRoll = Mockito.mock(TargetRoll.class);
         Mockito.when(mockTargetRoll.getValue()).thenReturn(8);
+        Mockito.when(mockTargetRoll.getDesc()).thenReturn("mock");
 
         TargetRoll mockTargetRollTwo = Mockito.mock(TargetRoll.class);
         Mockito.when(mockTargetRollTwo.getValue()).thenReturn(5);
+        Mockito.when(mockTargetRollTwo.getDesc()).thenReturn("mock");
 
         List<TargetRoll> testRollList = new ArrayList<TargetRoll>(2);
         testRollList.add(mockTargetRoll);

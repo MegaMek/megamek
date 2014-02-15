@@ -41,6 +41,7 @@ v0.37.8-dev (SVN)
 + TestBattleArmor: quad BA with SSWM's are now illegal
 + Bug [#3996]: Entity.getLoadedUnits can return a collection with null entries
 + Bug [#4043]: 0.37.7 Battle armor Reflective/Reactive armor & UMU BV
++ Bug [#4039]: Princess doesn't attempt to stand a 'mech 0.37.7
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

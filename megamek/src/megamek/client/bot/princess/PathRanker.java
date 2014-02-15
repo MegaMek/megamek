@@ -160,7 +160,7 @@ public class PathRanker {
                 returnPaths.add(path);
 
             } finally {
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, msg.toString());
             }
         }
 
@@ -323,6 +323,15 @@ public class PathRanker {
         double successProbability = 1.0;
         StringBuilder msg = new StringBuilder("Calculating Move Path Success");
         for (TargetRoll roll : pilotingRolls) {
+
+            // Skip the getting up check.  That's handled when checking for being immobile.
+            if (roll.getDesc().toLowerCase().contains("getting up")) {
+                continue;
+            }
+            if (roll.getDesc().toLowerCase().contains("careful stand")) {
+                continue;
+            }
+
             msg.append("\n\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
             double odds = Compute.oddsAbove(roll.getValue()) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");

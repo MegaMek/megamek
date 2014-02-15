@@ -881,9 +881,13 @@ public class BattleArmor extends Infantry {
                     continue;
                 }
                 if (weapon.getLocation() == LOC_SQUAD) {
-                    oBV += weapon.getType().getBV(this);
+                    // Squad support, count at 1/troopercount
+                    if (weapon.isSquadSupportWeapon()){
+                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
+                    } else {
+                        oBV += weapon.getType().getBV(this);
+                    }
                 } else {
-                    // squad support, count at 1/troopercount
                     oBV += weapon.getType().getBV(this) / getTotalOInternal();
                 }
             }
@@ -941,7 +945,9 @@ public class BattleArmor extends Infantry {
                     }
                 }
             }
-            int movement = Math.max(getWalkMP(false, false, true, true, false), getJumpMP(false, true, true));
+            // getJumpMP won't return UMU MP, so weed need to count that extra
+            int movement = Math.max(getWalkMP(false, false, true, true, false),
+                    Math.max(getJumpMP(false, true, true), getActiveUMUCount()));
             double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;

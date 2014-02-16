@@ -32,8 +32,8 @@ public class ISBASRM4OS extends SRMWeapon {
      */
     public ISBASRM4OS() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA SRM 4 (OS)";
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        name = "SRM 4 (OS)";
         setInternalName("ISBASRM4OS");
         addLookupName("ISBASRM4 (OS)"); // mtf
         addLookupName("IS BA SRM 4 (OS)"); // tdb

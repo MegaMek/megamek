@@ -59,7 +59,7 @@ import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
+import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -705,7 +705,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else if (type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-                if (type instanceof ISPopUpMineLauncher) {
+                if (type instanceof ISBAPopUpMineLauncher) {
                     totalDmg += 4;
                 }
             } else {

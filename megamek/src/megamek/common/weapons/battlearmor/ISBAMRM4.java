@@ -32,10 +32,9 @@ public class ISBAMRM4 extends MRMWeapon {
     public ISBAMRM4() {
         super();
         this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        this.name = "BA MRM 4";
-        this.setInternalName(this.name);
+        this.name = "MRM 4";
+        this.setInternalName("ISBAMRM4");
         this.addLookupName("BA MRM-4");
-        this.addLookupName("ISBAMRM4");
         this.addLookupName("IS BA MRM 4");
         this.rackSize = 4;
         this.shortRange = 3;

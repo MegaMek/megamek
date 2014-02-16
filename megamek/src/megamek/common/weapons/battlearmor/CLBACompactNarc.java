@@ -35,7 +35,7 @@ public class CLBACompactNarc extends NarcWeapon {
     public CLBACompactNarc() {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "BA Compact Narc";
+        name = "Compact Narc";
         setInternalName("CLBACompactNarc");
         addLookupName("CLBACompact Narc");
         heat = 0;

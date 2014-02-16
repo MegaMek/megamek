@@ -37,7 +37,7 @@ public class ISBASmallVariableSpeedPulseLaser extends
     public ISBASmallVariableSpeedPulseLaser() {
         super();
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        name = "BA Small VSP Laser";
+        name = "Small VSP Laser";
         setInternalName("ISBASmallVSPLaser");
         addLookupName("ISBASVSPL");
         addLookupName("ISBASmallVariableSpeedLaser");

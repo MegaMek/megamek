@@ -37,8 +37,8 @@ public class ISBALightMG extends BAMGWeapon {
     public ISBALightMG() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Light Machine Gun";
-        setInternalName("BA Light Machine Gun");
+        name = "Light Machine Gun";
+        setInternalName("ISBALightMachineGun");
         addLookupName("IS BA Light Machine Gun");
         addLookupName("ISBALightMG");
         ammoType = AmmoType.T_NA;

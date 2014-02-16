@@ -31,8 +31,8 @@ public class ISBASRM2OS extends SRMWeapon {
      */
     public ISBASRM2OS() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA SRM 2 (OS)";
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        name = "SRM 2 (OS)";
         setInternalName("ISBASRM2OS");
         addLookupName("ISBASRM2 (OS)"); // mtf
         addLookupName("IS BA SRM 2 (OS)"); // tdb

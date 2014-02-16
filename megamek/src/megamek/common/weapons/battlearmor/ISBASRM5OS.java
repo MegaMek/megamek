@@ -33,9 +33,9 @@ public class ISBASRM5OS extends SRMWeapon {
     public ISBASRM5OS() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA SRM 5 (OS)";
-        setInternalName(name);
-        addLookupName("ISBASRM5OS");
+        name = "SRM 5 (OS)";
+        setInternalName("ISBASRM5OS");
+        addLookupName("IS BA SRM5 OS");
         rackSize = 5;
         shortRange = 3;
         mediumRange = 6;

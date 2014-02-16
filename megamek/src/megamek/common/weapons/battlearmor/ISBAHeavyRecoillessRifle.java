@@ -38,10 +38,9 @@ public class ISBAHeavyRecoillessRifle extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy Recoilless Rifle";
-        setInternalName(name);
+        setInternalName("ISBAHeavyRecoillessRifle");
         addLookupName("ISHeavy Recoilless Rifle");
         addLookupName("ISBAHeavy Recoilless Rifle");
-        addLookupName("ISBAHeavyRecoillessRifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;
@@ -53,7 +52,7 @@ public class ISBAHeavyRecoillessRifle extends Weapon {
         tonnage = 0.325f;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_BA_WEAPON).or(F_BURST_FIRE);
+                .or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 5000;
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));

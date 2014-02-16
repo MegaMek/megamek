@@ -35,7 +35,7 @@ public class ISBACompactNarc extends NarcWeapon {
     public ISBACompactNarc() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Compact Narc";
+        name = "Compact Narc";
         setInternalName("ISBACompactNarc");
         addLookupName("ISBACompact Narc");
         heat = 0;

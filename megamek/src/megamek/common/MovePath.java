@@ -448,7 +448,7 @@ public class MovePath implements Cloneable, Serializable {
         return getLastStep().getMovementType();
     }
 
-    public final Vector<MoveStep> getStepVector() {
+    public Vector<MoveStep> getStepVector() {
         return steps;
     }
 

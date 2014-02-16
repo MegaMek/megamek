@@ -35,9 +35,10 @@ public class CLBAHeavyGrenadeLauncher extends Weapon {
     public CLBAHeavyGrenadeLauncher() {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Heavy BA Grenade Launcher";
-        setInternalName("Heavy BA Grenade Launcher");
+        name = "Heavy Grenade Launcher";
+        setInternalName("CLBAHeavyGrenadeLauncher");
         addLookupName("CLBAHeavyGL");
+        addLookupName("Heavy BA Grenade Launcher");
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

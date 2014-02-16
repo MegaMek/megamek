@@ -96,6 +96,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showUnitId;
     private JComboBox<String> displayLocale;
 
+    private JCheckBox showDamageLevel;
     private JCheckBox showMapsheets;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
@@ -395,6 +396,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(chkAntiAliasing);
         comps.add(row);
         
+        // showMapsheets setting
+        showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(showDamageLevel);
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -461,6 +468,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapsheets.setSelected(gs.getShowMapsheets());
         
         chkAntiAliasing.setSelected(gs.getAntiAliasing());
+
+        showDamageLevel.setSelected(gs.getShowDamageLevel());
+
 
         File dir = new File("data" + File.separator + "images" + File.separator
                 + "hexes" + File.separator);
@@ -543,6 +553,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowMapsheets(showMapsheets.isSelected());
         
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
+
+        gs.setShowDamageLevel(showDamageLevel.isSelected());
 
 
         if (tileSetChoice.getSelectedIndex() >= 0) {

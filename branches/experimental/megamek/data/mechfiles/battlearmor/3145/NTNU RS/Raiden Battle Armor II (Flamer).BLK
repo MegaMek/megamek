@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,56 +20,79 @@ Raiden II Battle Armor
 (Flamer)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3130
+</year>
 
-<weightclass>
-2
-</weightclass>
+<type>
+IS Level 3
+</type>
 
-<Trooper Count>
-4
-</Trooper Count>
+<motion_type>
+Jump
+</motion_type>
 
 <cruiseMP>
 1
 </cruiseMP>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<Armor>
-7
-</Armor>
 
 <armor_type>
 37
 </armor_type>
 
 <armor_tech>
-3
+5
 </armor_tech>
 
 <Squad Equipment>
 ISBAFlamer:LA
 BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Reflective:Body
+IS BA Reflective:LA
+IS BA Reflective:RA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
 </Squad Equipment>
 
-<type>
-IS Level 2
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3130
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<motion_type>
-Jump
-</motion_type>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS3145 NT NU
 </source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
 

@@ -36,9 +36,9 @@ public class ISBASupportPPC extends PPCWeapon {
     public ISBASupportPPC() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Support PPC";
-        setInternalName(name);
-        addLookupName("ISBASupportPPC");
+        name = "Support PPC";
+        setInternalName("ISBASupportPPC");
+        addLookupName("IS BA Support PPC");
         damage = 2;
         ammoType = AmmoType.T_NA;
         shortRange = 2;

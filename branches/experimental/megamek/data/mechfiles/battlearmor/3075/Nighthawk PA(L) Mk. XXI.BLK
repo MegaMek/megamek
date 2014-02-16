@@ -36,12 +36,28 @@ Jump
 1
 </cruiseMP>
 
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <Squad Equipment>
 IS BA ECM:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAExtendedLifeSupport:Body
-InfantryMauser960:RA:APM
+Mauser 960 Assault System:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth:LA
+IS BA Stealth:RA
+IS BA Stealth:RA
+IS BA Stealth:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -59,6 +75,7 @@ InfantryMauser960:RA:APM
 <source>
 TRO 3075
 </source>
+
 <chassis>
 biped
 </chassis>
@@ -78,13 +95,4 @@ biped
 <weightclass>
 0
 </weightclass>
-
-<armor_tech>
-3
-</armor_tech>
-
-<armor_type>
-32
-</armor_type>
-
 

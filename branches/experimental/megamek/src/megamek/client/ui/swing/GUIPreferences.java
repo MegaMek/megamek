@@ -161,6 +161,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
+    public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -279,6 +280,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
+        store.setDefault(SHOW_DAMAGE_LEVEL, false);
     }
 
     public void setDefault(String name, Color color) {
@@ -607,6 +609,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     	store.setValue(ANTIALIASING, state);
     }
     
+    public boolean getShowDamageLevel(){
+        return store.getBoolean(SHOW_DAMAGE_LEVEL);
+    }
+
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
     }
@@ -894,6 +900,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShowUnitOverview(boolean b){
         store.setValue(SHOW_UNIT_OVERVIEW, b);
+    }
+
+    public void setShowDamageLevel(boolean b){
+        store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
 
     protected ColorParser p = new ColorParser();

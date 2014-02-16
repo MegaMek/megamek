@@ -299,7 +299,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Integer, Image> scaledImageCache = 
+    private ImageCache<Integer, Image> scaledImageCache =
             new ImageCache<Integer, Image>();
 
     // Displayables (Chat box, etc.)
@@ -774,7 +774,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Adds the specified board listener to receive board events from this
      * board.
-     * 
+     *
      * @param listener
      *            the board listener.
      */
@@ -786,7 +786,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Removes the specified board listener.
-     * 
+     *
      * @param listener
      *            the board listener.
      */
@@ -796,7 +796,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Notifies attached board listeners of the event.
-     * 
+     *
      * @param event
      *            the board event.
      */
@@ -969,8 +969,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawSprites(g, pathSprites);
 
         // draw firing solution sprites, but only during the firing phase
-        if (game.getPhase() == Phase.PHASE_FIRING ||
-                game.getPhase() == Phase.PHASE_OFFBOARD) {
+        if ((game.getPhase() == Phase.PHASE_FIRING) ||
+                (game.getPhase() == Phase.PHASE_OFFBOARD)) {
             drawSprites(g, firingSprites);
         }
 
@@ -1050,7 +1050,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * isometric rendering process so that sprites are drawn in the order that
      * hills are rendered to create the appearance that the sprite is behind the
      * hill.
-     * 
+     *
      * @param c
      *            The Coordinates of the hex that the sprites should be drawn
      *            for.
@@ -1080,7 +1080,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * isometric rendering process so that sprites are drawn in the order that
      * hills are rendered to create the appearance that the sprite is behind the
      * hill.
-     * 
+     *
      * @param c
      *            The Coordinates of the hex that the sprites should be drawn
      *            for.
@@ -1110,7 +1110,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * is in the current view. This is used only when performing isometric
      * rending. This function is used to show units (with 50% transparency) that
      * are hidden behind a hill.
-     * 
+     *
      * TODO: Optimize this function so that it is only applied to sprites that
      * are actually hidden. This implementation performs the second rendering
      * for all sprites.
@@ -1169,7 +1169,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Darkens a hexes in the viewing area if there is no line of sight between
      * them and the supplied source hex. Used in non-isometric view.
-     * 
+     *
      * @param src
      *            The source hex for which line of sight originates
      * @param g
@@ -1177,19 +1177,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *            src, Graphics g) { Rectangle view = g.getClipBounds(); // only
      *            update visible hexes int drawX = (view.x / (int) (HEX_WC *
      *            scale)) - 1; int drawY = (view.y / (int) (HEX_H * scale)) - 1;
-     * 
+     *
      *            int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3; int
      *            drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
-     * 
+     *
      *            // loop through the hexes for (int i = 0; i < drawHeight; i++)
      *            { for (int j = 0; j < drawWidth; j++) { Coords c = new
      *            Coords(j + drawX, i + drawY); if
      *            (game.getBoard().contains(c)){ drawLos(src,c,g); } } } }
-     * 
-     * 
+     *
+     *
      *            /** Darkens a destination hex if there is no line of sight
      *            between it and a source hex.
-     * 
+     *
      * @param src
      *            The source hex for which line of sight originates
      * @param dest
@@ -1731,7 +1731,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (game.getBoard().inSpace()) {
             boardGraph.setColor(Color.LIGHT_GRAY);
         }
-        
+
         // draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
                 .getSpecialHexDisplay(c);
@@ -1753,7 +1753,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawCenteredString("Loading Error", drawX, drawY
                     + (int) (50 * scale), font_note, boardGraph);
             return;
-        }        
+        }
 
         // draw hex number
         if (scale >= 0.5) {
@@ -1861,7 +1861,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             src = null;
         }
         // Code for LoS darkening/highlighting
-        if (src != null && game.getBoard().contains(src)) {
+        if ((src != null) && game.getBoard().contains(src)) {
             Point p = new Point(drawX, drawY);
             GUIPreferences gs = GUIPreferences.getInstance();
             boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
@@ -1886,7 +1886,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (Entity target : game.getEntitiesVector(c)){
                     targetIlluminated |= target.isIlluminated();
                 }
-                
+
                 final int max_dist;
                 // We don't want to have to compute a LoSEffects yet, as that
                 //  can be expensive on large viewing areas
@@ -1896,7 +1896,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 } else {
                     max_dist = 60;
                 }
-                
+
                 final int d[] = { 4, 7, 10, 13, max_dist };
 
                 final Color transparent_gray = new Color(0, 0, 0,
@@ -1909,14 +1909,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 int visualRange = 30;
                 int minSensorRange = 0;
-                int maxSensorRange = 0;               
+                int maxSensorRange = 0;
 
                 if (dist == 0) {
                     drawHexBorder(p, boardGraph, selected_color, pad, lw);
                 } else if (dist < max_dist) {
                     LosEffects los = getLosEffects(src, c);
                     if (null != selectedEntity) {
-                        visualRange = Compute.getVisualRange(game, 
+                        visualRange = Compute.getVisualRange(game,
                                 selectedEntity, los, targetIlluminated);
                         int bracket = Compute.getSensorRangeBracket(
                                 selectedEntity, null);
@@ -2046,17 +2046,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * triangle for the elevation, the companion triangle representing the
      * adjacent hex is also needed. The two triangles when drawn together make a
      * complete rectangle representing the complete elevated hex side.
-     * 
+     *
      * By drawing the elevated hex as two separate triangles we avoid clipping
      * problems with other hexes because the lower elevation is rendered before
      * the higher elevation. Thus any hexes that have a higher elevation than
      * the lower hex will overwrite the lower hex.
-     * 
+     *
      * The Triangle for each hex side is formed by points p1, p2, and p3. Where
      * p1 and p2 are the original hex edges, and p3 has the same X value as p1,
      * but the y value has been increased (or decreased) based on the difference
      * in elevation between the given hex and the adjacent hex.
-     * 
+     *
      * @param c
      *            Coordinates of the source hex.
      * @param color
@@ -3535,7 +3535,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Sprite used for isometric rendering to render an entity partially hidden
      * behind a hill.
-     * 
+     *
      */
     private class IsometricSprite extends Sprite {
         private Entity entity;
@@ -4747,7 +4747,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.fillRect(55, 10, barLength, 3);
                 }
 
-                if (game.getOptions().booleanOption("show_dmg_level")) {
+                if (GUIPreferences.getInstance().getShowDamageLevel()) {
                     Color damageColor = getDamageColor();
                     if (damageColor != null) {
                         graph.setColor(damageColor);
@@ -6206,11 +6206,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Sprite and info for movement vector (AT2 advanced movement). Does not
      * actually use the image buffer as this can be horribly inefficient for
      * long diagonal lines.
-     * 
+     *
      * Appears as an arrow pointing to the hex this entity will move to based on
      * current movement vectors. TODO: Different color depending upon whether
      * entity has already moved this turn
-     * 
+     *
      */
     private class MovementSprite extends Sprite {
         private Point a;
@@ -6449,7 +6449,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (int i = 0; i < modifier.length(); i++){
                     Shape gs = gv.getGlyphOutline(i);
                     g2.setPaint(GUIPreferences.getInstance().getColor(
-                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR)); 
+                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
                     g2.fill(gs); // Fill the shape
                     g2.setPaint(Color.black); // Switch to solid black
                     g2.draw(gs); // And draw the outline
@@ -6462,7 +6462,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (int i = 0; i < modifier.length(); i++){
                     Shape gs = gv.getGlyphOutline(i);
                     g2.setPaint(GUIPreferences.getInstance().getColor(
-                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR)); 
+                            GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
                     g2.fill(gs); // Fill the shape
                     g2.setPaint(Color.black); // Switch to solid black
                     g2.draw(gs); // And draw the outline
@@ -6476,7 +6476,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (int i = 0; i < modifier.length(); i++){
                     Shape gs = gv.getGlyphOutline(i);
                     g2.setPaint(GUIPreferences.getInstance().getColor(
-                            GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR)); 
+                            GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR));
                     g2.fill(gs); // Fill the shape
                     g2.setPaint(Color.black); // Switch to solid black
                     g2.draw(gs); // And draw the outline
@@ -6573,7 +6573,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Determine if the tile manager's images have been loaded.
-     * 
+     *
      * @return <code>true</code> if all images have been loaded.
      *         <code>false</code> if more need to be loaded.
      */
@@ -6658,7 +6658,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Determines if this Board contains the Coords, and if so, "selects" that
      * Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
@@ -6675,7 +6675,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * "Selects" the specified Coords.
-     * 
+     *
      * @param x
      *            the x coordinate.
      * @param y
@@ -6688,7 +6688,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Determines if this Board contains the Coords, and if so, highlights that
      * Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
@@ -6705,7 +6705,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Highlights the specified Coords.
-     * 
+     *
      * @param x
      *            the x coordinate.
      * @param y
@@ -6718,7 +6718,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
@@ -6740,7 +6740,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * "Cursors" the specified Coords.
-     * 
+     *
      * @param x
      *            the x coordinate.
      * @param y
@@ -6800,7 +6800,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Notifies listeners about the specified mouse action.
-     * 
+     *
      * @param coords
      *            the Coords.
      */
@@ -6810,7 +6810,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
      */
@@ -6820,7 +6820,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
@@ -6834,7 +6834,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
@@ -7150,7 +7150,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Have the player select an Entity from the entities at the given coords.
-     * 
+     *
      * @param pos
      *            - the <code>Coords</code> containing targets.
      */
@@ -7204,23 +7204,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         IHex mhex = null;
         final Point point = e.getPoint();
         final Coords mcoords = getCoordsAt(point);
-        final ArrayList<ArtilleryAttackAction> artilleryAttacks = 
+        final ArrayList<ArtilleryAttackAction> artilleryAttacks =
                 getArtilleryAttacksAtLocation(mcoords);
         final Mounted curWeapon = getSelectedArtilleryWeapon();
-        
+
         if (GUIPreferences.getInstance().getShowMapHexPopup()
                 && game.getBoard().contains(mcoords)) {
             mhex = game.getBoard().getHex(mcoords);
         }
-        
+
         txt.append("<html>"); //$NON-NLS-1$
 
         // are we on a hex?
         if (mhex != null) {
-            txt.append(Messages.getString("BoardView1.Hex") + //$NON-NLS-1$ 
-                    mcoords.getBoardNum()); 
-            txt.append(Messages.getString("BoardView1.level") + //$NON-NLS-1$ 
-                    mhex.getElevation()); 
+            txt.append(Messages.getString("BoardView1.Hex") + //$NON-NLS-1$
+                    mcoords.getBoardNum());
+            txt.append(Messages.getString("BoardView1.level") + //$NON-NLS-1$
+                    mhex.getElevation());
             txt.append("<br>"); //$NON-NLS-1$
 
             // cycle through the terrains and report types found
@@ -7304,7 +7304,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (int i = 0; i < minefields.size(); i++) {
                     Minefield mf = minefields.elementAt(i);
                     String owner = " (" //$NON-NLS-1$
-                    + game.getPlayer(mf.getPlayerId()).getName() 
+                    + game.getPlayer(mf.getPlayerId()).getName()
                     + ")"; //$NON-NLS-1$
 
                     switch (mf.getType()) {
@@ -7346,7 +7346,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append("<br>"); //$NON-NLS-1$
                 }
             }
-        
+
         }
         // check if it's on any entities
         for (EntitySprite eSprite : entitySprites) {
@@ -7416,7 +7416,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 txt.append("<br>"); //$NON-NLS-1$
             }
         }
-        
+
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
                 .getSpecialHexDisplay(mcoords);
         if (shdList != null) {
@@ -7436,7 +7436,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append("<br>"); //$NON-NLS-1$
                 }
             }
-        }        
+        }
 
         txt.append("</html>"); //$NON-NLS-1$
         return txt.toString();
@@ -7650,12 +7650,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Return a scaled version of the input.  If the useCache flag is set, the
      * scaled image will be stored in an image cache for later retrieval.
-     * 
+     *
      * @param base   The image to get a scaled copy of.  The current zoom level
      *                  is used to determine the scale.
-     *                  
+     *
      * @param useCache  This flag determines whether the scaled image should
-     *                      be stored in a cache for later retrieval.                    
+     *                      be stored in a cache for later retrieval.
      */
     Image getScaledImage(Image base, boolean useCache) {
         if (base == null) {
@@ -7665,7 +7665,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return base;
         }
 
-        
+
         Image scaled;
         if (useCache){
             // Check the cache
@@ -7702,7 +7702,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // Cache the image if the flag is set
             if (useCache){
                 scaledImageCache.put(base.hashCode(), scaled);
-            }            
+            }
         }
         return scaled;
     }

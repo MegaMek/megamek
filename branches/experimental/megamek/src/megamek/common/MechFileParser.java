@@ -291,7 +291,8 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match DWP to weapon for "+ent.getShortName());
+                            "Unable to match DWP to weapon for " 
+                                    + ent.getShortName());
                 }
             }
             
@@ -305,7 +306,7 @@ public class MechFileParser {
                     }
 
                     // check location
-                    if (mWeapon.getBaMountLoc() == m.getBaMountLoc()) {
+                    if (mWeapon.getLocation() == m.getLocation()) {
                         m.setLinked(mWeapon);
                         break;
                     }
@@ -636,6 +637,37 @@ public class MechFileParser {
             } // End crossLink-PPC Capacitor
 
         } // Check the next piece of equipment.
+        
+        // For BattleArmor, we have to ensure that all ammo that is DWP mounted
+        //  is linked to it's DWP mounted weapon, so that TestBattleArmor
+        //  can properly account for DWP mounted ammo
+        if (ent instanceof BattleArmor){
+            for (Mounted ammo : ent.getAmmo()){
+                if (ammo.isDWPMounted()){
+                    // First, make sure every valid DWP weapon has ammo
+                    for (Mounted weapon : ent.getWeaponList()){
+                        if (weapon.isDWPMounted() && weapon.getLinked() == null
+                                && AmmoType.isAmmoValid(ammo, 
+                                        (WeaponType)weapon.getType())){
+                            weapon.setLinked(ammo);
+                            break;
+                        }
+                    }
+                    // If we didn't find a match, we can link to a weapon with
+                    //  already linked ammo.
+                    if (ammo.getLinkedBy() == null) {
+                        for (Mounted weapon : ent.getWeaponList()){
+                            if (weapon.isDWPMounted()
+                                    && AmmoType.isAmmoValid(ammo, 
+                                            (WeaponType)weapon.getType())){
+                                weapon.setLinked(ammo);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         Vector<Integer> usedMG = new Vector<Integer>();
         for (Mounted m : ent.getWeaponList()) {

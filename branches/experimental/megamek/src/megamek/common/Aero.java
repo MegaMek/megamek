@@ -2379,8 +2379,11 @@ public class Aero extends Entity {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
+        int atmoCond = game.getPlanetaryConditions().getAtmosphere();
         // add in atmospheric effects later
-        if (!game.getBoard().inSpace() && isAirborne()) {
+        if (!(game.getBoard().inSpace() 
+                || atmoCond == PlanetaryConditions.ATMO_VACUUM) 
+                && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
             // check type
@@ -3002,15 +3005,19 @@ public class Aero extends Entity {
     /**
      * Checks if a maneuver requires a control roll
      */
-    public PilotingRollData checkManeuver(MoveStep step, EntityMovementType overallMoveType) {
+    public PilotingRollData checkManeuver(MoveStep step, 
+            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to get up.");
+            roll.addModifier(TargetRoll.CHECK_FALSE, 
+                    "Check false: Entity is not attempting to get up.");
             return roll;
         }
-
-        roll.append(new PilotingRollData(getId(), ManeuverType.getMod(step.getManeuverType(), isVSTOL()), ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
+        boolean sideSlipMod = (this instanceof ConvFighter) && isVSTOL();
+        roll.append(new PilotingRollData(getId(), ManeuverType.getMod(
+                step.getManeuverType(), sideSlipMod), ManeuverType
+                .getTypeName(step.getManeuverType()) + " maneuver"));
 
         return roll;
 

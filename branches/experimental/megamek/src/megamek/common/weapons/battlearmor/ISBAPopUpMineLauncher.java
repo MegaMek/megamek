@@ -31,7 +31,7 @@ import megamek.server.Server;
 /**
  * @author Andrew Hunter
  */
-public class ISPopUpMineLauncher extends Weapon {
+public class ISBAPopUpMineLauncher extends Weapon {
     /**
      *
      */
@@ -40,7 +40,7 @@ public class ISPopUpMineLauncher extends Weapon {
     /**
      *
      */
-    public ISPopUpMineLauncher() {
+    public ISBAPopUpMineLauncher() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Pop-up Mine";
@@ -54,16 +54,17 @@ public class ISPopUpMineLauncher extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.0f;
-        criticals = 0;
+        tonnage = 0.2f;
+        criticals = 1;
+        cost = 2500;
         bv = 6;
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
-        introDate = 3062;
-        techLevel.put(3062, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_D;
+        introDate = 3050;
+        techLevel.put(3050, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 
     /*

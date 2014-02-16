@@ -389,7 +389,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
             .shiftLeft(179);
 
-
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
     public static final long S_TREE_CLUB = 1L << 1;// BMR
@@ -1485,6 +1484,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLaserMicrophone());
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createShotgunMicrophone());
+        EquipmentType.addType(MiscType.createISBAMineDispenser());
+        
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
@@ -3367,7 +3368,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_IS_EXPERIMENTAL);
@@ -3388,7 +3389,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -3411,7 +3412,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         misc.bv = 0;
         misc.introDate = 3074;
         misc.techLevel.put(3074, TechConstants.T_IS_EXPERIMENTAL);
@@ -3434,7 +3435,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
         misc.bv = 0;
         misc.introDate = 3075;
         misc.techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -3463,6 +3464,25 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+      
+    
+    public static MiscType createISBAMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        misc.name = "Mine Dispenser";
+        misc.setInternalName("ISBAMineDispenser");
+        misc.cost = 20000;
+        misc.tonnage = 0.05f;
+        misc.criticals = 2;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_VEHICLE_MINE_DISPENSER).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 8; // because it includes 2 mines
+        misc.introDate = 3062;
+        misc.techLevel.put(3062, misc.techLevel.get(3071));
+        misc.techRating = RATING_D;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        return misc;
+    }
 
     public static MiscType createISVehicularMineDispenser() {
         MiscType misc = new MiscType();
@@ -3473,8 +3493,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 20000;
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER)
-                .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.introDate = 3062;
         misc.techLevel.put(3062, misc.techLevel.get(3071));
@@ -5601,7 +5620,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-
+    
     public static MiscType createVacuumProtection() {
         MiscType misc = new MiscType();
 

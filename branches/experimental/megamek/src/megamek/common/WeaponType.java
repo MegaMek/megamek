@@ -1211,6 +1211,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLMekMortar8());
 
         // BA weapons
+        EquipmentType.addType(new CLAdvancedSRM1());
         EquipmentType.addType(new CLAdvancedSRM1OS());
         EquipmentType.addType(new CLAdvancedSRM2());
         EquipmentType.addType(new CLAdvancedSRM2OS());
@@ -1297,7 +1298,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBALightRecoillessRifle());
         EquipmentType.addType(new ISBAMediumRecoillessRifle());
         EquipmentType.addType(new ISBAMicroGrenadeLauncher());
-        EquipmentType.addType(new ISPopUpMineLauncher());
+        EquipmentType.addType(new ISBAGrenadeLauncher());
+        EquipmentType.addType(new ISBAPopUpMineLauncher());
         EquipmentType.addType(new ISBATsunamiGaussRifle());
         EquipmentType.addType(new ISBASRM1());
         EquipmentType.addType(new ISBASRM2());

@@ -37,6 +37,7 @@ biped
 ISDetachableWeaponPack:LA
 ISBASVSPL:DWP:LA
 BABasicManipulator:LA
+BABasicManipulator:RA
 BAAPMount:RA
 InfantryAssaultRifle:RA:APM
 </Squad Equipment>

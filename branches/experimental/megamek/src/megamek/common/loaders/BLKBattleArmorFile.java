@@ -104,7 +104,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             nMotion = EntityMovementMode.INF_JUMP;
         } else if (sMotion.equalsIgnoreCase("vtol")) {
             nMotion = EntityMovementMode.VTOL;
-        } else if (sMotion.equalsIgnoreCase("submarine")) {
+        } else if (sMotion.equalsIgnoreCase("umu")) {
             nMotion = EntityMovementMode.INF_UMU;
         }
         if (nMotion == EntityMovementMode.NONE) {
@@ -193,6 +193,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 boolean dwpMounted = saEquip[x].contains(":DWP");
                 saEquip[x] = saEquip[x].replace(":DWP", "");
                 
+                boolean sswMounted = saEquip[x].contains(":SSWM");
+                saEquip[x] = saEquip[x].replace(":SSWM", "");
+                
                 boolean apmMounted = saEquip[x].contains(":APM");
                 saEquip[x] = saEquip[x].replace(":APM", "");
                 
@@ -224,6 +227,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                             m.setShotsLeft(numShots);
                         }
                         m.setAPMMounted(apmMounted);
+                        m.setSquadSupportWeapon(sswMounted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

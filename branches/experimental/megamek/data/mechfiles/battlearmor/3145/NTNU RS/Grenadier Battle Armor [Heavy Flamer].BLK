@@ -40,8 +40,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-IS BA Heavy Flamer:LA
-IS BA Heavy Flamer:Body
+ISBAHeavyFlamer:LA
+ISBAHeavyFlamer:Body
 BABasicManipulator:RA
 </Squad Equipment>
 

@@ -35,7 +35,7 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
     public ISBAMediumPulseLaser() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Medium Pulse Laser";
+        name = "Medium Pulse Laser";
         setInternalName("ISBAMediumPulseLaser");
         addLookupName("IS BA Pulse Med Laser");
         addLookupName("IS BA Medium Pulse Laser");

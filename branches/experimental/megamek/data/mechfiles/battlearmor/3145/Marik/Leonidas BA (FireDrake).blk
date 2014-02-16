@@ -17,7 +17,7 @@ Leonidas Battle Armor
 </Name>
 
 <Model>
-(Fire Drake)
+(FireDrake)
 </Model>
 
 <year>
@@ -37,7 +37,7 @@ Jump
 </cruiseMP>
 
 <Squad Equipment>
-ISFiredrakeIncendiaryNeedler:RA
+ISBAFiredrakeIncendiaryNeedler:RA
 BAAPMount:RA
 InfantryAssaultRifle:RA:APM
 BAHeavyBattleClaw:LA

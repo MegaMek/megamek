@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -12,51 +13,69 @@ BattleArmor
 </UnitType>
 
 <Name>
-Kobold IIC Battle Armor
+Kobold Battle Armor  IIC 
 </Name>
 
-<chassis>
-biped
-</chassis>
+<Model>
 
-<weightclass>
-1
-</weightclass>
-
-<Trooper Count>
-5
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-6
-</jumpingMP>
-
-<Armor>
-5
-</Armor>
-
-<Point Equipment>
-CLBAECM:Body
-CLBALightTAG:LA
-CLBALightMG:RA
-BABasicManipulator:RA
-</Point Equipment>
-
-<type>
-Clan Level 3
-</type>
+</Model>
 
 <year>
 3130
 </year>
 
+<type>
+Clan Level 3
+</type>
+
 <motion_type>
 VTOL
 </motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CL BA ECM:Body
+CLBALightTAG:LA
+CLBALightMG:RA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):RA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle:APM
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <history>
 BA Harjel not coded. Unit included for completeness
@@ -66,11 +85,23 @@ BA Harjel not coded. Unit included for completeness
 RS3145 NT NU
 </source>
 
-<armor_type>
-33
-</armor_type>
-<armor_tech>
-2
-</armor_tech>
+<chassis>
+biped
+</chassis>
 
+<jumpingMP>
+6
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
 

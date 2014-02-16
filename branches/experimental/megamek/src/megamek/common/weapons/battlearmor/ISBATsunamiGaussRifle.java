@@ -36,9 +36,10 @@ public class ISBATsunamiGaussRifle extends Weapon {
     public ISBATsunamiGaussRifle() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Tsunami BA Heavy Gauss Rifle";
-        setInternalName("Tsunami BA Heavy Gauss Rifle");
+        name = "Tsunami Heavy Gauss Rifle";
+        setInternalName("ISBATsunamiHeavyGaussRifle");
         addLookupName("BA-ISTsunamiHeavyGaussRifle");
+        addLookupName("IS BA Tsunami Heavy Gauss Rifle");
         heat = 0;
         damage = 1;
         ammoType = AmmoType.T_NA;

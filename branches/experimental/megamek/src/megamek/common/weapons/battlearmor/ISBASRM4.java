@@ -32,11 +32,10 @@ public class ISBASRM4 extends SRMWeapon {
      */
     public ISBASRM4() {
         super();
-        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        this.name = "BA SRM 4";
-        this.setInternalName(this.name);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        this.name = "SRM 4";
+        this.setInternalName("ISBASRM4");
         this.addLookupName("IS BA SRM-4");
-        this.addLookupName("ISBASRM4");
         this.addLookupName("IS BA SRM 4");
         this.heat = 3;
         this.rackSize = 4;

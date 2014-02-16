@@ -87,9 +87,9 @@ public class PathRanker {
             for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
                 returnPaths.add(rankPath(path, game, maxRange, fallTollerance, startingHomeDistance, enemies,
-                        allyCenter));
+                                         allyCenter));
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
-                        .round(new MathContext(0, RoundingMode.DOWN));
+                                          .round(new MathContext(0, RoundingMode.DOWN));
                 if ((percent.compareTo(interval) >= 0)
                         && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
                     owner.sendChat("... " + percent.intValue() + "% complete.");
@@ -160,7 +160,7 @@ public class PathRanker {
                 returnPaths.add(path);
 
             } finally {
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, msg.toString());
             }
         }
 
@@ -224,7 +224,18 @@ public class PathRanker {
             Entity closest = null;
             List<Entity> enemies = getEnemies(me, game);
             for (Entity e : enemies) {
-                if (position.distance(e.getPosition()) < range) {
+                // Skip airborne aero units as they're further away than they seem and hard to catch.
+                if (e instanceof Aero && e.isAirborne()) {
+                    continue;
+                }
+
+                // If a unit has not moved, assume it will move away from me.
+                int unmovedDistMod = 0;
+                if (e.isSelectableThisTurn() && !e.isImmobile()) {
+                    unmovedDistMod = e.getWalkMP(true, false, false);
+                }
+
+                if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
                     range = position.distance(e.getPosition());
                     closest = e;
                 }
@@ -312,6 +323,15 @@ public class PathRanker {
         double successProbability = 1.0;
         StringBuilder msg = new StringBuilder("Calculating Move Path Success");
         for (TargetRoll roll : pilotingRolls) {
+
+            // Skip the getting up check.  That's handled when checking for being immobile.
+            if (roll.getDesc().toLowerCase().contains("getting up")) {
+                continue;
+            }
+            if (roll.getDesc().toLowerCase().contains("careful stand")) {
+                continue;
+            }
+
             msg.append("\n\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
             double odds = Compute.oddsAbove(roll.getValue()) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");

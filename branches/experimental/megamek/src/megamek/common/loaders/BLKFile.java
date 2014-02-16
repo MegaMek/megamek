@@ -490,6 +490,12 @@ public class BLKFile {
             if (m.isDWPMounted()){
                 name += ":DWP";
             }
+            if (m.isAPMMounted()){
+                name += ":APM";
+            }
+            if (m.isSquadSupportWeapon()){
+                name += ":SSWM";
+            }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
                 name += ":Body";
             }

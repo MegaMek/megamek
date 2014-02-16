@@ -45,9 +45,9 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BA Machine Gun:LA
-BA RL4:Body
-BA RL4:Body
+ISBAMachine Gun:LA
+ISBARL4:Body
+ISBARL4:Body
 BABattleClaw:RA
 BABattleClaw:LA
 IS BA Advanced:RA

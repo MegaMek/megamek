@@ -33,8 +33,8 @@ public class ISBARL1 extends RLWeapon {
     public ISBARL1() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Rocket Launcher 1";
-        setInternalName("BA RL1");
+        name = "Rocket Launcher 1";
+        setInternalName("ISBARL1");
         addLookupName("BA RL 1");
         addLookupName("BARL1");
         addLookupName("ISBARocketLauncher1");

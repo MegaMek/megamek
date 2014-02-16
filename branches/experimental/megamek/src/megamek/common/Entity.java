@@ -59,7 +59,7 @@ import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
+import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -454,6 +454,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Marks an entity as having been deployed
      */
     private boolean deployed = false;
+    
+    /**
+     * Tracks if this entity was never deployed
+     */
+    private boolean neverDeployed = true;
 
     /**
      * The unit number of this entity. All entities which are members of the
@@ -700,7 +705,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else if (type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-                if (type instanceof ISPopUpMineLauncher) {
+                if (type instanceof ISBAPopUpMineLauncher) {
                     totalDmg += 4;
                 }
             } else {
@@ -7803,6 +7808,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setDeployed(boolean deployed) {
         this.deployed = deployed;
+        if (deployed) {
+            this.neverDeployed = false;
+        }
     }
 
     /**
@@ -7810,6 +7818,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isDeployed() {
         return deployed;
+    }
+    
+    /**
+     * Checks to see if entity was never deployed
+     */
+    public boolean wasNeverDeployed() {
+        return neverDeployed;
     }
 
     /**

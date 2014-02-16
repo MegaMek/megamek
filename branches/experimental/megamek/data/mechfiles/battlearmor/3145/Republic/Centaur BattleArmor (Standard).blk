@@ -45,14 +45,14 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BABasicManipulator
-BABasicManipulator
+BABasicManipulator:LA
+BABasicManipulator:RA
 ISBATubeArtillery:DWP
 ISDetachableWeaponPack:Body
 BA-Magnetic Clamp:Body
-BA Small Laser:RA
-ISBATubeArtilleryAmmo:Body:Shots4#
-ISBATubeArtilleryAmmo:Body:Shots4#
+ISBASmallLaser:LA
+ISBATubeArtilleryAmmo:DWP:Shots4#
+ISBATubeArtilleryAmmo:DWP:Shots4#
 </Squad Equipment>
 
 <Trooper 1 Equipment>

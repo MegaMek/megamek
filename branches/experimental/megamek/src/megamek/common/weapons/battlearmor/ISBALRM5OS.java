@@ -33,8 +33,8 @@ public class ISBALRM5OS extends LRMWeapon {
     public ISBALRM5OS() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA LRM 5 (OS)";
-        setInternalName(name);
+        name = "LRM 5 (OS)";
+        setInternalName("ISBALRM5OS");
         addLookupName("IS BA OS LRM-5");
         addLookupName("ISBALRM5 (OS)");
         addLookupName("IS BALRM 5 (OS)");

@@ -7,6 +7,56 @@ v0.37.8-exp-dev (SVN)
     noticeable impact on performance (but again, it's parameterized).
 
 v0.37.8-dev (SVN)
++ Added state variable Entity.neverDeployed and new method for it boolean 
+    Entity.wasNeverDeployed()
++ Feature Request [#1224] Princess stop chasing the Fighters!
+    Also modified the code for finding the nearest enemy to assume that unmoved
+    units will move away.
++ Added some more BA Equipment, prevent Support Weapons from being added to 
+    mounts, and some unit fixes
++ Adjusted TestBattleArmor: AP Mounts are now counted as AP weapons, instead of
+    InfantryWeapons.  This is because, each AP Mount has the potential to have
+    an AP weapon in it.  It also matches the current TM errata.
++ TestBattleArmor now considers unallocated infantry weapons to be illegal
++ Feature: BLK encoding now adds the :APM tag for AP Mounted weapons
++ TestBattleArmor was improperly counting APM mounted Infantry weapons as 
+    unallocated
++ APM related bugs in MechFileParser
++ Tweaked Herd Mentality values again as Princess still shows a tendency to 
+    spread out too much when running a mix of fast and slow units.
++ Bug [#4006]: Facing after fall while moving was wrong
++ show damage level should be a client setting, not a game option
++ Bug [#4040]: Unable to match AP weapon mount for BA 0.37.8-dev
++ Bug [#4041]: DWP drop declaration repeated every end phase 0.37.8-dev
++ Started refactoring the FireControl class for readability and testability.
++ Bug [#4032]: Dropship penalized for atmospheric operations in a vacuum
++ Removed unused AmmoType.canClearMinefield2()
++ Feature: Added support for including ammo into DWPs
++ Updated Server.resolveAmmoDumping to also dump ammo mounted in DWPs
++ Updated TestBattleArmor to give weight reductions for ammo in DWPs and also to
+    not consider ammo mounted in DWPs as unallocated
++ Fixed Centaur BA to mount BA Tube Artillery ammo in the DWP
++ Updated support for squad support weapon mounts on BA: there is now a state
+    variable in Mounted, squadSupportWeapon, which has a getter and setter.
+    Mounteds that are squad support mounted have reduced weight, and weapons 
+    that are squad support mounted only get 1 hit
++ Squad Support Weapons on BA now cannot fire if Trooper 1 is dead
++ Updated Mounted.getDesc() to include tags for AP Mounted weapons and Squad
+    Support Weapon Mounts
++ TestBattleArmor: quad BA with SSWM's are now illegal
++ Bug [#3996]: Entity.getLoadedUnits can return a collection with null entries
++ Bug [#4043]: 0.37.7 Battle armor Reflective/Reactive armor & UMU BV
++ Bug [#4039]: Princess doesn't attempt to stand a 'mech 0.37.7
++ Bug [#4042]: Crew Dead
++ Bug: Entity.getMovementModeAsString returns "UMU" for INF_UMU, but 
+    BLKBattleArmorFile expects motion_type to be "submarine" for BA with UMUs.
+    Fixed this by changing BLKBattleArmorFile to "UMU"
++ Renamed a lot of the BA weapons and equipment to remove the BA infront of their names.
++ Data: LOT of BA blk file changes.
++ Bug: Aero Side-slips could only be performed if they expended all of the 
+    velocity (was using the wrong method to check for validity)
++ Bug: Aero Side-slips were improperly giving the -1 modifier to ASF's, it 
+    should only go to Conventional Fighters with VSTOL
 
 v0.37.7-exp (2014-02-11 02:57 UTC)
 

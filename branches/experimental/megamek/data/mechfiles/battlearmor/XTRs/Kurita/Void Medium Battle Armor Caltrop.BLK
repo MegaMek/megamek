@@ -2,74 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Void Medium Battle Armor
 </Name>
+
 <Model>
 Caltrop
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-3
-</cruiseMP>
-<jumpingMP>
-1
-</jumpingMP>
-<Armor>
-7
-</Armor>
-<Squad Equipment>
-CLBAERSmallLaser:RA
-BAHeavyBattleClaw:LA
-BAHeavyBattleClaw:RA
-</Squad Equipment>
-<Trooper 1 Equipment>
-Mine:Body
-Mine:Body
-</Trooper 1 Equipment>
-<Trooper 2 Equipment>
-Mine:Body
-Mine:Body
-</Trooper 2 Equipment>
-<Trooper 3 Equipment>
-Mine:Body
-Mine:Body
-</Trooper 3 Equipment>
-<Trooper 4 Equipment>
-Mine:Body
-Mine:Body
-</Trooper 4 Equipment>
-<type>
-Mixed (IS Chassis) Experimental
-</type>
+
 <year>
 3078
 </year>
-<source>
-XTR Kurita
-</source>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
 <motion_type>
 Jump
 </motion_type>
 
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 33
 </armor_type>
+
 <armor_tech>
-3
+2
 </armor_tech>
+
+<Squad Equipment>
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+CLBAERSmallLaser:RA
+ISBAMineDispenser:Body
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTR Kurita
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+1
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

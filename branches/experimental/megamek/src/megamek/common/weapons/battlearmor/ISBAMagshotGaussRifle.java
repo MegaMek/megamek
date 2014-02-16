@@ -31,7 +31,7 @@ public class ISBAMagshotGaussRifle extends Weapon {
     public ISBAMagshotGaussRifle() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Magshot";
+        name = "Magshot";
         setInternalName("ISBAMagshotGR");
         damage = 2;
         shortRange = 3;

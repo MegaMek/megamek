@@ -61,6 +61,7 @@ public class ACFlakHandler extends AmmoWeaponHandler {
         // location
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                && !(weapon.isSquadSupportWeapon())
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }

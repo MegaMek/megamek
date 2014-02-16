@@ -47,11 +47,7 @@ Jump
 <Squad Equipment>
 BABasicManipulator:LA
 BABasicManipulator:RA
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
-David Light BA Gauss Rifle:RA
+ISBADavidLightGaussRifle:RA
 ISBAMineDispenser:LA
 BAParafoil:Body
 IS BA Stealth (Basic):Body

@@ -2,56 +2,102 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Nephilim Assault Battle Armor
 </Name>
+
 <Model>
 (Capture Team)[HMG]
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
-<cruiseMP>
-2
-</cruiseMP>
-<Armor>
-16
-</Armor>
-<Squad Equipment>
-ISDetachableWeaponPack:Body
-ISBAHeavyMG:RA
-ISBATaser:DWP:Body
-ISBALRM2OS:Body
-BAHeavyBattleClaw:LA
-</Squad Equipment>
-<type>
-IS Level 3
-</type>
+
 <year>
 3075
 </year>
+
+<type>
+IS Level 3
+</type>
+
 <motion_type>
-leg
+Leg
 </motion_type>
-<source>
-TRO 3075
-</source>
+
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 36
 </armor_type>
+
 <armor_tech>
-5
+1
 </armor_tech>
+
+<Squad Equipment>
+ISDetachableWeaponPack:Body
+ISBAHeavyMachineGun:RA
+ISBATaser:DWP
+ISBALRM2OS:Body
+BAHeavyBattleClaw:LA
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+16
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

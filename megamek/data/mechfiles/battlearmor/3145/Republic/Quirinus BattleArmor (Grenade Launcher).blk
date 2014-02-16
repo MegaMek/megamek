@@ -36,12 +36,43 @@ Jump
 1
 </cruiseMP>
 
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
 <Squad Equipment>
 BABasicManipulator:RA
 BABattleClawVibro:LA
-Heavy Grenade Launcher:LA
 ISBALightTAG:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+ISBAGrenadeLauncher:LA
+IS BA Reactive:Body
+IS BA Reactive:RA
+IS BA Reactive:RA
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:Body
+IS BA Reactive:LA
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Republic
@@ -66,11 +97,4 @@ biped
 <weightclass>
 2
 </weightclass>
-
-<armor_type>
-38
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
 

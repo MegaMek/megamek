@@ -42,7 +42,7 @@ biped
 
 <Squad Equipment>
 ISBASmallVSP:Body
-ISFiredrakeIncendiaryNeedler:RA
+ISBAFiredrakeIncendiaryNeedler:RA
 ISBAMagshotGR:LA
 BABasicManipulator:LA
 </Squad Equipment>

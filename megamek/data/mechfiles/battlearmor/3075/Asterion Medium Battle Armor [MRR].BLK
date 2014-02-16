@@ -31,7 +31,7 @@ biped
 8
 </Armor>
 <Squad Equipment>
-ISMedium Recoilless Rifle:Body
+ISBAMediumRecoillessRifle:Body
 BABattleClaw:LA
 BABattleClaw:RA
 </Squad Equipment>

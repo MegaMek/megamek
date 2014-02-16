@@ -47,9 +47,9 @@ Leg
 <Squad Equipment>
 BABasicManipulator:LA
 BABasicManipulator:RA
-Heavy Recoilless Rifle:DWP
+ISBAHeavyRecoillessRifle:DWP
 ISDetachableWeaponPack:RA
-BA Medium Laser:DWP
+ISBAMediumLaser:DWP
 ISDetachableWeaponPack:LA
 IS BA Mimetic:Body
 IS BA Mimetic:Body

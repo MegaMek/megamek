@@ -33,7 +33,7 @@ Jump
 </motion_type>
 
 <cruiseMP>
-3
+2
 </cruiseMP>
 
 <armor_type>
@@ -45,38 +45,31 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-CLBAERSmallLaser:RA
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+CLBAERSmallLaser:RA
+ISBAMineDispenser:Body
 Clan BA Stealth (Improved):LA
 Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):LA
 Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 4 Equipment>
 
 <source>

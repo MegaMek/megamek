@@ -45,8 +45,8 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-Light Recoilless Rifle:RA
-BA LRM 3:Body
+ISBALightRecoillessRifle:RA
+ISBALRM3:Body
 BABattleClaw:LA
 IS BA Ammo LRM-3:Body:Shots4#
 IS BA Ammo LRM-3:Body:Shots4#

@@ -47,16 +47,16 @@ Leg
 <Squad Equipment>
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-Grenade Launcher:LA
-Grenade Launcher:RA
-Heavy Recoilless Rifle:Body
-Heavy Recoilless Rifle:Body
+ISBAHeavyRecoillessRifle:Body
+ISBAHeavyRecoillessRifle:Body
 ISImprovedSensors:LA
 IS BA Advanced:RA
 IS BA Advanced:LA
 IS BA Advanced:RA
 IS BA Advanced:RA
 IS BA Advanced:LA
+ISBAHeavyGrenadeLauncher:LA
+ISBAHeavyGrenadeLauncher:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

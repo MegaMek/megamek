@@ -41,10 +41,10 @@ quad
 </Armor>
 
 <Squad Equipment>
-Firedrake Needler:Body
-Firedrake Needler:Body
-Firedrake Needler:Body
-Firedrake Needler:Body
+ISBAFiredrakeNeedler:Body
+ISBAFiredrakeNeedler:Body
+ISBAFiredrakeNeedler:Body
+ISBAFiredrakeNeedler:Body
 </Squad Equipment>
 
 <type>

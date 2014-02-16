@@ -45,14 +45,10 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-Medium Recoilless Rifle:Body
-BA Machine Gun:Body
+ISBAMediumRecoillessRifle:Body
+ISBAMachineGun:Body
 BABattleClaw:LA
 BABattleClawVibro:RA
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
 IS BA Advanced:RA
 IS BA Advanced:Body
 IS BA Advanced:LA

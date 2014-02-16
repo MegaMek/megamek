@@ -33,10 +33,9 @@ public class ISBASRM3 extends SRMWeapon {
     public ISBASRM3() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA SRM 3";
-        setInternalName(name);
+        name = "SRM 3";
+        setInternalName("ISBASRM3");
         addLookupName("IS BA SRM-3");
-        addLookupName("ISBASRM3");
         addLookupName("IS BA SRM 3");
         rackSize = 3;
         shortRange = 3;

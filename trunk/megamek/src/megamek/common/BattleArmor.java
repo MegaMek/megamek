@@ -19,7 +19,7 @@ import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.battlearmor.ISPopUpMineLauncher;
+import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -762,7 +762,7 @@ public class BattleArmor extends Infantry {
             setAntiMek(true);
         }
 
-        if (mounted.getType() instanceof ISPopUpMineLauncher) {
+        if (mounted.getType() instanceof ISBAPopUpMineLauncher) {
             if (loc == BattleArmor.LOC_SQUAD) {
                 for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
                     addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), 

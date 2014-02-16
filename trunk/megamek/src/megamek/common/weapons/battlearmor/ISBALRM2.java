@@ -33,10 +33,9 @@ public class ISBALRM2 extends LRMWeapon {
     public ISBALRM2() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA LRM 2";
-        setInternalName(name);
+        name = "LRM 2";
+        setInternalName("ISBALRM2");
         addLookupName("IS BA LRM-2");
-        addLookupName("ISBALRM2");
         addLookupName("IS BA LRM 2");
         rackSize = 2;
         minimumRange = 6;

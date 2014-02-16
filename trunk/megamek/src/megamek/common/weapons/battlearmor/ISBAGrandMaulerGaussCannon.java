@@ -36,8 +36,8 @@ public class ISBAGrandMaulerGaussCannon extends Weapon {
     public ISBAGrandMaulerGaussCannon() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Grand Mauler BA Gauss Cannon";
-        setInternalName("Grand Mauler BA Gauss Cannon");
+        name = "Grand Mauler Gauss Cannon";
+        setInternalName("ISBAGrandMaulerGaussCannon");
         addLookupName("ISBAGrandMauler");
         heat = 0;
         damage = 1;

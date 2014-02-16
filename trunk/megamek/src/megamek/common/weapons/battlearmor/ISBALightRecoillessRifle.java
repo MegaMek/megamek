@@ -38,10 +38,9 @@ public class ISBALightRecoillessRifle extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Light Recoilless Rifle";
-        setInternalName(name);
+        setInternalName("ISBALightRecoillessRifle");
         addLookupName("ISLight Recoilless Rifle");
         addLookupName("ISBALight Recoilless Rifle");
-        addLookupName("ISBALightRecoillessRifle");
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
@@ -55,7 +54,7 @@ public class ISBALightRecoillessRifle extends Weapon {
         criticals = 2;
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_BA_WEAPON).or(F_BURST_FIRE);
+                .or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 1000;
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));

@@ -35,8 +35,8 @@ public class ISBAFlamer extends BAFlamerWeapon {
     public ISBAFlamer() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA Flamer";
-        setInternalName("IS BA Flamer");
+        name = "Flamer";
+        setInternalName("ISBAFlamer");
         addLookupName("ISBAFlamer");
         heat = 3;
         damage = 2;

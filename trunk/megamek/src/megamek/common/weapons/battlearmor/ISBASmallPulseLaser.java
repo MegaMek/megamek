@@ -36,7 +36,7 @@ public class ISBASmallPulseLaser extends PulseLaserWeapon {
     public ISBASmallPulseLaser() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Small Pulse Laser";
+        name = "Small Pulse Laser";
         setInternalName("ISBASmallPulseLaser");
         addLookupName("IS BA Small Pulse Laser");
         addLookupName("ISBASmall Pulse Laser");

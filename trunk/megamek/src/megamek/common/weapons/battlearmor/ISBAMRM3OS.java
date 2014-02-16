@@ -33,9 +33,9 @@ public class ISBAMRM3OS extends MRMWeapon {
     public ISBAMRM3OS() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA MRM 3 (OS)";
-        setInternalName(name);
-        addLookupName("ISBAMRM3OS");
+        name = "MRM 3 (OS)";
+        setInternalName("ISBAMRM3OS");
+        addLookupName("IS BA MRM3 OS");
         rackSize = 3;
         shortRange = 3;
         mediumRange = 8;

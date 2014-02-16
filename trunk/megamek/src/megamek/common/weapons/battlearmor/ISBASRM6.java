@@ -32,11 +32,10 @@ public class ISBASRM6 extends SRMWeapon {
      */
     public ISBASRM6() {
         super();
-        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        this.name = "BA SRM 6";
-        this.setInternalName(this.name);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        this.name = "SRM 6";
+        this.setInternalName("ISBASRM6");
         this.addLookupName("IS BA SRM-6");
-        this.addLookupName("ISBASRM6");
         this.addLookupName("IS BA SRM 6");
         this.heat = 4;
         this.rackSize = 6;
@@ -44,16 +43,14 @@ public class ISBASRM6 extends SRMWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = 3.0f;
-        this.criticals = 2;
+        this.tonnage = .360f;
+        this.criticals = 3;
         this.bv = 59;
         cost = 30000;
         introDate = 3050;
         techLevel.put(3050, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_B };
         techRating = RATING_E;
-        tonnage = .360f;
-        criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
     }
 }

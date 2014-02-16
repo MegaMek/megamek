@@ -1053,8 +1053,6 @@ public class TestBattleArmor extends TestEntity {
             if (m.isDWPMounted()) {
                 weight += wt.getTonnage(getEntity()) * 0.75;
             } else if (m.isSquadSupportWeapon()){
-                // Add the 5KG for the squad support weapon mount
-                weight += 0.05;
                 if (ba.isClan()){
                     weight += wt.getTonnage(getEntity()) * 0.4;
                 } else {

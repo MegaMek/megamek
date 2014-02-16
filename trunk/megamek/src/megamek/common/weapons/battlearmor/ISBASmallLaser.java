@@ -34,10 +34,9 @@ public class ISBASmallLaser extends LaserWeapon {
     public ISBASmallLaser() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA Small Laser";
-        setInternalName(name);
+        name = "Small Laser";
+        setInternalName("ISBASmallLaser");
         addLookupName("ISBASmall Laser");
-        addLookupName("ISBASmallLaser");
         heat = 1;
         damage = 3;
         shortRange = 1;

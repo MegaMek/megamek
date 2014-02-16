@@ -388,9 +388,6 @@ public class MiscType extends EquipmentType {
             .shiftLeft(178);
     public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
             .shiftLeft(179);
-    public static final BigInteger F_SQUAD_SUPPORT = BigInteger.valueOf(1)
-            .shiftLeft(180);
-
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1487,7 +1484,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLaserMicrophone());
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createShotgunMicrophone());
-        EquipmentType.addType(MiscType.createBASquadMount());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
         
         // support vee stuff
@@ -5625,26 +5621,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
     
-    public static MiscType createBASquadMount() {
-        MiscType misc = new MiscType();
-
-        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
-        misc.name = "Squad Support Weapon Mount";
-        misc.setInternalName("BASSWMount");
-        misc.tonnage = 0.005f;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_SQUAD_SUPPORT);
-        misc.bv = 0;
-        misc.cost = 5000;
-        misc.introDate = 1950;
-        misc.techLevel.put(1950, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        misc.techRating = RATING_E;
-
-        return misc;
-    }
-
     public static MiscType createVacuumProtection() {
         MiscType misc = new MiscType();
 

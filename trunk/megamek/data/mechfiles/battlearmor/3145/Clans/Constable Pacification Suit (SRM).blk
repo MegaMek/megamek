@@ -40,10 +40,12 @@ Jump
 CLBAHeavyGL:LA
 CLBAHeavyGL:RA
 BACuttingTorch:LA
+BACuttingTorch:RA
 BABattleClaw:LA
 BABattleClaw:RA
 CLBASRM1:Body
 BASRM1 Ammo:Body:Shots4#
+BASearchlight:Body
 </Point Equipment>
 
 <source>

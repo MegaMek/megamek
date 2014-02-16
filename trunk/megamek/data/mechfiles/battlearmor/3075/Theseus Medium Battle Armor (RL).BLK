@@ -31,10 +31,10 @@ biped
 8
 </Armor>
 <Squad Equipment>
-ISLight Recoilless Rifle:RA
-BARL1:Body
-BARL1:Body
-BARL1:LA
+ISBALightRecoillessRifle:RA
+ISBARL1:Body
+ISBARL1:Body
+ISBARL1:LA
 BABattleClaw:LA
 BABattleClaw:RA
 </Squad Equipment>

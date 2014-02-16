@@ -42,7 +42,9 @@ CLBAHeavyGL:RA
 BABattleClaw:LA
 BABattleClaw:RA
 BACuttingTorch:LA
+BACuttingTorch:RA
 CLBAImprovedSensors:Body
+BASearchlight:Body
 </Point Equipment>
 
 <source>

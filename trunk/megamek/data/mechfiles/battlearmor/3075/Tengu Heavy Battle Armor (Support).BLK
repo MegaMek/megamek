@@ -34,7 +34,7 @@ biped
 13
 </Armor>
 <Squad Equipment>
-ISLight Recoilless Rifle:LA
+ISBALightRecoillessRifle:LA
 ISBASRM3OS:Body
 BABasicManipulator:LA
 BABasicManipulator:RA

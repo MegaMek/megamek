@@ -31,7 +31,7 @@ biped
 7
 </Armor>
 <Squad Equipment>
-ISHeavyMortar:Body
+ISBAHeavyMortar:Body
 ISBAMagshotGR:RA
 BABattleClaw:LA
 BAArmoredGlove:RA
@@ -50,7 +50,7 @@ Leg
 TRO 3075
 </source>
 <armor_type>
-31
+33
 </armor_type>
 <armor_tech>
 3

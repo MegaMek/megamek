@@ -41,8 +41,10 @@ CLBALightMG:Body
 CLBAHeavyGL:LA
 CLBAHeavyGL:RA
 BACuttingTorch:LA
+BACuttingTorch:RA
 BABattleClaw:LA
 BABattleClaw:RA
+BASearchlight:Body
 </Point Equipment>
 
 <source>

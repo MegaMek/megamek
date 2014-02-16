@@ -29,8 +29,11 @@ quad
 </Armor>
 <Squad Equipment>
 ISBASmallLaser:Body
-ISFiredrakeIncendiaryNeedler:Body
+ISBAFiredrakeIncendiaryNeedler:Body
 ISImprovedSensors:Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
 </Squad Equipment>
 <type>
 IS Level 2

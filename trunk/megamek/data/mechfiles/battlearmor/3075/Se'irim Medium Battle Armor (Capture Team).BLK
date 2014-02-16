@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Se'irim Medium Battle Armor
 </Name>
@@ -17,48 +20,83 @@ Se'irim Medium Battle Armor
 (Capture Team)
 </Model>
 
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
-<cruiseMP>
-3
-</cruiseMP>
-<jumpingMP>
-0
-</jumpingMP>
-<Armor>
-6
-</Armor>
-<Squad Equipment>
-ISDetachableWeaponPack:Body
-ISBALightMG:RA
-ISBALightMG:LA
-ISBATaser:DWP:Body
-BABattleClaw:RA
-BABattleClaw:LA
-BASearchlight:Body
-</Squad Equipment>
-<type>
-IS Level 3
-</type>
 <year>
 3072
 </year>
+
+<type>
+IS Level 3
+</type>
+
 <motion_type>
 Jump
 </motion_type>
-<source>
-TRO 3075
-</source>
+
+<cruiseMP>
+3
+</cruiseMP>
+
 <armor_type>
 31
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+ISDetachableWeaponPack:Body
+ISBALightMachineGun:RA
+ISBALightMachineGun:LA
+ISBATaser:DWP
+BABattleClaw:RA
+BABattleClaw:LA
+BASearchlight:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

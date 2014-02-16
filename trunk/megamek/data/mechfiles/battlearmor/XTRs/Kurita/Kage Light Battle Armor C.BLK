@@ -2,62 +2,99 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Kage Light Battle Armor
 </Name>
+
 <Model>
 C
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-1
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-6
-</Armor>
-<Point Equipment>
-BattleArmorC3:Body
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
-</Point Equipment>
-<type>
-IS Level 4
-</type>
+
 <year>
 3077
 </year>
-<source>
-XTR Kurita
-</source>
+
+<type>
+IS Level 4
+</type>
+
 <motion_type>
 Jump
 </motion_type>
 
+<cruiseMP>
+1
+</cruiseMP>
+
 <armor_type>
 36
 </armor_type>
+
 <armor_tech>
-3
+1
 </armor_tech>
 
+<Squad Equipment>
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BattleArmorC3:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle:APM
+</Squad Equipment>
 
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTR Kurita
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
 

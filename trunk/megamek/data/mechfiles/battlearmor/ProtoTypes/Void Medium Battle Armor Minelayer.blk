@@ -21,11 +21,11 @@ Void Medium Battle Armor
 </Model>
 
 <year>
-3090
+3079
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -36,34 +36,41 @@ Jump
 3
 </cruiseMP>
 
-<jumpingMP>
-1
-</jumpingMP>
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
 
 <Squad Equipment>
-ISMedium Recoilless Rifle:RA
-BAAPMount:LA
-InfantryAssaultRifle:LA:APM
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
-ISMechanicalJumpBooster:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):LA
+ISBAMediumRecoillessRifle:RA
+BAAPMount:LA
+ISBAMineDispenser:Body
+ISBAMineDispenser:Body
+Infantry Auto Rifle:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 1 Equipment>
+
 <Trooper 2 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 2 Equipment>
+
 <Trooper 3 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 3 Equipment>
+
 <Trooper 4 Equipment>
-Mine:Body
-Mine:Body
 </Trooper 4 Equipment>
 
 <source>
@@ -74,17 +81,13 @@ TRO:Prototypes
 biped
 </chassis>
 
+<jumpingMP>
+1
+</jumpingMP>
+
 <armor>
 5
 </armor>
-
-<armor_type>
-31
-</armor_type>
-
-<armor_tech>
-5
-</armor_tech>
 
 <Trooper Count>
 4

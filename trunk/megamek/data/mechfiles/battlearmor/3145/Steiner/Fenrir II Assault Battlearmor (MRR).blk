@@ -37,8 +37,8 @@ Leg
 </cruiseMP>
 
 <Squad Equipment>
-ISMedium Recoilless Rifle:Body
-ISMedium Recoilless Rifle:Body
+ISBAMediumRecoillessRifle:Body
+ISBAMediumRecoillessRifle:Body
 </Squad Equipment>
 
 <source>

@@ -50,7 +50,7 @@ BABasicManipulator:RA
 ISBATubeArtillery:DWP
 ISDetachableWeaponPack:Body
 BA-Magnetic Clamp:Body
-BA Small Laser:RA
+ISBASmallLaser:LA
 ISBATubeArtilleryAmmo:DWP:Shots4#
 ISBATubeArtilleryAmmo:DWP:Shots4#
 </Squad Equipment>

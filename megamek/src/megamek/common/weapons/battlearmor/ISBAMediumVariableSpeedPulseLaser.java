@@ -36,7 +36,7 @@ public class ISBAMediumVariableSpeedPulseLaser extends
     public ISBAMediumVariableSpeedPulseLaser() {
         super();
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        name = "BA Medium VSP Laser";
+        name = "Medium VSP Laser";
         setInternalName("ISBAMediumVSPLaser");
         addLookupName("ISBAMVSPL");
         addLookupName("ISBAMediumVariableSpeedLaser");

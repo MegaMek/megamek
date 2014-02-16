@@ -36,9 +36,9 @@ public class ISBAMicroGrenadeLauncher extends Weapon {
     public ISBAMicroGrenadeLauncher() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Micro Grenade Launcher";
-        setInternalName(name);
-        addLookupName("ISBAMicroGrenadeLauncher");
+        name = "Micro Grenade Launcher";
+        setInternalName("ISBAMicroGrenadeLauncher");
+        addLookupName("IS BA Micro Grenade Launcher");
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_HALFD6;

@@ -36,9 +36,9 @@ public class ISBAKingDavidLightGaussRifle extends Weapon {
     public ISBAKingDavidLightGaussRifle() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "King David BA Light Gauss Rifle";
-        setInternalName("King David BA Light Gauss Rifle");
-        addLookupName("ISBAKingDavidLightGaussRifle");
+        name = "King David Light Gauss Rifle";
+        setInternalName("ISBAKingDavidLightGaussRifle");
+        addLookupName("IS BA King David Light Gauss Rifle");
         damage = 1;
         ammoType = AmmoType.T_NA;
         shortRange = 3;

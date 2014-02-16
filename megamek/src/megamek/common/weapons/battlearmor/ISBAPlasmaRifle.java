@@ -36,9 +36,9 @@ public class ISBAPlasmaRifle extends Weapon {
     public ISBAPlasmaRifle() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA Plasma Rifle";
-        setInternalName(name);
-        addLookupName("ISBAPlasmaRifle");
+        name = "Plasma Rifle";
+        setInternalName("ISBAPlasmaRifle");
+        addLookupName("IS BA Plasma Rifle");
         damage = 2;
         ammoType = AmmoType.T_NA;
         shortRange = 2;

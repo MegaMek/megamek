@@ -37,7 +37,6 @@ v0.37.8-dev (SVN)
 + Squad Support Weapons on BA now cannot fire if Trooper 1 is dead
 + Updated Mounted.getDesc() to include tags for AP Mounted weapons and Squad
     Support Weapon Mounts
-+ TestBattleArmor: 5kg now added for squad support weapon mount
 + TestBattleArmor: quad BA with SSWM's are now illegal
 + Bug [#3996]: Entity.getLoadedUnits can return a collection with null entries
 + Bug [#4043]: 0.37.7 Battle armor Reflective/Reactive armor & UMU BV
@@ -46,6 +45,7 @@ v0.37.8-dev (SVN)
 + Bug: Entity.getMovementModeAsString returns "UMU" for INF_UMU, but 
     BLKBattleArmorFile expects motion_type to be "submarine" for BA with UMUs.
     Fixed this by changing BLKBattleArmorFile to "UMU"
++ Renamed a lot of the BA weapons and equipment to remove the BA infront of their names.
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

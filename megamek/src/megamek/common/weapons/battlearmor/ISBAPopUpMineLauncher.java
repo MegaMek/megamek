@@ -31,7 +31,7 @@ import megamek.server.Server;
 /**
  * @author Andrew Hunter
  */
-public class ISPopUpMineLauncher extends Weapon {
+public class ISBAPopUpMineLauncher extends Weapon {
     /**
      *
      */
@@ -40,7 +40,7 @@ public class ISPopUpMineLauncher extends Weapon {
     /**
      *
      */
-    public ISPopUpMineLauncher() {
+    public ISBAPopUpMineLauncher() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Pop-up Mine";

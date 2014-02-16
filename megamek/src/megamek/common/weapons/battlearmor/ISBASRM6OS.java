@@ -32,12 +32,12 @@ public class ISBASRM6OS extends SRMWeapon {
      */
     public ISBASRM6OS() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA SRM 6 (OS)";
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        name = "SRM 6 (OS)";
         setInternalName("ISBASRM6OS");
         addLookupName("ISBASRM6 (OS)"); // mtf
         addLookupName("IS BA SRM 6 (OS)"); // tdb
-        addLookupName("OS BA SRM-6"); // mep
+        addLookupName("IS OS BA SRM-6"); // mep
         heat = 4;
         rackSize = 6;
         shortRange = 3;

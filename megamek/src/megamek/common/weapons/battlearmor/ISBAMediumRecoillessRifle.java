@@ -38,10 +38,9 @@ public class ISBAMediumRecoillessRifle extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Medium Recoilless Rifle";
-        setInternalName(name);
-        addLookupName("ISMedium Recoilless Rifle");
+        setInternalName("ISBAMediumRecoillessRifle");
+        addLookupName("IS BA Medium Recoilless Rifle");
         addLookupName("ISBAMedium Recoilless Rifle");
-        addLookupName("ISBAMediumRecoillessRifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;

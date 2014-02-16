@@ -35,11 +35,11 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
     public ISBAHeavyGrenadeLauncher() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Grenade Launcher";
-        setInternalName(name);
-        addLookupName("Heavy Grenade Launcher");
-        addLookupName("ISAutoGL");
-        addLookupName("ISHeavyGL");
+        name = "Heavy Grenade Launcher";
+        setInternalName("ISBAHeavyGrenadeLauncher");
+        addLookupName("BA Heavy Grenade Launcher");
+        addLookupName("ISBAAutoGL");
+        addLookupName("ISBAHeavyGL");
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
@@ -52,7 +52,8 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
         criticals = 1;
         bv = 2;
         cost = 4500;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         introDate = 2100;
         techLevel.put(2100, techLevel.get(3071));
         availRating = new int[] { RATING_B, RATING_B, RATING_B };

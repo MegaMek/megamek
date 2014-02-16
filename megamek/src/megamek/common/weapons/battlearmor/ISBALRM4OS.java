@@ -33,9 +33,9 @@ public class ISBALRM4OS extends LRMWeapon {
     public ISBALRM4OS() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA LRM 4 (OS)";
-        setInternalName(name);
-        addLookupName("ISBALRM4OS");
+        name = "LRM 4 (OS)";
+        setInternalName("ISBALRM4OS");
+        addLookupName("IS BA LRM4 OS");
         rackSize = 4;
         minimumRange = 6;
         bv = 8;

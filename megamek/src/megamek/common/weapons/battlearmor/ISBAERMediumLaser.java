@@ -35,7 +35,7 @@ public class ISBAERMediumLaser extends LaserWeapon {
     public ISBAERMediumLaser() {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "BA ER Medium Laser";
+        name = "ER Medium Laser";
         setInternalName("ISBAERMediumLaser");
         addLookupName("IS BA ER Medium Laser");
         heat = 5;

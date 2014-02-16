@@ -39,8 +39,8 @@ public class ISBAFiredrakeNeedler extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Firedrake Needler";
-        setInternalName(name);
-        addLookupName("ISFiredrakeIncendiaryNeedler");
+        setInternalName("ISBAFireDrakeNeedler");
+        addLookupName("ISBAFiredrakeIncendiaryNeedler");
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
         ammoType = AmmoType.T_NA;
@@ -58,7 +58,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
         techRating = EquipmentType.RATING_D;
         techLevel.put(3061, techLevel.get(3071));
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON);
+                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
     }
 
 }

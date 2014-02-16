@@ -31,12 +31,12 @@ public class ISBAMG extends BAMGWeapon {
      */
     public ISBAMG() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "BA Machine Gun";
-        setInternalName("BA Machine Gun");
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        name = "Machine Gun";
+        setInternalName("ISBAMG");
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");
-        addLookupName("ISBAMG");
+        addLookupName("ISBAMachineGun");
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

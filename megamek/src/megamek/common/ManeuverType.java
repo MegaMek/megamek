@@ -52,9 +52,16 @@ public class ManeuverType {
                                      int ceiling, boolean isVTOL, int distance, 
                                      IGame game, MovePath mp) {
 
-        //if the Aero has moved to any hexes, then it can no longer perform
-        //any maneuver except side slip
-        if((distance > 0) && (type != MAN_SIDE_SLIP_LEFT) && (type != MAN_SIDE_SLIP_RIGHT)) {
+        // We can only perform one maneuver in a turn (important for side-slip)
+        for (final MoveStep step : mp.getStepVector()){
+            if (step.getType() == MoveStepType.MANEUVER){
+                return false;
+            }
+        }
+        
+        // Side slip is the only maneuver that doesn't have to be at the start
+        if ((distance > 0) && (type != MAN_SIDE_SLIP_LEFT)
+                && (type != MAN_SIDE_SLIP_RIGHT)) {
             return false;
         }
 
@@ -106,7 +113,7 @@ public class ManeuverType {
                     for (int i = 0; i < 8; i++){
                         tmpMp.addStep(MoveStepType.FORWARDS,true,true);
                     }                    
-                    return tmpMp.isMoveLegal();
+                    return tmpMp.getLastStep().isLegal();
                 }else{
                     return true;
                 }
@@ -152,9 +159,16 @@ public class ManeuverType {
     }
 
     /**
-     * Control roll modifier
+     * Returns the Control Roll modifier for a particular maneuver.  
+     * 
+     * @param type       The type of maneuver performed
+     * @param isVSTOLCF  Flag that determines whether the maneuvering unit is 
+     *                   a conventional fighter with VSTOl, which has effects
+     *                   for side-slips
+     *                   
+     * @return The control roll modifier
      */
-    public static int getMod(int type, boolean isVTOL) {
+    public static int getMod(int type, boolean isVSTOLCF) {
         switch(type) {
         case (MAN_LOOP):
             return 1;
@@ -170,7 +184,7 @@ public class ManeuverType {
             return 0;
         case (MAN_SIDE_SLIP_LEFT):
         case (MAN_SIDE_SLIP_RIGHT):
-            if(isVTOL) {
+            if(isVSTOLCF) {
                 return -1;
             } else {
                 return 0;

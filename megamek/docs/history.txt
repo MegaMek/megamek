@@ -47,6 +47,10 @@ v0.37.8-dev (SVN)
     Fixed this by changing BLKBattleArmorFile to "UMU"
 + Renamed a lot of the BA weapons and equipment to remove the BA infront of their names.
 + Data: LOT of BA blk file changes.
++ Bug: Aero Side-slips could only be performed if they expended all of the 
+    velocity (was using the wrong method to check for validity)
++ Bug: Aero Side-slips were improperly giving the -1 modifier to ASF's, it 
+    should only go to Conventional Fighters with VSTOL
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

@@ -36,14 +36,43 @@ Jump
 3
 </cruiseMP>
 
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
 <Point Equipment>
 CL BA ECM:Body
 BABattleClaw:LA
 BABattleClaw:RA
-CLBAHeavyGL:LA
-CLBAHeavyGL:RA
+CLBAHeavyGrenadeLauncher:LA
+CLBAHeavyGrenadeLauncher:RA
 BACuttingTorch:LA
+BACuttingTorch:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BASearchlight:Body
 </Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 TRO 3145 Clans
@@ -68,11 +97,4 @@ biped
 <weightclass>
 1
 </weightclass>
-
-<armor_type>
-28
-</armor_type>
-<armor_tech>
-2
-</armor_tech>
 

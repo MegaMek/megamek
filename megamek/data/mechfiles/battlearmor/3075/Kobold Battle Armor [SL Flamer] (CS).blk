@@ -13,19 +13,17 @@ BattleArmor
 </UnitType>
 
 <Name>
-Oni Battle Armor
+Kobold Battle Armor
 </Name>
 
 <Model>
-[Narc]
-</Model>
-
+(CS) [SL/Flamer]
 <year>
-3134
+3069
 </year>
 
 <type>
-Mixed (IS Chassis) Experimental
+IS Level 2
 </type>
 
 <motion_type>
@@ -33,47 +31,54 @@ Jump
 </motion_type>
 
 <cruiseMP>
-3
+1
 </cruiseMP>
 
 <armor_type>
-35
+32
 </armor_type>
 
 <armor_tech>
-7
+1
 </armor_tech>
 
 <Squad Equipment>
-BAHeavyBattleClawVibro:LA
-BABasicManipulator:RA
-BAExtendedLifeSupport:Body
-Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:LA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+Infantry Auto Rifle:APM:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth:Body
+IS BA Stealth:Body
+IS BA Stealth:Body
+IS BA Stealth:Body
+ISBASmallLaser:RA
+ISBAFlamer:SSWM:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-ISBACompact Narc:RA
-BACompactNarc Ammo:RA
 </Trooper 1 Equipment>
+
 <Trooper 2 Equipment>
-ISBACompact Narc:RA
-BACompactNarc Ammo:RA
 </Trooper 2 Equipment>
+
 <Trooper 3 Equipment>
-ISBACompact Narc:RA
-BACompactNarc Ammo:RA
 </Trooper 3 Equipment>
+
 <Trooper 4 Equipment>
-ISBACompact Narc:RA
-BACompactNarc Ammo:RA
 </Trooper 4 Equipment>
 
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+
 <source>
-TRO 3145 Draconis Combine
+TRO 3075
 </source>
 
 <chassis>
@@ -81,18 +86,18 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-10
+5
 </armor>
 
 <Trooper Count>
-4
+6
 </Trooper Count>
 
 <weightclass>
-2
+1
 </weightclass>
 

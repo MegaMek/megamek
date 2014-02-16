@@ -10,53 +10,51 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Kobold Battle Armor
+Gray Death Strike Armor
 </Name>
 <Model>
-[GL]
+(Standard)
 </Model>
 <chassis>
 biped
 </chassis>
 <weightclass>
-1
+2
 </weightclass>
 <Trooper Count>
 4
 </Trooper Count>
 <cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
 3
-</jumpingMP>
+</cruiseMP>
 <Armor>
-5
+9
 </Armor>
-<Trooper 1 Equipment>
-ISBASmallPulseLaser:LA
-</Trooper 1 Equipment>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
-ISBAMicroGrenadeLauncher:RA
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
+ISBASRM3:Body
+BA-SRM3 Ammo:Body:Shots2#
+ISBALightTAG:RA
+BABasicManipulator:LA
+BABasicManipulator:RA
 </Squad Equipment>
 <type>
 IS Level 2
 </type>
 <year>
-3069
+3085
 </year>
 <motion_type>
-Jump
+Leg
 </motion_type>
 <source>
-TRO 3075
+TRO Prototypes
 </source>
-<armor_type>
-32
-</armor_type>
-<armor_tech>
-3
-</armor_tech>

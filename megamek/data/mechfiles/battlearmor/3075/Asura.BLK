@@ -45,13 +45,9 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-Medium Recoilless Rifle:RA
+ISBAMediumRecoillessRifle:RA
 BABattleClaw:LA
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
-BA RL4:Body
+ISBARL4:Body
 BARL4 Ammo:Body:Shots1#
 </Squad Equipment>
 

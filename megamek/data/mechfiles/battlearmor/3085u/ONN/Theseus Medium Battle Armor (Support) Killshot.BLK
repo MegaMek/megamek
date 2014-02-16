@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,52 +20,74 @@ Theseus Medium Battle Armor
 (Support) "Killshot"
 </Model>
 
-<chassis>
-biped
-</chassis>
-
-<weightclass>
-2
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-3
-</cruiseMP>
-
-<Armor>
-8
-</Armor>
-
-<Squad Equipment>
-ISBAMicroGrenadeLauncher:RA
-BA RL4:LA
-BA RL 5:Body
-BABattleClaw:RA
-</Squad Equipment>
+<year>
+3073
+</year>
 
 <type>
 IS Level 2
 </type>
 
-<year>
-3073
-</year>
-
 <motion_type>
 Leg
 </motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBARL4:LA
+ISBARL5:Body
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+ISBAGrenadeLauncher:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS 3085 Unabridged ONN
 </source>
 
-<armor_type>
-28
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+8
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

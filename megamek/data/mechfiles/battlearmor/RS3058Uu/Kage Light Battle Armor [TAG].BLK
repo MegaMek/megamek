@@ -40,6 +40,9 @@ BAArmoredGlove:RA
 BAPartialWing:Body
 BAAPMount:RA
 InfantryAssaultRifle:RA:APM
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
 </Squad Equipment>
 <Trooper 1 Equipment>
 ISBALightTAG:LA

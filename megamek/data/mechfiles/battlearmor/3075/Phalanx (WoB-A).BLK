@@ -30,6 +30,12 @@ biped
 <Armor>
 7
 </Armor>
+<armor_type>
+33
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
 <Squad Equipment>
 ISBADavidLightGaussRifle:RA
 ISBASRM4:Body

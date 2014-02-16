@@ -52,11 +52,14 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-InfantryAssaultRifle:RA:APM
+Infantry Auto Rifle:APM:RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+ISBAMG:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-BA Machine Gun:LA
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>

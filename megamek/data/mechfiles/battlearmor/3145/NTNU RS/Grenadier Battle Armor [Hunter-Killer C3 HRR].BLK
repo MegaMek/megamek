@@ -40,8 +40,8 @@ biped
 </Armor>
 
 <Squad Equipment>
-Heavy Recoilless Rifle:RA
-ISFiredrakeIncendiaryNeedler:LA
+ISBAHeavyRecoillessRifle:RA
+ISBAFiredrakeIncendiaryNeedler:LA
 BattleArmorC3:Body
 BABasicManipulator:LA
 </Squad Equipment>

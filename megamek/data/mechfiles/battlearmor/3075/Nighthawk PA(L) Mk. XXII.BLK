@@ -36,12 +36,28 @@ Jump
 1
 </cruiseMP>
 
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <Squad Equipment>
-Heavy Grenade Launcher:LA
 BAExtendedLifeSupport:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-InfantryMauser960:RA:APM
+Mauser 960 Assault System:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth:RA
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+ISBAMicroGrenadeLauncher:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -79,17 +95,4 @@ biped
 <weightclass>
 0
 </weightclass>
-
-<armor_tech>
-3
-</armor_tech>
-
-<armor_type>
-32
-</armor_type>
-
-
-
-
-
 

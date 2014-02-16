@@ -45,10 +45,9 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BA Small Laser:Body
-BA Small Laser:Body
+ISBASmall Laser:Body
+ISBASmall Laser:Body
 BAMineLauncher:Body
-InfantryERMediumLaser:Body
 BA-Mine Launcher Ammo:Body:Shots1#
 BA-Mine Launcher Ammo:Body:Shots1#
 BA-Mine Launcher Ammo:Body:Shots1#

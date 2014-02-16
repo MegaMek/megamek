@@ -55,6 +55,7 @@ v0.37.8-dev (SVN)
 + Bug: MovementDisplay was not setting the selected entity to null when a 
     player's turn is ended, which lead to the FOV darkening code darkening the 
     FOV from the perspective of the unit just moved before it was moved
++ Feature: Added PSR nag for ejecting from a 'mech
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

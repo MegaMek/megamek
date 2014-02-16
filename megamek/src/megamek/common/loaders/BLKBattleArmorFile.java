@@ -104,7 +104,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             nMotion = EntityMovementMode.INF_JUMP;
         } else if (sMotion.equalsIgnoreCase("vtol")) {
             nMotion = EntityMovementMode.VTOL;
-        } else if (sMotion.equalsIgnoreCase("submarine")) {
+        } else if (sMotion.equalsIgnoreCase("umu")) {
             nMotion = EntityMovementMode.INF_UMU;
         }
         if (nMotion == EntityMovementMode.NONE) {

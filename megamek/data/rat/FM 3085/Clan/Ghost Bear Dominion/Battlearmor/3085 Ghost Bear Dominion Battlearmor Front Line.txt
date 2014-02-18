@@ -1,6 +1,6 @@
 3085 Ghost Bear Dominion Battlearmor Front Line
-Rogue Bear Heavy Battle Armor,1
-Rogue Bear Heavy Battle Armor,2
+Rogue Bear Heavy Battle Armor (Standard),1
+Rogue Bear Heavy Battle Armor (Standard),2
 Elemental Battle Armor [MG],3
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],5

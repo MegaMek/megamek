@@ -1,12 +1,12 @@
 Version:1.1
 Malice
-MAL-YZ
+MAL-XY
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
-Era:3129
+Era:3142
 Source:TRO 3145 Republic
-Rules Level:4
+Rules Level:3
 
 Mass:100
 Engine:400 XXL (Clan) Engine

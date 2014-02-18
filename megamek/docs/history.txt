@@ -57,6 +57,7 @@ v0.37.8-dev (SVN)
     FOV from the perspective of the unit just moved before it was moved
 + Feature: Added PSR nag for ejecting from a 'mech
 + Added a VTOL_MAX_ROTOR_ARMOR define to TestTank, which is currently set to 2
++ Data: Unit and RAT fixes.
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

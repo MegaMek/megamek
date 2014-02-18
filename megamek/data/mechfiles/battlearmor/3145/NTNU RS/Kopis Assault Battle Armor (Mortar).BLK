@@ -58,8 +58,8 @@ IS BA Reactive:LA
 IS BA Reactive:LA
 BAAPMount:RA
 BAAPMount:LA
-Infantry Auto Rifle:APM
-Infantry Auto Rifle:APM
+InfantryAssaultRifle:LA:APM
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

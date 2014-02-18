@@ -1,10 +1,10 @@
 3085 Clan Wolf Battlearmor Second Line
 Undine Battle Armor,1
 Elemental Battle Armor [MG],2
-Clan Medium Battle Armor "Rabid",3
+Clan Medium Battle Armor (Rabid),3
 Clan Medium Battle Armor (Volk),4
 Salamander Battle Armor,5
-Clan Medium Battle Armor "Rache",6
+Clan Medium Battle Armor (Rache),6
 Undine Battle Armor (Upgrade),5
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],3

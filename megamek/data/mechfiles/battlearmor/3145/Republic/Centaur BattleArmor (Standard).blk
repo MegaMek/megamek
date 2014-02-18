@@ -41,7 +41,7 @@ Leg
 </armor_type>
 
 <armor_tech>
-7
+5
 </armor_tech>
 
 <Squad Equipment>
@@ -53,6 +53,13 @@ BA-Magnetic Clamp:Body
 ISBASmallLaser:LA
 ISBATubeArtilleryAmmo:DWP:Shots4#
 ISBATubeArtilleryAmmo:DWP:Shots4#
+IS BA Reactive:Body
+IS BA Reactive:Body
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

@@ -58,7 +58,7 @@ ISBAMediumRecoillessRifle:RA
 BAAPMount:LA
 ISBAMineDispenser:Body
 ISBAMineDispenser:Body
-Infantry Auto Rifle:APM
+InfantryAssaultRifle:LA:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

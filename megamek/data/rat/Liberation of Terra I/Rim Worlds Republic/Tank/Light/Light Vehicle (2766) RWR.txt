@@ -7,6 +7,6 @@ Nightshade ECM VTOL,6
 J. Edgar Light Hover Tank,7
 Lightning Attack Hovercraft,6
 Cyrano Gunship,5
-Ripper Infantry Transport,4
+Ripper Infantry Transport (Standard),4
 Lightning Attack Hovercraft,3
 Gabriel Reconnaissance Hovercraft,2

@@ -3,9 +3,9 @@
 Undine Battle Armor,2
 Elemental Battle Armor [MG],3
 Elemental Battle Armor [MG],4
-Clan Medium Battle Armor "Rabid",5
-Clan Medium Battle Armor "Rabid",6
-Clan Medium Battle Armor "Rabid",5
+Clan Medium Battle Armor (Rabid),5
+Clan Medium Battle Armor (Rabid),6
+Clan Medium Battle Armor (Rabid),5
 Elemental Battle Armor [MG],4
 Elemental Battle Armor (Space) [MG],3
 Elemental Battle Armor [MG],2

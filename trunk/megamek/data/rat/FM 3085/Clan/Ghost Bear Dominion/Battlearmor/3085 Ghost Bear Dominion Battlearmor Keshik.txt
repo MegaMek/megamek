@@ -1,5 +1,5 @@
 3085 Ghost Bear Dominion Battlearmor Keshik
-Rogue Bear Heavy Battle Armor,1
+Rogue Bear Heavy Battle Armor (Standard),1
 Elemental Battle Armor [MG],2
 Elemental Battle Armor [MG],3
 Elemental Battle Armor [MG],4

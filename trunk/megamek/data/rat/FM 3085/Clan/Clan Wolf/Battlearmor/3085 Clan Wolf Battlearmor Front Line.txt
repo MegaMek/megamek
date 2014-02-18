@@ -1,6 +1,6 @@
 3085 Clan Wolf Battlearmor Front Line
 Salamander Battle Armor,1
-Clan Medium Battle Armor "Rache",2
+Clan Medium Battle Armor (Rache),2
 Undine Battle Armor (Upgrade),3
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],5

@@ -1,5 +1,5 @@
 3085 Clan Wolf in Exile Battlearmor Front Line
-Clan Medium Battle Armor "Rabid",1
+Clan Medium Battle Armor (Rabid),1
 Elemental Battle Armor [MG],2
 Elemental Battle Armor [MG],3
 Elemental Battle Armor [MG],4

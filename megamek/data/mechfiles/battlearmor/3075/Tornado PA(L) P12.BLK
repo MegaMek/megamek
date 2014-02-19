@@ -36,6 +36,9 @@ Simple Camo:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 InfantryAssaultRifle:RA:APM
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):LA
 </Squad Equipment>
 <type>
 IS Level 2

@@ -37,6 +37,10 @@ biped
 <Squad Equipment>
 ISBAHeavyGL:LA
 BABasicManipulator:LA
+IS BA Stealth (Prototype):RA
+IS BA Stealth (Prototype):LA
+IS BA Stealth (Prototype):Body
+IS BA Stealth (Prototype):Body
 </Squad Equipment>
 <type>
 IS Level 2

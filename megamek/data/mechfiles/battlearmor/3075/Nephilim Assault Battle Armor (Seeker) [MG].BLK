@@ -37,6 +37,13 @@ BA-SRM3 Ammo:Body:Shots3#
 BAHeavyBattleClaw:LA
 ISBAImprovedSensors:Body
 BASearchlight:Body
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
 </Squad Equipment>
 <type>
 IS Level 2

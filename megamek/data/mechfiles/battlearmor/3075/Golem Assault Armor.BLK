@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,46 +20,80 @@ Golem Assault Armor
 (Standard)
 </Model>
 
-
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-5
-</Trooper Count>
-<cruiseMP>
-2
-</cruiseMP>
-<Armor>
-18
-</Armor>
-<Point Equipment>
-CLBearhunter Superheavy AC:LA
-CLBearhunter Superheavy AC:RA
-CLAdvancedSRM5:Body
-BA-Advanced SRM-5 Ammo:Body:Shots2#
-BABasicManipulator:LA
-BABasicManipulator:RA
-</Point Equipment>
-<type>
-Clan Level 2
-</type>
 <year>
 3067
 </year>
+
+<type>
+Clan Level 2
+</type>
+
 <motion_type>
 Leg
 </motion_type>
 
-<source>
-TRO:3075
-</source>
+<cruiseMP>
+2
+</cruiseMP>
+
 <armor_type>
 35
 </armor_type>
+
 <armor_tech>
-2
+12
 </armor_tech>
+
+<Point Equipment>
+Bearhunter Superheavy AC:LA
+Bearhunter Superheavy AC:RA
+CLAdvancedSRM5:Body
+BA-Advanced SRM-5 Ammo:Body:Shots2#
+BABasicManipulator:LA
+BABasicManipulator:RA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO:3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

@@ -2,60 +2,98 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 IS Standard Battle Armor
 </Name>
+
 <Model>
 Hive
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
-<cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-7
-</Armor>
-<Squad Equipment>
-ISBADavidLightGaussRifle:LA
-BABattleClaw:LA
-BAArmoredGlove:RA
-BattleArmorC3:Body
-InfantryAssaultRifle:RA:APM
-</Squad Equipment>
-<type>
-IS Level 4
-</type>
+
 <year>
 3076
 </year>
+
+<type>
+IS Level 4
+</type>
+
 <motion_type>
 Jump
 </motion_type>
-<source>
-XTR Gladiators
-</source>
+
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 30
 </armor_type>
+
 <armor_tech>
-3
+11
 </armor_tech>
+
+<Squad Equipment>
+BADavidLightGaussRifle:LA
+BABattleClaw:LA
+BAArmoredGlove:RA
+BattleArmorC3:Body
+Infantry Auto Rifle:APM:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:Body
+IS BA Advanced:RA
+IS BA Advanced:Body
+IS BA Advanced:LA
+IS BA Advanced:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTR Gladiators
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

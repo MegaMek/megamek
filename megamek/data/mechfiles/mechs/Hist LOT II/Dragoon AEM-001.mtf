@@ -10,10 +10,10 @@ Rules Level:2
 
 Mass:70
 Engine:280 XL Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:11 Single
+Heat Sinks:11 Double
 Walk MP:4
 Jump MP:3
 
@@ -31,8 +31,8 @@ RTR Armor:6
 RTC Armor:10
 
 Weapons:3
-ER PPC, Right Arm
 LB 10-X AC, Left Arm
+ER PPC, Right Arm
 LB 10-X AC, Right Arm
 
 Left Arm:
@@ -44,7 +44,7 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,12 +70,12 @@ Fusion Engine
 Jump Jet
 ISGuardianECMSuite
 ISGuardianECMSuite
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -84,12 +84,12 @@ Fusion Engine
 Jump Jet
 IS LB 10-X AC Ammo
 IS LB 10-X AC Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -109,7 +109,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

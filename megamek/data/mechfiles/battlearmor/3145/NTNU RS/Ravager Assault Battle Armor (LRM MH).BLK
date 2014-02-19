@@ -45,6 +45,11 @@ ISBALRM3:Body
 BABattleClaw:LA
 BAISLRM3 Ammo:Body:Shots4#
 BAISLRM3 Ammo:Body:Shots4#
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:LA
 </Squad Equipment>
 
 <type>

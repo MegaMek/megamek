@@ -46,6 +46,10 @@ BAAPMount:LA
 InfantryAssaultRifle:LA:APM
 BABasicManipulator:LA
 BABasicManipulator:RA
+IS BA Stealth:Body
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:LA
 </Squad Equipment>
 <type>
 IS Level 2

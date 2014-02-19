@@ -2,10 +2,12 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
@@ -18,53 +20,76 @@ Phalanx Battle Armor
 (D)
 </Model>
 
-<chassis>
-biped
-</chassis>
-
-<weightclass>
-3
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-2
-</cruiseMP>
-
-<Armor>
-7
-</Armor>
-
-<Squad Equipment>
-ISBAMediumVSP:DWP:Body
-ISDetachableWeaponPack:Body
-BABattleClaw:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
-</Squad Equipment>
+<year>
+3130
+</year>
 
 <type>
 IS Level 3
 </type>
 
-<year>
-3130
-</year>
-
 <motion_type>
 Leg
 </motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMediumVSPLaser:DWP
+ISDetachableWeaponPack:Body
+BABattleClaw:LA
+BAArmoredGlove:RA
+Infantry Auto Rifle:APM
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS3145 NT NU
 </source>
 
-<armor_type>
-33
-</armor_type>
-<armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
 3
-</armor_tech>
+</weightclass>
+

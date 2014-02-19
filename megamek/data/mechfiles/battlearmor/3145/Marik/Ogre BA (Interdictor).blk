@@ -36,14 +36,41 @@ Jump
 2
 </cruiseMP>
 
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <Squad Equipment>
 ISBASRM2:Body
 BAHeavyBattleClaw:LA
 BAHeavyBattleClaw:RA
 IS BA ECM:Body
-BASRM2 Ammo:Body:Shots4#
-BASRM2 Ammo:Body:Shots4#
+BA-SRM2 Ammo:Body:Shots4#
+BA-SRM2 Ammo:Body:Shots4#
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:LA
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Free Worlds League
@@ -54,6 +81,7 @@ biped
 </chassis>
 
 <jumpingMP>
+0
 </jumpingMP>
 
 <armor>
@@ -67,11 +95,4 @@ biped
 <weightclass>
 3
 </weightclass>
-
-<armor_type>
-36
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
 

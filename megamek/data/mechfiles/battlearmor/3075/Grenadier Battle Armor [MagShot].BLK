@@ -38,6 +38,10 @@ BA-SRM4 Ammo:Body:Shots3#
 BABasicManipulator:RA
 BAAPMount:RA
 InfantryAssaultRifle:RA:APM
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:Body
 </Squad Equipment>
 <type>
 IS Level 2

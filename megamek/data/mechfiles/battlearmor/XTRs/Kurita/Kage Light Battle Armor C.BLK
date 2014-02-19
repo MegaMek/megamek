@@ -45,13 +45,6 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-IS BA Mimetic:LA
-IS BA Mimetic:LA
-IS BA Mimetic:Body
-IS BA Mimetic:RA
-IS BA Mimetic:RA
-IS BA Mimetic:Body
-IS BA Mimetic:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BattleArmorC3:Body
@@ -60,6 +53,13 @@ SwarmWeaponMek
 StopSwarm
 LegAttack
 Infantry Auto Rifle:APM
+IS BA Mimetic:RA
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

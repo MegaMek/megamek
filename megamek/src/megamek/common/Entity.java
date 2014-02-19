@@ -65,7 +65,7 @@ import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter,
-        Targetable, RoundUpdated, PhaseUpdated {
+                                                            Targetable, RoundUpdated, PhaseUpdated {
     /**
      *
      */
@@ -321,7 +321,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * to avoid having to iterate over all weapons looking for TSEMPs to reset
      * at the start of every round.
      */
-    private boolean hasFiredTsemp= false;
+    private boolean hasFiredTsemp = false;
 
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
@@ -454,7 +454,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Marks an entity as having been deployed
      */
     private boolean deployed = false;
-    
+
     /**
      * Tracks if this entity was never deployed
      */
@@ -935,7 +935,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return ((getArmorTechLevel(loc) == TechConstants.T_CLAN_TW)
                 || (getArmorTechLevel(loc) == TechConstants.T_CLAN_ADVANCED)
-                || (getArmorTechLevel(loc) == TechConstants.T_CLAN_EXPERIMENTAL) || (getArmorTechLevel(loc) == TechConstants.T_CLAN_UNOFFICIAL));
+                || (getArmorTechLevel(loc) == TechConstants.T_CLAN_EXPERIMENTAL) || (getArmorTechLevel(loc) ==
+                TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public boolean isMixedTech() {
@@ -1408,25 +1409,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (next.containsTerrain(Terrains.BUILDING)
                     || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(-current.depth(true),
-                        current.terrainLevel(Terrains.BLDG_ELEV));
+                                      current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true),
-                        next.terrainLevel(Terrains.BLDG_ELEV));
+                                      next.terrainLevel(Terrains.BLDG_ELEV));
                 if (((assumedElevation == bldcur)
                         && (climbMode || isJumpingNow) && (this instanceof Mech))
                         || (retVal > bldnex)) {
                     retVal = bldnex;
                     System.err.println(" Entity " + getDisplayName()
-                            + "1 retval=" + retVal);
+                                               + "1 retval=" + retVal);
                 } else if ((bldnex + next.surface()) > (bldcur + current
                         .surface())) {
                     if (climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
                     } else if ((assumedElevation == 0)
                             && (next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                            .getValue())) {
+                                                                                             .getValue())) {
                         retVal -= BasementType.getType(
                                 next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                .getDepth();
+                                              .getDepth();
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();
@@ -1436,14 +1437,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         retVal = bldnex + next.surface();
                     } else if ((current
                             .terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                            .getValue())
+                                                                                     .getValue())
                             && (assumedElevation == -BasementType
                             .getType(
                                     current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                             .getDepth())) {
                         retVal = -BasementType.getType(
                                 next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                .getDepth();
+                                              .getDepth();
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();
@@ -1455,9 +1456,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (next.containsTerrain(Terrains.BRIDGE) || current
                     .containsTerrain(Terrains.BRIDGE))) {
                 int brdnex = Math.max(-(next.depth(true)),
-                        next.terrainLevel(Terrains.BRIDGE_ELEV));
+                                      next.terrainLevel(Terrains.BRIDGE_ELEV));
                 if (Math.abs((next.surface() + brdnex)
-                        - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
+                                     - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
                     // bridge is reachable at least
                     if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
@@ -1486,7 +1487,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if ((null == getPosition()) && (isDeployed())) {
             throw new IllegalStateException("Entity #" + getId()
-                    + " does not know its position.");
+                                                    + " does not know its position.");
         }
 
         if (isOffBoard()) {
@@ -1522,7 +1523,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         0,
                         BasementType.getType(
                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                .getDepth());
+                                    .getDepth());
                 break;
             case VTOL:
             case WIGE:
@@ -1556,10 +1557,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (this instanceof Protomech) {
                     minAlt -= Math
                             .max(0,
-                                    BasementType
-                                            .getType(
-                                                    hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                            .getDepth());
+                                 BasementType
+                                         .getType(
+                                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                         .getDepth());
                 } else {
                     return false;
                 }
@@ -1922,7 +1923,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         mp = Math.max(mp - getCargoMpReduction(), 0);
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
+                                 .getMovementMods(this);
             if (weatherMod != 0) {
                 mp = Math.max(mp + weatherMod, 0);
             }
@@ -1993,7 +1994,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getRunMP(boolean gravity, boolean ignoreheat,
                         boolean ignoremodulararmor) {
         return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
-                ignoremodulararmor) * 1.5);
+                                         ignoremodulararmor) * 1.5);
     }
 
     /**
@@ -2708,7 +2709,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted,
-                BattleArmor.MOUNT_LOC_NONE, false, false);
+                            BattleArmor.MOUNT_LOC_NONE, false, false);
     }
 
     /**
@@ -2718,7 +2719,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                isTurreted, false);
+                            isTurreted, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
@@ -2726,7 +2727,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                isTurreted, isSponsonTurreted, false);
+                            isTurreted, isSponsonTurreted, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
@@ -3038,7 +3039,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (mounted.isReady())
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null) || (mounted.getLinked()
-                    .getUsableShotsLeft() > 0))) {
+                                                                 .getUsableShotsLeft() > 0))) {
 
                 // TAG only in the correct phase...
                 if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
@@ -3148,15 +3149,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Checks whether a weapon has been fired on this unit this turn
+     *
      * @return
      */
-    public boolean weaponFired(){
+    public boolean weaponFired() {
         boolean fired = false;
-        for (int loc = 0; (loc < locations()) && !fired; loc++){
+        for (int loc = 0; (loc < locations()) && !fired; loc++) {
             fired |= weaponFiredFrom(loc);
         }
         return fired;
     }
+
     /**
      * Checks whether a weapon has been fired from the specified location this
      * turn
@@ -3451,9 +3454,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false; // no slot available :(
     }
-    
+
     /**
-     * Adds a critical to a critical slot, first trying the supplied slot 
+     * Adds a critical to a critical slot, first trying the supplied slot
      * number, and continuing from there if it's full
      *
      * @return true if there was room for the critical
@@ -3563,7 +3566,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getGoodCriticals(int type, int index, int loc) {
         int operational = 0;
         Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT){
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
         }
 
@@ -3576,13 +3579,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             //  need to get the Mounted that is mounted in that index and
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
-                    if (!ccs.isDestroyed() && !ccs.isBreached()) {
-                        if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                            operational++;
-                        } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
-                            operational++;
-                        }
+                if (!ccs.isDestroyed() && !ccs.isBreached()) {
+                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
+                        operational++;
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
+                                                                                                                                                                                                               .getMount2()))) {
+                        operational++;
                     }
+                }
             }
         }
         return operational;
@@ -3594,7 +3598,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
         Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT){
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
         }
 
@@ -3610,7 +3614,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (ccs.isDestroyed() || ccs.isBreached()) {
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
+                                                                                                                                                                                                               .getMount2()))) {
                         hits++;
                     }
                 }
@@ -3625,7 +3630,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getDamagedCriticals(int type, int index, int loc) {
         int hits = 0;
         Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT){
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
         }
 
@@ -3641,7 +3646,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (ccs.isDamaged()) {
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
+                                                                                                                                                                                                               .getMount2()))) {
                         hits++;
                     }
                 }
@@ -3656,7 +3662,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;
         Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT){
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
         }
 
@@ -3672,7 +3678,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
+                                                                                                                                                                                                               .getMount2()))) {
                         hits++;
                     }
                 }
@@ -3772,13 +3779,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             if (locationIsLeg(i)) {
                 if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_HIP, i) > 0)
+                                     Mech.ACTUATOR_HIP, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_UPPER_LEG, i) > 0)
+                                            Mech.ACTUATOR_UPPER_LEG, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_LOWER_LEG, i) > 0)
+                                            Mech.ACTUATOR_LOWER_LEG, i) > 0)
                         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_FOOT, i) > 0)) {
+                                            Mech.ACTUATOR_FOOT, i) > 0)) {
                     hasCrit = true;
                     break;
                 }
@@ -4145,7 +4152,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // time
                 if ((type instanceof MiscType)
                         && ((type.hasFlag(MiscType.F_ECM) && (m.curMode()
-                        .equals("ECCM")
+                                                               .equals("ECCM")
                         || m.curMode().equals("ECM & ECCM") || m
                         .curMode().equals("ECCM & Ghost Targets"))) || (type
                         .hasFlag(MiscType.F_COMMUNICATIONS) && m
@@ -4247,7 +4254,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         if ((game != null)
                                 && checkECM
                                 && Compute.isAffectedByAngelECM(this,
-                                getPosition(), getPosition())) {
+                                                                getPosition(), getPosition())) {
                             return false;
                         }
                         return true;
@@ -4255,7 +4262,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return !checkECM
                             || (game == null)
                             || !Compute.isAffectedByECM(this, getPosition(),
-                            getPosition());
+                                                        getPosition());
                 }
             }
         }
@@ -4268,13 +4275,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 .getOptions().booleanOption("bvdni")))) {
             return !checkECM
                     || !Compute.isAffectedByECM(this, getPosition(),
-                    getPosition());
+                                                getPosition());
         }
         // check for quirk
         if (hasQuirk("imp_sensors")) {
             return !checkECM
                     || !Compute.isAffectedByECM(this, getPosition(),
-                    getPosition());
+                                                getPosition());
         }
 
         return false;
@@ -4335,14 +4342,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
                         || (m.getType().getInternalName()
-                        .equals(Sensor.CLBALIGHT_AP))
+                             .equals(Sensor.CLBALIGHT_AP))
                         || (m.getType().getInternalName()
-                        .equals(Sensor.ISBALIGHT_AP))) {
+                             .equals(Sensor.ISBALIGHT_AP))) {
                     return 3 + cyberBonus + quirkBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)
                         || (m.getType().getInternalName()
-                        .equals(Sensor.CLIMPROVED))) {
+                             .equals(Sensor.CLIMPROVED))) {
                     return 2 + cyberBonus + quirkBonus;
                 }
                 return 4 + cyberBonus + quirkBonus;// everthing else should be
@@ -4403,7 +4410,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
                     && (m.getType().hasFlag(MiscType.F_C3S) || m.getType()
-                    .hasFlag(MiscType.F_C3SBS)) && !m.isInoperable()) {
+                                                                .hasFlag(MiscType.F_C3SBS)) && !m.isInoperable()) {
                 return true;
             }
         }
@@ -4466,7 +4473,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof WeaponType)
                     && (m.getType().hasFlag(WeaponType.F_C3M) || m.getType()
-                    .hasFlag(WeaponType.F_C3MBS)) && !m.isInoperable()) {
+                                                                  .hasFlag(WeaponType.F_C3MBS)) && !m.isInoperable()) {
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
@@ -4780,13 +4787,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !master.equals(m)
                 && master.hasC3()
                 && ((m.hasBoostedC3() && !Compute.isAffectedByAngelECM(m,
-                m.getPosition(), master.getPosition())) || !(Compute
+                                                                       m.getPosition(),
+                                                                       master.getPosition())) || !(Compute
                 .isAffectedByECM(m, m.getPosition(),
-                        master.getPosition())))
+                                 master.getPosition())))
                 && ((master.hasBoostedC3() && !Compute.isAffectedByAngelECM(
                 master, master.getPosition(), master.getPosition())) || !(Compute
                 .isAffectedByECM(master, master.getPosition(),
-                        master.getPosition())))) {
+                                 master.getPosition())))) {
             m = master;
             master = m.getC3Master();
         }
@@ -4996,9 +5004,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
             return !(Compute.isAffectedByECM(e, e.getPosition(),
-                    e.getPosition()))
+                                             e.getPosition()))
                     && !(Compute.isAffectedByECM(this, getPosition(),
-                    getPosition()));
+                                                 getPosition()));
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match,
@@ -5010,9 +5018,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
             return !(Compute.isAffectedByNovaECM(e, e.getPosition(),
-                    e.getPosition()))
+                                                 e.getPosition()))
                     && !(Compute.isAffectedByNovaECM(this, getPosition(),
-                    getPosition()));
+                                                     getPosition()));
         }
 
         // simple sanity check - do they both have C3, and are they both on the
@@ -5131,7 +5139,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (isAirborne()
                 && !(this instanceof Aero)
                 && (getAltitude() <= game.getPlanetaryConditions()
-                .getDropRate())) {
+                                         .getDropRate())) {
             setAssaultDropInProgress(true);
         }
 
@@ -5200,22 +5208,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // If we are effected by the TSEMP Shutdown effect, we should remove
         // it now, so we can startup during the end phase
-        if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN){
+        if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
-        // The TSEMP interference effect shouldn't be removed until the start
-        //  of a round where we didn't have any TSEMP hits and didn't fire a
-        //  TSEMP, since we need the effect active during the firing phase
-        } else if ((getTsempHitsThisTurn() == 0) && !isFiredTsempThisTurn()){
+            // The TSEMP interference effect shouldn't be removed until the start
+            //  of a round where we didn't have any TSEMP hits and didn't fire a
+            //  TSEMP, since we need the effect active during the firing phase
+        } else if ((getTsempHitsThisTurn() == 0) && !isFiredTsempThisTurn()) {
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
         }
 
         // TSEMPs can fire every other round, so if we didn't fire last
         //  round and the TSEMP isn't one-shot, reset it's fired state
-        if (!isFiredTsempThisTurn() && hasFiredTsemp()){
-            for (Mounted m : getWeaponList()){
+        if (!isFiredTsempThisTurn() && hasFiredTsemp()) {
+            for (Mounted m : getWeaponList()) {
                 if (m.getType().hasFlag(WeaponType.F_TSEMP)
                         && !m.getType().hasFlag(WeaponType.F_ONESHOT)
-                        && m.isFired()){
+                        && m.isFired()) {
                     m.setFired(false);
                 }
             }
@@ -5227,7 +5235,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         setFiredTsempThisTurn(false);
 
         // Decrement the number of consecutive turns if not used last turn
-        if (!hasActivatedRadicalHS()){
+        if (!hasActivatedRadicalHS()) {
             setConsecutiveRHSUses(Math.max(0, getConsecutiveRHSUses() - 1));
         }
         // Reset used RHS flag
@@ -5335,7 +5343,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 // AMS blocked by transported units can not fire
                 if (isWeaponBlockedAt(weapon.getLocation(),
-                        weapon.isRearMounted())) {
+                                      weapon.isRearMounted())) {
                     continue;
                 }
 
@@ -5362,14 +5370,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 for (WeaponHandler wr : vAttacks) {
                     if (!targets.contains(wr.waa)
                             && Compute.isInArc(game, getId(),
-                            getEquipmentNum(weapon),
-                            game.getEntity(wr.waa.getEntityId()))) {
+                                               getEquipmentNum(weapon),
+                                               game.getEntity(wr.waa.getEntityId()))) {
                         vAttacksInArc.addElement(wr.waa);
                     }
                 }
                 // find the most dangerous salvo by expected damage
                 WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                        vAttacksInArc, true);
+                                                                          vAttacksInArc, true);
                 if (waa != null) {
                     waa.addCounterEquipment(weapon);
                     targets.add(waa);
@@ -5633,54 +5641,54 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // Following line switched from impossible to automatic failure
             // -- bug fix for dead units taking PSRs
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    "Pilot dead");
+                                        "Pilot dead");
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
             return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE,
-                    "Pilot unconscious");
+                                        "Pilot unconscious");
         }
         // gyro operational?
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
+                             Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    getCrew().getPiloting() + 6, "Gyro destroyed");
+                                        getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // Takes 3+ hits to kill an HD Gyro.
         if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) {
+                             Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    getCrew().getPiloting() + 6, "Gyro destroyed");
+                                        getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // both legs present?
         if (this instanceof BipedMech) {
             if (((BipedMech) this).countBadLegs() == 2) {
                 return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL,
-                        getCrew().getPiloting() + 10, "Both legs destroyed");
+                                            TargetRoll.AUTOMATIC_FAIL,
+                                            getCrew().getPiloting() + 10, "Both legs destroyed");
             }
         } else if (this instanceof QuadMech) {
             if (((QuadMech) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting()
+                                            TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting()
                         + (((Mech) this).countBadLegs() * 5),
-                        ((Mech) this).countBadLegs() + " legs destroyed");
+                                            ((Mech) this).countBadLegs() + " legs destroyed");
             }
         }
         // entity shut down?
         if (isShutDown() && isShutDownThisPhase()) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    getCrew().getPiloting() + 3, "Reactor shut down");
+                                        getCrew().getPiloting() + 3, "Reactor shut down");
         } else if (isShutDown()) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    TargetRoll.IMPOSSIBLE, "Reactor shut down");
+                                        TargetRoll.IMPOSSIBLE, "Reactor shut down");
         }
 
         // okay, let's figure out the stuff then
         roll = new PilotingRollData(entityId, getCrew().getPiloting(),
-                "Base piloting skill");
+                                    "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll
         // pass in the roll
@@ -5782,35 +5790,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((step == null)
                 || ((step.getType() != MoveStepType.GET_UP) && (step.getType() != MoveStepType.CAREFUL_STAND))) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to get up.");
+                                        "Check false: Entity is not attempting to get up.");
         }
 
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
 
         if (this instanceof BipedMech) {
             if ((((Mech) this).countBadLegs() >= 1)
                     && (isLocationBad(Mech.LOC_LARM) && isLocationBad(Mech.LOC_RARM))) {
                 roll.addModifier(TargetRoll.IMPOSSIBLE,
-                        "can't get up with destroyed leg and arms");
+                                 "can't get up with destroyed leg and arms");
                 return roll;
             }
         }
 
         if (isHullDown() && (this instanceof QuadMech)) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,
-                    "getting up from hull down");
+                             "getting up from hull down");
             return roll;
         }
 
         if (!needsRollToStand()
                 && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) < 2)) {
+                                    Mech.LOC_CT) < 2)) {
             roll.addModifier(
                     TargetRoll.AUTOMATIC_SUCCESS,
                     "\n"
                             + getDisplayName()
-                            + " does not need to make a piloting skill check to stand up because it has all four of its legs.");
+                            + " does not need to make a piloting skill check to stand up because it has all four of " +
+                            "its legs.");
             return roll;
         }
 
@@ -5829,7 +5838,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.SYSTEM_GYRO, Mech.LOC_CT);
+                                         Mech.SYSTEM_GYRO, Mech.LOC_CT);
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
@@ -5837,10 +5846,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
-                    "running with damaged hip actuator or gyro"));
+                                             "running with damaged hip actuator or gyro"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to run with damage");
+                             "Check false: Entity is not attempting to run with damage");
         }
         addPilotingModifierForTerrain(roll);
         return roll;
@@ -5857,10 +5866,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
                 && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
-                    "sprinting with active MASC/Supercharger"));
+                                             "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to sprint with MASC");
+                             "Check false: Entity is not attempting to sprint with MASC");
         }
 
         addPilotingModifierForTerrain(roll);
@@ -5878,10 +5887,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
                 && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
-                    "sprinting with active MASC/Supercharger"));
+                                             "sprinting with active MASC/Supercharger"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to sprint with Supercharger");
+                             "Check false: Entity is not attempting to sprint with Supercharger");
         }
 
         addPilotingModifierForTerrain(roll);
@@ -5895,7 +5904,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkRecklessMove(MoveStep step, IHex curHex,
                                               Coords lastPos, Coords curPos, IHex prevHex) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
         // no need to go further if movement is careful
         if (step.getParent().isCareful()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "moving carefully");
@@ -5947,18 +5956,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 0) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
+                              Mech.LOC_CT) > 0) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
                 || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() == Mech.GYRO_HEAVY_DUTY))
+                                     Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() == Mech.GYRO_HEAVY_DUTY))
                 || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
-                    "landing with damaged leg actuator or gyro"));
+                                             "landing with damaged leg actuator or gyro"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(
                     TargetRoll.CHECK_FALSE,
-                    "Entity does not have gyro or leg actuator damage -- checking for purposes of determining PSR after jump.");
+                    "Entity does not have gyro or leg actuator damage -- checking for purposes of determining PSR " +
+                            "after jump.");
         }
         return roll;
     }
@@ -5974,7 +5984,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getJumpType() == Mech.JUMP_PROTOTYPE) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 3,
-                    "landing with prototype jump jets"));
+                                             "landing with prototype jump jets"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(
@@ -5992,11 +6002,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
-                    "landing in heavy woods"));
+                                             "landing in heavy woods"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "hex does not contain heavy woods");
+                             "hex does not contain heavy woods");
         }
         return roll;
     }
@@ -6011,12 +6021,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (curHex.containsTerrain(Terrains.ICE)
                 && (curHex.terrainLevel(Terrains.WATER) > 0)) {
             roll.append(new PilotingRollData(getId(), 0,
-                    "landing on ice-covered water"));
+                                             "landing on ice-covered water"));
             addPilotingModifierForTerrain(roll);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "hex is not covered by ice");
+                             "hex is not covered by ice");
         }
 
         return roll;
@@ -6031,7 +6041,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkMovedTooFast(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
         addPilotingModifierForTerrain(roll, step);
         switch (step.getMovementType()) {
             case MOVE_WALK:
@@ -6041,19 +6051,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (step.getMpUsed() > (int) Math
                         .ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0,
-                            "used more MPs than at 1G possible"));
+                                                     "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more MPs walking/running than possible at 1G");
+                                     "Check false: Entity did not use more MPs walking/running than possible at 1G");
                 }
                 break;
             case MOVE_JUMP:
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0,
-                            "used more MPs than at 1G possible"));
+                                                     "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more MPs jumping than possible at 1G");
+                                     "Check false: Entity did not use more MPs jumping than possible at 1G");
                 }
                 break;
             default:
@@ -6075,25 +6085,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: flyinge entities don't skid");
+                             "Check false: flyinge entities don't skid");
             return roll;
         }
 
         if (isInfantry) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: infantry don't skid");
+                             "Check false: infantry don't skid");
             return roll;
         }
 
         if (moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: jumping entities don't skid");
+                             "Check false: jumping entities don't skid");
             return roll;
         }
 
         if ((null != prevStep) && prevStep.isHasJustStood()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: getting up entities don't skid");
+                             "Check false: getting up entities don't skid");
             return roll;
         }
 
@@ -6106,34 +6116,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // or bridge matches entity elevation.
         if ((prevHex != null)
                 && prevHex.containsTerrain(Terrains.ICE)
-                && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game
+                && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || ((
+                (movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game
                 .getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game
                 .getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
-                    getMovementBeforeSkidPSRModifier(distance),
-                    "turning on ice"));
+                                             getMovementBeforeSkidPSRModifier(distance),
+                                             "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else if ((prevHex != null)
                 && (prevStep.isPavementStep()
-                && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+                && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
+                .MOVE_SPRINT))
                 && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
                 roll.append(new PilotingRollData(getId(),
-                        getMovementBeforeSkidPSRModifier(distance),
-                        "running & turning on pavement"));
+                                                 getMovementBeforeSkidPSRModifier(distance),
+                                                 "running & turning on pavement"));
             } else {
                 roll.append(new PilotingRollData(getId(),
-                        getMovementBeforeSkidPSRModifier(distance),
-                        "reckless driving on pavement"));
+                                                 getMovementBeforeSkidPSRModifier(distance),
+                                                 "reckless driving on pavement"));
             }
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not apparently skidding");
+                             "Check false: Entity is not apparently skidding");
             return roll;
         }
     }
@@ -6145,7 +6157,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
                                             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
@@ -6161,7 +6173,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not entering rubble");
+                             "Check false: Entity is not entering rubble");
         }
 
         return roll;
@@ -6174,15 +6186,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
                                          Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
-                this instanceof LargeSupportTank);
+                                              this instanceof LargeSupportTank);
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
                 && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod,
-                    "avoid bogging down"));
+                                             "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
@@ -6244,7 +6256,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: No water here.");
+                             "Check false: No water here.");
         }
 
         return roll;
@@ -6259,14 +6271,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
             return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
-                    "Check false: No swarmers attached");
+                                        "Check false: No swarmers attached");
         }
 
         // append the reason modifier
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+                                                        .getLastStepMovementType());
         roll.append(new PilotingRollData(getId(), 0,
-                "attempting to dislodge swarmers by dropping prone"));
+                                         "attempting to dislodge swarmers by dropping prone"));
         addPilotingModifierForTerrain(roll, step);
 
         return roll;
@@ -6592,7 +6604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // If we got to this point, then we can't load the unit.
         throw new IllegalArgumentException(getShortName() + " can not load "
-                + unit.getShortName());
+                                                   + unit.getShortName());
     }
 
     public void load(Entity unit, boolean checkElev) {
@@ -6638,7 +6650,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // If we got to this point, then we can't load the unit.
         throw new IllegalArgumentException(getShortName() + " can not recover "
-                + unit.getShortName());
+                                                   + unit.getShortName());
     }
 
     /**
@@ -6678,7 +6690,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (potential.size() > 0) {
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential
-                    .size()));
+                                                                          .size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
             chosenBay.setDoors(chosenBay.getDoors() - 1);
@@ -6730,7 +6742,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (potential.size() > 0) {
             DockingCollar chosenDC = potential.elementAt(Compute
-                    .randomInt(potential.size()));
+                                                                 .randomInt(potential.size()));
             chosenDC.setDamaged(true);
             result = true;
         }
@@ -7480,7 +7492,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             default:
                 throw new IllegalArgumentException("Unknown range constant: "
-                        + range);
+                                                           + range);
         }
 
         // Return the result.
@@ -7793,7 +7805,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isDeployed() {
         return deployed;
     }
-    
+
     /**
      * Checks to see if entity was never deployed
      */
@@ -7843,7 +7855,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !getCrew().isUnconscious()
                 && ((pos.x == 0) || (pos.x == (game.getBoard().getWidth() - 1))
                 || (pos.y == 0) || (pos.y == (game.getBoard()
-                .getHeight() - 1)));
+                                                  .getHeight() - 1)));
     }
 
     public void setSeenByEnemy(boolean b) {
@@ -8213,7 +8225,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 // Can the entity target *this* hex of the building?
                 final BuildingTarget target = new BuildingTarget(coords,
-                        game.getBoard(), false);
+                                                                 game.getBoard(), false);
                 canHit |= Compute.canPhysicalTarget(game, getId(), target);
 
             } // Check the next hex of the building
@@ -8376,29 +8388,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                        + (game.getBoard().getWidth() % 2),
-                        -getOffBoardDistance()));
+                                               + (game.getBoard().getWidth() % 2),
+                                       -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                        + (game.getBoard().getWidth() % 2), game.getBoard()
-                        .getHeight() + getOffBoardDistance()));
+                                               + (game.getBoard().getWidth() % 2), game.getBoard()
+                                                                                       .getHeight() +
+                        getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
-                        + getOffBoardDistance(),
-                        (game.getBoard().getHeight() / 2)
-                                + (game.getBoard().getHeight() % 2)));
+                                               + getOffBoardDistance(),
+                                       (game.getBoard().getHeight() / 2)
+                                               + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
                 setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
-                        .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
+                                                                    .getHeight() / 2) + (game.getBoard().getHeight()
+                        % 2)));
                 setFacing(1);
                 setDeployed(true);
                 break;
@@ -8514,7 +8528,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasSpotlight() && spotlightIsActive && (target != null)) {
             illuminated = true;
             ArrayList<Coords> in = Coords.intervening(getPosition(),
-                    target.getPosition());
+                                                      target.getPosition());
             for (Coords c : in) {
                 for (Enumeration<Entity> e = game.getEntities(c); e
                         .hasMoreElements(); ) {
@@ -8824,7 +8838,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             long itemCost = (long) mounted.getType().getCost(this,
-                    mounted.isArmored(), mounted.getLocation());
+                                                             mounted.isArmored(), mounted.getLocation());
 
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {
@@ -9059,12 +9073,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             IHex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
-                        getPosition(), 1, getElevation(), srcHex.floor(),
-                        curHex.floor());
+                                                                      getPosition(), 1, getElevation(), srcHex.floor(),
+                                                                      curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos,
-                        ai.targetPos, true);
+                                                          ai.targetPos, true);
                 leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
-                        Compute.isInBuilding(game, this), new LosEffects());
+                                                          Compute.isInBuilding(game, this), new LosEffects());
             }
         }
 
@@ -9230,12 +9244,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         if (!isElevationValid(getElevation(),
-                game.getBoard().getHex(getPosition()))) {
+                              game.getBoard().getHex(getPosition()))) {
             System.err.println(getDisplayName() + " in hex "
-                    + HexTarget.coordsToId(getPosition())
-                    + " is at invalid elevation: " + getElevation());
+                                       + HexTarget.coordsToId(getPosition())
+                                       + " is at invalid elevation: " + getElevation());
             setElevation(0 - game.getBoard()
-                    .getHex(getPosition()).depth());
+                                 .getHex(getPosition()).depth());
             System.err.println("   moved to elevation " + getElevation());
             return true;
         }
@@ -9362,7 +9376,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // equipment marked missing
         for (Mounted mounted : getEquipment()) {
             if (((mounted.getLocation() == loc) && mounted.getType()
-                    .isHittable())
+                                                          .isHittable())
                     || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
                 if (blownOff) {
                     mounted.setMissing(true);
@@ -9425,7 +9439,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType != EntityMovementType.MOVE_JUMP)
                 && (prevHex != null)
                 && (distance > 1)
-                && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN))
+                && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
+                .MOVE_VTOL_RUN))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)
                 && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
@@ -9438,7 +9453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: not apparently sideslipping");
+                             "Check false: not apparently sideslipping");
         }
 
         return roll;
@@ -9454,7 +9469,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (getPosition() != null)
                     && (game.getBoard().getHex(getPosition()) != null)
                     && ((game.getBoard().getHex(getPosition())
-                    .terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game
+                             .terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game
                     .getBoard().getHex(getPosition())
                     .terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation()))) {
                 return false;
@@ -9917,7 +9932,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     prefix = "CL";
                 }
                 this.addEquipment(
-                        EquipmentType.get(prefix+BattleArmor.SINGLE_HEX_ECM),
+                        EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
             } catch (LocationFullException ex) {
                 // ignore
@@ -9946,7 +9961,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     modes.add("Damage " + damage);
                 }
                 ((WeaponType) mounted.getType()).setModes(modes
-                        .toArray(stringArray));
+                                                                  .toArray(stringArray));
             } else if (((WeaponType) mounted.getType()).isCapital()
                     && (((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
                     && (((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_AR10)) {
@@ -9961,13 +9976,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (((mounted.getType() instanceof CapitalLaserBayWeapon) || (mounted
                         .getType() instanceof SCLBayWeapon))
                         && game.getOptions()
-                        .booleanOption("stratops_aaa_laser")) {
+                               .booleanOption("stratops_aaa_laser")) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
                 if (modes.size() > 1) {
                     ((WeaponType) mounted.getType()).setModes(modes
-                            .toArray(stringArray));
+                                                                      .toArray(stringArray));
                 }
             }
 
@@ -10237,7 +10252,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     strength = 2;
                 } else if ((strength < 1)
                         && (m.curMode().equals("ECM & ECCM") || m.curMode()
-                        .equals("ECM & Ghost Targets"))) {
+                                                                 .equals("ECM & Ghost Targets"))) {
                     strength = 1;
                 }
             } else if (m.getType().hasFlag(MiscType.F_ECM)
@@ -10267,7 +10282,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     strength = 2;
                 } else if ((strength < 1)
                         && (m.curMode().equals("ECM & ECCM") || m.curMode()
-                        .equals("ECCM & Ghost Targets"))) {
+                                                                 .equals("ECCM & Ghost Targets"))) {
                     strength = 1;
                 }
             } else if (m.getType().hasFlag(MiscType.F_ECM)
@@ -10348,7 +10363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // first reduce the current ammo load by number of santa annas
                 int nSantaAnna = amounted.getNSantaAnna();
                 amounted.setShotsLeft(Math.max(amounted.getBaseShotsLeft()
-                        - nSantaAnna, 0));
+                                                       - nSantaAnna, 0));
                 // save the new ammo information
                 locations.add(amounted.getLocation());
                 ammo.add(nSantaAnna);
@@ -10360,7 +10375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 if (null == getBayByAmmo(amounted)) {
                     System.err
-                            .println("cannot find the right bay for Santa Anna ammo");
+                          .println("cannot find the right bay for Santa Anna ammo");
                     return;
                 }
                 baymounts.add(getBayByAmmo(amounted));
@@ -10659,7 +10674,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
         return (getElevation() == 0)
                 && ((getMovementMode() == EntityMovementMode.NAVAL)
-                || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode.SUBMARINE));
+                || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode
+                .SUBMARINE));
     }
 
     /**
@@ -10890,7 +10906,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (game.getBoard().inAtmosphere()) {
             return (1 == (getAltitude() - game.getBoard().getHex(getPosition())
-                    .ceiling()));
+                                              .ceiling()));
         }
         if (game.getBoard().onGround()) {
             return 1 == getAltitude();
@@ -11103,7 +11119,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getBattleForceStandardWeaponsDamage(int range) {
         return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, false,
-                false);
+                                                   false);
     }
 
     /**
@@ -11113,7 +11129,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getBattleForceStandardWeaponsDamage(int range, int ammoType) {
         return getBattleForceStandardWeaponsDamage(range, ammoType, false,
-                false);
+                                                   false);
     }
 
     /**
@@ -11125,7 +11141,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getBattleForceStandardWeaponsDamage(int range,
                                                    boolean ignoreHeat, boolean ignoreSpecialAbilities) {
         return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA,
-                ignoreHeat, ignoreSpecialAbilities);
+                                                   ignoreHeat, ignoreSpecialAbilities);
     }
 
     /**
@@ -11225,7 +11241,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             if (weapon.hasFlag(WeaponType.F_MISSILE)) {
                 baseDamage = Compute.calculateClusterHitTableAmount(7,
-                        weapon.getRackSize());
+                                                                    weapon.getRackSize());
                 baseDamage *= weaponCount;
             } else {
                 baseDamage = weapon.getDamage() * weaponCount;
@@ -11233,7 +11249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             if (range == Entity.BATTLEFORCESHORTRANGE) {
                 int minRange = Math.min(6,
-                        Math.max(0, weapon.getMinimumRange()));
+                                        Math.max(0, weapon.getMinimumRange()));
                 minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
             }
             int toHitMod = weapon.getToHitModifier() + 4;
@@ -11242,7 +11258,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 case AmmoType.T_AC_LBX:
                 case AmmoType.T_AC_LBX_THB:
                     baseDamage = Compute.calculateClusterHitTableAmount(7,
-                            weapon.getRackSize()) * weaponCount;
+                                                                        weapon.getRackSize()) * weaponCount;
                     toHitMod--;
                     break;
                 case AmmoType.T_MRM:
@@ -11251,10 +11267,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (mLinker.getType() instanceof MiscType)
                             && !mLinker.isDestroyed() && !mLinker.isMissing()
                             && !mLinker.isBreached() && mLinker.getType()
-                            .hasFlag(MiscType.F_APOLLO))) {
+                                                               .hasFlag(MiscType.F_APOLLO))) {
                         toHitMod--;
                         baseDamage = Compute.calculateClusterHitTableAmount(6,
-                                weapon.getRackSize()) * weaponCount;
+                                                                            weapon.getRackSize()) * weaponCount;
                     }
                     break;
                 case AmmoType.T_LRM:
@@ -11263,17 +11279,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (mLinker.getType() instanceof MiscType)
                             && !mLinker.isDestroyed() && !mLinker.isMissing()
                             && !mLinker.isBreached() && mLinker.getType()
-                            .hasFlag(MiscType.F_ARTEMIS))) {
+                                                               .hasFlag(MiscType.F_ARTEMIS))) {
                         baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                weapon.getRackSize()) * weaponCount;
+                                                                            weapon.getRackSize()) * weaponCount;
                         hasArtemis = true;
                     } else if (((mLinker != null)
                             && (mLinker.getType() instanceof MiscType)
                             && !mLinker.isDestroyed() && !mLinker.isMissing()
                             && !mLinker.isBreached() && mLinker.getType()
-                            .hasFlag(MiscType.F_ARTEMIS_V))) {
+                                                               .hasFlag(MiscType.F_ARTEMIS_V))) {
                         baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                weapon.getRackSize()) * weaponCount;
+                                                                            weapon.getRackSize()) * weaponCount;
                         hasArtemis = true;
                     }
                     break;
@@ -11283,21 +11299,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (mLinker.getType() instanceof MiscType)
                             && !mLinker.isDestroyed() && !mLinker.isMissing()
                             && !mLinker.isBreached() && mLinker.getType()
-                            .hasFlag(MiscType.F_ARTEMIS))) {
+                                                               .hasFlag(MiscType.F_ARTEMIS))) {
                         baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                weapon.getRackSize()) * 2 * weaponCount;
+                                                                            weapon.getRackSize()) * 2 * weaponCount;
                         hasArtemis = true;
                     } else if (((mLinker != null)
                             && (mLinker.getType() instanceof MiscType)
                             && !mLinker.isDestroyed() && !mLinker.isMissing()
                             && !mLinker.isBreached() && mLinker.getType()
-                            .hasFlag(MiscType.F_ARTEMIS_V))) {
+                                                               .hasFlag(MiscType.F_ARTEMIS_V))) {
                         baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                weapon.getRackSize()) * 2 * weaponCount;
+                                                                            weapon.getRackSize()) * 2 * weaponCount;
                         hasArtemis = true;
                     } else {
                         baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                weapon.getRackSize()) * 2 * weaponCount;
+                                                                            weapon.getRackSize()) * 2 * weaponCount;
                     }
                     break;
                 case AmmoType.T_ATM:
@@ -11306,19 +11322,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         case Entity.BATTLEFORCESHORTRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(9,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount * 3;
                             break;
                         case Entity.BATTLEFORCEMEDIUMRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(9,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount * 2;
                             break;
                         case Entity.BATTLEFORCELONGRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(9,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount;
                             break;
                     }
@@ -11332,19 +11348,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         case Entity.BATTLEFORCESHORTRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(9,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount;
                             break;
                         case Entity.BATTLEFORCELONGRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(5,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount;
                             break;
                         case Entity.BATTLEFORCEMEDIUMRANGE:
                             baseDamage = Compute
                                     .calculateClusterHitTableAmount(7,
-                                            weapon.getRackSize())
+                                                                    weapon.getRackSize())
                                     * weaponCount;
                             break;
                     }
@@ -11354,7 +11370,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     break;
                 case AmmoType.T_AC_ROTARY:
                     baseDamage = Compute.calculateClusterHitTableAmount(7,
-                            weapon.getRackSize()) * weaponCount * 5;
+                                                                        weapon.getRackSize()) * weaponCount * 5;
                     break;
 
             }
@@ -11449,7 +11465,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         && !mLinker.isBreached() && mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS))) {
                     baseDamage = Compute.calculateClusterHitTableAmount(9,
-                            weapon.getRackSize()) * weaponCount;
+                                                                        weapon.getRackSize()) * weaponCount;
                     hasArtemis = true;
                 } else if (((mLinker != null)
                         && (mLinker.getType() instanceof MiscType)
@@ -11457,7 +11473,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         && !mLinker.isBreached() && mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS_V))) {
                     baseDamage = Compute.calculateClusterHitTableAmount(10,
-                            weapon.getRackSize()) * weaponCount;
+                                                                        weapon.getRackSize()) * weaponCount;
                     hasArtemis = true;
                 }
 
@@ -11492,13 +11508,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         totalDamage = Math.max(frontArcWeaponsTotalDamage,
-                rearArcWeaponsTotalDamage);
+                               rearArcWeaponsTotalDamage);
 
         totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
 
         if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
             totalDamage = Math.ceil((totalDamage * getHeatCapacity())
-                    / totalHeat);
+                                            / totalHeat);
         }
 
         if (ignoreSpecialAbility && (totalDamage < 10)) {
@@ -11632,7 +11648,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasStealth() {
         // only non-patchwork stealth actually works as stealth
-        if (((getArmorType(1) == EquipmentType.T_ARMOR_STEALTH) || (getArmorType(1) == EquipmentType.T_ARMOR_STEALTH_VEHICLE))
+        if (((getArmorType(1) == EquipmentType.T_ARMOR_STEALTH) || (getArmorType(1) == EquipmentType
+                .T_ARMOR_STEALTH_VEHICLE))
                 && !hasPatchworkArmor()) {
             return true;
         }
@@ -11899,7 +11916,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 Mounted superCharger = getSuperCharger();
                 bFailure = doMASCCheckFor(masc, vDesc, vCriticals);
                 boolean bSuperChargeFailure = doMASCCheckFor(superCharger,
-                        vDesc, vCriticals);
+                                                             vDesc, vCriticals);
                 usedMASC = true;
                 return bFailure || bSuperChargeFailure;
             }
@@ -11984,14 +12001,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     }
                     if (this instanceof Mech) {
                         vCriticals.put(new Integer(Mech.LOC_CT),
-                                new LinkedList<CriticalSlot>());
+                                       new LinkedList<CriticalSlot>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                                     && (cs.getIndex() == Mech.SYSTEM_ENGINE)
                                     && cs.isHittable()) {
                                 vCriticals.get(new Integer(Mech.LOC_CT))
-                                        .add(cs);
+                                          .add(cs);
                                 hits--;
                             }
                         }
@@ -12007,20 +12024,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         boolean heavyMovementDamage = tank
                                 .hasHeavyMovementDamage();
                         vCriticals.put(new Integer(Tank.LOC_BODY),
-                                new LinkedList<CriticalSlot>());
+                                       new LinkedList<CriticalSlot>());
                         vCriticals.put(new Integer(-1),
-                                new LinkedList<CriticalSlot>());
+                                       new LinkedList<CriticalSlot>());
                         if (tank instanceof VTOL) {
                             vCriticals.put(new Integer(VTOL.LOC_ROTOR),
-                                    new LinkedList<CriticalSlot>());
+                                           new LinkedList<CriticalSlot>());
                         }
                         for (int i = 0; i < hits; i++) {
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
                                     vCriticals.get(new Integer(Tank.LOC_BODY))
-                                            .add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    Tank.CRIT_ENGINE));
+                                              .add(new CriticalSlot(
+                                                      CriticalSlot.TYPE_SYSTEM,
+                                                      Tank.CRIT_ENGINE));
                                 } else {
                                     vCriticals
                                             .get(new Integer(VTOL.LOC_ROTOR))
@@ -12032,9 +12049,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             } else {
                                 if (heavyMovementDamage) {
                                     vCriticals.get(new Integer(Tank.LOC_BODY))
-                                            .add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    Tank.CRIT_ENGINE));
+                                              .add(new CriticalSlot(
+                                                      CriticalSlot.TYPE_SYSTEM,
+                                                      Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
@@ -12080,7 +12097,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 slot = getCritical(loc, slotIndex);
                             } while ((slot == null) || !slot.isHittable());
                             vCriticals.put(new Integer(loc),
-                                    new LinkedList<CriticalSlot>());
+                                           new LinkedList<CriticalSlot>());
                             vCriticals.get(new Integer(loc)).add(slot);
                         }
                     }
@@ -12411,7 +12428,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // Get a list of quirks for this entity.
         List<QuirkEntry> quirks = DefaultQuirksHandler.getQuirks(getChassis(),
-                getModel());
+                                                                 getModel());
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {
@@ -12433,8 +12450,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
                     System.out.println(q.toLog() + " failed for "
-                            + getChassis() + " " + getModel()
-                            + " - Invalid quirk!");
+                                               + getChassis() + " " + getModel()
+                                               + " - Invalid quirk!");
                     continue;
                 }
                 getQuirks().getOption(q.getQuirk()).setValue(true);
@@ -12445,19 +12462,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // Get the weapon in the indicated location and slot.
             // System.out.print("Getting CriticalSlot... ");
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()),
-                    q.getSlot());
+                                          q.getSlot());
             if (cs == null) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
-                        + " " + getModel() + " - Critical slot ("
-                        + q.getLocation() + "-" + q.getSlot()
-                        + ") did not load!");
+                                           + " " + getModel() + " - Critical slot ("
+                                           + q.getLocation() + "-" + q.getSlot()
+                                           + ") did not load!");
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
-                        + " " + getModel() + " - Critical slot ("
-                        + q.getLocation() + "-" + q.getSlot() + ") is empty!");
+                                           + " " + getModel() + " - Critical slot ("
+                                           + q.getLocation() + "-" + q.getSlot() + ") is empty!");
                 continue;
             }
 
@@ -12465,8 +12482,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // System.out.print("Getting WeaponType... ");
             if (!(m.getType() instanceof WeaponType)) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
-                        + " " + getModel() + " - " + m.getName()
-                        + " is not a weapon!");
+                                           + " " + getModel() + " - " + m.getName()
+                                           + " is not a weapon!");
                 continue;
             }
 
@@ -12484,8 +12501,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             if (!matchFound) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
-                        + " " + getModel() + " - " + m.getType().getName()
-                        + " != " + q.getWeaponName());
+                                           + " " + getModel() + " - " + m.getType().getName()
+                                           + " != " + q.getWeaponName());
                 continue;
             }
 
@@ -12493,7 +12510,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // System.out.print("Activating quirk... ");
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
-                        + " " + getModel() + " - Invalid quirk!");
+                                           + " " + getModel() + " - Invalid quirk!");
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
@@ -12654,7 +12671,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             Mounted m = null;
-            if (type == CriticalSlot.TYPE_EQUIPMENT){
+            if (type == CriticalSlot.TYPE_EQUIPMENT) {
                 m = getEquipment(slot);
             }
             if (((type == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == slot))
@@ -12688,7 +12705,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMaxWeaponRange() {
+
         int maxRange = 0;
+        if ((ETYPE_MECH == getEntityType()) || (ETYPE_INFANTRY == getEntityType()) ||
+                (ETYPE_PROTOMECH == getEntityType())) {
+            // account for physical attacks.
+            maxRange = 1;
+        }
+
         for (Mounted weapon : getWeaponList()) {
             if (!weapon.isReady()) {
                 continue;
@@ -12741,9 +12765,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean hasActivatedRadicalHS() {
-        for (Mounted m : getMisc()){
+        for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)
-                    && m.curMode().equals("On")){
+                    && m.curMode().equals("On")) {
                 return true;
             }
         }
@@ -12751,8 +12775,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void deactivateRadicalHS() {
-        for (Mounted m : getMisc()){
-            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
                 m.setMode("Off");
                 // Can only have one radical heat sink
                 break;

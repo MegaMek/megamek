@@ -207,14 +207,14 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "tacops_leg_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_walk_backwards", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_fast_infantry_move", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "mek_lance_movement", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "mek_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_hull_down", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_falling_expanded", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_attempting_stand", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_careful_stand", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, "mek_lance_movement", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, "mek_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicles_can_eject", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "ejected_pilots_flee", false); //$NON-NLS-1$

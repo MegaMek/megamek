@@ -1790,6 +1790,11 @@ public class Server implements Runnable {
                 "vehicle_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_INITIATIVE));
+        boolean meksMoved = entityUsed instanceof Mech;
+        boolean meksMoveMulti = game.getOptions().booleanOption(
+                "mek_lance_movement")
+                && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
+                        .getPhase() == IGame.Phase.PHASE_INITIATIVE));
 
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
@@ -1809,6 +1814,10 @@ public class Server implements Runnable {
 
         if (tanksMoveMulti) {
             multiMask += GameTurn.CLASS_TANK;
+        }
+        
+        if (meksMoveMulti) {
+            multiMask += GameTurn.CLASS_MECH;
         }
 
         // Is this a general move turn?
@@ -1891,6 +1900,23 @@ public class Server implements Runnable {
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreVeeTurns; i++) {
+                GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
+                        multiMask);
+                game.insertNextTurn(newTurn);
+                turnsChanged = true;
+            }
+        }
+        
+        if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
+            int remaining = game.getMechsLeft(playerId);
+
+            int moreMekTurns = Math.min(
+                    game.getOptions()
+                            .intOption("mek_lance_movement_number") - 1,
+                    remaining);
+
+            // Add the correct number of turns for the right unit classes.
+            for (int i = 0; i < moreMekTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
                 game.insertNextTurn(newTurn);
@@ -3127,6 +3153,11 @@ public class Server implements Runnable {
                 "vehicle_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+        boolean mekMoveByLance = game.getOptions().booleanOption(
+                "mek_lance_movement")
+                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+
 
         int evenMask = 0;
         if (infMoveEven) {
@@ -3235,6 +3266,8 @@ public class Server implements Runnable {
                         }
                     }
                 } else if ((entity instanceof Tank) && tankMoveByLance) {
+                    player.incrementMultiTurns();
+                } else if ((entity instanceof Mech) && mekMoveByLance) {
                     player.incrementMultiTurns();
                 } else {
                     player.incrementOtherTurns();
@@ -31358,6 +31391,7 @@ public class Server implements Runnable {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                Report.addNewline(handleAttackReports);
             }
         }
         // now resolve everything but TAG
@@ -31390,12 +31424,14 @@ public class Server implements Runnable {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                Report.addNewline(handleAttackReports);
             } else {
                 keptAttacks.add(ah);
             }
         }
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId));
+        Report.addNewline(handleAttackReports);
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

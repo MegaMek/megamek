@@ -859,6 +859,11 @@ public interface IGame {
      * Returns the number of remaining selectable Vehicles owned by a player.
      */
     public abstract int getVehiclesLeft(int playerId);
+    
+    /**
+     * Returns the number of remaining selectable Mechs owned by a player.
+     */
+    public abstract int getMechsLeft(int playerId);
 
     /**
      * Removes the last, next turn found that the specified entity can move in.

@@ -120,11 +120,11 @@ public class LRMHandler extends MissileWeaponHandler {
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
-            Report r = new Report(3325);
+            Report r = new Report(3326);
+            r.newlines = 0;
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
-            r.add(toHit.getTableDesc());
             vPhaseReport.add(r);
             return 1;
         }

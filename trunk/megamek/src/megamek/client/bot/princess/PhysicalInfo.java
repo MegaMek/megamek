@@ -70,8 +70,8 @@ public class PhysicalInfo {
                 target_state = new EntityState(ttarget);
             }
             attack_type = atype;
-            to_hit = owner.getFireControl().guessToHitModifier_Physical(shooter, shooter_state,
-                                                                        target, target_state, attack_type, game);
+            to_hit = owner.getFireControl().guessToHitModifierPhysical(shooter, shooter_state,
+                                                                       target, target_state, attack_type, game);
             int fromdir = target_state.getPosition()
                                       .direction(shooter_state.getPosition());
             damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;

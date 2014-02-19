@@ -68,6 +68,7 @@ v0.37.8-dev (SVN)
 + Bug: Mek Lance Movement is technically unofficial, options now relfects this
 + Feature [#1181]: Show armored components
 + Feature [#1119]: Arrange Map Sizes
++ Refactored FireControl.guessToHitModifierPhysical and added unit tests for it.
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

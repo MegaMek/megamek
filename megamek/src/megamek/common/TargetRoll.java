@@ -29,7 +29,6 @@ import java.util.ArrayList;
  * Intended for rolls like a to-hit roll or a piloting skill check.
  *
  * @author Ben
- * @version
  */
 public class TargetRoll implements Serializable {
 
@@ -47,11 +46,13 @@ public class TargetRoll implements Serializable {
      */
     public final static int CHECK_FALSE = Integer.MIN_VALUE + 1;
 
-    private ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
+    private ArrayList<TargetRollModifier> modifiers = new ArrayList<TargetRollModifier>();
 
     private int total;
 
-    /** Creates new TargetRoll */
+    /**
+     * Creates new TargetRoll
+     */
     public TargetRoll() {
 
     }
@@ -66,6 +67,7 @@ public class TargetRoll implements Serializable {
     /**
      * Creates a new TargetRoll with a base value & desc, which is possibly
      * not cumulative
+     *
      * @param value
      * @param desc
      * @param cumulative
@@ -106,25 +108,25 @@ public class TargetRoll implements Serializable {
         boolean first = true;
         StringBuffer allDesc = new StringBuffer();
 
-        for (Modifier modifier : modifiers) {
+        for (TargetRollModifier modifier : modifiers) {
 
             // check for break condition
-            if ((modifier.value == IMPOSSIBLE)
-                    || (modifier.value == AUTOMATIC_FAIL)
-                    || (modifier.value == AUTOMATIC_SUCCESS)
-                    || (modifier.value == CHECK_FALSE)) {
-                return modifier.desc;
+            if ((modifier.getValue() == IMPOSSIBLE)
+                    || (modifier.getValue() == AUTOMATIC_FAIL)
+                    || (modifier.getValue() == AUTOMATIC_SUCCESS)
+                    || (modifier.getValue() == CHECK_FALSE)) {
+                return modifier.getDesc();
             }
 
             // add desc
             if (first) {
                 first = false;
             } else {
-                allDesc.append((modifier.value < 0 ? " - " : " + "));
+                allDesc.append((modifier.getValue() < 0 ? " - " : " + "));
             }
-            allDesc.append(Math.abs(modifier.value));
+            allDesc.append(Math.abs(modifier.getValue()));
             allDesc.append(" (");
-            allDesc.append(modifier.desc);
+            allDesc.append(modifier.getDesc());
             allDesc.append(")");
         }
 
@@ -135,17 +137,18 @@ public class TargetRoll implements Serializable {
      * Returns the first description found
      */
     public String getPlainDesc() {
-        return modifiers.get(0).desc;
+        return modifiers.get(0).getDesc();
     }
 
     /**
-     * Returns the description of the first cumulative Modifier
+     * Returns the description of the first cumulative TargetRollModifier
+     *
      * @return
      */
     public String getCumulativePlainDesc() {
-        for (Modifier mod : modifiers) {
-            if (mod.cumulative) {
-                return mod.desc;
+        for (TargetRollModifier mod : modifiers) {
+            if (mod.isCumulative()) {
+                return mod.getDesc();
             }
         }
         return "";
@@ -155,20 +158,20 @@ public class TargetRoll implements Serializable {
      * Returns the last description found
      */
     public String getLastPlainDesc() {
-        Modifier last = modifiers.get(modifiers.size() - 1);
-        return last.desc;
+        TargetRollModifier last = modifiers.get(modifiers.size() - 1);
+        return last.getDesc();
     }
 
     public void addModifier(int value, String desc) {
-        addModifier(new Modifier(value, desc));
+        addModifier(new TargetRollModifier(value, desc));
     }
 
     public void addModifier(int value, String desc, boolean cumulative) {
-        addModifier(new Modifier(value, desc, cumulative));
+        addModifier(new TargetRollModifier(value, desc, cumulative));
     }
 
-    public void addModifier(Modifier modifier) {
-        if (modifier.value == CHECK_FALSE) {
+    public void addModifier(TargetRollModifier modifier) {
+        if (modifier.getValue() == CHECK_FALSE) {
             removeAutos(true);
         }
         modifiers.add(modifier);
@@ -186,6 +189,7 @@ public class TargetRoll implements Serializable {
      * Append another TargetRoll to the end of this one,
      * possibly ignoring non-cumulative Modifier in the other
      * one
+     *
      * @param other
      * @param appendNonCumulative
      */
@@ -193,9 +197,9 @@ public class TargetRoll implements Serializable {
         if (other == null) {
             return;
         }
-        for (Modifier modifier : other.modifiers) {
+        for (TargetRollModifier modifier : other.modifiers) {
             // possibly only add cumulative mods
-            if (appendNonCumulative || modifier.cumulative) {
+            if (appendNonCumulative || modifier.isCumulative()) {
                 addModifier(modifier);
             }
         }
@@ -214,20 +218,20 @@ public class TargetRoll implements Serializable {
      * impossibles
      *
      * @param removeImpossibles <code>boolean</code> value wether or not
-     *            impossibles should be removed
+     *                          impossibles should be removed
      */
 
     public void removeAutos(boolean removeImpossibles) {
-        ArrayList<Modifier> toKeep = new ArrayList<Modifier>();
-        for (Modifier modifier : modifiers) {
+        ArrayList<TargetRollModifier> toKeep = new ArrayList<TargetRollModifier>();
+        for (TargetRollModifier modifier : modifiers) {
             if (!removeImpossibles) {
-                if ((modifier.value != AUTOMATIC_FAIL)
-                        && (modifier.value != AUTOMATIC_SUCCESS)) {
+                if ((modifier.getValue() != AUTOMATIC_FAIL)
+                        && (modifier.getValue() != AUTOMATIC_SUCCESS)) {
                     toKeep.add(modifier);
                 }
-            } else if ((modifier.value != AUTOMATIC_FAIL)
-                    && (modifier.value != AUTOMATIC_SUCCESS)
-                    && (modifier.value != IMPOSSIBLE)) {
+            } else if ((modifier.getValue() != AUTOMATIC_FAIL)
+                    && (modifier.getValue() != AUTOMATIC_SUCCESS)
+                    && (modifier.getValue() != IMPOSSIBLE)) {
                 toKeep.add(modifier);
             }
         }
@@ -243,39 +247,19 @@ public class TargetRoll implements Serializable {
     private void recalculate() {
         total = 0;
 
-        for (Modifier modifier : modifiers) {
+        for (TargetRollModifier modifier : modifiers) {
             // check for break condition
-            if ((modifier.value == IMPOSSIBLE)
-                    || (modifier.value == AUTOMATIC_FAIL)
-                    || (modifier.value == AUTOMATIC_SUCCESS)
-                    || (modifier.value == CHECK_FALSE)) {
-                total = modifier.value;
+            if ((modifier.getValue() == IMPOSSIBLE)
+                    || (modifier.getValue() == AUTOMATIC_FAIL)
+                    || (modifier.getValue() == AUTOMATIC_SUCCESS)
+                    || (modifier.getValue() == CHECK_FALSE)) {
+                total = modifier.getValue();
                 break;
             }
 
             // add modifier
-            total += modifier.value;
+            total += modifier.getValue();
         }
     }
 
-    private class Modifier implements Serializable {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -7228584817530534507L;
-        int value;
-        String desc;
-        boolean cumulative = true;
-
-        public Modifier(int value, String desc) {
-            this.value = value;
-            this.desc = desc;
-        }
-
-        public Modifier(int value, String desc, boolean cumulative) {
-            this.value = value;
-            this.desc = desc;
-            this.cumulative = cumulative;
-        }
-    }
 }

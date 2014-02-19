@@ -19,5 +19,13 @@ package megamek.client.bot.princess;
  * @since 12/18/13 1:29 PM
  */
 public enum PhysicalAttackType {
-    LEFT_KICK, RIGHT_KICK, LEFT_PUNCH, RIGHT_PUNCH
+    LEFT_KICK, RIGHT_KICK, LEFT_PUNCH, RIGHT_PUNCH, CHARGE, DEATH_FROM_ABOVE, SHOVE, WEAPON, FRENZY;
+
+    public boolean isPunch() {
+        return LEFT_PUNCH.equals(this) || RIGHT_PUNCH.equals(this);
+    }
+
+    public boolean isKick() {
+        return LEFT_KICK.equals(this) || RIGHT_KICK.equals(this);
+    }
 }

@@ -46,6 +46,11 @@ CLBAAPGaussRifle:Body
 CLBAAPGaussRifle:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
 </Point Equipment>
 <type>
 Clan Level 2

@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Shedu Assault Battle Armor
 </Name>
@@ -17,46 +20,82 @@ Shedu Assault Battle Armor
 (Capture Team)
 </Model>
 
-<chassis>
-quad
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
-<cruiseMP>
-3
-</cruiseMP>
-<Armor>
-15
-</Armor>
-<Squad Equipment>
-ISDetachableWeaponPack:Body
-ISBATaser:DWP:Body
-ISDetachableWeaponPack:Body
-ISBATaser:DWP:Body
-ISBAMagshotGR:Body
-</Squad Equipment>
+<year>
+3074
+</year>
 
 <type>
 IS Level 3
 </type>
 
-<year>
-3074
-</year>
-
 <motion_type>
 Leg
 </motion_type>
-<source>
-TRO 3075
-</source>
+
+<cruiseMP>
+3
+</cruiseMP>
+
 <armor_type>
 30
 </armor_type>
+
 <armor_tech>
 5
 </armor_tech>
+
+<Squad Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISBAMagshotGR:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+15
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

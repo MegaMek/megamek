@@ -44,6 +44,10 @@ ISBAHeavyRecoillessRifle:RA
 ISBAFiredrakeIncendiaryNeedler:LA
 BattleArmorC3:Body
 BABasicManipulator:LA
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:Body
 </Squad Equipment>
 
 <type>

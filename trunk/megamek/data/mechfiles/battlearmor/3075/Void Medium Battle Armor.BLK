@@ -2,55 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Void Medium Battle Armor
 </Name>
-<chassis>
-biped
-</chassis>
-<weightclass>
-2
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
+
+<Model>
+
+</Model>
+
+<year>
+3067
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
 <cruiseMP>
 1
 </cruiseMP>
-<jumpingMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
 3
-</jumpingMP>
-<Armor>
-5
-</Armor>
+</armor_tech>
+
 <Squad Equipment>
 ISBASupportPPC:Body
 ISBAJumpBooster:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
 </Squad Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3067
-</year>
-<motion_type>
-Jump
-</motion_type>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
 <source>
 TRO 3075
 </source>
-<armor_type>
-33
-</armor_type>
-<armor_tech>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 3
-</armor_tech>
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

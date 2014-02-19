@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,56 +20,78 @@ Angerona Scout Suit
 (Recon)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3085
+</year>
 
-<weightclass>
-2
-</weightclass>
+<type>
+IS Level 2
+</type>
 
-<Trooper Count>
-4
-</Trooper Count>
+<motion_type>
+Leg
+</motion_type>
 
 <cruiseMP>
 3
 </cruiseMP>
-
-<Armor>
-6
-</Armor>
 
 <armor_type>
 33
 </armor_type>
 
 <armor_tech>
-3
+1
 </armor_tech>
 
 <Squad Equipment>
-ISBALightMG:LA
+ISBALightMachineGun:LA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 ISImprovedSensors:Body
 BARemoteSensorDispenser:Body
 Camo System:Body
-InfantryAssaultRifle:RA:APM
+Infantry Auto Rifle:APM:RA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
 </Squad Equipment>
 
-<type>
-IS Level 2
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3085
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<motion_type>
-Leg
-</motion_type>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3085
 </source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

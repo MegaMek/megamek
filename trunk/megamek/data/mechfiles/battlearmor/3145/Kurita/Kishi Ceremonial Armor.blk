@@ -36,11 +36,42 @@ Jump
 3
 </cruiseMP>
 
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
 <Squad Equipment>
-Heavy Battle Claw (w/ Vibro-Claws):LA
-ISBAHeavyMG:RA
+BAHeavyBattleClawVibro:LA
+ISBAHeavyMachineGun:RA
 ISMechanicalJumpBooster:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Draconis Combine
@@ -51,16 +82,12 @@ biped
 </chassis>
 
 <jumpingMP>
-
+0
 </jumpingMP>
 
 <armor>
 6
 </armor>
-
-<armor_type>
-37
-</armor_type>
 
 <Trooper Count>
 4
@@ -70,6 +97,3 @@ biped
 1
 </weightclass>
 
-<armor_tech>
-5
-</armor_tech>

@@ -50,13 +50,13 @@ ISBAHeavyMachineGun:RA
 ISBATaser:DWP
 ISBALRM2OS:Body
 BAHeavyBattleClaw:LA
-IS BA Mimetic:LA
-IS BA Mimetic:RA
-IS BA Mimetic:LA
 IS BA Mimetic:Body
 IS BA Mimetic:LA
-IS BA Mimetic:Body
+IS BA Mimetic:LA
 IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

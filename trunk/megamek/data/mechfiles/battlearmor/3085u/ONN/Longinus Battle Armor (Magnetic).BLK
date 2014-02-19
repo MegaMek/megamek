@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,58 +20,81 @@ Longinus Battle Armor
 (Magnetic)
 </Model>
 
-<chassis>
-biped
-</chassis>
-
-<weightclass>
-2
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<Armor>
-9
-</Armor>
-
-<Squad Equipment>
-ISBAHeavyMG:RA
-ISBAMachine Gun:LA
-BAAPMount:LA
-InfantryAssaultRifle:LA:APM
-BA-Magnetic Clamp:Body
-BABattleClaw:LA
-</Squad Equipment>
+<year>
+3069
+</year>
 
 <type>
 IS Level 2
 </type>
 
-<year>
-3069
-</year>
-
 <motion_type>
 Jump
 </motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAHeavyMachineGun:RA
+ISBAMG:LA
+BAAPMount:LA
+Infantry Auto Rifle:APM
+BA-Magnetic Clamp:Body
+BABattleClaw:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS 3085 Unabridged ONN
 </source>
 
-<armor_type>
-30
-</armor_type>
-<armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 3
-</armor_tech>
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

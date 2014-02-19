@@ -2,61 +2,98 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Hauberk Battle Armor
 </Name>
+
 <Model>
 Commando
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
+
+<year>
+3088
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
 <cruiseMP>
 2
 </cruiseMP>
-<Armor>
-11
-</Armor>
 
 <armor_type>
 36
 </armor_type>
 
 <armor_tech>
-5
+1
 </armor_tech>
 
 <Squad Equipment>
 ISDetachableWeaponPack:RA
-ISBAERSmallLaser:DWP:RA
+ISBAERSmallLaser:DWP
 ISDetachableWeaponPack:LA
-ISBAERSmallLaser:DWP:LA
+ISBAERSmallLaser:DWP
 ISDetachableWeaponPack:Body
-ISBAMagshotGR:DWP:Body
-ISBASRM2 (OS):Body
+ISBAMagshotGR:DWP
+ISBASRM2OS:Body
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
 </Squad Equipment>
-<type>
-IS Level 3
-</type>
-<year>
-3088
-</year>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
 <source>
 TRO:Prototypes
 </source>
-<motion_type>
-Leg
-</motion_type>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

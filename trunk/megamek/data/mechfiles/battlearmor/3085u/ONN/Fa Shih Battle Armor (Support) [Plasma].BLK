@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,56 +20,79 @@ Fa Shih Battle Armor
 (Support) [Plasma]
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3074
+</year>
 
-<weightclass>
-2
-</weightclass>
+<type>
+IS Level 2
+</type>
 
-<Trooper Count>
-4
-</Trooper Count>
+<motion_type>
+Jump
+</motion_type>
 
 <cruiseMP>
 1
 </cruiseMP>
 
-<jumpingMP>
-3
-</jumpingMP>
+<armor_type>
+30
+</armor_type>
 
-<Armor>
-7
-</Armor>
+<armor_tech>
+11
+</armor_tech>
 
 <Squad Equipment>
 ISBAPlasmaRifle:RA
 BA-Magnetic Clamp:Body
 BABasicManipulator:LA
 BABasicManipulator:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:Body
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:Body
+IS BA Advanced:LA
 </Squad Equipment>
 
-<type>
-IS Level 2
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3074
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<motion_type>
-Jump
-</motion_type>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS 3085 Unabridged ONN
 </source>
 
-<armor_type>
-30
-</armor_type>
-<armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 3
-</armor_tech>
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

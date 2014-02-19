@@ -41,18 +41,22 @@ Leg
 </armor_type>
 
 <armor_tech>
-1
+11
 </armor_tech>
 
 <Squad Equipment>
 ISBAMediumRecoillessRifle:Body
-ISBAMachineGun:Body
+ISBAMG:Body
 BABattleClaw:LA
 BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
 IS BA Advanced:RA
 IS BA Advanced:Body
-IS BA Advanced:LA
 IS BA Advanced:RA
+IS BA Advanced:LA
 IS BA Advanced:LA
 </Squad Equipment>
 

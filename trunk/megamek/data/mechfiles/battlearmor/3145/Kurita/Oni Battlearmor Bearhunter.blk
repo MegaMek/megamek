@@ -41,11 +41,11 @@ Jump
 </armor_type>
 
 <armor_tech>
-7
+12
 </armor_tech>
 
 <Squad Equipment>
-CLBearhunter Superheavy AC:RA
+Bearhunter Superheavy AC:RA
 BAHeavyBattleClawVibro:LA
 BABasicManipulator:RA
 IS BA ECM:Body
@@ -55,10 +55,10 @@ SwarmWeaponMek
 StopSwarm
 LegAttack
 Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:Body
 Clan BA Fire Resistant:LA
 Clan BA Fire Resistant:LA
 Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

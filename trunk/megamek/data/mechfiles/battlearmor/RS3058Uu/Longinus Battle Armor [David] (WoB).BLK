@@ -39,6 +39,11 @@ ISBASRM2OS:Body
 BABattleClaw:RA
 BAAPMount:LA
 InfantryAssaultRifle:LA:APM
+IS BA Advanced:RA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:LA
+IS BA Advanced:Body
 </Squad Equipment>
 <type>
 IS Level 2

@@ -41,6 +41,11 @@ CLBALRM4:Body
 BACLLRM4 Ammo:Body:Shots4#
 BACLLRM4 Ammo:Body:Shots4#
 BACLLRM4 Ammo:Body:Shots2#
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
@@ -71,6 +76,6 @@ quad
 30
 </armor_type>
 <armor_tech>
-7
+11
 </armor_tech>
 

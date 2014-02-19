@@ -180,6 +180,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     .getShootingStrength() : Compute
                     .missilesHit(((BattleArmor) ae).getShootingStrength());
             Report r = new Report(3325);
+            r.newlines = 0;
             r.subject = subjectId;
             r.add(toReturn);
             r.add(" troopers ");

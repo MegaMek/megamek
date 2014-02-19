@@ -166,6 +166,7 @@ public class CLIATMHandler extends ATMHandler {
 			if (ae instanceof BattleArmor) {
 				bSalvo = true;
 				Report r = new Report(3325);
+				r.newlines = 0;
 				r.subject = subjectId;
 				r.add(wtype.getRackSize()
 						* ((BattleArmor) ae).getShootingStrength());
@@ -176,6 +177,7 @@ public class CLIATMHandler extends ATMHandler {
 			}
 			Report r = new Report(3325);
 			r.subject = subjectId;
+			r.newlines = 0;
 			r.add(wtype.getRackSize());
 			r.add(sSalvoType);
 			r.add(toHit.getTableDesc());

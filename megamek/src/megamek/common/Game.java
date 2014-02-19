@@ -1888,6 +1888,29 @@ public class Game implements Serializable, IGame {
 
         return remaining;
     }
+    
+    /**
+     * Returns the number of Mechs that <code>playerId</code> has not moved
+     * yet this turn.
+     *
+     * @param playerId
+     * @return number of vehicles <code>playerId</code> has not moved yet this
+     *         turn
+     */
+    public int getMechsLeft(int playerId){
+        IPlayer player = getPlayer(playerId);
+        int remaining = 0;
+
+        for (Entity entity : entities) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof Mech)) {
+                remaining++;
+            }
+        }
+
+        return remaining;
+    }
 
     /**
      * Removes the first turn found that the specified entity can move in. Used

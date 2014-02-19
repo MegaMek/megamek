@@ -64,6 +64,8 @@ v0.37.8-dev (SVN)
     report and also in between different unit firing reports
 + Bug: Shooting LRMs at infantry caused some weird new lines in the report:
     you would see something like 12 missile(s) hit \n hits men.
++ Bug: Forgot to add l10n entries for Mek Lance Movement
++ Bug: Mek Lance Movement is technically unofficial, options now relfects this
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

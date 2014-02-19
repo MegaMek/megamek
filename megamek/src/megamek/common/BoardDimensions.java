@@ -144,25 +144,22 @@ public class BoardDimensions implements Cloneable, Serializable,
     }
 
     /**
-     * Compares dimensions based on the total number of hexes, falling back to
-     * width in the case of a tie.
+     * Compares dimensions based width, falling back on height if the widths 
+     * equal
      */
     @Override
     public int compareTo(final BoardDimensions o) {
         int result = 0;
-        long my_hexes = numHexes();
-        long his_hexes = o.numHexes();
 
-        if (my_hexes < his_hexes) {
+        if (width() < o.width()) {
             result = -1;
-        } else if (my_hexes > his_hexes) {
+        } else if (width() > o.width()) {
             result = 1;
         } else {
-            // Total hexes same, the one with the smallest width is considered
-            // smaller.
-            if (width() < o.width()) {
+            // width is the same, next consider height
+            if (height() < o.height()) {
                 result = -1;
-            } else if (width() > o.width()) {
+            } else if (height() > o.height()) {
                 result = 1;
             }
         }

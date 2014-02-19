@@ -2794,6 +2794,9 @@ public class MechDisplay extends JPanel {
                             break;
                         default:
                     }
+                    if (cs.isArmored()){
+                        sb.append(" (armored)");
+                    }
                 }
                 ((DefaultListModel<String>) slotList.getModel()).addElement(sb
                         .toString());

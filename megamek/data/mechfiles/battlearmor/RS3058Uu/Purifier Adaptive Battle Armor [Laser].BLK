@@ -47,17 +47,17 @@ Jump
 <Squad Equipment>
 BABattleClaw:LA
 ISBAERSmallLaser:LA
-IS BA Mimetic:RA
-IS BA Mimetic:Body
-IS BA Mimetic:Body
-IS BA Mimetic:LA
-IS BA Mimetic:Body
-IS BA Mimetic:RA
-IS BA Mimetic:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+IS BA Mimetic:RA
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+IS BA Mimetic:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

@@ -1,0 +1,71 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Hippogriff
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+8
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+2
+10
+4
+4
+10
+</Armor>
+
+<Torso Equipment>
+ProtoMechPartialWing
+</Torso Equipment>
+
+<Right Arm Equipment>
+CLLRM2
+CLLRM2 Ammo (24)
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+CLLRM2
+CLLRM2 Ammo (24)
+</Left Arm Equipment>
+
+<type>
+Clan Level 3
+</type>
+<year>
+3110
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Biped
+</motion_type>
+<source>
+TRO 3145 Mercenaries
+</source>
+
+

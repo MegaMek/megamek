@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,29 +20,29 @@ Infiltrator Mk. II Battle Armor
 (Magnetic)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3071
+</year>
 
-<weightclass>
-2
-</weightclass>
+<type>
+IS Level 2
+</type>
 
-<Trooper Count>
-4
-</Trooper Count>
+<motion_type>
+Jump
+</motion_type>
 
 <cruiseMP>
 1
 </cruiseMP>
 
-<jumpingMP>
-3
-</jumpingMP>
+<armor_type>
+32
+</armor_type>
 
-<Armor>
-6
-</Armor>
+<armor_tech>
+1
+</armor_tech>
 
 <Squad Equipment>
 ISBAMagshotGR:RA
@@ -50,27 +50,49 @@ BABasicManipulator:LA
 BABasicManipulator:RA
 BA-Magnetic Clamp:Body
 IS BA ECM:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:LA
+IS BA Stealth:LA
 </Squad Equipment>
 
-<type>
-IS Level 2
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3071
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<motion_type>
-Jump
-</motion_type>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 RS 3085 Unabridged ONN
 </source>
 
-<armor_type>
-32
-</armor_type>
-<armor_tech>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 3
-</armor_tech>
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

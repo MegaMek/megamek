@@ -41,7 +41,7 @@ Jump
 </armor_type>
 
 <armor_tech>
-7
+1
 </armor_tech>
 
 <Squad Equipment>
@@ -53,6 +53,9 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

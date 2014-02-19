@@ -56,6 +56,9 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

@@ -53,7 +53,11 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-InfantryClanMauserIICIAS:RA:APM
+Infantry Clan Mauser IIC:APM:RA
+Clan BA Stealth:RA
+Clan BA Stealth:LA
+Clan BA Stealth:LA
+Clan BA Stealth:RA
 </Point Equipment>
 
 <Trooper 1 Equipment>

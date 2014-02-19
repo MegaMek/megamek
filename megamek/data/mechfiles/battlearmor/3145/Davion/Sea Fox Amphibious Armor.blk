@@ -29,27 +29,50 @@ Mixed (IS Chassis) Experimental
 </type>
 
 <motion_type>
-umu
+UMU
 </motion_type>
 
 <cruiseMP>
 2
 </cruiseMP>
 
-<jumpingMP>
-3
-</jumpingMP>
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <Squad Equipment>
 BACuttingTorch:RA
 ISBASRM1OS:LA
-ISBALightMG:Body
+ISBALightMachineGun:Body
 BAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BAArmoredGlove:RA
 BAArmoredGlove:LA
-InfantryAssaultRifle:RA:APM
+Infantry Auto Rifle:APM:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Federated Suns
@@ -58,6 +81,10 @@ TRO 3145 Federated Suns
 <chassis>
 biped
 </chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
 
 <armor>
 5
@@ -70,11 +97,4 @@ biped
 <weightclass>
 1
 </weightclass>
-
-<armor_type>
-31
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
 

@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,36 +20,28 @@ Thunderbird Battle Armor
 [Upgrade] (ER Laser)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3130
+</year>
 
-<weightclass>
-3
-</weightclass>
+<type>
+Clan Level 3
+</type>
 
-<Trooper Count>
-5
-</Trooper Count>
+<motion_type>
+Jump
+</motion_type>
 
 <cruiseMP>
 1
 </cruiseMP>
-
-<jumpingMP>
-2
-</jumpingMP>
-
-<Armor>
-10
-</Armor>
 
 <armor_type>
 37
 </armor_type>
 
 <armor_tech>
-2
+6
 </armor_tech>
 
 <Point Equipment>
@@ -56,22 +49,51 @@ CLBAERSmallLaser:RA
 CLBAJumpBooster:Body
 BABasicManipulator:RA
 BABattleClaw:LA
+Clan BA Reflective:Body
+Clan BA Reflective:LA
+Clan BA Reflective:Body
+Clan BA Reflective:Body
+Clan BA Reflective:LA
+Clan BA Reflective:LA
+Clan BA Reflective:Body
 </Point Equipment>
 
-<type>
-Clan Level 2
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3130
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<motion_type>
-Jump
-</motion_type>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 RS3145 NT NU
 </source>
 
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
 

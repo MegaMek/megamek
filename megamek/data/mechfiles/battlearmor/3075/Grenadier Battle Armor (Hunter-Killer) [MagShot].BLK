@@ -36,6 +36,10 @@ ISBAFiredrakeIncendiaryNeedler:RA
 ISBASRM5:Body
 BA-SRM4 Ammo:Body:Shots4#
 BABasicManipulator:RA
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:Body
 </Squad Equipment>
 <type>
 IS Level 2

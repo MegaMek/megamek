@@ -36,13 +36,36 @@ Jump
 1
 </cruiseMP>
 
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <Squad Equipment>
 ISBAMagshotGR:RA
-ISBALightMG:Body
+ISBALightMachineGun:Body
 ISBAJumpBooster:Body
 BAArmoredGlove:LA
-InfantryAssaultRifle:LA:APM
+Infantry Auto Rifle:APM:LA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Federated Suns
@@ -67,11 +90,4 @@ biped
 <weightclass>
 4
 </weightclass>
-
-<armor_type>
-31
-</armor_type>
-<armor_tech>
-5
-</armor_tech>
 

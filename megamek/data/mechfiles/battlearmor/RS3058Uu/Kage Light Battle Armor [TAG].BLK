@@ -2,66 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Kage Light Battle Armor
 </Name>
+
 <Model>
 [TAG]
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-1
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
 <cruiseMP>
 1
 </cruiseMP>
-<jumpingMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
 3
-</jumpingMP>
-<Armor>
-5
-</Armor>
+</armor_tech>
 
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAPartialWing:Body
 BAAPMount:RA
-InfantryAssaultRifle:RA:APM
+Infantry Auto Rifle:APM:RA
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
-</Squad Equipment>
-<Trooper 1 Equipment>
 ISBALightTAG:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
 </Trooper 1 Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3056
-</year>
-<motion_type>
-Jump
-</motion_type>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
 <source>
 TRO 3058 Upgrade
 </source>
-<armor_type>
-31
-</armor_type>
-<armor_tech>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
 3
-</armor_tech>
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+

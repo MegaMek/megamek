@@ -1950,6 +1950,9 @@ public class Tank extends Entity {
                 r = new Report(7073, Report.PUBLIC);
             }
             vDesc.addElement(r);
+        } else if (getCrew().isEjected()){
+            r = new Report(7071, Report.PUBLIC);
+            vDesc.addElement(r);
         }
         r.newlines = 2;
 

@@ -1953,7 +1953,8 @@ public class Game implements Serializable, IGame {
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
                                 && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
                             turnVector.removeElementAt(turnIndex + 1);
@@ -1976,7 +1977,8 @@ public class Game implements Serializable, IGame {
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
                                 && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
                             turnVector.removeElementAt(turnIndex + 1);
@@ -1990,18 +1992,41 @@ public class Game implements Serializable, IGame {
         // Same thing but for vehicles
         if (getOptions().booleanOption("vehicle_lance_movement")
                 && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
-            if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
+            if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
                     .intOption("vehicle_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove
-                // that
+                // exception, if the _next_ turn is an tank turn, remove that
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_TANK)
                                 && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                            turnVector.removeElementAt(turnIndex + 1);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+        
+        // Same thing but for meks
+        if (getOptions().booleanOption("mek_lance_movement")
+                && (entity instanceof Mech) && (phase == Phase.PHASE_MOVEMENT)) {
+            if ((getMechsLeft(entity.getOwnerId()) % getOptions()
+                    .intOption("mek_lance_movement_number")) != 1) {
+                // exception, if the _next_ turn is an tank turn, remove that
+                // contrived, but may come up e.g. one mech accidently kills
+                // another
+                if (hasMoreTurns()) {
+                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
+                        if (ect.isValidClass(GameTurn.CLASS_MECH)
+                                && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
                             turnVector.removeElementAt(turnIndex + 1);
                         }
                     }

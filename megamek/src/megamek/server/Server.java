@@ -24617,6 +24617,7 @@ public class Server implements Runnable {
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
         int newElevation = 0;
+        
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
@@ -24635,6 +24636,11 @@ public class Server implements Runnable {
                 && (entity.getElevation() == 0)) {
             waterDepth = 0;
             newElevation = 0;
+        // If we are in a basement, we are at a negative elevation, and so
+        //  setting newElevation = 0 will cause us to "fall up"
+        } else if (entity.getMovementMode() != EntityMovementMode.VTOL
+                && game.getBoard().getBuildingAt(fallPos) != null){
+            newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface

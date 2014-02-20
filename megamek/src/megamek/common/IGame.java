@@ -402,6 +402,11 @@ public interface IGame {
      * Inserts a turn that will come directly after the current one
      */
     public abstract void insertNextTurn(GameTurn turn);
+    
+    /**
+     * Inserts a turn after the specific index
+     */
+    public abstract void insertTurnAfter(GameTurn turn, int index);
 
     /**
      * Returns an Enumeration of the current turn list

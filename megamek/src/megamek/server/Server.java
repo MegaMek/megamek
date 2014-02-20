@@ -22953,7 +22953,7 @@ public class Server implements Runnable {
             // facing after fall
             String side;
             int table;
-            int facing = Compute.d6();
+            int facing = Compute.d6() - 1;
             switch (facing) {
                 case 1:
                 case 2:
@@ -23018,7 +23018,7 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
 
-            en.setFacing((en.getFacing() + (facing - 1)) % 6);
+            en.setFacing((en.getFacing() + (facing)) % 6);
 
             boolean exploded = false;
 

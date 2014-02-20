@@ -4768,12 +4768,12 @@ public class Server implements Runnable {
                 int damage = ((int) entity.getWeight() + 19) / 20;
                 while (damage > 0) {
                     int table = ToHitData.HIT_NORMAL;
+                    int side = entity.sideTable(nextPos);
                     if (entity instanceof Protomech) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
-                    addReport(damageEntity(
-                            entity,
-                            entity.rollHitLocation(table, ToHitData.SIDE_FRONT),
+                    addReport(damageEntity(entity,
+                            entity.rollHitLocation(table, side),
                             Math.min(5, damage)));
                     damage -= 5;
                 }

@@ -56,6 +56,7 @@ import megamek.common.loaders.MepFile;
 import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.CLERPPC;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
 import megamek.common.weapons.ISLightPPC;
@@ -291,16 +292,16 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match DWP to weapon for " 
+                            "Unable to match DWP to weapon for "
                                     + ent.getShortName());
                 }
             }
-            
+
             // Link AP weapons to their AP Mount, when applicable
             if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     // Can only link APM mounted weapons that aren't linked
-                    if (!mWeapon.isAPMMounted() 
+                    if (!mWeapon.isAPMMounted()
                             || mWeapon.getLinkedBy() != null) {
                         continue;
                     }
@@ -397,7 +398,8 @@ public class MechFileParser {
                                 || (mWeapon.getType() instanceof ISLightPPC)
                                 || (mWeapon.getType() instanceof ISHeavyPPC)
                                 || (mWeapon.getType() instanceof ISERPPC)
-                                || (mWeapon.getType() instanceof ISSnubNosePPC)) {
+                                || (mWeapon.getType() instanceof ISSnubNosePPC)
+                                || (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -573,23 +575,23 @@ public class MechFileParser {
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
-                    
+
                     //Handle weapon bays
                     if (wtype.getBayType().equals(EquipmentType.get("PPC Bay"))){
                         for (int wId : mWeapon.getBayWeapons())
                         {
                             Mounted bayMountedWeapon = ent.getEquipment(wId);
-                            WeaponType bayWeapType = 
+                            WeaponType bayWeapType =
                                     (WeaponType)bayMountedWeapon.getType();
-                            
+
                             // Check for PPC that isn't crosslinked
-                            if (!bayWeapType.hasFlag(WeaponType.F_PPC) || 
+                            if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
                                     bayMountedWeapon.getCrossLinkedBy() != null){
                                 continue;
                             }
-                            
+
                             // check location
-                            if (bayMountedWeapon.getLocation() == 
+                            if (bayMountedWeapon.getLocation() ==
                                     m.getLocation()) {
 
                                 // Only Legal IS PPC's are allowed.
@@ -597,7 +599,8 @@ public class MechFileParser {
                                         || (bayWeapType instanceof ISLightPPC)
                                         || (bayWeapType instanceof ISHeavyPPC)
                                         || (bayWeapType instanceof ISERPPC)
-                                        || (bayWeapType instanceof ISSnubNosePPC)) {
+                                        || (bayWeapType instanceof ISSnubNosePPC)
+                                        || (bayWeapType instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                                     m.setCrossLinked(bayMountedWeapon);
                                     break;
@@ -605,9 +608,9 @@ public class MechFileParser {
                             }
                         }
                     }
-                    
+
                     // Check for PPC that isn't crosslinked
-                    if (!wtype.hasFlag(WeaponType.F_PPC) || 
+                    if (!wtype.hasFlag(WeaponType.F_PPC) ||
                             mWeapon.getCrossLinkedBy() != null){
                         continue;
                     }
@@ -637,7 +640,7 @@ public class MechFileParser {
             } // End crossLink-PPC Capacitor
 
         } // Check the next piece of equipment.
-        
+
         // For BattleArmor, we have to ensure that all ammo that is DWP mounted
         //  is linked to it's DWP mounted weapon, so that TestBattleArmor
         //  can properly account for DWP mounted ammo
@@ -647,7 +650,7 @@ public class MechFileParser {
                     // First, make sure every valid DWP weapon has ammo
                     for (Mounted weapon : ent.getWeaponList()){
                         if (weapon.isDWPMounted() && weapon.getLinked() == null
-                                && AmmoType.isAmmoValid(ammo, 
+                                && AmmoType.isAmmoValid(ammo,
                                         (WeaponType)weapon.getType())){
                             weapon.setLinked(ammo);
                             break;
@@ -658,7 +661,7 @@ public class MechFileParser {
                     if (ammo.getLinkedBy() == null) {
                         for (Mounted weapon : ent.getWeaponList()){
                             if (weapon.isDWPMounted()
-                                    && AmmoType.isAmmoValid(ammo, 
+                                    && AmmoType.isAmmoValid(ammo,
                                             (WeaponType)weapon.getType())){
                                 weapon.setLinked(ammo);
                                 break;

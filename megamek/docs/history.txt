@@ -70,6 +70,8 @@ v0.37.8-dev (SVN)
 + Feature [#1119]: Arrange Map Sizes
 + Refactored FireControl.guessToHitModifierPhysical and added unit tests for it.
 + Bug [#3942]: Initiative ties not rolled off when multiple ties
++ Bug: Fixed two potential "no units to move" errors related to Vee and Mek
+    lance movement rules
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

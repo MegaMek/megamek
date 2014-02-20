@@ -76,6 +76,8 @@ v0.37.8-dev (SVN)
     wrong elevation
 + Bug [#4047]: Unit Configuration Interface Issues with Stratops Capital
     Fighters On
++ Bug [#4045]: Exception in thread "AWT-EventQueue-0" 
+    java.lang.ArrayIndexOutOfBoundsException: -1 On Megamek 0.37.7 - Windows
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

@@ -74,6 +74,8 @@ v0.37.8-dev (SVN)
     lance movement rules
 + Bug [#3933]: mech that fails getting up after falling in basement ends up at
     wrong elevation
++ Bug [#4047]: Unit Configuration Interface Issues with Stratops Capital
+    Fighters On
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

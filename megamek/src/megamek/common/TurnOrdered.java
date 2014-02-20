@@ -17,7 +17,6 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -220,11 +219,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
         getInitiative().clear();
     }
 
-    public static void rollInitiative(Vector<? extends ITurnOrdered> v, boolean bUseInitiativeCompensation) {
+    public static void rollInitiative(Vector<? extends ITurnOrdered> v,
+            boolean bUseInitiativeCompensation) {
         // Clear all rolls
-        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                .hasMoreElements(); ) {
-            final ITurnOrdered item = i.nextElement();
+        for (ITurnOrdered item : v) {
             item.clearInitiative(bUseInitiativeCompensation);
         }
 
@@ -299,17 +297,16 @@ public abstract class TurnOrdered implements ITurnOrdered {
         for (ITurnOrdered item : v) {
             ties.removeAllElements();
             ties.addElement(item);
-            for (Enumeration<? extends ITurnOrdered> j = v.elements(); j
-                    .hasMoreElements(); ) {
-                final ITurnOrdered other = j.nextElement();
+            for (ITurnOrdered other : v) {
                 if ((item != other)
                     && item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
             if (ties.size() > 1) {
-                rollInitAndResolveTies(ties, null, bInitCompBonus);
-                return;
+                // We want to ignore init compensation here, because it will
+                // get dealt with once we're done resolving ties
+                rollInitAndResolveTies(ties, null, false);
             }
         }
 

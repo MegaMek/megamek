@@ -1819,6 +1819,25 @@ public class Server implements Runnable {
         if (meksMoveMulti) {
             multiMask += GameTurn.CLASS_MECH;
         }
+        
+        // In certain cases, a new SpecificEntityTurn could have been added for
+        //  the Entity whose turn we are ending as the next turn.  If this has 
+        //  happened, the remaining entity count will be off and we must ensure
+        //  that the SpecificEntityTurn for this unit remains the next turn  
+        Vector<GameTurn> turnVector = game.getTurnVector();
+        int turnIndex = game.getTurnIndex();
+        boolean usedEntityNotDone = false;
+        if ((turnIndex + 1) < turnVector.size()){
+            GameTurn nextTurn = turnVector.get(turnIndex+1);
+            if (nextTurn instanceof GameTurn.SpecificEntityTurn){
+                GameTurn.SpecificEntityTurn seTurn = 
+                        (GameTurn.SpecificEntityTurn)nextTurn;
+                if (seTurn.getEntityNum() == entityUsed.getId()){
+                    turnIndex++;
+                    usedEntityNotDone = true;
+                }
+            }
+        }
 
         // Is this a general move turn?
         boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
@@ -1860,7 +1879,7 @@ public class Server implements Runnable {
             for (int i = 0; i < protoTurns; i++) {
                 GameTurn newTurn = new GameTurn.UnitNumberTurn(playerId,
                         movingUnit);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
@@ -1877,6 +1896,9 @@ public class Server implements Runnable {
             if (protosMoveMulti) {
                 remaining += game.getProtomechsLeft(playerId);
             }
+            if (usedEntityNotDone){
+                remaining--;
+            }
             int moreInfAndProtoTurns = Math.min(
                     game.getOptions().intOption("inf_proto_move_multi") - 1,
                     remaining);
@@ -1885,14 +1907,16 @@ public class Server implements Runnable {
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
 
         if (tanksMoved && tanksMoveMulti && isGeneralMoveTurn) {
             int remaining = game.getVehiclesLeft(playerId);
-
+            if (usedEntityNotDone){
+                remaining--;
+            }
             int moreVeeTurns = Math.min(
                     game.getOptions()
                             .intOption("vehicle_lance_movement_number") - 1,
@@ -1902,14 +1926,16 @@ public class Server implements Runnable {
             for (int i = 0; i < moreVeeTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
         
         if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
             int remaining = game.getMechsLeft(playerId);
-
+            if (usedEntityNotDone){
+                remaining--;
+            }
             int moreMekTurns = Math.min(
                     game.getOptions()
                             .intOption("mek_lance_movement_number") - 1,
@@ -1919,7 +1945,7 @@ public class Server implements Runnable {
             for (int i = 0; i < moreMekTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }

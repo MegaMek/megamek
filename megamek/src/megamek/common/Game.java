@@ -646,6 +646,17 @@ public class Game implements Serializable, IGame {
     public void insertNextTurn(GameTurn turn) {
         turnVector.insertElementAt(turn, turnIndex + 1);
     }
+    
+    /**
+     * Inserts a turn after the specific index
+     */
+    public void insertTurnAfter(GameTurn turn, int index){
+        if ((index + 1) >= turnVector.size()){
+            turnVector.add(turn);
+        } else {
+            turnVector.insertElementAt(turn, index + 1);
+        }
+    }
 
     /** Returns an Enumeration of the current turn list */
     public Enumeration<GameTurn> getTurns() {

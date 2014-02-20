@@ -72,6 +72,8 @@ v0.37.8-dev (SVN)
 + Bug [#3942]: Initiative ties not rolled off when multiple ties
 + Bug: Fixed two potential "no units to move" errors related to Vee and Mek
     lance movement rules
++ Bug [#3933]: mech that fails getting up after falling in basement ends up at
+    wrong elevation
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

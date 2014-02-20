@@ -23,6 +23,7 @@ package megamek.common;
 
 import java.math.BigInteger;
 
+import megamek.common.weapons.CLERPPC;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
 import megamek.common.weapons.ISLightPPC;
@@ -1075,6 +1076,10 @@ public class MiscType extends EquipmentType {
             if (linkedTo.getType() instanceof ISERPPC) {
                 return 114;
             }
+
+            if (linkedTo.getType() instanceof CLERPPC) {
+                return 136;
+            }
         }
 
         if (linkedTo != null) {
@@ -1198,6 +1203,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLAPPod());
         EquipmentType.addType(MiscType.createSword());
         EquipmentType.addType(MiscType.createISPPCCapacitor());
+        EquipmentType.addType(MiscType.createCLPPCCapacitor());
         EquipmentType.addType(MiscType.createRetractableBlade());
         EquipmentType.addType(MiscType.createChainWhip());
         EquipmentType.addType(MiscType.createISApolloFCS());
@@ -1485,7 +1491,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createShotgunMicrophone());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
-        
+
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
@@ -3464,8 +3470,8 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-      
-    
+
+
     public static MiscType createISBAMineDispenser() {
         MiscType misc = new MiscType();
 
@@ -3644,7 +3650,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         return misc;
     }
-    
+
     public static MiscType createCLSingleHexECM() {
         MiscType misc = new MiscType();
 
@@ -3711,7 +3717,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAPowerPack() {
         MiscType misc = new MiscType();
 
@@ -3730,7 +3736,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createMekStealth() {
         MiscType misc = new MiscType();
 
@@ -5377,7 +5383,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAISAngelECM() {
         MiscType misc = new MiscType();
 
@@ -5404,7 +5410,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBACLAngelECM() {
         MiscType misc = new MiscType();
 
@@ -5620,7 +5626,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createVacuumProtection() {
         MiscType misc = new MiscType();
 
@@ -6332,6 +6338,28 @@ public class MiscType extends EquipmentType {
                 .or(F_VTOL_EQUIPMENT);
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
 
+        return misc;
+    }
+
+    public static MiscType createCLPPCCapacitor() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3101, TechConstants.T_CLAN_TW);
+        misc.name = "PPC Capacitor";
+        misc.setInternalName("CLPPCCapacitor");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.tankslots = 0;
+        misc.cost = 150000;
+        misc.setModes(new String[] { "Off", "Charge" });
+        misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.setInstantModeSwitch(false);
+        misc.explosive = true;
+        misc.bv = 0;
+        misc.introDate = 3101;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
         return misc;
     }
 
@@ -7548,7 +7576,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         return misc;
     }
-    
+
     public static MiscType createCLBASpaceOperationsAdaptation() {
         MiscType misc = new MiscType();
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
@@ -8324,7 +8352,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         return misc;
     }
-    
+
     public static MiscType createCLBAHeatSensor() {
         MiscType misc = new MiscType();
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
@@ -8921,7 +8949,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createISBAFuelTank() {
         MiscType misc = new MiscType();
 
@@ -8940,7 +8968,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createCLBAFuelTank() {
         MiscType misc = new MiscType();
 
@@ -8959,7 +8987,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createLaserMicrophone() {
         MiscType misc = new MiscType();
 
@@ -8978,7 +9006,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createShotgunMicrophone() {
         MiscType misc = new MiscType();
 

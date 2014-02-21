@@ -23,9 +23,9 @@ public class PlayerColors {
 
     public static final String colorNames[] = IPlayer.colorNames;
 
-    protected static final int colorRGBs[] = { 0x8686BF, 0xF2F261, 0xCC6666,
-            0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
-            0x98816B, 0x800080 };
+    protected static final int colorRGBs[] = { 0x8686BF, 0xCC6666,
+            0x87BF86, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
+            0x98816B, 0x800080, 0xF2F261, 0xFFFFFF};
 
     protected static final int advancedColorRGBs[] = {
             0x000000, 0x000033, 0x000066, 0x000099, 0x0000CC, 0x0000FF,

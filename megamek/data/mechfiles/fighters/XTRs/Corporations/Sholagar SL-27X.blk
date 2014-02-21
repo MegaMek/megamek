@@ -33,8 +33,12 @@ Aerodyne
 </motion_type>
 
 <SafeThrust>
-10
+11
 </SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -49,7 +53,7 @@ Aerodyne
 </fuel>
 
 <engine_type>
-2
+3
 </engine_type>
 
 <armor>

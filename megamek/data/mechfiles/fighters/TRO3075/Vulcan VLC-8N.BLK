@@ -1,79 +1,44 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Vulcan
-
 </Name>
 
 <Model>
-
 VLC-8N
-
 </Model>
 
-<Tonnage>
+<year>
+3074
+</year>
 
-80
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-77
-58
-58
-39
-</Armor>
-
-<Nose Equipment>
-ISERLargeLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISSRM6
-ISArtemisIV
-ISSRM6 Ammo Artemis-Capable 
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISLightGaussRifle
-ISLightGauss Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISLightGaussRifle
-ISLightGauss Ammo
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISERMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 16
@@ -87,34 +52,49 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<armor_tech>
-1
-</armor_tech>
-
-<year>
-3074
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+77
+58
+58
+39
+</armor>
 
+<Nose Equipment>
+ISLargePulseLaser
+ISLargePulseLaser
+SRM 6
+ISArtemisIV
+IS Ammo SRM-6 Artemis-capable
+ISERMediumLaser
+</Nose Equipment>
 
+<Left Wing Equipment>
+ISLightGaussRifle
+IS Light Gauss Ammo
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+ISLightGaussRifle
+IS Light Gauss Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+</Aft Equipment>
+
+<tonnage>
+80.0
+</tonnage>
 

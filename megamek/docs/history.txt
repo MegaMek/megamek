@@ -83,6 +83,7 @@ v0.37.8-dev (SVN)
 + Added Clan PPC Capacitor
 + Adjusted default player colors: yellow and white are now at the end, as they
     aren't very readable
++ Data: New Image and Units. Unit and Equipment Date Fixes.
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

@@ -8956,7 +8956,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createRadicalHeatSinkSystem() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3095, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         misc.name = "Radical Heat Sink System";
         misc.setInternalName(misc.name);
         misc.tonnage = 4;
@@ -8972,7 +8972,6 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
         misc.techRating = RATING_E;
-        misc.techLevel.put(3122, TechConstants.T_IS_ADVANCED);
 
         return misc;
     }

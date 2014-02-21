@@ -32,10 +32,6 @@ Mixed (IS Chassis) Advanced
 Tracked
 </motion_type>
 
-<transporters>
-troopspace:1.0
-</transporters>
-
 <cruiseMP>
 4
 </cruiseMP>

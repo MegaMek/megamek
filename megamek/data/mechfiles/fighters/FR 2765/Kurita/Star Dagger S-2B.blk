@@ -13,19 +13,19 @@ Aero
 </UnitType>
 
 <Name>
-Rapier
+Star Dagger
 </Name>
 
 <Model>
-RPR-300X
+S-2B
 </Model>
 
 <year>
-3070
+2571
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -33,7 +33,7 @@ Aerodyne
 </motion_type>
 
 <SafeThrust>
-6
+10
 </SafeThrust>
 
 <cockpit_type>
@@ -41,11 +41,11 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-15
+10
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
@@ -53,49 +53,39 @@ Aerodyne
 </fuel>
 
 <engine_type>
-2
+0
 </engine_type>
 
-<armor_type>
-20
-</armor_type>
-
-<armor_tech>
-7
-</armor_tech>
-
 <armor>
-77
-64
-64
-62
+34
+22
+22
+18
 </armor>
 
 <Nose Equipment>
-Hyper Velocity Auto Cannon/10
-Hyper Velocity Auto Cannon/10
-Extended LRM 10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
+Medium Laser
+Medium Laser
+IS Ammo MG - Full
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+Machine Gun
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+Machine Gun
 </Right Wing Equipment>
 
 <Aft Equipment>
+Machine Gun
 </Aft Equipment>
 
+<source>
+FR 2765 DCMS
+</source>
+
 <tonnage>
-85.0
+30.0
 </tonnage>
 

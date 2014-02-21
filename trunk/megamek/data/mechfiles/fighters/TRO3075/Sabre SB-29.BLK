@@ -36,6 +36,10 @@ Aerodyne
 11
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 10
 </heatsinks>
@@ -64,7 +68,7 @@ Aerodyne
 21
 17
 17
-17
+16
 </armor>
 
 <Nose Equipment>

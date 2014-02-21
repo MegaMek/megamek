@@ -1,180 +1,93 @@
-
 #building block data file
-
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Corsair
-
 </Name>
 
 <Model>
-
 CSR-X12 Rigid Night
-
 </Model>
 
-<Tonnage>
-
-50
-
-</Tonnage>
-
-<SafeThrust>
-
-9
-
-</SafeThrust>
-
-<Armor>
-
-96
-
-72
-
-72
-
-48
-
-</Armor>
-
-
-
-<Nose Equipment>
-
-
-
-CLMediumPulseLaser
-
-CLMediumPulseLaser
-
-CLSmallPulseLaser
-
-CLSmallPulseLaser
-
-</Nose Equipment>
-
-
-
-<Left Wing Equipment>
-
-
-
-CLMediumPulseLaser
-
-
-
-</Left Wing Equipment>
-
-
-
-<Right Wing Equipment>
-
-CLMediumPulseLaser
-
-
-
-</Right Wing Equipment>
-
-
-
-<Aft Equipment>
-
-
-
-CLSmallPulseLaser
-
-CLSmallPulseLaser
-
-</Aft Equipment>
-
-<heatsinks>
-
-12
-
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-400
-
-</fuel>
+<year>
+3074
+</year>
 
 <type>
 Mixed (IS Chassis) Experimental
 </type>
 
-<year>
+<motion_type>
+Aerodyne
+</motion_type>
 
-3074
+<SafeThrust>
+9
+</SafeThrust>
 
-</year>
-
-<source>
-
-Jihad
-
-</source>
-
-<internal_type>
-
+<cockpit_type>
 0
+</cockpit_type>
 
+<heatsinks>
+12
+</heatsinks>
 
+<sink_type>
+1
+</sink_type>
 
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
-
+<fuel>
+400
+</fuel>
 
 <engine_type>
-
-
-
 3
-
-
-
 </engine_type>
 
+<armor>
+96
+72
+72
+48
+</armor>
 
+<Nose Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+CLMediumPulseLaser
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+CLMediumPulseLaser
+</Right Wing Equipment>
 
+<Aft Equipment>
+CLSmallPulseLaser
+CLSmallPulseLaser
+</Aft Equipment>
 
-aerodyne
+<source>
+Jihad
+</source>
 
+<tonnage>
+50.0
+</tonnage>
 
-
-</motion_type>

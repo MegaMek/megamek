@@ -45,14 +45,18 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BA Heavy Machine Gun:RA
+ISBAHeavyMachineGun:RA
 ISBASRM6OS:Body
 BABattleClaw:LA
 IS BA Advanced:LA
-IS BA Advanced:Body
+IS BA Advanced:LA
 IS BA Advanced:RA
 IS BA Advanced:LA
-IS BA Advanced:LA
+IS BA Advanced:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
 </Squad Equipment>
 
 <Trooper 1 Equipment>

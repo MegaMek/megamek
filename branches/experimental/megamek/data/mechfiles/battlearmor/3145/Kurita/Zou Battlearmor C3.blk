@@ -25,7 +25,7 @@ Zou Heavy Battle Armor
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -36,18 +36,45 @@ Jump
 2
 </cruiseMP>
 
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
 <Squad Equipment>
 BABattleClaw:LA
 ISBAMediumRecoillessRifle:RA
-IS BattleArmor C3:Body
+BattleArmorC3:Body
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Draconis Combine
 </source>
 
 <chassis>
-Biped
+biped
 </chassis>
 
 <jumpingMP>
@@ -57,14 +84,6 @@ Biped
 <armor>
 11
 </armor>
-
-<armor_type>
-37
-</armor_type>
-
-<armor_tech>
-5
-</armor_tech>
 
 <Trooper Count>
 4

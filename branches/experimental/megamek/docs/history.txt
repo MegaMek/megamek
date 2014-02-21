@@ -51,12 +51,44 @@ v0.37.8-dev (SVN)
 + Bug: Entity.getMovementModeAsString returns "UMU" for INF_UMU, but 
     BLKBattleArmorFile expects motion_type to be "submarine" for BA with UMUs.
     Fixed this by changing BLKBattleArmorFile to "UMU"
-+ Renamed a lot of the BA weapons and equipment to remove the BA infront of their names.
++ Renamed a lot of the BA weapons and equipment to remove the BA infront of 
+    their names.
 + Data: LOT of BA blk file changes.
 + Bug: Aero Side-slips could only be performed if they expended all of the 
     velocity (was using the wrong method to check for validity)
 + Bug: Aero Side-slips were improperly giving the -1 modifier to ASF's, it 
     should only go to Conventional Fighters with VSTOL
++ Bug: MovementDisplay was not setting the selected entity to null when a 
+    player's turn is ended, which lead to the FOV darkening code darkening the 
+    FOV from the perspective of the unit just moved before it was moved
++ Feature: Added PSR nag for ejecting from a 'mech
++ Added a VTOL_MAX_ROTOR_ARMOR define to TestTank, which is currently set to 2
++ Data: Unit and RAT fixes.
++ Data: Unit fixes and new unit images.
++ Feature [#1229]: Move Multiple Mechs
++ Bug: Report spacing fix: there are now newlines after each weapon firing
+    report and also in between different unit firing reports
++ Bug: Shooting LRMs at infantry caused some weird new lines in the report:
+    you would see something like 12 missile(s) hit \n hits men.
++ Bug: Forgot to add l10n entries for Mek Lance Movement
++ Bug: Mek Lance Movement is technically unofficial, options now relfects this
++ Feature [#1181]: Show armored components
++ Feature [#1119]: Arrange Map Sizes
++ Refactored FireControl.guessToHitModifierPhysical and added unit tests for it.
++ Bug [#3942]: Initiative ties not rolled off when multiple ties
++ Bug: Fixed two potential "no units to move" errors related to Vee and Mek
+    lance movement rules
++ Bug [#3933]: mech that fails getting up after falling in basement ends up at
+    wrong elevation
++ Bug [#4047]: Unit Configuration Interface Issues with Stratops Capital
+    Fighters On
++ Bug: Server.crashVTOLorWiGE(7) had an off-by-one error for the facing table
++ Bug [#4006]: hit table when crashing during skid
++ Bug [#4049]: No unit to move error with Meks move as a lance
++ Bug [#4048]: Ejected units have no cause of destruction at end of game report
++ Added Clan PPC Capacitor
++ Adjusted default player colors: yellow and white are now at the end, as they
+    aren't very readable
 
 v0.37.7-exp (2014-02-11 02:57 UTC)
 

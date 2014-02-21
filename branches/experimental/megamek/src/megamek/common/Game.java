@@ -646,6 +646,17 @@ public class Game implements Serializable, IGame {
     public void insertNextTurn(GameTurn turn) {
         turnVector.insertElementAt(turn, turnIndex + 1);
     }
+    
+    /**
+     * Inserts a turn after the specific index
+     */
+    public void insertTurnAfter(GameTurn turn, int index){
+        if ((index + 1) >= turnVector.size()){
+            turnVector.add(turn);
+        } else {
+            turnVector.insertElementAt(turn, index + 1);
+        }
+    }
 
     /** Returns an Enumeration of the current turn list */
     public Enumeration<GameTurn> getTurns() {
@@ -1924,6 +1935,29 @@ public class Game implements Serializable, IGame {
 
         return remaining;
     }
+    
+    /**
+     * Returns the number of Mechs that <code>playerId</code> has not moved
+     * yet this turn.
+     *
+     * @param playerId
+     * @return number of vehicles <code>playerId</code> has not moved yet this
+     *         turn
+     */
+    public int getMechsLeft(int playerId){
+        IPlayer player = getPlayer(playerId);
+        int remaining = 0;
+
+        for (Entity entity : entities) {
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && (entity instanceof Mech)) {
+                remaining++;
+            }
+        }
+
+        return remaining;
+    }
 
     /**
      * Removes the first turn found that the specified entity can move in. Used
@@ -1966,7 +2000,8 @@ public class Game implements Serializable, IGame {
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
                                 && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
                             turnVector.removeElementAt(turnIndex + 1);
@@ -1989,7 +2024,8 @@ public class Game implements Serializable, IGame {
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
                                 && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
                             turnVector.removeElementAt(turnIndex + 1);
@@ -2003,18 +2039,41 @@ public class Game implements Serializable, IGame {
         // Same thing but for vehicles
         if (getOptions().booleanOption("vehicle_lance_movement")
                 && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
-            if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
+            if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
                     .intOption("vehicle_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove
-                // that
+                // exception, if the _next_ turn is an tank turn, remove that
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_TANK)
                                 && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                            turnVector.removeElementAt(turnIndex + 1);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+        
+        // Same thing but for meks
+        if (getOptions().booleanOption("mek_lance_movement")
+                && (entity instanceof Mech) && (phase == Phase.PHASE_MOVEMENT)) {
+            if ((getMechsLeft(entity.getOwnerId()) % getOptions()
+                    .intOption("mek_lance_movement_number")) != 1) {
+                // exception, if the _next_ turn is an tank turn, remove that
+                // contrived, but may come up e.g. one mech accidently kills
+                // another
+                if (hasMoreTurns()) {
+                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                        GameTurn.EntityClassTurn ect = 
+                                (GameTurn.EntityClassTurn) nextTurn;
+                        if (ect.isValidClass(GameTurn.CLASS_MECH)
+                                && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
                             turnVector.removeElementAt(turnIndex + 1);
                         }
                     }

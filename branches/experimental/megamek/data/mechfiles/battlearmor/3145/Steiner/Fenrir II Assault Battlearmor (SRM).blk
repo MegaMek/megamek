@@ -40,6 +40,11 @@ Leg
 CLBASRM5:Body
 BASRM5 Ammo:Body:Shots4#
 BASRM5 Ammo:Body:Shots2#
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
 </Squad Equipment>
 
 <source>
@@ -70,6 +75,6 @@ quad
 30
 </armor_type>
 <armor_tech>
-3
+11
 </armor_tech>
 

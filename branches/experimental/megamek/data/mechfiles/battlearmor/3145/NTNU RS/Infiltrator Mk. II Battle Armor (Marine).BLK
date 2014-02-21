@@ -47,6 +47,10 @@ BABasicManipulator:RA
 BACuttingTorch:RA
 Magnetic Clamp:Body
 ISBASpaceOperationsAdaptation:Body
+IS BA Stealth:Body
+IS BA Stealth:RA
+IS BA Stealth:LA
+IS BA Stealth:LA
 </Squad Equipment>
 
 <type>

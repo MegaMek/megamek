@@ -17,7 +17,6 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -71,12 +70,17 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public int getMultiTurns(IGame game) {
 
         int turns = 0;
-
+        
+        if (game.getOptions().booleanOption("mek_lance_movement")) {
+            turns += game.getOptions().intOption("mek_lance_movement_number");
+        }
+        
         if (game.getOptions().booleanOption("vehicle_lance_movement")) {
             turns += game.getOptions().intOption("vehicle_lance_movement_number");
         }
 
-        if (game.getOptions().booleanOption("protos_move_multi") || game.getOptions().booleanOption("inf_move_multi")) {
+        if (game.getOptions().booleanOption("protos_move_multi") 
+                || game.getOptions().booleanOption("inf_move_multi")) {
             turns += game.getOptions().intOption("inf_proto_move_multi");
         }
         return (int) Math.ceil(((double) turns_multi) / (double) turns);
@@ -215,11 +219,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
         getInitiative().clear();
     }
 
-    public static void rollInitiative(Vector<? extends ITurnOrdered> v, boolean bUseInitiativeCompensation) {
+    public static void rollInitiative(Vector<? extends ITurnOrdered> v,
+            boolean bUseInitiativeCompensation) {
         // Clear all rolls
-        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                .hasMoreElements(); ) {
-            final ITurnOrdered item = i.nextElement();
+        for (ITurnOrdered item : v) {
             item.clearInitiative(bUseInitiativeCompensation);
         }
 
@@ -254,29 +257,33 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * This takes a vector of TurnOrdered (Teams or Players), rolls initiative,
      * and resolves ties. The second argument is used when a specific teams
      * initiative should be re-rolled.
+     * 
+     * @param v                 A vector of items that need to have turns.
+     * @param rerollRequests
+     * @param bInitCompBonus    A flag that determines whether initiative
+     *                          compensation bonus should be used: used to
+     *                          prevent one side getting long init win streaks
      */
     public static void rollInitAndResolveTies(Vector<? extends ITurnOrdered> v,
-                                              Vector<? extends ITurnOrdered> rerollRequests,
-                                              boolean bInitiativeCompensationBonus) {
-        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                .hasMoreElements(); ) {
-            final ITurnOrdered item = i.nextElement();
+            Vector<? extends ITurnOrdered> rerollRequests,
+            boolean bInitCompBonus) {
+        for (ITurnOrdered item : v) {
             int bonus = 0;
             if (item instanceof Team) {
-                bonus = ((Team) item).getTotalInitBonus(bInitiativeCompensationBonus);
+                bonus = ((Team) item).getTotalInitBonus(bInitCompBonus);
             }
             if (item instanceof Entity) {
                 Entity e = (Entity) item;
-                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus(false) + e.getCrew().getInitBonus();
+                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus(
+                        false)
+                        + e.getCrew().getInitBonus();
             }
             if (rerollRequests == null) { // normal init roll
                 item.getInitiative().addRoll(bonus); // add a roll for all
                 // teams
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
-                for (Enumeration<? extends ITurnOrdered> j = rerollRequests
-                        .elements(); j.hasMoreElements(); ) {
-                    final ITurnOrdered rerollItem = j.nextElement();
+                for (ITurnOrdered rerollItem : rerollRequests) {
                     if (item == rerollItem) { // this is the team re-rolling
                         item.getInitiative().replaceRoll(bonus);
                         break; // each team only needs one reroll
@@ -287,36 +294,30 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<ITurnOrdered>();
-        for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                .hasMoreElements(); ) {
-            final ITurnOrdered item = i.nextElement();
+        for (ITurnOrdered item : v) {
             ties.removeAllElements();
             ties.addElement(item);
-            for (Enumeration<? extends ITurnOrdered> j = v.elements(); j
-                    .hasMoreElements(); ) {
-                final ITurnOrdered other = j.nextElement();
+            for (ITurnOrdered other : v) {
                 if ((item != other)
                     && item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
             if (ties.size() > 1) {
-                rollInitAndResolveTies(ties, null, bInitiativeCompensationBonus);
-                return;
+                // We want to ignore init compensation here, because it will
+                // get dealt with once we're done resolving ties
+                rollInitAndResolveTies(ties, null, false);
             }
         }
 
         // initiative compensation
-        if (bInitiativeCompensationBonus
-            && (v.elements().nextElement() instanceof Team)) {
+        if (bInitCompBonus && (v.elements().nextElement() instanceof Team)) {
             final ITurnOrdered comparisonElement = v.elements().nextElement();
             int difference = 0;
             ITurnOrdered winningElement = comparisonElement;
 
             // figure out who won init this round
-            for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                    .hasMoreElements(); ) {
-                final ITurnOrdered currentElement = i.nextElement();
+            for (ITurnOrdered currentElement : v) {
                 if (currentElement.getInitiative().compareTo(
                         comparisonElement.getInitiative()) > difference) {
                     difference = currentElement.getInitiative().compareTo(
@@ -328,14 +329,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // set/reset the init comp counters
             ((Team) winningElement).setInitCompensationBonus(0);
             if (lastRoundInitWinner != null) {
-                for (Enumeration<? extends ITurnOrdered> i = v.elements(); i
-                        .hasMoreElements(); ) {
-                    final ITurnOrdered currentElement = i.nextElement();
-                    if (!(currentElement.equals(winningElement) || currentElement
-                            .equals(lastRoundInitWinner))) {
-                        ((Team) currentElement)
-                                .setInitCompensationBonus(((Team) currentElement)
-                                                                  .getInitCompensationBonus(bInitiativeCompensationBonus) + 1);
+                for (ITurnOrdered item : v) {
+                    if (!(item.equals(winningElement) 
+                            || item.equals(lastRoundInitWinner))) {
+                        Team team = (Team)item;
+                        int newBonus = team
+                                .getInitCompensationBonus(bInitCompBonus) + 1;
+                        team.setInitCompensationBonus(newBonus);
                     }
                 }
             }

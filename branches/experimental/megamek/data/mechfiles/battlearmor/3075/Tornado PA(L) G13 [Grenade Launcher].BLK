@@ -35,6 +35,9 @@ ISBAHeavyGL:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 InfantryAssaultRifle:RA:APM
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
 </Squad Equipment>
 <type>
 IS Level 2

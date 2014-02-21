@@ -41,7 +41,7 @@ Leg
 </armor_type>
 
 <armor_tech>
-3
+1
 </armor_tech>
 
 <Squad Equipment>
@@ -54,6 +54,13 @@ ISBAMagshotGR:DWP
 CLBASRM2:Body
 BA-SRM2 Ammo:Body:Shots4#
 CL BA ECM:Body
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

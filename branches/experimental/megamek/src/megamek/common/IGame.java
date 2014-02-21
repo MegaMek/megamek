@@ -402,6 +402,11 @@ public interface IGame {
      * Inserts a turn that will come directly after the current one
      */
     public abstract void insertNextTurn(GameTurn turn);
+    
+    /**
+     * Inserts a turn after the specific index
+     */
+    public abstract void insertTurnAfter(GameTurn turn, int index);
 
     /**
      * Returns an Enumeration of the current turn list
@@ -868,6 +873,11 @@ public interface IGame {
      * Returns the number of remaining selectable Vehicles owned by a player.
      */
     public abstract int getVehiclesLeft(int playerId);
+    
+    /**
+     * Returns the number of remaining selectable Mechs owned by a player.
+     */
+    public abstract int getMechsLeft(int playerId);
 
     /**
      * Removes the last, next turn found that the specified entity can move in.

@@ -21,11 +21,11 @@ Quirinus Battle Armor
 </Model>
 
 <year>
-3145
+3093
 </year>
 
 <type>
-IS Level 3
+IS Level 4
 </type>
 
 <motion_type>
@@ -78,6 +78,6 @@ biped
 38
 </armor_type>
 <armor_tech>
-3
+7
 </armor_tech>
 

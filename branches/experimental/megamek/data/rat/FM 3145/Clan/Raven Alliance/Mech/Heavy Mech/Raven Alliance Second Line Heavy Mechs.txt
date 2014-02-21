@@ -3,7 +3,7 @@ Merlin MLN-1C,1
 Bombardier BMB-05A,2
 Hercules HRC-LS-9000,3
 Rifleman IIC,4
-Shiro SH-1R,5
+Shiro SH-1V,5
 Galahad (Glass Spider),6
 Bombardier BMB-12D,5
 Ryoken II,4

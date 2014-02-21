@@ -24,20 +24,25 @@ import megamek.common.BattleArmor;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
+import megamek.common.TargetRollModifier;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.annotations.Nullable;
 import megamek.common.Protomech;
 import megamek.common.RangeType;
 import megamek.common.Tank;
@@ -59,6 +64,60 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class FireControl {
 
+    protected static final TargetRollModifier TH_ATT_PRONE = new TargetRollModifier(2, "attacker prone");
+    protected static final TargetRollModifier TH_TAR_IMMOBILE = new TargetRollModifier(-4, "target immobile");
+    protected static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
+    protected static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
+    protected static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
+    protected static final String TH_WOODS = "woods";
+    protected static final String TH_SMOKE = "smoke";
+    protected static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
+                                                                                          "target prone and at range");
+    protected static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
+                                                                                        "target prone and adjacent");
+    protected static final TargetRollModifier TH_TAR_BA = new TargetRollModifier(1, "battle armor target");
+    protected static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected mechwarrior target");
+    protected static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
+    protected static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
+    protected static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1,
+                                                                                          "narrow/low profile target");
+    protected static final String TH_PHY_NOT_MECH = "non-mechs don't make physical attacks";
+    protected static final String TH_PHY_TOO_FAR = "target not adjacent";
+    protected static final String TH_RNG_TOO_FAR = "target beyond max range";
+    protected static final String TH_PHY_NOT_IN_ARC = "target not in arc";
+    protected static final String TH_PHY_TOO_MUCH_ELEVATION = "target elevation not in range";
+    protected static final String TH_PHY_P_TAR_PRONE = "can't punch while prone";
+    protected static final String TH_PHY_P_TAR_INF = "can't punch infantry";
+    protected static final String TH_PHY_P_NO_ARM = "Your arm's off!";
+    protected static final String TH_PHY_P_NO_SHOULDER = "shoulder destroyed";
+    protected static final String TH_PHY_BASE = "base";
+    protected static final TargetRollModifier TH_PHY_P_UPPER_ARM = new TargetRollModifier(2,
+                                                                                          "upper arm actuator " +
+                                                                                                  "destroyed");
+    protected static final TargetRollModifier TH_PHY_P_LOWER_ARM = new TargetRollModifier(2,
+                                                                                          "lower arm actuator missing" +
+                                                                                                  " or destroyed");
+    protected static final TargetRollModifier TH_PHY_P_HAND = new TargetRollModifier(1,
+                                                                                     "hand actuator missing or " +
+                                                                                             "destroyed");
+    protected static final String TH_PHY_K_PRONE = "can't kick while prone";
+    protected static final TargetRollModifier TH_PHY_K_INF = new TargetRollModifier(3, "kicking infantry");
+    protected static final String TH_PHY_K_INF_RNG = "Infantry too far away";
+    protected static final String TH_PHY_K_HIP = "can't kick with broken hip";
+    protected static final TargetRollModifier TH_PHY_K_UPPER_LEG = new TargetRollModifier(2,
+                                                                                          "upper leg actuator " +
+                                                                                                  "destroyed");
+    protected static final TargetRollModifier TH_PHY_K_LOWER_LEG = new TargetRollModifier(2,
+                                                                                          "lower leg actuator " +
+                                                                                                  "destroyed");
+    protected static final TargetRollModifier TH_PHY_K_FOOT = new TargetRollModifier(1, "foot actuator destroyed");
+    protected static final TargetRollModifier TH_PHY_LIGHT = new TargetRollModifier(-2, "weight class attack modifier");
+    protected static final TargetRollModifier TH_PHY_MEDIUM = new TargetRollModifier(-1,
+                                                                                     "weight class attack modifier");
+    protected static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
+    protected static final TargetRollModifier TH_PHY_EASY_PILOT = new TargetRollModifier(-1, "easy to pilot quirk");
+    protected static final String TH_PHY_P_NO_ARMS_QUIRK = "no/minimal arms quirk";
+
     private final Princess owner;
 
     public FireControl(Princess owningPrincess) {
@@ -74,27 +133,20 @@ public class FireControl {
         return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
     }
 
-    protected static final String TH_ATT_PRONE = "attacker prone";
-    protected static final String TH_TAR_IMMOBILE = "target immobile";
-    protected static final String TH_TAR_SKID = "target skidded";
-    protected static final String TH_TAR_NO_MOVE = "target didn't move";
-    protected static final String TH_TAR_SPRINT = "target sprinted";
-    protected static final String TH_WOODS = "woods";
-    protected static final String TH_TAR_PRONE_RANGE = "target prone and at range";
-    protected static final String TH_TAR_PRONE_ADJ = "target prone and adjacent";
-    protected static final String TH_TAR_BA = "battle armor target";
-    protected static final String TH_TAR_MW = "ejected mechwarrior target";
-    protected static final String TH_TAR_INF = "infantry target";
-    protected static final String TH_ANTI_AIR = "anti-aircraft quirk";
-    protected static final String TH_TAR_LOW_PROFILE = "narrow/low profile target";
-
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The state of the unit doing the shooting.
+     * @param target       Who is being shot at.
+     * @param targetState  The state of the target.
+     * @param game         The game being played.
+     * @return The estimated to hit modifiers.
      */
     public ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
-                                                          EntityState shooterState,
+                                                          @Nullable EntityState shooterState,
                                                           Targetable target,
-                                                          EntityState targetState,
+                                                          @Nullable EntityState targetState,
                                                           IGame game) {
 
         if (shooterState == null) {
@@ -110,27 +162,34 @@ public class FireControl {
 
         ToHitData toHitData = new ToHitData();
 
+        // Is the target in range at all?
+        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        int maxRange = shooter.getMaxWeaponRange();
+        if (distance > maxRange) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, TH_RNG_TOO_FAR);
+        }
+
         // If people are moving or lying down, there are consequences
         toHitData.append(getAttackerMovementModifier(game, shooter.getId(), shooterState.getMovementType()));
         toHitData.append(getTargetMovementModifier(targetState.getHexesMoved(), targetState.isJumping(),
                                                    target instanceof VTOL, game));
         if (shooterState.isProne()) {
-            toHitData.addModifier(2, TH_ATT_PRONE);
+            toHitData.addModifier(TH_ATT_PRONE);
         }
         if (targetState.isImmobile()) {
-            toHitData.addModifier(-4, TH_TAR_IMMOBILE);
+            toHitData.addModifier(TH_TAR_IMMOBILE);
         }
         if (game.getOptions().booleanOption("tacops_standing_still")
                 && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
                 && !targetState.isImmobile()
                 && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof
                 GunEmplacement))) {
-            toHitData.addModifier(-1, TH_TAR_NO_MOVE);
+            toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 
         // did the target sprint?
         if (targetState.getMovementType() == EntityMovementType.MOVE_SPRINT) {
-            toHitData.addModifier(-1, TH_TAR_SPRINT);
+            toHitData.addModifier(TH_TAR_SPRINT);
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
@@ -139,197 +198,207 @@ public class FireControl {
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
         }
-        if (woodsLevel == 1) {
-            toHitData.addModifier(1, TH_WOODS);
-        }
-        if (woodsLevel == 2) {
-            toHitData.addModifier(2, TH_WOODS);
-        }
-        if (woodsLevel == 3) {
-            toHitData.addModifier(3, TH_WOODS);
+        if (woodsLevel >= 1) {
+            toHitData.addModifier(woodsLevel, TH_WOODS);
         }
 
-        // todo handle smoke.
-        // todo handle partial cover.
+        int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        if (smokeLevel >= 1) {
+            toHitData.addModifier(smokeLevel, TH_SMOKE);
+        }
 
-        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        // todo handle partial cover (+1).
+
         if (targetState.isProne() && (distance > 1)) {
-            toHitData.addModifier(1, TH_TAR_PRONE_RANGE);
+            toHitData.addModifier(TH_TAR_PRONE_RANGE);
         } else if (targetState.isProne() && (distance == 1)) {
-            toHitData.addModifier(-2, TH_TAR_PRONE_ADJ);
+            toHitData.addModifier(TH_TAR_PRONE_ADJ);
         }
 
         if (targetState.getMovementType() == EntityMovementType.MOVE_SKID) {
-            toHitData.addModifier(2, TH_TAR_SKID);
+            toHitData.addModifier(TH_TAR_SKID);
         }
 
         boolean isShooterInfantry = (shooter instanceof Infantry);
         if (!isShooterInfantry) {
             if (target instanceof BattleArmor) {
-                toHitData.addModifier(1, TH_TAR_BA);
+                toHitData.addModifier(TH_TAR_BA);
             } else if (target instanceof MechWarrior) {
-                toHitData.addModifier(2, TH_TAR_MW);
+                toHitData.addModifier(TH_TAR_MW);
             } else if (target instanceof Infantry) {
-                toHitData.addModifier(1, TH_TAR_INF);
+                toHitData.addModifier(TH_TAR_INF);
             }
         }
 
         if (shooter.hasQuirk("anti_air") && (target.isAirborne() || target.isAirborneVTOLorWIGE())) {
-            toHitData.addModifier(-2, TH_ANTI_AIR);
+            toHitData.addModifier(TH_ANTI_AIR);
         }
 
         // todo improved targetting (range), variable range targetting, poor targetting (range), accurate, inaccurate
 
         if (targetEntity != null) {
-            if (targetEntity.hasQuirk("low_profile")) {
-                toHitData.addModifier(1, TH_TAR_LOW_PROFILE);
+            if (targetEntity.hasQuirk("low_profile")) { // todo only affects ranged attacks.
+                toHitData.addModifier(TH_TAR_LOW_PROFILE);
             }
         }
 
         return toHitData;
     }
 
+    protected boolean isInArc(Coords attackerPosition, int attackerFacing, Coords targetPosition, int firingArc) {
+        return Compute.isInArc(attackerPosition, attackerFacing, targetPosition, firingArc);
+    }
+
     /**
-     * Makes a rather poor guess as to what the to hit modifier will be with a
-     * physical attack.
+     * Makes a rather poor guess as to what the to hit modifier will be with a physical attack.
+     *
+     * @param shooter      The unit doing the attacking.
+     * @param shooterState The state of the unit doing the attacking.
+     * @param target       Who is being attacked.
+     * @param targetState  The state of the target.
+     * @param attackType   The tyep of physical attack being made.
+     * @param game         The game being played.
+     * @return The estimated to hit modifiers.
      */
-    public ToHitData guessToHitModifier_Physical(Entity shooter,
-                                                 EntityState shooter_state, Targetable target,
-                                                 EntityState target_state, PhysicalAttackType attack_type,
-                                                 IGame game) {
-        final String METHOD_NAME = "guessToHitModifier(Entity, EntityState, Targetable, EntityState, " +
-                "PhysicalAttackType, IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    public ToHitData guessToHitModifierPhysical(Entity shooter,
+                                                @Nullable EntityState shooterState,
+                                                Targetable target,
+                                                @Nullable EntityState targetState,
+                                                PhysicalAttackType attackType,
+                                                IGame game) {
 
-        try {
-            if (!(shooter instanceof Mech)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Non mechs don't make physical attacks");
-            }
-            // Base to hit is piloting skill +2
-            ToHitData tohit = new ToHitData();
-            if (shooter_state == null) {
-                shooter_state = new EntityState(shooter);
-            }
-            if (target_state == null) {
-                target_state = new EntityState(target);
-            }
-            int distance = shooter_state.getPosition().distance(target_state.getPosition());
-            if (distance > 1) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't hit that far");
-            }
+        // todo weapons, frenzy (pg 144) & vehicle charges.
 
-            tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooter_state,
-                                                              target, target_state, game));
-            // check if target is within arc
-            int arc = 0;
-            if (attack_type == PhysicalAttackType.LEFT_PUNCH) {
-                arc = Compute.ARC_LEFTARM;
-            } else if (attack_type == PhysicalAttackType.RIGHT_PUNCH) {
-                arc = Compute.ARC_RIGHTARM;
-            } else {
-                arc = Compute.ARC_FORWARD; // assume kick
-            }
-            if (!(Compute.isInArc(shooter_state.getPosition(),
-                                  shooter_state.getSecondaryFacing(), target_state.getPosition(),
-                                  arc) || (distance == 0))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
-            }
-
-            IHex attHex = game.getBoard().getHex(shooter_state.getPosition());
-            IHex targHex = game.getBoard().getHex(target_state.getPosition());
-            final int attackerElevation = shooter.getElevation()
-                    + attHex.getElevation();
-            final int attackerHeight = shooter.absHeight() + attHex.getElevation();
-            final int targetElevation = target.getElevation()
-                    + targHex.getElevation();
-            final int targetHeight = targetElevation + target.getHeight();
-            if ((attack_type == PhysicalAttackType.LEFT_PUNCH)
-                    || (attack_type == PhysicalAttackType.RIGHT_PUNCH)) {
-                if ((attackerHeight < targetElevation)
-                        || (attackerHeight > targetHeight)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Target elevation not in range");
-                }
-
-                if (shooter_state.isProne()) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "can't punch while prone");
-                }
-                if (target instanceof Infantry) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "can't punch infantry");
-                }
-                int armLoc = attack_type == PhysicalAttackType.RIGHT_PUNCH ? Mech.LOC_RARM
-                        : Mech.LOC_LARM;
-                if (shooter.isLocationBad(armLoc)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Your arm's off!");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "shoulder destroyed");
-                }
-                tohit.addModifier(shooter.getCrew().getPiloting(), "base");
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
-                    tohit.addModifier(2, "Upper arm actuator destroyed");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
-                    tohit.addModifier(2, "Lower arm actuator missing or destroyed");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
-                    tohit.addModifier(1, "Hand actuator missing or destroyed");
-                }
-            } else // assuming kick
-            {
-                tohit.addModifier(shooter.getCrew().getPiloting() - 2, "base");
-                if (shooter_state.isProne()) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Can't kick while prone");
-                }
-                if (target instanceof Infantry) {
-                    if (distance == 0) {
-                        tohit.addModifier(3, "kicking infantry");
-                    } else {
-                        return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                             "Infantry too far away");
-                    }
-                }
-                if ((attackerElevation < targetElevation)
-                        || (attackerElevation > targetHeight)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Target elevation not in range");
-                }
-                int legLoc = attack_type == PhysicalAttackType.RIGHT_KICK ? Mech.LOC_RLEG
-                        : Mech.LOC_LLEG;
-                if (((Mech) shooter).hasHipCrit()) {
-                    // if (!shooter.hasWorkingSystem(Mech.ACTUATOR_HIP,
-                    // legLoc)||!shooter.hasWorkingSystem(Mech.ACTUATOR_HIP,otherLegLoc))
-                    // {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "can't kick with broken hip");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
-                    tohit.addModifier(2, "Upper leg actuator destroyed");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLoc)) {
-                    tohit.addModifier(2, "Lower leg actuator destroyed");
-                }
-                if (!shooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
-                    tohit.addModifier(1, "Foot actuator destroyed");
-                }
-                if (game.getOptions().booleanOption("tacops_attack_physical_psr")) {
-                    if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
-                        tohit.addModifier(-2, "Weight Class Attack Modifier");
-                    } else if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                        tohit.addModifier(-1, "Weight Class Attack Modifier");
-                    }
-                }
-
-            }
-            return tohit;
-        } finally {
-            owner.methodEnd(FireControl.class, METHOD_NAME);
+        if (!(shooter instanceof Mech)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_NOT_MECH);
         }
+
+        if (shooterState == null) {
+            shooterState = new EntityState(shooter);
+        }
+        if (targetState == null) {
+            targetState = new EntityState(target);
+        }
+
+        // We can hit someone who isn't standing right next to us.
+        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        if (distance > 1) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_TOO_FAR);
+        }
+
+        // Get the general to hit modifiers.
+        ToHitData toHitData = new ToHitData();
+        toHitData.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, game));
+        if (toHitData.getValue() > 12) {
+            return toHitData;
+        }
+
+        // Check if target is within arc
+        int arc;
+        if (PhysicalAttackType.LEFT_PUNCH == attackType) {
+            arc = Compute.ARC_LEFTARM;
+        } else if (PhysicalAttackType.RIGHT_PUNCH == attackType) {
+            arc = Compute.ARC_RIGHTARM;
+        } else {
+            arc = Compute.ARC_FORWARD; // assume kick
+        }
+        if (!isInArc(shooterState.getPosition(), shooterState.getSecondaryFacing(), targetState.getPosition(), arc)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_NOT_IN_ARC);
+        }
+
+        // Check elevation difference.
+        IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
+        IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final int attackerElevation = shooter.getElevation() + attackerHex.getElevation();
+        final int attackerHeight = shooter.absHeight() + attackerHex.getElevation();
+        final int targetElevation = target.getElevation() + targetHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
+        if (attackType.isPunch()) {
+            if (shooter.hasQuirk("no_arms")) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_P_NO_ARMS_QUIRK);
+            }
+
+            if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_TOO_MUCH_ELEVATION);
+            }
+
+            if (shooterState.isProne()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_P_TAR_PRONE);
+            }
+            if (target instanceof Infantry) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_P_TAR_INF);
+            }
+            int armLocation = attackType == PhysicalAttackType.RIGHT_PUNCH ? Mech.LOC_RARM : Mech.LOC_LARM;
+            if (shooter.isLocationBad(armLocation)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_P_NO_ARM);
+            }
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLocation)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_P_NO_SHOULDER);
+            }
+
+            // Base to hit chance.
+            toHitData.addModifier(shooter.getCrew().getPiloting(), TH_PHY_BASE);
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLocation)) {
+                toHitData.addModifier(TH_PHY_P_UPPER_ARM);
+            }
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLocation)) {
+                toHitData.addModifier(TH_PHY_P_LOWER_ARM);
+            }
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_HAND, armLocation)) {
+                toHitData.addModifier(TH_PHY_P_HAND);
+            }
+        } else { // assuming kick
+
+            if (shooterState.isProne()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_K_PRONE);
+            }
+            if ((attackerElevation < targetElevation) || (attackerElevation > targetHeight)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_TOO_MUCH_ELEVATION);
+            }
+            if ((shooter).hasHipCrit()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_K_HIP);
+            }
+            int legLocation = attackType == PhysicalAttackType.RIGHT_KICK ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+
+            // Base to hit chance.
+            toHitData.addModifier(shooter.getCrew().getPiloting() - 2, TH_PHY_BASE);
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLocation)) {
+                toHitData.addModifier(TH_PHY_K_UPPER_LEG);
+            }
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLocation)) {
+                toHitData.addModifier(TH_PHY_K_LOWER_LEG);
+            }
+            if (!shooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLocation)) {
+                toHitData.addModifier(TH_PHY_K_FOOT);
+            }
+            if (target instanceof Infantry) {
+                if (distance == 0) {
+                    toHitData.addModifier(TH_PHY_K_INF);
+                } else {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, TH_PHY_K_INF_RNG);
+                }
+            }
+        }
+
+        if (game.getOptions().booleanOption("tacops_attack_physical_psr")) {
+            if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
+                toHitData.addModifier(TH_PHY_LIGHT);
+            } else if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                toHitData.addModifier(TH_PHY_MEDIUM);
+            }
+        }
+
+        // todo Do superheavy mechs qualify?
+        if ((target instanceof LargeSupportTank) || (target instanceof FixedWingSupport) ||
+                (target instanceof Dropship && target.isAirborne())) {
+            toHitData.addModifier(TH_PHY_LARGE);
+        }
+
+        if (shooter.hasQuirk("easy_pilot") && (shooter.getCrew().getPiloting() > 3)) {
+            toHitData.addModifier(TH_PHY_EASY_PILOT);
+        }
+
+        return toHitData;
     }
 
     /**

@@ -44,6 +44,11 @@ BA-SRM4 Ammo:Body
 BABattleClaw:LA
 BAArmoredGlove:RA
 InfantryAssaultRifle:RA:APM
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
 </Squad Equipment>
 <type>
 IS Level 2

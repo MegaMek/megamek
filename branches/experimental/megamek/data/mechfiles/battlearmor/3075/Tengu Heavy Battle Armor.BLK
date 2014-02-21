@@ -2,56 +2,100 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Tengu Heavy Battle Armor
 </Name>
-<chassis>
-biped
-</chassis>
-<weightclass>
-3
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
+
+<Model>
+
+</Model>
+
+<year>
+3070
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
 <cruiseMP>
 2
 </cruiseMP>
-<jumpingMP>
-2
-</jumpingMP>
-<Armor>
-13
-</Armor>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
 <Squad Equipment>
 ISBAPlasmaRifle:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
 BAAPMount:RA
-InfantryAssaultRifle:RA:APM
+Infantry Auto Rifle:APM:RA
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
 </Squad Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3070
-</year>
-<motion_type>
-Leg
-</motion_type>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
 <source>
 TRO 3075
 </source>
-<armor_type>
-30
-</armor_type>
-<armor_tech>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+13
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
 3
-</armor_tech>
+</weightclass>
+

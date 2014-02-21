@@ -50,13 +50,13 @@ BAHeavyBattleClaw:RA
 ISBAHeavyRecoillessRifle:Body
 ISBAHeavyRecoillessRifle:Body
 ISImprovedSensors:LA
-IS BA Advanced:RA
-IS BA Advanced:LA
-IS BA Advanced:RA
-IS BA Advanced:RA
-IS BA Advanced:LA
 ISBAHeavyGrenadeLauncher:LA
 ISBAHeavyGrenadeLauncher:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

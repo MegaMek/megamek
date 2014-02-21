@@ -48,7 +48,7 @@ biped
 </armor_type>
 
 <armor_tech>
-2
+6
 </armor_tech>
 
 <Point Equipment>
@@ -56,10 +56,17 @@ CLBASmallPulseLaser:RA
 CLBAJumpBooster:Body
 BABasicManipulator:RA
 BABattleClaw:LA
+Clan BA Reflective:Body
+Clan BA Reflective:LA
+Clan BA Reflective:Body
+Clan BA Reflective:Body
+Clan BA Reflective:LA
+Clan BA Reflective:LA
+Clan BA Reflective:Body
 </Point Equipment>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
 
 <year>

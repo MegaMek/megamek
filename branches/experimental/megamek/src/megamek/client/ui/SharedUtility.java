@@ -36,6 +36,7 @@ import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
+import megamek.common.PlanetaryConditions;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -385,6 +386,98 @@ public class SharedUtility {
                                 distribution[currentDoor] - 2);
                     }
                 }
+            }
+            
+            // Check for Ejecting
+            if (step.getType() == MoveStepType.EJECT 
+                    && (entity instanceof Mech)) {
+                rollTarget = new PilotingRollData(entity.getId(),
+                        entity.getCrew().getPiloting(), "ejecting");
+                if (entity.isProne()) {
+                    rollTarget.addModifier(5, "Mech is prone");
+                }
+                if (entity.getCrew().isUnconscious()) {
+                    rollTarget.addModifier(3, "pilot unconscious");
+                }
+                if (entity.getInternal(Mech.LOC_HEAD) < 3) {
+                    rollTarget.addModifier(
+                            Math.min(3 - entity.getInternal(Mech.LOC_HEAD), 2),
+                            "Head Internal Structure Damage");
+                }
+                int facing = entity.getFacing();
+                Coords targetCoords = entity.getPosition().translated(
+                        (facing + 3) % 6);
+                IHex targetHex = game.getBoard().getHex(targetCoords);
+                if (targetHex != null) {
+                    if ((targetHex.terrainLevel(Terrains.WATER) > 0)
+                            && !targetHex.containsTerrain(Terrains.ICE)) {
+                        rollTarget.addModifier(-1, "landing in water");
+                    } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
+                        rollTarget.addModifier(0, "landing in rough");
+                    } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
+                        rollTarget.addModifier(0, "landing in rubble");
+                    } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
+                        rollTarget.addModifier(2, "landing in light woods");
+                    } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
+                        rollTarget.addModifier(3, "landing in heavy woods");
+                    } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
+                        rollTarget.addModifier(4, "landing in ultra heavy woods");
+                    } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
+                        rollTarget.addModifier(3, "landing in light jungle");
+                    } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
+                        rollTarget.addModifier(5, "landing in heavy jungle");
+                    } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
+                        rollTarget.addModifier(7, "landing in ultra heavy jungle");
+                    } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
+                        rollTarget.addModifier(
+                                targetHex.terrainLevel(Terrains.BLDG_ELEV),
+                                "landing in a building");
+                    } else {
+                        rollTarget.addModifier(-2, "landing in clear terrain");
+                    }
+                } else {
+                    rollTarget.addModifier(-2, "landing off the board");
+                }
+
+                if (game.getPlanetaryConditions().getGravity() == 0) {
+                    rollTarget.addModifier(3, "Zero-G");
+                } else if (game.getPlanetaryConditions().getGravity() < .8) {
+                    rollTarget.addModifier(2, "Low-G");
+                } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
+                    rollTarget.addModifier(2, "High-G");
+                }
+
+                if (game.getPlanetaryConditions().getAtmosphere() == 
+                        PlanetaryConditions.ATMO_VACUUM) {
+                    rollTarget.addModifier(3, "Vacuum");
+                } else if (game.getPlanetaryConditions().getAtmosphere() == 
+                        PlanetaryConditions.ATMO_VHIGH) {
+                    rollTarget.addModifier(2, "Very High Atmosphere Pressure");
+                } else if (game.getPlanetaryConditions().getAtmosphere() == 
+                        PlanetaryConditions.ATMO_TRACE) {
+                    rollTarget.addModifier(2, "Trace atmosphere");
+                }
+
+                if ((game.getPlanetaryConditions().getWeather() == 
+                            PlanetaryConditions.WE_HEAVY_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == 
+                            PlanetaryConditions.WE_ICE_STORM)
+                        || (game.getPlanetaryConditions().getWeather() == 
+                            PlanetaryConditions.WE_DOWNPOUR)
+                        || (game.getPlanetaryConditions().getWindStrength() == 
+                            PlanetaryConditions.WI_STRONG_GALE)) {
+                    rollTarget.addModifier(2, "Bad Weather");
+                }
+
+                if ((game.getPlanetaryConditions().getWindStrength() >= 
+                            PlanetaryConditions.WI_STORM)
+                        || ((game.getPlanetaryConditions().getWeather() == 
+                            PlanetaryConditions.WE_HEAVY_SNOW) 
+                            && (game.getPlanetaryConditions().getWindStrength() 
+                                    == PlanetaryConditions.WI_STRONG_GALE))) {
+                    rollTarget.addModifier(3, "Really Bad Weather");
+                }
+                checkNag(rollTarget, nagReport, psrList);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex

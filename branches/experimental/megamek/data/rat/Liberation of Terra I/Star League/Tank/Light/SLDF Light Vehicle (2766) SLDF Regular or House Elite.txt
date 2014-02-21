@@ -6,7 +6,7 @@ Cobra Transport VTOL,5
 Cyrano Gunship,6
 Lightning Attack Hovercraft,7
 J. Edgar Light Hover Tank,6
-Ripper Infantry Transport,5
+Ripper Infantry Transport (Standard),5
 Nightshade ECM VTOL,4
 Chevalier Light Tank,3
 Gabriel Reconnaissance Hovercraft,2

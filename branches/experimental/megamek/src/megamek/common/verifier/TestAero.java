@@ -592,7 +592,7 @@ public class TestAero extends TestEntity {
             }
             correct = false;
         }
-        int numWeapons[] = new int[4];
+        int numWeapons[] = new int[aero.locations()];
         int numBombs = 0;
         
         for (Mounted m : aero.getWeaponList()){

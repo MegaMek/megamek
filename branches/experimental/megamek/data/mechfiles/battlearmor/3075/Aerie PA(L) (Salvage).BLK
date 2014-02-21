@@ -48,7 +48,11 @@ Jump
 BASalvageArm:RA
 BAArmoredGlove:LA
 CLBASpaceOperationsAdaptation:Body
-InfantryClanMauserIICIAS:RA:APM
+Infantry Clan Mauser IIC:APM:RA
+Clan BA Stealth:LA
+Clan BA Stealth:LA
+Clan BA Stealth:RA
+Clan BA Stealth:RA
 </Point Equipment>
 
 <Trooper 1 Equipment>

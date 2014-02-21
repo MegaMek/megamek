@@ -1790,6 +1790,11 @@ public class Server implements Runnable {
                 "vehicle_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_INITIATIVE));
+        boolean meksMoved = entityUsed instanceof Mech;
+        boolean meksMoveMulti = game.getOptions().booleanOption(
+                "mek_lance_movement")
+                && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
+                        .getPhase() == IGame.Phase.PHASE_INITIATIVE));
 
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
@@ -1809,6 +1814,29 @@ public class Server implements Runnable {
 
         if (tanksMoveMulti) {
             multiMask += GameTurn.CLASS_TANK;
+        }
+        
+        if (meksMoveMulti) {
+            multiMask += GameTurn.CLASS_MECH;
+        }
+        
+        // In certain cases, a new SpecificEntityTurn could have been added for
+        //  the Entity whose turn we are ending as the next turn.  If this has 
+        //  happened, the remaining entity count will be off and we must ensure
+        //  that the SpecificEntityTurn for this unit remains the next turn  
+        Vector<GameTurn> turnVector = game.getTurnVector();
+        int turnIndex = game.getTurnIndex();
+        boolean usedEntityNotDone = false;
+        if ((turnIndex + 1) < turnVector.size()){
+            GameTurn nextTurn = turnVector.get(turnIndex+1);
+            if (nextTurn instanceof GameTurn.SpecificEntityTurn){
+                GameTurn.SpecificEntityTurn seTurn = 
+                        (GameTurn.SpecificEntityTurn)nextTurn;
+                if (seTurn.getEntityNum() == entityUsed.getId()){
+                    turnIndex++;
+                    usedEntityNotDone = true;
+                }
+            }
         }
 
         // Is this a general move turn?
@@ -1851,7 +1879,7 @@ public class Server implements Runnable {
             for (int i = 0; i < protoTurns; i++) {
                 GameTurn newTurn = new GameTurn.UnitNumberTurn(playerId,
                         movingUnit);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
@@ -1868,6 +1896,9 @@ public class Server implements Runnable {
             if (protosMoveMulti) {
                 remaining += game.getProtomechsLeft(playerId);
             }
+            if (usedEntityNotDone){
+                remaining--;
+            }
             int moreInfAndProtoTurns = Math.min(
                     game.getOptions().intOption("inf_proto_move_multi") - 1,
                     remaining);
@@ -1876,14 +1907,16 @@ public class Server implements Runnable {
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
 
         if (tanksMoved && tanksMoveMulti && isGeneralMoveTurn) {
             int remaining = game.getVehiclesLeft(playerId);
-
+            if (usedEntityNotDone){
+                remaining--;
+            }
             int moreVeeTurns = Math.min(
                     game.getOptions()
                             .intOption("vehicle_lance_movement_number") - 1,
@@ -1893,7 +1926,26 @@ public class Server implements Runnable {
             for (int i = 0; i < moreVeeTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
-                game.insertNextTurn(newTurn);
+                game.insertTurnAfter(newTurn,turnIndex);
+                turnsChanged = true;
+            }
+        }
+        
+        if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
+            int remaining = game.getMechsLeft(playerId);
+            if (usedEntityNotDone){
+                remaining--;
+            }
+            int moreMekTurns = Math.min(
+                    game.getOptions()
+                            .intOption("mek_lance_movement_number") - 1,
+                    remaining);
+
+            // Add the correct number of turns for the right unit classes.
+            for (int i = 0; i < moreMekTurns; i++) {
+                GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
+                        multiMask);
+                game.insertTurnAfter(newTurn,turnIndex);
                 turnsChanged = true;
             }
         }
@@ -3127,6 +3179,11 @@ public class Server implements Runnable {
                 "vehicle_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+        boolean mekMoveByLance = game.getOptions().booleanOption(
+                "mek_lance_movement")
+                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+
 
         int evenMask = 0;
         if (infMoveEven) {
@@ -3235,6 +3292,8 @@ public class Server implements Runnable {
                         }
                     }
                 } else if ((entity instanceof Tank) && tankMoveByLance) {
+                    player.incrementMultiTurns();
+                } else if ((entity instanceof Mech) && mekMoveByLance) {
                     player.incrementMultiTurns();
                 } else {
                     player.incrementOtherTurns();
@@ -4735,12 +4794,12 @@ public class Server implements Runnable {
                 int damage = ((int) entity.getWeight() + 19) / 20;
                 while (damage > 0) {
                     int table = ToHitData.HIT_NORMAL;
+                    int side = entity.sideTable(nextPos);
                     if (entity instanceof Protomech) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
-                    addReport(damageEntity(
-                            entity,
-                            entity.rollHitLocation(table, ToHitData.SIDE_FRONT),
+                    addReport(damageEntity(entity,
+                            entity.rollHitLocation(table, side),
                             Math.min(5, damage)));
                     damage -= 5;
                 }
@@ -22920,7 +22979,7 @@ public class Server implements Runnable {
             // facing after fall
             String side;
             int table;
-            int facing = Compute.d6();
+            int facing = Compute.d6() - 1;
             switch (facing) {
                 case 1:
                 case 2:
@@ -22985,7 +23044,7 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
 
-            en.setFacing((en.getFacing() + (facing - 1)) % 6);
+            en.setFacing((en.getFacing() + (facing)) % 6);
 
             boolean exploded = false;
 
@@ -24584,6 +24643,7 @@ public class Server implements Runnable {
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
         int newElevation = 0;
+        
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
@@ -24602,6 +24662,11 @@ public class Server implements Runnable {
                 && (entity.getElevation() == 0)) {
             waterDepth = 0;
             newElevation = 0;
+        // If we are in a basement, we are at a negative elevation, and so
+        //  setting newElevation = 0 will cause us to "fall up"
+        } else if (entity.getMovementMode() != EntityMovementMode.VTOL
+                && game.getBoard().getBuildingAt(fallPos) != null){
+            newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
@@ -31358,6 +31423,7 @@ public class Server implements Runnable {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                Report.addNewline(handleAttackReports);
             }
         }
         // now resolve everything but TAG
@@ -31390,12 +31456,14 @@ public class Server implements Runnable {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                Report.addNewline(handleAttackReports);
             } else {
                 keptAttacks.add(ah);
             }
         }
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId));
+        Report.addNewline(handleAttackReports);
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

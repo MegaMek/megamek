@@ -1,6 +1,6 @@
 Lyran Commonwealth Assault Mechs A
 BattleMaster BLR-10S,1
-Zeus-X ZEU-X4,2
+Zeus X ZEU-X4,2
 Atlas AS7-S2,3
 Fafnir FNR-5X,4
 Atlas II AS7-D-H,5

@@ -37,6 +37,12 @@ import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
 
 public class TestTank extends TestEntity {
+    
+    /**
+     * Defines the maximum amount of armor a VTOL can mount on its rotor.
+     */
+    public static int VTOL_MAX_ROTOR_ARMOR = 2;
+    
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
@@ -282,9 +288,11 @@ public class TestTank extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
-        if ((tank instanceof VTOL) && (tank.getOArmor(VTOL.LOC_ROTOR) > 2)) {
+        if ((tank instanceof VTOL) 
+                && (tank.getOArmor(VTOL.LOC_ROTOR) > VTOL_MAX_ROTOR_ARMOR)) {
             buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
-            buff.append(" points of VTOL rotor armor exceed 2-point limit.\n\n");
+            buff.append(" points of VTOL rotor armor exceed "
+                    + VTOL_MAX_ROTOR_ARMOR + "-point limit.\n\n");
             correct = false;
         }
         for (Mounted m : tank.getMisc()) {

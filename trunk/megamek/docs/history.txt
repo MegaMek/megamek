@@ -81,6 +81,8 @@ v0.37.8-dev (SVN)
 + Bug [#4049]: No unit to move error with Meks move as a lance
 + Bug [#4048]: Ejected units have no cause of destruction at end of game report
 + Added Clan PPC Capacitor
++ Adjusted default player colors: yellow and white are now at the end, as they
+    aren't very readable
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 

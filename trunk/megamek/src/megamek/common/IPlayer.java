@@ -25,9 +25,8 @@ import java.util.Vector;
 public interface IPlayer extends ITurnOrdered {
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
-    public static final String[] colorNames = {"Blue", "Yellow", "Red",
-                           "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
-                           "Purple"};
+    public static final String[] colorNames = { "Blue", "Red", "Green", "Cyan",
+            "Pink", "Orange", "Gray", "Brown", "Purple", "Yellow", "White" };
     public static final String[] teamNames = {"No Team", "Team 1", "Team 2",
                           "Team 3", "Team 4", "Team 5"};
     public static final int MAX_TEAMS = teamNames.length;

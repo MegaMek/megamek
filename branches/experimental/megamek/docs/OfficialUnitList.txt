@@ -1490,6 +1490,9 @@ Starfire SF-1X (Prototype)|
 Tomahawk CX-11|
 Zero ZRO-CX-3|
 Ironsides CX-19|
+Star Dagger S-2B|
+Transit TR-9|
+Thrush TR-5|
 Rondel RDL-01C|
 Cutlass CUT-01E|
 Cutlass CUT-01D|
@@ -1676,27 +1679,26 @@ Tatsumaki Destroyer|
 Samarkand Carrier Block I|
 Shedu Assault Battle Armor (Recon)|
 Tornado PA(L) G13 [David Light Gauss]|
-Kobold Battle Armor [GL]|
-Kobold Battle Armor (GB) [GL/Flamer]|
 Tornado PA(L) G13 [Small Laser]|
-Kobold Battle Armor [GL/TAG]|
+Kobold Battle Armor (GB) [GL]|
+Kobold Battle Armor (GB) [GL/TAG]|
 Asterion Medium Battle Armor [PPC]|
-Asura Medium Battle Armor|
 Tengu Heavy Battle Armor (C3i)|
 Void Medium Battle Armor (Nova Cat)|
 Tengu Heavy Battle Armor (Support)|
-Kobold Battle Armor (GB) [GL]|
+Kobold Battle Armor [GL/TAG]|
 Clan Medium Battle Armor (Volk)|
 Tengu Heavy Battle Armor|
 Afreet Medium Battle Armor (Jade Falcon)|
-Kobold Battle Armor [SL]|
+Asura Medium Battle Armor (SRM)|
 Corona Battle Armor|
 Corona Battle Armor (SRM)|
-Nephilim Assault Battle Armor [Standard]|
+Nephilim Assault Battle Armor (Standard)|
 Grenadier Battle Armor (Hunter-Killer) [MagShot]|
+Kobold Battle Armor (GB) [SL/TAG]|
 Rottweiler Battle Armor (Upgrade)|
-Kobold Battle Armor [SL/Flamer]|
 Tornado PA(L) G12|
+Kobold Battle Armor (CS) [SL/TAG]|
 Tornado PA(L) P12 "Hurricane"|
 Aerie PA(L)|
 Shedu Assault Battle Armor (PPC)|
@@ -1705,73 +1707,71 @@ Shedu Assault Battle Armor (Capture Team)|
 Phalanx Battle Armor (WoB-C)|
 Afreet Medium Battle Armor|
 Phalanx Battle Armor (WoB-B)|
-Kobold Battle Armor (GB) [GL/TAG]|
 Void Medium Battle Armor|
 Se'irim Medium Battle Armor (Standard)|
 Hauberk II Battle Armor|
-Kobold Battle Armor (CS) [SL]|
 Theseus Medium Battle Armor (RL)|
 Grenadier Battle Armor [SL]|
-Clan Medium Battle Armor (Bär)|
 Grenadier Battle Armor [LRR]|
 Nephilim Assault Battle Armor (Capture Team)[HMG]|
 Afreet Medium Battle Armor (Hells's Horses)|
 Grenadier Battle Armor [MagShot]|
-Kobold Battle Armor (CS) [GL/Flamer]|
 Golem Assault Armor (Standard)|
 Asterion Medium Battle Armor [MRR]|
 Se'irim Medium Battle Armor (Capture Team)|
 Grenadier Battle Armor [TAG]|
 Theseus Medium Battle Armor|
-Clan Medium Battle Armor "Rabid"|
 Se'irim Medium Battle Armor (Anti Infantry)|
 Shedu Assault Battle Armor (Support)|
 Tornado PA(L) G13 [Machine Gun]|
 Grenadier Battle Armor [Flamer]|
+Asura Medium Battle Armor (Standard)|
 Nephilim Assault Battle Armor (Gauss)|
 Hauberk Battle Armor|
-Kobold Battle Armor (CS) [GL/TAG]|
 Djinn Battle Armor (Standard)|
 Golem Assault Armor (Fast Assault)|
 Nephilim Assault Battle Armor (Seeker) [MG]|
 Rottweiler Battle Armor|
+Kobold Battle Armor [SL/TAG]|
 Tornado PA(L) G14|
-Kobold Battle Armor (GB) [SL/TAG]|
 Nephilim Assault Battle Armor (Narc)|
-Asura Medium Battle Armor (SRM)|
+Kobold Battle Armor [GL/Flamer]|
 Tengu Heavy Battle Armor (RL)|
 Nephilim Assault Battle Armor (Support)|
-Kobold Battle Armor (GB) [SL/Flamer]|
 Phalanx Battle Armor (C)|
 Tornado PA(L) G13 [Grenade Launcher]|
 Void Medium Battle Armor (DCA)|
-Rogue Bear Heavy Battle Armor|
+Rogue Bear Heavy Battle Armor (Standard)|
+Kobold Battle Armor (CS) [GL]|
 Phalanx Battle Armor (A)|
 Phalanx Battle Armor (B)|
 Djinn Battle Armor (Stealth)|
-Kobold Battle Armor [GL/Flamer]|
-Kobold Battle Armor [SL/TAG]|
+Kobold Battle Armor [SL/Flamer]|
 Shedu Assault Battle Armor|
 Phalanx Battle Armor (WoB-A)|
 Grenadier Battle Armor (Hunter-Killer) [NARC]|
+Clan Medium Battle Armor (Rabid)|
 Aerie PA(L) (Salvage)|
 Golem Assault Armor (Rock Golem)|
 Tengu Heavy Battle Armor (VSP)|
 Rottweiler Battle Armor (Close Combat)|
+Kobold Battle Armor (GB) [GL/Flamer]|
 Kobold Battle Armor (CS) [SL/Flamer]|
-Kobold Battle Armor (CS) [SL/TAG]|
-Kobold Battle Armor (CS) [GL]|
+Clan Medium Battle Armor (Bär)|
+Kobold Battle Armor (CS) [GL/Flamer]|
 Tornado PA(L) G13 [Flamer]|
 Tengu Heavy Battle Armor (ML)|
-Asura Medium Battle Armor (Anti Infantry)|
 Nighthawk PA(L) Mk. XXI|
-Kobold Battle Armor (GB) [SL]|
-Ying Long Medium Battle Armor|
-Gray Death Strike (Production)|
+Kobold Battle Armor (CS) [GL/TAG]|
+Asura Medium Battle Armor (Anti Infantry)|
+Kobold Battle Armor (GB) [SL/Flamer]|
+Kobold Battle Armor [GL]|
+Ying Long Medium Battle Armor (Plasma)|
+Rogue Bear Heavy Battle Armor (Hybrid)|
 Hauberk Battle Armor Commando|
 Void Medium Battle Armor (Minelayer)|
 Sylph Battle Armor Enhanced|
-Rogue Bear (Hybrid)|
+Gray Death Strike Armor (Standard)|
 Elemental II (Production)|
 Gladiator Battle Armor S|
 Infiltrator Mk. II Battle Armor Coral Intent|
@@ -1783,7 +1783,7 @@ Gray Death Scout The Willow Wisps|
 Ailette Rescue PA(L)|
 Kage Light Battle Armor C|
 Void Medium Battle Armor Caltrop|
-Gray Death Strike|
+Gray Death Strike Armor (Prototype)|
 Fenrir Battle Armor "Longshot"|
 Purifier Battle Armor Terra Small Pulse(C)|
 Purifier Battle Armor Terra Medium Recoiless(C)|
@@ -1796,7 +1796,7 @@ Ying Long Medium Battle Armor BC3 [David]|
 Fa Shih Battle Armor 2 [MG]|
 Elemental II (X)|
 Sylph Battle Armor XR|
-Rogue Bear HR|
+Rogue Bear Heavy Battle Armor HR|
 Kobold Battle Armor X-C3|
 Hurricane PA (L) P17|
 Kage Light Battle Armor (Vibro-Claw)|
@@ -1821,6 +1821,7 @@ Gray Death Standard [SRM]|
 Achileus Light Battle Armor [David]|
 Kage Light Battle Armor [MG]|
 Elemental Battle Armor [Pulse Laser]|
+Sloth Battle Armor|
 Fenrir Battle Armor [SRM]|
 Kage Light Battle Armor [Laser]|
 Fa Shih Battle Armor [MG]|
@@ -1840,7 +1841,7 @@ Achileus Light Battle Armor (WoB)|
 Fenrir Battle Armor [MPL]|
 Infiltrator Mk. I Battle Armor (Special Ops)|
 Kage Light Battle Armor [TAG]|
-Purifier Adaptive Battle Armor (PPC)|
+Purifier Adaptive Battle Armor [PPC]|
 Achileus Light Battle Armor [Laser]|
 Achileus Light Battle Armor [Flamer]|
 Kage Light Battle Armor (DEST)|
@@ -1891,7 +1892,6 @@ Gnome Battle Armor (Upgrade) [Bearhunter]|
 Longinus Battle Armor [Laser] (WoB)|
 Purifier Adaptive Battle Armor [Laser]|
 Elemental Battle Armor [ER Laser]|
-Sloth Battle Armor|
 Longinus Battle Armor [David] (WoB)|
 Longinus Battle Armor [Laser]|
 Achileus Light Battle Armor (WoB) [MG]|
@@ -1914,20 +1914,20 @@ Oni Battle Armor [Bearhunter]|
 Oni Battle Armor [PPC]|
 Zou Heavy Battle Armor (Standard)|
 Zou Heavy Battle Armor (C3)|
-Oni Battle Armor [Narc]|
 Oni Battle Armor [MRR]|
+Oni Battle Armor [Narc]|
 Fenrir II Assault Battle Armor (LRM)|
-GD Inflitrator Suit (Firedrake)|
+GD Infiltrator Suit (Firedrake)|
 Fenrir II Assault Battle Armor (MRR)|
 Fenrir II Assault Battle Armor (Med. Laser)|
 Cuchulainn Support Armor (IS Model)|
-GD Inflitrator Suit (Mine)|
-GD Inflitrator Suit (Light TAG)|
-GD Inflitrator Suit (Sensors)|
+GD Infiltrator Suit (Mine)|
+GD Infiltrator Suit (Light TAG)|
+GD Infiltrator Suit (Sensors)|
 Cuchulainn Support Armor (Clan Model)|
 Fenrir II Assault Battle Armor (SRM)|
 Fenrir II Assault Battle Armor (AI)|
-GD Inflitrator Suit (Remote Sensors)|
+GD Infiltrator Suit (Remote Sensors)|
 Leonidas Battle Armor (MG)|
 Ogre Battle Armor (Standard)|
 Leonidas Battle Armor (Improved Sensors)|
@@ -1937,15 +1937,15 @@ Xiphos Assault Battle Armor (A)|
 Leonidas Battle Armor (David LGR)|
 Xiphos Assault Battle Armor (C)|
 Xiphos Assault Battle Armor (B)|
-Leonidas Battle Armor (Fire Drake)|
+Leonidas Battle Armor (FireDrake)|
 Grenadier Battle Armor [Heavy Flamer]|
 Warg Assault Battle Armor (Reactive)|
 Raiden II Battle Armor (Flamer)|
 Grenadier Battle Armor (Hunter-Killer)[SVSP/Magshot]|
 Sloth Battle Armor (Huntsman)|
-Kobold IIC Battle Armor|
+Kobold Battle Armor  IIC|
 Grenadier Battle Armor (Hunter-Killer) [C3/HRR]|
-Rogue Bear (Upgrade)|
+Rogue Bear Heavy Battle Armor (Upgrade)|
 Raiden II Battle Armor (HMG)|
 Kopis Assault Battle Armor (Mortar)|
 Ravager Assault Battle Armor (LRM) [MH]|
@@ -1956,15 +1956,15 @@ Thunderbird Battle Armor [Upgrade] (ER Laser)|
 Infiltrator Mk. II Battle Armor (Marine)|
 Kopis Assault Battle Armor (AI Mk IIr)|
 Thunderbird Battle Armor [Upgrade](Pulse Laser)|
-Gray Death Strike (Harjel)|
 Kopis Assault Battle Armor (AI Mk II)|
 Ravager Assault Battle Armor (LRM)|
+Gray Death Strike Armor (Harjel)|
+Shen Long Battle Armor [Interdictor]|
 Shen Long Battle Armor [MG]|
-Shen Long Battle Armor [Flamer]|
 Amazon Battle Armor [MRR]|
 Shen Long Battle Armor [David Light Gauss]|
 Shen Long Battle Armor [MRM]|
-Shen Long Battle Armor [HGL]|
+Shen Long Battle Armor [Pop-Up Mine]|
 Shen Long Battle Armor [SRM]|
 Amazon Battle Armor [Support PPC]|
 Constable Pacification Suit (ECM)|
@@ -1989,13 +1989,13 @@ Marauder Battle Armor|
 Kage Light Battle Armor (Space)|
 Sloth Battle Armor (Interdictor)|
 Elemental Battle Armor (Fire) [MicroPL]|
+Clan Medium Battle Armor (Rache)|
 Golem Assault Armor (Support)|
 Raiden Battle Armor (Anti-Infantry)|
 Fa Shih Battle Armor (Support) [Plasma]|
 Afreet Medium Battle Armor (Interdictor)|
 Infiltrator Mk. II Battle Armor (Magnetic)|
 Longinus Battle Armor (Magnetic)|
-Nighthawk PA(L) Mk. XXX (Bounty Hunter)|
 Purifier Adaptive Battle Armor [Narc] (RAF)|
 Theseus Medium Battle Armor (Support) "Killshot"|
 Elemental Battle Armor (Space) [MicroPL]|
@@ -2004,13 +2004,13 @@ Elemental Battle Armor (Space) [Flamer]|
 Elemental Battle Armor (Fire) [AP Gauss]|
 Rottweiler Battle Armor (Firedrake)|
 Purifier Adaptive Battle Armor [Laser] (RAF)|
+Nighthawk PA(L) Mk. XXX|
 Asterion Medium Battle Armor (Upgrade) [PPC]|
 Elemental Battle Armor (Space) [MG]|
 Gray Death Heavy Suit|
 Purifier Adaptive Battle Armor [PPC] (RAF)|
-Nighthawk PA(L) Mk. XXX|
 Purifier Adaptive Battle Armor [TAG] (RAF)|
-Clan Medium Battle Armor "Rache"|
+Nighthawk PA(L) Mk. XXX (Bounty Hunter)|
 Elemental Battle Armor (Fire) [Flamer]|
 Fa Shih Battle Armor (Support) [King David]|
 Gnome Battle Armor (LRM)|
@@ -4191,12 +4191,12 @@ Ares ARS-V1C Aphrodite|
 Malice MAL-XT|
 Uraeus UAE-7R|
 Malice MAL-XP|
-Malice MAL-YZ|
 Lament LMT-2R|
 Jackalope JLP-KA|
 Night Stalker NSR-K1|
 Doloire DLR-OB|
 Ares ARS-V1 Zeus|
+Malice MAL-XY|
 Hitotsume Kozo HKZ-1P|
 Exhumer EXR-2X|
 Avalanche AVL-1ON|
@@ -5633,6 +5633,7 @@ Svartalfa Ultra|
 Minotaur P2|
 Procyon (Quad)|
 Satyr XP|
+Hippogriff (Standard)|
 Boggart (Quad) 2|
 Sprite|
 Sprite 2|

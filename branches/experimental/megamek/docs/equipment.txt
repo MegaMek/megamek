@@ -2903,7 +2903,7 @@ M,3103-Inner Sphere3090-Inner Sphere,3103-IS_Advanced3090-IS_Experimental,IS Imp
 M,3131-Inner Sphere3120-Inner Sphere,3131-IS_Advanced3120-IS_Experimental,IS Ballistic-Reinforced,
 M,3120-Clan,3120-Clan_Advanced,HarJel II Self-Repair System,
 M,3137-Clan,3137-Clan_Advanced,HarJel III Self-Repair System,
-M,3122-Inner Sphere3095-Inner Sphere,3122-IS_Advanced3095-IS_Experimental,Radical Heat Sink System,
+M,3095-Inner Sphere,3095-IS_Advanced,Radical Heat Sink System,
 M,3071-Inner Sphere,3071-IS_Advanced,Bomb Bay,
 M,1950-IS/Clan,1950-(allowed to all),Light Fluid Suction System,
 A,3071-(Unknown Technology Base)1950-(Unknown Technology Base),3071-All_TW1950-All_TW,HEBomb,

@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+v0.37.9-exp-dev (SVN)
+
+v0.37.9-dev (SVN)
+
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the
     drawing in BoardView1.  The usage of anti-aliasing is parameterized in the

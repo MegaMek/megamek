@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.8-dev (SVN)
+v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 
     Entity.wasNeverDeployed()
 + Feature Request [#1224] Princess stop chasing the Fighters!

@@ -13,19 +13,19 @@ Aero
 </UnitType>
 
 <Name>
-Rapier
+Transit
 </Name>
 
 <Model>
-RPR-300X
+TR-9
 </Model>
 
 <year>
-3070
+2571
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -41,11 +41,11 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-15
+13
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
@@ -53,49 +53,49 @@ Aerodyne
 </fuel>
 
 <engine_type>
-2
+0
 </engine_type>
 
 <armor_type>
-20
+19
 </armor_type>
 
 <armor_tech>
-7
+1
 </armor_tech>
 
 <armor>
-77
-64
-64
-62
+65
+35
+35
+35
 </armor>
 
 <Nose Equipment>
-Hyper Velocity Auto Cannon/10
-Hyper Velocity Auto Cannon/10
-Extended LRM 10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
+Autocannon/20
+Medium Laser
+Medium Laser
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
 
+<source>
+FR 2765 Liao
+</source>
+
 <tonnage>
-85.0
+50.0
 </tonnage>
 

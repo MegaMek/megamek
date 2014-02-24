@@ -10,25 +10,25 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Gray Death Scout
+Gray Death Standard Suit
 </Name>
-<Trooper Count>
-4
-</Trooper Count>
+<Model>
+[Laser]
+</Model>
 <chassis>
 biped
 </chassis>
 <weightclass>
-1
+2
 </weightclass>
-<cruiseMP>
-1
-</cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
+<Trooper Count>
 4
+</Trooper Count>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+9
 </Armor>
 
 <armor_type>
@@ -36,11 +36,11 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISBAActiveProbe:Body
-ISBAJumpBooster:Body
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
+ISBASmallLaser:RA
+BABattleClaw:RA
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+ISImprovedSensors:Body
 </Squad Equipment>
 <type>
 IS Level 2
@@ -49,7 +49,7 @@ IS Level 2
 3052
 </year>
 <motion_type>
-Jump
+Leg
 </motion_type>
 <source>
 TRO 3058 Upgrade

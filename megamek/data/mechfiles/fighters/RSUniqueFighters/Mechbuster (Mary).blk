@@ -10,7 +10,7 @@ MAM0
 ConvFighter
 </UnitType>
 <Name>
-'Mechbuster
+Mechbuster
 </Name>
 <Model>
 (Mary)
@@ -61,3 +61,7 @@ IS Level 2
 <motion_type>
 aerodyne
 </motion_type>
+
+<source>
+RS Unique Fighters
+</source>

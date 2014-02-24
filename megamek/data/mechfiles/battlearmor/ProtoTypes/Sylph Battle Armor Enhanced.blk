@@ -10,50 +10,52 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Gray Death Standard
+Sylph Battle Armor
 </Name>
 <Model>
-[Laser]
+(Enhanced)
 </Model>
 <chassis>
 biped
 </chassis>
 <weightclass>
-2
+1
 </weightclass>
 <Trooper Count>
-4
+5
 </Trooper Count>
 <cruiseMP>
 3
 </cruiseMP>
+
 <Armor>
-9
+5
 </Armor>
 
 <armor_type>
 28
 </armor_type>
 
-<Squad Equipment>
-ISBASmallLaser:RA
-BABattleClaw:RA
-BAAPMount:LA
-InfantryAssaultRifle:LA:APM
-ISImprovedSensors:Body
-</Squad Equipment>
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+CLBAMyomerBooster:Body
+CLBAERMicroLaser:RA
+</Point Equipment>
+
 <type>
-IS Level 2
+Clan Level 3
 </type>
 <year>
-3052
+3085
 </year>
 <motion_type>
 Leg
 </motion_type>
 <source>
-TRO 3058 Upgrade
+TRO:Prototype
 </source>
-<armor_tech>
-3
-</armor_tech>

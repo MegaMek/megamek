@@ -10,10 +10,11 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Elemental II
+Elemental II Battle Armor
 </Name>
+
 <Model>
-(Production)
+(Standard)
 </Model>
 
 <chassis>

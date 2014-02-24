@@ -336,3 +336,6 @@ Repair:30000:1
 <passengers>
 25
 </passengers>
+
+<BattleStation>
+</BattleStation>

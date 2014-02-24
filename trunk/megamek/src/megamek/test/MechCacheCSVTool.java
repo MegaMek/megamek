@@ -49,10 +49,10 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chasis, Model, Engine Name, Internals Name, " +
+            csvLine.append("Chassis, Model, Engine Name, Internals Name, " +
             		"Myomer Name, Cockpit name, Gyro Name, " +
             		"Armor Types (multiple entries), " +
-            		"Euipment (multiple entries)\n");
+            		"Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
                 if (mech.getUnitType().equals("Infantry")){

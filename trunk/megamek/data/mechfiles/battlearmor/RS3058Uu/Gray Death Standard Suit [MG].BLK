@@ -10,10 +10,10 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Gray Death Standard
+Gray Death Standard Suit
 </Name>
 <Model>
-[LRR]
+[MG]
 </Model>
 <chassis>
 biped
@@ -36,7 +36,7 @@ biped
 </armor_type>
 
 <Squad Equipment>
-ISLight Recoilless Rifle:RA
+BA Machine Gun:RA
 BABattleClaw:RA
 BAAPMount:LA
 InfantryAssaultRifle:LA:APM
@@ -46,7 +46,7 @@ ISImprovedSensors:Body
 IS Level 2
 </type>
 <year>
-3069
+3052
 </year>
 <motion_type>
 Leg

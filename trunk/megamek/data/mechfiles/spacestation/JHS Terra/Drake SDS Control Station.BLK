@@ -216,3 +216,6 @@ CargoBay:3820.5:1
 <history>
 Has 1 Unpressurized Repair Bays each with 5,000 Capacity.  Lastly none of the Special CASPAR II equipment is coded in MM unit included for completeness.
 </history>
+
+<BattleStation>
+</BattleStation>

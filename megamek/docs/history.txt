@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.37.9-dev (SVN)
++ Data Unit Fixes and Some renaming
++ Bug [#4053] - BA LBX weapons missing AmmoType Tag
++ Some typo fixes and adding Primitive RL15
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -43,6 +44,7 @@ public class CLBALBX extends Weapon {
         extremeRange = 10;
         tonnage = 0.4f;
         toHitModifier = -1;
+        ammoType = AmmoType.T_NA;
         bv = 20;
         cost = 70000;
         introDate = 3075;

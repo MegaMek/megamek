@@ -852,6 +852,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISRL5());
         EquipmentType.addType(new ISRL10());
         EquipmentType.addType(new ISRL15());
+        EquipmentType.addType(new ISPrimRL15());
         EquipmentType.addType(new ISRL20());
         EquipmentType.addType(new CLPrototypeRL10());
         EquipmentType.addType(new CLPrototypeRL15());

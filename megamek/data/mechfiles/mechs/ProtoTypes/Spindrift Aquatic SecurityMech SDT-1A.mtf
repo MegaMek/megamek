@@ -5,6 +5,7 @@ SDT-1A
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
+Source:TRO:Prototypes
 Rules Level:4
 
 Mass:30

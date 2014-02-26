@@ -12,6 +12,11 @@ Tank
 <Name>
 Fox Armored Car
 </Name>
+
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 20
 </Tonnage>
@@ -51,5 +56,5 @@ IS Level 2
 Hover
 </motion_type>
 <source>
-Dark Age
+TRO 3085
 </source>

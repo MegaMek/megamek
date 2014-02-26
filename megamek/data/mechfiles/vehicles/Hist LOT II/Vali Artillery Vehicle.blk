@@ -1,78 +1,70 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
-Naval
+Tank
 </UnitType>
 
-<blockversion>
-1
-</blockversion>
-
 <Name>
-Sea Skimmer
+Vali Artillery Vehicle
 </Name>
 
 <Model>
-"Sniper"
+(Standard)
 </Model>
 
 <year>
-3071
+2600
 </year>
 
-<Source>
-Jihad
-</Source>
-
 <type>
-IS Level 4
+IS Level 3
 </type>
 
-<tonnage>
-25.0
-</tonnage>
-
 <motion_type>
-Hydrofoil
+Wheeled
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
-12
+4
 </cruiseMP>
 
+<engine_type>
+1
+</engine_type>
+
 <armor_type>
-6
+1
 </armor_type>
 
 <armor_tech>
-7
+5
 </armor_tech>
 
 <armor>
-9
-8
-8
-8
-6
+20
+20
+20
+11
 </armor>
 
 <Body Equipment>
-ISExtended LRM5 Ammo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
 </Body Equipment>
 
-<Turret Equipment>
-ISExtendedLRM5
-</Turret Equipment>
-
 <Front Equipment>
+ISArrowIV
 </Front Equipment>
 
 <Right Equipment>
@@ -84,4 +76,11 @@ ISExtendedLRM5
 <Rear Equipment>
 </Rear Equipment>
 
+<source>
+Hist LOT II
+</source>
+
+<tonnage>
+40.0
+</tonnage>
 

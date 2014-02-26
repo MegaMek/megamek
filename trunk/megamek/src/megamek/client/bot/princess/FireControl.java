@@ -24,7 +24,6 @@ import megamek.common.BattleArmor;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
@@ -43,7 +42,6 @@ import megamek.common.TargetRollModifier;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.TripodMech;
 import megamek.common.annotations.Nullable;
 import megamek.common.Protomech;
 import megamek.common.RangeType;
@@ -200,6 +198,9 @@ public class FireControl {
             new TargetRollModifier(1, "inaccurate weapon quirk");
     protected static final TargetRollModifier TH_RNG_LARGE =
             new TargetRollModifier(-1, "target large vehicle or superheavy mech");
+    protected static final TargetRollModifier TH_AIR_STRIKE_PATH =
+            new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
+    protected static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
 
     private final Princess owner;
 
@@ -878,81 +879,81 @@ public class FireControl {
     }
 
     /**
-     * Makes an educated guess as to the to hit modifier by an aerospace unit
-     * flying on a ground map doing a strike attack on a unit
+     * Makes an educated guess as to the to hit modifier by an aerospace unit flying on a ground map doing a strike
+     * attack on a unit
+     *
+     * @param shooter               The {@link megamek.common.Entity} doing the shooting.
+     * @param shooterState          The {@link EntityState} of the unit doing the shooting.
+     * @param target                The {@link megamek.common.Targetable} being shot at.
+     * @param targetState           The {@link megamek.client.bot.princess.EntityState} of the unit being shot at.
+     * @param flightPath            The path the shooter is taking.
+     * @param weapon                The weapon being fired as a {@link megamek.common.Mounted} object.
+     * @param game                  The {@link megamek.common.IGame being played.}
+     * @param assumeUnderFlightPlan Set TRUE to assume that the target falls under the given flight path.
+     * @return The to hit modifiers for the given weapon firing at the given target as a {@link ToHitData} object.
      */
-    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
-                                                         Targetable target, EntityState target_state,
-                                                         MovePath shooter_path,
-                                                         Mounted mw, IGame game,
-                                                         boolean assume_under_flight_plan) {
-        final String METHOD_NAME = "guessAirToGroundStrikeToHitModifier(Entity, Targetable, EntityState, MovePath, " +
-                "Mounted, IGame, boolean)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter, @Nullable EntityState shooterState,
+                                                         Targetable target, @Nullable EntityState targetState,
+                                                         MovePath flightPath, Mounted weapon, IGame game,
+                                                         boolean assumeUnderFlightPlan) {
 
-        try {
-            if (target_state == null) {
-                target_state = new EntityState(target);
-            }
-            EntityState shooter_state = new EntityState(shooter);
-            // first check if the shot is impossible
-            if (!mw.canFire()) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "weapon cannot fire");
-            }
-            if (((WeaponType) mw.getType()).ammoType != AmmoType.T_NA) {
-                if (mw.getLinked() == null) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "ammo is gone");
-                }
-                if (mw.getLinked().getUsableShotsLeft() == 0) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "weapon out of ammo");
-                }
-            }
-            // check if target is even under our path
-            if (!assume_under_flight_plan) {
-                if (!isTargetUnderMovePath(shooter_path, target_state)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "target not under flight path");
-                }
-            }
-            // Base to hit is gunnery skill
-            ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(),
-                                            "gunnery skill");
-            tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooter_state,
-                                                              target, target_state, game));
-            // Additional penalty due to strike attack
-            tohit.addModifier(+2, "strike attack");
-
-            return tohit;
-        } finally {
-            owner.methodEnd(FireControl.class, METHOD_NAME);
+        if (targetState == null) {
+            targetState = new EntityState(target);
         }
+        if (shooterState == null) {
+            shooterState = new EntityState(shooter);
+        }
+
+        // first check if the shot is impossible
+        if (!weapon.canFire()) {
+            return new ToHitData(TH_WEAP_CANNOT_FIRE);
+        }
+
+        // Is the weapon loaded?
+        if (((WeaponType) weapon.getType()).ammoType != AmmoType.T_NA) {
+            if (weapon.getLinked() == null) {
+                return new ToHitData(TH_WEAP_NO_AMMO);
+            }
+            if (weapon.getLinked().getUsableShotsLeft() == 0) {
+                return new ToHitData(TH_WEAP_NO_AMMO);
+            }
+        }
+
+        // check if target is even under our path
+        if (!assumeUnderFlightPlan && !isTargetUnderFlightPath(flightPath, targetState)) {
+            return new ToHitData(TH_AIR_STRIKE_PATH);
+        }
+
+        // Base to hit is gunnery skill
+        ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(), TH_GUNNERY);
+
+        // Get general modifiers.
+        tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, game));
+
+        // Additional penalty due to strike attack
+        tohit.addModifier(TH_AIR_STRIKE);
+
+        return tohit;
     }
 
     /**
-     * Checks if a target lies under a move path, to see if an aero unit can
-     * attack it
+     * Checks if a target lies under a move path, to see if an aero unit can attack it.
      *
-     * @param p            move path to check
-     * @param target_state used for targets position
-     * @return
+     * @param flightPath  move path to check
+     * @param targetState used for targets position
+     * @return TRUE if the target is under the path.
      */
-    public boolean isTargetUnderMovePath(MovePath p,
-                                         EntityState target_state) {
-        final String METHOD_NAME = "isTargetUnderMovePath(MovePath, EntityState)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    public boolean isTargetUnderFlightPath(MovePath flightPath,
+                                           EntityState targetState) {
 
-        try {
-            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements(); ) {
-                Coords cord = e.nextElement().getPosition();
-                if (cord.equals(target_state.getPosition())) {
-                    return true;
-                }
+        Coords targetCoords = targetState.getPosition();
+        for (Enumeration<MoveStep> step = flightPath.getSteps(); step.hasMoreElements(); ) {
+            Coords stepCoords = step.nextElement().getPosition();
+            if (targetCoords.equals(stepCoords)) {
+                return true;
             }
-            return false;
-        } finally {
-            owner.methodEnd(FireControl.class, METHOD_NAME);
         }
+        return false;
     }
 
     /**
@@ -1199,7 +1200,7 @@ public class FireControl {
             target_state = new EntityState(target);
         }
         if (!assume_under_flight_path) {
-            if (!isTargetUnderMovePath(shooter_path, target_state)) {
+            if (!isTargetUnderFlightPath(shooter_path, target_state)) {
                 return new FiringPlan(owner, target);
             }
         }

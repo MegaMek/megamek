@@ -36,6 +36,8 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Mounted;
+import megamek.common.MovePath;
+import megamek.common.MoveStep;
 import megamek.common.Tank;
 import megamek.common.TargetRollModifier;
 import megamek.common.Targetable;
@@ -58,9 +60,11 @@ import org.mockito.Mockito;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -1681,5 +1685,124 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
+    }
+
+    @Test
+    public void testGuessAirToGroundStrikeToHitModifier() {
+        ToHitData expected;
+        MovePath mockFlightPathGood = Mockito.mock(MovePath.class);
+        MovePath mockFlightPathBad = Mockito.mock(MovePath.class);
+        Mockito.doReturn(new ToHitData())
+               .when(testFireControl)
+               .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
+                                                     Mockito.any(Targetable.class), Mockito.any(EntityState.class),
+                                                     Mockito.any(IGame.class));
+        Mockito.doReturn(true).when(testFireControl).isTargetUnderFlightPath(Mockito.any(MovePath.class),
+                                                                             Mockito.any(EntityState.class));
+        Mockito.doReturn(false).when(testFireControl).isTargetUnderFlightPath(Mockito.eq(mockFlightPathBad),
+                                                                              Mockito.any(EntityState.class));
+
+        Mounted mockWeapon = Mockito.mock(Mounted.class);
+        Mockito.when(mockWeapon.canFire()).thenReturn(true);
+
+        WeaponType mockWeaponType = Mockito.mock(WeaponType.class);
+        Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        Mockito.when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_AC);
+
+        Mounted mockAmmo = Mockito.mock(Mounted.class);
+        Mockito.when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        Mockito.when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
+
+        ConvFighter mockFighter = Mockito.mock(ConvFighter.class);
+        Mockito.when(mockFighter.getCrew()).thenReturn(mockCrew);
+
+        // Test the vanilla case.
+        expected = new ToHitData(mockCrew.getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_AIR_STRIKE);
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathGood,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            true));
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathGood,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            false));
+
+        // Test the target not being under our flight path.
+        expected = new ToHitData(FireControl.TH_AIR_STRIKE_PATH);
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathBad,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            false));
+
+        // Test a weapon that is out of ammo.
+        Mockito.when(mockAmmo.getUsableShotsLeft()).thenReturn(0);
+        expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathGood,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            true));
+
+        // Test a weapon who's ammo has been destroyed.
+        Mockito.when(mockWeapon.getLinked()).thenReturn(null);
+        expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathGood,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            true));
+
+        // Test a weapon unable to fire.
+        Mockito.when(mockWeapon.canFire()).thenReturn(false);
+        expected = new ToHitData(FireControl.TH_WEAP_CANNOT_FIRE);
+        assertToHitDataEquals(expected, testFireControl.guessAirToGroundStrikeToHitModifier(mockFighter,
+                                                                                            mockShooterState,
+                                                                                            mockTarget,
+                                                                                            mockTargetState,
+                                                                                            mockFlightPathGood,
+                                                                                            mockWeapon,
+                                                                                            mockGame,
+                                                                                            true));
+    }
+
+    @Test
+    public void testIsTargetUnderFlightPath() {
+
+        // Test the target being under the path.
+        Vector<MoveStep> pathSteps = new Vector<MoveStep>(1);
+        MoveStep mockStep = Mockito.mock(MoveStep.class);
+        pathSteps.add(mockStep);
+        MovePath mockPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockPath.getSteps()).thenReturn(pathSteps.elements());
+        Mockito.when(mockStep.getPosition()).thenReturn(mockTargetCoods);
+        Assert.assertTrue(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
+
+        // Test the target not being under the path.
+        pathSteps = new Vector<MoveStep>(1);
+        mockStep = Mockito.mock(MoveStep.class);
+        pathSteps.add(mockStep);
+        mockPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockPath.getSteps()).thenReturn(pathSteps.elements());
+        Mockito.when(mockStep.getPosition()).thenReturn(mockShooterCoords);
+        Assert.assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }
 }

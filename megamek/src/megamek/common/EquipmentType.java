@@ -105,22 +105,23 @@ public class EquipmentType {
             "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
             "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
             "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
+            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum",
+            /* extra space at the end on purpose */ "Industrial ",
             "Heavy Industrial", "Ferro-Lamellor", "Primitive",
             "Electric Discharge ProtoMech", "Ferro-Aluminum",
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
-            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced", 
-            "Prototype Ferro-Aluminum", "BA Standard", 
-            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)", 
-            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)", 
+            "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
+            "Prototype Ferro-Aluminum", "BA Standard",
+            "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
+            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)",
             "BA Fire Resistant", "BA Mimetic", "BA Reflective", "BA Reactive"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
             "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
-    
+
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
             1600, 3200 };
@@ -129,14 +130,14 @@ public class EquipmentType {
     public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
             15000, 15000, 25000, /* patchwork */0, 50000, 20000, 3000, 75000,
             100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 10000, 10000, 
+            25000, 15000, 50000, 15000, 25000, 20000, 25000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000 };
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
             1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875,
             0.67, 1, 1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8,
             1.6, 0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96 };
-    
+
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
@@ -157,7 +158,7 @@ public class EquipmentType {
 
     public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
             "X" };
-	
+
 
     protected String name = null;
 
@@ -299,6 +300,14 @@ public class EquipmentType {
                 && ((mounted.getLinked() == null) || (mounted.getLinked()
                         .getUsableShotsLeft() == 0))) {
             return false;
+        }
+
+        // special case: RISC laser pulse module are only explosive when the
+        // laser they're linked to is working
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            if ((mounted.getLinked() == null) || mounted.getLinked().isInoperable()) {
+                return false;
+            }
         }
 
         // special-case. RACs only explode when jammed
@@ -538,7 +547,7 @@ public class EquipmentType {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-        return EquipmentType.lookupHash.get(key.toLowerCase().trim());
+        return EquipmentType.lookupHash.get(key.toLowerCase());
     }
 
     public Enumeration<String> getNames() {
@@ -621,7 +630,7 @@ public class EquipmentType {
         return clan ? "Clan " + structureNames[structureType] : "IS "
                 + structureNames[structureType];
     }
-    
+
     public static String getBaArmorTypeName(int armorType) {
         return getArmorTypeName(armorType);
     }
@@ -629,8 +638,8 @@ public class EquipmentType {
     public static String getBaArmorTypeName(int armorType, boolean clan) {
         return getArmorTypeName(armorType, clan);
     }
-    
-    public static float getBaArmorWeightPerPoint(int type, boolean isClan) {        
+
+    public static float getBaArmorWeightPerPoint(int type, boolean isClan) {
         switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
             return 0.1f;
@@ -802,10 +811,10 @@ public class EquipmentType {
             return POINT_MULTIPLIER_CLAN_FF;
         }*/
         // Clan armors of these types have a multiplier exactly 0.08 higher than the I.S. variety
-        if (clanArmor && (inArmor == EquipmentType.T_ARMOR_FERRO_CARBIDE || inArmor == EquipmentType.T_ARMOR_FERRO_IMP
-                || inArmor == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE || inArmor == T_ARMOR_ALUM || inArmor == T_ARMOR_FERRO_FIBROUS)) {
+        if (clanArmor && ((inArmor == EquipmentType.T_ARMOR_FERRO_CARBIDE) || (inArmor == EquipmentType.T_ARMOR_FERRO_IMP)
+                || (inArmor == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) || (inArmor == T_ARMOR_ALUM) || (inArmor == T_ARMOR_FERRO_FIBROUS))) {
             return armorPointMultipliers[inArmor] + POINT_ADDITION_CLAN_FF;
-            
+
         }
         return armorPointMultipliers[inArmor];
     }

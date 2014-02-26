@@ -24,10 +24,6 @@ Striker Light Tank
 3070
 </year>
 
-<source>
-Jihad
-</source>
-
 <type>
 IS Level 4
 </type>
@@ -72,3 +68,7 @@ RL10
 <Rear Turret Equipment>
 SRM 6
 </Rear Turret Equipment>
+
+<source>
+XTRO Pirates
+</source>

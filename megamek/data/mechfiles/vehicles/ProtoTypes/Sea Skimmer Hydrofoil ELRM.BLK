@@ -13,11 +13,11 @@ Naval
 </blockversion>
 
 <Name>
-Sea Skimmer
+Sea Skimmer Hydrofoil
 </Name>
 
 <Model>
-ELRM
+(ELRM)
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ ELRM
 </year>
 
 <Source>
-Jihad
+TRO:Prototypes
 </Source>
 
 <type>

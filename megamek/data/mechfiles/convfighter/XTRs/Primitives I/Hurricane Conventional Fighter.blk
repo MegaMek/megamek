@@ -1,112 +1,104 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
 
 <UnitType>
-SmallCraft
+FixedWingSupport
 </UnitType>
 
 <Name>
-Zhen Niao
+Hurricane Conventional Fighter
 </Name>
 
-<Model>
-</Model>
-
 <Tonnage>
-40
+25
 </Tonnage>
 
 <SafeThrust>
-5
+6
 </SafeThrust>
 
 <Armor>
-84
-61
-61
-41
+10
+7
+7
+5
 </Armor>
 
-<structural_integrity>
-8
-</structural_integrity>
-
 <Nose Equipment>
-ISBeagleActiveProbe
+ISMG
+ISPrimRL15
 </Nose Equipment>
 
-<Left Wing Equipment> 
+<Left Wing Equipment>
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 </Right Wing Equipment>
 
+<Body Equipment>
+Basic Fire Control
+ISMG Ammo Half
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
 <Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISGuardianECM
-ISHypersprectralImager
-ISSpaceMineDispenser
 </Aft Equipment>
 
+<transporters>
+</transporters>
+
 <heatsinks>
-12
+0
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
-400
+320
 </fuel>
 
 <type>
-IS Level 3
+IS Level 5
 </type>
 
 <year>
-3107
+2297
 </year>
 
+<source>
+XTR Primitives I
+</source>
+
 <internal_type>
-0
+0				
 </internal_type>
 
 <armor_type>
-8
+0
 </armor_type>
 
-<engine_type>
-0
+<barrating>
+5
+</barrating>
+
+<engine_type>				
+1
 </engine_type>
 
 <motion_type>
 aerodyne
 </motion_type>
 
-<history>
-</history>
-
-<source>
-TRO 3145 CC
-</source>
-
-<transporters>
-cargobay:3:1
-</transporters>
-
-<crew>
-4
-</crew>
-
-<passengers>
-0
-</passengers>
+<vstol>
+1
+</vstol>

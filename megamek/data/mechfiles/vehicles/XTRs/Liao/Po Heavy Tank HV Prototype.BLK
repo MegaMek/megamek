@@ -17,7 +17,7 @@ Po Heavy Tank
 </Name>
 
 <Model>
-HV Prototype
+(HV Prototype)
 </Model>
 
 <year>
@@ -82,4 +82,8 @@ ISStreakSRM6
 <Turret Equipment>
 Hyper Velocity Auto Cannon/10
 </Turret Equipment>
+
+<source>
+XTR Liao
+</source>
 

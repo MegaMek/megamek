@@ -17,9 +17,8 @@ SeaBuster Strike Fighter
 </Name>
 
 <Model>
-(Production)
+(Standard)
 </Model>
-
 
 <Tonnage>
 50
@@ -67,7 +66,7 @@ ISReconCamera
 </fuel>
 
 <type>
-IS Level 5
+IS Level 3
 </type>
 
 <year>
@@ -75,7 +74,7 @@ IS Level 5
 </year>
 
 <source>
-XTR Prototypes
+TRO:Prototypes
 </source>
 
 <internal_type>

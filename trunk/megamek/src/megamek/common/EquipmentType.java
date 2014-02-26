@@ -302,14 +302,6 @@ public class EquipmentType {
             return false;
         }
 
-        // special case: RISC laser pulse module are only explosive when the
-        // laser they're linked to is working
-        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-            if ((mounted.getLinked() == null) || mounted.getLinked().isInoperable()) {
-                return false;
-            }
-        }
-
         // special-case. RACs only explode when jammed
         if ((mounted.getType() instanceof WeaponType)
                 && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY)) {

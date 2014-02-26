@@ -22,6 +22,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Keeps track of a target for a roll. Allows adding modifiers with
@@ -99,6 +100,10 @@ public class TargetRoll implements Serializable {
             default:
                 return Integer.toString(total);
         }
+    }
+
+    public List<TargetRollModifier> getModifiers() {
+        return new ArrayList<TargetRollModifier>(modifiers);
     }
 
     /**

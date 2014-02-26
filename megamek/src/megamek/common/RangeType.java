@@ -32,7 +32,7 @@ public class RangeType {
     public int r_extreme;
 
     public RangeType(int r_min, int r_short, int r_med, int r_long,
-            int r_extreme) {
+                     int r_extreme) {
         this.r_min = r_min;
         this.r_short = r_short;
         this.r_med = r_med;
@@ -72,17 +72,16 @@ public class RangeType {
 
     /**
      * Returns the range bracket a distance falls into.
-     * 
-     * @param distance - the <code>int</code> distance to the target.
-     * @param ranges - the array of <code>int</code> distances of the weapon.
+     *
+     * @param distance        - the <code>int</code> distance to the target.
+     * @param ranges          - the array of <code>int</code> distances of the weapon.
      * @param useExtremeRange - <code>true</code> if the maxtech extreme range
-     *            rules should be used. <code>false</code> if the BMRr range
-     *            rules are in effect.
+     *                        rules should be used. <code>false</code> if the BMRr range
+     *                        rules are in effect.
      * @return the <code>int</code> constant for the range bracket.
      */
-    public static int rangeBracket(int distance, int[] ranges,
-            boolean useExtremeRange) {
-        int range = RANGE_OUT;
+    public static int rangeBracket(int distance, int[] ranges, boolean useExtremeRange) {
+        int range;
 
         // Determine the range bracket of the distance.
         if (null == ranges) {

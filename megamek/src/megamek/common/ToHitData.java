@@ -47,15 +47,15 @@ public class ToHitData extends TargetRoll {
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
     private int margineOfSuccess = 0;
-    
+
     private Coords location;
-    
+
     private int range;
 
     /**
      * Indicates if the primary cover is damagable.
      */
-    int damagableCoverTypePrimary   = LosEffects.DAMAGABLE_COVER_NONE;
+    int damagableCoverTypePrimary = LosEffects.DAMAGABLE_COVER_NONE;
     /**
      * Indicates if the secondary cover is damagable
      */
@@ -106,6 +106,15 @@ public class ToHitData extends TargetRoll {
      */
     public ToHitData() {
         super();
+    }
+
+    /**
+     * Construct with a target roll modifier right off the bat.
+     *
+     * @param targetRollModifier The {@link TargetRollModifier} that applies immediately.
+     */
+    public ToHitData(TargetRollModifier targetRollModifier) {
+        this(targetRollModifier.getValue(), targetRollModifier.getDesc());
     }
 
     /**
@@ -191,7 +200,7 @@ public class ToHitData extends TargetRoll {
                     break;
                 case HIT_PARTIAL_COVER:
                     tdesc += "Partial cover " +
-                        "(" + LosEffects.getCoverName(cover,true) + ") ";
+                            "(" + LosEffects.getCoverName(cover, true) + ") ";
                     break;
             }
             return " (using " + tdesc + "table)";
@@ -214,20 +223,20 @@ public class ToHitData extends TargetRoll {
     public void setMoS(int moS) {
         margineOfSuccess = moS;
     }
-    
-    public void setLocation(Coords l){
+
+    public void setLocation(Coords l) {
         location = l;
     }
-    
-    public Coords getLocation(){
+
+    public Coords getLocation() {
         return location;
     }
-    
-    public void setRange(int r){
+
+    public void setRange(int r) {
         range = r;
     }
-    
-    public int getRange(){
+
+    public int getRange() {
         return range;
     }
 

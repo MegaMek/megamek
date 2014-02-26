@@ -249,8 +249,9 @@ public class WeaponFireInfo {
     }
 
     protected ToHitData calcToHit() {
-        return owner.getFireControl().guessToHitModifier(getShooter(), getShooterState(), getTarget(), getTargetState(),
-                                                         getWeapon(), getGame(), owner);
+        return owner.getFireControl().guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
+                                                                  getTargetState(),
+                                                                  getWeapon(), getGame());
     }
 
     protected ToHitData calcToHit(MovePath shooterPath, boolean assumeUnderFlightPath) {

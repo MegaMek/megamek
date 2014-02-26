@@ -20,6 +20,8 @@ import megamek.common.BuildingTarget;
 import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Crew;
+import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
@@ -30,19 +32,23 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
+import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Mounted;
 import megamek.common.Tank;
-import megamek.common.TargetRoll;
+import megamek.common.TargetRollModifier;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.StringUtil;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
+import megamek.common.weapons.StopSwarmAttack;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +58,9 @@ import org.mockito.Mockito;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -113,6 +121,7 @@ public class FireControlTest {
     private Coords mockShooterCoords;
     private EntityState mockShooterState;
     private ToHitData mockShooterMoveMod;
+    private Crew mockCrew;
 
     private GameOptions mockGameOptions;
     private IHex mockHex;
@@ -134,6 +143,11 @@ public class FireControlTest {
         mockShooterCoords = new Coords(0, 0);
         Mockito.when(mockShooterState.getPosition()).thenReturn(mockShooterCoords);
         mockShooterMoveMod = new ToHitData();
+
+        mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockCrew.getPiloting()).thenReturn(5);
+        Mockito.when(mockCrew.getGunnery()).thenReturn(4);
+        Mockito.when(mockShooter.getCrew()).thenReturn(mockCrew);
 
         mockTargetState = Mockito.mock(EntityState.class);
         Mockito.when(mockTargetState.isBuilding()).thenReturn(false);
@@ -698,15 +712,15 @@ public class FireControlTest {
 
         // Test the most vanilla case we can.
         Mockito.when(mockShooterState.isProne()).thenReturn(false);
-        Mockito.when(mockShooter.hasQuirk(Mockito.eq("anti_air"))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(false);
         Mockito.when(mockTargetState.isImmobile()).thenReturn(false);
         Mockito.when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
         Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(10, 0));
         Mockito.when(mockTargetState.isProne()).thenReturn(false);
         Mockito.when(mockTarget.isAirborne()).thenReturn(false);
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
-        Mockito.when(mockTarget.hasQuirk(Mockito.eq("low_profile"))).thenReturn(false);
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq("tacops_standing_still"))).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+               .thenReturn(false);
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
         ToHitData expected = new ToHitData();
@@ -715,6 +729,68 @@ public class FireControlTest {
                                                                                              mockTarget,
                                                                                              mockTargetState,
                                                                                              mockGame));
+
+        // Test industrial mechs.
+        Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_INDUSTRIAL);
+        expected = new ToHitData();
+        expected.addModifier(FireControl.TH_INDUSTRIAL);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockTarget,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+        Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);
+        expected = new ToHitData();
+        expected.addModifier(FireControl.TH_PRIMATIVE_INDUSTRIAL);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockTarget,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+        Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
+
+        // Test attacking a superheavy mech.
+        Mockito.when(((Mech) mockTarget).getCockpitType()).thenReturn(Mech.COCKPIT_SUPERHEAVY);
+        expected = new ToHitData();
+        expected.addModifier(FireControl.TH_TAR_SUPER);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockTarget,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+        Mockito.when(((Mech) mockTarget).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
+
+        // Test attacking a grounded dropship.
+        Dropship mockDropship = Mockito.mock(Dropship.class);
+        Mockito.when(mockDropship.isAirborne()).thenReturn(false);
+        Mockito.when(mockDropship.isAirborneVTOLorWIGE()).thenReturn(false);
+        expected = new ToHitData();
+        expected.addModifier(FireControl.TH_TAR_GROUND_DS);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockDropship,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+
+        // Test the shooter having a null position.
+        Mockito.when(mockShooterState.getPosition()).thenReturn(null);
+        expected = new ToHitData(FireControl.TH_NULL_POSITION);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockTarget,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+        Mockito.when(mockShooterState.getPosition()).thenReturn(new Coords(0, 0));
+
+        // Test the target having a null position.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(null);
+        expected = new ToHitData(FireControl.TH_NULL_POSITION);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+                                                                                             mockShooterState,
+                                                                                             mockTarget,
+                                                                                             mockTargetState,
+                                                                                             mockGame));
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(10, 0));
 
         // Make the shooter prone.
         Mockito.when(mockShooterState.isProne()).thenReturn(true);
@@ -768,7 +844,8 @@ public class FireControlTest {
         Mockito.when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Turn on Tac-Ops Standing Still rules.
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq("tacops_standing_still"))).thenReturn(true);
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+               .thenReturn(true);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_NO_MOVE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
@@ -783,7 +860,8 @@ public class FireControlTest {
                                                                                              mockTarget,
                                                                                              mockTargetState,
                                                                                              mockGame));
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq("tacops_standing_still"))).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+               .thenReturn(false);
         Mockito.when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Have the target sprint.
@@ -842,17 +920,17 @@ public class FireControlTest {
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
 
         // Give the shooter the anti-air quirk but fire on a ground target.
-        Mockito.when(mockShooter.hasQuirk(Mockito.eq("anti_air"))).thenReturn(true);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(true);
         expected = new ToHitData();
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                                                                                              mockShooterState,
                                                                                              mockTarget,
                                                                                              mockTargetState,
                                                                                              mockGame));
-        Mockito.when(mockShooter.hasQuirk(Mockito.eq("anti_air"))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(false);
 
         // Give the shooter the anti-air quirk, and fire on an airborne target.
-        Mockito.when(mockShooter.hasQuirk(Mockito.eq("anti_air"))).thenReturn(true);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(true);
         mockTarget = Mockito.mock(ConvFighter.class);
         Mockito.when(mockTarget.isAirborne()).thenReturn(true);
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
@@ -863,7 +941,7 @@ public class FireControlTest {
                                                                                              mockTarget,
                                                                                              mockTargetState,
                                                                                              mockGame));
-        Mockito.when(mockShooter.hasQuirk(Mockito.eq("anti_air"))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(false);
         mockTarget = Mockito.mock(BipedMech.class);
         Mockito.when(mockTarget.isAirborne()).thenReturn(false);
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
@@ -901,20 +979,9 @@ public class FireControlTest {
                                                                                              mockGame));
         mockTarget = Mockito.mock(BipedMech.class);
 
-        // Target is low-profile.
-        Mockito.when(mockTarget.hasQuirk(Mockito.eq("low_profile"))).thenReturn(true);
-        expected = new ToHitData();
-        expected.addModifier(FireControl.TH_TAR_LOW_PROFILE);
-        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
-                                                                                             mockShooterState,
-                                                                                             mockTarget,
-                                                                                             mockTargetState,
-                                                                                             mockGame));
-        Mockito.when(mockTarget.hasQuirk(Mockito.eq("low_profile"))).thenReturn(false);
-
         // Target is out of range.
         Mockito.when(mockShooter.getMaxWeaponRange()).thenReturn(5);
-        expected = new ToHitData(ToHitData.IMPOSSIBLE, FireControl.TH_RNG_TOO_FAR);
+        expected = new ToHitData(FireControl.TH_RNG_TOO_FAR);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                                                                                              mockShooterState,
                                                                                              mockTarget,
@@ -936,17 +1003,25 @@ public class FireControlTest {
         Assert.assertNotNull(actual);
         Assert.assertTrue("actual: " + actual.getClass().getName(), actual instanceof ToHitData);
         ToHitData actualTHD = (ToHitData) actual;
-        Assert.assertEquals(expected.getValue(), actualTHD.getValue());
-        Assert.assertEquals(expected.getDesc(), actualTHD.getDesc());
+        StringBuilder failure = new StringBuilder();
+        if (expected.getValue() != actualTHD.getValue()) {
+            failure.append("\nExpected: ").append(expected.getValue());
+            failure.append("\nActual:   ").append(actualTHD.getValue());
+        }
+        Set<TargetRollModifier> expectedMods = new HashSet<TargetRollModifier>(expected.getModifiers());
+        Set<TargetRollModifier> actualMods = new HashSet<TargetRollModifier>(actualTHD.getModifiers());
+        if (!expectedMods.equals(actualMods)) {
+            failure.append("\nExpected: ").append(expected.getDesc());
+            failure.append("\nActual:   ").append(actualTHD.getDesc());
+        }
+        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+            Assert.fail(failure.toString());
+        }
     }
 
     @Test
     public void testGuessToHitModifierPhysical() {
         ToHitData expected;
-
-        Crew mockCrew = Mockito.mock(Crew.class);
-        Mockito.when(mockCrew.getPiloting()).thenReturn(5);
-        Mockito.when(mockShooter.getCrew()).thenReturn(mockCrew);
 
         // guessToHitModifierHelperForAnyAttack being tested elsewhere.
         Mockito.doReturn(new ToHitData())
@@ -987,8 +1062,19 @@ public class FireControlTest {
                                                                                    PhysicalAttackType.LEFT_KICK,
                                                                                    mockGame));
 
+        // Test a superheavy mech attempting a kick.
+        Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_SUPERHEAVY);
+        expected = new ToHitData();
+        expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
+        expected.addModifier(FireControl.TH_PHY_SUPER);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
+                                                                                   mockTarget, mockTargetState,
+                                                                                   PhysicalAttackType.LEFT_KICK,
+                                                                                   mockGame));
+        Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
+
         // Test turning on the TacOps Attacker Weight modifier.
-        Mockito.when(mockGameOptions.booleanOption("tacops_attack_physical_psr")).thenReturn(true);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(true);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_LIGHT);
@@ -1011,14 +1097,14 @@ public class FireControlTest {
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_KICK,
                                                                                    mockGame));
-        Mockito.when(mockGameOptions.booleanOption("tacops_attack_physical_psr")).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(false);
         Mockito.when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
 
         // Test trying to kick infantry in a different hex.
         Entity infantryTarget = Mockito.mock(Infantry.class);
         Mockito.when(infantryTarget.getElevation()).thenReturn(0);
         Mockito.when(infantryTarget.getHeight()).thenReturn(1);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_K_INF_RNG);
+        expected = new ToHitData(FireControl.TH_PHY_K_INF_RNG);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    infantryTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_KICK,
@@ -1068,7 +1154,7 @@ public class FireControlTest {
 
         // Test kicking with a busted hip.
         Mockito.when(mockShooter.hasHipCrit()).thenReturn(true);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_K_HIP);
+        expected = new ToHitData(FireControl.TH_PHY_K_HIP);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_KICK,
@@ -1076,7 +1162,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.hasHipCrit()).thenReturn(false);
 
         // Test trying to kick while prone.
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_K_PRONE);
+        expected = new ToHitData(FireControl.TH_PHY_K_PRONE);
         Mockito.when(mockShooterState.isProne()).thenReturn(true);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
@@ -1093,7 +1179,7 @@ public class FireControlTest {
                                                                                    mockGame));
 
         // Test having the 'easy to pilot' quirk.
-        Mockito.when(mockShooter.hasQuirk("easy_pilot")).thenReturn(true);
+        Mockito.when(mockShooter.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)).thenReturn(true);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting(), FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_EASY_PILOT);
@@ -1108,7 +1194,7 @@ public class FireControlTest {
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
                                                                                    mockGame));
-        Mockito.when(mockShooter.hasQuirk("easy_pilot")).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)).thenReturn(false);
         Mockito.when(mockCrew.getPiloting()).thenReturn(5);
 
         /// Test having a damaged/missing hand.
@@ -1146,7 +1232,7 @@ public class FireControlTest {
 
         // Test trying to punch with a bad shoulder.
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)).thenReturn(false);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_P_NO_SHOULDER);
+        expected = new ToHitData(FireControl.TH_PHY_P_NO_SHOULDER);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.RIGHT_PUNCH,
@@ -1154,7 +1240,7 @@ public class FireControlTest {
 
         // Test trying to punch with a destroyed arm.
         Mockito.when(mockShooter.isLocationBad(Mech.LOC_RARM)).thenReturn(true);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_P_NO_ARM);
+        expected = new ToHitData(FireControl.TH_PHY_P_NO_ARM);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.RIGHT_PUNCH,
@@ -1164,7 +1250,7 @@ public class FireControlTest {
         infantryTarget = Mockito.mock(Infantry.class);
         Mockito.when(infantryTarget.getElevation()).thenReturn(1);
         Mockito.when(infantryTarget.getHeight()).thenReturn(1);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_P_TAR_INF);
+        expected = new ToHitData(FireControl.TH_PHY_P_TAR_INF);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    infantryTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
@@ -1172,7 +1258,7 @@ public class FireControlTest {
 
         // Test trying to punch while prone.
         Mockito.when(mockShooterState.isProne()).thenReturn(true);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_P_TAR_PRONE);
+        expected = new ToHitData(FireControl.TH_PHY_P_TAR_PRONE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
@@ -1180,15 +1266,15 @@ public class FireControlTest {
 
         // Test the target being at the wrong elevation for a punch.
         Mockito.when(mockShooterHex.getElevation()).thenReturn(1);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_TOO_MUCH_ELEVATION);
+        expected = new ToHitData(FireControl.TH_PHY_TOO_MUCH_ELEVATION);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
                                                                                    mockGame));
 
         // Test an attacker with the 'no arms' quirk trying to punch.
-        Mockito.when(mockShooter.hasQuirk("no_arms")).thenReturn(true);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_P_NO_ARMS_QUIRK);
+        Mockito.when(mockShooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)).thenReturn(true);
+        expected = new ToHitData(FireControl.TH_PHY_P_NO_ARMS_QUIRK);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
@@ -1197,7 +1283,7 @@ public class FireControlTest {
         // Test the target not being in the attack arc.
         Mockito.doReturn(false).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
                                                               Mockito.any(Coords.class), Mockito.anyInt());
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_NOT_IN_ARC);
+        expected = new ToHitData(FireControl.TH_PHY_NOT_IN_ARC);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
@@ -1205,7 +1291,7 @@ public class FireControlTest {
 
         // Test the target being more than 1 hex away.
         Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(10, 10));
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_TOO_FAR);
+        expected = new ToHitData(FireControl.TH_PHY_TOO_FAR);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_PUNCH,
@@ -1213,10 +1299,387 @@ public class FireControlTest {
 
         // Test an attacker that is not a mech.
         Entity mockVee = Mockito.mock(Tank.class);
-        expected = new ToHitData(TargetRoll.IMPOSSIBLE, FireControl.TH_PHY_NOT_MECH);
+        expected = new ToHitData(FireControl.TH_PHY_NOT_MECH);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockVee, null, mockTarget,
                                                                                    mockTargetState,
                                                                                    PhysicalAttackType.CHARGE,
                                                                                    mockGame));
+    }
+
+    @Test
+    public void testGuessToHitModifierForWeapon() {
+        ToHitData expected;
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(false);
+        Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
+        Mockito.when(mockShooterState.getFacing()).thenReturn(1);
+        Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
+                                                             Mockito.any(Coords.class), Mockito.anyInt());
+        Mockito.doReturn(new ToHitData())
+               .when(testFireControl)
+               .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
+                                                     Mockito.any(Targetable.class), Mockito.any(EntityState.class),
+                                                     Mockito.any(IGame.class));
+        LosEffects spyLosEffects = Mockito.spy(new LosEffects());
+        Mockito.doReturn(spyLosEffects)
+               .when(testFireControl)
+               .getLosEffects(Mockito.any(IGame.class), Mockito.anyInt(), Mockito.any(Targetable.class),
+                              Mockito.any(Coords.class), Mockito.any(Coords.class), Mockito.anyBoolean());
+        Mockito.doReturn(new ToHitData()).when(spyLosEffects).losModifiers(Mockito.eq(mockGame));
+
+        IHex mockTargetHex = Mockito.mock(IHex.class);
+        Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetCoods))).thenReturn(mockTargetHex);
+        Mockito.when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false); // todo test water
+
+        final int MOCK_WEAPON_ID = 1;
+        Mounted mockWeapon = Mockito.mock(Mounted.class);
+        Mockito.when(mockWeapon.canFire()).thenReturn(true);
+        Mockito.when(mockWeapon.getLocation()).thenReturn(Mech.LOC_RARM);
+        Mockito.when(mockShooter.getEquipmentNum(Mockito.eq(mockWeapon))).thenReturn(MOCK_WEAPON_ID);
+        Mockito.when(mockShooter.isSecondaryArcWeapon(MOCK_WEAPON_ID)).thenReturn(false);
+
+
+        WeaponType mockWeaponType = Mockito.mock(WeaponType.class);
+        Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        Mockito.when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_AC);
+        Mockito.when(mockWeaponType.getRanges(Mockito.eq(mockWeapon))).thenReturn(new int[]{3, 6, 12, 18, 24});
+        Mockito.when(mockWeaponType.getMinimumRange()).thenReturn(3);
+        Mockito.when(mockWeaponType.hasFlag(Mockito.eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
+
+        Mounted mockAmmo = Mockito.mock(Mounted.class);
+        Mockito.when(mockWeapon.getLinked()).thenReturn(mockAmmo);
+        Mockito.when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
+
+        // Test the vanilla case.
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+
+        // Test weapon quirks.
+        Mockito.when(mockWeapon.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_WEAP_POS_ACCURATE))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_ACCURATE_WEAP);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeapon.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_WEAP_POS_ACCURATE))).thenReturn(false);
+        Mockito.when(mockWeapon.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_INACCURATE_WEAP);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeapon.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE))).thenReturn(false);
+
+        // Test long range shooter quirks.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 15));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_L))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_LONG_RANGE);
+        expected.addModifier(FireControl.TH_IMP_TARG_LONG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_L))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_LONG_RANGE);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARG_SHORT_AT_LONG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_LONG_RANGE);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARG_LONG_AT_LONG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_L))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_LONG_RANGE);
+        expected.addModifier(FireControl.TH_POOR_TARG_LONG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_L))).thenReturn(false);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+
+        // Test medium range shooter quirks.
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_M))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_IMP_TARG_MEDIUM);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_M))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_M))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_POOR_TARG_MEDIUM);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_M))).thenReturn(false);
+
+        // Test short range shooter quirks.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 5));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_S))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_SHORT_RANGE);
+        expected.addModifier(FireControl.TH_IMP_TARG_SHORT);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_S))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_SHORT_RANGE);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARG_SHORT_AT_SHORT);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_SHORT_RANGE);
+        expected.addModifier(FireControl.TH_VAR_RNG_TARG_LONG_AT_SHORT);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L))).thenReturn(false);
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_S))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_SHORT_RANGE);
+        expected.addModifier(FireControl.TH_POOR_TARG_SHORT);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_S))).thenReturn(false);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+
+        // Test a low-profile target.
+        Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_TAR_LOW_PROFILE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
+
+        // Test a targeting computer.
+        Mockito.when(mockShooter.hasTargComp()).thenReturn(true);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_TARGETTING_COMP);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeaponType.hasFlag(Mockito.eq(WeaponType.F_DIRECT_FIRE))).thenReturn(false);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeaponType.hasFlag(Mockito.eq(WeaponType.F_DIRECT_FIRE))).thenReturn(false);
+        Mockito.when(mockShooter.hasTargComp()).thenReturn(false);
+
+        // Test ammo mods.
+        AmmoType mockAmmoType = Mockito.mock(AmmoType.class);
+        Mockito.when(mockAmmo.getType()).thenReturn(mockAmmoType);
+        Mockito.when(mockAmmoType.getToHitModifier()).thenReturn(1);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(1, FireControl.TH_AMMO_MOD);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockAmmoType.getToHitModifier()).thenReturn(0);
+
+        // Test target size mods.
+        LargeSupportTank mockLargeTank = Mockito.mock(LargeSupportTank.class);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_RNG_LARGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockLargeTank, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(((Mech) mockTarget).getCockpitType()).thenReturn(Mech.COCKPIT_SUPERHEAVY);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_RNG_LARGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(((Mech) mockTarget).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
+
+        // Test weapon mods.
+        Mockito.when(mockWeaponType.getToHitModifier()).thenReturn(-2);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(-2, FireControl.TH_WEAPON_MOD);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeaponType.getToHitModifier()).thenReturn(0);
+
+        // Test heat mods.
+        Mockito.when(mockShooter.getHeatFiringModifier()).thenReturn(1);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(1, FireControl.TH_HEAT);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.getHeatFiringModifier()).thenReturn(0);
+
+        // Test fighter's at altitude
+        ConvFighter mockFighter = Mockito.mock(ConvFighter.class);
+        Mockito.when(mockFighter.getAltitude()).thenReturn(3);
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_LONG_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockFighter, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+
+        // Test changing the range.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(5, 0));
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_SHORT_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(1, 0));
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(3, FireControl.TH_MINIMUM_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(true);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(20, 0));
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_EXTREME_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        // todo Test infantry range mods.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(false);
+
+        // todo Test swarming and leg attacks.
+
+        // Test sensor damage.
+        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        Mockito.when(mockShooter.getBadCriticals(Mockito.eq(CriticalSlot.TYPE_SYSTEM), Mockito.eq(Mech.SYSTEM_SENSORS),
+                                                 Mockito.eq(Mech.LOC_HEAD))).thenReturn(2);
+        expected.addModifier(2, FireControl.TH_SENSORS);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Tank mockTank = Mockito.mock(Tank.class); // Tank sensor damage is a little different.
+        Mockito.when(mockTank.getCrew()).thenReturn(mockCrew);
+        expected = new ToHitData(mockTank.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        Mockito.when(mockTank.getSensorHits()).thenReturn(1);
+        expected.addModifier(1, FireControl.TH_SENSORS);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockTank, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.getBadCriticals(Mockito.eq(CriticalSlot.TYPE_SYSTEM), Mockito.eq(Mech.SYSTEM_SENSORS),
+                                                 Mockito.eq(Mech.LOC_HEAD))).thenReturn(0);
+
+        // Test stopping swarm attacks.
+        WeaponType mockSwarmStop = Mockito.mock(StopSwarmAttack.class);
+        Mockito.when(mockSwarmStop.getRanges(Mockito.eq(mockWeapon))).thenReturn(new int[]{0, 0, 0, 0, 0});
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 0));
+        Mockito.when(mockWeapon.getType()).thenReturn(mockSwarmStop);
+        Mockito.when(mockShooter.getSwarmTargetId()).thenReturn(Entity.NONE); // Invalid attack.
+        expected = new ToHitData(FireControl.TH_STOP_SWARM_INVALID);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooter.getSwarmTargetId()).thenReturn(10); // Valid attack.
+        expected = new ToHitData(FireControl.TH_SWARM_STOPPED);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+
+        // Test shooting infantry at 0 range.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 0));
+        expected = new ToHitData(FireControl.TH_INF_ZERO_RNG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        //todo Infantry on Infantry violence.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+
+        // Test being out of range.
+        Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 100));
+        expected = new ToHitData(FireControl.TH_OUT_OF_RANGE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+
+        // Test the target being out of arc.
+        Mockito.doReturn(false).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
+                                                              Mockito.any(Coords.class), Mockito.anyInt());
+        expected = new ToHitData(FireControl.TH_WEAPON_NO_ARC);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+
+
+        // Test a prone mech w/ no arms.
+        Mockito.when(mockShooterState.isProne()).thenReturn(true);
+        Mockito.when(mockShooter.isLocationBad(Mech.LOC_RARM)).thenReturn(true);
+        Mockito.when(mockShooter.isLocationBad(Mech.LOC_LARM)).thenReturn(true);
+        expected = new ToHitData(FireControl.TH_WEAP_PRONE_ARMLESS);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        // Propping self up on firing arm.
+        Mockito.when(mockShooter.isLocationBad(Mech.LOC_LARM)).thenReturn(false);
+        expected = new ToHitData(FireControl.TH_WEAP_ARM_PROP);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        // Trying to fire a leg weapon.
+        Mockito.when(mockWeapon.getLocation()).thenReturn(Mech.LOC_LLEG);
+        expected = new ToHitData(FireControl.TH_WEAP_PRONE_LEG);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockShooterState.isProne()).thenReturn(false);
+
+        // Test a weapon that is out of ammo.
+        Mockito.when(mockAmmo.getUsableShotsLeft()).thenReturn(0);
+        expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+        Mockito.when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
+        Mockito.when(mockWeapon.getLinked()).thenReturn(null);
+        expected = new ToHitData(FireControl.TH_WEAP_NO_AMMO);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
+
+        // Test a weapon that cannot fire.
+        Mockito.when(mockWeapon.canFire()).thenReturn(false);
+        expected = new ToHitData(FireControl.TH_WEAP_CANNOT_FIRE);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
+                                                                                    mockTarget, mockTargetState,
+                                                                                    mockWeapon, mockGame));
     }
 }

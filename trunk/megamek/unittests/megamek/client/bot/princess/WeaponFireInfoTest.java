@@ -64,10 +64,11 @@ public class WeaponFireInfoTest {
         Mockito.when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
 
         mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockFireControl.guessToHitModifier(Mockito.any(Entity.class), Mockito.any(EntityState.class),
-                                                        Mockito.any(Targetable.class), Mockito.any(EntityState.class),
-                                                        Mockito.any(Mounted.class), Mockito.any(IGame.class),
-                                                        Mockito.any(Princess.class)))
+        Mockito.when(mockFireControl.guessToHitModifierForWeapon(Mockito.any(Entity.class), Mockito.any(EntityState
+                                                                                                                .class),
+                                                                 Mockito.any(Targetable.class),
+                                                                 Mockito.any(EntityState.class),
+                                                                 Mockito.any(Mounted.class), Mockito.any(IGame.class)))
                .thenReturn(mockToHitEight);
 
         mockPrincess = Mockito.mock(Princess.class);

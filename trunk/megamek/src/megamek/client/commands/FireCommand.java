@@ -45,8 +45,6 @@ public class FireCommand extends ClientCommand {
 
     /**
      * @param client
-     * @param name
-     * @param helpText
      */
     public FireCommand(Client client) {
         super(client, "fire", "used to shoot. See #fire HELP for more details.");
@@ -77,11 +75,15 @@ public class FireCommand extends ClientCommand {
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
                         + "#fire ABORT = aborts planed fireing and deselect unit.\n"
-                        + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite for all commands listed after this.\n"
+                        + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite " +
+                        "for all commands listed after this.\n"
                         + "#fire COMMIT = executs the current fireing plan.\n"
-                        + "#fire LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs.\n"
-                        + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, NE, SE, etc) to try and turn.\n"
-                        + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified.\n"
+                        + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
+                        "This is currently the only way to get weapon IDs.\n"
+                        + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, " +
+                        "NE, SE, etc) to try and turn.\n"
+                        + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
+                        " target. Any number of weapons may be specified.\n"
                         + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
@@ -92,13 +94,13 @@ public class FireCommand extends ClientCommand {
                         String str = "";
                         try {
                             Targetable target = getClient().getEntity(Integer
-                                    .parseInt(args[2]));
+                                                                              .parseInt(args[2]));
                             if (args.length == 4
                                     && args[3].equalsIgnoreCase("ALL")) {
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
                                         fire(ce().getEquipmentNum(weapon),
-                                                target);
+                                             target);
                                     }
                                 }
                                 return "Fireing all remaining weapons at "
@@ -117,7 +119,7 @@ public class FireCommand extends ClientCommand {
                     } else if (args[1].equalsIgnoreCase("LIST")) {
                         try {
                             Targetable target = getClient().getEntity(Integer
-                                    .parseInt(args[2]));
+                                                                              .parseInt(args[2]));
                             if (target != null) {
                                 String str = " Weapons for " + ce() + " at "
                                         + target.toString() + ":\n";
@@ -129,8 +131,8 @@ public class FireCommand extends ClientCommand {
                                             + weapon.getName()
                                             + " = "
                                             + calculateToHit(ce()
-                                                    .getEquipmentNum(weapon),
-                                                    target) + "\n";
+                                                                     .getEquipmentNum(weapon),
+                                                             target) + "\n";
                                 }
 
                                 return str;
@@ -234,7 +236,7 @@ public class FireCommand extends ClientCommand {
                     || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
 
                 waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
-                                            // now.
+                // now.
             }
         }
 
@@ -276,7 +278,7 @@ public class FireCommand extends ClientCommand {
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target,
-                    weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                                             weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
             // str += "Target: " + target.toString();
 
             str += " Range: "
@@ -289,10 +291,10 @@ public class FireCommand extends ClientCommand {
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                str += " Can't shoot: " + toHit.getValueAsString();
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
+            } else if (toHit.getValue() > 12) {
+                str += " Can't hit: " + toHit.getValueAsString();
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                         + Compute.oddsAbove(toHit.getValue()) + "%)";
@@ -311,19 +313,19 @@ public class FireCommand extends ClientCommand {
         // Re-compute the to-hit numbers by adding in correct order.
         Vector<EntityAction> newAttacks = new Vector<EntityAction>();
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target,
-                        attacker.getForwardArc());
+                                                        attacker.getSecondaryFacing(), target,
+                                                        attacker.getForwardArc());
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                            .getEntityId(), waa.getTargetType(), waa
-                            .getTargetId(), waa.getWeaponId());
+                                                                             .getEntityId(), waa.getTargetType(), waa
+                                                                             .getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -334,19 +336,19 @@ public class FireCommand extends ClientCommand {
             }
         }
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target,
-                        attacker.getForwardArc());
+                                                        attacker.getSecondaryFacing(), target,
+                                                        attacker.getForwardArc());
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                            .getEntityId(), waa.getTargetType(), waa
-                            .getTargetId(), waa.getWeaponId());
+                                                                             .getEntityId(), waa.getTargetType(), waa
+                                                                             .getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());

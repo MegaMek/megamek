@@ -12,7 +12,7 @@ SmallCraft
 </UnitType>
 
 <Name>
-Würger Assault Craft
+Wurger Assault Craft
 </Name>
 
 <Model>
@@ -129,3 +129,7 @@ CargoBay:1:1
 <passengers>
 0
 </passengers>
+
+<source>
+TRO 3145 LC
+</source>

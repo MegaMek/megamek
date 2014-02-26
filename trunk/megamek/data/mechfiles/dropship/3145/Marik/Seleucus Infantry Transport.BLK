@@ -15,7 +15,7 @@ Dropship
 </UnitType>
 
 <Name>
-Seleucus Infantry Transpor
+Seleucus Infantry Transport
 </Name>
 
 <Model>
@@ -166,3 +166,7 @@ CargoBay:217:1
 <passengers>
 0
 </passengers>
+
+<source>
+TRO 3145 FWL
+</source>

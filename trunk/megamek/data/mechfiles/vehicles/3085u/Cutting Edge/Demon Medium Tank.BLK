@@ -12,6 +12,9 @@ Tank
 <Name>
 Demon Medium Tank
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 45
 </Tonnage>
@@ -58,5 +61,5 @@ IS Level 2
 Wheeled
 </motion_type>
 <source>
-Jihad
+TRO3085
 </source>

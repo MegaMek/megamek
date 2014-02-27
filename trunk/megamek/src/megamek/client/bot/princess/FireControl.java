@@ -55,6 +55,7 @@ import megamek.common.WeaponType;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.StringUtil;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
@@ -957,162 +958,131 @@ public class FireControl {
     }
 
     /**
-     * Returns a list of enemies that lie under this flight path
+     * Mostly for debugging, this returns a non-null string that describes how the guess has failed to be perfectly
+     * accurate. or null if perfectly accurate
      *
-     * @param p
-     * @param shooter
-     * @param game
-     * @return
+     * @param shooter The unit doing the shooting.
+     * @param target  The unit being shot at.
+     * @param weapon  The weapon being fired.
+     * @param game    The game being played.
+     * @return A description of the differences or NULL if there are none.
      */
-    ArrayList<Entity> getEnemiesUnderFlightPath(MovePath p, Entity shooter,
-                                                IGame game) {
-        final String METHOD_NAME = "getEnemiesUnderFlightPath(MovePath, Entity, IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    String checkGuess(Entity shooter, Targetable target, Mounted weapon, IGame game) {
 
-        try {
-            ArrayList<Entity> ret = new ArrayList<Entity>();
-            for (Enumeration<MoveStep> e = p.getSteps(); e.hasMoreElements(); ) {
-                Coords cord = e.nextElement().getPosition();
-                Entity enemy = game.getFirstEnemyEntity(cord, shooter);
-                if (enemy != null) {
-                    ret.add(enemy);
-                }
-            }
-            return ret;
-        } finally {
-            owner.methodEnd(FireControl.class, METHOD_NAME);
+        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
+        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+            return null;
         }
+
+        // Don't bother checking these as the guesses are minimal (or non-existant).
+        if ((shooter instanceof Aero) || (shooter.getPosition() == null) || (target.getPosition() == null)) {
+            return null;
+        }
+
+        String ret = null;
+        WeaponFireInfo guessInfo = new WeaponFireInfo(shooter, new EntityState(shooter), target, null, weapon, game,
+                                                      true, owner);
+        WeaponFireInfo accurateInfo = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
+
+        if (guessInfo.getToHit().getValue() != accurateInfo.getToHit().getValue()) {
+            ret += "Incorrect To Hit prediction, weapon " + weapon.getName() + " (" + shooter.getChassis() + " vs " +
+                    target.getDisplayName() + ")" + ":\n";
+            ret += " Guess: " + Integer.toString(guessInfo.getToHit().getValue()) + " " +
+                    guessInfo.getToHit().getDesc() + "\n";
+            ret += " Real:  " + Integer.toString(accurateInfo.getToHit().getValue()) + " " +
+                    accurateInfo.getToHit().getDesc() + "\n";
+        }
+        return ret;
     }
 
     /**
-     * Mostly for debugging, this returns a non-null string that describes how
-     * the guess has failed to be perfectly accurate. or null if perfectly
-     * accurate
+     * Mostly for debugging, this returns a non-null string that describes how the guess on a physical attack failed
+     * to be perfectly accurate, or null if accurate
+     *
+     * @param shooter    The unit doing the shooting.
+     * @param target     The unit being shot at.
+     * @param attackType The attack being made.
+     * @param game       The game being played.
+     * @return A description of the differences or NULL if there are none.
      */
-    String checkGuess(Entity shooter, Targetable target, Mounted mw, IGame game) {
-        final String METHOD_NAME = "checkGuess(Entity, Targetable, Mounted, IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
+    String checkGuessPhysical(Entity shooter, Targetable target, PhysicalAttackType attackType, IGame game) {
 
-        try {
-
-            if ((shooter instanceof Aero) ||
-                    (shooter.getPosition() == null) ||
-                    (target.getPosition() == null)) {
-                return null;
-            }
-            String ret = null;
-            WeaponFireInfo guess_info = new WeaponFireInfo(shooter,
-                                                           new EntityState(shooter), target, null, mw, game, owner);
-            WeaponFireInfo accurate_info = new WeaponFireInfo(shooter, target, mw,
-                                                              game, owner);
-            if (guess_info.getToHit().getValue() != accurate_info.getToHit().getValue()) {
-                ret = new String();
-                ret += "Incorrect To Hit prediction, weapon " + mw.getName() + " ("
-                        + shooter.getChassis() + " vs " + target.getDisplayName()
-                        + ")" + ":\n";
-                ret += " Guess: " + Integer.toString(guess_info.getToHit().getValue())
-                        + " " + guess_info.getToHit().getDesc() + "\n";
-                ret += " Real:  "
-                        + Integer.toString(accurate_info.getToHit().getValue()) + " "
-                        + accurate_info.getToHit().getDesc() + "\n";
-            }
-            return ret;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
+        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+            return null;
         }
+
+        // only mechs can do physicals
+        if (!(shooter instanceof Mech)) {
+            return null;
+        }
+
+        String ret = null;
+        if (shooter.getPosition() == null) {
+            return "Shooter has NULL coordinates!";
+        } else if (target.getPosition() == null) {
+            return "Target has NULL coordinates!";
+        }
+
+        PhysicalInfo guessInfo = new PhysicalInfo(shooter, null, target, null, attackType, game, owner);
+        PhysicalInfo accurateInfo = new PhysicalInfo(shooter, target, attackType, game, owner);
+        if (guessInfo.to_hit.getValue() != accurateInfo.to_hit.getValue()) {
+            ret += "Incorrect To Hit prediction, physical attack " + attackType.name() + ":\n";
+            ret += " Guess: " + Integer.toString(guessInfo.to_hit.getValue()) + " " + guessInfo.to_hit.getDesc() +
+                    "\n";
+            ret += " Real:  " + Integer.toString(accurateInfo.to_hit.getValue()) + " " +
+                    accurateInfo.to_hit.getDesc() + "\n";
+        }
+        return ret;
     }
 
     /**
-     * Mostly for debugging, this returns a non-null string that describes how
-     * the guess on a physical attack failed to be perfectly accurate, or null
-     * if accurate
-     */
-    String checkGuess_Physical(Entity shooter, Targetable target,
-                               PhysicalAttackType attack_type, IGame game) {
-        final String METHOD_NAME = "getGuess_Physical(Entity, Targetable, PhysicalAttackType, IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
-
-        try {
-            if (!(shooter instanceof Mech)) {
-                return null; // only mechs can do physicals
-            }
-
-            String ret = null;
-            if (shooter.getPosition() == null) {
-                return "Shooter has NULL coordinates!";
-            } else if (target.getPosition() == null) {
-                return "Target has NULL coordinates!";
-            }
-            PhysicalInfo guess_info = new PhysicalInfo(shooter, null, target, null,
-                                                       attack_type, game, owner);
-            PhysicalInfo accurate_info = new PhysicalInfo(shooter, target,
-                                                          attack_type, game, owner);
-            if (guess_info.to_hit.getValue() != accurate_info.to_hit.getValue()) {
-                ret = new String();
-                ret += "Incorrect To Hit prediction, physical attack "
-                        + attack_type.name() + ":\n";
-                ret += " Guess: " + Integer.toString(guess_info.to_hit.getValue())
-                        + " " + guess_info.to_hit.getDesc() + "\n";
-                ret += " Real:  "
-                        + Integer.toString(accurate_info.to_hit.getValue()) + " "
-                        + accurate_info.to_hit.getDesc() + "\n";
-            }
-            return ret;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
-        }
-    }
-
-    /**
-     * Mostly for debugging, this returns a non-null string that describes how
-     * any possible guess has failed to be perfectly accurate. or null if
-     * perfect
+     * Mostly for debugging, this returns a non-null string that describes how  any possible guess has failed to be
+     * perfectly accurate. or null if  perfect
+     *
+     * @param shooter The unit doing the shooting.
+     * @param game    The game being played.
+     * @return A description of the differences or NULL if there are none.
      */
     String checkAllGuesses(Entity shooter, IGame game) {
-        final String METHOD_NAME = "checkAllGuesses(Entity, IGame)";
-        owner.methodBegin(FireControl.class, METHOD_NAME);
 
-        try {
-            String ret = new String("");
-            ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter,
-                                                                       game);
-            for (Targetable e : enemies) {
-                for (Mounted mw : shooter.getWeaponList()) {
-                    String splain = checkGuess(shooter, e, mw, game);
-                    if (splain != null) {
-                        ret += splain;
-                    }
-                }
-                String splainphys = null;
-                splainphys = checkGuess_Physical(shooter, e,
-                                                 PhysicalAttackType.RIGHT_KICK, game);
-                if (splainphys != null) {
-                    ret += splainphys;
-                }
-                splainphys = checkGuess_Physical(shooter, e,
-                                                 PhysicalAttackType.LEFT_KICK, game);
-                if (splainphys != null) {
-                    ret += splainphys;
-                }
-                splainphys = checkGuess_Physical(shooter, e,
-                                                 PhysicalAttackType.RIGHT_PUNCH, game);
-                if (splainphys != null) {
-                    ret += splainphys;
-                }
-                splainphys = checkGuess_Physical(shooter, e,
-                                                 PhysicalAttackType.LEFT_PUNCH, game);
-                if (splainphys != null) {
-                    ret += splainphys;
-                }
-
-            }
-            if (ret.compareTo("") == 0) {
-                return null;
-            }
-            return ret;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
+        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+            return null;
         }
+
+        String ret = "";
+        ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        for (Targetable enemy : enemies) {
+            for (Mounted weapon : shooter.getWeaponList()) {
+                String shootingCheck = checkGuess(shooter, enemy, weapon, game);
+                if (shootingCheck != null) {
+                    ret += shootingCheck;
+                }
+            }
+            String physicalCheck = null;
+            physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.RIGHT_KICK, game);
+            if (physicalCheck != null) {
+                ret += physicalCheck;
+            }
+            physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.LEFT_KICK, game);
+            if (physicalCheck != null) {
+                ret += physicalCheck;
+            }
+            physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.RIGHT_PUNCH, game);
+            if (physicalCheck != null) {
+                ret += physicalCheck;
+            }
+            physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.LEFT_PUNCH, game);
+            if (physicalCheck != null) {
+                ret += physicalCheck;
+            }
+
+        }
+        if (StringUtil.isNullOrEmpty(ret)) {
+            return null;
+        }
+        return ret;
     }
 
     /**
@@ -1169,7 +1139,7 @@ public class FireControl {
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_state,
-                                                      target, target_state, mw, game, owner);
+                                                      target, target_state, mw, game, true, owner);
             if (shoot.getProbabilityToHit() > 0) {
                 myplan.add(shoot);
             }
@@ -1220,7 +1190,7 @@ public class FireControl {
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
 
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_path,
-                                                      target, target_state, mw, game, true, owner);
+                                                      target, target_state, mw, game, true, true, owner);
             if (shoot.getProbabilityToHit() > 0) {
                 myplan.add(shoot);
             }
@@ -1263,7 +1233,7 @@ public class FireControl {
             return myplan;
         }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
-            WeaponFireInfo shoot = new WeaponFireInfo(shooter, target, mw, game, owner);
+            WeaponFireInfo shoot = new WeaponFireInfo(shooter, target, mw, game, false, owner);
             if ((shoot.getProbabilityToHit() > 0)) {
                 myplan.add(shoot);
             }

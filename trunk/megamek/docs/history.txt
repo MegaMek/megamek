@@ -7,6 +7,9 @@ v0.37.9-dev (SVN)
 + Refactored FireControl.guessToHitModifierForWeapon and added unit tests for it.
 + Data: Some unit corrections to bring them inline with the MUL.
 + Refactored FireControl.guessAirToGroundStrikeToHitModifier and added unit tests for it.
++ Added a 'guess' paramter to the various WeaponFireInfo constructors to indicate when the to hit chance should be
+    estimated rather than fully calculated.
++ Changed the FireControl.checkGuess... methods to only run when Princess is in debug mode.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

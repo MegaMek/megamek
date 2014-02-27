@@ -1805,4 +1805,9 @@ public class FireControlTest {
         Mockito.when(mockStep.getPosition()).thenReturn(mockShooterCoords);
         Assert.assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }
+
+    @Test
+    public void testCalculateUtility() {
+
+    }
 }

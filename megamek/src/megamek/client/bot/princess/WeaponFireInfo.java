@@ -23,6 +23,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 
 import java.text.DecimalFormat;
@@ -65,66 +66,69 @@ public class WeaponFireInfo {
     }
 
     /**
-     * This constructs a WeaponFireInfo using an actual {@link WeaponAttackAction} with real to hit values
+     * Basic constructor.
      *
-     * @param shooter The {@link Entity} doing the attacking.
-     * @param target  The {@link Targetable} of the attack.
-     * @param weapon  The {@link Mounted} weapon used for the attack.
-     * @param game    The {@link IGame} in progress.
+     * @param shooter The {@link megamek.common.Entity} doing the attacking.
+     * @param target  The {@link megamek.common.Targetable} of the attack.
+     * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param game    The {@link megamek.common.IGame} in progress.
+     * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    WeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game, Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, owner);
+    WeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game, boolean guess, Princess owner) {
+        this(shooter, null, null, target, null, weapon, game, false, guess, owner);
     }
 
     /**
-     * This constructs a WeaponFireInfo using the best guess of how likely  this is to hit without actually
-     * constructing the {@link WeaponAttackAction}
+     * Constructor including the shooter and target's state information.
      *
-     * @param shooter      The {@link Entity} doing the attacking.
-     * @param shooterState The current {@link EntityState} of the attacker.
-     * @param target       The {@link Targetable} of the attack.
-     * @param targetState  The current {@link EntityState} of the target.
-     * @param weapon       The {@link Mounted} weapon used for the attack.
-     * @param game         The {@link IGame} in progress.
+     * @param shooter      The {@link megamek.common.Entity} doing the attacking.
+     * @param shooterState The current {@link megamek.client.bot.princess.EntityState} of the attacker.
+     * @param target       The {@link megamek.common.Targetable} of the attack.
+     * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param game         The {@link megamek.common.IGame} in progress.
+     * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    WeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target,
-                   EntityState targetState, Mounted weapon, IGame game, Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, owner);
+    WeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
+                   Mounted weapon, IGame game, boolean guess, Princess owner) {
+        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner);
     }
 
     /**
-     * This constructs a WeaponFireInfo using the best guess of how likely an aerospace unit using a strike attack will
-     * hit, without actually constructing the {@link WeaponAttackAction}
+     * Constructor for aerospace units performing Strike attacks.
      *
-     * @param shooter               The {@link Entity} doing the attacking.
-     * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link Targetable} of the attack.
-     * @param targetState           The current {@link EntityState} of the target.
-     * @param weapon                The {@link Mounted} weapon used for the attack.
-     * @param game                  The {@link IGame} in progress.
+     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooterPath           The {@link megamek.common.MovePath} of the attacker.
+     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
+     * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(Entity shooter, MovePath shooterPath, Targetable target, EntityState targetState,
-                   Mounted weapon, IGame game, boolean assumeUnderFlightPath, Princess owner) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, owner);
+                   Mounted weapon, IGame game, boolean assumeUnderFlightPath, boolean guess, Princess owner) {
+        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner);
     }
 
     /**
      * This constructs a WeaponFireInfo using the best guess of how likely an aerospace unit using a strike attack will
      * hit, without actually constructing the {@link WeaponAttackAction}
      *
-     * @param shooter               The {@link Entity} doing the attacking.
-     * @param shooterState          The current {@link EntityState} of the attacker.
-     * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link Targetable} of the attack.
-     * @param targetState           The current {@link EntityState} of the target.
-     * @param weapon                The {@link Mounted} weapon used for the attack.
-     * @param game                  The {@link IGame} in progress.
+     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooterState          The current {@link megamek.client.bot.princess.EntityState} of the attacker.
+     * @param shooterPath           The {@link megamek.common.MovePath} of the attacker.
+     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
+     * @param guess                 Set TRUE to esitmate the chance to hit rather than going through the full
+     *                              calculation.
      */
     WeaponFireInfo(Entity shooter, EntityState shooterState, MovePath shooterPath, Targetable target,
                    EntityState targetState, Mounted weapon, IGame game, boolean assumeUnderFlightPath,
-                   Princess owner) {
+                   boolean guess, Princess owner) {
         final String METHOD_NAME =
                 "WeaponFireInfo(Entity, EntityState, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
         owner.methodBegin(getClass(), METHOD_NAME);
@@ -137,7 +141,7 @@ public class WeaponFireInfo {
             setTargetState(targetState);
             setWeapon(weapon);
             setGame(game);
-            initDamage(shooterPath, assumeUnderFlightPath);
+            initDamage(shooterPath, assumeUnderFlightPath, guess);
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
@@ -261,6 +265,10 @@ public class WeaponFireInfo {
                                                                           assumeUnderFlightPath);
     }
 
+    protected ToHitData calcRealToHit(WeaponAttackAction weaponAttackAction) {
+        return weaponAttackAction.toHit(getGame());
+    }
+
     public IGame getGame() {
         return game;
     }
@@ -325,20 +333,27 @@ public class WeaponFireInfo {
 
     /*
      * Helper function that calculates expected damage
+     *
+     * @param shooterPath The path the attacker has moved.
+     * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure the target is under their flight
+     *                              path.
+     * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
      */
-    protected void initDamage(MovePath shooterPath, boolean assumeUnderFlightPath) {
+    protected void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess) {
         final String METHOD_NAME = "initDamage(MovePath, boolean)";
 
-        StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                                                                         .append(" firing ").append(getWeapon()
-                                                                                                            .getDesc
-                                                                                                                    ()).append(" at ").append(getTarget().getDisplayName())
-                                                                         .append(":");
+        StringBuilder msg =
+                new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                                                             .append(" firing ").append(getWeapon().getDesc())
+                                                             .append(" at ").append(getTarget().getDisplayName())
+                                                             .append(":");
 
         try {
             // Set up the attack action and calculate the chance to hit.
             setAction(buildWeaponAttackAction());
-            if (shooterPath != null) {
+            if (!guess) {
+                setToHit(calcRealToHit(getWeaponAttackAction()));
+            } else if (shooterPath != null) {
                 setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
             } else {
                 setToHit(calcToHit());

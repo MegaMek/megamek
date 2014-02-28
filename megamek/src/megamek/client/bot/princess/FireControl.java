@@ -67,6 +67,12 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class FireControl {
 
+    private static double damage_utility = 1.0;
+    private static double critical_utility = 10.0;
+    private static double kill_utility = 50.0;
+    private static double overheat_disutility = 5.0;
+    private static double ejected_pilot_disutility = 1000.0;
+
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
     protected static final String TH_PHY_BASE = "base";
@@ -1087,35 +1093,40 @@ public class FireControl {
     }
 
     /**
-     * calculates the 'utility' of a firing plan. override this function if you
-     * have a better idea about what firing plans are good
+     * calculates the 'utility' of a firing plan. override this function if you have a better idea about what firing
+     * plans are good
+     *
+     * @param firingPlan        The {@link FiringPlan} to be calculated.
+     * @param overheatTolerance How much overheat we're willing to forgive.
      */
-    void calculateUtility(FiringPlan p, int overheat_value) {
-        double damage_utility = 1.0;
-        double critical_utility = 10.0;
-        double kill_utility = 50.0;
-        double overheat_disutility = 5.0;
-        double ejected_pilot_disutility = (p.getTarget() instanceof MechWarrior ? 1000.0 : 0.0);
+    void calculateUtility(FiringPlan firingPlan, int overheatTolerance) {
         int overheat = 0;
-        if (p.getHeat() > overheat_value) {
-            overheat = p.getHeat() - overheat_value;
+        if (firingPlan.getHeat() > overheatTolerance) {
+            overheat = firingPlan.getHeat() - overheatTolerance;
         }
-        p.setUtility(((damage_utility * p.getExpectedDamage())
-                + (critical_utility * p.getExpectedCriticals()) + (kill_utility * p
-                .getKillProbability())) - (overheat_disutility * overheat) - ejected_pilot_disutility);
+
+        double utility = damage_utility * firingPlan.getExpectedDamage();
+        utility += critical_utility * firingPlan.getExpectedCriticals();
+        utility += kill_utility * firingPlan.getKillProbability();
+        utility -= overheat_disutility * overheat;
+        utility -= (firingPlan.getTarget() instanceof MechWarrior) ? ejected_pilot_disutility : 0;
+
+        firingPlan.setUtility(utility);
     }
 
     /**
      * calculates the 'utility' of a physical action.
+     *
+     * @param physicalInfo The {@link PhysicalInfo} to be calculated.
      */
-    void calculateUtility(PhysicalInfo p) {
-        double damage_utility = 1.0;
-        double critical_utility = 10.0;
-        double kill_utility = 50.0;
-        double ejected_pilot_disutility = (p.getTarget() instanceof MechWarrior ? 1000.0 : 0.0);
-        p.setUtility((damage_utility * p.getExpectedDamage())
-                             + (critical_utility * p.getExpectedCriticals())
-                             + (kill_utility * p.getKillProbability()) - ejected_pilot_disutility);
+    void calculateUtility(PhysicalInfo physicalInfo) {
+
+        double utility = damage_utility * physicalInfo.getExpectedDamage();
+        utility += critical_utility * physicalInfo.getExpectedCriticals();
+        utility += kill_utility * physicalInfo.getKillProbability();
+        utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? ejected_pilot_disutility : 0;
+
+        physicalInfo.setUtility(utility);
     }
 
     /**

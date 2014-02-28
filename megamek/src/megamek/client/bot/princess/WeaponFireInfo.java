@@ -359,9 +359,6 @@ public class WeaponFireInfo {
                 setToHit(calcToHit());
             }
 
-            // Calculate the direction of damage.
-            calcDamageDirection();
-
             // If we can't hit, set everything zero and return..
             if (getToHit().getValue() > 12) {
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
@@ -467,5 +464,4 @@ public class WeaponFireInfo {
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
     }
-
 }

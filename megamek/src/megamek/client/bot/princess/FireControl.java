@@ -1024,14 +1024,15 @@ public class FireControl {
             return "Target has NULL coordinates!";
         }
 
-        PhysicalInfo guessInfo = new PhysicalInfo(shooter, null, target, null, attackType, game, owner);
-        PhysicalInfo accurateInfo = new PhysicalInfo(shooter, target, attackType, game, owner);
-        if (guessInfo.to_hit.getValue() != accurateInfo.to_hit.getValue()) {
+        PhysicalInfo guessInfo = new PhysicalInfo(shooter, null, target, null, attackType, game, owner, true);
+        PhysicalInfo accurateInfo = new PhysicalInfo(shooter, target, attackType, game, owner, false);
+        if (guessInfo.getHitData().getValue() != accurateInfo.getHitData().getValue()) {
             ret += "Incorrect To Hit prediction, physical attack " + attackType.name() + ":\n";
-            ret += " Guess: " + Integer.toString(guessInfo.to_hit.getValue()) + " " + guessInfo.to_hit.getDesc() +
+            ret += " Guess: " + Integer.toString(guessInfo.getHitData().getValue()) + " " + guessInfo.getHitData()
+                                                                                                     .getDesc() +
                     "\n";
-            ret += " Real:  " + Integer.toString(accurateInfo.to_hit.getValue()) + " " +
-                    accurateInfo.to_hit.getDesc() + "\n";
+            ret += " Real:  " + Integer.toString(accurateInfo.getHitData().getValue()) + " " +
+                    accurateInfo.getHitData().getDesc() + "\n";
         }
         return ret;
     }
@@ -1111,9 +1112,10 @@ public class FireControl {
         double damage_utility = 1.0;
         double critical_utility = 10.0;
         double kill_utility = 50.0;
-        p.utility = (damage_utility * p.getExpectedDamage())
-                + (critical_utility * p.expected_criticals)
-                + (kill_utility * p.kill_probability);
+        double ejected_pilot_disutility = (p.getTarget() instanceof MechWarrior ? 1000.0 : 0.0);
+        p.setUtility((damage_utility * p.getExpectedDamage())
+                             + (critical_utility * p.getExpectedCriticals())
+                             + (kill_utility * p.getKillProbability()) - ejected_pilot_disutility);
     }
 
     /**

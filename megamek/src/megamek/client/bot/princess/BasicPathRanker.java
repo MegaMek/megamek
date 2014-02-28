@@ -246,12 +246,13 @@ public class BasicPathRanker extends PathRanker {
 
         // if they can kick me, and probably hit, they probably will.
         PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
-                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner);
+                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner,
+                                                  true);
 
-        if (theirKick.prob_to_hit <= 0.5) {
+        if (theirKick.getProbabilityToHit() <= 0.5) {
             return 0.0;
         }
-        return theirKick.expected_damage_on_hit * theirKick.prob_to_hit;
+        return theirKick.getExpectedDamageOnHit() * theirKick.getProbabilityToHit();
     }
 
     protected double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, IGame game) {
@@ -283,11 +284,11 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
                                                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
-                                               game, owner);
-        if (myKick.prob_to_hit <= 0.5) {
+                                               game, owner, true);
+        if (myKick.getProbabilityToHit() <= 0.5) {
             return 0;
         }
-        return myKick.expected_damage_on_hit * myKick.prob_to_hit;
+        return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
     }
 
     protected EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, IGame game) {
@@ -461,8 +462,8 @@ public class BasicPathRanker extends PathRanker {
                 }
                 PhysicalInfo myKick = new PhysicalInfo(
                         path.getEntity(), new EntityState(path), target, null,
-                        PhysicalAttackType.RIGHT_KICK, game, owner);
-                double expectedKickDamage = myKick.expected_damage_on_hit * myKick.prob_to_hit;
+                        PhysicalAttackType.RIGHT_KICK, game, owner, true);
+                double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
                 if (expectedKickDamage > maximumPhysicalDamage) {
                     maximumPhysicalDamage = expectedKickDamage;
                 }

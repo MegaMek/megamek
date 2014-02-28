@@ -16,225 +16,373 @@ package megamek.client.bot.princess;
 import megamek.client.bot.PhysicalOption;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import megamek.common.logging.LogLevel;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @lastEditBy Deric "Netzilla" Page (deric dot page at gmail dot com)
  * @since 12/18/13 1:29 PM
  */
 public class PhysicalInfo {
-    public Entity shooter;
-    public Targetable target;
-    public PhysicalAttackAction action;
-    public PhysicalAttackType attack_type;
-    public ToHitData to_hit;
-    public double prob_to_hit;
-    public double max_damage;
-    public double expected_damage_on_hit;
-    public int damage_direction; // direction damage is coming from relative
-    // to target
-    public double expected_criticals;
-    public double kill_probability; // probability to destroy CT or HEAD
-    // (ignores criticals)
-    public double utility; // filled out externally
+    private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
+    private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
+
+    private Entity shooter;
+    private Targetable target;
+    private PhysicalAttackAction action;
+    private PhysicalAttackType attackType;
+    private ToHitData hitData;
+    private double probabilityToHit;
+    private double maxDamage;
+    private double expectedDamageOnHit;
+    private int damageDirection; // direction damage is coming from relative to target
+    private double expectedCriticals;
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double utility; // filled out externally
     private Princess owner;
 
+    /**
+     * For unit testing.
+     *
+     * @param owner
+     */
+    protected PhysicalInfo(Princess owner) {
+        this.owner = owner;
+    }
+
     public double getExpectedDamage() {
-        return prob_to_hit * expected_damage_on_hit;
+        return getProbabilityToHit() * getExpectedDamageOnHit();
     }
 
-    PhysicalInfo(Entity sshooter, EntityState shooter_state,
-                 Targetable ttarget, EntityState target_state,
-                 PhysicalAttackType atype, IGame game, Princess owner) {
-        final String METHOD_NAME = "PhysicalInfo(Entity, EntityState, Targetable, EntityState, PhysicalAttackType, " +
-                "IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+    /**
+     * Constructor including the shooter and target's state information.
+     *
+     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
+     * @param shooterState       The current {@link megamek.client.bot.princess.EntityState} of the attacker.
+     * @param target             The {@link megamek.common.Targetable} of the attack.
+     * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param physicalAttackType The type of attack being made.
+     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param owner              The owning {@link Princess} bot.
+     * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     */
+    PhysicalInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
+                 PhysicalAttackType physicalAttackType, IGame game, Princess owner, boolean guess) {
+
         this.owner = owner;
 
-        try {
-            shooter = sshooter;
-            target = ttarget;
-            if (shooter_state == null) {
-                shooter_state = new EntityState(sshooter);
-            }
-            if (target_state == null) {
-                target_state = new EntityState(ttarget);
-            }
-            attack_type = atype;
-            to_hit = owner.getFireControl().guessToHitModifierPhysical(shooter, shooter_state,
-                                                                       target, target_state, attack_type, game);
-            int fromdir = target_state.getPosition()
-                                      .direction(shooter_state.getPosition());
-            damage_direction = ((fromdir - target_state.getFacing()) + 6) % 6;
-            if ((atype == PhysicalAttackType.LEFT_PUNCH)
-                    || (atype == PhysicalAttackType.RIGHT_PUNCH)) {
-                if (sshooter instanceof BipedMech) {
-                    max_damage = (int) Math.ceil(shooter.getWeight() / 10.0);
-                } else {
-                    max_damage = 0;
-                }
-            } else { // assuming kick
-                max_damage = (int) Math.floor(shooter.getWeight() / 5.0);
-            }
-            initDamage();
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+        setShooter(shooter);
+        setTarget(target);
+        setAttackType(physicalAttackType);
+        initDamage(physicalAttackType, shooterState, targetState, guess, game);
+    }
+
+    /**
+     * Builds a new {@link PhysicalAttackAction} from the given parameters.
+     *
+     * @param attackType The {@link PhysicalAttackType} of the attack.
+     * @param shooterId  The ID of the attacking unit.
+     * @param target     The unit being attacked.
+     * @return The resulting {@link PhysicalAttackType}.
+     */
+    protected PhysicalAttackAction buildAction(PhysicalAttackType attackType, int shooterId, Targetable target) {
+        if (attackType.isPunch()) {
+            int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mech.LOC_RARM : Mech.LOC_LARM;
+            return new PunchAttackAction(shooterId, target.getTargetType(), target.getTargetId(), armId, false, false);
+        } else if (attackType.isKick()) {
+            int legId = PhysicalAttackType.RIGHT_KICK == attackType ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+            return new KickAttackAction(shooterId, target.getTargetType(), target.getTargetId(), legId);
+        } else {
+            // todo handle other physical attack types.
+            return null;
         }
     }
 
-    PhysicalInfo(Entity sshooter, Targetable ttarget,
-                 PhysicalAttackType atype, IGame game, Princess owner) {
-        final String METHOD_NAME = "PhysicalInfo(Entity, Targetable, PhysicalAttackType, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
-        this.owner = owner;
-
-        try {
-            shooter = sshooter;
-            target = ttarget;
-            attack_type = atype;
-            int fromdir = target.getPosition().direction(shooter.getPosition());
-            if (target instanceof Entity) {
-                damage_direction = ((fromdir - ((Entity) target).getFacing()) + 6) % 6;
-            } else {
-                damage_direction = 0;
-            }
-            if ((attack_type == PhysicalAttackType.RIGHT_PUNCH)
-                    || (attack_type == PhysicalAttackType.LEFT_PUNCH)) {
-                int armid = attack_type == PhysicalAttackType.RIGHT_PUNCH ? 2
-                        : 1;
-                // action = new PunchAttackAction(shooter.getId(),
-                // target.getId(),
-                // armid);
-                action = new PunchAttackAction(shooter.getId(),
-                                               target.getTargetType(), target.getTargetId(), armid,
-                                               false, false);
-                to_hit = ((PunchAttackAction) action).toHit(game);
-                if (sshooter instanceof BipedMech) {
-                    max_damage = PunchAttackAction.getDamageFor(shooter, armid,
-                                                                target instanceof Infantry);
-                } else {
-                    max_damage = 0;
-                }
-            } else { // assume kick
-                int legid = attack_type == PhysicalAttackType.RIGHT_KICK ? 2
-                        : 1;
-                // action = new KickAttackAction(shooter.getId(),
-                // target.getId(),
-                // legid);
-                action = new KickAttackAction(shooter.getId(),
-                                              target.getTargetType(), target.getTargetId(), legid);
-                to_hit = ((KickAttackAction) action).toHit(game);
-                max_damage = KickAttackAction.getDamageFor(shooter, legid,
-                                                           target instanceof Infantry);
-            }
-            initDamage();
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
-        }
+    /**
+     * Basic constructor.
+     *
+     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
+     * @param target             The {@link megamek.common.Targetable} of the attack.
+     * @param physicalAttackType The type of attack being made.
+     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param owner              The owning {@link Princess} bot.
+     * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     */
+    PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, IGame game, Princess owner,
+                 boolean guess) {
+        this(shooter, null, target, null, physicalAttackType, game, owner, guess);
     }
 
     /**
      * Helper function to determine damage and criticals
      */
-    public void initDamage() {
-        final String METHOD_NAME = "initDamage()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+    protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
+                              boolean guess, IGame game) {
+        final String METHOD_NAME = "initDamage(PhysicalAttackType, EntityState, EntityState, boolean, IGame)";
 
-        try {
-            prob_to_hit = Compute.oddsAbove(to_hit.getValue()) / 100.0;
-            expected_damage_on_hit = max_damage;
-            // now guess how many critical hits will be done
-            expected_criticals = 0;
-            kill_probability = 0;
-            if (target instanceof Mech) {
-                Mech mtarget = (Mech) target;
-                for (int i = 0; i <= 7; i++) {
-                    int hitloc = i;
-                    while (mtarget.isLocationBad(hitloc)
-                            && (hitloc != Mech.LOC_CT)) {
-                        hitloc++;
-                        if (hitloc >= 7) {
-                            hitloc = 0;
-                        }
-                        hitloc = Mech.getInnerLocation(hitloc);
-                    }
-                    double hprob;
-                    if ((attack_type == PhysicalAttackType.RIGHT_PUNCH)
-                            || (attack_type == PhysicalAttackType.LEFT_PUNCH)) {
-                        hprob = ProbabilityCalculator.getHitProbability_Punch(
-                                damage_direction, hitloc);
-                    } else { // assume kick
-                        hprob = ProbabilityCalculator.getHitProbability_Kick(
-                                damage_direction, hitloc);
-                    }
-                    int target_armor = mtarget.getArmor(hitloc,
-                                                        (damage_direction == 3 ? true : false));
-                    int target_internals = mtarget.getInternal(hitloc);
-                    if (target_armor < 0) {
-                        target_armor = 0; // ignore NA or Destroyed cases
-                    }
-                    if (target_internals < 0) {
-                        target_internals = 0;
-                    }
-                    if (expected_damage_on_hit > ((target_armor + target_internals))) {
-                        expected_criticals += hprob * prob_to_hit;
-                        if ((hitloc == Mech.LOC_HEAD)
-                                || (hitloc == Mech.LOC_CT)) {
-                            kill_probability += hprob * prob_to_hit;
-                        }
-                    } else if (expected_damage_on_hit > (target_armor)) {
-                        expected_criticals += hprob
-                                * ProbabilityCalculator
-                                .getExpectedCriticalHitCount()
-                                * prob_to_hit;
-                    }
-                }
+        StringBuilder msg =
+                new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                                                             .append(" ").append(physicalAttackType.toString())
+                                                             .append(" at ").append(getTarget().getDisplayName())
+                                                             .append(":");
+
+        // Only mechs do physical attacks.
+        if (!(getShooter() instanceof Mech)) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg.append("\n\tNot a mech!").toString());
+            setProbabilityToHit(0);
+            setMaxDamage(0);
+            setExpectedCriticals(0);
+            setKillProbability(0);
+            setExpectedDamageOnHit(0);
+            return;
+        }
+        Mech targetMech = (Mech) getTarget();
+
+        if (shooterState == null) {
+            shooterState = new EntityState(getShooter());
+        }
+        if (targetState == null) {
+            targetState = new EntityState(getTarget());
+        }
+
+        // Build the to hit data.
+        if (guess) {
+            setHitData(owner.getFireControl().guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
+                                                                         targetState, getAttackType(), game));
+        } else {
+            PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());
+            setAction(action);
+            setHitData(physicalAttackType.isPunch() ?
+                               ((PunchAttackAction) action).toHit(game) :
+                               ((KickAttackAction) action).toHit(game));
+        }
+
+        // Get the attack direction.
+        setDamageDirection(targetState, shooterState.getPosition());
+
+        // If we can't hit, set all values to 0 and return.
+        if (getHitData().getValue() > 12) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
+                                                                  .append(getHitData().getValue()).toString());
+            setProbabilityToHit(0);
+            setMaxDamage(0);
+            setExpectedCriticals(0);
+            setKillProbability(0);
+            setExpectedDamageOnHit(0);
+            return;
+        }
+
+        // Calculate the max damage.
+        if (physicalAttackType.isPunch()) {
+            if ((getShooter() instanceof BipedMech) || (getShooter() instanceof TripodMech)) {
+                setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
+            } else {
+                // Only bipeds & tripods can punch.
+                owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
+                          msg.append("\n\tnon-biped/tripod trying to punch!").toString());
+                setProbabilityToHit(0);
+                setMaxDamage(0);
+                setExpectedCriticals(0);
+                setKillProbability(0);
+                setExpectedDamageOnHit(0);
+                return;
             }
-            // there's always the chance of rolling a '2'
-            expected_criticals += 0.028
-                    * ProbabilityCalculator.getExpectedCriticalHitCount()
-                    * prob_to_hit;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+        } else { // assuming kick
+            setMaxDamage((int) Math.floor(getShooter().getWeight() / 5.0));
+        }
+
+        setProbabilityToHit(Compute.oddsAbove(getHitData().getValue()) / 100.0);
+
+        setExpectedDamageOnHit(getMaxDamage());
+
+        double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
+
+        // there's always the chance of rolling a '2'
+        final double ROLL_TWO = 0.028;
+        setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
+        setKillProbability(0);
+
+        // now guess how many critical hits will be done
+        for (int i = 0; i <= 7; i++) {
+            int hitLoc = i;
+            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)) {
+                if (hitLoc > 7) {
+                    hitLoc = 0;
+                }
+                hitLoc = Mech.getInnerLocation(hitLoc);
+            }
+            double hitLocationProbability;
+            if (getAttackType().isPunch()) {
+                hitLocationProbability = ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(), hitLoc);
+            } else { // assume kick
+                hitLocationProbability = ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(), hitLoc);
+            }
+            int targetArmor = targetMech.getArmor(hitLoc, (getDamageDirection() == 3));
+            int targetInternals = targetMech.getInternal(hitLoc);
+            if (targetArmor < 0) {
+                targetArmor = 0; // ignore NA or Destroyed cases
+            }
+            if (targetInternals < 0) {
+                targetInternals = 0;
+            }
+
+            // If the location could be destroyed outright...
+            if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
+                setExpectedCriticals(getExpectedCriticals() + hitLocationProbability * getProbabilityToHit());
+                if ((hitLoc == Mech.LOC_HEAD) || (hitLoc == Mech.LOC_CT)) {
+                    setKillProbability(getKillProbability() + hitLocationProbability * getProbabilityToHit());
+                }
+
+                // If the armor can be breached, but the location not destroyed...
+            } else if (getExpectedDamageOnHit() > (targetArmor)) {
+                setExpectedCriticals(getExpectedCriticals() +
+                                             hitLocationProbability *
+                                                     ProbabilityCalculator.getExpectedCriticalHitCount() *
+                                                     getProbabilityToHit());
+            }
         }
     }
 
     /**
-     * Current bot code requires physical attacks to be given as 'physical
-     * option'. This does the necessary conversion
+     * Current bot code requires physical attacks to be given as 'physical option'. This does the necessary conversion
      */
     public PhysicalOption getAsPhysicalOption() {
-        final String METHOD_NAME = "getAsPhysicalOption()";
-        owner.methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            int option_integer = 0;
-            if (attack_type == PhysicalAttackType.RIGHT_PUNCH) {
-                option_integer = PhysicalOption.PUNCH_RIGHT;
-            }
-            if (attack_type == PhysicalAttackType.LEFT_PUNCH) {
-                option_integer = PhysicalOption.PUNCH_LEFT;
-            }
-            if (attack_type == PhysicalAttackType.RIGHT_KICK) {
-                option_integer = PhysicalOption.KICK_RIGHT;
-            }
-            if (attack_type == PhysicalAttackType.LEFT_KICK) {
-                option_integer = PhysicalOption.KICK_LEFT;
-            }
-            PhysicalOption physical_attack = new PhysicalOption(shooter,
-                                                                target, 0, option_integer, null);
-            return physical_attack;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+        int optionInteger = 0;
+        if (getAttackType() == PhysicalAttackType.RIGHT_PUNCH) {
+            optionInteger = PhysicalOption.PUNCH_RIGHT;
         }
+        if (getAttackType() == PhysicalAttackType.LEFT_PUNCH) {
+            optionInteger = PhysicalOption.PUNCH_LEFT;
+        }
+        if (getAttackType() == PhysicalAttackType.RIGHT_KICK) {
+            optionInteger = PhysicalOption.KICK_RIGHT;
+        }
+        if (getAttackType() == PhysicalAttackType.LEFT_KICK) {
+            optionInteger = PhysicalOption.KICK_LEFT;
+        }
+        return new PhysicalOption(getShooter(), getTarget(), 0, optionInteger, null);
+    }
+
+    public Entity getShooter() {
+        return shooter;
+    }
+
+    public void setShooter(Entity shooter) {
+        this.shooter = shooter;
+    }
+
+    public Targetable getTarget() {
+        return target;
+    }
+
+    public void setTarget(Targetable target) {
+        this.target = target;
+    }
+
+    public PhysicalAttackAction getAction() {
+        return action;
+    }
+
+    public void setAction(PhysicalAttackAction action) {
+        this.action = action;
+    }
+
+    public PhysicalAttackType getAttackType() {
+        return attackType;
+    }
+
+    public void setAttackType(PhysicalAttackType attackType) {
+        this.attackType = attackType;
+    }
+
+    public ToHitData getHitData() {
+        return hitData;
+    }
+
+    public void setHitData(ToHitData hitData) {
+        this.hitData = hitData;
+    }
+
+    public double getProbabilityToHit() {
+        return probabilityToHit;
+    }
+
+    public void setProbabilityToHit(double probabilityToHit) {
+        this.probabilityToHit = probabilityToHit;
+    }
+
+    public double getMaxDamage() {
+        return maxDamage;
+    }
+
+    public void setMaxDamage(double maxDamage) {
+        this.maxDamage = maxDamage;
+    }
+
+    public double getExpectedDamageOnHit() {
+        return expectedDamageOnHit;
+    }
+
+    public void setExpectedDamageOnHit(double expectedDamageOnHit) {
+        this.expectedDamageOnHit = expectedDamageOnHit;
+    }
+
+    public int getDamageDirection() {
+        return damageDirection;
+    }
+
+    public void setDamageDirection(int damageDirection) {
+        this.damageDirection = damageDirection;
+    }
+
+    protected void setDamageDirection(EntityState targetState, Coords shooterCoords) {
+        int fromDirection = targetState.getPosition().direction(shooterCoords);
+        setDamageDirection(((fromDirection - targetState.getFacing()) + 6) % 6);
+    }
+
+    public double getExpectedCriticals() {
+        return expectedCriticals;
+    }
+
+    public void setExpectedCriticals(double expectedCriticals) {
+        this.expectedCriticals = expectedCriticals;
+    }
+
+    public double getKillProbability() {
+        return killProbability;
+    }
+
+    public void setKillProbability(double killProbability) {
+        this.killProbability = killProbability;
+    }
+
+    public double getUtility() {
+        return utility;
+    }
+
+    public void setUtility(double utility) {
+        this.utility = utility;
+    }
+
+    String getDebugDescription() {
+        return getAttackType().toString() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
+                + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
+                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
+                + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
+                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
+
     }
 }

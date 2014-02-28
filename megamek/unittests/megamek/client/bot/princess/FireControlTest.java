@@ -1808,6 +1808,192 @@ public class FireControlTest {
 
     @Test
     public void testCalculateUtility() {
+        final double TOLERANCE = 0.00001;
+        int overheatTolerance = 5;
+        double baseUtility = 20.6154;
+        MechWarrior mockPilot = Mockito.mock(MechWarrior.class);
 
+        // Basic firing plan test.
+        FiringPlan testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
+
+        // Attack an ejected pilot.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockPilot));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(-979.3846, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Increase the kill chance.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.12005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(25.6154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
+
+        // Decrease the kill chance.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.01005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(20.1154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Increase the # crits.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.86129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(24.6154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
+
+        // Decrease the # crits.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.26129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(18.6154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Test a higher damage plan.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(20.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(25.6154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
+
+        // Test a lower damage plan.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(5.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(10.6154, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Test a higher heat plan.
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(15).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(-29.3846, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Test a higher heat tolerance.
+        overheatTolerance = 10;
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(15).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(-4.38459, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Test a lower heat tolerance.
+        overheatTolerance = 0;
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(15).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        Assert.assertEquals(-54.3846, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
+
+        // Basic punch attack.
+        PhysicalInfo testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(baseUtility, testPhysicalInfo.getUtility(), TOLERANCE);
+
+        // Kick an ejected pilot.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        Mockito.doReturn(mockPilot).when(testPhysicalInfo).getTarget();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(-979.3846, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testPhysicalInfo.getUtility());
+
+        // Increase the kill chance.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.12005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(25.6154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testPhysicalInfo.getUtility());
+
+        // Decrease the kill chance.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.01005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(20.1154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testPhysicalInfo.getUtility());
+
+        // Increase the # crits.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.86129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(24.6154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testPhysicalInfo.getUtility());
+
+        // Decrease the # crits.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(15.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.26129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(18.6154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testPhysicalInfo.getUtility());
+
+        // Test a higher damage plan.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(20.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(25.6154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility < testPhysicalInfo.getUtility());
+
+        // Test a lower damage plan.
+        testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
+        Mockito.doReturn(5.0).when(testPhysicalInfo).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testPhysicalInfo).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testPhysicalInfo).getKillProbability();
+        testFireControl.calculateUtility(testPhysicalInfo);
+        Assert.assertEquals(10.6154, testPhysicalInfo.getUtility(), TOLERANCE);
+        Assert.assertTrue(baseUtility > testPhysicalInfo.getUtility());
     }
 }

@@ -13,6 +13,7 @@ v0.37.9-dev (SVN)
 + Updated the Princess help doc with a list of Optional Rules that should be safe to use.
 + Bug [#4058]: Movement Report Dialogue needs a scrollbar
 + Refactored PhysicalInfo class and added unit tests for it.
++ Refactored FireControl.calculateUtility and added unit tests for it.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

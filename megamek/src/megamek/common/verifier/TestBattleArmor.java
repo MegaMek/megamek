@@ -357,7 +357,7 @@ public class TestBattleArmor extends TestEntity {
         int jumpMP = ba.getOriginalJumpMP();
         switch (ba.getWeightClass()) {
             case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                if (ba.isClan()) {
+                if (ba.isClan() && ba.isClanExoWithoutHarjel()) {
                     tons += 0.13;
                 } else {
                     tons += 0.08;

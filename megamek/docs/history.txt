@@ -4,17 +4,26 @@ v0.37.9-dev (SVN)
 + Data: Unit Fixes and Some renaming
 + Bug [#4053] - BA LBX weapons missing AmmoType Tag
 + Some typo fixes and adding Primitive RL15
-+ Refactored FireControl.guessToHitModifierForWeapon and added unit tests for it.
++ Refactored FireControl.guessToHitModifierForWeapon and added unit tests for
+    it.
 + Data: Some unit corrections to bring them inline with the MUL.
-+ Refactored FireControl.guessAirToGroundStrikeToHitModifier and added unit tests for it.
-+ Added a 'guess' paramter to the various WeaponFireInfo constructors to indicate when the to hit chance should be
++ Refactored FireControl.guessAirToGroundStrikeToHitModifier and added unit
+    tests for it.
++ Added a 'guess' paramter to the various WeaponFireInfo constructors to
+    indicate when the to hit chance should be
     estimated rather than fully calculated.
-+ Changed the FireControl.checkGuess... methods to only run when Princess is in debug mode.
-+ Updated the Princess help doc with a list of Optional Rules that should be safe to use.
++ Changed the FireControl.checkGuess... methods to only run when Princess is in
+    debug mode.
++ Updated the Princess help doc with a list of Optional Rules that should be
+    safe to use.
 + Bug [#4058]: Movement Report Dialogue needs a scrollbar
 + Refactored PhysicalInfo class and added unit tests for it.
 + Refactored FireControl.calculateUtility and added unit tests for it.
-+ Added additional considerations for ground to air attacks in Princess's 'guess to hit' methods.
++ Added additional considerations for ground to air attacks in Princess's
+    'guess to hit' methods.
++ Feature: Added support for Clan Exoskeletons without harjel: BattleArmor has
+    a new state variable to track this, and TestBattleArmor.getWeightStructure
+    properly supports it
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

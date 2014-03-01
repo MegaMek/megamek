@@ -105,6 +105,7 @@ public class PathRanker {
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
+        LogLevel logLevel = LogLevel.DEBUG;
 
         Entity mover = startingPathList.get(0).getEntity();
 
@@ -131,7 +132,8 @@ public class PathRanker {
 
                 // If fleeing, skip any paths that don't get me closer to home.
                 if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    msg.append("\n  INVALID: Running away in wrong direction.");
+                    logLevel = LogLevel.WARNING;
+                    msg.append("\n\tINVALID: Running away in wrong direction.");
                     continue;
                 }
 
@@ -139,28 +141,31 @@ public class PathRanker {
                 Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                 String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                 if (!StringUtil.isNullOrEmpty(validation)) {
-                    msg.append("\n  ").append(validation);
+                    msg.append("\n\t").append(validation);
                     continue;
                 }
 
                 // Don't move on/through buildings that will not support our weight.
                 if (willBuildingCollapse(path, game)) {
-                    msg.append("\n  INVALID: Building in path will collapse.");
+                    logLevel = LogLevel.WARNING;
+                    msg.append("\n\tINVALID: Building in path will collapse.");
                     continue;
                 }
 
                 // Skip any path where I am too likely to fail my piloting roll.
-                if (getMovePathSuccessProbability(path) < fallTolerance) {
-                    msg.append("\n  INVALID: Too likely to fall on my face.");
+                double chance = getMovePathSuccessProbability(path, msg);
+                if (chance < fallTolerance) {
+                    logLevel = LogLevel.WARNING;
+                    msg.append("\n\tINVALID: Too likely to fall on my face.");
                     continue;
                 }
 
                 // If all the above checks have passed, this is a valid path.
-                msg.append("\n  VALID.");
+                msg.append("\n\tVALID.");
                 returnPaths.add(path);
 
             } finally {
-                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, msg.toString());
+                owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
             }
         }
 
@@ -317,11 +322,11 @@ public class PathRanker {
     /**
      * Returns the probability of success of a movepath
      */
-    public double getMovePathSuccessProbability(MovePath movePath) {
+    public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
-        StringBuilder msg = new StringBuilder("Calculating Move Path Success");
+        msg.append("\n\tCalculating Move Path Success");
         for (TargetRoll roll : pilotingRolls) {
 
             // Skip the getting up check.  That's handled when checking for being immobile.
@@ -332,7 +337,7 @@ public class PathRanker {
                 continue;
             }
 
-            msg.append("\n\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
+            msg.append("\n\t\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
             double odds = Compute.oddsAbove(roll.getValue()) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= odds;
@@ -340,17 +345,14 @@ public class PathRanker {
 
         // Account for MASC
         if (pathCopy.hasActiveMASC()) {
-            msg.append("\n\tMASC ");
+            msg.append("\n\t\tMASC ");
             int target = pathCopy.getEntity().getMASCTarget();
             msg.append(target);
             double odds = Compute.oddsAbove(target) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
         }
-        msg.append("\n\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
-
-        LogLevel logLevel = (successProbability < 1.0 ? LogLevel.INFO : LogLevel.DEBUG);
-        owner.log(getClass(), "getMovePathSuccessProbability(MovePath)", logLevel, msg.toString());
+        msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
         return successProbability;
     }

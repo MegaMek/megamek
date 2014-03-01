@@ -14,6 +14,7 @@ v0.37.9-dev (SVN)
 + Bug [#4058]: Movement Report Dialogue needs a scrollbar
 + Refactored PhysicalInfo class and added unit tests for it.
 + Refactored FireControl.calculateUtility and added unit tests for it.
++ Added additional considerations for ground to air attacks in Princess's 'guess to hit' methods.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

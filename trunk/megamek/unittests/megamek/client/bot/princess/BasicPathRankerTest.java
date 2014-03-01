@@ -170,13 +170,13 @@ public class BasicPathRankerTest {
         Mockito.doReturn(testRollList).when(testRanker).getPSRList(Mockito.eq(mockPath));
 
         double expected = 0.346;
-        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Add in a MASC roll.
         Mockito.when(mockPath.hasActiveMASC()).thenReturn(true);
         expected = 0.336;
-        actual = testRanker.getMovePathSuccessProbability(mockPath);
+        actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
     }
 
@@ -351,7 +351,7 @@ public class BasicPathRankerTest {
         BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(1.0)
                .when(testRanker)
-               .getMovePathSuccessProbability(Mockito.any(MovePath.class));
+               .getMovePathSuccessProbability(Mockito.any(MovePath.class), Mockito.any(StringBuilder.class));
         Mockito.doReturn(5)
                .when(testRanker)
                .distanceToClosestEdge(Mockito.any(Coords.class), Mockito.any(IGame.class));
@@ -456,7 +456,7 @@ public class BasicPathRankerTest {
         // Change the move path success probability.
         Mockito.doReturn(0.5)
                .when(testRanker)
-               .getMovePathSuccessProbability(Mockito.any(MovePath.class));
+               .getMovePathSuccessProbability(Mockito.any(MovePath.class), Mockito.any(StringBuilder.class));
         expected = new RankedPath(-98.125, mockPath, "Calculation: {" +
                 "fall mod [" + LOG_DECIMAL.format(50) + " = " + LOG_DECIMAL.format(0.5) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
@@ -475,7 +475,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(0.75)
                .when(testRanker)
-               .getMovePathSuccessProbability(Mockito.any(MovePath.class));
+               .getMovePathSuccessProbability(Mockito.any(MovePath.class), Mockito.any(StringBuilder.class));
         expected = new RankedPath(-74.6875, mockPath, "Calculation: {" +
                 "fall mod [" + LOG_DECIMAL.format(25) + " = " + LOG_DECIMAL.format(0.25) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
@@ -494,7 +494,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(1.0)
                .when(testRanker)
-               .getMovePathSuccessProbability(Mockito.any(MovePath.class));
+               .getMovePathSuccessProbability(Mockito.any(MovePath.class), Mockito.any(StringBuilder.class));
 
         // Change the damage to enemy mech 1.
         evalForMockEnemyMech = new EntityEvaluationResponse();

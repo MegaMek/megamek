@@ -87,6 +87,10 @@ public class FireControl {
     protected static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
     protected static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
     protected static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
+    protected static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1,
+                                                                                           "NOE aero adjacent flight path");
+    protected static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3,
+                                                                                       "NOE aero non-adjacent flight path");
     protected static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
                                                                                           "target prone and at range");
     protected static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
@@ -236,6 +240,18 @@ public class FireControl {
     }
 
     /**
+     * Returns the {@link Coords} computed by {@link Compute#getClosestFlightPath(Coords, Entity)}.
+     *
+     * @param shooterPosition The shooter's position.
+     * @param targetAero The aero unit being attacked.
+     * @return The {@link Coords} from the target's flight path closest to the shooter.
+     */
+    @StaticWrapper
+    protected Coords getNearestPointInFlightPath(Coords shooterPosition, Aero targetAero) {
+        return Compute.getClosestFlightPath(shooterPosition, targetAero);
+    }
+
+    /**
      * Returns the movement modifier calculated by {@link Compute#getTargetMovementModifier(int, boolean, boolean,
      * IGame)}
      *
@@ -253,18 +269,19 @@ public class FireControl {
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
      *
+     *
      * @param shooter      The unit doing the shooting.
      * @param shooterState The state of the unit doing the shooting.
      * @param target       Who is being shot at.
      * @param targetState  The state of the target.
-     * @param game         The game being played.
-     * @return The estimated to hit modifiers.
+     * @param distance
+     * @param game         The game being played.  @return The estimated to hit modifiers.
      */
-    public ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
-                                                          @Nullable EntityState shooterState,
-                                                          Targetable target,
-                                                          @Nullable EntityState targetState,
-                                                          IGame game) {
+    protected ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
+                                                             @Nullable EntityState shooterState,
+                                                             Targetable target,
+                                                             @Nullable EntityState targetState,
+                                                             int distance, IGame game) {
 
         if (shooterState == null) {
             shooterState = new EntityState(shooter);
@@ -280,7 +297,6 @@ public class FireControl {
         }
 
         // Is the target in range at all?
-        int distance = shooterState.getPosition().distance(targetState.getPosition());
         int maxRange = shooter.getMaxWeaponRange();
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
@@ -290,8 +306,23 @@ public class FireControl {
 
         // If people are moving or lying down, there are consequences
         toHitData.append(getAttackerMovementModifier(game, shooter.getId(), shooterState.getMovementType()));
-        toHitData.append(getTargetMovementModifier(targetState.getHexesMoved(), targetState.isJumping(),
-                                                   target instanceof VTOL, game));
+
+        // Ground units attacking airborne aeros.
+        if (!shooterState.isAero() && targetState.isAirborneAero()) {
+            Aero targetAero = (Aero) target;
+            if (targetAero.isNOE()) {
+                Coords closestInFlightPath = getNearestPointInFlightPath(shooterState.getPosition(), targetAero);
+                int aeroDistance = closestInFlightPath.distance(shooterState.getPosition());
+                if (aeroDistance <= 1) {
+                    toHitData.addModifier(TH_TAR_AERO_NOE_ADJ);
+                } else {
+                    toHitData.addModifier(TH_TAR_AERO_NOE);
+                }
+            }
+        } else {
+            toHitData.append(getTargetMovementModifier(targetState.getHexesMoved(), targetState.isJumping(),
+                                                       target instanceof VTOL, game));
+        }
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);
         }
@@ -301,8 +332,8 @@ public class FireControl {
         if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
                 && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
                 && !targetState.isImmobile()
-                && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof
-                GunEmplacement))) {
+                && !((target instanceof Infantry) || (target instanceof VTOL) ||
+                     (target instanceof GunEmplacement))) {
             toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 
@@ -416,7 +447,8 @@ public class FireControl {
 
         // Get the general to hit modifiers.
         ToHitData toHitData = new ToHitData();
-        toHitData.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, game));
+        toHitData.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, distance,
+                                                              game));
         if (toHitData.getValue() == TargetRoll.IMPOSSIBLE || toHitData.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             return toHitData;
         }
@@ -520,12 +552,10 @@ public class FireControl {
                 (target instanceof Dropship && target.isAirborne())) {
             toHitData.addModifier(TH_PHY_LARGE);
         }
-        if (shooter instanceof Mech) {
-            Mech shooterMech = (Mech) shooter;
-            if (shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY ||
-                    shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
-                toHitData.addModifier(TH_PHY_SUPER);
-            }
+        Mech shooterMech = (Mech) shooter;
+        if (shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY ||
+            shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+            toHitData.addModifier(TH_PHY_SUPER);
         }
 
         if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) && (shooter.getCrew().getPiloting() > 3)) {
@@ -701,18 +731,30 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (target instanceof Aero) {
-            distance += 2 * target.getAltitude(); // Aeros are +2 hexes further for each altitude.
+
+        // Ground units attacking airborne aero considerations.
+        if (targetState.isAirborneAero() && !shooterState.isAero()) {
+
+            // If the aero is attacking me, there is no range.
+            if (target.getTargetId() == shooter.getId()) {
+                distance = 0;
+            } else {
+                // Take into account altitude.
+                distance += 2 * target.getAltitude();
+            }
         }
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon),
                                            game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
+        } else if ((range == RangeType.RANGE_MINIMUM) && targetState.isAirborneAero()) {
+            range = RangeType.RANGE_SHORT;
         }
 
         // Cannot shoot at 0 range infantry unless shooter is also infantry.
         boolean isShooterInfantry = (shooter instanceof Infantry);
-        if ((distance == 0) && (!isShooterInfantry) && !(weaponType instanceof StopSwarmAttack)) {
+        if ((distance == 0) && (!isShooterInfantry) && !(weaponType instanceof StopSwarmAttack) &&
+            !targetState.isAirborneAero()) {
             return new ToHitData(TH_INF_ZERO_RNG);
         }
 
@@ -726,8 +768,9 @@ public class FireControl {
         }
 
         // Get the mods that apply to all attacks.
-        ToHitData baseMods = guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, game);
-        if (baseMods.getValue() > TargetRoll.IMPOSSIBLE || baseMods.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        ToHitData baseMods = guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, distance,
+                                                                  game);
+        if (baseMods.getValue() == TargetRoll.IMPOSSIBLE || baseMods.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             return baseMods;
         }
 
@@ -791,7 +834,7 @@ public class FireControl {
                 toHit.addModifier(TH_LONG_RANGE);
             } else if (range == RangeType.RANGE_EXTREME) {
                 toHit.addModifier(TH_EXTREME_RANGE);
-            } else if ((range == RangeType.RANGE_MINIMUM) && !(target instanceof Aero)) {
+            } else if (range == RangeType.RANGE_MINIMUM) {
                 toHit.addModifier((weaponType.getMinimumRange() - distance) + 1, TH_MINIMUM_RANGE);
             }
         } else {
@@ -889,7 +932,7 @@ public class FireControl {
      * Makes an educated guess as to the to hit modifier by an aerospace unit flying on a ground map doing a strike
      * attack on a unit
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the shooting.
+     * @param shooter               The {@link Entity} doing the shooting.
      * @param shooterState          The {@link EntityState} of the unit doing the shooting.
      * @param target                The {@link megamek.common.Targetable} being shot at.
      * @param targetState           The {@link megamek.client.bot.princess.EntityState} of the unit being shot at.
@@ -935,7 +978,7 @@ public class FireControl {
         ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(), TH_GUNNERY);
 
         // Get general modifiers.
-        tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, game));
+        tohit.append(guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, 0, game));
 
         // Additional penalty due to strike attack
         tohit.addModifier(TH_AIR_STRIKE);
@@ -1679,8 +1722,8 @@ public class FireControl {
     protected Mounted getPreferredAmmo(Entity shooter, Targetable target, WeaponType weaponType) {
         final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
 
-        StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName()).append(" firing " +
-                                                                                                                    "at ").append(target.getDisplayName());
+        StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
+                                                                  .append(" firing at ").append(target.getDisplayName());
         Entity targetEntity = null;
         Mounted preferredAmmo = null;
 
@@ -1709,7 +1752,7 @@ public class FireControl {
 
             // If no valid ammo was found, return nothing.
             if (validAmmo.isEmpty()) {
-                return preferredAmmo;
+                return null;
             }
             msg.append("\n\tFound ").append(validAmmo.size()).append(" units of valid ammo.");
 

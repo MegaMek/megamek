@@ -389,6 +389,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(178);
     public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
             .shiftLeft(179);
+    public static final BigInteger F_SNOWMOBILE = BigInteger.valueOf(1)
+            .shiftLeft(180);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1223,6 +1225,7 @@ public class MiscType extends EquipmentType {
 
         EquipmentType.addType(MiscType.createFieldKitchen());
         EquipmentType.addType(MiscType.createAmphibiousChassis());
+        EquipmentType.addType(MiscType.createSnomobileChassis());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
@@ -7325,6 +7328,28 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2470;
         misc.techLevel.put(2470, misc.techLevel.get(3071));
         misc.techRating = RATING_B;
+
+        return misc;
+    }
+
+    public static MiscType createSnomobileChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Snowmobile";
+        misc.setInternalName("SnowmobileChassis");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.availRating = new int[] { EquipmentType.RATING_D,
+                EquipmentType.RATING_E, EquipmentType.RATING_E };
+        misc.introDate = 2470;
+        misc.techLevel.put(2470, misc.techLevel.get(3071));
+        misc.techRating = RATING_B;
+        //TODO: implement game rules
 
         return misc;
     }

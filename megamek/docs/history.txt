@@ -30,6 +30,9 @@ v0.37.9-dev (SVN)
 + Bug [#3950]: Geometric Mean BV Option Not Updating in Unit Selection Dialog
 + Bug [#3950]: Two single die rolls were made for skidding/falling when only 
     1 was necessary
++ Updates to MechCacheCSVTool: units with no model name now display (Standard),
+    Added code to ignore various equipment names, like structure, armor, bays,
+    and BA related attacks
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

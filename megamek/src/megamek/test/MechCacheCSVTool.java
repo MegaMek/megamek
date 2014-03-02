@@ -31,7 +31,7 @@ import megamek.common.MechSummaryCache;
  * This class provides a utility to read in all of the data/mechfiles and print
  * that data out into a CVS format.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class MechCacheCSVTool {
@@ -63,7 +63,11 @@ public class MechCacheCSVTool {
                 // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
-                csvLine.append(mech.getModel() + ",");
+                if (mech.getModel().equals("")){
+                    csvLine.append("(Standard),");
+                } else {                    
+                    csvLine.append(mech.getModel() + ",");
+                }
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
                 // Internals Type
@@ -101,7 +105,38 @@ public class MechCacheCSVTool {
                 }
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
-                    csvLine.append(name + ",");
+                    boolean ignore = false;
+                    // Ignore armor criticals
+                    for (String armorName : EquipmentType.armorNames){
+                        if (name.contains(armorName.trim())){
+                            ignore = true;
+                        }
+                    }
+                    // Ignore internal structure criticals
+                    for (String isName : EquipmentType.structureNames){
+                        if (name.contains(isName.trim())){
+                            ignore = true;
+                        }
+                    }
+                    // Ignore Bays
+                    if (name.contains("Bay")){
+                        ignore = true;
+                    }
+                    // Ignore Ammo
+                    if (name.contains("Ammo")){
+                        ignore = true;
+                    }
+                    
+                    if (name.contains("SwarmMek")
+                            || name.contains("SwarmWeaponMek")
+                            || name.contains("StopSwarm")
+                            || name.contains("LegAttack")){
+                        ignore = true;
+                    }
+                    
+                    if (!ignore){
+                        csvLine.append(name + ",");
+                    }
                 }     
                 csvLine.append("\n");
                 fout.write(csvLine.toString());

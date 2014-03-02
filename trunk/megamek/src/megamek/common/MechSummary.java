@@ -41,6 +41,10 @@ public class MechSummary implements Serializable {
     private int m_nType;
     private float m_nTons;
     private int m_nBV;
+    /**
+     * Stores the BV of the unit computed using the geometric mean method.
+     */
+    private int m_gmBV;
     private long m_nCost;
     private long m_nUnloadedCost;
     private long m_aCost;
@@ -432,6 +436,14 @@ public class MechSummary implements Serializable {
 
     public void setSuitWeight(float suitWeight) {
         this.suitWeight = suitWeight;
+    }
+
+    public int getGMBV() {
+        return m_gmBV;
+    }
+
+    public void setGMBV(int m_gmBV) {
+        this.m_gmBV = m_gmBV;
     }
 
     @Override

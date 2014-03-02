@@ -350,6 +350,9 @@ public class MechSummaryCache {
             ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
+        e.setUseGeometricBV(true);
+        ms.setGMBV(e.calculateBattleValue());
+        e.setUseGeometricBV(false);        
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((long) e.getCost(false));
         ms.setUnloadedCost(((long) e.getCost(true)));

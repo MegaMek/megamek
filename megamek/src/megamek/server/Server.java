@@ -7008,7 +7008,11 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 boolean psrFailed = true;
+                int startingfacing = entity.getFacing();
                 if (entity instanceof Mech) {
+                    // We need to ensure that falls will happen from the proper
+                    //  facing
+                    entity.setFacing(curFacing);
                     psrFailed = (0 < doSkillCheckWhileMoving(entity,
                             lastElevation, lastPos, lastPos, rollTarget, true));
                 } else {
@@ -7062,7 +7066,11 @@ public class Server implements Runnable {
                     distance = entity.delta_distance;
                     break;
 
-                } // End failed-skid-psr
+                } else { // End failed-skid-psr
+                    // If the checke succeeded, restore the facing we had before
+                    //  if it failed, the fall will have changed facing
+                    entity.setFacing(startingfacing);
+                }
 
             } // End need-skid-psr
 

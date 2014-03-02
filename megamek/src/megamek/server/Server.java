@@ -10737,8 +10737,17 @@ public class Server implements Runnable {
         if (affaTarget == null) {
             r.newlines = 1;
             vPhaseReport.add(r);
-            vPhaseReport
-                    .addAll(doEntityFall(entity, dest, fallElevation, roll));
+            // If we rolled for the direction, we want to use that for the fall
+            if (src.equals(dest)){
+                vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
+                        direction, roll, false));  
+            } else {
+                // Otherwise, we'll roll for the direction after the fall
+                vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
+                        roll));
+            }
+            
+            
             return vPhaseReport;
         }
         vPhaseReport.add(r);

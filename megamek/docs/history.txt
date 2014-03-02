@@ -27,6 +27,7 @@ v0.37.9-dev (SVN)
 + Bug: Armored Gloves weren't properly being counted as AP Mounts for purposes
     of BattleArmor validation
 + Bug [#4051]: Facing when 'Mech skids: ver 0.37.8-Exp
++ Bug [#3950]: Geometric Mean BV Option Not Updating in Unit Selection Dialog
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

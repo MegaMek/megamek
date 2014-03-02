@@ -657,6 +657,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int consecutiveRHSUses = 0;
 
     /**
+     * Flag that can be used to indicate whether this Entity should use a 
+     * geometric mean when computing BV.
+     */
+    protected boolean useGeometricBV = false;;
+    
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -5493,8 +5499,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract int calculateBattleValue();
 
     public boolean useGeometricMeanBV() {
-        return (game != null)
-                && game.getOptions().booleanOption("geometric_mean_bv");
+        return useGeometricBV || ((game != null)
+                && game.getOptions().booleanOption("geometric_mean_bv"));
     }
 
     /**
@@ -12798,5 +12804,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setHasDamagedRHS(boolean hasDamagedRHS) {
         this.hasDamagedRHS = hasDamagedRHS;
+    }
+
+    public boolean isUseGeometricBV() {
+        return useGeometricBV;
+    }
+
+    public void setUseGeometricBV(boolean useGeometricBV) {
+        this.useGeometricBV = useGeometricBV;
     }
 }

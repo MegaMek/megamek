@@ -758,7 +758,12 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                     return ms.getTons();
                 }
                 if(col == COL_BV) {
-                    return ms.getBV();
+                    if (client.getGame().getOptions()
+                        .booleanOption("geometric_mean_bv")) {
+                        return ms.getGMBV();
+                    } else {
+                        return ms.getBV();
+                    }
                 }
                 if(col == COL_YEAR) {
                     return ms.getYear();

@@ -1216,7 +1216,7 @@ public class FireControl {
             targetState = new EntityState(target);
         }
 
-        FiringPlan myPlan = new FiringPlan(owner, target);
+        FiringPlan myPlan = new FiringPlan(target);
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((shooter.getPosition() == null) || shooter.isOffBoard() ||
@@ -1265,10 +1265,10 @@ public class FireControl {
         }
         if (!assume_under_flight_path) {
             if (!isTargetUnderFlightPath(shooter_path, target_state)) {
-                return new FiringPlan(owner, target);
+                return new FiringPlan(target);
             }
         }
-        FiringPlan myplan = new FiringPlan(owner, target);
+        FiringPlan myplan = new FiringPlan(target);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                       "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
@@ -1313,7 +1313,7 @@ public class FireControl {
      * states
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan myplan = new FiringPlan(owner, target);
+        FiringPlan myplan = new FiringPlan(target);
         if (shooter.getPosition() == null) {
             owner.log(getClass(),
                       "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
@@ -1346,8 +1346,8 @@ public class FireControl {
             maxheat = 0; // can't be worse than zero heat
         }
         FiringPlan[] best_plans = new FiringPlan[maxheat + 1];
-        best_plans[0] = new FiringPlan(owner, target);
-        FiringPlan nonzeroheat_options = new FiringPlan(owner, target);
+        best_plans[0] = new FiringPlan(target);
+        FiringPlan nonzeroheat_options = new FiringPlan(target);
         // first extract any firings of zero heat
         for (WeaponFireInfo f : maxplan) {
             if (f.getHeat() == 0) {
@@ -1358,12 +1358,12 @@ public class FireControl {
         }
         // build up heat table
         for (int i = 1; i <= maxheat; i++) {
-            best_plans[i] = new FiringPlan(owner, target);
+            best_plans[i] = new FiringPlan(target);
             best_plans[i].addAll(best_plans[i - 1]);
             for (WeaponFireInfo f : nonzeroheat_options) {
                 if ((i - f.getHeat()) >= 0) {
                     if (!best_plans[i - f.getHeat()].containsWeapon(f.getWeapon())) {
-                        FiringPlan testplan = new FiringPlan(owner, target);
+                        FiringPlan testplan = new FiringPlan(target);
                         testplan.addAll(best_plans[i - f.getHeat()]);
                         testplan.add(f);
                         calculateUtility(testplan, 999); // TODO fix overheat
@@ -1403,7 +1403,7 @@ public class FireControl {
             return fullplan; // no need to optimize heat for non-mechs
         }
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
-        FiringPlan best_plan = new FiringPlan(owner, target);
+        FiringPlan best_plan = new FiringPlan(target);
         int overheat = (shooter.getHeatCapacity() - shooter.heat) + 4;
         for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -1447,7 +1447,7 @@ public class FireControl {
             return fullplan; // no need to optimize heat for non-mechs
         }
         FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
-        FiringPlan best_plan = new FiringPlan(owner, target);
+        FiringPlan best_plan = new FiringPlan(target);
         int overheat = (shooter.getHeatCapacity() - shooter_state.getHeat()) + 4;
         for (int i = 0; i < fullplan.getHeat(); i++) {
             calculateUtility(heatplans[i], overheat);
@@ -1473,11 +1473,11 @@ public class FireControl {
         shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = getBestFiringPlanUnderHeat(shooter,
                                                                 target, maxheat, game);
-        righttwist_plan.twist = 1;
+        righttwist_plan.setTwist(1);
         shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = getBestFiringPlanUnderHeat(shooter, target,
                                                                maxheat, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1505,10 +1505,10 @@ public class FireControl {
         }
         shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = getBestFiringPlan(shooter, target, game);
-        righttwist_plan.twist = 1;
+        righttwist_plan.setTwist(1);
         shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = getBestFiringPlan(shooter, target, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1542,11 +1542,11 @@ public class FireControl {
         shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                                                                   shooter_state, target, target_state, maxheat, game);
-        righttwist_plan.twist = 1;
+        righttwist_plan.setTwist(1);
         shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = guessBestFiringPlanUnderHeat(shooter,
                                                                  shooter_state, target, target_state, maxheat, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter_state.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())
@@ -1580,11 +1580,11 @@ public class FireControl {
         shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
         FiringPlan righttwist_plan = guessBestFiringPlan(shooter,
                                                          shooter_state, target, target_state, game);
-        righttwist_plan.twist = 1;
+        righttwist_plan.setTwist(1);
         shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
         FiringPlan lefttwist_plan = guessBestFiringPlan(shooter, shooter_state,
                                                         target, target_state, game);
-        lefttwist_plan.twist = -1;
+        lefttwist_plan.setTwist(-1);
         shooter_state.setSecondaryFacing(orig_facing);
         if ((notwist_plan.getExpectedDamage() > righttwist_plan
                 .getExpectedDamage())

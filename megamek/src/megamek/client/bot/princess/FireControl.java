@@ -67,11 +67,11 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class FireControl {
 
-    private static double damage_utility = 1.0;
-    private static double critical_utility = 10.0;
-    private static double kill_utility = 50.0;
-    private static double overheat_disutility = 5.0;
-    private static double ejected_pilot_disutility = 1000.0;
+    private static double DAMAGE_UTILITY = 1.0;
+    private static double CRITICAL_UTILITY = 10.0;
+    private static double KILL_UTILITY = 50.0;
+    private static double OVERHEAT_DISUTILITY = 5.0;
+    private static double EJECTED_PILOT_DISUTILITY = 1000.0;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -88,9 +88,11 @@ public class FireControl {
     protected static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
     protected static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
     protected static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1,
-                                                                                           "NOE aero adjacent flight path");
+                                                                                           "NOE aero adjacent flight " +
+                                                                                                   "path");
     protected static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3,
-                                                                                       "NOE aero non-adjacent flight path");
+                                                                                       "NOE aero non-adjacent flight " +
+                                                                                               "path");
     protected static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
                                                                                           "target prone and at range");
     protected static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
@@ -243,7 +245,7 @@ public class FireControl {
      * Returns the {@link Coords} computed by {@link Compute#getClosestFlightPath(Coords, Entity)}.
      *
      * @param shooterPosition The shooter's position.
-     * @param targetAero The aero unit being attacked.
+     * @param targetAero      The aero unit being attacked.
      * @return The {@link Coords} from the target's flight path closest to the shooter.
      */
     @StaticWrapper
@@ -268,7 +270,6 @@ public class FireControl {
 
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
-     *
      *
      * @param shooter      The unit doing the shooting.
      * @param shooterState The state of the unit doing the shooting.
@@ -333,7 +334,7 @@ public class FireControl {
                 && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
                 && !targetState.isImmobile()
                 && !((target instanceof Infantry) || (target instanceof VTOL) ||
-                     (target instanceof GunEmplacement))) {
+                (target instanceof GunEmplacement))) {
             toHitData.addModifier(TH_TAR_NO_MOVE);
         }
 
@@ -554,7 +555,7 @@ public class FireControl {
         }
         Mech shooterMech = (Mech) shooter;
         if (shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY ||
-            shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+                shooterMech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             toHitData.addModifier(TH_PHY_SUPER);
         }
 
@@ -754,7 +755,7 @@ public class FireControl {
         // Cannot shoot at 0 range infantry unless shooter is also infantry.
         boolean isShooterInfantry = (shooter instanceof Infantry);
         if ((distance == 0) && (!isShooterInfantry) && !(weaponType instanceof StopSwarmAttack) &&
-            !targetState.isAirborneAero()) {
+                !targetState.isAirborneAero()) {
             return new ToHitData(TH_INF_ZERO_RNG);
         }
 
@@ -1142,17 +1143,20 @@ public class FireControl {
      * @param firingPlan        The {@link FiringPlan} to be calculated.
      * @param overheatTolerance How much overheat we're willing to forgive.
      */
+    // todo Add a 'heat tolerance' setting to Princess.
+    // todo Aeros *really* don't want to overheat.
+    // todo ammo considerations should affect utility.
     void calculateUtility(FiringPlan firingPlan, int overheatTolerance) {
         int overheat = 0;
         if (firingPlan.getHeat() > overheatTolerance) {
             overheat = firingPlan.getHeat() - overheatTolerance;
         }
 
-        double utility = damage_utility * firingPlan.getExpectedDamage();
-        utility += critical_utility * firingPlan.getExpectedCriticals();
-        utility += kill_utility * firingPlan.getKillProbability();
-        utility -= overheat_disutility * overheat;
-        utility -= (firingPlan.getTarget() instanceof MechWarrior) ? ejected_pilot_disutility : 0;
+        double utility = DAMAGE_UTILITY * firingPlan.getExpectedDamage();
+        utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
+        utility += KILL_UTILITY * firingPlan.getKillProbability();
+        utility -= OVERHEAT_DISUTILITY * overheat;
+        utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
 
         firingPlan.setUtility(utility);
     }
@@ -1164,47 +1168,81 @@ public class FireControl {
      */
     void calculateUtility(PhysicalInfo physicalInfo) {
 
-        double utility = damage_utility * physicalInfo.getExpectedDamage();
-        utility += critical_utility * physicalInfo.getExpectedCriticals();
-        utility += kill_utility * physicalInfo.getKillProbability();
-        utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? ejected_pilot_disutility : 0;
+        double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
+        utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
+        utility += KILL_UTILITY * physicalInfo.getKillProbability();
+        utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
 
         physicalInfo.setUtility(utility);
     }
 
     /**
-     * Creates a firing plan that fires all weapons with nonzero to hit value at
-     * a target ignoring heat, and using best guess from different states Does
-     * not change facing
+     * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The current state of the shooter.
+     * @param target       The target being fired on.
+     * @param targetState  The current state of the target.
+     * @param weapon       The weapon being fired.
+     * @param game         The game being played.
+     * @param guessToHit   Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @return The resulting {@link WeaponFireInfo}.
      */
-    FiringPlan guessFullFiringPlan(Entity shooter, EntityState shooter_state,
-                                   Targetable target, EntityState target_state, IGame game) {
-        if (shooter_state == null) {
-            shooter_state = new EntityState(shooter);
+    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target,
+                                                 EntityState targetState, Mounted weapon, IGame game,
+                                                 boolean guessToHit) {
+        return new WeaponFireInfo(shooter, shooterState, target, targetState, weapon, game, guessToHit, owner);
+    }
+
+    /**
+     * Creates a firing plan that fires all weapons with nonzero to hit value at a target ignoring heat, and using
+     * best guess from different states. Does not change facing.
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The current state of the shooter.
+     * @param target       The unit being fired on.
+     * @param targetState  The current state of the target.
+     * @param game         The game being played.
+     * @return The {@link FiringPlan} containing all weapons to be fired.
+     */
+    FiringPlan guessFullFiringPlan(Entity shooter, @Nullable EntityState shooterState, Targetable target,
+                                   @Nullable EntityState targetState, IGame game) {
+        final String METHOD_NAME = "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)";
+
+        if (shooterState == null) {
+            shooterState = new EntityState(shooter);
         }
-        FiringPlan myplan = new FiringPlan(owner, target);
-        if (shooter.getPosition() == null) {
-            owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      LogLevel.ERROR, "Shooter's position is NULL!");
-            return myplan;
+        if (targetState == null) {
+            targetState = new EntityState(target);
         }
-        if (target.getPosition() == null) {
-            owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
-                      LogLevel.ERROR, "Target's position is NULL!");
-            return myplan;
+
+        FiringPlan myPlan = new FiringPlan(owner, target);
+
+        // Shooting isn't possible if one of us isn't on the board.
+        if ((shooter.getPosition() == null) || shooter.isOffBoard() ||
+                !game.getBoard().contains(shooter.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL!");
+            return myPlan;
         }
-        for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
-            WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_state,
-                                                      target, target_state, mw, game, true, owner);
+        if ((target.getPosition() == null) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL!");
+            return myPlan;
+        }
+
+        // cycle through my weapons
+        for (Mounted weapon : shooter.getWeaponList()) {
+            WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon, game, true);
             if (shoot.getProbabilityToHit() > 0) {
-                myplan.add(shoot);
+                myPlan.add(shoot);
             }
         }
-        calculateUtility(
-                myplan,
-                (shooter instanceof Mech) ? ((shooter.getHeatCapacity() - shooter_state.getHeat()) + 5)
-                        : 999);
-        return myplan;
+
+        // Rank how useful this plan is.
+        int heatTolerance = (shooter instanceof Mech) ?
+                ((shooter.getHeatCapacity() - shooterState.getHeat()) + 5) :
+                999;
+        calculateUtility(myPlan, heatTolerance);
+        return myPlan;
     }
 
     /**
@@ -1723,7 +1761,8 @@ public class FireControl {
         final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
 
         StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
-                                                                  .append(" firing at ").append(target.getDisplayName());
+                                                                  .append(" firing at ").append(target.getDisplayName
+                        ());
         Entity targetEntity = null;
         Mounted preferredAmmo = null;
 

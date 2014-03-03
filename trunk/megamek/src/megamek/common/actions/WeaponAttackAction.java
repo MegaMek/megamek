@@ -1495,6 +1495,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        if (weapon.isKindRapidFire() && weapon.curMode().equals("Rapid")){
+            toHit.addModifier(1, "AC rapid fire mode");
+        }
 
         // Armor Piercing ammo is a flat +1
         if ((atype != null)

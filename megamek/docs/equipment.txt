@@ -2609,6 +2609,7 @@ M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),HeavyBridg
 M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Environmental Sealing,
 M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),FieldKitchen,
 M,3071-IS/Clan2470-IS/Clan,3071-(allowed to all)2470-(allowed to all),AmphibiousChassis,
+M,3071-IS/Clan2470-IS/Clan,3071-(allowed to all)2470-(allowed to all),SnowmobileChassis,
 M,3069-Inner Sphere3071-Inner Sphere,3069-IS_TW_Non_Box3071-IS_TW_Non_Box,IS Improved Jump Jet,ISImprovedJump Jet,ImprovedJump Jet,Improved Jump Jet,
 M,3069-Clan3071-Clan,3069-Clan_TW3071-Clan_TW,Clan Improved Jump Jet,Clan Improved Jump Jet,CLImprovedJump Jet,
 M,3083-Inner Sphere3071-Inner Sphere3060-Inner Sphere,3083-IS_TW_Non_Box3071-IS_Experimental3060-IS_Experimental,Jump Booster,

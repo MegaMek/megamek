@@ -118,10 +118,16 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private void beginMyTurn() {
         // Make sure we've got the correct local player
         p = clientgui.getClient().getLocalPlayer();
-        // we should get 5 hexes per 4 mapsheets
+        // By default, we should get 5 hexes per 4 mapsheets
         // 4 mapsheets is 16*17*4 hexes, so 1088        
-        IBoard board = clientgui.getClient().getGame().getBoard();
-        startingHexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        IGame game = clientgui.getClient().getGame();
+        IBoard board = game.getBoard();
+        int preDesignateArea = 
+                game.getOptions().intOption("map_area_predesignate");
+        int hexesPer = 
+                game.getOptions().intOption("num_hexes_predesignate");
+        double mapArea = board.getWidth() * board.getHeight();
+        startingHexes = (int) Math.ceil((mapArea)/preDesignateArea)*hexesPer;
         artyAutoHitHexes.clear();
         setArtyEnabled(startingHexes);
         butDone.setEnabled(true);

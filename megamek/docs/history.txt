@@ -33,6 +33,7 @@ v0.37.9-dev (SVN)
 + Updates to MechCacheCSVTool: units with no model name now display (Standard),
     Added code to ignore various equipment names, like structure, armor, bays,
     and BA related attacks
++ Bug [#4060]: Missing limit on number of artillery spots per mapsheet.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -13,7 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import com.sun.org.apache.bcel.internal.generic.FCMPG;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -59,7 +58,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-import org.mockito.internal.util.collections.Sets;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1884,7 +1882,7 @@ public class FireControlTest {
         MechWarrior mockPilot = Mockito.mock(MechWarrior.class);
 
         // Basic firing plan test.
-        FiringPlan testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        FiringPlan testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1893,7 +1891,7 @@ public class FireControlTest {
         Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
 
         // Attack an ejected pilot.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockPilot));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockPilot));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1903,7 +1901,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
         // Increase the kill chance.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.12005).when(testFiringPlan).getKillProbability();
@@ -1913,7 +1911,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
         // Decrease the kill chance.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.01005).when(testFiringPlan).getKillProbability();
@@ -1923,7 +1921,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
         // Increase the # crits.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.86129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1933,7 +1931,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
         // Decrease the # crits.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.26129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1943,7 +1941,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
         // Test a higher damage plan.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(20.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1953,7 +1951,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
         // Test a lower damage plan.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(5.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1963,7 +1961,7 @@ public class FireControlTest {
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
         // Test a higher heat plan.
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1974,7 +1972,7 @@ public class FireControlTest {
 
         // Test a higher heat tolerance.
         overheatTolerance = 10;
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -1985,7 +1983,7 @@ public class FireControlTest {
 
         // Test a lower heat tolerance.
         overheatTolerance = 0;
-        testFiringPlan = Mockito.spy(new FiringPlan(mockPrincess, mockTarget));
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
@@ -2120,7 +2118,7 @@ public class FireControlTest {
                                                                                     Mockito.anyBoolean());
 
         // Test the normal case.
-        expected = new FiringPlan(mockPrincess, mockTarget);
+        expected = new FiringPlan(mockTarget);
         expected.add(mockPPCFireInfo);
         expected.add(mockLRMFireInfo);
         FiringPlan actual = testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
@@ -2129,13 +2127,13 @@ public class FireControlTest {
 
         // Test the target not being on the board.
         Mockito.when(mockTarget.getPosition()).thenReturn(null);
-        expected = new FiringPlan(mockPrincess, mockTarget);
+        expected = new FiringPlan(mockTarget);
         Assert.assertEquals(expected, testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
                                                                           mockTargetState, mockGame));
 
         // Test the shooter not being on the board.
         Mockito.when(mockShooter.getPosition()).thenReturn(null);
-        expected = new FiringPlan(mockPrincess, mockTarget);
+        expected = new FiringPlan(mockTarget);
         Assert.assertEquals(expected, testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
                                                                           mockTargetState, mockGame));
     }

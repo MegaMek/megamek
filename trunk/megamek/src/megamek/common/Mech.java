@@ -6030,12 +6030,10 @@ public abstract class Mech extends Entity {
             if (m.isRearMounted()) {
                 toReturn.append(m.getType().getInternalName()).append(" (R)")
                         .append(armoredText);
-            }
-            if (m.isMechTurretMounted()) {
+            } else if (m.isMechTurretMounted()) {
                 toReturn.append(m.getType().getInternalName()).append(" (T)")
                         .append(armoredText);
-            }
-            if ((m.getType() instanceof WeaponType)
+            } else if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
                 switch (m.getFacing()) {
                     case 1:
@@ -6044,7 +6042,7 @@ public abstract class Mech extends Entity {
                     case 2:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (RR)").append(armoredText);
-                        // case 3:
+                    // case 3:
                         // already handled by isRearMounted() above
                     case 4:
                         toReturn.append(m.getType().getInternalName())
@@ -6055,8 +6053,10 @@ public abstract class Mech extends Entity {
                     default:
                         break;
                 }
+            } else {
+                toReturn.append(m.getType().getInternalName()).append(
+                        armoredText);
             }
-            toReturn.append(m.getType().getInternalName()).append(armoredText);
             // superheavy mechs can have two heatsinks or ammo bin in one slot
             // they can't be armored or rear or turret mounted or VGLs, so we
             // just need the internalname

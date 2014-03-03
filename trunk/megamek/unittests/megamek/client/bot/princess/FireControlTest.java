@@ -59,6 +59,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+import org.mockito.internal.util.collections.Sets;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -2064,5 +2065,78 @@ public class FireControlTest {
         testFireControl.calculateUtility(testPhysicalInfo);
         Assert.assertEquals(10.6154, testPhysicalInfo.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testPhysicalInfo.getUtility());
+    }
+
+    @Test
+    public void testGuessFullFiringPlan() {
+        FiringPlan expected;
+        Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        Mockito.when(mockShooter.isOffBoard()).thenReturn(false);
+        Mockito.when(mockShooter.getHeatCapacity()).thenReturn(16);
+        Mockito.when(mockShooter.getHeat()).thenReturn(0);
+        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
+        Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
+        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
+        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt());
+
+        ArrayList<Mounted> shooterWeapons = new ArrayList<Mounted>(3);
+        Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
+
+        Mounted mockPPC = Mockito.mock(Mounted.class);
+        shooterWeapons.add(mockPPC);
+        WeaponFireInfo mockPPCFireInfo = Mockito.mock(WeaponFireInfo.class);
+        Mockito.when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.5);
+        Mockito.doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
+                                                                                    Mockito.any(EntityState.class),
+                                                                                    Mockito.any(Targetable.class),
+                                                                                    Mockito.any(EntityState.class),
+                                                                                    Mockito.eq(mockPPC),
+                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.anyBoolean());
+
+        Mounted mockML = Mockito.mock(Mounted.class);
+        shooterWeapons.add(mockML);
+        WeaponFireInfo mockMLFireInfo = Mockito.mock(WeaponFireInfo.class);
+        Mockito.when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.0);
+        Mockito.doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
+                                                                                   Mockito.any(EntityState.class),
+                                                                                   Mockito.any(Targetable.class),
+                                                                                   Mockito.any(EntityState.class),
+                                                                                   Mockito.eq(mockML),
+                                                                                   Mockito.any(IGame.class),
+                                                                                   Mockito.anyBoolean());
+
+        Mounted mockLRM5 = Mockito.mock(Mounted.class);
+        shooterWeapons.add(mockLRM5);
+        WeaponFireInfo mockLRMFireInfo = Mockito.mock(WeaponFireInfo.class);
+        Mockito.when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
+                                                                                    Mockito.any(EntityState.class),
+                                                                                    Mockito.any(Targetable.class),
+                                                                                    Mockito.any(EntityState.class),
+                                                                                    Mockito.eq(mockLRM5),
+                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.anyBoolean());
+
+        // Test the normal case.
+        expected = new FiringPlan(mockPrincess, mockTarget);
+        expected.add(mockPPCFireInfo);
+        expected.add(mockLRMFireInfo);
+        FiringPlan actual = testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
+                                                                mockTargetState, mockGame);
+        Assert.assertEquals(new HashSet<WeaponFireInfo>(expected), new HashSet<WeaponFireInfo>(actual));
+
+        // Test the target not being on the board.
+        Mockito.when(mockTarget.getPosition()).thenReturn(null);
+        expected = new FiringPlan(mockPrincess, mockTarget);
+        Assert.assertEquals(expected, testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
+                                                                          mockTargetState, mockGame));
+
+        // Test the shooter not being on the board.
+        Mockito.when(mockShooter.getPosition()).thenReturn(null);
+        expected = new FiringPlan(mockPrincess, mockTarget);
+        Assert.assertEquals(expected, testFireControl.guessFullFiringPlan(mockShooter, mockShooterState, mockTarget,
+                                                                          mockTargetState, mockGame));
     }
 }

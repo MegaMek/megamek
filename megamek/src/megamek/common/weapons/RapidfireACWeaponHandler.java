@@ -74,7 +74,6 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
                 weapon.setJammed(true);
-                weapon.setHit(true);
             } else {
                 Report r = new Report(3162);
                 r.subject = subjectId;

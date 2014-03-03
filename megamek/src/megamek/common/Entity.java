@@ -1859,7 +1859,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
      * As of 5/22/2012 also returns true if there is a jammed and not destroyed
-     * Ultra AC and the unofficial options is enabled.
+     * Ultra AC and the unofficial options is enabled.  Jammed ACs and LACs can
+     * also be unjammed if rapid-fire ACs is turned on.
      */
     public boolean canUnjamRAC() {
         for (Mounted mounted : getTotalWeaponList()) {
@@ -1868,8 +1869,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
             }
-            if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                    .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+            if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                    || (wtype.getAmmoType() == AmmoType.T_AC)
+                    || (wtype.getAmmoType() == AmmoType.T_LAC))
                     && mounted.isJammed()
                     && !mounted.isDestroyed()
                     && game.getOptions().booleanOption("unjam_uac")) {

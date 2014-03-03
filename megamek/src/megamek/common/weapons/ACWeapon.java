@@ -68,10 +68,8 @@ public abstract class ACWeapon extends AmmoWeapon {
             RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit,
                     waa, game, server);
             if (weapon.isKindRapidFire()) {
-                toHitModifier = 1;
                 ah.setKindRapidFire(true);
             } else {
-                toHitModifier = 0;
                 ah.setKindRapidFire(false);
             }
             return ah;

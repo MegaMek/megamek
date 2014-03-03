@@ -12203,10 +12203,12 @@ public class Server implements Runnable {
                     }
                     addReport(r);
                 }
-                // Unofficial option to unjam Ultra Autocannons like Rotary
+                // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                        || (wtype.getAmmoType() == AmmoType.T_AC)
+                        || (wtype.getAmmoType() == AmmoType.T_LAC))
                         && game.getOptions().booleanOption("unjam_uac")) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);

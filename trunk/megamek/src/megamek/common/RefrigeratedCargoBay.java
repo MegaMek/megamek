@@ -76,7 +76,7 @@ public final class RefrigeratedCargoBay extends Bay {
         StringBuffer returnString = new StringBuffer("Refrigerated Cargo Space - ");
 
         if (currentSpace != Math.round(currentSpace)) {
-            returnString.append(String.format("%1$,.2f", currentSpace));
+            returnString.append(String.format("%1$,.3f", currentSpace));
         } else {
             returnString.append(String.format("%1$,.0f", currentSpace));
         }

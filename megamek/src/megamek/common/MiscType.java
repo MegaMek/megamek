@@ -394,9 +394,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LADDER = BigInteger.valueOf(1)
             .shiftLeft(181);
     public static final BigInteger F_LIFEBOAT = BigInteger.valueOf(1)
-            .shiftLeft(180);
+            .shiftLeft(182);
     public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
-            .shiftLeft(180);
+            .shiftLeft(183);
 
 
     // Secondary Flags for Physical Weapons

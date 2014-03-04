@@ -1195,6 +1195,27 @@ public class FireControl {
     }
 
     /**
+     * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
+     *
+     * @param shooter               The unit doing the shooting.
+     * @param flightPath            The path the unit flies over this turn.
+     * @param target                The target being fired on.
+     * @param targetState           The current state of the target.
+     * @param weapon                The weapon being fired.
+     * @param game                  The game being played.
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
+     *                              calculation.
+     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @return The resulting {@link WeaponFireInfo}.
+     */
+    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, MovePath flightPath, Targetable target,
+                                                 EntityState targetState, Mounted weapon, IGame game,
+                                                 boolean assumeUnderFlightPath, boolean guessToHit) {
+        return new WeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, assumeUnderFlightPath,
+                                  guessToHit, owner);
+    }
+
+    /**
      * Creates a firing plan that fires all weapons with nonzero to hit value at a target ignoring heat, and using
      * best guess from different states. Does not change facing.
      *
@@ -1221,11 +1242,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((shooter.getPosition() == null) || shooter.isOffBoard() ||
                 !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL!");
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((target.getPosition() == null) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL!");
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1246,52 +1267,57 @@ public class FireControl {
     }
 
     /**
-     * Creates a firing plan that fires all weapons with nonzero to hit value in
-     * a air to ground strike
+     * Creates a firing plan that fires all weapons with nonzero to hit value in a air to ground strike
      *
-     * @param shooter
-     * @param target
-     * @param target_state
-     * @param shooter_path
-     * @param game
-     * @param assume_under_flight_path
-     * @return
+     * @param shooter               The unit doing the shooting.
+     * @param target                The unit being fired on.
+     * @param targetState           The current state of the target.
+     * @param flightPath            The path the shooter is flying over.
+     * @param game                  The game being played.
+     * @param assumeUnderFlightPath Set TRUE to automatically assume the target will be under the flight path rather
+     *                              than going through the full calculation.
+     * @return The {@link FiringPlan} containing all weapons to be fired.
      */
-    FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target,
-                                        EntityState target_state, MovePath shooter_path, IGame game,
-                                        boolean assume_under_flight_path) {
-        if (target_state == null) {
-            target_state = new EntityState(target);
-        }
-        if (!assume_under_flight_path) {
-            if (!isTargetUnderFlightPath(shooter_path, target_state)) {
-                return new FiringPlan(target);
-            }
-        }
-        FiringPlan myplan = new FiringPlan(target);
-        if (shooter.getPosition() == null) {
-            owner.log(getClass(),
-                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      LogLevel.ERROR, "Shooter's position is NULL!");
-            return myplan;
-        }
-        if (target.getPosition() == null) {
-            owner.log(getClass(),
-                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
-                      LogLevel.ERROR, "Target's position is NULL!");
-            return myplan;
-        }
-        for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
+    FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target, @Nullable EntityState targetState,
+                                        MovePath flightPath, IGame game, boolean assumeUnderFlightPath) {
+        final String METHOD_NAME = "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, " +
+                "boolean)";
 
-            WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_path,
-                                                      target, target_state, mw, game, true, true, owner);
+        if (targetState == null) {
+            targetState = new EntityState(target);
+        }
+
+        // Must fly over the target to hit it.
+        if (!assumeUnderFlightPath && !isTargetUnderFlightPath(flightPath, targetState)) {
+            return new FiringPlan(target);
+        }
+
+        FiringPlan myPlan = new FiringPlan(target);
+
+        // Shooting isn't possible if one of us isn't on the board.
+        if ((shooter.getPosition() == null) || shooter.isOffBoard() ||
+                !game.getBoard().contains(shooter.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            return myPlan;
+        }
+        if ((target.getPosition() == null) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            return myPlan;
+        }
+
+        // cycle through my weapons
+        for (Mounted weapon : shooter.getWeaponList()) {
+
+            WeaponFireInfo shoot = buildWeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, true,
+                                                       true);
             if (shoot.getProbabilityToHit() > 0) {
-                myplan.add(shoot);
+                myPlan.add(shoot);
             }
         }
-        calculateUtility(myplan, 999); // Aeros don't have heat capacity, (I
-        // think?)
-        return myplan;
+
+        // Rank how useful this plan is.
+        calculateUtility(myPlan, 0); // Aeros really don't want to overheat.
+        return myPlan;
     }
 
     /**

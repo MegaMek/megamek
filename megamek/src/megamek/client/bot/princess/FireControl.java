@@ -1216,6 +1216,21 @@ public class FireControl {
     }
 
     /**
+     * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
+     *
+     * @param shooter    The unit doing the shooting.
+     * @param target     The target being fired on.
+     * @param weapon     The weapon being fired.
+     * @param game       The game being played.
+     * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @return The resulting {@link WeaponFireInfo}.
+     */
+    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game,
+                                                 boolean guessToHit) {
+        return new WeaponFireInfo(shooter, target, weapon, game, guessToHit, owner);
+    }
+
+    /**
      * Creates a firing plan that fires all weapons with nonzero to hit value at a target ignoring heat, and using
      * best guess from different states. Does not change facing.
      *
@@ -1321,45 +1336,44 @@ public class FireControl {
     }
 
     /**
-     * Guesses what the expected damage would be if the shooter fired all of its
-     * weapons at the target
-     */
-    double guessExpectedDamage(Entity shooter, EntityState shooter_state,
-                               Targetable target, EntityState target_state, IGame game) {
-        // FiringPlan
-        // fullplan=guessFullFiringPlan(shooter,shooter_state,target,target_state,game);
-        FiringPlan fullplan = guessFullFiringPlan(shooter, shooter_state,
-                                                  target, target_state, game);
-        return fullplan.getExpectedDamage();
-    }
-
-    /**
-     * Creates a firing plan that fires all weapons with nonzero to hit value at
-     * a target ignoring heat, and using actual game ruleset from different
-     * states
+     * Creates a firing plan that fires all weapons with nonzero to hit value at a target ignoring heat, and using
+     * actual game rules from different states
+     *
+     * @param shooter The unit doing the shooting.
+     * @param target  The unit being fired on.
+     * @param game    The game being played.
+     * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan myplan = new FiringPlan(target);
-        if (shooter.getPosition() == null) {
-            owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
-                      "Shooter's position is NULL!");
-            return myplan;
+        final String METHOD_NAME = "getFullFiringPlan(Entity, Targetable, IGame)";
+
+        FiringPlan myPlan = new FiringPlan(target);
+
+        // Shooting isn't possible if one of us isn't on the board.
+        if ((shooter.getPosition() == null) || shooter.isOffBoard() ||
+                !game.getBoard().contains(shooter.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            return myPlan;
         }
-        if (target.getPosition() == null) {
-            owner.log(getClass(),
-                      "getFullFiringPlan(Entity, Targetable, IGame)", LogLevel.ERROR,
-                      "Target's position is NULL!");
-            return myplan;
+        if ((target.getPosition() == null) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            return myPlan;
         }
-        for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
-            WeaponFireInfo shoot = new WeaponFireInfo(shooter, target, mw, game, false, owner);
+
+        // cycle through my weapons
+        for (Mounted weapon : shooter.getWeaponList()) {
+            WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             if ((shoot.getProbabilityToHit() > 0)) {
-                myplan.add(shoot);
+                myPlan.add(shoot);
             }
         }
-        calculateUtility(myplan, (shooter.getHeatCapacity() - shooter.heat) + 5);
-        return myplan;
+
+        // Rank how useful this plan is.
+        int heatTolerance = (shooter instanceof Mech) ?
+                ((shooter.getHeatCapacity() - shooter.getHeat()) + 5) :
+                999;
+        calculateUtility(myPlan, heatTolerance);
+        return myPlan;
     }
 
     /**

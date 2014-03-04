@@ -1520,6 +1520,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createBicycleModification());
         EquipmentType.addType(MiscType.createConvertibleModification());
+        EquipmentType.addType(MiscType.create20mLadder());
+        EquipmentType.addType(MiscType.create40mLadder());
+        EquipmentType.addType(MiscType.create60mLadder());
+        EquipmentType.addType(MiscType.create80mLadder());
+        EquipmentType.addType(MiscType.create100mLadder());
+        EquipmentType.addType(MiscType.createMaritimeLifeboat());
 
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
         EquipmentType.addType(MiscType.createISHeatDissipating());
@@ -9110,6 +9116,103 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+
+    public static MiscType create20mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (20m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.1f;
+        misc.techRating = RATING_A;
+        misc.cost = 100;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_A, RATING_A, RATING_A};
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType create40mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (40m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.2f;
+        misc.techRating = RATING_A;
+        misc.cost = 200;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_A, RATING_A, RATING_A};
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType create60mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (60m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.3f;
+        misc.techRating = RATING_A;
+        misc.cost = 300;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_A, RATING_A, RATING_A};
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType create80mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (80m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.4f;
+        misc.techRating = RATING_A;
+        misc.cost = 400;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_A, RATING_A, RATING_A};
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType create100mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (100m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.5f;
+        misc.techRating = RATING_A;
+        misc.cost = 500;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_A, RATING_A, RATING_A};
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createMaritimeLifeboat() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Lifeboat (Maritime)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 0;
+        misc.tonnage = 1f;
+        misc.techRating = RATING_A;
+        misc.cost = 5000;
+        misc.introDate = 1950;
+        misc.availRating = new int[] {RATING_B, RATING_C, RATING_C};
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+
 
 
     @Override

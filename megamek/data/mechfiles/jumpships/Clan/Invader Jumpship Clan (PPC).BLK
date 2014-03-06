@@ -10,9 +10,10 @@ MAM0
 Jumpship
 </UnitType>
 <Name>
-Invader
+Invader Jumpship
 </Name>
 <Model>
+(Clan)[PPC]
 </Model>
 <Tonnage>
 152000
@@ -28,10 +29,10 @@ Invader
 <Nose Equipment>
 </Nose Equipment>
 <Front Left Side Equipment>
-ISLargeLaser
+ISPPC
 </Front Left Side Equipment>
 <Front Right Side Equipment> 
-ISLargeLaser
+ISPPC
 </Front Right Side Equipment>
 <Aft Left Side Equipment>
 </Aft Left Side Equipment>
@@ -87,3 +88,6 @@ CargoBay:288:1
 <passengers>
 0
 </passengers>
+<source>
+TRO 3057r
+</source>

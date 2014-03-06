@@ -3,7 +3,7 @@ Kage Light Battle Armor [MG],1
 Infiltrator Mk. II Battle Armor "Puma",2
 Fa Shih Battle Armor [MG],3
 Achileus Light Battle Armor [MG], 4
-Gray Death Standard [MG],5
+Gray Death Standard Suit [MG],5
 IS Standard Battle Armor [MG],6
 Raiden Battle Armor [MG],5
 Longinus Battle Armor [MG],4

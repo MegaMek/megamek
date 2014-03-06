@@ -12,7 +12,7 @@ Aero
 Seydlitz
 </Name>
 <Model>
-(Mary)
+(Mary)"Yari"
 </Model>
 <Tonnage>
 20
@@ -62,3 +62,7 @@ IS Level 2
 <motion_type>
 aerodyne
 </motion_type>
+
+<source>
+RS:Unique Fighters
+</source>

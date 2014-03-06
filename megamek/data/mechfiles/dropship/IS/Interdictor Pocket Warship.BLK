@@ -169,8 +169,6 @@ IS Level 3
 aerodyne
 </motion_type>
 
-
-
 <transporters>
 SmallCraftBay:2:2
 CargoBay:566:2
@@ -192,3 +190,7 @@ BattleArmorBay:36:1
 <passengers>
 0
 </passengers>
+
+<source>
+TRO 3085
+</source>

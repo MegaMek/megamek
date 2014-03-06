@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Elemental II Battle Armor
 </Name>
@@ -17,59 +20,79 @@ Elemental II Battle Armor
 (Standard)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3084
+</year>
 
-<weightclass>
-3
-</weightclass>
+<type>
+Clan Level 3
+</type>
 
-<Trooper Count>
-5
-</Trooper Count>
+<motion_type>
+Leg
+</motion_type>
 
 <cruiseMP>
-3
+2
 </cruiseMP>
-
-<jumpingMP>
-
-</jumpingMP>
-
-<Armor>
-10
-</Armor>
 
 <armor_type>
 28
 </armor_type>
 
 <armor_tech>
-6
+2
 </armor_tech>
 
 <Point Equipment>
 CLBAAPGaussRifle:RA
 CLBAMyomerBooster:Body
 BAAPMount:LA
-InfantryAssaultRifle:LA:APM
+Infantry Auto Rifle:APM:LA
 BABasicManipulator:LA
 BABasicManipulator:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
 </Point Equipment>
 
-<type>
-Clan Level 3
-</type>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<year>
-3084
-</year>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
 <source>
 TRO:Prototypes
 </source>
 
-<motion_type>
-Leg
-</motion_type>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

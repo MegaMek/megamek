@@ -10,176 +10,233 @@ MAM0
 Warship
 </UnitType>
 <Name>
-Concordant
+New Syrtis Carrier
 </Name>
 <Model>
-(Frigate)
+(2557)
 </Model>
 <Tonnage>
-440000
+920000
 </Tonnage>
 <SafeThrust>
 4
 </SafeThrust>
 <Armor>
-44
-44
-44
-30
-30
-35
+80
+80
+80
+80
+80
+70
 </Armor>
 <Nose Equipment>
 NAC20
 NAC20
-NAC20 Ammo:50
+NAC20
+NAC20 Ammo:60
 NL55
 NL55
 NL55
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Nose Equipment>
+
 <Front Left Side Equipment>
-NAC20
-NAC20
-NAC20 Ammo:50
-NL45
-NL45
+NAC10
+NAC10
+NAC10 Ammo:40
+Barracuda
+Barracuda
+Barracuda Ammo:40
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Front Left Side Equipment>
+
 <Front Right Side Equipment>
-NAC20
-NAC20
-NAC20 Ammo:50
-NL45
-NL45
+NAC10
+NAC10
+NAC10 Ammo:40
+Barracuda
+Barracuda
+Barracuda Ammo:40
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Front Right Side Equipment>
+
 <Left Broadside Equipment>
+HeavyNPPC
+HeavyNPPC
 NAC20
 NAC20
 NAC20
-NAC20 Ammo:75
+NAC20 Ammo:60
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Left Broadside Equipment>
+
 <Right Broadside Equipment>
+HeavyNPPC
+HeavyNPPC
 NAC20
 NAC20
 NAC20
-NAC20 Ammo:75
+NAC20 Ammo:60
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Right Broadside Equipment>
+
 <Aft Left Side Equipment>
-NAC20
-NAC20 Ammo:20
+NAC10
+NAC10
+NAC10 Ammo:40
+Barracuda
+Barracuda
+Barracuda Ammo:40
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Aft Left Side Equipment>
+
 <Aft Right Side Equipment>
-NAC20
-NAC20 Ammo:20
+NAC10
+NAC10
+NAC10 Ammo:40
+Barracuda
+Barracuda
+Barracuda Ammo:40
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Aft Right Side Equipment>
+
 <Aft Equipment>
-NAC20
-NAC20 Ammo:20
+NAC10
+NAC10
+NAC10 Ammo:40
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM15 Ammo:60
 Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo:80
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
 </Aft Equipment>
+
 <structural_integrity>
 60
 </structural_integrity>
+
 <heatsinks>
-1495
+2451
 </heatsinks>
 <sink_type>
 0
 </sink_type>
 <fuel>
-6250
+50000
 </fuel>
 <type>
 IS Level 3
 </type>
 <year>
-2506
+2557
 </year>
 <internal_type>
 0
@@ -194,25 +251,31 @@ IS Level 3
 aerodyne
 </motion_type>
 <transporters>
-SmallCraftBay:8:4
-CargoBay:25004:4
-CargoBay:25003.5:4
+ASFBay:60:4
+ASFBay:60:4
+InfantryBay:10:2
+CargoBay:50310:6
+CargoBay:50310:6
 </transporters>
 <docking_collar>
-4
+2
 </docking_collar>
 <grav_deck>
-1
+2
 </grav_deck>
 <escape_pod>
-25
+90
 </escape_pod>
 <life_boat>
-35
+200
 </life_boat>
 <crew>
-327
+1572
 </crew>
 <passengers>
-75
+650
 </passengers>
+
+<history>
+173 Officers, 634 Enlisted/non-rated, 125 Gunners, 20 First Class Passengers, 60 Second Class Passengers, 450 Steerage Passengers, 120 Marines, 640 Bay personnel
+</history>

@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,3071-Inner Sphere,3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -2898,6 +2898,12 @@ M,3071-IS/Clan,3071-(allowed to all),UltraLightChassisMod,
 M,1950-IS/Clan,1950-(allowed to all),MonocycleChassisMod,
 M,1950-IS/Clan,1950-(allowed to all),BicycleChassisMod,
 M,1950-IS/Clan,1950-(allowed to all),ConvertibleChassisMod,
+M,1950-IS/Clan,1950-(allowed to all),Ladder (20m),
+M,1950-IS/Clan,1950-(allowed to all),Ladder (40m),
+M,1950-IS/Clan,1950-(allowed to all),Ladder (60m),
+M,1950-IS/Clan,1950-(allowed to all),Ladder (80m),
+M,1950-IS/Clan,1950-(allowed to all),Ladder (100m),
+M,1950-IS/Clan,1950-(allowed to all),Lifeboat (Maritime),
 M,3114-Inner Sphere3100-Inner Sphere,3114-IS_Advanced3100-IS_Experimental,IS Anti-Penetrative Ablation,
 M,3115-Inner Sphere3123-Inner Sphere,3115-IS_Experimental3123-IS_Advanced,IS Heat-Dissipating,
 M,3126-Clan,3126-Clan_Advanced,Clan Heat-Dissipating,
@@ -2908,6 +2914,7 @@ M,3137-Clan,3137-Clan_Advanced,HarJel III Self-Repair System,
 M,3095-Inner Sphere,3095-IS_Advanced,Radical Heat Sink System,
 M,3071-Inner Sphere,3071-IS_Advanced,Bomb Bay,
 M,1950-IS/Clan,1950-(allowed to all),Light Fluid Suction System,
+M,1950-IS/Clan,1950-(allowed to all),Fluid Suction System,
 A,3071-(Unknown Technology Base)1950-(Unknown Technology Base),3071-All_TW1950-All_TW,HEBomb,
 A,3071-(Unknown Technology Base)1950-(Unknown Technology Base),3071-All_TW1950-All_TW,ClusterBomb,
 A,3071-(Unknown Technology Base)1950-(Unknown Technology Base),3071-All_TW1950-All_TW,LGBomb,

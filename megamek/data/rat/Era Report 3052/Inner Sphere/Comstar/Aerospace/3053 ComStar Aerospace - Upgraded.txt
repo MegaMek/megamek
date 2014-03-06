@@ -4,7 +4,7 @@ Ironsides IRN-SD1,2
 Gotha GTHA-500,3
 Rogue RGU-133E,4
 Zero ZRO-114,5
-Swift SW-606,6
+Swift SWF-606,6
 Spad SPD-502,5
 Tomahawk THK-63,4
 Hellcat II HCT-213B,3

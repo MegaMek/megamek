@@ -6,11 +6,11 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2439
 Source:Star League
-Rules Level:2
+Rules Level:5
 
 Mass:100
-Engine:360 Fusion Engine
-Structure:Standard
+Engine:360 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Primitive Cockpit
 Gyro:Standard Gyro
@@ -19,7 +19,7 @@ Heat Sinks:17 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Industrial(Inner Sphere)
+Armor:Primitive(Inner Sphere)
 LA Armor:24
 RA Armor:24
 LT Armor:20
@@ -33,16 +33,16 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:3
-Particle Cannon, Left Arm
-Autocannon/5, Right Arm
+PPC, Left Arm
+AC/5, Right Arm
 Large Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 -Empty-
 -Empty-
 -Empty-

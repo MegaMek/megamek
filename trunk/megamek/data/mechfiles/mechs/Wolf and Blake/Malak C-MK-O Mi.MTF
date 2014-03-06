@@ -9,7 +9,7 @@ Rules Level:4
 
 Mass:30
 Engine:210 Light Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -43,10 +43,10 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISMediumVSPLaser
+ISMediumVSPLaser
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -54,14 +54,14 @@ Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumVSPLaser
+ISMediumVSPLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -74,19 +74,19 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 Supercharger
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

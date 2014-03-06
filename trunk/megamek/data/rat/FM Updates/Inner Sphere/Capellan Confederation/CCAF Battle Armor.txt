@@ -9,4 +9,4 @@ IS Standard Battle Armor [Flamer],5
 IS Standard Battle Armor [MG],4
 IS Standard Battle Armor [LRR],3
 Longinus Battle Armor [Laser],2
-Ying Long Medium Battle Armor,1
+Ying Long Medium Battle Armor (Plasma),1

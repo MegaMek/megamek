@@ -2,11 +2,11 @@
 #Resgate (Support) (Vehicle),1
 #Resgate (Spotter) (Vehicle),2
 Gnome Battle Armor,3
-Afreet Medium Battle Armor,4
+Afreet Medium Battle Armor (Jade Falcon),4
 Salamander Battle Armor,5
 Elemental Battle Armor [MG],6
 Salamander Battle Armor,5
-Salamander Battle Armor (Anti-Personnel),4
+Salamander Battle Armor (Anti-Infantry),4
 Elemental Battle Armor (Fire) [AP Gauss],3
-Elemental Battle Armor (Fire) [AP Gauss],2
+Elemental Battle Armor (Fire) [Flamer],2
 Ironhold Assault Battle Armor,1

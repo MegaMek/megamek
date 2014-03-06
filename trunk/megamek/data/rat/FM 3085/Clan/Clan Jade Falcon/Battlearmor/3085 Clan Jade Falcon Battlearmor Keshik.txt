@@ -1,12 +1,12 @@
 3085 Clan Jade Falcon Battlearmor Keshik
 Elemental Battle Armor [MG],1
 Salamander Battle Armor,2
-Salamander Battle Armor (Anti-Personnel),3
-Elemental Battle Armor (Fire) [AP Gauss],4
-Elemental Battle Armor (Fire) [AP Gauss],5
+Salamander Battle Armor (Anti-Infantry),3
+Elemental Battle Armor (Fire) [MicroPL],5
+Elemental Battle Armor (Fire) [AP Gauss],6
 Ironhold Assault Battle Armor,6
 Afreet Medium Battle Armor (Jade Falcon),5
 Ironhold Assault Battle Armor (Fire),4
-Elemental Battle Armor (Fire) [AP Gauss],3
+Elemental Battle Armor (Fire) [Flamer],3
 Afreet Medium Battle Armor (Interdictor),2
 Ironhold Assault Battle Armor (Fire),1

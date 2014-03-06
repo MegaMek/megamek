@@ -10,10 +10,11 @@ MAM0
 Warship
 </UnitType>
 <Name>
-Aquilla Tranport
+Aquilla Transport Jumpship
 </Name>
 
 <Model>
+(Standard)
 </Model>
 
 <Tonnage>

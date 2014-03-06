@@ -24,6 +24,10 @@ SpaceStation
 Bastion System Defense Station
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 150000
 </Tonnage>

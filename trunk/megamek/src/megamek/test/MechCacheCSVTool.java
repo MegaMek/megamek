@@ -55,7 +55,7 @@ public class MechCacheCSVTool {
             		"Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-                if (mech.getUnitType().equals("Infantry")){
+                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
                     continue;
                 }
                 
@@ -70,39 +70,49 @@ public class MechCacheCSVTool {
                 }
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
+                
                 // Internals Type
-                if (mech.getInternalsType() > 0){
+                if (mech.getInternalsType() >= 0){
                     csvLine.append(EquipmentType.structureNames[mech.getInternalsType()] + ",");
-                }else{
-                    csvLine.append(mech.getInternalsType() + ",");
+                }else if
+                	(mech.getInternalsType() < 0){
+                    csvLine.append("Not Applicable,");
                 }
+                
                 // Myomer type
                 csvLine.append(mech.getMyomerName()+ ",");
+                
                 // Cockpit Type
-                if (mech.getCockpitType() > 0 && 
+                if (mech.getCockpitType() >= 0 && 
                         mech.getCockpitType() < Mech.COCKPIT_STRING.length){
                     if (mech.getUnitType().equals("Mek")){
                         csvLine.append(Mech.COCKPIT_STRING[mech.getCockpitType()]+ ",");
-                    } else {
+                    } else
                         csvLine.append(Aero.COCKPIT_STRING[mech.getCockpitType()]+ ",");
-                    }
-                } else {
-                    csvLine.append(mech.getCockpitType()+ ",");
-                }
-                // Gyro Type
-                if (mech.getGyroType() > 0){
-                    csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
-                } else {
-                    csvLine.append(mech.getGyroType() + ",");
-                }
-                // Armor type - prints different armor types on the unit
-                for (Integer armorType : mech.getArmorType()){
-                    if (armorType > 0){
-                        csvLine.append(EquipmentType.armorNames[armorType]+",");
                     } else {
-                        csvLine.append(armorType+",");
-                    }
+                    csvLine.append("Not Applicable,");
                 }
+                
+                // Gyro Type
+                if (mech.getGyroType() >= 0){
+                    csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
+                } else if 
+                	(mech.getGyroType() <0){   
+                    csvLine.append("Not Applicable,");	
+               	}
+                
+                // Armor type - prints different armor types on the unit
+               for (Integer armorType : mech.getArmorType()){
+                   if (armorType >= 0){
+                       csvLine.append(EquipmentType.armorNames[armorType]+",");
+                   } else if
+                      (armorType < 0){
+                       csvLine.append("Standard,");
+                   } else {
+                       csvLine.append(armorType+",");
+                   }
+               }
+                
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
                     boolean ignore = false;
@@ -126,6 +136,11 @@ public class MechCacheCSVTool {
                     if (name.contains("Ammo")){
                         ignore = true;
                     }
+                    // Ignore Rifle
+                    if (name.contains("Infantry Auto Rifle")){
+                        ignore = true;
+                    }
+                    
                     
                     if (name.contains("SwarmMek")
                             || name.contains("SwarmWeaponMek")

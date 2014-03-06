@@ -51,5 +51,6 @@ public class ISPrimRL15 extends RLWeapon {
         techLevel.put(2315, techLevel.get(3071));
         availRating = new int[] { RATING_B, RATING_X, RATING_X };
         techRating = RATING_B;
+        toHitModifier = -1;
     }
 }

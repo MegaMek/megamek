@@ -18,6 +18,7 @@ import megamek.common.Targetable;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -138,7 +139,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
         }
         StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
                                                                          .append(" at ")
-                                                                         .append(get(0).getTarget().getDisplayName())
+                                                                         .append(getTarget().getDisplayName())
                                                                          .append("; ").append(Integer.toString(size()))
                                                                          .append(" weapons fired ");
         if (detailed) {
@@ -146,9 +147,11 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
                 description.append("\n\t\t").append(weaponFireInfo.getDebugDescription());
             }
         }
-        description.append("\n\tTotal Expected Damage=").append(Double.toString(getExpectedDamage()));
-        description.append("\n\tTotal Expected Criticals=").append(Double.toString(getExpectedCriticals()));
-        description.append("\n\tKill Probability=").append(Double.toString(getKillProbability()));
+        DecimalFormat decimalFormat = new DecimalFormat("0.00000");
+        description.append("\n\tTotal Expected Damage=").append(decimalFormat.format(getExpectedDamage()));
+        description.append("\n\tTotal Expected Criticals=").append(decimalFormat.format(getExpectedCriticals()));
+        description.append("\n\tKill Probability=").append(decimalFormat.format(getKillProbability()));
+        description.append("\n\tUtility=").append(decimalFormat.format(getUtility()));
         return description.toString();
     }
 
@@ -173,5 +176,36 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
      */
     public Targetable getTarget() {
         return target;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FiringPlan)) return false;
+        if (!super.equals(o)) return false;
+
+        FiringPlan that = (FiringPlan) o;
+
+        final double TOLERANCE = 0.00001;
+        if (twist != that.twist) return false;
+        if (Math.abs(utility - that.utility) > TOLERANCE) return false;
+        if (!target.equals(that.target)) return false;
+        if (getHeat() != that.getHeat()) return false;
+        if (Math.abs(getKillProbability() - that.getKillProbability()) > TOLERANCE) return false;
+        if (Math.abs(getExpectedCriticals() - that.getExpectedCriticals()) > TOLERANCE) return false;
+        if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        long temp;
+        temp = Double.doubleToLongBits(utility);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + target.hashCode();
+        result = 31 * result + twist;
+        return result;
     }
 }

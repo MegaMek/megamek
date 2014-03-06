@@ -71,6 +71,7 @@ public class FireControl {
     private static double CRITICAL_UTILITY = 10.0;
     private static double KILL_UTILITY = 50.0;
     private static double OVERHEAT_DISUTILITY = 5.0;
+    private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
 
     protected static final String TH_WOODS = "woods";
@@ -1140,13 +1141,16 @@ public class FireControl {
      * calculates the 'utility' of a firing plan. override this function if you have a better idea about what firing
      * plans are good
      *
-     * @param firingPlan        The {@link FiringPlan} to be calculated.
+     * @param firingPlan        The {@link megamek.client.bot.princess.FiringPlan} to be calculated.
      * @param overheatTolerance How much overheat we're willing to forgive.
+     * @param isAero
      */
-    // todo Add a 'heat tolerance' setting to Princess.
     // todo Aeros *really* don't want to overheat.
     // todo ammo considerations should affect utility.
-    void calculateUtility(FiringPlan firingPlan, int overheatTolerance) {
+    // todo commander/sub-commander utility
+    // todo strategic targets utility
+    // todo crippled/retreating targets disutility
+    void calculateUtility(FiringPlan firingPlan, int overheatTolerance, boolean isAero) {
         int overheat = 0;
         if (firingPlan.getHeat() > overheatTolerance) {
             overheat = firingPlan.getHeat() - overheatTolerance;
@@ -1155,7 +1159,7 @@ public class FireControl {
         double utility = DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
-        utility -= OVERHEAT_DISUTILITY * overheat;
+        utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
 
         firingPlan.setUtility(utility);
@@ -1274,10 +1278,7 @@ public class FireControl {
         }
 
         // Rank how useful this plan is.
-        int heatTolerance = (shooter instanceof Mech) ?
-                ((shooter.getHeatCapacity() - shooterState.getHeat()) + 5) :
-                999;
-        calculateUtility(myPlan, heatTolerance);
+        calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooterState.isAero());
         return myPlan;
     }
 
@@ -1331,7 +1332,7 @@ public class FireControl {
         }
 
         // Rank how useful this plan is.
-        calculateUtility(myPlan, 0); // Aeros really don't want to overheat.
+        calculateUtility(myPlan, calcHeatTolerance(shooter, null), (shooter instanceof Aero));
         return myPlan;
     }
 
@@ -1369,52 +1370,95 @@ public class FireControl {
         }
 
         // Rank how useful this plan is.
-        int heatTolerance = (shooter instanceof Mech) ?
-                ((shooter.getHeatCapacity() - shooter.getHeat()) + 5) :
-                999;
-        calculateUtility(myPlan, heatTolerance);
+        calculateUtility(myPlan, calcHeatTolerance(shooter, null), (shooter instanceof Aero));
         return myPlan;
     }
 
-    /**
-     * Creates an array that gives the 'best' firing plan (the maximum utility)
-     * under the heat of the index
-     */
-    FiringPlan[] calcFiringPlansUnderHeat(FiringPlan maxplan, int maxheat, Targetable target,
-                                          IGame game) {
-        if (maxheat < 0) {
-            maxheat = 0; // can't be worse than zero heat
+    private int calcHeatTolerance(Entity entity, @Nullable Boolean isAero) {
+
+        // If the unit doesn't track heat, we won't worry about it.
+        if (entity.getHeatCapacity() == 999) {
+            return 999;
         }
-        FiringPlan[] best_plans = new FiringPlan[maxheat + 1];
-        best_plans[0] = new FiringPlan(target);
-        FiringPlan nonzeroheat_options = new FiringPlan(target);
-        // first extract any firings of zero heat
-        for (WeaponFireInfo f : maxplan) {
-            if (f.getHeat() == 0) {
-                best_plans[0].add(f);
+
+        int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
+
+        if (isAero == null) {
+            isAero = (entity instanceof Aero);
+        }
+
+        // Aeros *really* don't want to overheat.
+        if (isAero) {
+            return baseTolerance;
+        }
+
+        return baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
+    }
+
+    /**
+     * Creates an array that gives the 'best' firing plan (the maximum utility) under the heat of the index
+     *
+     * @param shooter     The unit doing the shooting.
+     * @param alphaStrike The alpha strike plan.
+     * @return
+     */
+    FiringPlan[] calcFiringPlansUnderHeat(Entity shooter, FiringPlan alphaStrike) {
+
+        // can't be lower than zero heat
+        int maxHeat = alphaStrike.getHeat();
+        if (maxHeat < 0) {
+            maxHeat = 0;
+        }
+
+        Targetable target = alphaStrike.getTarget();
+
+        boolean isAero = (shooter instanceof Aero);
+        int heatTolerance = calcHeatTolerance(shooter, isAero);
+
+        // How many plans do I need to compute?
+        FiringPlan[] bestPlans = new FiringPlan[maxHeat + 1];
+
+        // First plan is a plan that fires only heatless weapons.
+        // The remaining plans will build at least some heat.
+        bestPlans[0] = new FiringPlan(target);
+        FiringPlan nonZeroHeatOptions = new FiringPlan(target);
+        for (WeaponFireInfo weaponFireInfo : alphaStrike) {
+            if (weaponFireInfo.getHeat() == 0) {
+                bestPlans[0].add(weaponFireInfo);
             } else {
-                nonzeroheat_options.add(f);
+                nonZeroHeatOptions.add(weaponFireInfo);
             }
         }
+
         // build up heat table
-        for (int i = 1; i <= maxheat; i++) {
-            best_plans[i] = new FiringPlan(target);
-            best_plans[i].addAll(best_plans[i - 1]);
-            for (WeaponFireInfo f : nonzeroheat_options) {
-                if ((i - f.getHeat()) >= 0) {
-                    if (!best_plans[i - f.getHeat()].containsWeapon(f.getWeapon())) {
-                        FiringPlan testplan = new FiringPlan(target);
-                        testplan.addAll(best_plans[i - f.getHeat()]);
-                        testplan.add(f);
-                        calculateUtility(testplan, 999); // TODO fix overheat
-                        if (testplan.getUtility() > best_plans[i].getUtility()) {
-                            best_plans[i] = testplan;
-                        }
+        for (int heatLevel = 1; heatLevel <= maxHeat; heatLevel++) {
+            bestPlans[heatLevel] = new FiringPlan(target);
+
+            // Include all the firing options that exist at the last heat level.
+            bestPlans[heatLevel].addAll(bestPlans[heatLevel - 1]);
+
+
+            for (WeaponFireInfo weaponFireInfo : nonZeroHeatOptions) {
+
+                int leftoverHeatCapacity = heatLevel - weaponFireInfo.getHeat();
+
+                // If this attack produces heat and is not already included in the plan, check its utility.
+                if ((leftoverHeatCapacity >= 0) &&
+                        !bestPlans[leftoverHeatCapacity].containsWeapon(weaponFireInfo.getWeapon())) {
+
+                    FiringPlan testPlan = new FiringPlan(target);
+                    testPlan.addAll(bestPlans[heatLevel - weaponFireInfo.getHeat()]);
+                    testPlan.add(weaponFireInfo);
+                    calculateUtility(testPlan, heatTolerance, isAero);
+
+                    // If this plan has a higher utility, add it.
+                    if (testPlan.getUtility() > bestPlans[heatLevel].getUtility()) {
+                        bestPlans[heatLevel] = testPlan;
                     }
                 }
             }
         }
-        return best_plans;
+        return bestPlans;
     }
 
     /**
@@ -1429,7 +1473,7 @@ public class FireControl {
         if (fullplan.getHeat() <= maxheat) {
             return fullplan;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat, target, game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
         return heatplans[maxheat];
     }
 
@@ -1442,11 +1486,10 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
         FiringPlan best_plan = new FiringPlan(target);
-        int overheat = (shooter.getHeatCapacity() - shooter.heat) + 4;
         for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
-            calculateUtility(heatplans[i], overheat);
+            calculateUtility(heatplans[i], calcHeatTolerance(shooter, null), (shooter instanceof Aero));
             if ((best_plan.getUtility() < heatplans[i].getUtility())) {
                 best_plan = heatplans[i];
             }
@@ -1468,7 +1511,7 @@ public class FireControl {
         if (fullplan.getHeat() <= maxheat) {
             return fullplan;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, maxheat, target, game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
         return heatplans[maxheat];
     }
 
@@ -1486,11 +1529,10 @@ public class FireControl {
         if (!(shooter instanceof Mech)) {
             return fullplan; // no need to optimize heat for non-mechs
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(fullplan, fullplan.getHeat(), target, game);
+        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
         FiringPlan best_plan = new FiringPlan(target);
-        int overheat = (shooter.getHeatCapacity() - shooter_state.getHeat()) + 4;
         for (int i = 0; i < fullplan.getHeat(); i++) {
-            calculateUtility(heatplans[i], overheat);
+            calculateUtility(heatplans[i], calcHeatTolerance(shooter, null), (shooter instanceof Aero));
             if ((best_plan.getUtility() < heatplans[i].getUtility())) {
                 best_plan = heatplans[i];
             }

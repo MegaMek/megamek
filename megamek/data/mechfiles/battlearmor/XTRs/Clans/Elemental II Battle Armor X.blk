@@ -46,7 +46,7 @@ Jump
 
 <Point Equipment>
 CLDetachableWeaponPack:Body
-CLBAMicroPulseLaser:DWP:Body
+CLBAMicroPulseLaser:DWP
 BAAPMount:LA
 Infantry Auto Rifle:APM:LA
 CLBAMyomerBooster:Body

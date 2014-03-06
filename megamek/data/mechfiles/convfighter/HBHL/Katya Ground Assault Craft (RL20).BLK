@@ -17,7 +17,7 @@ Katya Ground Assault Craft
 </Name>
 
 <Model>
-C-904
+C-905(RL20)
 </Model>
 
 <Tonnage>
@@ -39,14 +39,14 @@ C-904
 Light Machine Gun
 Light Machine Gun
 IS Light Machine Gun Ammo - Half
+RL10
+RL10
 </Nose Equipment>
 <Left Wing Equipment>
-RL15
-RL15
+RL20
 </Left Wing Equipment>
 <Right Wing Equipment>
-RL15
-RL15
+RL20
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -73,7 +73,7 @@ IS Level 2
 </year>
 
 <source>
-Civil War
+HB:House Liao
 </source>
 
 <internal_type>

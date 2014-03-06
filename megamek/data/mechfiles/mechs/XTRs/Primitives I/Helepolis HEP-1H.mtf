@@ -5,7 +5,7 @@ HEP-1H
 Config:Biped
 TechBase:Inner Sphere
 Era:2460
-Rules Level:4
+Rules Level:5
 
 Mass:75
 Engine:180 Primitive Fusion Engine
@@ -17,7 +17,7 @@ Heat Sinks:11 Single
 Walk MP:2
 Jump MP:0
 
-Armor:Industrial
+Armor:Primitive(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:22

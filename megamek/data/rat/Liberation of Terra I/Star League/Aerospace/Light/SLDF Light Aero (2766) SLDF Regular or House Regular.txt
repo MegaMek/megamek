@@ -1,6 +1,6 @@
 SLDF Light (2766) SLDF Regular or House Regular
 Trident TRN-3T,2
-Swift SW-606,3
+Swift SWF-606,3
 Zero ZRO-114,4
 Tomahawk THK-63,5
 Spad SPD-502,6

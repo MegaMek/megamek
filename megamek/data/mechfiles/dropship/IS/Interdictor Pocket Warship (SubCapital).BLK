@@ -246,8 +246,6 @@ aerodyne
 
 </motion_type>
 
-
-
 <transporters>
 
 SmallCraftBay:1:1
@@ -279,3 +277,7 @@ CargoBay:128:2
 0
 
 </passengers>
+
+<source>
+TRO 3085
+</source>

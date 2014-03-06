@@ -5,6 +5,7 @@ COM-1A
 Config:Biped
 TechBase:Inner Sphere
 Era:2463
+Source:XTRO Primitives I
 Rules Level:5
 
 Mass:25
@@ -17,7 +18,7 @@ Heat Sinks:10 Single
 Walk MP:5
 Jump MP:0
 
-Armor:Industrial
+Armor:Primitive(Inner Sphere)
 LA Armor:5
 RA Armor:5
 LT Armor:5

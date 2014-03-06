@@ -17,7 +17,7 @@ Katya Ground Assault Craft
 </Name>
 
 <Model>
-C-906
+(RL10)
 </Model>
 
 <Tonnage>
@@ -77,7 +77,7 @@ IS Level 2
 </year>
 
 <source>
-Civil War
+HB:House Liao
 </source>
 
 <internal_type>

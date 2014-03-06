@@ -19,7 +19,7 @@ Swift
 </Name>
 
 <Model>
-SW-606R
+SWF-606R
 </Model>
 
 <Tonnage>
@@ -85,3 +85,7 @@ IS Level 2
 <motion_type>
 aerodyne
 </motion_type>
+
+<source>
+TRO 3050
+</source>

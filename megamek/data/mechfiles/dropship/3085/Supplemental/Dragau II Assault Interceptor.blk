@@ -15,11 +15,11 @@ Dropship
 </UnitType>
 
 <Name>
-Dragau II
+Dragau II Assault Interceptor
 </Name>
 
 <Model>
-(Assault Interceptor)
+(Standard)
 </Model>
 
 <motion_type>
@@ -155,6 +155,10 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
+
+<source>
+TRO 3085 Supplemental
+</source>
 
 
 

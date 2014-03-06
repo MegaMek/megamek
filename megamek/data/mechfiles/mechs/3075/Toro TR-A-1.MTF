@@ -5,7 +5,7 @@ TR-A-1
 Config:Biped
 TechBase:Inner Sphere
 Era:2481
-Source:Star League
+Source:TRO 3075
 Rules Level:5
 
 Mass:35
@@ -19,7 +19,7 @@ Heat Sinks:11 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Industrial((Unknown Technology Base))
+Armor:Primitive(Inner Sphere)
 LA Armor:11
 RA Armor:11
 LT Armor:13

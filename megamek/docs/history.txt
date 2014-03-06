@@ -43,6 +43,9 @@ v0.37.9-dev (SVN)
 + Refactored FireControl.guessFullAirToGroundPlan and added unit tests for it.
 + Refactored FireControl.getFullFiringPlan and added unit tests for it.
 + Refactored FireControl.calcFiringPlansUnderHeat and added unit tests for it.
++ New Images
++ Fixed Rats
++ Unit corrections with data changes.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

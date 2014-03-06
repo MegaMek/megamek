@@ -10,10 +10,10 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Asterion Medium Battle Armor
+Trinity Medium Battle Armor
 </Name>
 <Model>
-[PPC]
+(Asterion)[PPC]
 </Model>
 <chassis>
 biped

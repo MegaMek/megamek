@@ -10,11 +10,11 @@ MAM0
 Warship
 </UnitType>
 <Name>
-Dreadnought
+Dreadnought Battleship
 </Name>
 
 <Model>
-(Battleship)
+(2330)
 </Model>
 
 <Tonnage>

@@ -1,6 +1,6 @@
 SLDF Light (2766) SLDF Royal
 Trident TRN-3Tb,2
-Swift SW-606,3
+Swift SWF-606,3
 Zero ZRO-116b,4
 Tomahawk THK-63b,5
 Spad SPD-502,6

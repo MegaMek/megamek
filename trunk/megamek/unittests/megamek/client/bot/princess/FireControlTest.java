@@ -60,6 +60,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -152,6 +153,8 @@ public class FireControlTest {
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getId()).thenReturn(1);
         Mockito.when(mockShooter.getMaxWeaponRange()).thenReturn(21);
+        Mockito.when(mockShooter.getHeatCapacity()).thenReturn(10);
+        Mockito.when(mockShooter.getHeat()).thenReturn(0);
         mockShooterState = Mockito.mock(EntityState.class);
         mockShooterCoords = new Coords(0, 0);
         Mockito.when(mockShooterState.getPosition()).thenReturn(mockShooterCoords);
@@ -181,6 +184,7 @@ public class FireControlTest {
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
 
         mockTarget = Mockito.mock(BipedMech.class);
+        Mockito.when(mockTarget.getDisplayName()).thenReturn("mock target");
 
         testFireControl = Mockito.spy(new FireControl(mockPrincess));
         Mockito.doReturn(mockShooterMoveMod)
@@ -1973,7 +1977,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
 
         // Attack an ejected pilot.
@@ -1982,7 +1986,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(-979.3846, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -1992,7 +1996,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.12005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(25.6154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
@@ -2002,7 +2006,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.01005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(20.1154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2012,7 +2016,7 @@ public class FireControlTest {
         Mockito.doReturn(0.86129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(24.6154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
@@ -2022,7 +2026,7 @@ public class FireControlTest {
         Mockito.doReturn(0.26129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(18.6154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2032,7 +2036,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(25.6154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility < testFiringPlan.getUtility());
 
@@ -2042,7 +2046,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(10.6154, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2052,7 +2056,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(15).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(-29.3846, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2063,7 +2067,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(15).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(-4.38459, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2074,7 +2078,7 @@ public class FireControlTest {
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(15).when(testFiringPlan).getHeat();
-        testFireControl.calculateUtility(testFiringPlan, overheatTolerance);
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(-54.3846, testFiringPlan.getUtility(), TOLERANCE);
         Assert.assertTrue(baseUtility > testFiringPlan.getUtility());
 
@@ -2162,7 +2166,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
         Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
-        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt());
+        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
+                                                                   Mockito.anyBoolean());
 
         // Test the normal case.
         expected = new FiringPlan(mockTarget);
@@ -2194,7 +2199,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
         Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
-        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt());
+        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
+                                                                   Mockito.anyBoolean());
 
         MovePath mockFlightPath = Mockito.mock(MovePath.class);
 
@@ -2230,7 +2236,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
         Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
-        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt());
+        Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
+                                                                   Mockito.anyBoolean());
 
         // Test the normal case.
         expected = new FiringPlan(mockTarget);
@@ -2248,5 +2255,157 @@ public class FireControlTest {
         Mockito.when(mockShooter.getPosition()).thenReturn(null);
         expected = new FiringPlan(mockTarget);
         Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget, mockGame));
+    }
+
+    @Test
+    public void testCalcFiringPlansUnderHeat() {
+        FiringPlan alphaStrike = new FiringPlan(mockTarget);
+
+        Mockito.when(mockShooter.getChassis()).thenReturn("mock chassis");
+
+        Mockito.when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockPPCFireInfo.getHeat()).thenReturn(10);
+        Mockito.when(mockPPCFireInfo.getExpectedDamageOnHit()).thenReturn(10.0);
+        Mockito.when(mockPPCFireInfo.getExpectedCriticals()).thenReturn(0.46);
+        Mockito.when(mockPPCFireInfo.getKillProbability()).thenReturn(0.002);
+        Mockito.when(mockPPCFireInfo.getWeapon()).thenReturn(mockPPC);
+        Mockito.when(mockPPCFireInfo.getShooter()).thenReturn(mockShooter);
+        Mockito.when(mockPPCFireInfo.getDebugDescription()).thenReturn("mock PPC");
+        alphaStrike.add(mockPPCFireInfo);
+
+        Mockito.when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockMLFireInfo.getHeat()).thenReturn(3);
+        Mockito.when(mockMLFireInfo.getExpectedDamageOnHit()).thenReturn(5.0);
+        Mockito.when(mockMLFireInfo.getExpectedCriticals()).thenReturn(0.0);
+        Mockito.when(mockMLFireInfo.getKillProbability()).thenReturn(0.0);
+        Mockito.when(mockMLFireInfo.getWeapon()).thenReturn(mockML);
+        Mockito.when(mockMLFireInfo.getShooter()).thenReturn(mockShooter);
+        Mockito.when(mockMLFireInfo.getDebugDescription()).thenReturn("mock ML");
+        alphaStrike.add(mockMLFireInfo);
+
+        Mockito.when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockLRMFireInfo.getHeat()).thenReturn(1);
+        Mockito.when(mockLRMFireInfo.getExpectedDamageOnHit()).thenReturn(3.0);
+        Mockito.when(mockLRMFireInfo.getExpectedCriticals()).thenReturn(0.0);
+        Mockito.when(mockLRMFireInfo.getKillProbability()).thenReturn(0.0);
+        Mockito.when(mockLRMFireInfo.getWeapon()).thenReturn(mockLRM5);
+        Mockito.when(mockLRMFireInfo.getShooter()).thenReturn(mockShooter);
+        Mockito.when(mockLRMFireInfo.getDebugDescription()).thenReturn("mock LRM");
+        alphaStrike.add(mockLRMFireInfo);
+
+        Mounted mockMG = Mockito.mock(Mounted.class);
+        shooterWeapons.add(mockMG);
+        WeaponFireInfo mockMGFireInfo = Mockito.mock(WeaponFireInfo.class);
+        Mockito.when(mockMGFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockMGFireInfo.getHeat()).thenReturn(0);
+        Mockito.when(mockMGFireInfo.getExpectedDamageOnHit()).thenReturn(2.0);
+        Mockito.when(mockMGFireInfo.getExpectedCriticals()).thenReturn(0.0);
+        Mockito.when(mockMGFireInfo.getKillProbability()).thenReturn(0.0);
+        Mockito.when(mockMGFireInfo.getWeapon()).thenReturn(mockMG);
+        Mockito.when(mockMGFireInfo.getShooter()).thenReturn(mockShooter);
+        Mockito.when(mockMGFireInfo.getDebugDescription()).thenReturn("mock MG");
+        alphaStrike.add(mockMGFireInfo);
+
+        FiringPlan[] expected = new FiringPlan[15];
+        expected[0] = new FiringPlan(mockTarget);
+        expected[0].add(mockMGFireInfo);
+        expected[1] = new FiringPlan(mockTarget);
+        expected[1].add(mockMGFireInfo);
+        expected[1].add(mockLRMFireInfo);
+        expected[1].setUtility(3.0);
+        expected[2] = new FiringPlan(mockTarget);
+        expected[2].add(mockMGFireInfo);
+        expected[2].add(mockLRMFireInfo);
+        expected[2].setUtility(0.0);
+        expected[3] = new FiringPlan(mockTarget);
+        expected[3].add(mockMGFireInfo);
+        expected[3].add(mockMLFireInfo);
+        expected[3].setUtility(4.2);
+        expected[4] = new FiringPlan(mockTarget);
+        expected[4].add(mockMGFireInfo);
+        expected[4].add(mockLRMFireInfo);
+        expected[4].add(mockMLFireInfo);
+        expected[4].setUtility(6.0);
+        expected[5] = new FiringPlan(mockTarget);
+        expected[5].add(mockMGFireInfo);
+        expected[5].add(mockLRMFireInfo);
+        expected[5].add(mockMLFireInfo);
+        expected[5].setUtility(6.0);
+        expected[6] = new FiringPlan(mockTarget);
+        expected[6].add(mockMGFireInfo);
+        expected[6].add(mockLRMFireInfo);
+        expected[6].add(mockMLFireInfo);
+        expected[6].setUtility(0.0);
+        expected[7] = new FiringPlan(mockTarget);
+        expected[7].add(mockMGFireInfo);
+        expected[7].add(mockLRMFireInfo);
+        expected[7].add(mockMLFireInfo);
+        expected[7].setUtility(0.0);
+        expected[8] = new FiringPlan(mockTarget);
+        expected[8].add(mockMGFireInfo);
+        expected[8].add(mockLRMFireInfo);
+        expected[8].add(mockMLFireInfo);
+        expected[8].setUtility(0.0);
+        expected[9] = new FiringPlan(mockTarget);
+        expected[9].add(mockMGFireInfo);
+        expected[9].add(mockLRMFireInfo);
+        expected[9].add(mockMLFireInfo);
+        expected[9].setUtility(0.0);
+        expected[10] = new FiringPlan(mockTarget);
+        expected[10].add(mockMGFireInfo);
+        expected[10].add(mockPPCFireInfo);
+        expected[10].setUtility(11.9);
+        expected[11] = new FiringPlan(mockTarget);
+        expected[11].add(mockMGFireInfo);
+        expected[11].add(mockLRMFireInfo);
+        expected[11].add(mockPPCFireInfo);
+        expected[11].setUtility(13.7);
+        expected[12] = new FiringPlan(mockTarget);
+        expected[12].add(mockMGFireInfo);
+        expected[12].add(mockLRMFireInfo);
+        expected[12].add(mockPPCFireInfo);
+        expected[12].setUtility(13.7);
+        expected[13] = new FiringPlan(mockTarget);
+        expected[13].add(mockMGFireInfo);
+        expected[13].add(mockMLFireInfo);
+        expected[13].add(mockPPCFireInfo);
+        expected[13].setUtility(14.9);
+        expected[14] = new FiringPlan(mockTarget);
+        expected[14].add(mockMGFireInfo);
+        expected[14].add(mockLRMFireInfo);
+        expected[14].add(mockMLFireInfo);
+        expected[14].add(mockPPCFireInfo);
+        expected[14].setUtility(16.7);
+        FiringPlan[] actual = testFireControl.calcFiringPlansUnderHeat(mockShooter, alphaStrike);
+        assertArrayEquals(expected, actual);
+    }
+
+    private void assertArrayEquals(FiringPlan[] expected, Object actual) {
+        Assert.assertNotNull(actual);
+        Assert.assertTrue("actual: " + actual.getClass().getName(), actual instanceof FiringPlan[]);
+
+        FiringPlan[] actualArray = (FiringPlan[]) actual;
+        Assert.assertEquals(expected.length, actualArray.length);
+
+        StringBuilder failure = new StringBuilder();
+        for (int i = 0; i < expected.length; i++) {
+            if ((expected[i] == null) && (actualArray[i] != null)) {
+                failure.append("\nExpected[" + i + "]: null");
+                failure.append("\nActual[" + i + "]:   ").append(actualArray[i].getDebugDescription(true));
+                continue;
+            }
+            if (!expected[i].equals(actualArray[i])) {
+                failure.append("\nExpected[" + i + "]: ").append(expected[i].getDebugDescription(true));
+                if (actualArray[i] == null) {
+                    failure.append("\nActual[" + i + "]:   null");
+                } else {
+                    failure.append("\nActual[" + i + "]:   ").append(actualArray[i].getDebugDescription(true));
+                }
+            }
+        }
+
+        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+            Assert.fail(failure.toString());
+        }
     }
 }

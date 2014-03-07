@@ -49,6 +49,8 @@ v0.37.9-dev (SVN)
 + Added some code to remove a 'Report.addNewline failed' message
 + Finished refactoring the FireControl class.
 + Bug [#4055]: allow constructing BA with Modular Equipment Adaptor
++ Bug [#4064]: Inability to fire at secondary targets when attacking things with
+    stealth armor. (also made some code formatting changes) 
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

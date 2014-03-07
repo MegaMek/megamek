@@ -48,6 +48,7 @@ v0.37.9-dev (SVN)
 + Unit corrections with data changes.
 + Added some code to remove a 'Report.addNewline failed' message
 + Finished refactoring the FireControl class.
++ Bug [#4055]: allow constructing BA with Modular Equipment Adaptor
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

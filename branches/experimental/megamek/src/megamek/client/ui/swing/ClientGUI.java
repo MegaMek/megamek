@@ -1203,9 +1203,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         ReportDisplay.setupStylesheet(textArea);
 
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(textArea,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>" + message + "</pre>");
-        JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
+        scrollPane.setPreferredSize(new Dimension(
+                (int) (getSize().getWidth() / 1.5), (int) (getSize()
+                        .getHeight() / 1.5)));
+        JOptionPane.showMessageDialog(frame, scrollPane, title,
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**

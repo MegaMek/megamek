@@ -64,10 +64,11 @@ public class WeaponFireInfoTest {
         Mockito.when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
 
         mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockFireControl.guessToHitModifier(Mockito.any(Entity.class), Mockito.any(EntityState.class),
-                                                        Mockito.any(Targetable.class), Mockito.any(EntityState.class),
-                                                        Mockito.any(Mounted.class), Mockito.any(IGame.class),
-                                                        Mockito.any(Princess.class)))
+        Mockito.when(mockFireControl.guessToHitModifierForWeapon(Mockito.any(Entity.class), Mockito.any(EntityState
+                                                                                                                .class),
+                                                                 Mockito.any(Targetable.class),
+                                                                 Mockito.any(EntityState.class),
+                                                                 Mockito.any(Mounted.class), Mockito.any(IGame.class)))
                .thenReturn(mockToHitEight);
 
         mockPrincess = Mockito.mock(Princess.class);
@@ -164,7 +165,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        testWeaponFireInfo.initDamage(null, false);
+        testWeaponFireInfo.initDamage(null, false, true);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
@@ -181,7 +182,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        testWeaponFireInfo.initDamage(null, false);
+        testWeaponFireInfo.initDamage(null, false, true);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
@@ -198,7 +199,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        testWeaponFireInfo.initDamage(null, false);
+        testWeaponFireInfo.initDamage(null, false, true);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
@@ -215,7 +216,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        testWeaponFireInfo.initDamage(null, false);
+        testWeaponFireInfo.initDamage(null, false, true);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
@@ -232,7 +233,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        testWeaponFireInfo.initDamage(null, false);
+        testWeaponFireInfo.initDamage(null, false, true);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
         TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);

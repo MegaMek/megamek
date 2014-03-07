@@ -6,7 +6,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2439
 Source:Star League
-Rules Level:2
+Rules Level:5
 
 Mass:100
 Engine:360 Fusion Engine
@@ -19,7 +19,7 @@ Heat Sinks:15 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Industrial(Inner Sphere)
+Armor:Primitive(Inner Sphere)
 LA Armor:24
 RA Armor:24
 LT Armor:20

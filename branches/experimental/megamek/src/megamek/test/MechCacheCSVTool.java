@@ -31,7 +31,7 @@ import megamek.common.MechSummaryCache;
  * This class provides a utility to read in all of the data/mechfiles and print
  * that data out into a CVS format.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class MechCacheCSVTool {
@@ -49,13 +49,13 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chasis, Model, Engine Name, Internals Name, " +
+            csvLine.append("Chassis, Model, Engine Name, Internals Name, " +
             		"Myomer Name, Cockpit name, Gyro Name, " +
             		"Armor Types (multiple entries), " +
-            		"Euipment (multiple entries)\n");
+            		"Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-                if (mech.getUnitType().equals("Infantry")){
+                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
                     continue;
                 }
                 
@@ -63,45 +63,95 @@ public class MechCacheCSVTool {
                 // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
-                csvLine.append(mech.getModel() + ",");
+                if (mech.getModel().equals("")){
+                    csvLine.append("(Standard),");
+                } else {                    
+                    csvLine.append(mech.getModel() + ",");
+                }
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
+                
                 // Internals Type
-                if (mech.getInternalsType() > 0){
+                if (mech.getInternalsType() >= 0){
                     csvLine.append(EquipmentType.structureNames[mech.getInternalsType()] + ",");
-                }else{
-                    csvLine.append(mech.getInternalsType() + ",");
+                }else if
+                	(mech.getInternalsType() < 0){
+                    csvLine.append("Not Applicable,");
                 }
+                
                 // Myomer type
                 csvLine.append(mech.getMyomerName()+ ",");
+                
                 // Cockpit Type
-                if (mech.getCockpitType() > 0 && 
+                if (mech.getCockpitType() >= 0 && 
                         mech.getCockpitType() < Mech.COCKPIT_STRING.length){
                     if (mech.getUnitType().equals("Mek")){
                         csvLine.append(Mech.COCKPIT_STRING[mech.getCockpitType()]+ ",");
-                    } else {
+                    } else
                         csvLine.append(Aero.COCKPIT_STRING[mech.getCockpitType()]+ ",");
-                    }
-                } else {
-                    csvLine.append(mech.getCockpitType()+ ",");
-                }
-                // Gyro Type
-                if (mech.getGyroType() > 0){
-                    csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
-                } else {
-                    csvLine.append(mech.getGyroType() + ",");
-                }
-                // Armor type - prints different armor types on the unit
-                for (Integer armorType : mech.getArmorType()){
-                    if (armorType > 0){
-                        csvLine.append(EquipmentType.armorNames[armorType]+",");
                     } else {
-                        csvLine.append(armorType+",");
-                    }
+                    csvLine.append("Not Applicable,");
                 }
+                
+                // Gyro Type
+                if (mech.getGyroType() >= 0){
+                    csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
+                } else if 
+                	(mech.getGyroType() <0){   
+                    csvLine.append("Not Applicable,");	
+               	}
+                
+                // Armor type - prints different armor types on the unit
+               for (Integer armorType : mech.getArmorType()){
+                   if (armorType >= 0){
+                       csvLine.append(EquipmentType.armorNames[armorType]+",");
+                   } else if
+                      (armorType < 0){
+                       csvLine.append("Standard,");
+                   } else {
+                       csvLine.append(armorType+",");
+                   }
+               }
+                
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
-                    csvLine.append(name + ",");
+                    boolean ignore = false;
+                    // Ignore armor criticals
+                    for (String armorName : EquipmentType.armorNames){
+                        if (name.contains(armorName.trim())){
+                            ignore = true;
+                        }
+                    }
+                    // Ignore internal structure criticals
+                    for (String isName : EquipmentType.structureNames){
+                        if (name.contains(isName.trim())){
+                            ignore = true;
+                        }
+                    }
+                    // Ignore Bays
+                    if (name.contains("Bay")){
+                        ignore = true;
+                    }
+                    // Ignore Ammo
+                    if (name.contains("Ammo")){
+                        ignore = true;
+                    }
+                    // Ignore Rifle
+                    if (name.contains("Infantry Auto Rifle")){
+                        ignore = true;
+                    }
+                    
+                    
+                    if (name.contains("SwarmMek")
+                            || name.contains("SwarmWeaponMek")
+                            || name.contains("StopSwarm")
+                            || name.contains("LegAttack")){
+                        ignore = true;
+                    }
+                    
+                    if (!ignore){
+                        csvLine.append(name + ",");
+                    }
                 }     
                 csvLine.append("\n");
                 fout.write(csvLine.toString());

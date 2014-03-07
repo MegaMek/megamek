@@ -1,7 +1,7 @@
 2821 Operations Klondike Clan Light Aerospace 
 Zero ZRO-114,1
 Trident TRN-3T,2
-Swift SW-606,3
+Swift SWF-606,3
 Spad SPD-502,4
 Tomahawk THK-63b,5
 Zero ZRO-116b,6

@@ -3,7 +3,7 @@ Rogue RGU-133F,1
 Zero ZRO-114,2
 Zero ZRO-114,3
 Spad SPD-502,4
-Swift SW-606,5
+Swift SWF-606,5
 Trident TRN-3T,6
 Tomahawk THK-63,5
 Cheetah F-12-S,4

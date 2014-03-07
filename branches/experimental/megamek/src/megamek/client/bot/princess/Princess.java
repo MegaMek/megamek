@@ -189,18 +189,18 @@ public class Princess extends BotClient {
             Coords[] startingCoords = getStartingCoordsArray();
             if (startingCoords.length == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                        "No valid locations to deploy "
-                                + getEntity(entityNum).getDisplayName());
+                    "No valid locations to deploy "
+                            + getEntity(entityNum).getDisplayName());
             }
 
             // get the coordinates I can deploy on
             Coords deployCoords = getCoordsAround(getEntity(entityNum), startingCoords);
             if (deployCoords == null) {
                 log(getClass(),
-                        METHOD_NAME,
-                        LogLevel.ERROR,
-                        "getCoordsAround gave no location for "
-                                + getEntity(entityNum).getChassis());
+                    METHOD_NAME,
+                    LogLevel.ERROR,
+                    "getCoordsAround gave no location for "
+                            + getEntity(entityNum).getChassis());
             }
 
             // first coordinate that it is legal to put this unit on now find some sort of reasonable facing. If there
@@ -241,7 +241,7 @@ public class Princess extends BotClient {
 
                 log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
                 // tell the game I want to fire
-                sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
+                sendAttackData(shooter.getId(), plan.getEntityActionVector());
 
             } else {
                 sendAttackData(shooter.getId(), new Vector<EntityAction>(0));
@@ -360,9 +360,9 @@ public class Princess extends BotClient {
         StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
-            if (entity.isOffBoard() || (entity.getPosition() == null) 
-                    || !entity.isSelectableThisTurn() 
-                    || !getGame().getTurn().isValidEntity(entity,getGame())) {
+            if (entity.isOffBoard() || (entity.getPosition() == null)
+                    || !entity.isSelectableThisTurn()
+                    || !getGame().getTurn().isValidEntity(entity, getGame())) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -424,56 +424,54 @@ public class Princess extends BotClient {
             Entity hitter = first_entity;
             PhysicalInfo best_attack = null;
             do {
-                log(getClass(),
-                        METHOD_NAME,
-                        "Calculating physical attacks for "
-                                + hitter.getDisplayName());
+                log(getClass(), METHOD_NAME, "Calculating physical attacks for " + hitter.getDisplayName());
+
                 // this is an array of all my enemies
                 List<Entity> enemies = getEnemyEntities();
+
                 // cycle through potential enemies
                 for (Entity e : enemies) {
                     if (e.getPosition() == null) {
                         continue; // Skip enemies not on the board.
                     }
                     PhysicalInfo right_punch = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this);
+                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this, false);
                     fireControl.calculateUtility(right_punch);
-                    if (right_punch.utility > 0) {
+                    if (right_punch.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (right_punch.utility > best_attack.utility)) {
+                                || (right_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = right_punch;
                         }
                     }
                     PhysicalInfo left_punch = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game, this);
+                            hitter, e, PhysicalAttackType.LEFT_PUNCH, game, this, false);
                     fireControl.calculateUtility(left_punch);
-                    if (left_punch.utility > 0) {
+                    if (left_punch.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (left_punch.utility > best_attack.utility)) {
+                                || (left_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = left_punch;
                         }
                     }
                     PhysicalInfo right_kick = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_KICK, game, this);
-                    if (right_kick.utility > 0) {
+                            hitter, e, PhysicalAttackType.RIGHT_KICK, game, this, false);
+                    if (right_kick.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (right_kick.utility > best_attack.utility)) {
+                                || (right_kick.getUtility() > best_attack.getUtility())) {
                             best_attack = right_kick;
                         }
                     }
                     PhysicalInfo left_kick = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.LEFT_KICK, game, this);
+                            hitter, e, PhysicalAttackType.LEFT_KICK, game, this, false);
                     if (left_kick.getExpectedDamage() > 0) {
                         if ((best_attack == null)
-                                || (left_kick.utility > best_attack.utility)) {
+                                || (left_kick.getUtility() > best_attack.getUtility())) {
                             best_attack = left_kick;
                         }
                     }
 
                 }
                 if (best_attack != null) {
-                    log(getClass(), METHOD_NAME, "Attack is a "
-                            + best_attack.attack_type.name());
+                    log(getClass(), METHOD_NAME, "Attack is " + best_attack.getDebugDescription());
                 } else {
                     log(getClass(), METHOD_NAME, "No useful attack to be made");
                 }
@@ -577,7 +575,7 @@ public class Princess extends BotClient {
             // If our odds to get up are equal to or worse than the threshold, consider ourselves immobile.
             PilotingRollData target = mech.checkGetUp(getUp);
             log(getClass(), METHOD_NAME, LogLevel.INFO,
-                    "Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
+                "Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
         }
 
@@ -586,9 +584,9 @@ public class Princess extends BotClient {
         MoveStep walk = new MoveStep(movePath, type);
         IHex hex = getHex(mech.getPosition());
         PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
-                hex.getElevation(), false);
+                                                    hex.getElevation(), false);
         log(getClass(), METHOD_NAME, LogLevel.INFO,
-                "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
+            "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
 
@@ -608,7 +606,7 @@ public class Princess extends BotClient {
                                               int startingHomeDistance, int startingDistToNearestEnemy,
                                               List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
-                startingDistToNearestEnemy, enemies, friends);
+                                         startingDistToNearestEnemy, enemies, friends);
     }
 
     @Override
@@ -661,7 +659,7 @@ public class Princess extends BotClient {
 
             if (paths == null) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                        "No valid paths found.");
+                    "No valid paths found.");
                 return new MovePath(game, entity);
             }
 
@@ -683,11 +681,13 @@ public class Princess extends BotClient {
             getPathRanker().initUnitTurn(entity, getGame());
             double fallTolerance = getBehaviorSettings().getFallShameIndex() / 10d;
             int startingHomeDistance = getPathRanker().distanceToHomeEdge(entity.getPosition(),
-                    getBehaviorSettings().getHomeEdge(), getGame());
+                                                                          getBehaviorSettings().getHomeEdge(),
+                                                                          getGame());
             int distanceToNerestEnemy = (int) getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
-                    getGame());
+                                                                                     getGame());
             List<RankedPath> rankedpaths = rankPaths(paths, entity.getMaxWeaponRange(), fallTolerance,
-                    startingHomeDistance, distanceToNerestEnemy, getEnemyEntities(), getFriendEntities());
+                                                     startingHomeDistance, distanceToNerestEnemy, getEnemyEntities(),
+                                                     getFriendEntities());
             long stop_time = System.currentTimeMillis();
 
             // update path evaluation time estimate
@@ -764,7 +764,7 @@ public class Princess extends BotClient {
                                 && (fireControl.getAdditionalTargets().indexOf(bt) == -1)) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " + coords.toFriendlyString()
-                                    + " designated target due to Gun Emplacement.");
+                                             + " designated target due to Gun Emplacement.");
                         }
                     }
                 }
@@ -813,7 +813,7 @@ public class Princess extends BotClient {
                                 && !getStrategicTargets().contains(coords)) {
                             getStrategicTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +
-                                    " designated target due to Gun Emplacement.");
+                                             " designated target due to Gun Emplacement.");
                         }
                     }
                 }
@@ -864,7 +864,7 @@ public class Princess extends BotClient {
     public void setHomeEdge(HomeEdge homeEdge) {
         if (homeEdge == null) {
             log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
-                    new IllegalArgumentException("Home Edge is required!"));
+                new IllegalArgumentException("Home Edge is required!"));
             return;
         }
         getBehaviorSettings().setHomeEdge(homeEdge);

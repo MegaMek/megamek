@@ -136,7 +136,7 @@ Clan Level 2
 </internal_type>
 
 <armor_type>
-17
+19
 </armor_type>
 
 <engine_type>
@@ -167,3 +167,7 @@ CargoBay:207:1
 <passengers>
 0
 </passengers>
+
+<source>
+TRO 3145 Merc
+</source>

@@ -13,7 +13,7 @@ Engine:320 Fusion Engine(IS)
 Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:12 Single
+Heat Sinks:14 Single
 Walk MP:4
 Jump MP:0
 
@@ -33,8 +33,8 @@ RTC Armor:6
 Weapons:4
 LRM 15, Left Arm
 LRM 15, Right Arm
-MML 5, Right Torso
 MML 5, Left Torso
+MML 5, Right Torso
 
 Left Arm:
 Shoulder
@@ -125,7 +125,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -139,7 +139,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+Heat Sink
 -Empty-
 -Empty-
 -Empty-

@@ -46,4 +46,26 @@ public class TargetRollModifier implements Serializable {
     public void setCumulative(boolean cumulative) {
         this.cumulative = cumulative;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TargetRollModifier)) return false;
+
+        TargetRollModifier that = (TargetRollModifier) o;
+
+        if (cumulative != that.cumulative) return false;
+        if (value != that.value) return false;
+        if (!desc.equals(that.desc)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = value;
+        result = 31 * result + desc.hashCode();
+        result = 31 * result + (cumulative ? 1 : 0);
+        return result;
+    }
 }

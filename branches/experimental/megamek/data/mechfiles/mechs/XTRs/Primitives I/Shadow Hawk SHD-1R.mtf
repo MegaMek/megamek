@@ -5,7 +5,8 @@ SHD-1R
 Config:Biped
 TechBase:Inner Sphere
 Era:2467
-Rules Level:4
+Source:XTRO Primitives I
+Rules Level:5
 
 Mass:50
 Engine:240 Primitive Fusion Engine
@@ -17,7 +18,7 @@ Heat Sinks:10 Single
 Walk MP:4
 Jump MP:3
 
-Armor:Industrial
+Armor:Primitive(Inner Sphere)
 LA Armor:16
 RA Armor:16
 LT Armor:18

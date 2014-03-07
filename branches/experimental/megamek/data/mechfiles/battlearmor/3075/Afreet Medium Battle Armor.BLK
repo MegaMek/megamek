@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Afreet Medium Battle Armor
 </Name>
+<model>
+(Standard)
+</model>
 <chassis>
 biped
 </chassis>

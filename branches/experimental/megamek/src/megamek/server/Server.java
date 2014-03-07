@@ -7008,7 +7008,11 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 boolean psrFailed = true;
+                int startingfacing = entity.getFacing();
                 if (entity instanceof Mech) {
+                    // We need to ensure that falls will happen from the proper
+                    //  facing
+                    entity.setFacing(curFacing);
                     psrFailed = (0 < doSkillCheckWhileMoving(entity,
                             lastElevation, lastPos, lastPos, rollTarget, true));
                 } else {
@@ -7062,7 +7066,11 @@ public class Server implements Runnable {
                     distance = entity.delta_distance;
                     break;
 
-                } // End failed-skid-psr
+                } else { // End failed-skid-psr
+                    // If the checke succeeded, restore the facing we had before
+                    //  if it failed, the fall will have changed facing
+                    entity.setFacing(startingfacing);
+                }
 
             } // End need-skid-psr
 
@@ -10729,8 +10737,17 @@ public class Server implements Runnable {
         if (affaTarget == null) {
             r.newlines = 1;
             vPhaseReport.add(r);
-            vPhaseReport
-                    .addAll(doEntityFall(entity, dest, fallElevation, roll));
+            // If we rolled for the direction, we want to use that for the fall
+            if (src.equals(dest)){
+                vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
+                        direction, roll, false));  
+            } else {
+                // Otherwise, we'll roll for the direction after the fall
+                vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
+                        roll));
+            }
+            
+            
             return vPhaseReport;
         }
         vPhaseReport.add(r);
@@ -12186,10 +12203,12 @@ public class Server implements Runnable {
                     }
                     addReport(r);
                 }
-                // Unofficial option to unjam Ultra Autocannons like Rotary
+                // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                        || (wtype.getAmmoType() == AmmoType.T_AC)
+                        || (wtype.getAmmoType() == AmmoType.T_LAC))
                         && game.getOptions().booleanOption("unjam_uac")) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
@@ -31463,7 +31482,9 @@ public class Server implements Runnable {
         }
         // resolve standard to capital one more time
         handleAttackReports.addAll(checkFatalThresholds(lastAttackerId));
-        Report.addNewline(handleAttackReports);
+        if (handleAttackReports.size() > 0){
+            Report.addNewline(handleAttackReports);
+        }
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

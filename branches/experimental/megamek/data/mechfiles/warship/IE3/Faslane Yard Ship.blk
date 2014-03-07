@@ -13,8 +13,12 @@ Warship
 </UnitType>
 
 <Name>
-Faslane Yard Ship
+Faslane Yardship
 </Name>
+
+<Model>
+(Standard)
+</Model>  
 
 <Tonnage>
 550000

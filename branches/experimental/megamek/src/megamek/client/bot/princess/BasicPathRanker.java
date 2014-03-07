@@ -59,7 +59,7 @@ public class BasicPathRanker extends PathRanker {
         bestDamageByEnemies = new TreeMap<Integer, Double>();
         owner = owningPrincess;
         owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
-                " behavior");
+                                                           " behavior");
     }
 
     protected Princess getOwner() {
@@ -88,7 +88,7 @@ public class BasicPathRanker extends PathRanker {
 
     protected boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
         return (leftBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) > 0)
-                && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
+               && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
     }
 
     protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range) {
@@ -103,14 +103,14 @@ public class BasicPathRanker extends PathRanker {
             return false;
         }
         return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -155,7 +155,7 @@ public class BasicPathRanker extends PathRanker {
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range) *
-                                                              damageDiscount);
+                                                      damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
@@ -199,8 +199,8 @@ public class BasicPathRanker extends PathRanker {
     }
 
     @Override
-    public double getMovePathSuccessProbability(MovePath movePath) {
-        return super.getMovePathSuccessProbability(movePath);
+    public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+        return super.getMovePathSuccessProbability(movePath, msg);
     }
 
     private double calculateFallMod(double successProbability, StringBuilder formula) {
@@ -246,12 +246,13 @@ public class BasicPathRanker extends PathRanker {
 
         // if they can kick me, and probably hit, they probably will.
         PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
-                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner);
+                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner,
+                                                  true);
 
-        if (theirKick.prob_to_hit <= 0.5) {
+        if (theirKick.getProbabilityToHit() <= 0.5) {
             return 0.0;
         }
-        return theirKick.expected_damage_on_hit * theirKick.prob_to_hit;
+        return theirKick.getExpectedDamageOnHit() * theirKick.getProbabilityToHit();
     }
 
     protected double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, IGame game) {
@@ -283,11 +284,11 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
                                                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
-                                               game, owner);
-        if (myKick.prob_to_hit <= 0.5) {
+                                               game, owner, true);
+        if (myKick.getProbabilityToHit() <= 0.5) {
             return 0;
         }
-        return myKick.expected_damage_on_hit * myKick.prob_to_hit;
+        return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
     }
 
     protected EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, IGame game) {
@@ -352,18 +353,18 @@ public class BasicPathRanker extends PathRanker {
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                game.getBoard().getCenter() :
-                closest.getPosition();
+                        game.getBoard().getCenter() :
+                        closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                || (currentFacing == ((desiredFacing + 5) % 6))) {
+                   || (currentFacing == ((desiredFacing + 5) % 6))) {
             facingDiff = 1;
         } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                || (currentFacing == ((desiredFacing + 4) % 6))) {
+                   || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 2;
         } else {
             facingDiff = 3;
@@ -415,7 +416,7 @@ public class BasicPathRanker extends PathRanker {
             MovePath pathCopy = path.clone();
 
             // Worry about failed piloting rolls (weighted by Fall Shame).
-            double successProbability = getMovePathSuccessProbability(pathCopy);
+            double successProbability = getMovePathSuccessProbability(pathCopy, formula);
             double utility = -calculateFallMod(successProbability, formula);
 
             // look at all of my enemies
@@ -426,7 +427,7 @@ public class BasicPathRanker extends PathRanker {
 
                 // Skip units not actually on the board.
                 if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                        || !game.getBoard().contains(enemy.getPosition())) {
+                    || !game.getBoard().contains(enemy.getPosition())) {
                     continue;
                 }
 
@@ -449,7 +450,7 @@ public class BasicPathRanker extends PathRanker {
             for (int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
                 Targetable target = getOwner().getFireControl().getAdditionalTargets().get(i);
                 if (target.isOffBoard() || (target.getPosition() == null)
-                        || !game.getBoard().contains(target.getPosition())) {
+                    || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
@@ -461,8 +462,8 @@ public class BasicPathRanker extends PathRanker {
                 }
                 PhysicalInfo myKick = new PhysicalInfo(
                         path.getEntity(), new EntityState(path), target, null,
-                        PhysicalAttackType.RIGHT_KICK, game, owner);
-                double expectedKickDamage = myKick.expected_damage_on_hit * myKick.prob_to_hit;
+                        PhysicalAttackType.RIGHT_KICK, game, owner, true);
+                double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
                 if (expectedKickDamage > maximumPhysicalDamage) {
                     maximumPhysicalDamage = expectedKickDamage;
                 }

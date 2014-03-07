@@ -17,6 +17,10 @@ BattleSat System-Defense Station
 </Name>
 
 <Model>
+(Standard)
+</Model>
+
+<Model>
 </Model>
 
 <Tonnage>
@@ -117,3 +121,6 @@ cargobay:150:1
 
 <passengers>
 </passengers>
+
+<BattleStation>
+</BattleStation>

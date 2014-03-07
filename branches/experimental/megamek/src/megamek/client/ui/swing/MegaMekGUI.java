@@ -439,7 +439,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port);
+            server = new Server(hd.serverPass, hd.port, hd.register, hd.register ? hd.metaserver : "");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
                     + hd.port);

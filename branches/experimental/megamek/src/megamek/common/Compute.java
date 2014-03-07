@@ -1360,7 +1360,7 @@ public class Compute {
         return distance;
     }
 
-    private static Coords getClosestFlightPath(Coords aPos, Entity te) {
+    public static Coords getClosestFlightPath(Coords aPos, Entity te) {
 
         Coords finalPos = te.getPosition();
         int distance = aPos.distance(finalPos);

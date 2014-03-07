@@ -192,6 +192,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "uac_tworolls", false); //$NON-NLS-1$
         addOption(advancedCombat, "clubs_punch", false); //$NON-NLS-1$
         addOption(advancedCombat, "on_map_predesignate", false); //$NON-NLS-1$
+        addOption(advancedCombat, "num_hexes_predesignate", 5); //$NON-NLS-1$
+        addOption(advancedCombat, "map_area_predesignate", 1088); //$NON-NLS-1$
         addOption(advancedCombat, "max_external_heat", 15); //$NON-NLS-1$
         addOption(advancedCombat, "case_pilot_damage", false); //$NON-NLS-1$
 

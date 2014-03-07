@@ -3,6 +3,52 @@ VERSION HISTORY:
 v0.37.9-exp-dev (SVN)
 
 v0.37.9-dev (SVN)
++ Data: Unit Fixes and Some renaming
++ Bug [#4053] - BA LBX weapons missing AmmoType Tag
++ Some typo fixes and adding Primitive RL15
++ Refactored FireControl.guessToHitModifierForWeapon and added unit tests for
+    it.
++ Data: Some unit corrections to bring them inline with the MUL.
++ Refactored FireControl.guessAirToGroundStrikeToHitModifier and added unit
+    tests for it.
++ Added a 'guess' paramter to the various WeaponFireInfo constructors to
+    indicate when the to hit chance should be
+    estimated rather than fully calculated.
++ Changed the FireControl.checkGuess... methods to only run when Princess is in
+    debug mode.
++ Updated the Princess help doc with a list of Optional Rules that should be
+    safe to use.
++ Bug [#4058]: Movement Report Dialogue needs a scrollbar
++ Refactored PhysicalInfo class and added unit tests for it.
++ Refactored FireControl.calculateUtility and added unit tests for it.
++ Added additional considerations for ground to air attacks in Princess's
+    'guess to hit' methods.
++ Feature: Added support for Clan Exoskeletons without harjel: BattleArmor has
+    a new state variable to track this, and TestBattleArmor.getWeightStructure
+    properly supports it
++ Bug: Armored Gloves weren't properly being counted as AP Mounts for purposes
+    of BattleArmor validation
++ Bug [#4051]: Facing when 'Mech skids: ver 0.37.8-Exp
++ Bug [#3950]: Geometric Mean BV Option Not Updating in Unit Selection Dialog
++ Bug [#3950]: Two single die rolls were made for skidding/falling when only 
+    1 was necessary
++ Updates to MechCacheCSVTool: units with no model name now display (Standard),
+    Added code to ignore various equipment names, like structure, armor, bays,
+    and BA related attacks
++ Bug [#4060]: Missing limit on number of artillery spots per mapsheet.
++ Bug [#4061]: Error - loading weapons
++ Bug [#3563]: Server browser not working when you start from a save
++ Bug [#3914]: LACs incorrectly getting the rapid fire penalty
++ Bug [#3914]: Allowed unjamming ACs/LACs with rapid-fire ACs and unjam UACs
++ Refactored FireControl.guessFullFiringPlan and added unit tests for it.
++ Refactored FiringPlan class and added unit tests for it.
++ Refactored FireControl.guessFullAirToGroundPlan and added unit tests for it.
++ Refactored FireControl.getFullFiringPlan and added unit tests for it.
++ Refactored FireControl.calcFiringPlansUnderHeat and added unit tests for it.
++ New Images
++ Fixed Rats
++ Unit corrections with data changes.
++ Added some code to remove a 'Report.addNewline failed' message
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

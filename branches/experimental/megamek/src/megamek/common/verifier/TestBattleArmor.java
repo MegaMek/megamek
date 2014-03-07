@@ -357,7 +357,7 @@ public class TestBattleArmor extends TestEntity {
         int jumpMP = ba.getOriginalJumpMP();
         switch (ba.getWeightClass()) {
             case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                if (ba.isClan()) {
+                if (ba.isClan() && ba.isClanExoWithoutHarjel()) {
                     tons += 0.13;
                 } else {
                     tons += 0.08;
@@ -620,16 +620,17 @@ public class TestBattleArmor extends TestEntity {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
                 continue;
             }
-            // Manipulators don't take up slots in BA
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
-                continue;
-            }
 
             int critSize;
             if (m.getType().isSpreadable()) {
                 critSize = 1;
             } else {
                 critSize = m.getType().getCriticals(ba);
+            }
+            
+            // Manipulators don't take up slots in BA
+            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+                critSize = 0;
             }
 
             // AP Weapons that are mounted in an AP Mount don't take up slots
@@ -749,7 +750,7 @@ public class TestBattleArmor extends TestEntity {
                 if (numAMWeapons[t][loc] > 
                         ba.getNumAllowedAntiMechWeapons(loc)) {
                     buff.append(ba.getBaMountLocAbbr(loc) + " of "
-                            + ba.getLocationAbbr(t) + "has "
+                            + ba.getLocationAbbr(t) + " has "
                             + numAMWeapons[t][loc]
                             + " anti-mech weapons, but only "
                             + ba.getNumAllowedAntiMechWeapons(loc)
@@ -759,7 +760,7 @@ public class TestBattleArmor extends TestEntity {
                 if (numAPWeapons[t][loc] > ba
                         .getNumAllowedAntiPersonnelWeapons(loc, t)) {
                     buff.append(ba.getBaMountLocAbbr(loc) + " of "
-                            + ba.getLocationAbbr(t) + "has "
+                            + ba.getLocationAbbr(t) + " has "
                             + numAPWeapons[t][loc]
                             + " anti-personnel weapons, but only "
                             + ba.getNumAllowedAntiPersonnelWeapons(loc, t)

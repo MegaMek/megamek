@@ -389,6 +389,15 @@ public class MiscType extends EquipmentType {
             .shiftLeft(178);
     public static final BigInteger F_BATTLEMECH_NIU = BigInteger.valueOf(1)
             .shiftLeft(179);
+    public static final BigInteger F_SNOWMOBILE = BigInteger.valueOf(1)
+            .shiftLeft(180);
+    public static final BigInteger F_LADDER = BigInteger.valueOf(1)
+            .shiftLeft(181);
+    public static final BigInteger F_LIFEBOAT = BigInteger.valueOf(1)
+            .shiftLeft(182);
+    public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
+            .shiftLeft(183);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -915,9 +924,8 @@ public class MiscType extends EquipmentType {
         } else if ((entity instanceof Aero)
                 && (hasFlag(F_REACTIVE) || hasFlag(F_REFLECTIVE)
                         || hasFlag(F_ANTI_PENETRATIVE_ABLATIVE)
-                        || hasFlag(F_BALLISTIC_REINFORCED)
-                        || hasFlag(F_FERRO_LAMELLOR))) {
-            //Aero armor doesn't take up criticals
+                        || hasFlag(F_BALLISTIC_REINFORCED) || hasFlag(F_FERRO_LAMELLOR))) {
+            // Aero armor doesn't take up criticals
             return 0;
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -1223,6 +1231,7 @@ public class MiscType extends EquipmentType {
 
         EquipmentType.addType(MiscType.createFieldKitchen());
         EquipmentType.addType(MiscType.createAmphibiousChassis());
+        EquipmentType.addType(MiscType.createSnomobileChassis());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
@@ -1517,6 +1526,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createBicycleModification());
         EquipmentType.addType(MiscType.createConvertibleModification());
+        EquipmentType.addType(MiscType.create20mLadder());
+        EquipmentType.addType(MiscType.create40mLadder());
+        EquipmentType.addType(MiscType.create60mLadder());
+        EquipmentType.addType(MiscType.create80mLadder());
+        EquipmentType.addType(MiscType.create100mLadder());
+        EquipmentType.addType(MiscType.createMaritimeLifeboat());
 
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
         EquipmentType.addType(MiscType.createISHeatDissipating());
@@ -1530,6 +1545,7 @@ public class MiscType extends EquipmentType {
 
         EquipmentType.addType(MiscType.createLAMBombBay());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
+        EquipmentType.addType(MiscType.createFluidSuctionSystem());
 
     }
 
@@ -7329,6 +7345,28 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createSnomobileChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Snowmobile";
+        misc.setInternalName("SnowmobileChassis");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.availRating = new int[] { EquipmentType.RATING_D,
+                EquipmentType.RATING_E, EquipmentType.RATING_E };
+        misc.introDate = 2470;
+        misc.techLevel.put(2470, misc.techLevel.get(3071));
+        misc.techRating = RATING_B;
+        // TODO: implement game rules
+
+        return misc;
+    }
+
     public static MiscType createISDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
@@ -9006,6 +9044,24 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createFluidSuctionSystem() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Fluid Suction System";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.techRating = RATING_C;
+        misc.availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        misc.cost = 25000;
+        misc.introDate = 1950;
+        misc.flags = misc.flags.or(F_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
     public static MiscType createISBAFuelTank() {
         MiscType misc = new MiscType();
 
@@ -9086,6 +9142,106 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType create20mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (20m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.1f;
+        misc.techRating = RATING_A;
+        misc.cost = 100;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType create40mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (40m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.2f;
+        misc.techRating = RATING_A;
+        misc.cost = 200;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER);
+        return misc;
+    }
+
+    public static MiscType create60mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (60m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.3f;
+        misc.techRating = RATING_A;
+        misc.cost = 300;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER);
+        return misc;
+    }
+
+    public static MiscType create80mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (80m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.4f;
+        misc.techRating = RATING_A;
+        misc.cost = 400;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER);
+        return misc;
+    }
+
+    public static MiscType create100mLadder() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Ladder (100m)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 1;
+        misc.criticals = 1;
+        misc.tonnage = 0.5f;
+        misc.techRating = RATING_A;
+        misc.cost = 500;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER);
+        return misc;
+    }
+
+    public static MiscType createMaritimeLifeboat() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Lifeboat (Maritime)";
+        misc.setInternalName(misc.name);
+        misc.tankslots = 0;
+        misc.tonnage = 1f;
+        misc.techRating = RATING_A;
+        misc.cost = 5000;
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_B, RATING_C, RATING_C };
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
+        return misc;
+    }
 
     @Override
     public String toString() {

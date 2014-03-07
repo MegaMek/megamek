@@ -95,6 +95,10 @@ aerodyne
 <history>
 </history>
 
+<source>
+TRO 3145 CC
+</source>
+
 <transporters>
 cargobay:3:1
 </transporters>

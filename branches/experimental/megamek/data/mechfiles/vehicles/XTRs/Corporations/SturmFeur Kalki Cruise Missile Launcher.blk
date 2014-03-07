@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-SturmFeur
+SturmFeur “Kalki” Cruise Missile Launcher
 </Name>
 
 <Model>
-“Kalki” Cruise Missile Launcher
+(Standard)
 </Model>
 
 <year>

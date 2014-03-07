@@ -190,7 +190,8 @@ public class BasicPathRankerTest {
         Entity mockMyUnit = Mockito.mock(BipedMech.class);
         Mockito.when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
         Mockito.doReturn(10.0).when(testRanker).getMaxDamageAtRange(Mockito.any(FireControl.class),
-                                                                    Mockito.eq(mockMyUnit), Mockito.anyInt());
+                                                                    Mockito.eq(mockMyUnit), Mockito.anyInt(),
+                                                                    Mockito.anyBoolean());
 
         MovePath mockPath = Mockito.mock(MovePath.class);
         Mockito.when(mockPath.getFinalCoords()).thenReturn(testCoords);
@@ -201,7 +202,7 @@ public class BasicPathRankerTest {
         Entity mockAero = Mockito.mock(Aero.class);
         Mockito.when(mockAero.getId()).thenReturn(2);
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
-        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath);
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
         // Test an enemy mech 5 hexes away, in my LoS and unable to kick my flank.
@@ -219,7 +220,8 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt());
+               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+                                    Mockito.anyBoolean());
         Mockito.doReturn(false)
                .when(testRanker)
                .canFlankAndKick(Mockito.eq(mockEnemyMech), Mockito.any(Coords.class), Mockito.any(Coords.class),
@@ -228,7 +230,7 @@ public class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(2.5);
         expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath);
+        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
         // Test an enemy mech 5 hexes away but not in my LoS.
@@ -246,7 +248,8 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt());
+               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+                                    Mockito.anyBoolean());
         Mockito.doReturn(false)
                .when(testRanker)
                .canFlankAndKick(Mockito.eq(mockEnemyMech), Mockito.any(Coords.class), Mockito.any(Coords.class),
@@ -255,7 +258,7 @@ public class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath);
+        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false);
         assertEntityEvaluationResponseEquals(expected, actual);
 
         // Test an enemy mech 5 hexes away, not in my LoS and able to kick me.
@@ -273,7 +276,8 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt());
+               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+                                    Mockito.anyBoolean());
         Mockito.doReturn(true)
                .when(testRanker)
                .canFlankAndKick(Mockito.eq(mockEnemyMech), Mockito.any(Coords.class), Mockito.any(Coords.class),
@@ -282,7 +286,7 @@ public class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(4.625);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath);
+        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
 
@@ -432,7 +436,7 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech2.setEstimatedEnemyDamage(15.0);
         Mockito.doReturn(evalForMockEnemyMech2)
                .when(testRanker)
-               .evaluateUnmovedEnemy(Mockito.eq(mockEnemyMech2), Mockito.any(MovePath.class));
+               .evaluateUnmovedEnemy(Mockito.eq(mockEnemyMech2), Mockito.any(MovePath.class), Mockito.anyBoolean());
         testEnemies.add(mockEnemyMech2);
 
         Coords friendsCoords = new Coords(10, 10);

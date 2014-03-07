@@ -2408,4 +2408,9 @@ public class FireControlTest {
             Assert.fail(failure.toString());
         }
     }
+
+    @Test
+    public void testGetBestFiringPlanUnderHeat() {
+
+    }
 }

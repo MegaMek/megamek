@@ -54,6 +54,7 @@ v0.37.9-dev (SVN)
 + Bug: MechDisplay was using Mech.isChameleonShieldActive() instead of 
     Mech.isChameleonShieldOn() to determine if a CLPS is generating heat.
 + Bug [#3675]: Infantry mods for Chameleon LPS
++ Bug [#3806]: Another double-blind related bug
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

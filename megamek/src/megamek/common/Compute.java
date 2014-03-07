@@ -1048,6 +1048,19 @@ public class Compute {
         if (isWeaponInfantry ) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
                     (InfantryWeapon) wtype);
+            
+            int rangeModifier = mods.getValue();
+            if (rangeModifier == TargetRoll.AUTOMATIC_FAIL){
+                usingRange = RangeType.RANGE_OUT;
+            } else if (rangeModifier == 0){
+                usingRange = RangeType.RANGE_SHORT;
+            } else if (rangeModifier <= 2){
+                usingRange = RangeType.RANGE_MEDIUM;
+            } else if (rangeModifier <= 4) {
+                usingRange = RangeType.RANGE_LONG;
+            } else {
+                usingRange = RangeType.RANGE_EXTREME;
+            }
         }
 
         // add any target stealth modifier

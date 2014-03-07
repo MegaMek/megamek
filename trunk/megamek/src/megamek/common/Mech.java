@@ -5169,12 +5169,14 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Does the mech have a functioning Chameleon Light Polarization Field?
+     * Does the mech have a functioning Chameleon Light Polarization Field? For
+     * a CLPS to be functioning it must be on and the unit can't have mounted
+     * mechanized BattleArmor.
      */
     @Override
     public boolean isChameleonShieldActive() {
-        // per the rules questions forum, externally mounted BA invalidates Void
-        // Sig
+        // TO pg 300 states that generates heat but doesn't operate if the unit
+        //  has mounted BA
         if (getLoadedUnits().size() > 0) {
             return false;
         }
@@ -5191,7 +5193,9 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Does the mech have a functioning Chameleon Light Polarization Field?
+     * Does the mech Chameleon Light Polarization Field turned on?  This is used
+     * for heat generation purposes.  A CLPS can be on and generating heat but
+     * not providing any benefit if the unit has mechanized BattleArmor.
      */
     @Override
     public boolean isChameleonShieldOn() {

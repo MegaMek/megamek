@@ -1104,7 +1104,7 @@ public class FireControl {
         }
 
         String ret = "";
-        ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
         for (Targetable enemy : enemies) {
             for (Mounted weapon : shooter.getWeaponList()) {
                 String shootingCheck = checkGuess(shooter, enemy, weapon, game);
@@ -1463,297 +1463,363 @@ public class FireControl {
 
     /**
      * Gets the 'best' firing plan under a certain heat No twisting is done
+     *
+     * @param shooter The unit doing the shooting.
+     * @param target  The unit being shot at.
+     * @param maxHeat The maximum amount of heat buildup we'll allow.
+     * @param game    The game currently being played.
+     * @return the 'best' firing plan under a certain heat.
      */
-    FiringPlan getBestFiringPlanUnderHeat(Entity shooter, Targetable target,
-                                          int maxheat, IGame game) {
-        if (maxheat < 0) {
-            maxheat = 0; // can't have less than zero heat
+    FiringPlan getBestFiringPlanUnderHeat(Entity shooter, Targetable target, int maxHeat, IGame game) {
+
+        // can't have less than zero heat
+        if (maxHeat < 0) {
+            maxHeat = 0;
         }
-        FiringPlan fullplan = getFullFiringPlan(shooter, target, game);
-        if (fullplan.getHeat() <= maxheat) {
-            return fullplan;
+
+        // Generate an alpha strike.  If it falls within our heat limits, use it.
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, game);
+        if (alphaStrike.getHeat() <= maxHeat) {
+            return alphaStrike;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
-        return heatplans[maxheat];
+
+        // Create an array of additional plans that general less heat than a full alpha strike and use the one that
+        // comes closest to our max heat level without going over.
+        FiringPlan heatPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
+        return heatPlans[maxHeat];
     }
 
     /*
-     * Gets the 'best' firing plan, using heat as a disutility. No twisting is
-     * done
+     * Gets the 'best' firing plan, using heat as a disutility. No twisting is done
+     *
+     * @param shooter The unit doing the shooting.
+     * @param target The unit being shot at.
+     * @param game The game currently being played.
+     * @return the 'best' firing plan, using heat as a disutility.
      */
     FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game) {
-        FiringPlan fullplan = getFullFiringPlan(shooter, target, game);
-        if (!(shooter instanceof Mech)) {
-            return fullplan; // no need to optimize heat for non-mechs
+
+        // Start with an alpha strike.
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, game);
+        if (shooter.getHeatCapacity() == 999) {
+            return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
-        FiringPlan best_plan = new FiringPlan(target);
-        for (int i = 0; i < (fullplan.getHeat() + 1); i++) {
-            calculateUtility(heatplans[i], calcHeatTolerance(shooter, null), (shooter instanceof Aero));
-            if ((best_plan.getUtility() < heatplans[i].getUtility())) {
-                best_plan = heatplans[i];
-            }
-        }
-        return best_plan;
+
+        // Get all the best plans that generate less heat than an alpha strike.
+        FiringPlan allPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
+
+        // Determine the best plan taking into account our heat tolerance.
+        return getBestFiringPlanUnderHeat(target, shooter, allPlans);
     }
 
     /**
      * Guesses the 'best' firing plan under a certain heat No twisting is done
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The current state of the shooting unit.
+     * @param target       The unit being shot at.
+     * @param targetState  The current state of the target unit.
+     * @param maxHeat      How much heat we're willing to tolerate.
+     * @param game         The game currently being played.
+     * @return the 'best' firing plan under a certain heat.
      */
-    FiringPlan guessBestFiringPlanUnderHeat(Entity shooter,
-                                            EntityState shooter_state, Targetable target,
-                                            EntityState target_state, int maxheat, IGame game) {
-        if (maxheat < 0) {
-            maxheat = 0; // can't have less than zero heat
+    FiringPlan guessBestFiringPlanUnderHeat(Entity shooter, @Nullable EntityState shooterState, Targetable target,
+                                            @Nullable EntityState targetState, int maxHeat, IGame game) {
+
+        // can't have less than zero heat
+        if (maxHeat < 0) {
+            maxHeat = 0;
         }
-        FiringPlan fullplan = guessFullFiringPlan(shooter, shooter_state,
-                                                  target, target_state, game);
-        if (fullplan.getHeat() <= maxheat) {
-            return fullplan;
+
+        // Start with an alpha strike.  If it falls under our heat limit, use it.
+        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
+        if (alphaStrike.getHeat() <= maxHeat) {
+            return alphaStrike;
         }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
-        return heatplans[maxheat];
+
+        // Get the best firing plan that falls under our heat limit.
+        FiringPlan heatPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
+        return heatPlans[maxHeat];
     }
 
     /**
-     * Guesses the 'best' firing plan, using heat as a disutility. No twisting
-     * is done
+     * Guesses the 'best' firing plan, using heat as a disutility. No twisting is done
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The current state of the shooting unit.
+     * @param target       The unit being shot at.
+     * @param targetState  The current state of the target unit.
+     * @param game         The game currently being played.
+     * @return the 'best' firing plan, using heat as a disutility.
      */
-    FiringPlan guessBestFiringPlan(Entity shooter, EntityState shooter_state,
-                                   Targetable target, EntityState target_state, IGame game) {
-        if (shooter_state == null) {
-            shooter_state = new EntityState(shooter);
+    FiringPlan guessBestFiringPlan(Entity shooter, @Nullable EntityState shooterState, Targetable target,
+                                   @Nullable EntityState targetState, IGame game) {
+
+        // Start with an alpha strike.
+        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
+
+        // If we don't track heat, use the alpha.
+        if (shooter.getHeatCapacity() == 999) {
+            return alphaStrike;
         }
-        FiringPlan fullplan = guessFullFiringPlan(shooter, shooter_state,
-                                                  target, target_state, game);
-        if (!(shooter instanceof Mech)) {
-            return fullplan; // no need to optimize heat for non-mechs
-        }
-        FiringPlan heatplans[] = calcFiringPlansUnderHeat(shooter, fullplan);
-        FiringPlan best_plan = new FiringPlan(target);
-        for (int i = 0; i < fullplan.getHeat(); i++) {
-            calculateUtility(heatplans[i], calcHeatTolerance(shooter, null), (shooter instanceof Aero));
-            if ((best_plan.getUtility() < heatplans[i].getUtility())) {
-                best_plan = heatplans[i];
+
+        // Get all the best plans that generate less heat than an alpha strike.
+        FiringPlan allPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
+        return getBestFiringPlanUnderHeat(target, shooter, allPlans);
+    }
+
+    private FiringPlan getBestFiringPlanUnderHeat(Targetable target, Entity shooter, FiringPlan[] allPlans) {
+
+        // Determine the best plan taking into account our heat tolerance.
+        FiringPlan bestPlan = new FiringPlan(target);
+        boolean isAero = (shooter instanceof Aero);
+        int heatTolerance = calcHeatTolerance(shooter, isAero);
+        for (FiringPlan firingPlan : allPlans) {
+            calculateUtility(firingPlan, heatTolerance, isAero);
+            if ((bestPlan.getUtility() < firingPlan.getUtility())) {
+                bestPlan = firingPlan;
             }
         }
-        return best_plan;
+        return bestPlan;
     }
 
     /**
-     * Gets the 'best' firing plan under a certain heat includes the option of
-     * twisting
-     */
-    FiringPlan getBestFiringPlanUnderHeatWithTwists(Entity shooter,
-                                                    Targetable target, int maxheat, IGame game) {
-        int orig_facing = shooter.getSecondaryFacing();
-        FiringPlan notwist_plan = getBestFiringPlanUnderHeat(shooter, target,
-                                                             maxheat, game);
-        if (!shooter.canChangeSecondaryFacing()) {
-            return notwist_plan;
-        }
-        shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
-        FiringPlan righttwist_plan = getBestFiringPlanUnderHeat(shooter,
-                                                                target, maxheat, game);
-        righttwist_plan.setTwist(1);
-        shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
-        FiringPlan lefttwist_plan = getBestFiringPlanUnderHeat(shooter, target,
-                                                               maxheat, game);
-        lefttwist_plan.setTwist(-1);
-        shooter.setSecondaryFacing(orig_facing);
-        if ((notwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage())
-                && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                .getExpectedDamage())) {
-            return notwist_plan;
-        }
-        if (lefttwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage()) {
-            return lefttwist_plan;
-        }
-        return righttwist_plan;
-    }
-
-    /**
-     * Gets the 'best' firing plan using heat as disutiltiy includes the option
-     * of twisting
-     */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target,
-                                           IGame game) {
-        int orig_facing = shooter.getSecondaryFacing();
-        FiringPlan notwist_plan = getBestFiringPlan(shooter, target, game);
-        if (!shooter.canChangeSecondaryFacing()) {
-            return notwist_plan;
-        }
-        shooter.setSecondaryFacing(correct_facing(orig_facing + 1));
-        FiringPlan righttwist_plan = getBestFiringPlan(shooter, target, game);
-        righttwist_plan.setTwist(1);
-        shooter.setSecondaryFacing(correct_facing(orig_facing - 1));
-        FiringPlan lefttwist_plan = getBestFiringPlan(shooter, target, game);
-        lefttwist_plan.setTwist(-1);
-        shooter.setSecondaryFacing(orig_facing);
-        if ((notwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage())
-                && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                .getExpectedDamage())) {
-            return notwist_plan;
-        }
-        if (lefttwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage()) {
-            return lefttwist_plan;
-        }
-        return righttwist_plan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option
-     * of twisting
-     */
-    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter,
-                                                      EntityState shooter_state, Targetable target,
-                                                      EntityState target_state, int maxheat, IGame game) {
-        if (shooter_state == null) {
-            shooter_state = new EntityState(shooter);
-        }
-        int orig_facing = shooter_state.getFacing();
-        FiringPlan notwist_plan = guessBestFiringPlanUnderHeat(shooter,
-                                                               shooter_state, target, target_state, maxheat, game);
-        if (!shooter.canChangeSecondaryFacing()) {
-            return notwist_plan;
-        }
-        shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
-        FiringPlan righttwist_plan = guessBestFiringPlanUnderHeat(shooter,
-                                                                  shooter_state, target, target_state, maxheat, game);
-        righttwist_plan.setTwist(1);
-        shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
-        FiringPlan lefttwist_plan = guessBestFiringPlanUnderHeat(shooter,
-                                                                 shooter_state, target, target_state, maxheat, game);
-        lefttwist_plan.setTwist(-1);
-        shooter_state.setSecondaryFacing(orig_facing);
-        if ((notwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage())
-                && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                .getExpectedDamage())) {
-            return notwist_plan;
-        }
-        if (lefttwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage()) {
-            return lefttwist_plan;
-        }
-        return righttwist_plan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option
-     * of twisting
-     */
-    FiringPlan guessBestFiringPlanWithTwists(Entity shooter,
-                                             EntityState shooter_state, Targetable target,
-                                             EntityState target_state, IGame game) {
-        if (shooter_state == null) {
-            shooter_state = new EntityState(shooter);
-        }
-        int orig_facing = shooter_state.getFacing();
-        FiringPlan notwist_plan = guessBestFiringPlan(shooter, shooter_state,
-                                                      target, target_state, game);
-        if (!shooter.canChangeSecondaryFacing()) {
-            return notwist_plan;
-        }
-        shooter_state.setSecondaryFacing(correct_facing(orig_facing + 1));
-        FiringPlan righttwist_plan = guessBestFiringPlan(shooter,
-                                                         shooter_state, target, target_state, game);
-        righttwist_plan.setTwist(1);
-        shooter_state.setSecondaryFacing(correct_facing(orig_facing - 1));
-        FiringPlan lefttwist_plan = guessBestFiringPlan(shooter, shooter_state,
-                                                        target, target_state, game);
-        lefttwist_plan.setTwist(-1);
-        shooter_state.setSecondaryFacing(orig_facing);
-        if ((notwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage())
-                && (notwist_plan.getExpectedDamage() > lefttwist_plan
-                .getExpectedDamage())) {
-            return notwist_plan;
-        }
-        if (lefttwist_plan.getExpectedDamage() > righttwist_plan
-                .getExpectedDamage()) {
-            return lefttwist_plan;
-        }
-        return righttwist_plan;
-    }
-
-    /*
-     * Skeleton for guessing the best air to ground firing plan. Currently this
-     * code is working in basicpathranker FiringPlan
-     * guessBestAirToGroundFiringPlan(Entity shooter,MovePath shooter_path,IGame
-     * game) { ArrayList<Entity>
-     * targets=getEnemiesUnderFlightPath(shooter_path,shooter,game); for(Entity
-     * target:targets) { FiringPlan theplan=guessFullAirToGroundPlan(shooter,
-     * target,new EntityState(target),shooter_path,game,true);
+     * Gets the 'best' firing plan using heat as disutiltiy includes the option of twisting
      *
-     * }
-     *
-     *
-     * }
+     * @param shooter The unit doing the shooting.
+     * @param target  The unit being shot at.
+     * @param game    The game currently being played.
+     * @return the 'best' firing plan using heat as disutiltiy includes the option of twisting
      */
+    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game) {
+
+        // Keep track of our original facing so we can go back to it.
+        int originalFacing = shooter.getSecondaryFacing();
+
+        // Get the best plan without any twists.
+        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game);
+
+        // If we can't change facing, we're done.
+        if (!shooter.canChangeSecondaryFacing()) {
+            return noTwistPlan;
+        }
+
+        // Turn to the right.
+        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
+        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game);
+        rightTwistPlan.setTwist(1);
+
+        // Turn to the left.
+        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
+        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game);
+        leftTwistPlan.setTwist(-1);
+
+        // todo extended torso twist.
+
+        // Back to where we started.
+        shooter.setSecondaryFacing(originalFacing);
+
+        // Return the highest utility plan.
+        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
+                (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
+            return noTwistPlan;
+        }
+        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
+            return leftTwistPlan;
+        }
+        return rightTwistPlan;
+    }
 
     /**
-     * Gets all the entities that are potential targets (even if you can't
-     * technically hit them)
+     * Guesses the 'best' firing plan under a certain heat includes the option  of twisting
+     *
+     * @param shooter      The unit doing the shooting.
+     * @param shooterState The current state of the shooting unit.
+     * @param target       The unit being shot at.
+     * @param targetState  The current state of the target unit.
+     * @param maxHeat      How much heat we're willing to tolerate.
+     * @param game         The game currently being played.
+     * @return the 'best' firing plan under a certain heat includes the option  of twisting.
      */
-    ArrayList<Targetable> getTargetableEnemyEntities(Entity shooter, IGame game) {
-        ArrayList<Targetable> ret = new ArrayList<Targetable>();
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.getOwner().isEnemyOf(shooter.getOwner())
-                    && (e.getPosition() != null) && !e.isOffBoard() && e.isTargetable()) {
-                ret.add(e);
+    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter, @Nullable EntityState shooterState,
+                                                      Targetable target, @Nullable EntityState targetState,
+                                                      int maxHeat, IGame game) {
+
+        // Keep track of our original facing so we can go back to it.
+        int originalFacing = shooterState.getFacing();
+
+        // Get the best plan without any twists.
+        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
+                                                              game);
+
+        // If we can't change facing, we're done.
+        if (!shooter.canChangeSecondaryFacing()) {
+            return noTwistPlan;
+        }
+
+        // Turn to the right.
+        shooterState.setSecondaryFacing(correctFacing(originalFacing + 1));
+        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
+                                                                 game);
+        rightTwistPlan.setTwist(1);
+
+        // Turn to the left.
+        shooterState.setSecondaryFacing(correctFacing(originalFacing - 1));
+        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
+                                                                game);
+        leftTwistPlan.setTwist(-1);
+
+        // todo extended torso twist.
+
+        // Back to where we started.
+        shooterState.setSecondaryFacing(originalFacing);
+
+        // Return the highest utility plan.
+        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
+                (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
+            return noTwistPlan;
+        }
+        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
+            return leftTwistPlan;
+        }
+        return rightTwistPlan;
+    }
+
+    /**
+     * Guesses the 'best' firing plan under a certain heat includes the option of twisting
+     */
+    FiringPlan guessBestFiringPlanWithTwists(Entity shooter, @Nullable EntityState shooterState, Targetable target,
+                                             @Nullable EntityState targetState, IGame game) {
+
+        // Keep track of our original facing so we can go back to it.
+        int originalFacing = shooterState.getFacing();
+
+        // Get the best plan without any twists.
+        FiringPlan noTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+
+        // If we can't change facing, we're done.
+        if (!shooter.canChangeSecondaryFacing()) {
+            return noTwistPlan;
+        }
+
+        // Turn to the right.
+        shooterState.setSecondaryFacing(correctFacing(originalFacing + 1));
+        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        rightTwistPlan.setTwist(1);
+
+        // Turn to the left.
+        shooterState.setSecondaryFacing(correctFacing(originalFacing - 1));
+        FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        leftTwistPlan.setTwist(-1);
+
+        // todo extended torso twist.
+
+        // Back to where we started.
+        shooterState.setSecondaryFacing(originalFacing);
+
+        // Return the highest utility plan.
+        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
+                (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
+            return noTwistPlan;
+        }
+        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
+            return leftTwistPlan;
+        }
+        return rightTwistPlan;
+    }
+
+    /**
+     * Gets all the entities that are potential targets (even if you can't technically hit them)
+     *
+     * @param shooter The unit doing the shooting.
+     * @param game    The game being played.
+     * @return A list of potential targets.
+     */
+    List<Targetable> getTargetableEnemyEntities(Entity shooter, IGame game) {
+        List<Targetable> targetableEnemyList = new ArrayList<Targetable>();
+
+        // Go through every unit in the game.
+        for (Entity entity : game.getEntitiesVector()) {
+
+            // If they are my enenmy and on the board, they're a target.
+            if (entity.getOwner().isEnemyOf(shooter.getOwner())
+                    && (entity.getPosition() != null)
+                    && !entity.isOffBoard()
+                    && entity.isTargetable()) {
+                targetableEnemyList.add(entity);
             }
         }
-        ret.addAll(additionalTargets);
-        return ret;
+
+        // Add in potential building targets and the like.
+        targetableEnemyList.addAll(getAdditionalTargets());
+
+        return targetableEnemyList;
     }
 
     /**
      * This is it. Calculate the 'best' possible firing plan for this entity.
      * Overload this function if you think you can do better.
+     *
+     * @param shooter The unit doing the shooting.
+     * @param game    The game being played.
+     * @return
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
-        FiringPlan bestplan = null;
-        ArrayList<Targetable> enemies = getTargetableEnemyEntities(shooter,
-                                                                   game);
-        for (Targetable e : enemies) {
-            FiringPlan plan = getBestFiringPlanWithTwists(shooter, e, game);
-            if ((bestplan == null) || (plan.getUtility() > bestplan.getUtility())) {
-                bestplan = plan;
-            }
-        }
-        return bestplan;
-    }
 
-    public double getMaxDamageAtRange(Entity shooter, int range) {
-        double ret = 0;
-        for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
-            WeaponType wtype = (WeaponType) mw.getType();
-            if (range < wtype.getLongRange()) {
-                if (wtype.getDamage() > 0) {
-                    ret += wtype.getDamage();
-                }
+        FiringPlan bestPlan = null;
+
+        // Get a list of potential targets.
+        List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+
+        // Loop through each enemy and find the best plan for attacking them.
+        for (Targetable enemy : enemies) {
+            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy, game);
+            if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {
+                bestPlan = plan;
             }
         }
-        return ret;
+
+        // Return the best overall plan.
+        return bestPlan;
     }
 
     /**
-     * makes sure facing falls between 0 and 5 This function likely already
-     * exists somewhere else
+     * Calculates the maximum damage a unit can do at a given range.  Chance to hit is not a factor.
+     *
+     * @param shooter         The firing unit.
+     * @param range           The range to be checked.
+     * @param useExtremeRange
+     * @return The most damage done at that range.
      */
-    public static int correct_facing(int f) {
-        while (f < 0) {
-            f += 6;
+    // todo cluster and other variable damage.
+    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange) {
+        double maxDamage = 0;
+
+        // cycle through my weapons
+        for (Mounted weapon : shooter.getWeaponList()) {
+            WeaponType weaponType = (WeaponType) weapon.getType();
+            int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange);
+            if ((bracket != RangeType.RANGE_OUT) && (weaponType.getDamage() > 0)) {
+                maxDamage += weaponType.getDamage();
+            }
         }
-        if (f > 5) {
-            f = f % 6;
+        return maxDamage;
+    }
+
+    /**
+     * makes sure facing falls between 0 and 5 This function likely already exists somewhere else
+     *
+     * @param facing The facing to be corrected.
+     * @return The properly adjusted facing.
+     */
+    public static int correctFacing(int facing) {
+        while (facing < 0) {
+            facing += 6;
         }
-        return f;
+        if (facing > 5) {
+            facing = facing % 6;
+        }
+        return facing;
     }
 
     /**

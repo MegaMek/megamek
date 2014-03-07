@@ -56,6 +56,7 @@ v0.37.9-dev (SVN)
 + Bug [#3675]: Infantry mods for Chameleon LPS
 + Bug [#3806]: Another double-blind related bug
 + Bug: Fixed potential NPE in EquipmentChoiceDialog
++ Bug: APM and MEA editing in EquipmentChoiceDialog was not being disabled
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

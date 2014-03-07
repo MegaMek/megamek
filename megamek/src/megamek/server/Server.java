@@ -25995,7 +25995,11 @@ public class Server implements Runnable {
                     e.setSeenByEnemy(true);
                 }
             }
-            if ((previousVisibleValue != e.isVisibleToEnemy())
+            // If this unit wasn't previously visible and is now visible, it's
+            // possible that the enemy's client doesn't know about the unit
+            if (!previousVisibleValue && e.isVisibleToEnemy()){
+                entityUpdate(e.getId());
+            } else if ((previousVisibleValue != e.isVisibleToEnemy())
                     || (previousSeenValue != e.isSeenByEnemy())) {
                 sendVisibilityIndicator(e);
             }

@@ -308,7 +308,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         choC3.setEnabled(false);
         chAutoEject.setEnabled(false);
         chSearchlight.setEnabled(false);
-        m_bombs.setEnabled(false);
+        if (m_bombs != null){
+            m_bombs.setEnabled(false);
+        }
         disableMunitionEditing();
         disableMGSetting();
         disableMineSetting();

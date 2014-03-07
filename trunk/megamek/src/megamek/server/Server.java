@@ -25643,7 +25643,9 @@ public class Server implements Runnable {
                     continue;
                 }
                 if (Compute.canSee(game, e, entity)) {
-                    vCanSee.addElement(e.getOwner());
+                    if (!vCanSee.contains(e.getOwner())){
+                        vCanSee.addElement(e.getOwner());
+                    }
                     if (bTeamVision) {
                         addTeammates(vCanSee, e.getOwner());
                     }

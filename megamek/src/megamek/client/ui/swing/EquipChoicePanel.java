@@ -915,7 +915,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 String sDesc = "";
                 if (baMountLoc != BattleArmor.MOUNT_LOC_NONE){
                     sDesc += " (" 
-                            + BattleArmor.MOUNT_LOC_NAMES[m.getBaMountLoc()] 
+                            + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] 
                             + ')';
                 } else {
                     sDesc = "None";

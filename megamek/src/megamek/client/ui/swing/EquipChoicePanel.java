@@ -312,6 +312,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             m_bombs.setEnabled(false);
         }
         disableMunitionEditing();
+        disableAPMEditing();
+        disableMEAEditing();
         disableMGSetting();
         disableMineSetting();
         panInfArmor.setEnabled(false);
@@ -1336,6 +1338,18 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         private void disableMunitionEditing() {
             for (int i = 0; i < m_vMunitions.size(); i++) {
                 m_vMunitions.get(i).setEnabled(false);
+            }
+        }
+        
+        private void disableAPMEditing() {
+            for (int i = 0; i < m_vAPMounts.size(); i++) {
+                m_vAPMounts.get(i).setEnabled(false);
+            }
+        }
+        
+        private void disableMEAEditing() {
+            for (int i = 0; i < m_vMEAdaptors.size(); i++) {
+                m_vMEAdaptors.get(i).setEnabled(false);
             }
         }
 

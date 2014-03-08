@@ -100,10 +100,10 @@ public class PhysicalInfo {
      */
     protected PhysicalAttackAction buildAction(PhysicalAttackType attackType, int shooterId, Targetable target) {
         if (attackType.isPunch()) {
-            int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mech.LOC_RARM : Mech.LOC_LARM;
+            int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? PunchAttackAction.RIGHT : PunchAttackAction.LEFT;
             return new PunchAttackAction(shooterId, target.getTargetType(), target.getTargetId(), armId, false, false);
         } else if (attackType.isKick()) {
-            int legId = PhysicalAttackType.RIGHT_KICK == attackType ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+            int legId = PhysicalAttackType.RIGHT_KICK == attackType ? KickAttackAction.RIGHT : KickAttackAction.LEFT;
             return new KickAttackAction(shooterId, target.getTargetType(), target.getTargetId(), legId);
         } else {
             // todo handle other physical attack types.

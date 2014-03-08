@@ -10672,9 +10672,7 @@ public class Server implements Runnable {
      * Process a fall when moving from the source hex to the destination hex.
      * Depending on the elevations of the hexes, the Entity could land in the
      * source or destination hexes. Check for any conflicts and resolve them.
-     * Deal damage to faller. Note: the elevation of the entity is used to
-     * determine fall distance, so it is important to ensure the Entity's
-     * elevation is correct.
+     * Deal damage to faller. 
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
@@ -10683,10 +10681,10 @@ public class Server implements Runnable {
      *            src hex. This is necessary as the state of the Entity may
      *            represent the elevation of the entity about the surface of the
      *            dest hex.
-     * @param src
-     *            The <code>Coords</code> of the source hex.
-     * @param dest
-     *            The <code>Coords</code> of the destination hex.
+     * @param origSrc
+     *            The <code>Coords</code> of the original source hex.
+     * @param origDest
+     *            The <code>Coords</code> of the original destination hex.
      * @param roll
      *            The <code>PilotingRollData</code> to be used for PSRs induced
      *            by the falling.
@@ -10697,11 +10695,23 @@ public class Server implements Runnable {
      *            An integer value to reduce the fall distance by
      */
     private Vector<Report> doEntityFallsInto(Entity entity,
-            int entitySrcElevation, Coords src, Coords dest,
+            int entitySrcElevation, Coords origSrc, Coords origDest,
             PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<Report>();
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        IHex srcHex = game.getBoard().getHex(origSrc);
+        IHex destHex = game.getBoard().getHex(origDest);
+        Coords src, dest;
+        // We need to fall into the lower of the two hexes, TW pg 68
+        if (srcHex.getElevation() < destHex.getElevation()){
+            IHex swapHex = destHex;
+            destHex = srcHex;
+            srcHex = swapHex;
+            src = origDest;
+            dest = origSrc;
+        } else {
+            src = origSrc;
+            dest = origDest;
+        }
         final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(true);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()

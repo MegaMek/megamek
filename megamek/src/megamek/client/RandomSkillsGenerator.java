@@ -254,9 +254,9 @@ public class RandomSkillsGenerator implements Serializable {
         int bonus = 0;
         if (ty == T_CLAN) {
             if ((e instanceof Mech) || (e instanceof BattleArmor)) {
-                bonus++;
+                bonus+=2;
             } else if ((e instanceof Tank) || (e instanceof Infantry)) {
-                bonus--;
+                bonus-=2;
             }
         }
         if (ty == T_MD) {

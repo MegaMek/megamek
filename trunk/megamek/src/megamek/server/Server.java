@@ -27687,7 +27687,7 @@ public class Server implements Runnable {
         if ((boomloc != -1) && (boomslot != -1)) {
             CriticalSlot slot = entity.getCritical(boomloc, boomslot);
             slot.setHit(true);
-            Mounted equip = entity.getEquipment(slot.getIndex());
+            Mounted equip = slot.getMount();
             equip.setHit(true);
             // We've allocated heatBuildup to heat in resolveHeat(),
             // so need to add to the entity's heat instead.

@@ -62,6 +62,9 @@ v0.37.9-dev (SVN)
 + Fixed NPE in FireControl class.
 + Bug [#3903]: When failing a PSR moving between two hexes, the unit should fall
     into the lower of the two hexes
++ Bug [#4067]: When displaced into a water hex, a PSR for entering a water hex
+    could be rolled
++ Bug: Fixed a potential NPE in Server
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

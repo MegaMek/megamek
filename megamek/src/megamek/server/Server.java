@@ -2648,7 +2648,8 @@ public class Server implements Runnable {
                 // check phase report
                 // HACK: hardcoded message ID check
                 if ((vPhaseReport.size() > 3)
-                        || (vPhaseReport.elementAt(1).messageId != 1205)) {
+                        || (vPhaseReport.size() > 1 
+                                && vPhaseReport.elementAt(1).messageId != 1205)) {
                     game.addReports(vPhaseReport);
                     changePhase(IGame.Phase.PHASE_END_REPORT);
                 } else {
@@ -11043,8 +11044,9 @@ public class Server implements Runnable {
                 sendChangedBuildings(buildings);
             }
         }
+        int waterDepth = destHex.terrainLevel(Terrains.WATER);
         // Falling into water instantly destroys most non-mechs
-        if ((destHex.terrainLevel(Terrains.WATER) > 0)
+        if ((waterDepth > 0)
                 && !(entity instanceof Mech)
                 && !(entity instanceof Protomech)
                 && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
@@ -11067,6 +11069,14 @@ public class Server implements Runnable {
 
         if (roll != null) {
             game.addPSR(roll);
+        }
+        
+        if (waterDepth > 0){
+            PilotingRollData waterRoll = 
+                    entity.checkWaterMove(waterDepth, entity.moved);
+            if (waterRoll.getValue() != TargetRoll.CHECK_FALSE) {
+                doSkillCheckInPlace(entity, waterRoll);
+            }
         }
         // Update the entity's postion on the client.
         entityUpdate(entity.getId());

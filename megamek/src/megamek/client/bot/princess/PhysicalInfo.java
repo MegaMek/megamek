@@ -149,7 +149,6 @@ public class PhysicalInfo {
             setExpectedDamageOnHit(0);
             return;
         }
-        Mech targetMech = (Mech) getTarget();
 
         if (shooterState == null) {
             shooterState = new EntityState(getShooter());
@@ -215,7 +214,12 @@ public class PhysicalInfo {
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
         setKillProbability(0);
 
+        if (!(getTarget() instanceof Mech)) {
+            return;
+        }
+
         // now guess how many critical hits will be done
+        Mech targetMech = (Mech) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
             while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)) {

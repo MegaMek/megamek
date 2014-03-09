@@ -68,6 +68,7 @@ v0.37.9-dev (SVN)
 + Bug: Server.explodeInfernoAmmoFromHeat wa susing CriticalSlot.getIndex() when
     it should have been using CriticalSlot.getMount(), which was causing issues
     when exploding inferno ammo from heat
++ Fixed a ClassCastException in PhysicalInfo.initDamage()
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

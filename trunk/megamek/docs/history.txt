@@ -69,6 +69,10 @@ v0.37.9-dev (SVN)
     it should have been using CriticalSlot.getMount(), which was causing issues
     when exploding inferno ammo from heat
 + Fixed a ClassCastException in PhysicalInfo.initDamage()
++ Added code for Princess to give command units a higher targeting priority.  Princess defines 2 levels of command
+    unit: Commander and Sub-Commander.  A Commander is any unit with the isCommander flag set, has a C3 Master system
+    or provides the highest initiative bonus for its player.  A Sub-Commander is any unit that has an init bonus (but
+    not the highest), a C3 slave system, ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

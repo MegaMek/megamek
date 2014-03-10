@@ -32,6 +32,9 @@ public class OptionsConstants {
     public static final String QUIRK_POS_IMP_TARG_L = "imp_target_long";
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long";
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short";
+    public static final String QUIRK_POS_BATTLE_COMP = "battle_computer";
+    public static final String QUIRK_POS_COMMAND_MECH = "command_mech";
+    public static final String QUIRK_POS_IMPROVED_SENSORS = "imp_sensors";
 
     public static final String QUIRK_NEG_NO_ARMS = "no_arms";
     public static final String QUIRK_NEG_POOR_TARG_S = "poor_target_short";

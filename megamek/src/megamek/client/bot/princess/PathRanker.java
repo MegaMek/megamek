@@ -39,6 +39,8 @@ import megamek.common.util.StringUtil;
 public class PathRanker {
 
     private static Princess owner;
+    private int highestEnemyInitiativeBonus = 0;
+    private int highestEnemyInitiativeId = -1;
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -288,6 +290,11 @@ public class PathRanker {
                 if (entity.getOwner().isEnemyOf(myunit.getOwner())
                         && (entity.getPosition() != null) && !entity.isOffBoard()) {
                     enemies.add(entity);
+                    int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
+                    if (initBonus > highestEnemyInitiativeBonus) {
+                        highestEnemyInitiativeBonus = initBonus;
+                        highestEnemyInitiativeId = entity.getId();
+                    }
                 }
             }
             return enemies;
@@ -511,5 +518,9 @@ public class PathRanker {
 
     public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         return 0;
+    }
+
+    public int getHighestEnemyInitiativeId() {
+        return highestEnemyInitiativeId;
     }
 }

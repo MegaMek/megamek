@@ -38,6 +38,7 @@ import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
+import megamek.common.MiscType;
 import megamek.common.TargetRollModifier;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
@@ -57,6 +58,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ATMWeapon;
+import megamek.common.weapons.ISNarc;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -73,6 +75,8 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY = 5.0;
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
+    private static double COMMANDER_UTILITY = 2.0;
+    private static double SUB_COMMANDER_UTILITY = 1.5;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1145,9 +1149,7 @@ public class FireControl {
      * @param overheatTolerance How much overheat we're willing to forgive.
      * @param isAero
      */
-    // todo Aeros *really* don't want to overheat.
     // todo ammo considerations should affect utility.
-    // todo commander/sub-commander utility
     // todo strategic targets utility
     // todo crippled/retreating targets disutility
     void calculateUtility(FiringPlan firingPlan, int overheatTolerance, boolean isAero) {
@@ -1162,7 +1164,37 @@ public class FireControl {
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
 
+        if (firingPlan.getTarget() instanceof Entity) {
+            utility *= calcCommandUtility((Entity) firingPlan.getTarget(), (utility >= 0));
+        }
+
         firingPlan.setUtility(utility);
+    }
+
+    private double calcCommandUtility(Entity entity, boolean positiveUtility) {
+        double commandMult = 1.0;
+        if (isCommander(entity)) {
+            commandMult = COMMANDER_UTILITY;
+        } else if (isSubCommander(entity)) {
+            commandMult = SUB_COMMANDER_UTILITY;
+        }
+        if (positiveUtility) {
+            return commandMult;
+        }
+        return 1 / commandMult;
+    }
+
+    private boolean isCommander(Entity entity) {
+        return entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
+                (owner.getPathRanker().getHighestEnemyInitiativeId() == entity.getId());
+    }
+
+    private boolean isSubCommander(Entity entity) {
+        int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus() + entity.getMDIniBonus();
+        return entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
+                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
+                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
+                (initBonus > 0);
     }
 
     /**
@@ -1176,6 +1208,10 @@ public class FireControl {
         utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
         utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
+
+        if (physicalInfo.getTarget() instanceof Entity) {
+            utility *= calcCommandUtility((Entity) physicalInfo.getTarget(), (utility >= 0));
+        }
 
         physicalInfo.setUtility(utility);
     }

@@ -77,6 +77,8 @@ import java.util.Vector;
 @RunWith(JUnit4.class)
 public class FireControlTest {
 
+    private static final int MOCK_TARGET_ID = 10;
+
     // AC5
     private WeaponType mockWeaponTypeAC5;
     private AmmoType mockAmmoTypeAC5Std;
@@ -142,6 +144,7 @@ public class FireControlTest {
     private WeaponFireInfo mockPPCFireInfo;
     private WeaponFireInfo mockMLFireInfo;
     private WeaponFireInfo mockLRMFireInfo;
+    private BasicPathRanker mockPathRanker;
 
     private FireControl testFireControl;
 
@@ -149,6 +152,9 @@ public class FireControlTest {
     @Before
     public void setUp() {
         mockPrincess = Mockito.mock(Princess.class);
+
+        mockPathRanker = Mockito.mock(BasicPathRanker.class);
+        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
 
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getId()).thenReturn(1);
@@ -185,6 +191,7 @@ public class FireControlTest {
 
         mockTarget = Mockito.mock(BipedMech.class);
         Mockito.when(mockTarget.getDisplayName()).thenReturn("mock target");
+        Mockito.when(mockTarget.getId()).thenReturn(MOCK_TARGET_ID);
 
         testFireControl = Mockito.spy(new FireControl(mockPrincess));
         Mockito.doReturn(mockShooterMoveMod)
@@ -1970,6 +1977,7 @@ public class FireControlTest {
         int overheatTolerance = 5;
         double baseUtility = 20.6154;
         MechWarrior mockPilot = Mockito.mock(MechWarrior.class);
+        Mockito.when(mockPilot.getId()).thenReturn(20);
 
         // Basic firing plan test.
         FiringPlan testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
@@ -1979,6 +1987,28 @@ public class FireControlTest {
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
+
+        // Make the target a commander.
+        Mockito.when(mockTarget.isCommander()).thenReturn(true);
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
+        Assert.assertEquals(baseUtility * 2, testFiringPlan.getUtility(), TOLERANCE);
+        Mockito.when(mockTarget.isCommander()).thenReturn(false);
+
+        // Make the target a sub-commander.
+        Mockito.when(mockTarget.hasC3()).thenReturn(true);
+        testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
+        Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
+        Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
+        Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
+        Mockito.doReturn(0).when(testFiringPlan).getHeat();
+        testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
+        Assert.assertEquals(baseUtility * 1.5, testFiringPlan.getUtility(), TOLERANCE);
+        Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Attack an ejected pilot.
         testFiringPlan = Mockito.spy(new FiringPlan(mockPilot));

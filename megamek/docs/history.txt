@@ -74,6 +74,8 @@ v0.37.9-dev (SVN)
     or provides the highest initiative bonus for its player.  A Sub-Commander is any unit that has an init bonus (but
     not the highest), a C3 slave system, ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
 + Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
++ Bug [#3996]: Cleaned up a few more areas where not all of an Entitys loaded
+    units were being sent to Clients during updates
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -63,6 +63,7 @@ import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.INarcPod;
+import megamek.common.IPlayer;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -470,12 +471,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         IGame game = clientgui.getClient().getGame();
         Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
-            int ownerId = ce().getOwnerId();
             boolean friendlyFire = game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$
+            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
-                    && (friendlyFire || (target.getOwnerId() != ownerId))
-                    && target.isVisibleToEnemy() && target.isTargetable()) {
+                    && (friendlyFire || enemyTarget)
+                    && (!enemyTarget || target.isVisibleToEnemy()) 
+                    && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));

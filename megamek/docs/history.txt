@@ -76,6 +76,9 @@ v0.37.9-dev (SVN)
 + Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
 + Bug [#3996]: Cleaned up a few more areas where not all of an Entitys loaded
     units were being sent to Clients during updates
++ Bug: Firing solutions was always drawing data for teammate units, even if
+    friendly fire was off, also wouldn't draw friendly units that weren't 
+    visible to an enemy unit
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

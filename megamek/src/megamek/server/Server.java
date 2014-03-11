@@ -25578,6 +25578,22 @@ public class Server implements Runnable {
         if (doBlind()) {
             Vector<IPlayer> playersVector = game.getPlayersVector();
             Vector<IPlayer> vCanSee = whoCanSee(eTarget);
+            
+            // If this unit has ECM, players with units effected by the ECM will
+            //  need to know about this entity, even if they can't see it.
+            //  Otherwise, the client can't properly report things like to-hits.
+            if (eTarget.getECMRange() > 0 && eTarget.getPosition() != null){
+                int ecmRange = eTarget.getECMRange();
+                Coords pos = eTarget.getPosition();
+                for (Entity ent : game.getEntitiesVector()){
+                    if (ent.getPosition() != null
+                            && pos.distance(ent.getPosition()) <= ecmRange) {
+                        if (!vCanSee.contains(ent.getOwner())){
+                            vCanSee.add(ent.getOwner());
+                        }
+                    }
+                }
+            }
 
             // send an entity update to everyone who can see
             Packet pack = createEntityPacket(nEntityID, movePath);
@@ -25809,6 +25825,19 @@ public class Server implements Runnable {
                 if (Compute.canSee(game, spotter, e)) {
                     addVisibleEntity(vCanSee, e);
                     break;
+                }
+                
+                // If this unit has ECM, players with units effected by the ECM
+                //  will need to know about this entity, even if they can't see
+                //  it.  Otherwise, the client can't properly report things 
+                //  like to-hits.
+                if (e.getECMRange() > 0 && e.getPosition() != null &&
+                        spotter.getPosition() != null){
+                    int ecmRange = e.getECMRange();
+                    Coords pos = e.getPosition();
+                    if (pos.distance(spotter.getPosition()) <= ecmRange){
+                        addVisibleEntity(vCanSee, e);
+                    }
                 }
             }
         }

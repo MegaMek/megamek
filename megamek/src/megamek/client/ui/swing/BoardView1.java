@@ -2417,6 +2417,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (entity.getPosition() == null) {
                 continue;
             }
+            if (entity.getOwner().isEnemyOf(localPlayer) 
+                    && !entity.isSeenByEnemy()){
+                continue;
+            }
             if (entity.getSecondaryPositions().isEmpty()) {
                 EntitySprite sprite = new EntitySprite(entity, -1);
                 newSprites.add(sprite);

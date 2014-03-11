@@ -475,7 +475,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     "friendly_fire"); //$NON-NLS-1$
             if ((target.getId() != cen)
                     && (friendlyFire || (target.getOwnerId() != ownerId))
-                    && target.isTargetable()) {
+                    && target.isVisibleToEnemy() && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));

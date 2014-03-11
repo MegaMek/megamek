@@ -25611,29 +25611,45 @@ public class Server implements Runnable {
                 }
             }
 
-            // In double-blind, the client may not know about the loaded units,
-            // so we need to send them.
-            for (Entity eLoaded : eTarget.getLoadedUnits()) {
-                // send an entity update to everyone who can see
-                pack = createEntityPacket(eLoaded.getId(), null);
-                for (int x = 0; x < vCanSee.size(); x++) {
-                    IPlayer p = vCanSee.elementAt(x);
-                    send(p.getId(), pack);
-                }
-                // send an entity delete to everyone else
-                pack = createRemoveEntityPacket(eLoaded.getId(),
-                        eLoaded.getRemovalCondition());
-                for (int x = 0; x < playersVector.size(); x++) {
-                    if (!vCanSee.contains(playersVector.elementAt(x))) {
-                        IPlayer p = playersVector.elementAt(x);
-                        send(p.getId(), pack);
-                    }
-                }
-            }
-
+            entityUpdateLoadedUnits(eTarget, vCanSee, playersVector);
         } else {
             // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));
+        }
+    }
+    
+    /**
+     * Whenever updating an Entity, we also need to update all of its loaded
+     * Entity's, otherwise it could cause issues with Clients.
+     * 
+     * @param loader        An Entity being updated that is transporting units
+     *                      that should also send an update
+     * @param vCanSee       The list of Players who can see the loader.
+     * @param playersVector The list of all Players
+     */
+    private void entityUpdateLoadedUnits(Entity loader, 
+            Vector<IPlayer> vCanSee, Vector<IPlayer> playersVector){
+        Packet pack;
+        
+        // In double-blind, the client may not know about the loaded units,
+        // so we need to send them.
+        for (Entity eLoaded : loader.getLoadedUnits()) {
+            // send an entity update to everyone who can see
+            pack = createEntityPacket(eLoaded.getId(), null);
+            for (int x = 0; x < vCanSee.size(); x++) {
+                IPlayer p = vCanSee.elementAt(x);
+                send(p.getId(), pack);
+            }
+            // send an entity delete to everyone else
+            pack = createRemoveEntityPacket(eLoaded.getId(),
+                    eLoaded.getRemovalCondition());
+            for (int x = 0; x < playersVector.size(); x++) {
+                if (!vCanSee.contains(playersVector.elementAt(x))) {
+                    IPlayer p = playersVector.elementAt(x);
+                    send(p.getId(), pack);
+                }
+            }
+            entityUpdateLoadedUnits(eLoaded, vCanSee, playersVector);
         }
     }
 
@@ -25784,7 +25800,7 @@ public class Server implements Runnable {
             for (Entity a : vMyEntities) {
                 for (Entity b : vMyEntities) {
                     if (a.isEnemyOf(b) && Compute.canSee(game, b, a)) {
-                        vCanSee.add(a);
+                        addVisibleEntity(vCanSee, a);
                         break;
                     }
                 }
@@ -25806,7 +25822,7 @@ public class Server implements Runnable {
         for (Entity e : vEntities) {
             // If it's their own unit, obviously, they can see it.
             if (vMyEntities.contains(e)) {
-                vCanSee.addElement(e);
+                addVisibleEntity(vCanSee, e);
                 continue;
             } else if (e.isHidden()) {
                 // If it's NOT friendly and is hidden, they can't see it,

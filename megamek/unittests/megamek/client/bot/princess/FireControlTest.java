@@ -1996,7 +1996,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility * 2, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.isCommander()).thenReturn(false);
 
         // Make the target a sub-commander.
@@ -2007,7 +2007,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility * 1.5, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 25, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Attack an ejected pilot.

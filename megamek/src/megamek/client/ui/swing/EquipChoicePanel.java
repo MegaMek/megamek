@@ -818,6 +818,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
                 WeaponType apType = null;
                 if (n > 0 && n <= m_APWeaps.size()){
                     // Need to account for the "None" selection
@@ -934,6 +938,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
                 MiscType manipType = null;
                 if (n > 0 && n <= m_Manipulators.size()){
                     // Need to account for the "None" selection
@@ -1074,6 +1082,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
                 m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());

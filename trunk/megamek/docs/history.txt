@@ -79,6 +79,10 @@ v0.37.9-dev (SVN)
 + Bug: Firing solutions was always drawing data for teammate units, even if
     friendly fire was off, also wouldn't draw friendly units that weren't 
     visible to an enemy unit
++ Bug [#4070]: Specialty BA not working when BA carried by mech.
++ Bug: No report when mechanized BA avoid damage
++ Bug: Reports for mechanized BA taking/avoiding damage are not indented well
++ Bug: Reports for hitting swarming units not indented well
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

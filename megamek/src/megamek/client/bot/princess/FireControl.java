@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -81,6 +82,7 @@ public class FireControl {
     private static double COMMANDER_UTILITY = 50.0;
     @SuppressWarnings("FieldCanBeLocal")
     private static double SUB_COMMANDER_UTILITY = 25.0;
+    private static double STRATEGIC_TARGET_UTILITY = 25.0;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1168,8 +1170,23 @@ public class FireControl {
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(firingPlan.getTarget());
+        utility += calcStrategicTargetUtility(firingPlan.getTarget());
 
         firingPlan.setUtility(utility);
+    }
+
+    private double calcStrategicTargetUtility(Targetable target) {
+        if (!(target instanceof BuildingTarget)) {
+            return 0;
+        }
+
+        DecimalFormat coordsFormat = new DecimalFormat("00");
+        Coords targetCoords = target.getPosition();
+        String coords = coordsFormat.format(targetCoords.x + 1) + coordsFormat.format(targetCoords.y + 1);
+        if (owner.getBehaviorSettings().getStrategicTargets().contains(coords)) {
+            return STRATEGIC_TARGET_UTILITY;
+        }
+        return 0;
     }
 
     private double calcCommandUtility(Targetable target) {
@@ -1211,6 +1228,7 @@ public class FireControl {
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
         utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(physicalInfo.getTarget());
+        utility += calcStrategicTargetUtility(physicalInfo.getTarget());
 
         physicalInfo.setUtility(utility);
     }

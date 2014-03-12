@@ -19489,8 +19489,9 @@ public class Server implements Runnable {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
+                int avoidRoll = Compute.d6();
                 if (!ammoExplosion && (null != passenger)
-                        && (Compute.d6() >= 5) && !passenger.isDoomed()
+                        && (avoidRoll >= 5) && !passenger.isDoomed()
                         && (bFrag != DamageType.IGNORE_PASSENGER)) {
                     // Yup. Roll up some hit data for that passenger.
                     r = new Report(6075);
@@ -19500,16 +19501,45 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
 
                     HitData passHit = passenger.getTrooperAtLocation(hit, te);
+                    passHit.setGeneralDamageType(hit.getGeneralDamageType());
+                    
 
                     // How much damage will the passenger absorb?
                     int absorb = 0;
                     HitData nextPassHit = passHit;
                     do {
+                        int armorType = passenger.getArmorType(
+                                nextPassHit.getLocation());
+                        boolean armorDamageReduction = false;
+                        if ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                                && ((hit.getGeneralDamageType() == 
+                                    HitData.DAMAGE_MISSILE))
+                                    || (hit.getGeneralDamageType() == 
+                                    HitData.DAMAGE_ARMOR_PIERCING_MISSILE)){
+                            armorDamageReduction = true;
+                        }
+                        // Check for reflective armor
+                        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
+                                && (hit.getGeneralDamageType() == 
+                                    HitData.DAMAGE_ENERGY)){
+                            armorDamageReduction = true;
+                        }
                         if (0 < passenger.getArmor(nextPassHit)) {
                             absorb += passenger.getArmor(nextPassHit);
+                            if (armorDamageReduction){
+                                absorb *= 2;
+                            }                            
                         }
                         if (0 < passenger.getInternal(nextPassHit)) {
                             absorb += passenger.getInternal(nextPassHit);
+                            // Armor damage reduction, like for reflective or 
+                            //  reactive armor will divide the whole damage 
+                            //  total by 2 and round down.  If we have an odd
+                            //  damage total, need to add 1 to make this 
+                            //  evenly divisible by 2
+                            if ((absorb % 2 != 0) && armorDamageReduction){
+                                absorb++;
+                            }
                         }
                         nextPassHit = passenger
                                 .getTransferLocation(nextPassHit);
@@ -19517,7 +19547,13 @@ public class Server implements Runnable {
                             && (nextPassHit.getLocation() >= 0));
 
                     // Damage the passenger.
-                    vDesc.addAll(damageEntity(passenger, passHit, damage));
+                    int absorbedDamage = Math.min(damage, absorb);
+                    Vector<Report> newReports = 
+                            damageEntity(passenger, passHit, absorbedDamage);
+                    for (Report newReport : newReports){
+                        newReport.indent(2);
+                    }
+                    vDesc.addAll(newReports);
 
                     // Did some damage pass on?
                     if (damage > absorb) {
@@ -19525,7 +19561,7 @@ public class Server implements Runnable {
                         damage -= absorb;
                         r = new Report(6080);
                         r.subject = te_n;
-                        r.indent(1);
+                        r.indent(2);
                         r.add(damage);
                         r.addDesc(te);
                         vDesc.addElement(r);
@@ -19534,6 +19570,16 @@ public class Server implements Runnable {
                         return vDesc;
                     }
 
+                } else if (!ammoExplosion && (null != passenger)
+                        && (avoidRoll < 5) && !passenger.isDoomed()
+                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                    // Report that a passenger that could've been missed 
+                    // narrowly avoids damage
+                    r = new Report(6084);
+                    r.subject = passenger.getId();
+                    r.indent(3);
+                    r.addDesc(passenger);
+                    vDesc.addElement(r);
                 } // End nLoc-has-exterior-passenger
 
                 boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT)
@@ -19573,7 +19619,13 @@ public class Server implements Runnable {
                             && (nextPassHit.getLocation() >= 0));
 
                     // Damage the swarm.
-                    vDesc.addAll(damageEntity(swarm, passHit, damage));
+                    int absorbedDamage = Math.min(damage, absorb);
+                    Vector<Report> newReports = 
+                            damageEntity(swarm, passHit, absorbedDamage);
+                    for (Report newReport : newReports){
+                        newReport.indent(2);
+                    }
+                    vDesc.addAll(newReports);
 
                     // Did some damage pass on?
                     if (damage > absorb) {
@@ -19581,7 +19633,7 @@ public class Server implements Runnable {
                         damage -= absorb;
                         r = new Report(6080);
                         r.subject = te_n;
-                        r.indent(1);
+                        r.indent(2);
                         r.add(damage);
                         r.addDesc(te);
                         vDesc.addElement(r);

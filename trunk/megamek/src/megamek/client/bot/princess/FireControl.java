@@ -72,11 +72,15 @@ public class FireControl {
     private static double DAMAGE_UTILITY = 1.0;
     private static double CRITICAL_UTILITY = 10.0;
     private static double KILL_UTILITY = 50.0;
+    @SuppressWarnings("FieldCanBeLocal")
     private static double OVERHEAT_DISUTILITY = 5.0;
+    @SuppressWarnings("FieldCanBeLocal")
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
-    private static double COMMANDER_UTILITY = 2.0;
-    private static double SUB_COMMANDER_UTILITY = 1.5;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double COMMANDER_UTILITY = 50.0;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double SUB_COMMANDER_UTILITY = 25.0;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1163,25 +1167,23 @@ public class FireControl {
         utility += KILL_UTILITY * firingPlan.getKillProbability();
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-
-        if (firingPlan.getTarget() instanceof Entity) {
-            utility *= calcCommandUtility((Entity) firingPlan.getTarget(), (utility >= 0));
-        }
+        utility += calcCommandUtility(firingPlan.getTarget());
 
         firingPlan.setUtility(utility);
     }
 
-    private double calcCommandUtility(Entity entity, boolean positiveUtility) {
-        double commandMult = 1.0;
+    private double calcCommandUtility(Targetable target) {
+        if (!(target instanceof Entity)) {
+            return 0;
+        }
+
+        Entity entity = (Entity) target;
         if (isCommander(entity)) {
-            commandMult = COMMANDER_UTILITY;
+            return COMMANDER_UTILITY;
         } else if (isSubCommander(entity)) {
-            commandMult = SUB_COMMANDER_UTILITY;
+            return SUB_COMMANDER_UTILITY;
         }
-        if (positiveUtility) {
-            return commandMult;
-        }
-        return 1 / commandMult;
+        return 0;
     }
 
     private boolean isCommander(Entity entity) {
@@ -1208,10 +1210,7 @@ public class FireControl {
         utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
         utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-
-        if (physicalInfo.getTarget() instanceof Entity) {
-            utility *= calcCommandUtility((Entity) physicalInfo.getTarget(), (utility >= 0));
-        }
+        utility += calcCommandUtility(physicalInfo.getTarget());
 
         physicalInfo.setUtility(utility);
     }

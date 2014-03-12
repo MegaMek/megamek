@@ -86,6 +86,7 @@ v0.37.9-dev (SVN)
 + Bug: Recent change to not draw enemy units that aren't visible causes an NPE
     when BoardView1.localPlayer == null
 + Bug [#4069]: Estevez MBT & Estevez AA Customize Issue
++ Changed the commander/subcommander weighting mod from a multipler to a straight adder.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

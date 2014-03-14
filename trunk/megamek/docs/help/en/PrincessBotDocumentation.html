@@ -6,7 +6,7 @@
     <META NAME="GENERATOR" CONTENT="LibreOffice 3.5  (Linux)">
     <META NAME="AUTHOR" CONTENT="Deric Page">
     <META NAME="CREATED" CONTENT="0;0">
-    <META NAME="CHANGED" CONTENT="20140227;11300200">
+    <META NAME="CHANGED" CONTENT="20140313;10374900">
     <META NAME="CHANGEDBY" CONTENT="Deric Page">
     <META NAME="CHANGEDBY" CONTENT="Deric Page">
     <STYLE TYPE="text/css">
@@ -56,11 +56,12 @@
     to move next, however, she is slower at moving fast units (VTOLs &amp;
     Hovercraft especially).&nbsp; She is able to operate AeroSpace units
     on the ground map, which TestBot cannot, but it takes a long time for
-    her to crunch the numbers and she still canâ€™t handle anything on
-    the space maps.&nbsp; Also, sheâ€™s not very competent with Infantry,
-    which she seriously undervalues.&nbsp; One of the biggest advantages
-    of Princess, however, is that her behavior can be modified in a
-    number of ways, which youâ€™ll see throughout this document.</P>
+    her to crunch the numbers and she still canâ€™t handle anything
+    on the space maps.&nbsp; Also, sheâ€™s not very competent with
+    Infantry, which she seriously undervalues.&nbsp; One of the biggest
+    advantages of Princess, however, is that her behavior can be modified
+    in a number of ways, which youâ€™ll see throughout this
+    document.</P>
 
 <H2 CLASS="western"><A NAME="mozTocId432957"></A>Princess Bot
     Configuration</H2>
@@ -135,9 +136,10 @@
                 higher levels she should run straight for her home edge.</P>
 
             <P><B>Strategic Targets</B> - This allows you to provide Princess
-                with a list of hex coordinates to move to and attack.&nbsp; If a
-                building exists in the target hex, then she will attempt to
-                destroy that building.</P>
+                with a list of hex coordinates or unit ids to move to and attack.&nbsp;
+                If a building exists in a target hex, then she will attempt to
+                destroy that building. If a unit with the given id is on the
+                enemy team, she will give that target a higher priority.</P>
         </TD>
     </TR>
 </TABLE>
@@ -194,6 +196,11 @@ decreases it by one.</SPAN></SPAN></P>
     target : hexNumber</I><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>Adds
 the specified hex to princess's list of Strategic Targets.</SPAN></SPAN></P>
 
+<P><SPAN STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><B>Prioritize</B></SPAN></SPAN><SPAN
+        STYLE="font-variant: normal"><SPAN STYLE="font-style: normal"><BR>princessName:
+prioritize : unitId<BR>Adds the specified unit to princess's Priority
+Targets list.</SPAN></SPAN></P>
+
 <H2 CLASS="western"><A NAME="mozTocId779311"></A>Replacing an Absent
     Player with the Princess Bot</H2>
 
@@ -211,8 +218,8 @@ the specified hex to princess's list of Strategic Targets.</SPAN></SPAN></P>
     DEFAULT will be used.<BR>&lt;-v&gt; Specifies the verbosity level
     used to log Princess (DEBUG/INFO/WARNING/ERROR). If left out, ERROR
     will be used.<BR>&lt;-p&gt; Specifies the player to be replaced. The
-    â€œ-pâ€� is only required with the â€œ-câ€� or â€œ-vâ€� parameters
-    are also used.</P>
+    â€œ-pâ€� is only required with the â€œ-câ€� or
+    â€œ-vâ€� parameters are also used.</P>
 
 <H2 CLASS="western" STYLE="page-break-after: avoid"><A NAME="Princess-Compatible Optional Rules|outline"></A>
     Princess-Compatible Optional Rules</H2>
@@ -225,8 +232,8 @@ the specified hex to princess's list of Strategic Targets.</SPAN></SPAN></P>
     using Princess.</P>
 
 <P>If there is an optional rule you would like Princess to support,
-    file a Feature Request:<BR>
-    <A HREF="https://sourceforge.net/p/megamek/feature-requests/?source=navbar">https://sourceforge.net/p/megamek/feature-requests/?source=navbar</A>
+    file a Feature
+    Request:<BR><A HREF="https://sourceforge.net/p/megamek/feature-requests/?source=navbar">https://sourceforge.net/p/megamek/feature-requests/?source=navbar</A>
 </P>
 
 <P STYLE="margin-bottom: 0in"><B>Basic</B></P>
@@ -253,8 +260,8 @@ the specified hex to princess's list of Strategic Targets.</SPAN></SPAN></P>
 <P STYLE="margin-bottom: 0in"><B>Victory Conditions</B></P>
 
 <P STYLE="margin-bottom: 0in">Any will work, but Princess isn't
-    really aware of them. This means that she'll use the same strategy
-    no matter the VC.</P>
+    really aware of them. This means that she'll use the same strategy no
+    matter the VC.</P>
 
 <P STYLE="margin-bottom: 0in"><BR>
 </P>

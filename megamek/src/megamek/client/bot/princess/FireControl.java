@@ -1165,12 +1165,13 @@ public class FireControl {
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(firingPlan.getTarget());
-        utility += calcStrategicTargetUtility(firingPlan.getTarget());
+        utility += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        utility += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
         firingPlan.setUtility(utility);
     }
 
-    private double calcStrategicTargetUtility(Targetable target) {
+    private double calcStrategicBuildingTargetUtility(Targetable target) {
         if (!(target instanceof BuildingTarget)) {
             return 0;
         }
@@ -1178,7 +1179,19 @@ public class FireControl {
         DecimalFormat coordsFormat = new DecimalFormat("00");
         Coords targetCoords = target.getPosition();
         String coords = coordsFormat.format(targetCoords.x + 1) + coordsFormat.format(targetCoords.y + 1);
-        if (owner.getBehaviorSettings().getStrategicTargets().contains(coords)) {
+        if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
+            return STRATEGIC_TARGET_UTILITY;
+        }
+        return 0;
+    }
+
+    private double calcPriorityUnitTargetUtility(Targetable target) {
+        if (!(target instanceof Entity)) {
+            return 0;
+        }
+
+        int id = ((Entity) target).getId();
+        if (owner.getBehaviorSettings().getPriorityUnitTargets().contains(id)) {
             return STRATEGIC_TARGET_UTILITY;
         }
         return 0;
@@ -1223,7 +1236,8 @@ public class FireControl {
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
         utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(physicalInfo.getTarget());
-        utility += calcStrategicTargetUtility(physicalInfo.getTarget());
+        utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
+        utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
 
         physicalInfo.setUtility(utility);
     }

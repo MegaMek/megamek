@@ -101,7 +101,9 @@ public class BehaviorSettings {
     private int fallShameIndex = 5; // How much do I want to avoid failed Piloting Rolls?
     private int hyperAggressionIndex = 5; // How close to I want to get to my enemies?
     private HomeEdge homeEdge = HomeEdge.NORTH; // In which direction will I flee?
-    private Set<String> strategicTargets = new HashSet<String>(); // What (besides enemy units) do I want to blow up?
+    private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to
+    // blow up?
+    private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
 
@@ -182,8 +184,8 @@ public class BehaviorSettings {
      *
      * @return A list of hexes that Princess will attempt to move to and attack.
      */
-    public Set<String> getStrategicTargets() {
-        return strategicTargets;
+    public Set<String> getStrategicBuildingTargets() {
+        return new HashSet<>(strategicBuildingTargets);
     }
 
     /**
@@ -195,7 +197,7 @@ public class BehaviorSettings {
         if (StringUtil.isNullOrEmpty(target)) {
             return;
         }
-        strategicTargets.add(target);
+        strategicBuildingTargets.add(target);
     }
 
     /**
@@ -204,7 +206,56 @@ public class BehaviorSettings {
      * @param target The target to be removed.
      */
     public void removeStrategicTarget(String target) {
-        strategicTargets.remove(target);
+        strategicBuildingTargets.remove(target);
+    }
+
+    /**
+     * @return A list of enemy units that Princess will prioritize over others.
+     */
+    public Set<Integer> getPriorityUnitTargets() {
+        return new HashSet<>(priorityUnitTargets);
+    }
+
+    /**
+     * Add an enemy unit to the priority list.
+     *
+     * @param id The ID of the unit to be added.
+     */
+    public void addPriorityUnit(int id) {
+        priorityUnitTargets.add(id);
+    }
+
+    /**
+     * Add an enemy unit to the priority list.
+     *
+     * @param id The ID of the unit to be added.
+     */
+    public void addPriorityUnit(String id) {
+        if (!StringUtil.isPositiveInteger(id)) {
+            return;
+        }
+        addPriorityUnit(Integer.parseInt(id));
+    }
+
+    /**
+     * Remove a unit from the priority target list.
+     *
+     * @param id The ID of the unit to be removed.
+     */
+    public void removePriorityUnit(int id) {
+        priorityUnitTargets.remove(id);
+    }
+
+    /**
+     * Remove a unit from the priority target list.
+     *
+     * @param id The ID of the unit to be removed.
+     */
+    public void removePriorityUnit(String id) {
+        if (!StringUtil.isPositiveInteger(id)) {
+            return;
+        }
+        removePriorityUnit(Integer.parseInt(id));
     }
 
     /**
@@ -566,15 +617,12 @@ public class BehaviorSettings {
                 NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
                     Node t = targets.item(j);
-                    if (!"target".equalsIgnoreCase(t.getNodeName())) {
-                        continue;
-                    }
-                    if ("escape".equalsIgnoreCase(t.getTextContent())) {
-                        getStrategicTargets().clear();
+                    if ("target".equalsIgnoreCase(t.getNodeName())) {
                         addStrategicTarget(t.getTextContent());
-                        break;
                     }
-                    addStrategicTarget(t.getTextContent());
+                    if ("unit".equalsIgnoreCase(t.getNodeName())) {
+                        addPriorityUnit(t.getTextContent());
+                    }
                 }
             }
         }
@@ -637,18 +685,17 @@ public class BehaviorSettings {
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
-            Element targetsNode = doc.createElement("strategicTargets");
+            Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
-                if (getStrategicTargets().contains("escape")) {
+                for (String t : getStrategicBuildingTargets()) {
                     Element targetElement = doc.createElement("target");
-                    targetElement.setTextContent("escape");
+                    targetElement.setTextContent(StringUtil.makeXmlSafe(t));
                     targetsNode.appendChild(targetElement);
-                } else {
-                    for (String t : getStrategicTargets()) {
-                        Element targetElement = doc.createElement("target");
-                        targetElement.setTextContent(StringUtil.makeXmlSafe(t));
-                        targetsNode.appendChild(targetElement);
-                    }
+                }
+                for (int id : getPriorityUnitTargets()) {
+                    Element unitElement = doc.createElement("unit");
+                    unitElement.setTextContent(String.valueOf(id));
+                    targetsNode.appendChild(unitElement);
                 }
             }
             behavior.appendChild(targetsNode);
@@ -666,20 +713,26 @@ public class BehaviorSettings {
      */
     public String toLog() {
         String out = "Princess Behavior: " + getDescription();
-        out += "\n    Home Edge: " + getHomeEdge().toString();
-        out += "\n    Forced Withdrawal: " + isForcedWithdrawal();
-        out += "\n    Self Preservation: " + getSelfPreservationIndex();
-        out += "\n    Hyper Aggression: " + getHyperAggressionIndex();
-        out += "\n    Fall Shame: " + getFallShameIndex();
-        out += "\n    Bravery: " + getBraveryIndex();
-        out += "\n    Herd Mentality: " + getHerdMentalityIndex();
-        out += "\n    Targets:";
-        for (String t : getStrategicTargets()) {
+        out += "\n\tHome Edge: " + getHomeEdge().toString();
+        out += "\n\tForced Withdrawal: " + isForcedWithdrawal();
+        out += "\n\tSelf Preservation: " + getSelfPreservationIndex();
+        out += "\n\tHyper Aggression: " + getHyperAggressionIndex();
+        out += "\n\tFall Shame: " + getFallShameIndex();
+        out += "\n\tBravery: " + getBraveryIndex();
+        out += "\n\tHerd Mentality: " + getHerdMentalityIndex();
+        out += "\n\tTargets:";
+        out += "\n\t\tCoords: ";
+        for (String t : getStrategicBuildingTargets()) {
             out += "  " + t;
+        }
+        out += "\n\t\tUnits:";
+        for (int id : getPriorityUnitTargets()) {
+            out += "  " + id;
         }
         return out;
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -697,8 +750,14 @@ public class BehaviorSettings {
         if (selfPreservationIndex != that.selfPreservationIndex) return false;
         if (!description.equals(that.description)) return false;
         if (homeEdge != that.homeEdge) return false;
-        if (strategicTargets != null ? !strategicTargets.equals(that.strategicTargets) : that.strategicTargets != null)
+        if (strategicBuildingTargets != null ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : that
+                                                                                                                         .strategicBuildingTargets != null) {
             return false;
+        }
+        if (priorityUnitTargets != null ? !priorityUnitTargets.equals(that.priorityUnitTargets) : that
+                                                                                                          .priorityUnitTargets != null) {
+            return false;
+        }
 
         return true;
     }
@@ -713,7 +772,8 @@ public class BehaviorSettings {
         result = 31 * result + fallShameIndex;
         result = 31 * result + hyperAggressionIndex;
         result = 31 * result + homeEdge.hashCode();
-        result = 31 * result + (strategicTargets != null ? strategicTargets.hashCode() : 0);
+        result = 31 * result + (strategicBuildingTargets != null ? strategicBuildingTargets.hashCode() : 0);
+        result = 31 * result + (priorityUnitTargets != null ? priorityUnitTargets.hashCode() : 0);
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
         return result;

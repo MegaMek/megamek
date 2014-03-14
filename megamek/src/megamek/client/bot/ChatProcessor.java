@@ -212,7 +212,7 @@ public class ChatProcessor {
 
         String from = tokenizer.nextToken().trim(); // First token should be who sent the message.
         String sentTo = tokenizer.nextToken().trim(); // Second token should be the player name the message is directed
-                                                      // to.
+        // to.
         String command = tokenizer.nextToken().trim(); // The third token should be the actual command.
         if (command.length() < 2) {
             princess.sendChat("I do not recognize that command.");
@@ -414,6 +414,26 @@ public class ChatProcessor {
 
             princess.getBehaviorSettings().addStrategicTarget(hex);
             msg = "Hex " + hex + " added to strategic targets list.";
+            princess.sendChat(msg);
+        }
+
+        if (command.toLowerCase().startsWith(Princess.CMD_PRIORITY)) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid syntax.  Should be 'princessName : priority : unitId'.";
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            String id = arguments[0];
+            if (!StringUtil.isPositiveInteger(id)) {
+                msg = "Invalid unit id number: " + id;
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            princess.getBehaviorSettings().addPriorityUnit(id);
+            msg = "Unit " + id + " added to priority unit targets list.";
             princess.sendChat(msg);
         }
     }

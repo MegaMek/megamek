@@ -472,13 +472,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Indicates whether this entity has been seen by the enemy during the
      * course of this game. Used in double-blind.
      */
-    private boolean seenByEnemy = false;
+    private boolean everSeenByEnemy = false;
 
     /**
      * Indicates whether this entity can currently be seen by the enemy. Used in
      * double-blind.
      */
     private boolean visibleToEnemy = false;
+    
+    /**
+     * Flag that indicates whether this entity has been detected by sensors by
+     * an enemy.
+     */
+    private boolean detectedByEnemy;
 
     /**
      * Check to see who has seen this Entity Used for Double Blind Reports.
@@ -7867,12 +7873,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   .getHeight() - 1)));
     }
 
-    public void setSeenByEnemy(boolean b) {
-        seenByEnemy = b;
+    public void setEverSeenByEnemy(boolean b) {
+        everSeenByEnemy = b;
     }
 
-    public boolean isSeenByEnemy() {
-        return seenByEnemy;
+    public boolean isEverSeenByEnemy() {
+        return everSeenByEnemy;
     }
 
     public void setVisibleToEnemy(boolean b) {
@@ -7881,6 +7887,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         return visibleToEnemy;
+    }
+    
+    public void setDetectedByEnemy(boolean b){
+        detectedByEnemy = b;
+    }
+    
+    public boolean isDetectedByEnemy(){
+        return detectedByEnemy;
     }
 
     public void addBeenSeenBy(IPlayer p) {

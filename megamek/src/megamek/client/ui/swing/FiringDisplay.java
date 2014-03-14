@@ -476,7 +476,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                     && (friendlyFire || enemyTarget)
-                    && (!enemyTarget || target.isVisibleToEnemy()) 
+                    && (!enemyTarget || target.isVisibleToEnemy() 
+                            || target.isDetectedByEnemy()) 
                     && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());

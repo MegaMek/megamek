@@ -1823,7 +1823,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         if (darken) {
                             if (game.getOptions().booleanOption(
                                     "tacops_sensors")
-                                    && (dist >= minSensorRange)
+                                    && (dist > minSensorRange)
                                     && (dist <= maxSensorRange)) {
                                 drawHexLayer(p, boardGraph,
                                         transparent_light_gray);
@@ -2419,7 +2419,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             if ((localPlayer != null) 
                     && entity.getOwner().isEnemyOf(localPlayer) 
-                    && !entity.isSeenByEnemy()){
+                    && !entity.isVisibleToEnemy()
+                    && !entity.isDetectedByEnemy()){
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {
@@ -4566,7 +4567,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 // If this unit is currently unknown to the enemy, say so.
                 if (trackThisEntitiesVisibilityInfo(entity)) {
-                    if (!entity.isSeenByEnemy()) {
+                    if (!entity.isEverSeenByEnemy()) {
                         // draw "U"
                         graph.setColor(Color.darkGray);
                         graph.drawString("U", 30, 71); //$NON-NLS-1$

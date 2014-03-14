@@ -25706,9 +25706,22 @@ public class Server implements Runnable {
     }
 
     /**
-     * Returns a vector of which players can see this entity.
+     * Returns a vector of which players can see this entity, always allowing
+     * for sensor detections.
      */
     private Vector<IPlayer> whoCanSee(Entity entity) {
+        return whoCanSee(entity, true);
+    }
+        
+    /**
+     * Returns a vector of which players can see the given entity, optionally
+     * allowing for sensors to count.
+     * 
+     * @param entity        The entity to check visiblity for
+     * @param useSensors    A flag that determines whether sensors are allowed
+     * @return              A vector of the players who can see the entity
+     */
+    private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors) {
 
         // Some times Null entities are sent to this
         if (entity == null) {
@@ -25733,8 +25746,7 @@ public class Server implements Runnable {
             }
         }
 
-        // If the entity is hidden, skip this; noone else will be able to see
-        // it.
+        // If the entity is hidden, skip; noone else will be able to see it.
         if (!entity.isHidden()) {
             for (int i = 0; i < vEntities.size(); i++) {
                 Entity e = vEntities.elementAt(i);
@@ -25746,7 +25758,7 @@ public class Server implements Runnable {
                 if (e.isOffBoard()) {
                     continue;
                 }
-                if (Compute.canSee(game, e, entity)) {
+                if (Compute.canSee(game, e, entity, useSensors)) {
                     if (!vCanSee.contains(e.getOwner())){
                         vCanSee.addElement(e.getOwner());
                     }
@@ -25759,6 +25771,40 @@ public class Server implements Runnable {
         }
 
         return vCanSee;
+    }
+    
+    private Vector<IPlayer> whoCanDetect(Entity entity) {
+
+        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        Vector<Entity> vEntities = game.getEntitiesVector();
+
+        Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
+
+        // If the entity is hidden, skip; noone else will be able to detect it
+        if (!entity.isHidden()) {
+            for (int i = 0; i < vEntities.size(); i++) {
+                Entity e = vEntities.elementAt(i);
+                if (vCanDetect.contains(e.getOwner()) || !e.isActive()) {
+                    continue;
+                }
+
+                // Off board units should not spot on board units
+                if (e.isOffBoard()) {
+                    continue;
+                }
+                if (Compute.inSensorRange(game, e, entity)) {
+                    if (!vCanDetect.contains(e.getOwner())){
+                        vCanDetect.addElement(e.getOwner());
+                    }
+                    if (bTeamVision) {
+                        addTeammates(vCanDetect, e.getOwner());
+                    }
+                    addObservers(vCanDetect);
+                }
+            }
+        }
+
+        return vCanDetect;
     }
 
     /**
@@ -26104,22 +26150,31 @@ public class Server implements Runnable {
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = vAllEntities.elementAt(x);
             boolean previousVisibleValue = e.isVisibleToEnemy();
-            boolean previousSeenValue = e.isSeenByEnemy();
+            boolean previousSeenValue = e.isEverSeenByEnemy();
+            boolean previousDetectedValue = e.isDetectedByEnemy();
             e.setVisibleToEnemy(false);
-            Vector<IPlayer> vCanSee = whoCanSee(e);
-            for (int y = 0; y < vCanSee.size(); y++) {
-                IPlayer p = vCanSee.elementAt(y);
+            e.setDetectedByEnemy(false);
+            Vector<IPlayer> vCanSee = whoCanSee(e, false);
+            for (IPlayer p : vCanSee) {
                 if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                     e.setVisibleToEnemy(true);
-                    e.setSeenByEnemy(true);
+                    e.setEverSeenByEnemy(true);
+                }
+            }
+            Vector<IPlayer> vCanDetect = whoCanDetect(e);
+            for (IPlayer p : vCanDetect) {
+                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
+                    e.setDetectedByEnemy(true);
                 }
             }
             // If this unit wasn't previously visible and is now visible, it's
             // possible that the enemy's client doesn't know about the unit
-            if (!previousVisibleValue && e.isVisibleToEnemy()){
+            if ((!previousVisibleValue && e.isVisibleToEnemy())
+                    || (!previousDetectedValue && e.isDetectedByEnemy())){
                 entityUpdate(e.getId());
             } else if ((previousVisibleValue != e.isVisibleToEnemy())
-                    || (previousSeenValue != e.isSeenByEnemy())) {
+                    || (previousSeenValue != e.isEverSeenByEnemy())
+                    || (previousDetectedValue != e.isDetectedByEnemy())) {
                 sendVisibilityIndicator(e);
             }
         }
@@ -27226,10 +27281,11 @@ public class Server implements Runnable {
     }
 
     public void sendVisibilityIndicator(Entity e) {
-        final Object[] data = new Object[3];
+        final Object[] data = new Object[4];
         data[0] = new Integer(e.getId());
-        data[1] = Boolean.valueOf(e.isSeenByEnemy());
+        data[1] = Boolean.valueOf(e.isEverSeenByEnemy());
         data[2] = Boolean.valueOf(e.isVisibleToEnemy());
+        data[3] = Boolean.valueOf(e.isDetectedByEnemy());
         send(new Packet(Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR, data));
     }
 

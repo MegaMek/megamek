@@ -88,6 +88,14 @@ v0.37.9-dev (SVN)
 + Bug [#4069]: Estevez MBT & Estevez AA Customize Issue
 + Changed the commander/subcommander weighting mod from a multipler to a straight adder.
 + Added code to increase the target priority of buildings on the Strategic Targets list.
++ Bug: Fixed a bug introduced in [r10660] (when fixing [#2244]): the code to 
+    determine if an entity should be drawn was using isEverSeenByEnemy instead
+    of isVisibleToEntity
++ Bug: Los darkening for sensor ranges was using a >= comparison for min sensor
+    range instead of >.  The min range is not inclusive as witnessed in
+    Compute.inSensorRange
++ Bug [#4068]: In double-blind, units detected by sensors only should not be
+    aware
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

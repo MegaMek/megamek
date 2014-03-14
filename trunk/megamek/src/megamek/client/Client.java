@@ -925,8 +925,9 @@ public class Client implements IClientCommandHandler {
     protected void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = game.getEntity(packet.getIntValue(0));
         if (e != null) { // we may not have this entity due to double blind
-            e.setSeenByEnemy(packet.getBooleanValue(1));
+            e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
+            e.setDetectedByEnemy(packet.getBooleanValue(3));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));

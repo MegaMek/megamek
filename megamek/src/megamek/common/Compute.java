@@ -3516,10 +3516,19 @@ public class Compute {
     }
 
     /**
-     * Slightly misnamed. Checks to see if the target is visible to the unit,
-     * either visually or through sensors
+     * Checks to see if the target is visible to the unit, always considering 
+     * sensors.
      */
     public static boolean canSee(IGame game, Entity ae, Targetable target) {
+        return canSee(game, ae, target, true);
+    }
+    
+    /**
+     * Checks to see if the target is visible to the unit, if the sensor flag
+     * is true then sensors are checked as well.
+     */
+    public static boolean canSee(IGame game, Entity ae, Targetable target, 
+            boolean useSensors) {
 
         if (!ae.getCrew().isActive()) {
             return false;
@@ -3527,10 +3536,14 @@ public class Compute {
         if (target.isOffBoard()) {
             return false;
         }
-
-        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute
-                .inVisualRange(game, ae, target))
-                || Compute.inSensorRange(game, ae, target);
+        
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), target);
+        boolean isVisible = los.canSee() 
+                && Compute.inVisualRange(game, ae, target);
+        if (useSensors){
+            isVisible = isVisible || Compute.inSensorRange(game, ae, target);
+        }
+        return isVisible;
     }
 
     /**

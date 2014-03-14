@@ -397,6 +397,9 @@ public class MiscType extends EquipmentType {
             .shiftLeft(182);
     public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
             .shiftLeft(183);
+    // Flag for BattleArmor Modular Equipment Adaptor
+    public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
+            .shiftLeft(184);
 
 
     // Secondary Flags for Physical Weapons
@@ -1463,6 +1466,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAHeavyBattleClawVibro());
         EquipmentType.addType(MiscType.createBAIndustrialDrill());
         EquipmentType.addType(MiscType.createBASalvageArm());
+        EquipmentType.addType(MiscType.createBAModularEquipmentAdaptor());
         EquipmentType.addType(MiscType.createBAArmoredGlove());
         EquipmentType.addType(MiscType.createBAMagneticClamp());
         EquipmentType.addType(MiscType.createBAAPMount());
@@ -5316,6 +5320,26 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createBAModularEquipmentAdaptor() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Modular Equipment Adaptor";
+        misc.setInternalName("BAMEA"); 
+        misc.tonnage = 0.01f;
+        misc.criticals = 2;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MEA);
+        misc.bv = 0;
+        misc.introDate = 2110;
+        misc.cost = 10000;
+        misc.techLevel.put(2110, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
     public static MiscType createBAArmoredGlove() {
         MiscType misc = new MiscType();
 

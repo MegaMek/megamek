@@ -1250,7 +1250,7 @@ public class MechDisplay extends JPanel {
                 // heat
             }
 
-            if ((en instanceof Mech) && en.isChameleonShieldActive()) {
+            if ((en instanceof Mech) && en.isChameleonShieldOn()) {
                 currentHeatBuildup += 6;
             }
 

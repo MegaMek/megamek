@@ -49,6 +49,55 @@ v0.37.9-dev (SVN)
 + Fixed Rats
 + Unit corrections with data changes.
 + Added some code to remove a 'Report.addNewline failed' message
++ Finished refactoring the FireControl class.
++ Bug [#4055]: allow constructing BA with Modular Equipment Adaptor
++ Bug [#4064]: Inability to fire at secondary targets when attacking things with
+    stealth armor. (also made some code formatting changes) 
++ Bug: MechDisplay was using Mech.isChameleonShieldActive() instead of 
+    Mech.isChameleonShieldOn() to determine if a CLPS is generating heat.
++ Bug [#3675]: Infantry mods for Chameleon LPS
++ Bug [#3806]: Another double-blind related bug
++ Bug: Fixed potential NPE in EquipmentChoiceDialog
++ Bug: APM and MEA editing in EquipmentChoiceDialog was not being disabled
++ Bug: Updated Server.whoCanSee to prevent adding duplicates
++ Bug [#4066]: Random Skill Generator TW Method errata
++ Fixed NPE in FireControl class.
++ Bug [#3903]: When failing a PSR moving between two hexes, the unit should fall
+    into the lower of the two hexes
++ Bug [#4067]: When displaced into a water hex, a PSR for entering a water hex
+    could be rolled
++ Bug: Fixed a potential NPE in Server
++ Bug: Server.explodeInfernoAmmoFromHeat wa susing CriticalSlot.getIndex() when
+    it should have been using CriticalSlot.getMount(), which was causing issues
+    when exploding inferno ammo from heat
++ Fixed a ClassCastException in PhysicalInfo.initDamage()
++ Added code for Princess to give command units a higher targeting priority.  Princess defines 2 levels of command
+    unit: Commander and Sub-Commander.  A Commander is any unit with the isCommander flag set, has a C3 Master system
+    or provides the highest initiative bonus for its player.  A Sub-Commander is any unit that has an init bonus (but
+    not the highest), a C3 slave system, ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
++ Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
++ Bug [#3996]: Cleaned up a few more areas where not all of an Entitys loaded
+    units were being sent to Clients during updates
++ Bug: Firing solutions was always drawing data for teammate units, even if
+    friendly fire was off, also wouldn't draw friendly units that weren't 
+    visible to an enemy unit
++ Bug [#4070]: Specialty BA not working when BA carried by mech.
++ Bug: No report when mechanized BA avoid damage
++ Bug: Reports for mechanized BA taking/avoiding damage are not indented well
++ Bug: Reports for hitting swarming units not indented well
++ Bug: Recent change to not draw enemy units that aren't visible causes an NPE
+    when BoardView1.localPlayer == null
++ Bug [#4069]: Estevez MBT & Estevez AA Customize Issue
++ Changed the commander/subcommander weighting mod from a multipler to a straight adder.
++ Added code to increase the target priority of buildings on the Strategic Targets list.
++ Bug: Fixed a bug introduced in [r10660] (when fixing [#2244]): the code to 
+    determine if an entity should be drawn was using isEverSeenByEnemy instead
+    of isVisibleToEntity
++ Bug: Los darkening for sensor ranges was using a >= comparison for min sensor
+    range instead of >.  The min range is not inclusive as witnessed in
+    Compute.inSensorRange
++ Bug [#4068]: In double-blind, units detected by sensors only should not be
+    aware
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

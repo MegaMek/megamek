@@ -36,6 +36,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.VTOL;
 import megamek.common.logging.LogLevel;
+import megamek.common.options.OptionsConstants;
 
 /**
  * A very basic pathranker
@@ -59,7 +60,7 @@ public class BasicPathRanker extends PathRanker {
         bestDamageByEnemies = new TreeMap<Integer, Double>();
         owner = owningPrincess;
         owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
-                                                           " behavior");
+                " behavior");
     }
 
     protected Princess getOwner() {
@@ -88,11 +89,11 @@ public class BasicPathRanker extends PathRanker {
 
     protected boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
         return (leftBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) > 0)
-               && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
+                && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
     }
 
-    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range) {
-        return fireControl.getMaxDamageAtRange(shooter, range);
+    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange) {
+        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange);
     }
 
     protected boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
@@ -103,21 +104,21 @@ public class BasicPathRanker extends PathRanker {
             return false;
         }
         return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy.  Improve for missile attacks, gun skill, and range
      */
-    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange) {
         final String METHOD_NAME = "EntityEvaluationResponse evaluateUnmovedEnemy(Entity,MovePath,IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -154,12 +155,13 @@ public class BasicPathRanker extends PathRanker {
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
-                returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range) *
-                                                      damageDiscount);
+                returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range,
+                                                                          useExtremeRange) * damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
-            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range) * damageDiscount);
+            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange)
+                                                             * damageDiscount);
 
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -353,18 +355,18 @@ public class BasicPathRanker extends PathRanker {
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                        game.getBoard().getCenter() :
-                        closest.getPosition();
+                game.getBoard().getCenter() :
+                closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                   || (currentFacing == ((desiredFacing + 5) % 6))) {
+                || (currentFacing == ((desiredFacing + 5) % 6))) {
             facingDiff = 1;
         } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                   || (currentFacing == ((desiredFacing + 4) % 6))) {
+                || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 2;
         } else {
             facingDiff = 3;
@@ -423,11 +425,12 @@ public class BasicPathRanker extends PathRanker {
             double maximumDamageDone = 0;
             double maximumPhysicalDamage = 0;
             double expectedDamageTaken = 0;
+            boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE);
             for (Entity enemy : enemies) {
 
                 // Skip units not actually on the board.
                 if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                    || !game.getBoard().contains(enemy.getPosition())) {
+                        || !game.getBoard().contains(enemy.getPosition())) {
                     continue;
                 }
 
@@ -435,7 +438,7 @@ public class BasicPathRanker extends PathRanker {
                 if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
-                    eval = evaluateUnmovedEnemy(enemy, path);
+                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange);
                 }
                 if (maximumDamageDone < eval.getMyEstimatedDamage()) {
                     maximumDamageDone = eval.getMyEstimatedDamage();
@@ -450,7 +453,7 @@ public class BasicPathRanker extends PathRanker {
             for (int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
                 Targetable target = getOwner().getFireControl().getAdditionalTargets().get(i);
                 if (target.isOffBoard() || (target.getPosition() == null)
-                    || !game.getBoard().contains(target.getPosition())) {
+                        || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),

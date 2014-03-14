@@ -1048,6 +1048,19 @@ public class Compute {
         if (isWeaponInfantry ) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
                     (InfantryWeapon) wtype);
+            
+            int rangeModifier = mods.getValue();
+            if (rangeModifier == TargetRoll.AUTOMATIC_FAIL){
+                usingRange = RangeType.RANGE_OUT;
+            } else if (rangeModifier == 0){
+                usingRange = RangeType.RANGE_SHORT;
+            } else if (rangeModifier <= 2){
+                usingRange = RangeType.RANGE_MEDIUM;
+            } else if (rangeModifier <= 4) {
+                usingRange = RangeType.RANGE_LONG;
+            } else {
+                usingRange = RangeType.RANGE_EXTREME;
+            }
         }
 
         // add any target stealth modifier
@@ -1881,7 +1894,8 @@ public class Compute {
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction) o;
             if (prevAttack.getEntityId() == attacker.getId()) {
-                // Count how many targets we have for proper secondary modifiers for multi-crew vehicles
+                // Count how many targets we have for proper secondary modifiers
+                // for multi-crew vehicles
                 countTargets++;
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
@@ -1894,14 +1908,7 @@ public class Compute {
                 if (pte == null) {
                     continue;
                 }
-                // When targeting a stealthed Mech, you can _only_ target it,
-                // not anything else (BMRr, pg. 147)
-                if (((pte instanceof Mech) || (pte instanceof Tank))
-                        && ((Entity) pte).isStealthActive() && (pte != target)
-                        && !isSwarm) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                            "When targeting a stealthed unit, can not attack secondary targets");
-                }
+
                 if (Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), pte,
                         attacker.getForwardArc())) {
@@ -1913,18 +1920,18 @@ public class Compute {
             }
         }
         
-        if (game.getOptions().booleanOption("tacops_tank_crews") && attacker instanceof Tank) {
-            /*
-             * If we are a tank, and only have 1 crew then we have some special restrictions
-             */
+        if (game.getOptions().booleanOption("tacops_tank_crews")
+                && attacker instanceof Tank) {
+            
+            // If we are a tank, and only have 1 crew then we have some special
+            //  restrictions
             if (countTargets > 0 && attacker.getCrew().getSize() == 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Vehicles with only 1 crewman may not attack secondary targets");
+                        "Vehicles with only 1 crewman may not attack " +
+                        "secondary targets");
             }
-            /*
-             * If we are a tank, and our previous targets are less than the number of crew - 2
-             * we don't have a secondary modifier 
-             */
+            // If we are a tank, and our previous targets are less than the
+            // number of crew - 2 we don't have a secondary modifier 
             if (countTargets < attacker.getCrew().getSize()-2) {
                 return null; // no modifier
             }
@@ -1938,11 +1945,12 @@ public class Compute {
 
         // current target is secondary
 
-        // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
+        // Stealthed Mechs can't be secondary targets (TW, pg. 142)
         if (((target instanceof Tank) || (target instanceof Mech))
                 && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can't target unit with active stealth armor as secondary target");
+                    "Can't target unit with active stealth armor as " +
+                    "secondary target");
         }
 
         int mod = 2;
@@ -3508,10 +3516,19 @@ public class Compute {
     }
 
     /**
-     * Slightly misnamed. Checks to see if the target is visible to the unit,
-     * either visually or through sensors
+     * Checks to see if the target is visible to the unit, always considering 
+     * sensors.
      */
     public static boolean canSee(IGame game, Entity ae, Targetable target) {
+        return canSee(game, ae, target, true);
+    }
+    
+    /**
+     * Checks to see if the target is visible to the unit, if the sensor flag
+     * is true then sensors are checked as well.
+     */
+    public static boolean canSee(IGame game, Entity ae, Targetable target, 
+            boolean useSensors) {
 
         if (!ae.getCrew().isActive()) {
             return false;
@@ -3519,10 +3536,14 @@ public class Compute {
         if (target.isOffBoard()) {
             return false;
         }
-
-        return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute
-                .inVisualRange(game, ae, target))
-                || Compute.inSensorRange(game, ae, target);
+        
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), target);
+        boolean isVisible = los.canSee() 
+                && Compute.inVisualRange(game, ae, target);
+        if (useSensors){
+            isVisible = isVisible || Compute.inSensorRange(game, ae, target);
+        }
+        return isVisible;
     }
 
     /**

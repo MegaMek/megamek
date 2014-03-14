@@ -18,6 +18,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -39,6 +40,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.Configuration;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -53,6 +55,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -71,6 +74,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private int[] entityCorrespondance;
 
     private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
+    
     /**
      * An <code>ArrayList</code> to keep track of all of the 
      * <code>APWeaponChoicePanels</code> that were added, so we can apply 
@@ -78,12 +82,22 @@ public class EquipChoicePanel extends JPanel implements Serializable {
      */
     private ArrayList<APWeaponChoicePanel> m_vAPMounts = 
             new ArrayList<APWeaponChoicePanel>();
+    
+    /**
+     * An <code>ArrayList</code> to keep track of all of the 
+     * <code>MEAChoicePanels</code> that were added, so we can apply 
+     * their choices when the dialog is closed.
+     */
+    private ArrayList<MEAChoicePanel> m_vMEAdaptors = 
+            new ArrayList<MEAChoicePanel>();
+    
     /**
      * Panel for adding components related to selecting which anti-personnel
      * weapons are mounted in an AP Mount (armored gloves are also considered 
      * AP mounts)
      **/
     private JPanel panAPMounts = new JPanel();
+    private JPanel panMEAdaptors = new JPanel();
     private JPanel panMunitions = new JPanel();
 
     private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
@@ -205,6 +219,36 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(panAPMounts,GBC.eop().anchor(GridBagConstraints.CENTER));
         }
         
+        if ((entity instanceof BattleArmor) 
+                && entity.hasWorkingMisc(MiscType.F_BA_MEA)){            
+            panMEAdaptors.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createEmptyBorder(), Messages
+                    .getString("CustomMechDialog.MEAPanelTitle"),
+                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
+            // We need to determine how much weight is free, so the user can
+            //  pick legal combinations of manipulators
+            BattleArmor ba = (BattleArmor) entity;
+            EntityVerifier verifier = new EntityVerifier(
+                    new File(Configuration.unitsDir(),
+                            EntityVerifier.CONFIG_FILENAME));
+            TestBattleArmor testBA = new TestBattleArmor(ba, 
+                    verifier.baOption, null);
+            float maxTrooperWeight = 0;
+            for (int i = 1; i < ba.getTroopers(); i++){
+                float trooperWeight = testBA.calculateWeight(i);
+                if (trooperWeight > maxTrooperWeight){
+                    maxTrooperWeight = trooperWeight;
+                }
+            }
+            String freeWeight = Messages
+                    .getString("CustomMechDialog.freeWeight")
+                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight,
+                            ba.getTrooperWeight());
+                        
+            setupMEAdaptors(freeWeight);
+            add(panMEAdaptors,GBC.eop().anchor(GridBagConstraints.CENTER));
+        }
+        
         // Can't set up munitions on infantry.
         if (!((entity instanceof Infantry) && !((Infantry) entity)
                 .hasFieldGun()) || (entity instanceof BattleArmor)) {
@@ -264,8 +308,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         choC3.setEnabled(false);
         chAutoEject.setEnabled(false);
         chSearchlight.setEnabled(false);
-        m_bombs.setEnabled(false);
+        if (m_bombs != null){
+            m_bombs.setEnabled(false);
+        }
         disableMunitionEditing();
+        disableAPMEditing();
+        disableMEAEditing();
         disableMGSetting();
         disableMineSetting();
         panInfArmor.setEnabled(false);
@@ -290,6 +338,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update AP weapon selections
         for (APWeaponChoicePanel apChoicePanel : m_vAPMounts) {
             apChoicePanel.applyChoice();
+        }
+        
+        // update modular equipment adaptor selections
+        for (MEAChoicePanel meaChoicePanel : m_vMEAdaptors) {
+            meaChoicePanel.applyChoice();
         }
         
         // update munitions selections
@@ -408,6 +461,52 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 panSantaAnna.add(sacp, GBC.eol());
                 m_vSantaAnna.add(sacp);
             }
+        }
+    }
+    
+    /**
+     * Setup the layout of <code>panMEAdaptors</code>, which contains components
+     * for selecting which manipulators are mounted in a modular equipment 
+     * adaptor
+     */
+    private void setupMEAdaptors(String freeWeight) {
+        GridBagLayout gbl = new GridBagLayout();
+        panMEAdaptors.setLayout(gbl);
+        
+        JLabel lblFreeWeight = new JLabel(freeWeight);
+        panMEAdaptors.add(lblFreeWeight,
+                GBC.eol().anchor(GridBagConstraints.CENTER));
+
+        ArrayList<MiscType> manipTypes = new ArrayList<MiscType>();
+        
+        for (String manipTypeName : BattleArmor.MANIPULATOR_TYPE_STRINGS){
+            // Ignore the "None" option
+            if (manipTypeName.equals(BattleArmor.MANIPULATOR_TYPE_STRINGS[0])){
+                continue;
+            }
+            MiscType mType = (MiscType)EquipmentType.get(manipTypeName);
+            manipTypes.add(mType);
+        }
+        
+        for (Mounted m : entity.getMisc()){
+            if (!m.getType().hasFlag(MiscType.F_BA_MEA)){
+                continue;
+            }
+            Mounted currentManip = null;
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                currentManip = ((BattleArmor)entity).getLeftManipulator();
+            } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+                currentManip = ((BattleArmor)entity).getRightManipulator();
+            } else {
+                // We can only have MEA's in an arm
+                continue;
+            }
+            MEAChoicePanel meacp;
+            meacp = new MEAChoicePanel(entity, m.getBaMountLoc(), currentManip, 
+                    manipTypes);
+            
+            panMEAdaptors.add(meacp, GBC.eol());
+            m_vMEAdaptors.add(meacp);
         }
     }
     
@@ -719,6 +818,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
                 WeaponType apType = null;
                 if (n > 0 && n <= m_APWeaps.size()){
                     // Need to account for the "None" selection
@@ -746,6 +849,120 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);
+                } catch (LocationFullException ex){
+                    // This shouldn't happen for BA...
+                    ex.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                m_choice.setEnabled(enabled);
+            }
+
+        }
+        
+        /**
+         * A panel that houses a label and a combo box that allows for selecting
+         * which maniulator is mounted in a modular equipment adaptor.
+         * 
+         * @author arlith
+         *
+         */
+        class MEAChoicePanel extends JPanel {
+            
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 6189888202192403704L;
+
+            private Entity entity;
+            
+            private ArrayList<MiscType> m_Manipulators;
+
+            private JComboBox<String> m_choice;
+
+            /**
+             * The manipulator currently mounted by a modular equipment adaptor.
+             */
+            private Mounted m_Manipmounted;
+            
+            /**
+             * The BattleArmor mount location of the modular equipment adaptor.
+             */
+            private int baMountLoc;
+            
+
+            MEAChoicePanel(Entity e, int mountLoc, Mounted m, 
+                    ArrayList<MiscType> manips) {
+                entity = e;
+                m_Manipulators = manips;
+                m_Manipmounted = m;
+                baMountLoc = mountLoc;
+                EquipmentType  curType = null;
+                if (m != null){
+                    curType = m.getType();
+                }
+                m_choice = new JComboBox<String>();
+                m_choice.addItem("None");
+                m_choice.setSelectedIndex(0);
+                Iterator<MiscType> it = m_Manipulators.iterator();
+                for (int x = 1; it.hasNext(); x++) {
+                    MiscType manip = it.next();
+                    String manipName = manip.getName() + " ("
+                            + manip.getTonnage(entity) + "kg)";
+                    m_choice.addItem(manipName);
+                    if (curType != null && 
+                            manip.getInternalName() == 
+                                curType.getInternalName()) {
+                        m_choice.setSelectedIndex(x);
+                    }
+                }
+
+                String sDesc = "";
+                if (baMountLoc != BattleArmor.MOUNT_LOC_NONE){
+                    sDesc += " (" 
+                            + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] 
+                            + ')';
+                } else {
+                    sDesc = "None";
+                }
+                JLabel lLoc = new JLabel(sDesc);
+                GridBagLayout g = new GridBagLayout();
+                setLayout(g);
+                add(lLoc, GBC.std());
+                add(m_choice, GBC.std());
+                
+            }
+
+            public void applyChoice() {
+                int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
+                MiscType manipType = null;
+                if (n > 0 && n <= m_Manipulators.size()){
+                    // Need to account for the "None" selection
+                    manipType = m_Manipulators.get(n-1);
+                }
+
+                if (m_Manipmounted != null){
+                    entity.getEquipment().remove(m_Manipmounted);
+                    entity.getMisc().remove(m_Manipmounted);
+                }            
+                
+                // Was no manipulator selected?
+                if (n == 0){
+                    return;
+                }
+                    
+                // Add the newly mounted maniplator
+                try{
+                    m_Manipmounted = entity.addEquipment(manipType, 
+                            m_Manipmounted.getLocation());
+                    m_Manipmounted.setBaMountLoc(baMountLoc);
                 } catch (LocationFullException ex){
                     // This shouldn't happen for BA...
                     ex.printStackTrace();
@@ -865,6 +1082,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
                 m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
@@ -1129,6 +1350,18 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         private void disableMunitionEditing() {
             for (int i = 0; i < m_vMunitions.size(); i++) {
                 m_vMunitions.get(i).setEnabled(false);
+            }
+        }
+        
+        private void disableAPMEditing() {
+            for (int i = 0; i < m_vAPMounts.size(); i++) {
+                m_vAPMounts.get(i).setEnabled(false);
+            }
+        }
+        
+        private void disableMEAEditing() {
+            for (int i = 0; i < m_vMEAdaptors.size(); i++) {
+                m_vMEAdaptors.get(i).setEnabled(false);
             }
         }
 

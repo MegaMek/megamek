@@ -2837,6 +2837,7 @@ M,3055-IS/Clan3071-IS/Clan,3055-(allowed to all)3071-(allowed to all),Heavy Batt
 M,3054-IS/Clan3071-IS/Clan,3054-(allowed to all)3071-(allowed to all),Heavy Battle Claw (w/ Vibro-Claws),BAHeavyBattleClawVibro,
 M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),BAIndustrialDrill,
 M,3071-IS/Clan2415-IS/Clan,3071-(allowed to all)2415-(allowed to all),BASalvageArm,
+M,3071-IS/Clan2110-IS/Clan,3071-(allowed to all)2110-(allowed to all),BAMEA,
 M,3071-IS/Clan2110-IS/Clan,3071-(allowed to all)2110-(allowed to all),BAArmoredGlove,
 M,3071-Inner Sphere3062-Inner Sphere,3071-IS_TW_Non_Box3062-IS_TW_Non_Box,BA-Magnetic Clamp,Magnetic Clamp,
 M,2870-IS/Clan3071-IS/Clan,2870-(allowed to all)3071-(allowed to all),BAAPMount,

@@ -100,10 +100,10 @@ public class PhysicalInfo {
      */
     protected PhysicalAttackAction buildAction(PhysicalAttackType attackType, int shooterId, Targetable target) {
         if (attackType.isPunch()) {
-            int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? Mech.LOC_RARM : Mech.LOC_LARM;
+            int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? PunchAttackAction.RIGHT : PunchAttackAction.LEFT;
             return new PunchAttackAction(shooterId, target.getTargetType(), target.getTargetId(), armId, false, false);
         } else if (attackType.isKick()) {
-            int legId = PhysicalAttackType.RIGHT_KICK == attackType ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+            int legId = PhysicalAttackType.RIGHT_KICK == attackType ? KickAttackAction.RIGHT : KickAttackAction.LEFT;
             return new KickAttackAction(shooterId, target.getTargetType(), target.getTargetId(), legId);
         } else {
             // todo handle other physical attack types.
@@ -149,7 +149,6 @@ public class PhysicalInfo {
             setExpectedDamageOnHit(0);
             return;
         }
-        Mech targetMech = (Mech) getTarget();
 
         if (shooterState == null) {
             shooterState = new EntityState(getShooter());
@@ -215,7 +214,12 @@ public class PhysicalInfo {
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
         setKillProbability(0);
 
+        if (!(getTarget() instanceof Mech)) {
+            return;
+        }
+
         // now guess how many critical hits will be done
+        Mech targetMech = (Mech) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
             while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)) {

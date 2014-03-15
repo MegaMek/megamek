@@ -105,6 +105,7 @@ v0.37.9-dev (SVN)
     (I had to change Entity.getTotalWeaponList to return the actual list and 
     not a copy, which appeared to not be necessary)
 + Bug: Changing ammo type on BA would change the number of shots selected
++ Bug [#3999]: Renamed all .MTF to .mtf
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

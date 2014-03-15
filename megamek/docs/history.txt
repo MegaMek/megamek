@@ -101,6 +101,10 @@ v0.37.9-dev (SVN)
     even higher weighting).  This should (hopefully) prove useful for escort and headhunting type missions.
 + Bug [#4072]: Entity sprites "blinking" out of drawing since revisions after
     r10659.
++ Bug: Changing the AP weapon mounted would cause a crash when starting the game
+    (I had to change Entity.getTotalWeaponList to return the actual list and 
+    not a copy, which appeared to not be necessary)
++ Bug: Changing ammo type on BA would change the number of shots selected
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

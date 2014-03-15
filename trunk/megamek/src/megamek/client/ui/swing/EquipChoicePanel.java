@@ -833,6 +833,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         && m_APmounted.getLinked().getType() != apType){
                     entity.getEquipment().remove(m_APmounted.getLinked());
                     entity.getWeaponList().remove(m_APmounted.getLinked());
+                    entity.getTotalWeaponList().remove(m_APmounted.getLinked());
                 }
                 
                 // Did the selection not change, or no weapon was selected
@@ -1035,6 +1036,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_num_shots.removeAllItems();
                         int shotsPerTon = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
+                        // BA always have a certain number of shots per slot
+                        if (entity instanceof BattleArmor){
+                            shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                        }
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
                         }

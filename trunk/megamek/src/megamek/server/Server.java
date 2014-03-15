@@ -19952,6 +19952,8 @@ public class Server implements Runnable {
                             int new_loc = a.getOppositeLocation(hit
                                     .getLocation());
                             damage = Math.min(damage, te.getArmor(new_loc));
+                            // We don't want to deal negative damage
+                            damage = Math.max(damage,0);
                             r = new Report(6065);
                             r.subject = te_n;
                             r.indent(2);

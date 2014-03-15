@@ -99,6 +99,8 @@ v0.37.9-dev (SVN)
 + Added the ability to add enemy units to Princess's Strategic Targets list.  Units on this list will be weighted about
     the same as sub-commander's (though a unit could be both a commander/sub-commander and a strategic target for an
     even higher weighting).  This should (hopefully) prove useful for escort and headhunting type missions.
++ Bug [#4072]: Entity sprites "blinking" out of drawing since revisions after
+    r10659.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

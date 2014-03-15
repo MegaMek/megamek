@@ -24208,8 +24208,9 @@ public class Server implements Runnable {
                             || (externalUnits.contains(other) && !survived)) {
                         // Nope.
                         other.setDestroyed(true);
+                        // We need to unload the unit, since it's ID goes away
+                        entity.unload(other);
                         game.moveToGraveyard(other.getId());
-                        entityUpdate(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6370);
                         r.subject = other.getId();
@@ -24224,8 +24225,9 @@ public class Server implements Runnable {
                             || other.isLocationProhibited(curPos)) {
                         // Nope.
                         other.setDestroyed(true);
+                        // We need to unload the unit, since it's ID goes away
+                        entity.unload(other);
                         game.moveToGraveyard(other.getId());
-                        entityUpdate(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6375);
                         r.subject = other.getId();

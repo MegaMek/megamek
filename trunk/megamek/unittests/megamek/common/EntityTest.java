@@ -87,7 +87,7 @@ public class EntityTest {
         
         // Test 1/1
         try {
-            f = new File("data/mechfiles/mechs/3039/Exterminator EXT-4A.MTF");
+            f = new File("data/mechfiles/mechs/3039/Exterminator EXT-4A.mtf");
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;

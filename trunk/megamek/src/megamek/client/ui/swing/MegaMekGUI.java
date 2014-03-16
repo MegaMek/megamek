@@ -552,7 +552,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // popup options dialog
-        GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions());
+        GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions(), false);
         god.update(g.getOptions());
         god.setEditable(true);
         god.setVisible(true);

@@ -14,8 +14,6 @@
 
 package megamek.common;
 
-import gd.xml.ParseException;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -420,7 +419,7 @@ public class EntityListFile {
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<unit>");
+        output.write("<unit version=\"" + MegaMek.VERSION + "\" >");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
 
@@ -845,19 +844,15 @@ public class EntityListFile {
     public static Vector<Entity> loadFrom(File file) throws IOException {
 
         // Create an empty parser.
-        XMLStreamParser parser = new XMLStreamParser();
+        MULParser parser = new MULParser();
 
         // Open up the file.
         InputStream listStream = new FileInputStream(file);
 
         // Read a Vector from the file.
-        try {
-            parser.parse(listStream);
-            listStream.close();
-        } catch (ParseException excep) {
-            excep.printStackTrace(System.err);
-            throw new IOException("Unable to read from: " + file);
-        }
+        parser.parse(listStream);
+        listStream.close();
+
 
         // Was there any error in parsing?
         if (parser.hasWarningMessage()) {

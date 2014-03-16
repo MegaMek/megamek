@@ -112,6 +112,10 @@ v0.37.9-dev (SVN)
 + Bug: Tanks with stunned crews could spot for indirect fire
 + Bug [#3672]: Starting a scenario resets all game options to default
 + Fixed an issue with Princess attempting impossible physical attacks.
++ Bug [#3669]: Random Names bad encoding (major refactorization of MUL parsing)
++ Bug: Reading in bomb choices from a MUL file threw an 
+    ArrayIndexOutOfBoundsException:  bomb types were saved as numbers but were
+    being parsed as names
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

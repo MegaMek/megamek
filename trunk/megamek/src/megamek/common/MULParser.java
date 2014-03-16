@@ -89,6 +89,8 @@ public class MULParser {
     private static final String DRIVER = "driver";
     private static final String COMMANDER = "commander";
     private static final String DEPLOYMENT = "deployment";
+    private static final String VELOCITY = "velocity";
+    private static final String ALTITUDE = "altitude";
     private static final String AUTOEJECT = "autoeject";
     private static final String CONDEJECTAMMO = "condejectammo";
     private static final String CONDEJECTENGINE = "condejectengine";
@@ -379,6 +381,19 @@ public class MULParser {
             entity.setDeployRound(deployround);
         } catch (Exception e) {
             entity.setDeployRound(0);
+        }
+        
+        if (entity instanceof Aero){
+            int velocity = Integer.parseInt(entityTag.getAttribute(VELOCITY));
+            int altitude = Integer.parseInt(entityTag.getAttribute(ALTITUDE));
+            Aero a = (Aero) entity;
+            a.setCurrentVelocity(velocity);
+            a.setNextVelocity(velocity);
+            if (altitude <= 0) {
+                a.land();
+            } else {
+                a.liftOff(altitude);
+            }
         }
 
         // Camo

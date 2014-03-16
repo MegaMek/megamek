@@ -116,6 +116,7 @@ v0.37.9-dev (SVN)
 + Bug: Reading in bomb choices from a MUL file threw an 
     ArrayIndexOutOfBoundsException:  bomb types were saved as numbers but were
     being parsed as names
++ Bug: MUL files weren't saving velocity and altitude information for Aeros
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -1,0 +1,149 @@
+Version:1.1
+Crosscut ForestryMech
+ED-X4
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2876
+Source:TRO VA
+Rules Level:2
+
+Mass:30
+Engine:90 ICE Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:0 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Industrial (Inner Sphere)
+LA Armor:3
+RA Armor:3
+LT Armor:5
+RT Armor:5
+CT Armor:5
+HD Armor:4
+LL Armor:4
+RL Armor:4
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Chainsaw
+Chainsaw
+Chainsaw
+Chainsaw
+Chainsaw
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cargo (1 ton)
+Cargo (1 ton)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

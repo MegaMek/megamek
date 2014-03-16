@@ -109,6 +109,7 @@ v0.37.9-dev (SVN)
 + Bug [#4063]: Mixed Tech MASC verification failure
 + Bug [#3999]: Renamed all .BLK to .blk
 + Data: New Images and Units.  Fixes to RATs.
++ Bug: Tanks with stunned crews could spot for indirect fire
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -125,6 +125,12 @@ public class MULParser {
     private static final String BOMBS = "bombs";
     private static final String BOMB = "bomb";
     private static final String LOAD = "load";
+    private static final String BA_MEA = "modularEquipmentMount";
+    private static final String BA_APM = "antiPersonnelMount";
+    private static final String BA_APM_MOUNT_NUM = "baAPMMountNum";
+    private static final String BA_APM_TYPE_NAME = "baAPMTypeName";
+    private static final String BA_MEA_MOUNT_LOC = "baMEAMountLoc";
+    private static final String BA_MEA_TYPE_NAME = "baMEATypeName";
 
     /**
      * Special values recognized by this parser.
@@ -296,6 +302,10 @@ public class MULParser {
                     parseBombs(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(C3I)){
                     parseC3I(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(BA_MEA)){
+                    parseBAMEA(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(BA_APM)){
+                    parseBAAPM(currEle, entity);
                 }
             } else {
                 continue;
@@ -1542,6 +1552,140 @@ public class MULParser {
                 continue;
             }
         }
+    }
+    
+    /**
+     * Parase a modularEquipmentMount tag for the supplied <code>Entity</code>.
+     * 
+     * @param meaTag
+     * @param entity
+     */
+    private void parseBAMEA(Element meaTag, Entity entity){
+        if (!(entity instanceof BattleArmor)){
+            warning.append("Found a BA MEA tag but Entity is not " +
+            		"BattleArmor!\n");
+            return;
+        }
+        
+        String meaMountLocString = meaTag.getAttribute(BA_MEA_MOUNT_LOC);
+        String manipTypeName = meaTag.getAttribute(BA_MEA_TYPE_NAME);
+        
+        // Make sure we got a mount number
+        if (meaMountLocString.length() == 0){
+            warning.append("antiPersonnelMount tag does not specify " +
+                    "a baMeaMountLoc!\n");
+            return;
+        }
+        
+        // We could have no mounted manipulator
+        EquipmentType manipType = null;
+        if (manipTypeName.length() > 0){
+            manipType = EquipmentType.get(manipTypeName);
+        }
+        
+        // Find the Mounted instance for the MEA 
+        Mounted mountedManip = null;
+        int meaMountLoc = Integer.parseInt(meaMountLocString);
+        boolean foundMea = false;
+        for (Mounted m : entity.getEquipment()){
+            if (m.getBaMountLoc() != meaMountLoc){
+                continue;
+            }
+            if (m.getType().hasFlag(MiscType.F_BA_MEA)){
+                foundMea = true;
+                break;
+            }                
+        }
+        if (!foundMea){
+            warning.append("No modular equipment mount found in specified " +
+            		"location! Location: " + meaMountLoc + "\n");
+            return;
+        }
+        if (meaMountLoc == BattleArmor.MOUNT_LOC_LARM){
+            mountedManip = ((BattleArmor)entity).getLeftManipulator();
+        } else if (meaMountLoc == BattleArmor.MOUNT_LOC_RARM){
+            mountedManip = ((BattleArmor)entity).getRightManipulator();
+        }
+
+        if (mountedManip != null){
+            entity.getEquipment().remove(mountedManip);
+            entity.getMisc().remove(mountedManip);
+        }            
+        
+        // Was no manipulator selected?
+        if (manipType == null){
+            return;
+        }
+            
+        // Add the newly mounted maniplator
+        try{
+            int baMountLoc = mountedManip.getBaMountLoc();
+            mountedManip = entity.addEquipment(manipType, 
+                    mountedManip.getLocation());
+            mountedManip.setBaMountLoc(baMountLoc);
+        } catch (LocationFullException ex){
+            // This shouldn't happen for BA...
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Parase a antiPersonnelMount tag for the supplied <code>Entity</code>.
+     * 
+     * @param meaTag
+     * @param entity
+     */
+    private void parseBAAPM(Element apmTag, Entity entity){
+        if (!(entity instanceof BattleArmor)){
+            warning.append("Found a BA APM tag but Entity is not " +
+                    "BattleArmor!\n");
+            return;
+        }
+        
+        String mountNumber = apmTag.getAttribute(BA_APM_MOUNT_NUM);
+        String apTypeName = apmTag.getAttribute(BA_APM_TYPE_NAME);
+        
+        // Make sure we got a mount number
+        if (mountNumber.length() == 0){
+            warning.append("antiPersonnelMount tag does not specify " +
+            		"a baAPMountNum!\n");
+            return;
+        }
+        
+        Mounted apMount = entity.getEquipment(Integer.parseInt(mountNumber));
+        // We may mount no AP weapon
+        EquipmentType apType = null;
+        if (apTypeName.length() > 0){
+            apType = EquipmentType.get(apTypeName);
+        }
+        
+        // Remove any currently mounted AP weapon
+        if (apMount.getLinked() != null 
+                && apMount.getLinked().getType() != apType){
+            entity.getEquipment().remove(apMount.getLinked());
+            entity.getWeaponList().remove(apMount.getLinked());
+            entity.getTotalWeaponList().remove(apMount.getLinked());
+        }
+        
+        // Did the selection not change, or no weapon was selected
+        if ((apMount.getLinked() != null 
+                && apMount.getLinked().getType() == apType)
+                || (apType == null)){
+            return;
+        }
+            
+        // Add the newly mounted weapon
+        try{
+            Mounted newWeap =  entity.addEquipment(apType, 
+                    apMount.getLocation());
+            apMount.setLinked(newWeap);
+            newWeap.setLinked(apMount);
+            newWeap.setAPMMounted(true);
+        } catch (LocationFullException ex){
+            // This shouldn't happen for BA...
+            ex.printStackTrace();
+        }
+        
     }
     
     /**

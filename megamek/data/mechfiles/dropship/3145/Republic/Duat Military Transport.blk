@@ -120,9 +120,11 @@ CargoBay:678.5:1
 
 <Nose Equipment>
 (B) ISCruiseMissile50
+ISCruiseMissile50Ammo:20
 (B) ISCruiseMissile50
+ISCruiseMissile50Ammo:20
 (B) ISCruiseMissile50
-ISCruiseMissile50Ammo:60
+ISCruiseMissile50Ammo:20
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle

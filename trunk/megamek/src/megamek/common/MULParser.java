@@ -1516,8 +1516,8 @@ public class MULParser {
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
-                        bombChoices[Integer.parseInt(type)] += 
-                                Integer.parseInt(load);
+                        bombChoices[BombType.getBombTypeFromInternalName(type)] 
+                                += Integer.parseInt(load);
                         ((Aero) entity).setBombChoices(bombChoices);
                     }
                 }

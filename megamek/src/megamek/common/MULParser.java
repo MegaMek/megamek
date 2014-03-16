@@ -394,15 +394,22 @@ public class MULParser {
         }
         
         if (entity instanceof Aero){
-            int velocity = Integer.parseInt(entityTag.getAttribute(VELOCITY));
-            int altitude = Integer.parseInt(entityTag.getAttribute(ALTITUDE));
+            String velString = entityTag.getAttribute(VELOCITY);
+            String altString = entityTag.getAttribute(ALTITUDE);
+            
             Aero a = (Aero) entity;
-            a.setCurrentVelocity(velocity);
-            a.setNextVelocity(velocity);
-            if (altitude <= 0) {
-                a.land();
-            } else {
-                a.liftOff(altitude);
+            if (velString.length() > 0){
+                int velocity = Integer.parseInt(velString);
+                a.setCurrentVelocity(velocity);
+                a.setNextVelocity(velocity);
+            }
+            if (altString.length() > 0){
+                int altitude = Integer.parseInt(altString);
+                if (altitude <= 0) {
+                    a.land();
+                } else {
+                    a.liftOff(altitude);
+                }    
             }
         }
 

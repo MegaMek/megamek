@@ -632,9 +632,10 @@ public class EntityListFile {
                     output.write("      <bombs>");
                     output.write(CommonConstants.NL);
                     for (int type = 0; type < BombType.B_NUM; type++) {
+                        String typeName = BombType.getBombInternalName(type);
                         if (bombChoices[type] > 0) {
                             output.write("         <bomb type=\"");
-                            output.write(String.valueOf(type));
+                            output.write(typeName);
                             output.write("\" load=\"");
                             output.write(String.valueOf(bombChoices[type]));
                             output.write("\"/>");

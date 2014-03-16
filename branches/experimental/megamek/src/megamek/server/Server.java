@@ -19952,6 +19952,8 @@ public class Server implements Runnable {
                             int new_loc = a.getOppositeLocation(hit
                                     .getLocation());
                             damage = Math.min(damage, te.getArmor(new_loc));
+                            // We don't want to deal negative damage
+                            damage = Math.max(damage,0);
                             r = new Report(6065);
                             r.subject = te_n;
                             r.indent(2);
@@ -24208,8 +24210,9 @@ public class Server implements Runnable {
                             || (externalUnits.contains(other) && !survived)) {
                         // Nope.
                         other.setDestroyed(true);
+                        // We need to unload the unit, since it's ID goes away
+                        entity.unload(other);
                         game.moveToGraveyard(other.getId());
-                        entityUpdate(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6370);
                         r.subject = other.getId();
@@ -24224,8 +24227,9 @@ public class Server implements Runnable {
                             || other.isLocationProhibited(curPos)) {
                         // Nope.
                         other.setDestroyed(true);
+                        // We need to unload the unit, since it's ID goes away
+                        entity.unload(other);
                         game.moveToGraveyard(other.getId());
-                        entityUpdate(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6375);
                         r.subject = other.getId();

@@ -60,6 +60,7 @@ public class Princess extends BotClient {
     public static final String CMD_HERDING = "he";
     public static final String CMD_BRAVERY = "br";
     public static final String CMD_TARGET = "ta";
+    public static final String CMD_PRIORITY = "pr";
 
     private static final Logger logger = new Logger();
 
@@ -71,7 +72,8 @@ public class Princess extends BotClient {
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private Precognition precognition;
-    private final Set<Coords> strategicTargets = new HashSet<Coords>();
+    private final Set<Coords> strategicBuildingTargets = new HashSet<>();
+    private final Set<Integer> priorityUnitTargets = new HashSet<>();
     private boolean flee = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
     private boolean mustFlee = false;
@@ -112,34 +114,41 @@ public class Princess extends BotClient {
 
     public void setShouldFlee(boolean shouldFlee, String reason) {
         log(getClass(), "setShouldFlee(boolean, String)", LogLevel.INFO, "Setting Should Flee " + shouldFlee +
-                " because: " + reason);
+                                                                         " because: " + reason);
         flee = shouldFlee;
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
         log(getClass(), "setBehaviorSettings(BehaviorSettings)", LogLevel.INFO, "New behavior settings for " +
-                getName() + "\n" +
-                behaviorSettings.toLog());
+                                                                                getName() + "\n" +
+                                                                                behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (PrincessException e) {
             log(getClass(), "setBehaviorSettings(BehaviorSettings)", e);
             return;
         }
-        getStrategicTargets().clear();
+        getStrategicBuildingTargets().clear();
         setShouldFlee(behaviorSettings.shouldAutoFlee(), "Configured to auto flee.");
         if (shouldFlee()) {
             return;
         }
 
-        for (String targetCoords : behaviorSettings.getStrategicTargets()) {
+        for (String targetCoords : behaviorSettings.getStrategicBuildingTargets()) {
             if (!StringUtil.isPositiveInteger(targetCoords) || (targetCoords.length() != 4)) {
                 continue;
             }
             String x = targetCoords.substring(0, 2);
             String y = targetCoords.replaceFirst(x, "");
             Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
-            getStrategicTargets().add(coords);
+            getStrategicBuildingTargets().add(coords);
+        }
+
+        for (int priorityUnit : behaviorSettings.getPriorityUnitTargets()) {
+            if (priorityUnit <= 0) {
+                continue;
+            }
+            getPriorityUnitTargets().add(priorityUnit);
         }
     }
 
@@ -151,8 +160,12 @@ public class Princess extends BotClient {
         return behaviorSettings;
     }
 
-    public Set<Coords> getStrategicTargets() {
-        return strategicTargets;
+    public Set<Coords> getStrategicBuildingTargets() {
+        return strategicBuildingTargets;
+    }
+
+    public Set<Integer> getPriorityUnitTargets() {
+        return priorityUnitTargets;
     }
 
     @Override
@@ -190,7 +203,7 @@ public class Princess extends BotClient {
             if (startingCoords.length == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
                     "No valid locations to deploy "
-                            + getEntity(entityNum).getDisplayName());
+                    + getEntity(entityNum).getDisplayName());
             }
 
             // get the coordinates I can deploy on
@@ -200,7 +213,7 @@ public class Princess extends BotClient {
                     METHOD_NAME,
                     LogLevel.ERROR,
                     "getCoordsAround gave no location for "
-                            + getEntity(entityNum).getChassis());
+                    + getEntity(entityNum).getChassis());
             }
 
             // first coordinate that it is legal to put this unit on now find some sort of reasonable facing. If there
@@ -216,7 +229,7 @@ public class Princess extends BotClient {
             // if I haven't found a decent facing, then at least face towards the center of the board
             if (decentFacing == -1) {
                 Coords center = new Coords(game.getBoard().getWidth() / 2, game
-                        .getBoard().getHeight() / 2);
+                                                                                   .getBoard().getHeight() / 2);
                 decentFacing = deployCoords.direction(center);
             }
             deploy(entityNum, deployCoords, decentFacing, 0);
@@ -361,8 +374,8 @@ public class Princess extends BotClient {
         for (Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
             if (entity.isOffBoard() || (entity.getPosition() == null)
-                    || !entity.isSelectableThisTurn()
-                    || !getGame().getTurn().isValidEntity(entity, getGame())) {
+                || !entity.isSelectableThisTurn()
+                || !getGame().getTurn().isValidEntity(entity, getGame())) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -439,7 +452,7 @@ public class Princess extends BotClient {
                     fireControl.calculateUtility(right_punch);
                     if (right_punch.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (right_punch.getUtility() > best_attack.getUtility())) {
+                            || (right_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = right_punch;
                         }
                     }
@@ -448,7 +461,7 @@ public class Princess extends BotClient {
                     fireControl.calculateUtility(left_punch);
                     if (left_punch.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (left_punch.getUtility() > best_attack.getUtility())) {
+                            || (left_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = left_punch;
                         }
                     }
@@ -456,7 +469,7 @@ public class Princess extends BotClient {
                             hitter, e, PhysicalAttackType.RIGHT_KICK, game, this, false);
                     if (right_kick.getUtility() > 0) {
                         if ((best_attack == null)
-                                || (right_kick.getUtility() > best_attack.getUtility())) {
+                            || (right_kick.getUtility() > best_attack.getUtility())) {
                             best_attack = right_kick;
                         }
                     }
@@ -464,7 +477,7 @@ public class Princess extends BotClient {
                             hitter, e, PhysicalAttackType.LEFT_KICK, game, this, false);
                     if (left_kick.getExpectedDamage() > 0) {
                         if ((best_attack == null)
-                                || (left_kick.getUtility() > best_attack.getUtility())) {
+                            || (left_kick.getUtility() > best_attack.getUtility())) {
                             best_attack = left_kick;
                         }
                     }
@@ -495,8 +508,8 @@ public class Princess extends BotClient {
 
     protected boolean wantsToFlee(Entity entity) {
         return shouldFlee()
-                || isMustFlee()
-                || (entity.isCrippled() && getBehaviorSettings().isForcedWithdrawal());
+               || isMustFlee()
+               || (entity.isCrippled() && getBehaviorSettings().isForcedWithdrawal());
     }
 
     protected boolean isFleeing(Entity entity) {
@@ -568,8 +581,8 @@ public class Princess extends BotClient {
             }
 
             MovePath.MoveStepType type = (getBooleanOption("tacops_careful_stand") ?
-                    MovePath.MoveStepType.CAREFUL_STAND :
-                    MovePath.MoveStepType.GET_UP);
+                                          MovePath.MoveStepType.CAREFUL_STAND :
+                                          MovePath.MoveStepType.GET_UP);
             MoveStep getUp = new MoveStep(movePath, type);
 
             // If our odds to get up are equal to or worse than the threshold, consider ourselves immobile.
@@ -668,12 +681,12 @@ public class Princess extends BotClient {
                 String timeestimate = "unknown.";
                 if (thisTimeEstimate != 0) {
                     timeestimate = Integer.toString((int) thisTimeEstimate)
-                            + " seconds";
+                                   + " seconds";
                 }
                 String message = "Moving " + entity.getChassis() + ". "
-                        + Long.toString(paths.size())
-                        + " paths to consider.  Estimated time to completion: "
-                        + timeestimate;
+                                 + Long.toString(paths.size())
+                                 + " paths to consider.  Estimated time to completion: "
+                                 + timeestimate;
                 sendChat(message);
             }
 
@@ -703,7 +716,7 @@ public class Princess extends BotClient {
             precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
-                    + bestpath.rank);
+                                                        + bestpath.rank);
             return bestpath.path;
         } finally {
             methodEnd(getClass(), METHOD_NAME);
@@ -740,7 +753,7 @@ public class Princess extends BotClient {
         try {
             // reset strategic targets
             fireControl.setAdditionalTargets(new ArrayList<Targetable>());
-            for (Coords strategicTarget : getStrategicTargets()) {
+            for (Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (game.getBoard().getBuildingAt(strategicTarget) == null) {
                     sendChat("No building to target in Hex " + strategicTarget.toFriendlyString() + ", ignoring.");
                 } else {
@@ -760,11 +773,11 @@ public class Princess extends BotClient {
                         Entity entity = i.nextElement();
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
                         if ((entity instanceof GunEmplacement)
-                                && entity.getOwner().isEnemyOf(getLocalPlayer())
-                                && (fireControl.getAdditionalTargets().indexOf(bt) == -1)) {
+                            && entity.getOwner().isEnemyOf(getLocalPlayer())
+                            && (fireControl.getAdditionalTargets().indexOf(bt) == -1)) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " + coords.toFriendlyString()
-                                             + " designated target due to Gun Emplacement.");
+                                     + " designated target due to Gun Emplacement.");
                         }
                     }
                 }
@@ -809,11 +822,11 @@ public class Princess extends BotClient {
                     for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         if (entity instanceof GunEmplacement
-                                && entity.getOwner().isEnemyOf(getLocalPlayer())
-                                && !getStrategicTargets().contains(coords)) {
-                            getStrategicTargets().add(coords);
+                            && entity.getOwner().isEnemyOf(getLocalPlayer())
+                            && !getStrategicBuildingTargets().contains(coords)) {
+                            getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +
-                                             " designated target due to Gun Emplacement.");
+                                     " designated target due to Gun Emplacement.");
                         }
                     }
                 }

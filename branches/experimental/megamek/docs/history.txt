@@ -98,6 +98,20 @@ v0.37.9-dev (SVN)
     Compute.inSensorRange
 + Bug [#4068]: In double-blind, units detected by sensors only should not be
     aware
++ Added the ability to add enemy units to Princess's Strategic Targets list.  Units on this list will be weighted about
+    the same as sub-commander's (though a unit could be both a commander/sub-commander and a strategic target for an
+    even higher weighting).  This should (hopefully) prove useful for escort and headhunting type missions.
++ Bug [#4072]: Entity sprites "blinking" out of drawing since revisions after
+    r10659.
++ Bug: Changing the AP weapon mounted would cause a crash when starting the game
+    (I had to change Entity.getTotalWeaponList to return the actual list and 
+    not a copy, which appeared to not be necessary)
++ Bug: Changing ammo type on BA would change the number of shots selected
++ Bug [#3999]: Renamed all .MTF to .mtf
++ Bug [#4063]: Mixed Tech MASC verification failure
++ Bug [#3999]: Renamed all .BLK to .blk
++ Data: New Images and Units.  Fixes to RATs.
++ Bug: Tanks with stunned crews could spot for indirect fire
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

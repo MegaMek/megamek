@@ -570,7 +570,7 @@ public class MiscType extends EquipmentType {
                     return (float) (Math
                             .ceil((e.getWeightEngine(entity) / 10.0f) * 2.0f) / 2.0);
                 }
-                if (entity.isClan()) {
+                if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                     return Math.round(entity.getWeight() / 25.0f);
                 }
                 return Math.round(entity.getWeight() / 20.0f);
@@ -920,7 +920,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
-            if (entity.isClan()) {
+            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return (int) Math.round(entity.getWeight() / 25.0);
             }
             return (int) Math.round(entity.getWeight() / 20.0);

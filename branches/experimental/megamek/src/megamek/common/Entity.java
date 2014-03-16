@@ -2984,7 +2984,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public List<Mounted> getTotalWeaponList() {
         // return full weapon list even bay mounts and weapon groups
-        return new ArrayList<Mounted>(totalWeaponList);
+        return totalWeaponList;
     }
 
     public ArrayList<Mounted> getWeaponBayList() {

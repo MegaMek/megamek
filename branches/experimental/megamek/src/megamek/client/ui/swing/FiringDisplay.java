@@ -1429,6 +1429,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && clientgui.getClient().getGame().getOptions().booleanOption(
                         "indirect_fire")) { //$NON-NLS-1$)
             setSpotEnabled(true);
+        } else {
+            setSpotEnabled(false);
         }
 
         // update target panel

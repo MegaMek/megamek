@@ -2529,6 +2529,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if ((localPlayer != null) 
+                    && game.getOptions().booleanOption("double_blind")
                     && entity.getOwner().isEnemyOf(localPlayer) 
                     && !entity.isVisibleToEnemy()
                     && !entity.isDetectedByEnemy()){

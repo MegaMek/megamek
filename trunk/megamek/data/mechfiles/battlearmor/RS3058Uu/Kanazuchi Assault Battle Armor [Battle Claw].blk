@@ -34,7 +34,8 @@ biped
 ISBAMediumLaser:RA
 ISBASRM2OS:Body
 ISBASRM2OS:Body
-BAHeavyBattleClaw:RA
+BAMEA:LA
+BAHeavyBattleClaw:LA
 BAAPMount:Body
 InfantryAssaultRifle:Body:APM
 BAAPMount:Body

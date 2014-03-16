@@ -13,19 +13,19 @@ BattleArmor
 </UnitType>
 
 <Name>
-Cuchulainn Support Armor
+Krise PA(L)
 </Name>
 
 <Model>
-(Clan Model)
+(Standard)
 </Model>
 
 <year>
-3134
+3067
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -33,27 +33,24 @@ Jump
 </motion_type>
 
 <cruiseMP>
-2
+3
 </cruiseMP>
 
 <armor_type>
-33
+28
 </armor_type>
 
 <armor_tech>
-6
+2
 </armor_tech>
 
 <Point Equipment>
-CLDetachableWeaponPack:RA
-BACLERMediumPulseLaser:DWP
-BABasicManipulator:LA
+BASalvageArm:LA
 BABasicManipulator:RA
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
+CLImprovedSensors:Body
+BACuttingTorch:RA
+BASearchlight:LA
+BAExtendedLifeSupport:Body
 </Point Equipment>
 
 <Trooper 1 Equipment>
@@ -72,7 +69,7 @@ Clan BA Stealth (Improved):Body
 </Trooper 5 Equipment>
 
 <source>
-TRO 3145 Lyran Commonwealth
+TRO VA
 </source>
 
 <chassis>
@@ -80,11 +77,11 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-12
+1
 </armor>
 
 <Trooper Count>
@@ -92,6 +89,6 @@ biped
 </Trooper Count>
 
 <weightclass>
-3
+1
 </weightclass>
 

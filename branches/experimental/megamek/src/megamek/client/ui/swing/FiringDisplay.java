@@ -58,7 +58,6 @@ import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.INarcPod;
-import megamek.common.IPlayer;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;

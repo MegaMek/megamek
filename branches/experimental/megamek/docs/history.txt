@@ -112,6 +112,19 @@ v0.37.9-dev (SVN)
 + Bug [#3999]: Renamed all .BLK to .blk
 + Data: New Images and Units.  Fixes to RATs.
 + Bug: Tanks with stunned crews could spot for indirect fire
++ Bug [#3672]: Starting a scenario resets all game options to default
++ Fixed an issue with Princess attempting impossible physical attacks.
++ Bug [#3669]: Random Names bad encoding (major refactorization of MUL parsing)
++ Bug: Reading in bomb choices from a MUL file threw an 
+    ArrayIndexOutOfBoundsException:  bomb types were saved as numbers but were
+    being parsed as names
++ Bug: MUL files weren't saving velocity and altitude information for Aeros
++ Bug: Antipersonel Mount and Modular Equipment Mount changes via the 
+    CustomMechDialog were not saved in the MUL file
++ Bug: EntityListFile.getLocString was using Entity.getArmorForReal and 
+    BattleArmor.getOArmor to make armor comparisons at the squad level: one will
+    return -1  and the other will return 0.  Added code to make the propr 
+    comparisons for BA
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

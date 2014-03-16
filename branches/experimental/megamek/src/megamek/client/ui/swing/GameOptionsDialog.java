@@ -88,6 +88,13 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             .getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    
+    /**
+     * When the OK button is pressed, the options can be saved to a file; this
+     * behavior happens by default but there are some situations where the 
+     * options should not be saved, such as when loading a scenario.
+     */
+    private boolean performSave = true;
 
     /**
      * Initialize this dialog.
@@ -148,8 +155,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      * @param frame - the <code>Frame</code> parent of this dialog.
      * @param options - the <code>GameOptions</code> to be displayed.
      */
-    public GameOptionsDialog(JFrame frame, GameOptions options) {
-        super(frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
+    public GameOptionsDialog(JFrame frame, GameOptions options){
+        new GameOptionsDialog(frame, options, true);
+    }
+    
+    public GameOptionsDialog(JFrame frame, GameOptions options, 
+            boolean shouldSave){
+        super(frame, Messages.getString("GameOptionsDialog.title"), true); 
+        //$NON-NLS-1$
+        performSave = shouldSave;        
         init(frame, options);
         butOkay.setEnabled(false);
     }
@@ -605,7 +619,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             if (client != null) {
                 send();
             }
-            doSave();
+            if (performSave){
+                doSave();
+            }
         } else if (e.getSource().equals(butDefaults)) {
             resetToDefaults();
             return;

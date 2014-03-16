@@ -14,8 +14,6 @@
 
 package megamek.common;
 
-import gd.xml.ParseException;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -170,7 +169,13 @@ public class EntityListFile {
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.
             if (!isDestroyed) {
-                if (entity.getOArmor(loc) != entity.getArmorForReal(loc)) {
+                int currentArmor;
+                if (entity instanceof BattleArmor){
+                    currentArmor = entity.getArmor(loc);
+                } else {
+                    currentArmor = entity.getArmorForReal(loc);
+                }
+                if (entity.getOArmor(loc) != currentArmor) {
                     thisLoc.append("         <armor points=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity
                             .getArmorForReal(loc)));
@@ -420,7 +425,7 @@ public class EntityListFile {
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<unit>");
+        output.write("<unit version=\"" + MegaMek.VERSION + "\" >");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
 
@@ -444,6 +449,12 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
+            if (entity instanceof Aero){
+                output.write("\" velocity=\"");
+                output.write(((Aero)entity).getCurrentVelocity() + "");
+                output.write("\" altitude=\"");
+                output.write(((Aero)entity).getAltitude() + "");
+            }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
                 output.write(entity.getExternalIdAsString());
@@ -621,9 +632,10 @@ public class EntityListFile {
                     output.write("      <bombs>");
                     output.write(CommonConstants.NL);
                     for (int type = 0; type < BombType.B_NUM; type++) {
+                        String typeName = BombType.getBombInternalName(type);
                         if (bombChoices[type] > 0) {
                             output.write("         <bomb type=\"");
-                            output.write(String.valueOf(type));
+                            output.write(typeName);
                             output.write("\" load=\"");
                             output.write(String.valueOf(bombChoices[type]));
                             output.write("\"/>");
@@ -667,6 +679,45 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getAeroCritString(a));
 
+            }
+            
+            if (entity instanceof BattleArmor) {
+                BattleArmor ba = (BattleArmor) entity;
+                for (Mounted m : entity.getEquipment()){
+                    if (m.getType().hasFlag(MiscType.F_BA_MEA)){
+                        Mounted manipulator = null;
+                        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+                            manipulator = ba.getLeftManipulator();
+                        } else if (m.getBaMountLoc() 
+                                == BattleArmor.MOUNT_LOC_RARM){
+                            manipulator = ba.getRightManipulator();
+                        }
+                        output.write("      <modularEquipmentMount ");
+                        output.write("baMEAMountLoc=\"" + m.getBaMountLoc()
+                                + "\" ");
+                        if (manipulator != null){                            
+                            output.write("baMEATypeName=\""
+                                    + manipulator.getType().getInternalName()
+                                    + "\" ");
+                        }
+                        output.write("/>");
+                        output.write(CommonConstants.NL);
+                    } else if (m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                        int mountIdx = entity.getEquipmentNum(m);
+                        EquipmentType apType = null;
+                        if (m.getLinked() != null){
+                            apType = m.getLinked().getType();
+                        }
+                        output.write("      <antiPersonnelMount ");
+                        output.write("baAPMMountNum=\"" + mountIdx + "\" ");
+                        if (apType != null){
+                            output.write("baAPMTypeName=\""
+                                    + apType.getInternalName() + "\" ");
+                        }
+                        output.write("/>");
+                        output.write(CommonConstants.NL);
+                    }
+                }
             }
 
             // Add the locations of this entity (if any are needed).
@@ -845,19 +896,15 @@ public class EntityListFile {
     public static Vector<Entity> loadFrom(File file) throws IOException {
 
         // Create an empty parser.
-        XMLStreamParser parser = new XMLStreamParser();
+        MULParser parser = new MULParser();
 
         // Open up the file.
         InputStream listStream = new FileInputStream(file);
 
         // Read a Vector from the file.
-        try {
-            parser.parse(listStream);
-            listStream.close();
-        } catch (ParseException excep) {
-            excep.printStackTrace(System.err);
-            throw new IOException("Unable to read from: " + file);
-        }
+        parser.parse(listStream);
+        listStream.close();
+
 
         // Was there any error in parsing?
         if (parser.hasWarningMessage()) {

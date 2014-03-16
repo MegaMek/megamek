@@ -252,11 +252,14 @@ public class Princess extends BotClient {
             if (plan != null) {
                 fireControl.loadAmmo(shooter, plan.getTarget());
 
-                log(getClass(), METHOD_NAME, plan.getDebugDescription(false));
+                log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " - Best Firing Plan: " +
+                                                            plan.getDebugDescription(true));
+
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(), plan.getEntityActionVector());
 
             } else {
+                log(getClass(), METHOD_NAME, LogLevel.INFO, "No best firing plan for " + shooter.getDisplayName());
                 sendAttackData(shooter.getId(), new Vector<EntityAction>(0));
             }
         } finally {
@@ -434,25 +437,38 @@ public class Princess extends BotClient {
         try {
             // get the first entity that can act this turn
             Entity first_entity = game.getFirstEntity(getMyTurn());
-            Entity hitter = first_entity;
             PhysicalInfo best_attack = null;
-            do {
-                log(getClass(), METHOD_NAME, "Calculating physical attacks for " + hitter.getDisplayName());
+            int firstEntityId = first_entity.getId();
+            int nextEntityId = firstEntityId;
 
-                // this is an array of all my enemies
-                List<Entity> enemies = getEnemyEntities();
+            // this is an array of all my enemies
+            List<Entity> enemies = getEnemyEntities();
+
+            do {
+                Entity hitter = game.getEntity(nextEntityId);
+                nextEntityId = game.getNextEntityNum(hitter.getId());
+
+                if (hitter.getPosition() == null) {
+                    continue;
+                }
+
+                log(getClass(), METHOD_NAME, LogLevel.INFO,
+                    "Calculating physical attacks for " + hitter.getDisplayName());
 
                 // cycle through potential enemies
                 for (Entity e : enemies) {
                     if (e.getPosition() == null) {
                         continue; // Skip enemies not on the board.
                     }
-                    PhysicalInfo right_punch = new PhysicalInfo(
-                            hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this, false);
+                    if (hitter.getPosition().distance(e.getPosition()) > 1) {
+                        continue;
+                    }
+
+                    PhysicalInfo right_punch = new PhysicalInfo(hitter, e, PhysicalAttackType.RIGHT_PUNCH, game, this,
+                                                                false);
                     fireControl.calculateUtility(right_punch);
                     if (right_punch.getUtility() > 0) {
-                        if ((best_attack == null)
-                            || (right_punch.getUtility() > best_attack.getUtility())) {
+                        if ((best_attack == null) || (right_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = right_punch;
                         }
                     }
@@ -475,7 +491,7 @@ public class Princess extends BotClient {
                     }
                     PhysicalInfo left_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_KICK, game, this, false);
-                    if (left_kick.getExpectedDamage() > 0) {
+                    if (left_kick.getUtility() > 0) {
                         if ((best_attack == null)
                             || (left_kick.getUtility() > best_attack.getUtility())) {
                             best_attack = left_kick;
@@ -484,21 +500,14 @@ public class Princess extends BotClient {
 
                 }
                 if (best_attack != null) {
-                    log(getClass(), METHOD_NAME, "Attack is " + best_attack.getDebugDescription());
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "Attack is " + best_attack.getDebugDescription());
                 } else {
-                    log(getClass(), METHOD_NAME, "No useful attack to be made");
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "No useful attack to be made");
                 }
                 if (best_attack != null) {
                     return best_attack.getAsPhysicalOption();
                 }
-                hitter = game.getEntity(game.getNextEntityNum(hitter.getId()));
-                // otherwise, check if the next entity can hit something
-                if (hitter.equals(first_entity)) {
-                    hitter = null; // getNextEntity is incorrect, it does not
-                    // return
-                    // null at the end, it returns the first entity
-                }
-            } while (hitter != null);
+            } while (nextEntityId != firstEntityId);
             // no one can hit anything anymore, so give up
             return null;
         } finally {

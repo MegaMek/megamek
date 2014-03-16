@@ -174,8 +174,8 @@ public class PhysicalInfo {
 
         // If we can't hit, set all values to 0 and return.
         if (getHitData().getValue() > 12) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
-                                                                  .append(getHitData().getValue()).toString());
+            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, msg.append("\n\tImpossible toHit: ")
+                                                                 .append(getHitData().getValue()).toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);

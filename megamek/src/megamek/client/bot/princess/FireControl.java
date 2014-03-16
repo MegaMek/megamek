@@ -75,9 +75,12 @@ public class FireControl {
     @SuppressWarnings("FieldCanBeLocal")
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
-    @SuppressWarnings("FieldCanBeLocal") private static double COMMANDER_UTILITY = 50.0;
-    @SuppressWarnings("FieldCanBeLocal") private static double SUB_COMMANDER_UTILITY = 25.0;
-    @SuppressWarnings("FieldCanBeLocal") private static double STRATEGIC_TARGET_UTILITY = 25.0;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double COMMANDER_UTILITY = 40.0;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double SUB_COMMANDER_UTILITY = 20.0;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double STRATEGIC_TARGET_UTILITY = 20.0;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1231,6 +1234,12 @@ public class FireControl {
      */
     void calculateUtility(PhysicalInfo physicalInfo) {
 
+        // If we can't hit, there's no point.
+        if (physicalInfo.getProbabilityToHit() <= 0.0) {
+            physicalInfo.setUtility(-10000);
+            return;
+        }
+
         double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
         utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
@@ -1799,6 +1808,7 @@ public class FireControl {
      * @return
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
+        final String METHOD_NAME = "getBestFiringPlan(Entity, IGame)";
 
         FiringPlan bestPlan = null;
 
@@ -1808,6 +1818,8 @@ public class FireControl {
         // Loop through each enemy and find the best plan for attacking them.
         for (Targetable enemy : enemies) {
             FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy, game);
+            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
+                    .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }

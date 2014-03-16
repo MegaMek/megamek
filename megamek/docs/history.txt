@@ -111,6 +111,7 @@ v0.37.9-dev (SVN)
 + Data: New Images and Units.  Fixes to RATs.
 + Bug: Tanks with stunned crews could spot for indirect fire
 + Bug [#3672]: Starting a scenario resets all game options to default
++ Fixed an issue with Princess attempting impossible physical attacks.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

@@ -443,6 +443,12 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
+            if (entity instanceof Aero){
+                output.write("\" velocity=\"");
+                output.write(((Aero)entity).getCurrentVelocity() + "");
+                output.write("\" altitude=\"");
+                output.write(((Aero)entity).getAltitude() + "");
+            }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
                 output.write(entity.getExternalIdAsString());

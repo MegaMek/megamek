@@ -1,0 +1,149 @@
+Version:1.1
+Pompier
+GM-3A
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3044
+Source:TRO VA
+Rules Level:3
+
+Mass:15
+Engine:30 Fuel Cell Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:1 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Heavy Industrial(Inner Sphere)
+LA Armor:2
+RA Armor:2
+LT Armor:2
+RT Armor:2
+CT Armor:3
+HD Armor:3
+LL Armor:2
+RL Armor:2
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Salvage Arm
+Salvage Arm
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Searchlight
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+MechSprayer
+Liquid Storage (1 ton)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

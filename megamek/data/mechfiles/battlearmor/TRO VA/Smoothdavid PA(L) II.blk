@@ -13,48 +13,50 @@ BattleArmor
 </UnitType>
 
 <Name>
-Cuchulainn Support Armor
+Smoothdavid PA(L)
 </Name>
 
 <Model>
-(Clan Model)
+II
 </Model>
 
 <year>
-3134
+3064
 </year>
 
 <type>
-Clan Level 3
+IS Level 2
 </type>
 
 <motion_type>
-Jump
+Leg
 </motion_type>
 
 <cruiseMP>
-2
+3
 </cruiseMP>
 
 <armor_type>
-33
+28
 </armor_type>
 
 <armor_tech>
-6
+-1
 </armor_tech>
 
-<Point Equipment>
-CLDetachableWeaponPack:RA
-BACLERMediumPulseLaser:DWP
-BABasicManipulator:LA
-BABasicManipulator:RA
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):LA
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-</Point Equipment>
+<Squad Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAAPMount:LA
+BAAPMount:RA
+BASearchlight:Body
+Infantry Auto Rifle:APM
+Infantry Auto Rifle:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
 
 <Trooper 1 Equipment>
 </Trooper 1 Equipment>
@@ -68,11 +70,8 @@ Clan BA Stealth (Improved):Body
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
 <source>
-TRO 3145 Lyran Commonwealth
+TRO VA
 </source>
 
 <chassis>
@@ -84,14 +83,14 @@ biped
 </jumpingMP>
 
 <armor>
-12
+1
 </armor>
 
 <Trooper Count>
-5
+4
 </Trooper Count>
 
 <weightclass>
-3
+0
 </weightclass>
 

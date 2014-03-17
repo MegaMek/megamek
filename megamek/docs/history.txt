@@ -125,6 +125,7 @@ v0.37.9-dev (SVN)
     comparisons for BA
 + Fixed the Random Map Generation dialog to see folders as well as "*.xml" files without having to switch to "all"
     files.
++ Fix of the previous fix of the Random Map Generation dialog (been too long since I last worked with a FileChooser).
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

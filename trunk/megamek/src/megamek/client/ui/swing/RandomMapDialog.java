@@ -46,6 +46,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.SimpleLine;
 import megamek.common.MapSettings;
+import megamek.common.util.StringUtil;
 
 public class RandomMapDialog extends JDialog implements ActionListener,
                                                         FocusListener {
@@ -401,6 +402,55 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         initiated = true;
     }
 
+    private File fileBrowser(String title, String targetDir, String fileName, final String extension,
+                             final String description, boolean isSave) {
+
+        // Create a new instance of the file chooser.
+        JFileChooser fileChooser = new JFileChooser(targetDir);
+
+        // Only allow selectoin of one file.
+        fileChooser.setMultiSelectionEnabled(false);
+
+        // Give the file chooser a title.
+        fileChooser.setDialogTitle(title);
+
+        // If we have a file to start with, select it.
+        if (!StringUtil.isNullOrEmpty(fileName)) {
+            fileChooser.setSelectedFile(new File(targetDir + fileName));
+        }
+
+        // Put a filter on the files that the user can selec.
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return (f.getPath().toLowerCase().endsWith(extension) || f.isDirectory());
+            }
+
+            @Override
+            public String getDescription() {
+                return description;
+            }
+        });
+
+        // Turn off the ability to select any file.
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        // Show the dialog and store the option clicked (open or cancel).
+        int option;
+        if (isSave) {
+            option = fileChooser.showSaveDialog(null);
+        } else {
+            option = fileChooser.showOpenDialog(null);
+        }
+
+        // If the user did hose to open...
+        if (JFileChooser.APPROVE_OPTION == option) {
+            // Get the file that was selected and return it.
+            return fileChooser.getSelectedFile();
+        }
+        return null;
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOK)) {
             if (applyValues()) {
@@ -411,27 +461,12 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             if (!applyValues()) {
                 return;
             }
-            JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-            fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            fc.setDialogTitle(Messages.getString("RandomMapDialog.FileSaveDialog"));
-            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fc.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File dir) {
-                    return ((null != dir.getName()) && dir.getName().endsWith(".xml")); //$NON-NLS-1$
-                }
-
-                @Override
-                public String getDescription() {
-                    return ".xml";
-                }
-            });
-            int returnVal = fc.showSaveDialog(frame);
-            if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-                // I want a file, y'know!
+            File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileSaveDialog"),
+                                            "data" + File.separator + "boards", null, ".xml", "(*.xml)", true);
+            if (selectedFile == null) {
                 return;
             }
-            File selectedFile = fc.getSelectedFile();
+
             // make sure the file ends in xml
             if (!selectedFile.getName().toLowerCase().endsWith(".xml")) { //$NON-NLS-1$
                 try {
@@ -447,28 +482,14 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 ex.printStackTrace();
             }
         } else if (e.getSource().equals(butLoad)) {
-            JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-            fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            fc.setDialogTitle(Messages.getString("RandomMapDialog.FileLoadDialog"));
-            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fc.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File dir) {
-                    return ((null != dir.getName()) && dir.getName().endsWith(".xml")); //$NON-NLS-1$
-                }
-
-                @Override
-                public String getDescription() {
-                    return ".xml";
-                }
-            });
-            int returnVal = fc.showOpenDialog(frame);
-            if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-                // I want a file, y'know!
+            File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
+                                            "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+            if (selectedFile == null) {
                 return;
             }
+
             try {
-                mapSettings.load(new FileInputStream(fc.getSelectedFile()));
+                mapSettings.load(new FileInputStream(selectedFile));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

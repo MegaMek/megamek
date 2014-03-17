@@ -123,6 +123,8 @@ v0.37.9-dev (SVN)
     BattleArmor.getOArmor to make armor comparisons at the squad level: one will
     return -1  and the other will return 0.  Added code to make the propr 
     comparisons for BA
++ Fixed the Random Map Generation dialog to see folders as well as "*.xml" files without having to switch to "all"
+    files.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

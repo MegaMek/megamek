@@ -1284,17 +1284,15 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
+        if (!(this instanceof SupportTank) && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
                 || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
                 || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
                 || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
                 || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
-                || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+                || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
             typeModifier += .1;
-        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) && !(this instanceof SupportTank)) {
             typeModifier += .2;
-        } else if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
-            typeModifier += .5;
         }
         bvText.append(startColumn);
         bvText.append("x Body Type Modier");

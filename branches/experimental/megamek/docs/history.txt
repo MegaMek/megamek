@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.37.9-exp-dev (SVN)
++ Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp
++ Bug: Go Up and Maneuver buttons were not being disabled for OOC Aeros
 
 v0.37.9-dev (SVN)
 + Data: Unit Fixes and Some renaming

@@ -598,6 +598,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // boolean isProtomech = (ce instanceof Protomech);
         boolean isAero = (ce instanceof Aero);
 
+        getBtn(Command.MOVE_MORE).setEnabled(true);
         setWalkEnabled(!ce.isImmobile()
                 && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
@@ -822,8 +823,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setLandEnabled(false);
         setVLandEnabled(false);
         setLowerEnabled(false);
+        setRaiseEnabled(false);
         setRecklessEnabled(false);
         setGoProneEnabled(false);
+        setManeuverEnabled(false);
+        
         getBtn(Command.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(Command.MOVE_DIG_IN).setEnabled(false);
     }

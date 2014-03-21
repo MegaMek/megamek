@@ -209,6 +209,9 @@
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)
         data/images/hexes/note.png (modified for formatting, from http://www.iconspedia.com/icon/note-icon-21517.html)
+      Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
+        data/images/widgets/hyades.jpg
+
 
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of 

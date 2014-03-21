@@ -125,7 +125,7 @@
 
       </border>
       <background_image>kiro/hexpattern_02.png</background_image>
-      <background_image>bvc_background.jpg</background_image>
+      <background_image>hyades.jpg</background_image>
   </UI_Element>
 
   <!-- Defines default borders used in Megamek -->

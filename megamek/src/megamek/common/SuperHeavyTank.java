@@ -210,7 +210,21 @@ public class SuperHeavyTank extends Tank {
             case 10:
             case 11:
                 if (!m_bHasNoTurret) {
-                    rv = new HitData(LOC_TURRET);
+                    if (!hasNoDualTurret()) {
+                        int roll = Compute.d6();
+                        if (side == ToHitData.SIDE_FRONT) {
+                            roll -= 2;
+                        } else if (side == ToHitData.SIDE_REAR) {
+                            roll += 2;
+                        }
+                        if (roll <= 3) {
+                            rv = new HitData(LOC_TURRET_2);
+                        } else {
+                            rv = new HitData(LOC_TURRET);
+                        }
+                    } else {
+                        rv = new HitData(LOC_TURRET);
+                    }
                 }
                 break;
             case 12:
@@ -222,7 +236,21 @@ public class SuperHeavyTank extends Tank {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                 } else {
-                    rv = new HitData(LOC_TURRET, false);
+                    if (!hasNoDualTurret()) {
+                        int roll = Compute.d6();
+                        if (side == ToHitData.SIDE_FRONT) {
+                            roll -= 2;
+                        } else if (side == ToHitData.SIDE_REAR) {
+                            roll += 2;
+                        }
+                        if (roll <= 3) {
+                            rv = new HitData(LOC_TURRET_2);
+                        } else {
+                            rv = new HitData(LOC_TURRET);
+                        }
+                    } else {
+                        rv = new HitData(LOC_TURRET, false);
+                    }
                     if (game.getOptions().booleanOption(
                             "vehicles_threshold")) {
                         setPotCrit(HitData.EFFECT_CRITICAL);

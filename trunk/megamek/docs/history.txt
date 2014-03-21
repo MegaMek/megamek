@@ -130,6 +130,7 @@ v0.37.9-dev (SVN)
 + Bug: Server.damageCrew will no damage the crew if they are dead, doomed or
     ejected.  This can lead to circumstances were the user might not be aware of
     why no damage was dealt.  New reports why the crew didn't take damage.
++ Bug [#4073]: NPE on unit loading in MM, Think its something with Armortype
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

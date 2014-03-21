@@ -400,7 +400,15 @@ public class MtfFile implements IMechLoader {
                         clan = true;
                     }
                     String armorName = armorValues[x].substring(armorValues[x].indexOf(':')+1,armorValues[x].indexOf('('));
-                    mech.setArmorType(EquipmentType.getArmorType(EquipmentType.get(clan?"Clan "+armorName:"IS "+armorName)), locationOrder[x]);
+                    if (!armorName.contains("Clan") 
+                            && !armorName.contains("IS")){
+                        if (clan){
+                            armorName = "Clan " + armorName;
+                        } else {
+                            armorName = "IS " + armorName; 
+                        }
+                    }
+                    mech.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
                     if (armorValues[x].toLowerCase().indexOf("clan") != -1) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 2:

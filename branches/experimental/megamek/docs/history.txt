@@ -130,6 +130,10 @@ v0.37.9-dev (SVN)
 + Fixed the Random Map Generation dialog to see folders as well as "*.xml" files without having to switch to "all"
     files.
 + Fix of the previous fix of the Random Map Generation dialog (been too long since I last worked with a FileChooser).
++ Rebuilt the Random Map Generation dialog from the ground up to improve it's organization and work flow.  Added
+    tool tips explaining the various fields and eliminated the need to save and exit the dialog before switching
+    from Normal to Advanced view.  Did not update the German or Russian messages.properties files as I'm not
+    nearly qualified.
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

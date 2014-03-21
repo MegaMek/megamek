@@ -22,11 +22,11 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Deric Page (deric.page@usa.net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISLRM5Primitive extends LRMWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 176095314320974740L;
 
@@ -54,7 +54,7 @@ public class ISLRM5Primitive extends LRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+                                              WeaponAttackAction waa, IGame game, Server server) {
         return new LRMHandler(toHit, waa, game, server, -2);
     }
 }

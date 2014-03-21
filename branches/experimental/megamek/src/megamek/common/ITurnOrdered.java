@@ -17,7 +17,7 @@ import java.io.Serializable;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Deric
+ * User: Deric "Netzilla" Page (deric dot page at usa dot net)
  * Date: 8/17/13
  * Time: 10:21 AM
  * To change this template use File | Settings | File Templates.

@@ -22,11 +22,11 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * Deric Page (deric.page@usa.net)
+ * Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISAC5Primitive extends ACWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8826026540026351600L;
 
@@ -62,7 +62,7 @@ public class ISAC5Primitive extends ACWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+                                              WeaponAttackAction waa, IGame game, Server server) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, server);
     }
 }

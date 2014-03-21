@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 import java.util.Vector;
 
 /**
- * @author Deric "Netzilla" Page (deric dot page at gmail dot com)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
  * @since 3/3/14 3:36 PM
  */

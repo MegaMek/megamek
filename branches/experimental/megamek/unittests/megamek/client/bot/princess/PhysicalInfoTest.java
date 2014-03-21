@@ -18,7 +18,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 /**
- * @author Deric "Netzilla" Page (deric dot page at gmail dot com)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
  * @since 2/27/14 3:23 PM
  */

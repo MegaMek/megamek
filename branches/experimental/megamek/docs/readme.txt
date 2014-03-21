@@ -440,8 +440,8 @@ and CASE.  Clan units have the same restricted equipment list.
 
 ADVANCED MAP SETTINGS
 ---------------------
-Tip: use the basic settings, press OK, then go into map settings again, select
-advanced, and the boxes are filled in with the values from the basic settings
+Tip: Use the basic settings, then select advanced, and the boxes will be filled in with the values from the basic
+settings.
 
 Board Size - set the size of the map sheet generated.  When using generated
 maps, it is better to generate one large play area than to try and combine

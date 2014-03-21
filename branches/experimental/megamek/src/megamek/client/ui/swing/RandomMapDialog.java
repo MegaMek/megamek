@@ -11,395 +11,239 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
+import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.common.MapSettings;
+import megamek.common.util.StringUtil;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileFilter;
+/**
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @version %Id%
+ * @since 3/13/14 2:41 PM
+ */
+public class RandomMapDialog extends JDialog implements ActionListener {
 
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.widget.SimpleLine;
-import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
+    // Views.
+    private static final String VIEW_BASIC = Messages.getString("RandomMapDialog.Normal");
+    private static final String VIEW_ADVANCED = Messages.getString("RandomMapDialog.Advanced");
 
-public class RandomMapDialog extends JDialog implements ActionListener,
-                                                        FocusListener {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -1932447917045308611L;
-    private static final String NONE = Messages
-            .getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
-    private static final String LOW = Messages
-            .getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
-    private static final String MEDIUM = Messages
-            .getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
-    private static final String HIGH = Messages
-            .getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
+    // External helpers.
+    private final JFrame PARENT;
+    private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
+    private final Client CLIENT;
 
-    private static final String INVALID_SETTING = Messages
-            .getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
-
-    private static final int NORMAL_LINE_WIDTH = 195;
-    private static final int ADVANCED_LINE_WIDTH = 295;
-
-    private JScrollPane scrAll = new JScrollPane();
-
-    private JButton butOK;
-    private JButton butAdvanced;
-    private JButton butSave;
-    private JButton butLoad;
-
-    private JPanel panButtons;
-    private JPanel panOptions;
-
-    private JLabel labBoardSize;
-    private JTextField texBoardWidth;
-    private JTextField texBoardHeight;
-
-    private JComboBox<String> choElevation;
-    private JComboBox<String> choCliffs;
-    private JComboBox<String> choWoods;
-    private JComboBox<String> choLakes;
-    private JComboBox<String> choPavement;
-    private JComboBox<String> choRubble;
-    private JComboBox<String> choFortified;
-    private JComboBox<String> choIce;
-    private JComboBox<String> choRough;
-    private JComboBox<String> choSand;
-    private JComboBox<String> choPlantedField;
-    private JComboBox<String> choRoads;
-    private JComboBox<String> choRivers;
-    private JComboBox<String> choSwamp;
-    private JComboBox<String> choCraters;
-    private JComboBox<String> choCity;
-    private JComboBox<String> choMountain;
-
-    private JLabel labElevation;
-    private JLabel labCliffs;
-    private JLabel labWoods;
-    private JLabel labLakes;
-    private JLabel labPavement;
-    private JLabel labRubble;
-    private JLabel labFortified;
-    private JLabel labIce;
-    private JLabel labRough;
-    private JLabel labSand;
-    private JLabel labPlantedField;
-    private JLabel labRoads;
-    private JLabel labRivers;
-    private JLabel labSwamp;
-    private JLabel labTheme;
-    private JLabel labCraters;
-    private JLabel labCity;
-    private JLabel labMountain = null;
-
-    private SimpleLine slElevation;
-    private SimpleLine slCliffs;
-    private SimpleLine slWoods;
-    private SimpleLine slLakes;
-    private SimpleLine slPavement;
-    private SimpleLine slRubble;
-    private SimpleLine slFortified;
-    private SimpleLine slIce;
-    private SimpleLine slRough;
-    private SimpleLine slSand;
-    private SimpleLine slPlantedField;
-    private SimpleLine slRoads;
-    private SimpleLine slRivers;
-    private SimpleLine slSwamp;
-    private SimpleLine slBoardSize;
-    private SimpleLine slCraters;
-    private SimpleLine slCity;
-    private SimpleLine slMountain;
-
-    private SimpleLine slElevationAd;
-    private SimpleLine slWoodsAd;
-    private SimpleLine slLakesAd;
-    private SimpleLine slPavementAd;
-    private SimpleLine slRubbleAd;
-    private SimpleLine slFortifiedAd;
-    private SimpleLine slIceAd;
-    private SimpleLine slRoughAd;
-    private SimpleLine slSandAd;
-    private SimpleLine slPlantedFieldAd;
-    private SimpleLine slRoadsAd;
-    private SimpleLine slRiversAd;
-    private SimpleLine slSwampAd;
-    private SimpleLine slBoardSizeAd;
-    private SimpleLine slCratersAd;
-    private SimpleLine slCityAd;
-    private SimpleLine slInvertNegativeAd;
-
-    private JTextField texTheme;
-
-    /**
-     * how much hills there should be, Range 0..100
-     */
-    private JLabel labHilliness;
-    private JTextField texHilliness;
-    /**
-     * invert negative terrain? 1 yes, 0 no
-     */
-    private JLabel labInvertNegative;
-    private JTextField texInvertNegative;
-    /**
-     * Maximum level of the map
-     */
-    private JLabel labRange;
-    private JTextField texRange;
-    private JLabel labProbInvert;
-    private JTextField texProbInvert;
-    private JLabel labCliffsAd;
-    private JTextField texCliffs;
-
-    /**
-     * how much Lakes at least
-     */
-    private JLabel labWaterSpots;
-    private JTextField texMinWaterSpots;
-    /**
-     * how much Lakes at most
-     */
-    private JTextField texMaxWaterSpots;
-    /**
-     * minimum size of a lake
-     */
-    private JLabel labWaterSize;
-    private JTextField texMinWaterSize;
-    /**
-     * maximum Size of a lake
-     */
-    private JTextField texMaxWaterSize;
-    /**
-     * probability for water deeper than lvl1, Range 0..100
-     */
-    private JLabel labProbDeep;
-    private JTextField texProbDeep;
-
-    /**
-     * how much forests at least
-     */
-    private JLabel labForestSpots;
-    private JTextField texMinForestSpots;
-    /**
-     * how much forests at most
-     */
-    private JTextField texMaxForestSpots;
-    /**
-     * minimum size of a forest
-     */
-    private JLabel labForestSize;
-    private JTextField texMinForestSize;
-    /**
-     * maximum Size of a forest
-     */
-    private JTextField texMaxForestSize;
-    /**
-     * probability for heavy wood, Range 0..100
-     */
-    private JLabel labProbHeavy;
-    private JTextField texProbHeavy;
-
-    /**
-     * rough
-     */
-    private JLabel labRoughSpots;
-    private JTextField texMinRoughSpots;
-    private JTextField texMaxRoughSpots;
-    private JLabel labRoughSize;
-    private JTextField texMinRoughSize;
-    private JTextField texMaxRoughSize;
-
-    /**
-     * sand
-     */
-    private JLabel labSandSpots;
-    private JTextField texMinSandSpots;
-    private JTextField texMaxSandSpots;
-    private JLabel labSandSize;
-    private JTextField texMinSandSize;
-    private JTextField texMaxSandSize;
-
-    /**
-     * planted field
-     */
-    private JLabel labPlantedFieldSpots;
-    private JTextField texMinPlantedFieldSpots;
-    private JTextField texMaxPlantedFieldSpots;
-    private JLabel labPlantedFieldSize;
-    private JTextField texMinPlantedFieldSize;
-    private JTextField texMaxPlantedFieldSize;
-
-    /**
-     * swamp
-     */
-    private JLabel labSwampSpots;
-    private JTextField texMinSwampSpots;
-    private JTextField texMaxSwampSpots;
-    private JLabel labSwampSize;
-    private JTextField texMinSwampSize;
-    private JTextField texMaxSwampSize;
-
-    /**
-     * pavement/ice
-     */
-    private JLabel labPavementSpots;
-    private JTextField texMinPavementSpots;
-    private JTextField texMaxPavementSpots;
-    private JLabel labPavementSize;
-    private JTextField texMinPavementSize;
-    private JTextField texMaxPavementSize;
-    private JLabel labIceSpots;
-    private JTextField texMinIceSpots;
-    private JTextField texMaxIceSpots;
-    private JLabel labIceSize;
-    private JTextField texMinIceSize;
-    private JTextField texMaxIceSize;
-
-    /**
-     * rubble / fortified
-     */
-    private JLabel labRubbleSpots;
-    private JTextField texMinRubbleSpots;
-    private JTextField texMaxRubbleSpots;
-    private JLabel labRubbleSize;
-    private JTextField texMinRubbleSize;
-    private JTextField texMaxRubbleSize;
-    private JLabel labFortifiedSpots;
-    private JTextField texMinFortifiedSpots;
-    private JTextField texMaxFortifiedSpots;
-    private JLabel labFortifiedSize;
-    private JTextField texMinFortifiedSize;
-    private JTextField texMaxFortifiedSize;
-
-    /**
-     * probability for a road, range 0..100
-     */
-    private JLabel labProbRoad;
-    private JTextField texProbRoad;
-    /**
-     * probability for a river, range 0..100
-     */
-    private JLabel labProbRiver;
-    private JTextField texProbRiver;
-
-    /* Craters */
-    private JLabel labProbCrater;
-    private JTextField texProbCrater;
-    private JLabel labRadius;
-    private JTextField texMinRadius;
-    private JTextField texMaxRadius;
-    private JLabel labMaxCraters;
-    private JTextField texMaxCraters;
-    private JTextField texMinCraters;
-
-    /* FX */
-    private JLabel labProbDrought;
-    private JTextField texProbDrought;
-    private JLabel labProbFire;
-    private JTextField texProbFire;
-    private JLabel labProbFlood;
-    private JTextField texProbFlood;
-    private JLabel labProbFreeze;
-    private JTextField texProbFreeze;
-    private JLabel labFxMod;
-    private JTextField texFxMod;
-
-    /* City */
-    private JLabel labCityBlocks;
-    private JLabel labCityCF;
-    private JLabel labCityFloors;
-    private JLabel labCityDensity;
-    private JLabel labTownSize;
-    private JTextField texCityBlocks;
-    private JTextField texCityMinCF;
-    private JTextField texCityMaxCF;
-    private JTextField texCityMinFloors;
-    private JTextField texCityMaxFloors;
-    private JTextField texCityDensity;
-    private JTextField texTownSize;
-
-    // Mountain
-    private JLabel labMountainPeaks;
-    private JLabel labMountainHeight;
-    private JLabel labMountainWidth;
-    private JLabel labMountainStyle;
-    private JTextField texMountainPeaks;
-    private JTextField texMountainStyle;
-    private JTextField texMountainHeightMin;
-    private JTextField texMountainHeightMax;
-    private JTextField texMountainWidthMin;
-    private JTextField texMountainWidthMax;
-    /**
-     * Algorithm
-     */
-    private JLabel labAlgorithmToUse;
-    private JTextField texAlgorithmToUse;
-
-    GridBagLayout gridbag;
-
+    // How the map will be set up.
     private MapSettings mapSettings;
-    private JFrame frame;
-    private IMapSettingsObserver bsd;
-    private Client client;
 
-    private boolean advanced;
-    private boolean initiated;
+    // View switching objects.
+    private final RandomMapPanelBasic basicPanel;
+    private final RandomMapPanelAdvanced advancedPanel;
+    private final JRadioButton basicButton = new JRadioButton(VIEW_BASIC);
+    private final JRadioButton advancedButton = new JRadioButton(VIEW_ADVANCED);
+    private final CardLayout cardLayout = new CardLayout(0, 0);
+    private final JPanel mainDisplay = new JPanel();
 
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver bsd, Client client,
+    // General map settings.
+    private final JLabel mapSizeLabel = new JLabel(Messages.getString("RandomMapDialog.BoardSize"));
+    private final JLabel mapSizeSeperatorLabel = new JLabel("x");
+    private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
+    private final VerifiableTextField mapWidthField = new VerifiableTextField(4);
+    private final VerifiableTextField mapHeightField = new VerifiableTextField(4);
+    private final VerifiableTextField mapThemeField = new VerifiableTextField(10);
+
+    // Control buttons
+    private final JButton okayButton = new JButton(Messages.getString("Okay"));
+    private final JButton loadButton = new JButton(Messages.getString("RandomMapDialog.Load"));
+    private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
+
+    /**
+     * Constructor for this dialog.
+     *
+     * @param parent              The parent {@link JFrame} invoking this dialog.
+     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
+     *                            this is a local only game.
+     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     *                            server-based game.
+     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
+     */
+    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
                            MapSettings mapSettings) {
-        super(parent, Messages.getString("RandomMapDialog.title"), true); //$NON-NLS-1$
+
+        super(parent, Messages.getString("RandomMapDialog.title"), true);
         this.mapSettings = mapSettings;
-        frame = parent;
-        this.bsd = bsd;
-        this.client = client;
+        PARENT = parent;
+        MAP_SETTINGS_OBSERVER = mapSettingsObserver;
+        CLIENT = client;
+        basicPanel = new RandomMapPanelBasic(mapSettings);
+        advancedPanel = new RandomMapPanelAdvanced(mapSettings);
+
+        initGUI();
         setResizable(true);
 
-        createComponents();
-        loadValues();
-
-        getContentPane().setLayout(new BorderLayout());
-        setupOptions();
-        getContentPane().add(scrAll, BorderLayout.CENTER);
-        setupButtons();
-        getContentPane().add(panButtons, BorderLayout.SOUTH);
-
         validate();
+        mainDisplay.validate();
         pack();
-        setProperSize();
 
-        butOK.requestFocus();
+    }
 
-        setProperSize();
-        setProperLocation();
-        initiated = true;
+    private void initGUI() {
+        setupMainPanel();
+
+        final JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.add(setupTopPanel(), BorderLayout.NORTH);
+        contentPanel.add(mainDisplay, BorderLayout.CENTER);
+        contentPanel.add(setupControlsPanel(), BorderLayout.SOUTH);
+
+        add(contentPanel);
+        setLocationRelativeTo(PARENT);
+        switchView(VIEW_BASIC, true);
+    }
+
+    private void switchView(String viewName, boolean initializing) {
+        // Copy the updated map settings to the other panel.
+        if (!initializing && VIEW_ADVANCED.equalsIgnoreCase(viewName)) {
+            mapSettings = basicPanel.getMapSettings();
+            if (mapSettings == null) {
+                basicButton.setSelected(true);
+                return;
+            }
+            advancedPanel.setMapSettings(mapSettings);
+        } else if (!initializing) {
+            mapSettings = advancedPanel.getMapSettings();
+            if (mapSettings == null) {
+                advancedButton.setSelected(true);
+                return;
+            }
+            basicPanel.setMapSettings(mapSettings);
+        }
+
+        cardLayout.show(mainDisplay, viewName);
+        mainDisplay.revalidate();
+    }
+
+    private void setupMainPanel() {
+        mainDisplay.setLayout(cardLayout);
+        mainDisplay.add(basicPanel, VIEW_BASIC);
+        mainDisplay.add(advancedPanel, VIEW_ADVANCED);
+        mainDisplay.setBorder(new LineBorder(Color.black, 1));
+    }
+
+    private JPanel setupDisplayButtons() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+        ButtonGroup displayButtonGroup = new ButtonGroup();
+
+        basicButton.addActionListener(this);
+        displayButtonGroup.add(basicButton);
+        panel.add(basicButton);
+
+        advancedButton.addActionListener(this);
+        displayButtonGroup.add(advancedButton);
+        panel.add(advancedButton);
+
+        basicButton.setSelected(true);
+
+        panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1), "View"));
+
+        return panel;
+    }
+
+    private JPanel setupTopPanel() {
+        GridBagLayout layout = new GridBagLayout();
+        GridBagConstraints constraints = new GridBagConstraints();
+        JPanel panel = new JPanel(layout);
+
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.weightx = 0;
+        constraints.weighty = 0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.insets = new Insets(2, 2, 2, 2);
+
+        // Row 1, Column 1.
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 4;
+        JPanel displayOptionsPanel = setupDisplayButtons();
+        panel.add(displayOptionsPanel, constraints);
+
+        // Row 2, Column 1.
+        constraints.gridx = 0;
+        constraints.gridy++;
+        constraints.gridwidth = 1;
+        panel.add(mapSizeLabel, constraints);
+
+        // Row 2, Column 2.
+        constraints.gridx++;
+        mapWidthField.setSelectAllTextOnGotFocus(true);
+        mapWidthField.setRequired(true);
+        mapWidthField.setText(String.valueOf(mapSettings.getBoardWidth()));
+        mapWidthField.addVerifier(new VerifyIsPositiveInteger());
+        mapWidthField.setToolTipText(Messages.getString("RandomMapDialog.mapWidthField.toolTip"));
+        panel.add(mapWidthField, constraints);
+
+        // Row 2, Column 3.
+        constraints.gridx++;
+        panel.add(mapSizeSeperatorLabel, constraints);
+
+        // Row 2, Column 4.
+        constraints.gridx++;
+        mapHeightField.setSelectAllTextOnGotFocus(true);
+        mapHeightField.setRequired(true);
+        mapHeightField.setText(String.valueOf(mapSettings.getBoardHeight()));
+        mapHeightField.addVerifier(new VerifyIsPositiveInteger());
+        mapHeightField.setToolTipText(Messages.getString("RandomMapDialog.mapHeightField.toolTip"));
+        panel.add(mapHeightField, constraints);
+
+        // Row 3, Column 1.
+        constraints.gridx = 0;
+        constraints.gridy++;
+        panel.add(mapThemeLabel, constraints);
+
+        // Row 3, Column 2.
+        constraints.gridx++;
+        constraints.gridwidth = 3;
+        mapThemeField.setSelectAllTextOnGotFocus(true);
+        mapThemeField.setText(mapSettings.getTheme());
+        mapThemeField.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
+        panel.add(mapThemeField, constraints);
+
+        return panel;
+    }
+
+    private JPanel setupControlsPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+
+        loadButton.addActionListener(this);
+        loadButton.setMnemonic(loadButton.getText().charAt(0));
+        panel.add(loadButton);
+
+        saveButton.addActionListener(this);
+        saveButton.setMnemonic(saveButton.getText().charAt(0));
+        panel.add(saveButton);
+
+        okayButton.addActionListener(this);
+        okayButton.setMnemonic(okayButton.getText().charAt(0));
+        panel.add(okayButton);
+
+        return panel;
     }
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
@@ -419,7 +263,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 
-        // Put a filter on the files that the user can selec.
+        // Put a filter on the files that the user can select the proper file.
         fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -443,7 +287,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             option = fileChooser.showOpenDialog(null);
         }
 
-        // If the user did hose to open...
+        // If the user did chose to open...
         if (JFileChooser.APPROVE_OPTION == option) {
             // Get the file that was selected and return it.
             return fileChooser.getSelectedFile();
@@ -451,2269 +295,102 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         return null;
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(butOK)) {
-            if (applyValues()) {
-                setVisible(false);
-            }
-        } else if (e.getSource().equals(butSave)) {
-            // Apply changes before saving
-            if (!applyValues()) {
-                return;
-            }
-            File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileSaveDialog"),
-                                            "data" + File.separator + "boards", null, ".xml", "(*.xml)", true);
-            if (selectedFile == null) {
-                return;
-            }
+    private void doLoad() {
 
-            // make sure the file ends in xml
-            if (!selectedFile.getName().toLowerCase().endsWith(".xml")) { //$NON-NLS-1$
-                try {
-                    selectedFile = new File(selectedFile.getCanonicalPath() + ".xml"); //$NON-NLS-1$
-                } catch (IOException ie) {
-                    // failure!
-                    return;
-                }
-            }
-            try {
-                mapSettings.save(new FileOutputStream(selectedFile));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else if (e.getSource().equals(butLoad)) {
-            File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                            "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
-            if (selectedFile == null) {
-                return;
-            }
+        // Get the user-selected file.
+        File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
+                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
 
-            try {
-                mapSettings.load(new FileInputStream(selectedFile));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            loadValues();
-            if (!advanced) {
-                advanced = true;
-                butAdvanced.setText(Messages.getString("RandomMapDialog.Normal")); //$NON-NLS-1$
-                setupOptions();
-                setProperSize();
-            }
-        } else {
-            advanced = !advanced;
-            if (advanced) {
-                butAdvanced.setText(Messages
-                                            .getString("RandomMapDialog.Normal")); //$NON-NLS-1$
-            } else {
-                butAdvanced.setText(Messages
-                                            .getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
-            }
-            setupOptions();
-            setProperSize();
+        // If we don't have a file, there's nothing to load.
+        if (selectedFile == null) {
+            return;
         }
-    }
 
-    private void setupOptions() {
-        panOptions.removeAll();
-
-        addLabelTextField(labBoardSize, texBoardWidth, texBoardHeight, "x"); //$NON-NLS-1$
-        texBoardWidth.requestFocus();
-
-        if (!advanced) {
-
-            addSeparator(slBoardSize);
-
-            addLabelTextField(labTheme, texTheme);
-
-            addOption(labElevation, choElevation, slElevation);
-            addOption(labCliffs, choCliffs, slCliffs);
-            addOption(labWoods, choWoods, slWoods);
-            addOption(labRough, choRough, slRough);
-            addOption(labSand, choSand, slSand);
-            addOption(labPlantedField, choPlantedField, slPlantedField);
-            addOption(labSwamp, choSwamp, slSwamp);
-            addOption(labRoads, choRoads, slRoads);
-            addOption(labLakes, choLakes, slLakes);
-            addOption(labRivers, choRivers, slRivers);
-            addOption(labCraters, choCraters, slCraters);
-            addOption(labPavement, choPavement, slPavement);
-            addOption(labIce, choIce, slIce);
-            addOption(labRubble, choRubble, slRubble);
-            addOption(labFortified, choFortified, slFortified);
-            addOption(labCity, choCity, slCity);
-            addOption(labMountain, choMountain, slMountain);
-
-        } else {
-
-            addSeparator(slBoardSizeAd);
-
-            addLabelTextField(labTheme, texTheme);
-
-            addLabelTextField(labHilliness, texHilliness);
-            addLabelTextField(labRange, texRange);
-            addLabelTextField(labProbInvert, texProbInvert);
-            addLabelTextField(labAlgorithmToUse, texAlgorithmToUse);
-            addLabelTextField(labCliffsAd, texCliffs);
-            addLabelTextField(labMountainPeaks, texMountainPeaks);
-            addLabelTextField(labMountainStyle, texMountainStyle);
-            addLabelTextField(labMountainHeight, texMountainHeightMin,
-                              texMountainHeightMax, "-");
-            addLabelTextField(labMountainWidth, texMountainWidthMin,
-                              texMountainWidthMax, "-");
-
-            addSeparator(slElevationAd);
-
-            addLabelTextField(labForestSpots, texMinForestSpots,
-                              texMaxForestSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labForestSize, texMinForestSize,
-                              texMaxForestSize, "-"); //$NON-NLS-1$
-            addLabelTextField(labProbHeavy, texProbHeavy);
-
-            addSeparator(slWoodsAd);
-
-            addLabelTextField(labRoughSpots, texMinRoughSpots,
-                              texMaxRoughSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize,
-                              "-"); //$NON-NLS-1$
-
-            addSeparator(slRoughAd);
-
-            addLabelTextField(labSandSpots, texMinSandSpots,
-                              texMaxSandSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labSandSize, texMinSandSize, texMaxSandSize,
-                              "-"); //$NON-NLS-1$
-
-            addSeparator(slSandAd);
-
-            addLabelTextField(labPlantedFieldSpots, texMinPlantedFieldSpots,
-                              texMaxPlantedFieldSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labPlantedFieldSize, texMinPlantedFieldSize, texMaxPlantedFieldSize,
-                              "-"); //$NON-NLS-1$
-
-            addSeparator(slPlantedFieldAd);
-
-            addLabelTextField(labSwampSpots, texMinSwampSpots,
-                              texMaxSwampSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labSwampSize, texMinSwampSize, texMaxSwampSize,
-                              "-"); //$NON-NLS-1$
-
-            addSeparator(slSwampAd);
-
-            addLabelTextField(labProbRoad, texProbRoad);
-
-            addSeparator(slRoadsAd);
-
-            addLabelTextField(labWaterSpots, texMinWaterSpots,
-                              texMaxWaterSpots, "-"); //$NON-NLS-1$
-            addLabelTextField(labWaterSize, texMinWaterSize, texMaxWaterSize,
-                              "-"); //$NON-NLS-1$
-            addLabelTextField(labProbDeep, texProbDeep);
-
-            addSeparator(slLakesAd);
-
-            addLabelTextField(labProbRiver, texProbRiver);
-
-            addSeparator(slRiversAd);
-
-            addLabelTextField(labProbCrater, texProbCrater);
-            addLabelTextField(labMaxCraters, texMinCraters, texMaxCraters, "-"); //$NON-NLS-1$
-            addLabelTextField(labRadius, texMinRadius, texMaxRadius, "-"); //$NON-NLS-1$
-
-            addSeparator(slCratersAd);
-
-            addLabelTextField(labPavementSpots, texMinPavementSpots,
-                              texMaxPavementSpots, "-");
-            addLabelTextField(labPavementSize, texMinPavementSize,
-                              texMaxPavementSize, "-");
-
-            addSeparator(slPavementAd);
-
-            addLabelTextField(labRubbleSpots, texMinRubbleSpots,
-                              texMaxRubbleSpots, "-");
-            addLabelTextField(labRubbleSize, texMinRubbleSize,
-                              texMaxRubbleSize, "-");
-
-            addSeparator(slRubbleAd);
-
-            addLabelTextField(labFortifiedSpots, texMinFortifiedSpots,
-                              texMaxFortifiedSpots, "-");
-            addLabelTextField(labFortifiedSize, texMinFortifiedSize,
-                              texMaxFortifiedSize, "-");
-
-            addSeparator(slFortifiedAd);
-
-            addLabelTextField(labIceSpots, texMinIceSpots, texMaxIceSpots, "-");
-            addLabelTextField(labIceSize, texMinIceSize, texMaxIceSize, "-");
-
-            addSeparator(slIceAd);
-
-            addLabelTextField(labProbDrought, texProbDrought);
-            addLabelTextField(labProbFire, texProbFire);
-            addLabelTextField(labProbFreeze, texProbFreeze);
-            addLabelTextField(labProbFlood, texProbFlood);
-            addLabelTextField(labFxMod, texFxMod);
-
-            addSeparator(slCityAd);
-
-            addOption(labCity, choCity, slCity);
-            addLabelTextField(labCityBlocks, texCityBlocks);
-            addLabelTextField(labCityCF, texCityMinCF, texCityMaxCF, "-");
-            addLabelTextField(labCityFloors, texCityMinFloors,
-                              texCityMaxFloors, "-");
-            addLabelTextField(labCityDensity, texCityDensity);
-            addLabelTextField(labTownSize, texTownSize);
-
-            addSeparator(slInvertNegativeAd);
-            addLabelTextField(labInvertNegative, texInvertNegative);
-        }
-        scrAll.setViewportView(panOptions);
-
-        if (initiated) {
-            pack();
-            setProperSize();
-            setProperLocation();
-        }
-    }
-
-    private void setupButtons() {
-
-        panButtons.add(butOK);
-        panButtons.add(butAdvanced);
-        panButtons.add(butSave);
-        panButtons.add(butLoad);
-
-    }
-
-    private void createComponents() {
-
-        butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-        butOK.addActionListener(this);
-
-        butAdvanced = new JButton(Messages
-                                          .getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
-        butAdvanced.addActionListener(this);
-
-        butSave = new JButton(Messages.getString("RandomMapDialog.Save")); //$NON-NLS-1$
-        butSave.addActionListener(this);
-
-        butLoad = new JButton(Messages.getString("RandomMapDialog.Load")); //$NON-NLS-1$
-        butLoad.addActionListener(this);
-
-        panButtons = new JPanel();
-        panButtons.setLayout(new FlowLayout());
-
-        panOptions = new JPanel();
-        gridbag = new GridBagLayout();
-        panOptions.setLayout(gridbag);
-
-        labBoardSize = new JLabel(Messages
-                                          .getString("RandomMapDialog.BoardSize"), SwingConstants.LEFT); //$NON-NLS-1$
-        texBoardWidth = new JTextField(2);
-        texBoardWidth.addFocusListener(this);
-        texBoardHeight = new JTextField(2);
-        texBoardHeight.addFocusListener(this);
-        slBoardSize = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        // Normal setting components...
-        labElevation = new JLabel(Messages
-                                          .getString("RandomMapDialog.labElevation"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        choElevation = new JComboBox<String>();
-        fillChoice(choElevation);
-        slElevation = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labCliffs = new JLabel(
-                Messages.getString("RandomMapDialog.labCliffs"), SwingConstants.LEFT); //$NON-NLS-1$
-        choCliffs = new JComboBox<String>();
-        fillChoice(choCliffs);
-        slCliffs = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labWoods = new JLabel(
-                Messages.getString("RandomMapDialog.labWoods"), SwingConstants.LEFT); //$NON-NLS-1$
-        choWoods = new JComboBox<String>();
-        fillChoice(choWoods);
-        slWoods = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labLakes = new JLabel(
-                Messages.getString("RandomMapDialog.labLakes"), SwingConstants.LEFT); //$NON-NLS-1$
-        choLakes = new JComboBox<String>();
-        fillChoice(choLakes);
-        slLakes = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labRough = new JLabel(
-                Messages.getString("RandomMapDialog.labRough"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRough = new JComboBox<String>();
-        fillChoice(choRough);
-        slRough = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labSand = new JLabel(
-                Messages.getString("RandomMapDialog.labSand"), SwingConstants.LEFT); //$NON-NLS-1$
-        choSand = new JComboBox<String>();
-        fillChoice(choSand);
-        slSand = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labPlantedField = new JLabel(
-                Messages.getString("RandomMapDialog.labPlantedField"), SwingConstants.LEFT); //$NON-NLS-1$
-        choPlantedField = new JComboBox<String>();
-        fillChoice(choPlantedField);
-        slPlantedField = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labSwamp = new JLabel(
-                Messages.getString("RandomMapDialog.labSwamp"), SwingConstants.LEFT); //$NON-NLS-1$
-        choSwamp = new JComboBox<String>();
-        fillChoice(choSwamp);
-        slSwamp = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labPavement = new JLabel(Messages
-                                         .getString("RandomMapDialog.labPavement"), SwingConstants.LEFT);
-        choPavement = new JComboBox<String>();
-        fillChoice(choPavement);
-        slPavement = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labRubble = new JLabel(Messages.getString("RandomMapDialog.labRubble"),
-                               SwingConstants.LEFT);
-        choRubble = new JComboBox<String>();
-        fillChoice(choRubble);
-        slRubble = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labFortified = new JLabel(Messages
-                                          .getString("RandomMapDialog.labFortified"), SwingConstants.LEFT);
-        choFortified = new JComboBox<String>();
-        fillChoice(choFortified);
-        slFortified = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labIce = new JLabel(Messages.getString("RandomMapDialog.labIce"),
-                            SwingConstants.LEFT);
-        choIce = new JComboBox<String>();
-        fillChoice(choIce);
-        slIce = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labCraters = new JLabel(Messages
-                                        .getString("RandomMapDialog.labCraters"), SwingConstants.LEFT);
-        choCraters = new JComboBox<String>();
-        fillChoice(choCraters);
-        slCraters = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labRivers = new JLabel(
-                Messages.getString("RandomMapDialog.labRivers"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRivers = new JComboBox<String>();
-        fillChoice(choRivers);
-        slRivers = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labRoads = new JLabel(
-                Messages.getString("RandomMapDialog.labRoads"), SwingConstants.LEFT); //$NON-NLS-1$
-        choRoads = new JComboBox<String>();
-        fillChoice(choRoads);
-        slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        labCity = new JLabel(
-                Messages.getString("RandomMapDialog.labCity"), SwingConstants.LEFT); //$NON-NLS-1$
-        choCity = new JComboBox<String>();
-        choCity.addItem(NONE);
-        choCity.addItem("HUB");
-        choCity.addItem("GRID");
-        choCity.addItem("METRO");
-        choCity.addItem("TOWN");
-        slCity = new SimpleLine(NORMAL_LINE_WIDTH);
-        labMountain = new JLabel(Messages
-                                         .getString("RandomMapDialog.labMountain"), SwingConstants.LEFT); //$NON-NLS-1$
-        choMountain = new JComboBox<String>();
-        fillChoice(choMountain);
-        slMountain = new SimpleLine(NORMAL_LINE_WIDTH);
-
-        // Advanced setting components...
-        labTheme = new JLabel(Messages.getString("RandomMapDialog.labTheme"),
-                              SwingConstants.LEFT);
-        texTheme = new JTextField(20);
-        /** how much hills there should be, Range 0..99 */
-        labHilliness = new JLabel(Messages
-                                          .getString("RandomMapDialog.labHilliness"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texHilliness = new JTextField(2);
-        texHilliness.addFocusListener(this);
-        /** Maximum level of the map */
-        labRange = new JLabel(
-                Messages.getString("RandomMapDialog.labRange"), SwingConstants.LEFT); //$NON-NLS-1$
-        texRange = new JTextField(2);
-        texRange.addFocusListener(this);
-        labProbInvert = new JLabel(
-                Messages.getString("RandomMapDialog.labProbInvert"), SwingConstants.LEFT); //$NON-NLS-1$
-        texProbInvert = new JTextField(2);
-        texProbInvert.addFocusListener(this);
-        labCliffsAd = new JLabel(Messages
-                                         .getString("RandomMapDialog.labCliffs"), SwingConstants.LEFT); //$NON-NLS-1$
-        texCliffs = new JTextField(2);
-        texCliffs.addFocusListener(this);
-
-        // mountain
-        labMountainHeight = new JLabel(
-                Messages.getString("RandomMapDialog.labMountainHeight"), SwingConstants.LEFT); //$NON-NLS-1$
-        labMountainWidth = new JLabel(
-                Messages.getString("RandomMapDialog.labMountainWidth"), SwingConstants.LEFT); //$NON-NLS-1$
-        labMountainPeaks = new JLabel(
-                Messages.getString("RandomMapDialog.labMountainPeaks"), SwingConstants.LEFT); //$NON-NLS-1$
-        labMountainStyle = new JLabel(
-                Messages.getString("RandomMapDialog.labMountainStyle"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMountainPeaks = new JTextField(2);
-        texMountainPeaks.addFocusListener(this);
-        texMountainHeightMin = new JTextField(2);
-        texMountainHeightMin.addFocusListener(this);
-        texMountainHeightMax = new JTextField(2);
-        texMountainHeightMax.addFocusListener(this);
-        texMountainWidthMin = new JTextField(2);
-        texMountainWidthMin.addFocusListener(this);
-        texMountainWidthMax = new JTextField(2);
-        texMountainWidthMax.addFocusListener(this);
-        texMountainStyle = new JTextField(2);
-        texMountainStyle.addFocusListener(this);
-
-        /** how much Lakes at least */
-        labWaterSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labWaterSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinWaterSpots = new JTextField(2);
-        texMinWaterSpots.addFocusListener(this);
-        /** how much Lakes at most */
-        texMaxWaterSpots = new JTextField(2);
-        texMaxWaterSpots.addFocusListener(this);
-        /** minimum size of a lake */
-        labWaterSize = new JLabel(Messages
-                                          .getString("RandomMapDialog.labWaterSize"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texMinWaterSize = new JTextField(2);
-        texMinWaterSize.addFocusListener(this);
-        /** maximum Size of a lake */
-        texMaxWaterSize = new JTextField(2);
-        texMaxWaterSize.addFocusListener(this);
-        /** probability for water deeper than lvl1, Range 0..100 */
-        labProbDeep = new JLabel(Messages
-                                         .getString("RandomMapDialog.labProbDeep"), SwingConstants.LEFT); //$NON-NLS-1$
-        texProbDeep = new JTextField(2);
-        texProbDeep.addFocusListener(this);
-
-        /** how much forests at least */
-        labForestSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labForestSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinForestSpots = new JTextField(2);
-        texMinForestSpots.addFocusListener(this);
-        /** how much forests at most */
-        texMaxForestSpots = new JTextField(2);
-        texMaxForestSpots.addFocusListener(this);
-        /** minimum size of a forest */
-        labForestSize = new JLabel(
-                Messages.getString("RandomMapDialog.labForestSize"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinForestSize = new JTextField(2);
-        texMinForestSize.addFocusListener(this);
-        /** maximum Size of a forest */
-        texMaxForestSize = new JTextField(2);
-        texMaxForestSize.addFocusListener(this);
-        /** probability for heavy wood, Range 0..100 */
-        labProbHeavy = new JLabel(Messages
-                                          .getString("RandomMapDialog.labProbHeavy"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texProbHeavy = new JTextField(2);
-        texProbHeavy.addFocusListener(this);
-
-        /** rough */
-        labRoughSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labRoughSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinRoughSpots = new JTextField(2);
-        texMinRoughSpots.addFocusListener(this);
-        texMaxRoughSpots = new JTextField(2);
-        texMaxRoughSpots.addFocusListener(this);
-        labRoughSize = new JLabel(Messages
-                                          .getString("RandomMapDialog.labRoughSize"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texMinRoughSize = new JTextField(2);
-        texMinRoughSize.addFocusListener(this);
-        texMaxRoughSize = new JTextField(2);
-        texMaxRoughSize.addFocusListener(this);
-
-        /** sand */
-        labSandSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labSandSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinSandSpots = new JTextField(2);
-        texMinSandSpots.addFocusListener(this);
-        texMaxSandSpots = new JTextField(2);
-        texMaxSandSpots.addFocusListener(this);
-        labSandSize = new JLabel(Messages
-                                         .getString("RandomMapDialog.labSandSize"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinSandSize = new JTextField(2);
-        texMinSandSize.addFocusListener(this);
-        texMaxSandSize = new JTextField(2);
-        texMaxSandSize.addFocusListener(this);
-
-        /** planted field */
-        labPlantedFieldSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labPlantedFieldSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinPlantedFieldSpots = new JTextField(2);
-        texMinPlantedFieldSpots.addFocusListener(this);
-        texMaxPlantedFieldSpots = new JTextField(2);
-        texMaxPlantedFieldSpots.addFocusListener(this);
-        labPlantedFieldSize = new JLabel(Messages
-                                                 .getString("RandomMapDialog.labPlantedFieldSize"),
-                                         SwingConstants.LEFT); //$NON-NLS-1$
-        texMinPlantedFieldSize = new JTextField(2);
-        texMinPlantedFieldSize.addFocusListener(this);
-        texMaxPlantedFieldSize = new JTextField(2);
-        texMaxPlantedFieldSize.addFocusListener(this);
-
-        /** swamp */
-        labSwampSpots = new JLabel(
-                Messages.getString("RandomMapDialog.labSwampSpots"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinSwampSpots = new JTextField(2);
-        texMinSwampSpots.addFocusListener(this);
-        texMaxSwampSpots = new JTextField(2);
-        texMaxSwampSpots.addFocusListener(this);
-        labSwampSize = new JLabel(Messages
-                                          .getString("RandomMapDialog.labSwampSize"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texMinSwampSize = new JTextField(2);
-        texMinSwampSize.addFocusListener(this);
-        texMaxSwampSize = new JTextField(2);
-        texMaxSwampSize.addFocusListener(this);
-
-        /** pavement */
-        labPavementSpots = new JLabel(Messages
-                                              .getString("RandomMapDialog.labPavementSpots"),
-                                      SwingConstants.LEFT);
-        texMinPavementSpots = new JTextField(2);
-        texMinPavementSpots.addFocusListener(this);
-        texMaxPavementSpots = new JTextField(2);
-        texMaxPavementSpots.addFocusListener(this);
-        labPavementSize = new JLabel(Messages
-                                             .getString("RandomMapDialog.labPavementSize"),
-                                     SwingConstants.LEFT);
-        texMinPavementSize = new JTextField(2);
-        texMinPavementSize.addFocusListener(this);
-        texMaxPavementSize = new JTextField(2);
-        texMaxPavementSize.addFocusListener(this);
-
-        /** Rubble */
-        labRubbleSpots = new JLabel(Messages
-                                            .getString("RandomMapDialog.labRubbleSpots"),
-                                    SwingConstants.LEFT);
-        texMinRubbleSpots = new JTextField(2);
-        texMinRubbleSpots.addFocusListener(this);
-        texMaxRubbleSpots = new JTextField(2);
-        texMaxRubbleSpots.addFocusListener(this);
-        labRubbleSize = new JLabel(Messages
-                                           .getString("RandomMapDialog.labRubbleSize"),
-                                   SwingConstants.LEFT);
-        texMinRubbleSize = new JTextField(2);
-        texMinRubbleSize.addFocusListener(this);
-        texMaxRubbleSize = new JTextField(2);
-        texMaxRubbleSize.addFocusListener(this);
-
-        /** Fortified */
-        labFortifiedSpots = new JLabel(Messages
-                                               .getString("RandomMapDialog.labFortifiedSpots"),
-                                       SwingConstants.LEFT);
-        texMinFortifiedSpots = new JTextField(2);
-        texMinFortifiedSpots.addFocusListener(this);
-        texMaxFortifiedSpots = new JTextField(2);
-        texMaxFortifiedSpots.addFocusListener(this);
-        labFortifiedSize = new JLabel(Messages
-                                              .getString("RandomMapDialog.labFortifiedSize"),
-                                      SwingConstants.LEFT);
-        texMinFortifiedSize = new JTextField(2);
-        texMinFortifiedSize.addFocusListener(this);
-        texMaxFortifiedSize = new JTextField(2);
-        texMaxFortifiedSize.addFocusListener(this);
-
-        /** ice */
-        labIceSpots = new JLabel(Messages
-                                         .getString("RandomMapDialog.labIceSpots"), SwingConstants.LEFT);
-        texMinIceSpots = new JTextField(2);
-        texMinIceSpots.addFocusListener(this);
-        texMaxIceSpots = new JTextField(2);
-        texMaxIceSpots.addFocusListener(this);
-        labIceSize = new JLabel(Messages
-                                        .getString("RandomMapDialog.labIceSize"), SwingConstants.LEFT);
-        texMinIceSize = new JTextField(2);
-        texMinIceSize.addFocusListener(this);
-        texMaxIceSize = new JTextField(2);
-        texMaxIceSize.addFocusListener(this);
-
-        /** probability for a road, range 0..100 */
-        labProbRoad = new JLabel(Messages
-                                         .getString("RandomMapDialog.labProbRoad"), SwingConstants.LEFT); //$NON-NLS-1$
-        texProbRoad = new JTextField(2);
-        texProbRoad.addFocusListener(this);
-        /** probability for a river, range 0..100 */
-        labProbRiver = new JLabel(Messages
-                                          .getString("RandomMapDialog.labProbRiver"),
-                                  SwingConstants.LEFT); //$NON-NLS-1$
-        texProbRiver = new JTextField(2);
-        texProbRiver.addFocusListener(this);
-
-        /* Craters */
-        labProbCrater = new JLabel(
-                Messages.getString("RandomMapDialog.labProbCrater"), SwingConstants.LEFT); //$NON-NLS-1$
-        texProbCrater = new JTextField(2);
-        texProbCrater.addFocusListener(this);
-        labRadius = new JLabel(
-                Messages.getString("RandomMapDialog.labRadius"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMinRadius = new JTextField(2);
-        texMinRadius.addFocusListener(this);
-        texMaxRadius = new JTextField(2);
-        texMaxRadius.addFocusListener(this);
-        labMaxCraters = new JLabel(
-                Messages.getString("RandomMapDialog.labMaxCraters"), SwingConstants.LEFT); //$NON-NLS-1$
-        texMaxCraters = new JTextField(2);
-        texMaxCraters.addFocusListener(this);
-        texMinCraters = new JTextField(2);
-        texMinCraters.addFocusListener(this);
-
-        /* FX */
-        labProbDrought = new JLabel(Messages
-                                            .getString("RandomMapDialog.labProbDrought"),
-                                    SwingConstants.LEFT);
-        labProbFire = new JLabel(Messages
-                                         .getString("RandomMapDialog.labProbFire"), SwingConstants.LEFT);
-        labProbFreeze = new JLabel(Messages
-                                           .getString("RandomMapDialog.labProbFreeze"),
-                                   SwingConstants.LEFT);
-        labProbFlood = new JLabel(Messages
-                                          .getString("RandomMapDialog.labProbFlood"), SwingConstants.LEFT);
-        labFxMod = new JLabel(Messages.getString("RandomMapDialog.labFxMod"),
-                              SwingConstants.LEFT);
-        texProbDrought = new JTextField(2);
-        texProbFire = new JTextField(2);
-        texProbFreeze = new JTextField(2);
-        texProbFlood = new JTextField(2);
-        texFxMod = new JTextField(2);
-
-        /* Buildings */
-        labCityBlocks = new JLabel(Messages
-                                           .getString("RandomMapDialog.labCityBlocks"),
-                                   SwingConstants.LEFT);
-        labCityCF = new JLabel(Messages.getString("RandomMapDialog.labCityCF"),
-                               SwingConstants.LEFT);
-        labCityFloors = new JLabel(Messages
-                                           .getString("RandomMapDialog.labCityFloors"),
-                                   SwingConstants.LEFT);
-        labCityDensity = new JLabel(Messages
-                                            .getString("RandomMapDialog.labCityDensity"),
-                                    SwingConstants.LEFT);
-        labTownSize = new JLabel(Messages
-                                         .getString("RandomMapDialog.labTownSize"), SwingConstants.LEFT);
-        texCityBlocks = new JTextField(2);
-        texCityMinCF = new JTextField(2);
-        texCityMaxCF = new JTextField(2);
-        texCityMinFloors = new JTextField(2);
-        texCityMaxFloors = new JTextField(2);
-        texCityDensity = new JTextField(2);
-        texTownSize = new JTextField(2);
-
-        labInvertNegative = new JLabel(
-                Messages.getString("RandomMapDialog.labInvertNegative"), SwingConstants.LEFT); //$NON-NLS-1$
-        texInvertNegative = new JTextField(1);
-
-        /** Algorithm */
-        labAlgorithmToUse = new JLabel(
-                Messages.getString("RandomMapDialog.labAlgorithmToUse"), SwingConstants.LEFT); //$NON-NLS-1$
-        texAlgorithmToUse = new JTextField(2);
-
-        slElevationAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slWoodsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slLakesAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slPavementAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slRubbleAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slFortifiedAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slIceAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slRoughAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slSandAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slPlantedFieldAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slRoadsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slRiversAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slSwampAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slBoardSizeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slCratersAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slCityAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-        slInvertNegativeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
-
-    }
-
-    private void addOption(JLabel label, JComboBox<String> choice, SimpleLine sl) {
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(label, c);
-        panOptions.add(label);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(choice, c);
-        panOptions.add(choice);
-
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(2, 0, 2, 0);
-        gridbag.setConstraints(sl, c);
-        panOptions.add(sl);
-
-    }
-
-    private void fillChoice(JComboBox<String> c) {
-        c.addItem(NONE);
-        c.addItem(LOW);
-        c.addItem(MEDIUM);
-        c.addItem(HIGH);
-    }
-
-    private void addLabelTextField(JLabel label, JTextField text) {
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.weightx = 1;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(label, c);
-        panOptions.add(label);
-
-        c.weightx = 0;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.NONE;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(text, c);
-        panOptions.add(text);
-    }
-
-    private void addLabelTextField(JLabel label, JTextField text,
-                                   JTextField text2, String separator) {
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.weightx = 1;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(label, c);
-        panOptions.add(label);
-
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(text, c);
-        panOptions.add(text);
-
-        JLabel l = new JLabel(separator, SwingConstants.CENTER);
-        gridbag.setConstraints(l, c);
-        panOptions.add(l);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(text2, c);
-        panOptions.add(text2);
-    }
-
-    private void addSeparator(SimpleLine sl) {
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(2, 0, 2, 0);
-        gridbag.setConstraints(sl, c);
-        panOptions.add(sl);
-    }
-
-    public void loadValues() {
-        texBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
-        texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
-        texTheme.setText(mapSettings.getTheme());
-
-        texHilliness.setText(Integer.toString(mapSettings.getHilliness()));
-        texRange.setText(Integer.toString(mapSettings.getRange()));
-        texProbInvert.setText(Integer.toString(mapSettings.getProbInvert()));
-        texCliffs.setText(Integer.toString(mapSettings.getCliffs()));
-        texMinWaterSpots.setText(Integer.toString(mapSettings
-                                                          .getMinWaterSpots()));
-        texMaxWaterSpots.setText(Integer.toString(mapSettings
-                                                          .getMaxWaterSpots()));
-        texMinWaterSize
-                .setText(Integer.toString(mapSettings.getMinWaterSize()));
-        texMaxWaterSize
-                .setText(Integer.toString(mapSettings.getMaxWaterSize()));
-
-        texMinForestSpots.setText(Integer.toString(mapSettings
-                                                           .getMinForestSpots()));
-        texMaxForestSpots.setText(Integer.toString(mapSettings
-                                                           .getMaxForestSpots()));
-        texMinForestSize.setText(Integer.toString(mapSettings
-                                                          .getMinForestSize()));
-        texMaxForestSize.setText(Integer.toString(mapSettings
-                                                          .getMaxForestSize()));
-
-        texMinRoughSpots.setText(Integer.toString(mapSettings
-                                                          .getMinRoughSpots()));
-        texMaxRoughSpots.setText(Integer.toString(mapSettings
-                                                          .getMaxRoughSpots()));
-        texMinRoughSize
-                .setText(Integer.toString(mapSettings.getMinRoughSize()));
-        texMaxRoughSize
-                .setText(Integer.toString(mapSettings.getMaxRoughSize()));
-
-        texMinSandSpots.setText(Integer.toString(mapSettings
-                                                         .getMinSandSpots()));
-        texMaxSandSpots.setText(Integer.toString(mapSettings
-                                                         .getMaxSandSpots()));
-        texMinSandSize
-                .setText(Integer.toString(mapSettings.getMinSandSize()));
-        texMaxSandSize
-                .setText(Integer.toString(mapSettings.getMaxSandSize()));
-
-        texMinPlantedFieldSpots.setText(Integer.toString(mapSettings
-                                                                 .getMinPlantedFieldSpots()));
-        texMaxPlantedFieldSpots.setText(Integer.toString(mapSettings
-                                                                 .getMaxPlantedFieldSpots()));
-        texMinPlantedFieldSize
-                .setText(Integer.toString(mapSettings.getMinPlantedFieldSize()));
-        texMaxPlantedFieldSize
-                .setText(Integer.toString(mapSettings.getMaxPlantedFieldSize()));
-
-        texMinSwampSpots.setText(Integer.toString(mapSettings
-                                                          .getMinSwampSpots()));
-        texMaxSwampSpots.setText(Integer.toString(mapSettings
-                                                          .getMaxSwampSpots()));
-        texMinSwampSize
-                .setText(Integer.toString(mapSettings.getMinSwampSize()));
-        texMaxSwampSize
-                .setText(Integer.toString(mapSettings.getMaxSwampSize()));
-
-        texMinPavementSpots.setText(Integer.toString(mapSettings
-                                                             .getMinPavementSpots()));
-        texMaxPavementSpots.setText(Integer.toString(mapSettings
-                                                             .getMaxPavementSpots()));
-        texMinPavementSize.setText(Integer.toString(mapSettings
-                                                            .getMinPavementSize()));
-        texMaxPavementSize.setText(Integer.toString(mapSettings
-                                                            .getMaxPavementSize()));
-
-        texMinRubbleSpots.setText(Integer.toString(mapSettings
-                                                           .getMinRubbleSpots()));
-        texMaxRubbleSpots.setText(Integer.toString(mapSettings
-                                                           .getMaxRubbleSpots()));
-        texMinRubbleSize.setText(Integer.toString(mapSettings
-                                                          .getMinRubbleSize()));
-        texMaxRubbleSize.setText(Integer.toString(mapSettings
-                                                          .getMaxRubbleSize()));
-
-        texMinFortifiedSpots.setText(Integer.toString(mapSettings
-                                                              .getMinFortifiedSpots()));
-        texMaxFortifiedSpots.setText(Integer.toString(mapSettings
-                                                              .getMaxFortifiedSpots()));
-        texMinFortifiedSize.setText(Integer.toString(mapSettings
-                                                             .getMinFortifiedSize()));
-        texMaxFortifiedSize.setText(Integer.toString(mapSettings
-                                                             .getMaxFortifiedSize()));
-
-        texMinIceSpots.setText(Integer.toString(mapSettings.getMinIceSpots()));
-        texMaxIceSpots.setText(Integer.toString(mapSettings.getMaxIceSpots()));
-        texMinIceSize.setText(Integer.toString(mapSettings.getMinIceSize()));
-        texMaxIceSize.setText(Integer.toString(mapSettings.getMaxIceSize()));
-
-        texProbDeep.setText(Integer.toString(mapSettings.getProbDeep()));
-        texProbHeavy.setText(Integer.toString(mapSettings.getProbHeavy()));
-        texProbRiver.setText(Integer.toString(mapSettings.getProbRiver()));
-        texProbRoad.setText(Integer.toString(mapSettings.getProbRoad()));
-        texProbCrater.setText(Integer.toString(mapSettings.getProbCrater()));
-        texMinRadius.setText(Integer.toString(mapSettings.getMinRadius()));
-        texMaxRadius.setText(Integer.toString(mapSettings.getMaxRadius()));
-        texMaxCraters.setText(Integer.toString(mapSettings.getMaxCraters()));
-        texMinCraters.setText(Integer.toString(mapSettings.getMinCraters()));
-
-        texProbDrought.setText(Integer.toString(mapSettings.getProbDrought()));
-        texProbFire.setText(Integer.toString(mapSettings.getProbForestFire()));
-        texProbFreeze.setText(Integer.toString(mapSettings.getProbFreeze()));
-        texProbFlood.setText(Integer.toString(mapSettings.getProbFlood()));
-        texFxMod.setText(Integer.toString(mapSettings.getFxMod()));
-
-        choCity.setSelectedItem(mapSettings.getCityType());
-        texInvertNegative.setText(Integer.toString(mapSettings
-                                                           .getInvertNegativeTerrain()));
-        texCityBlocks.setText(Integer.toString(mapSettings.getCityBlocks()));
-        texCityMinCF.setText(Integer.toString(mapSettings.getCityMinCF()));
-        texCityMaxCF.setText(Integer.toString(mapSettings.getCityMaxCF()));
-        texCityMinFloors.setText(Integer.toString(mapSettings
-                                                          .getCityMinFloors()));
-        texCityMaxFloors.setText(Integer.toString(mapSettings
-                                                          .getCityMaxFloors()));
-        texCityDensity.setText(Integer.toString(mapSettings.getCityDensity()));
-        texTownSize.setText(Integer.toString(mapSettings.getTownSize()));
-
-        texMountainPeaks.setText(Integer.toString(mapSettings
-                                                          .getMountainPeaks()));
-        texMountainStyle.setText(Integer.toString(mapSettings
-                                                          .getMountainStyle()));
-        texMountainHeightMin.setText(Integer.toString(mapSettings
-                                                              .getMountainHeightMin()));
-        texMountainHeightMax.setText(Integer.toString(mapSettings
-                                                              .getMountainHeightMax()));
-        texMountainWidthMin.setText(Integer.toString(mapSettings
-                                                             .getMountainWidthMin()));
-        texMountainWidthMax.setText(Integer.toString(mapSettings
-                                                             .getMountainWidthMax()));
-        texAlgorithmToUse.setText(Integer.toString(mapSettings
-                                                           .getAlgorithmToUse()));
-    }
-
-    private boolean applyValues() {
-        int boardWidth;
-        int boardHeight;
-        int hilliness, range, cliffs;
-        int minWaterSpots, maxWaterSpots, minWaterSize, maxWaterSize, probDeep;
-        int minForestSpots, maxForestSpots, minForestSize, maxForestSize, probHeavy;
-        int minRoughSpots, maxRoughSpots, minRoughSize, maxRoughSize;
-        int minSandSpots, maxSandSpots, minSandSize, maxSandSize;
-        int minPlantedFieldSpots, maxPlantedFieldSpots, minPlantedFieldSize, maxPlantedFieldSize;
-        int minPavementSpots, maxPavementSpots, minPavementSize, maxPavementSize;
-        int minRubbleSpots, maxRubbleSpots, minRubbleSize, maxRubbleSize;
-        int minFortifiedSpots, maxFortifiedSpots, minFortifiedSize, maxFortifiedSize;
-        int minIceSpots, maxIceSpots, minIceSize, maxIceSize;
-        int minSwampSpots, maxSwampSpots, minSwampSize, maxSwampSize;
-        int probRoad, probRiver, probInvert;
-        int minRadius, maxRadius, minCraters, maxCraters, probCrater;
-        int drought, fire, freeze, flood, fxmod;
-        int algorithmToUse;
-        String theme = "";
-        String cityType;
-        int cityBlocks = 4;
-        int cityMinCF = 10;
-        int cityMaxCF = 100;
-        int cityMinFloors = 1;
-        int cityMaxFloors = 6;
-        int cityDensity = 75;
-        int townSize = 60;
-        int mountainPeaks, mountainHeightMin, mountainHeightMax;
-        int mountainStyle, mountainWidthMin, mountainWidthMax;
-        int invertNegative = 0;
-
+        // Load the file.  If there is an error, log it and return.
         try {
-            boardWidth = Integer.parseInt(texBoardWidth.getText());
-            boardHeight = Integer.parseInt(texBoardHeight.getText());
-        } catch (NumberFormatException ex) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages
-                                    .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING,
-                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            mapSettings.load(new FileInputStream(selectedFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Pass the loaded settings into the two different views.
+        basicPanel.setMapSettings(mapSettings);
+        advancedPanel.setMapSettings(mapSettings);
+    }
+
+    private boolean doSave() {
+
+        // Apply the changes.
+        if (!doApply()) {
             return false;
         }
 
-        if ((boardWidth <= 0) || (boardHeight <= 0)) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("RandomMapDialog.BoardSizeWarn"), INVALID_SETTING,
-                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+        // Have the user choose a file to save the new settings to.
+        File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
+                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+
+        // If no file was selected, we're done.
+        if (selectedFile == null) {
             return false;
         }
 
-        theme = texTheme.getText();
-
-        if (advanced) {
-            try {
-                hilliness = Integer.parseInt(texHilliness.getText());
-                range = Integer.parseInt(texRange.getText());
-                cliffs = Integer.parseInt(texCliffs.getText());
-                probInvert = Integer.parseInt(texProbInvert.getText());
-                minWaterSpots = Integer.parseInt(texMinWaterSpots.getText());
-                maxWaterSpots = Integer.parseInt(texMaxWaterSpots.getText());
-                minWaterSize = Integer.parseInt(texMinWaterSize.getText());
-                maxWaterSize = Integer.parseInt(texMaxWaterSize.getText());
-                minForestSpots = Integer.parseInt(texMinForestSpots.getText());
-                maxForestSpots = Integer.parseInt(texMaxForestSpots.getText());
-                minForestSize = Integer.parseInt(texMinForestSize.getText());
-                maxForestSize = Integer.parseInt(texMaxForestSize.getText());
-                minRoughSpots = Integer.parseInt(texMinRoughSpots.getText());
-                maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
-                minRoughSize = Integer.parseInt(texMinRoughSize.getText());
-                maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
-                minRoughSpots = Integer.parseInt(texMinRoughSpots.getText());
-                maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
-                minRoughSize = Integer.parseInt(texMinRoughSize.getText());
-                maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
-                minRoughSpots = Integer.parseInt(texMinRoughSpots.getText());
-                maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
-                minRoughSize = Integer.parseInt(texMinRoughSize.getText());
-                maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
-                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
-                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
-                minSandSize = Integer.parseInt(texMinSandSize.getText());
-                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
-                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
-                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
-                minSandSize = Integer.parseInt(texMinSandSize.getText());
-                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
-                minSandSpots = Integer.parseInt(texMinSandSpots.getText());
-                maxSandSpots = Integer.parseInt(texMaxSandSpots.getText());
-                minSandSize = Integer.parseInt(texMinSandSize.getText());
-                maxSandSize = Integer.parseInt(texMaxSandSize.getText());
-                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
-                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
-                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
-                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
-                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
-                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
-                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
-                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
-                minPlantedFieldSpots = Integer.parseInt(texMinPlantedFieldSpots.getText());
-                maxPlantedFieldSpots = Integer.parseInt(texMaxPlantedFieldSpots.getText());
-                minPlantedFieldSize = Integer.parseInt(texMinPlantedFieldSize.getText());
-                maxPlantedFieldSize = Integer.parseInt(texMaxPlantedFieldSize.getText());
-                minSwampSpots = Integer.parseInt(texMinSwampSpots.getText());
-                maxSwampSpots = Integer.parseInt(texMaxSwampSpots.getText());
-                minSwampSize = Integer.parseInt(texMinSwampSize.getText());
-                maxSwampSize = Integer.parseInt(texMaxSwampSize.getText());
-                minPavementSpots = Integer.parseInt(texMinPavementSpots
-                                                            .getText());
-                maxPavementSpots = Integer.parseInt(texMaxPavementSpots
-                                                            .getText());
-                minPavementSize = Integer
-                        .parseInt(texMinPavementSize.getText());
-                maxPavementSize = Integer
-                        .parseInt(texMaxPavementSize.getText());
-                minRubbleSpots = Integer.parseInt(texMinRubbleSpots.getText());
-                maxRubbleSpots = Integer.parseInt(texMaxRubbleSpots.getText());
-                minRubbleSize = Integer.parseInt(texMinRubbleSize.getText());
-                maxRubbleSize = Integer.parseInt(texMaxRubbleSize.getText());
-                minFortifiedSpots = Integer.parseInt(texMinFortifiedSpots
-                                                             .getText());
-                maxFortifiedSpots = Integer.parseInt(texMaxFortifiedSpots
-                                                             .getText());
-                minFortifiedSize = Integer.parseInt(texMinFortifiedSize
-                                                            .getText());
-                maxFortifiedSize = Integer.parseInt(texMaxFortifiedSize
-                                                            .getText());
-                minIceSpots = Integer.parseInt(texMinIceSpots.getText());
-                maxIceSpots = Integer.parseInt(texMaxIceSpots.getText());
-                minIceSize = Integer.parseInt(texMinIceSize.getText());
-                maxIceSize = Integer.parseInt(texMaxIceSize.getText());
-                probRoad = Integer.parseInt(texProbRoad.getText());
-                probRiver = Integer.parseInt(texProbRiver.getText());
-                probHeavy = Integer.parseInt(texProbHeavy.getText());
-                probDeep = Integer.parseInt(texProbDeep.getText());
-                probCrater = Integer.parseInt(texProbCrater.getText());
-                minRadius = Integer.parseInt(texMinRadius.getText());
-                maxRadius = Integer.parseInt(texMaxRadius.getText());
-                maxCraters = Integer.parseInt(texMaxCraters.getText());
-                minCraters = Integer.parseInt(texMinCraters.getText());
-                algorithmToUse = Integer.parseInt(texAlgorithmToUse.getText());
-                drought = Integer.parseInt(texProbDrought.getText());
-                fire = Integer.parseInt(texProbFire.getText());
-                freeze = Integer.parseInt(texProbFreeze.getText());
-                flood = Integer.parseInt(texProbFlood.getText());
-                fxmod = Integer.parseInt(texFxMod.getText());
-                cityBlocks = Integer.parseInt(texCityBlocks.getText());
-                cityMinCF = Integer.parseInt(texCityMinCF.getText());
-                cityMaxCF = Integer.parseInt(texCityMaxCF.getText());
-                cityMinFloors = Integer.parseInt(texCityMinFloors.getText());
-                cityMaxFloors = Integer.parseInt(texCityMaxFloors.getText());
-                cityDensity = Integer.parseInt(texCityDensity.getText());
-                mountainHeightMin = Integer.parseInt(texMountainHeightMin
-                                                             .getText());
-                mountainHeightMax = Integer.parseInt(texMountainHeightMax
-                                                             .getText());
-                mountainWidthMin = Integer.parseInt(texMountainWidthMin
-                                                            .getText());
-                mountainWidthMax = Integer.parseInt(texMountainWidthMax
-                                                            .getText());
-                mountainStyle = Integer.parseInt(texMountainStyle.getText());
-                mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
-                invertNegative = Integer.parseInt(texInvertNegative.getText());
-                townSize = Integer.parseInt(texTownSize.getText());
-
-            } catch (NumberFormatException ex) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.OnlyIntegersWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-
-            if ((hilliness < 0) || (hilliness > 99)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.AmmountOfElevationWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((cliffs < 0) || (cliffs > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CliffsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (range < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.elevRangeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probInvert < 0) || (probInvert > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.depressionWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minWaterSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinLakesWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxWaterSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakesWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxWaterSpots < minWaterSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakesWarn2"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minWaterSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinLakeSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxWaterSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakeSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxWaterSize < minWaterSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxLakeSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probDeep < 0) || (probDeep > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.DeepWaterProbWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minForestSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinForestsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxForestSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxForestSpots < minForestSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestsWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minForestSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinForestSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxForestSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxForestSize < minForestSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxForestSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probHeavy < 0) || (probHeavy > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.HeavyForestProbWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minRoughSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRoughsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRoughSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRoughSpots < minRoughSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughsWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minRoughSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRoughSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRoughSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRoughSize < minRoughSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRoughSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minSandSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSandsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSandSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSandsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSandSpots < minSandSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSandsWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minSandSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSandSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSandSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSandSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSandSize < minSandSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSandSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minPlantedFieldSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPlantedFieldsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPlantedFieldSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPlantedFieldsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPlantedFieldSpots < minPlantedFieldSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPlantedFieldsWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minPlantedFieldSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPlantedFieldSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPlantedFieldSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPlantedFieldSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPlantedFieldSize < minPlantedFieldSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPlantedFieldSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minSwampSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSwampsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSwampSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampsWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSwampSpots < minSwampSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampsWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minSwampSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinSwampSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSwampSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxSwampSize < minSwampSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxSwampSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minPavementSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPavementWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPavementSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPavementSpots < minPavementSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minPavementSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinPavementSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPavementSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxPavementSize < minPavementSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxPavementSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minRubbleSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRubbleWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRubbleSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRubbleSpots < minRubbleSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minRubbleSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinRubbleSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRubbleSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRubbleSize < minRubbleSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxRubbleSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minFortifiedSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinFortifiedWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxFortifiedSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxFortifiedSpots < minFortifiedSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minFortifiedSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinFortifiedSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxFortifiedSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxFortifiedSize < minFortifiedSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxFortifiedSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minIceSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinIceWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxIceSpots < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxIceSpots < minIceSpots) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minIceSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinIceSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxIceSize < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceSizeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxIceSize < minIceSize) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxIceSizeWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probRiver < 0) || (probRiver > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.RiverProbWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probRoad < 0) || (probRoad > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.RoadProbWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((probCrater < 0) || (probCrater > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CratersProbWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minRadius < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinCraterRadiusWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRadius < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCraterRadiusWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxRadius < minRadius) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCraterRadiusWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxCraters < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCratersWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (minCraters < 0) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MinCratersWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if (maxCraters < minCraters) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MaxCratersWarn1"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-            if ((algorithmToUse < 0) || (algorithmToUse > 2)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.AlgorithmWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-
-            if ((cityMinCF < 1) || (cityMaxCF > 150)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.CFOutOfRangeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-
-            if ((cityMinFloors < 1) || (cityMaxFloors > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.FloorsOutOfRangeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-
-            if ((cityDensity < 1) || (cityDensity > 100)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.DensityOutOfRangeWarn"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-                return false;
-            }
-
-            if (((mountainWidthMin < 1) || (mountainWidthMax < mountainWidthMin))
-                && (mountainPeaks > 0)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("RandomMapDialog.MountainWidthOutOfRange"), INVALID_SETTING,
-                                JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-
-        } else {
-            String s = (String) choElevation.getSelectedItem();
-            if (s.equals(NONE)) {
-                hilliness = 0;
-                range = 0;
-            } else if (s.equals(LOW)) {
-                hilliness = 25;
-                range = 3;
-            } else if (s.equals(MEDIUM)) {
-                hilliness = 50;
-                range = 5;
-            } else {
-                hilliness = 75;
-                range = 8;
-            }
-            s = (String) choCliffs.getSelectedItem();
-            if (s.equals(NONE)) {
-                cliffs = 0;
-            } else if (s.equals(LOW)) {
-                cliffs = 25;
-            } else if (s.equals(MEDIUM)) {
-                cliffs = 50;
-            } else {
-                cliffs = 75;
-            }
-            s = (String) choWoods.getSelectedItem();
-            if (s.equals(NONE)) {
-                minForestSize = 0;
-                maxForestSize = 0;
-                minForestSpots = 0;
-                maxForestSpots = 0;
-                probHeavy = 0;
-            } else if (s.equals(LOW)) {
-                minForestSize = 3;
-                maxForestSize = 6;
-                minForestSpots = 3;
-                maxForestSpots = 6;
-                probHeavy = 20;
-            } else if (s.equals(MEDIUM)) {
-                minForestSize = 3;
-                maxForestSize = 10;
-                minForestSpots = 4;
-                maxForestSpots = 8;
-                probHeavy = 30;
-            } else {
-                minForestSize = 8;
-                maxForestSize = 13;
-                minForestSpots = 6;
-                maxForestSpots = 10;
-                probHeavy = 45;
-            }
-            s = (String) choLakes.getSelectedItem();
-            if (s.equals(NONE)) {
-                minWaterSize = 0;
-                maxWaterSize = 0;
-                minWaterSpots = 0;
-                maxWaterSpots = 0;
-                probDeep = 0;
-            } else if (s.equals(LOW)) {
-                minWaterSize = 1;
-                maxWaterSize = 5;
-                minWaterSpots = 1;
-                maxWaterSpots = 5;
-                probDeep = 20;
-            } else if (s.equals(MEDIUM)) {
-                minWaterSize = 6;
-                maxWaterSize = 10;
-                minWaterSpots = 2;
-                maxWaterSpots = 5;
-                probDeep = 30;
-            } else {
-                minWaterSize = 8;
-                maxWaterSize = 15;
-                minWaterSpots = 3;
-                maxWaterSpots = 6;
-                probDeep = 45;
-            }
-            s = (String) choRough.getSelectedItem();
-            if (s.equals(NONE)) {
-                minRoughSize = 0;
-                maxRoughSize = 0;
-                minRoughSpots = 0;
-                maxRoughSpots = 0;
-            } else if (s.equals(LOW)) {
-                minRoughSize = 1;
-                maxRoughSize = 2;
-                minRoughSpots = 2;
-                maxRoughSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minRoughSize = 2;
-                maxRoughSize = 5;
-                minRoughSpots = 3;
-                maxRoughSpots = 8;
-            } else {
-                minRoughSize = 3;
-                maxRoughSize = 7;
-                minRoughSpots = 5;
-                maxRoughSpots = 10;
-            }
-            s = (String) choSand.getSelectedItem();
-            if (s.equals(NONE)) {
-                minSandSize = 0;
-                maxSandSize = 0;
-                minSandSpots = 0;
-                maxSandSpots = 0;
-            } else if (s.equals(LOW)) {
-                minSandSize = 1;
-                maxSandSize = 2;
-                minSandSpots = 2;
-                maxSandSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minSandSize = 2;
-                maxSandSize = 5;
-                minSandSpots = 3;
-                maxSandSpots = 8;
-            } else {
-                minSandSize = 3;
-                maxSandSize = 7;
-                minSandSpots = 5;
-                maxSandSpots = 10;
-            }
-            s = (String) choPlantedField.getSelectedItem();
-            if (s.equals(NONE)) {
-                minPlantedFieldSize = 0;
-                maxPlantedFieldSize = 0;
-                minPlantedFieldSpots = 0;
-                maxPlantedFieldSpots = 0;
-            } else if (s.equals(LOW)) {
-                minPlantedFieldSize = 1;
-                maxPlantedFieldSize = 2;
-                minPlantedFieldSpots = 2;
-                maxPlantedFieldSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minPlantedFieldSize = 2;
-                maxPlantedFieldSize = 5;
-                minPlantedFieldSpots = 3;
-                maxPlantedFieldSpots = 8;
-            } else {
-                minPlantedFieldSize = 3;
-                maxPlantedFieldSize = 7;
-                minPlantedFieldSpots = 5;
-                maxPlantedFieldSpots = 10;
-            }
-            s = (String) choSwamp.getSelectedItem();
-            if (s.equals(NONE)) {
-                minSwampSize = 0;
-                maxSwampSize = 0;
-                minSwampSpots = 0;
-                maxSwampSpots = 0;
-            } else if (s.equals(LOW)) {
-                minSwampSize = 1;
-                maxSwampSize = 2;
-                minSwampSpots = 2;
-                maxSwampSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minSwampSize = 2;
-                maxSwampSize = 5;
-                minSwampSpots = 3;
-                maxSwampSpots = 8;
-            } else {
-                minSwampSize = 3;
-                maxSwampSize = 7;
-                minSwampSpots = 5;
-                maxSwampSpots = 10;
-            }
-            s = (String) choPavement.getSelectedItem();
-            if (s.equals(NONE)) {
-                minPavementSize = 0;
-                maxPavementSize = 0;
-                minPavementSpots = 0;
-                maxPavementSpots = 0;
-            } else if (s.equals(LOW)) {
-                minPavementSize = 1;
-                maxPavementSize = 2;
-                minPavementSpots = 2;
-                maxPavementSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minPavementSize = 2;
-                maxPavementSize = 5;
-                minPavementSpots = 3;
-                maxPavementSpots = 8;
-            } else {
-                minPavementSize = 3;
-                maxPavementSize = 7;
-                minPavementSpots = 5;
-                maxPavementSpots = 10;
-            }
-            s = (String) choRubble.getSelectedItem();
-            if (s.equals(NONE)) {
-                minRubbleSize = 0;
-                maxRubbleSize = 0;
-                minRubbleSpots = 0;
-                maxRubbleSpots = 0;
-            } else if (s.equals(LOW)) {
-                minRubbleSize = 1;
-                maxRubbleSize = 2;
-                minRubbleSpots = 2;
-                maxRubbleSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minRubbleSize = 2;
-                maxRubbleSize = 5;
-                minRubbleSpots = 3;
-                maxRubbleSpots = 8;
-            } else {
-                minRubbleSize = 3;
-                maxRubbleSize = 7;
-                minRubbleSpots = 5;
-                maxRubbleSpots = 10;
-            }
-            s = (String) choFortified.getSelectedItem();
-            if (s.equals(NONE)) {
-                minFortifiedSize = 0;
-                maxFortifiedSize = 0;
-                minFortifiedSpots = 0;
-                maxFortifiedSpots = 0;
-            } else if (s.equals(LOW)) {
-                minFortifiedSize = 1;
-                maxFortifiedSize = 2;
-                minFortifiedSpots = 1;
-                maxFortifiedSpots = 2;
-            } else if (s.equals(MEDIUM)) {
-                minFortifiedSize = 2;
-                maxFortifiedSize = 3;
-                minFortifiedSpots = 2;
-                maxFortifiedSpots = 4;
-            } else {
-                minFortifiedSize = 2;
-                maxFortifiedSize = 4;
-                minFortifiedSpots = 3;
-                maxFortifiedSpots = 6;
-            }
-            s = (String) choIce.getSelectedItem();
-            if (s.equals(NONE)) {
-                minIceSize = 0;
-                maxIceSize = 0;
-                minIceSpots = 0;
-                maxIceSpots = 0;
-            } else if (s.equals(LOW)) {
-                minIceSize = 1;
-                maxIceSize = 2;
-                minIceSpots = 2;
-                maxIceSpots = 6;
-            } else if (s.equals(MEDIUM)) {
-                minIceSize = 2;
-                maxIceSize = 5;
-                minIceSpots = 3;
-                maxIceSpots = 8;
-            } else {
-                minIceSize = 3;
-                maxIceSize = 7;
-                minIceSpots = 5;
-                maxIceSpots = 10;
-            }
-            s = (String) choRoads.getSelectedItem();
-            if (s.equals(NONE)) {
-                probRoad = 0;
-            } else if (s.equals(LOW)) {
-                probRoad = 25;
-            } else if (s.equals(MEDIUM)) {
-                probRoad = 50;
-            } else {
-                probRoad = 75;
-            }
-            s = (String) choRivers.getSelectedItem();
-            if (s.equals(NONE)) {
-                probRiver = 0;
-            } else if (s.equals(LOW)) {
-                probRiver = 25;
-            } else if (s.equals(MEDIUM)) {
-                probRiver = 50;
-            } else {
-                probRiver = 75;
-            }
-
-            s = (String) choCraters.getSelectedItem();
-            if (s.equals(NONE)) {
-                probCrater = 0;
-                minRadius = 0;
-                maxRadius = 0;
-                minCraters = 0;
-                maxCraters = 0;
-            } else if (s.equals(LOW)) {
-                probCrater = 25;
-                minRadius = 1;
-                maxRadius = 3;
-                minCraters = 1;
-                maxCraters = 3;
-            } else if (s.equals(MEDIUM)) {
-                probCrater = 50;
-                minRadius = 1;
-                maxRadius = 5;
-                minCraters = 3;
-                maxCraters = 8;
-            } else {
-                probCrater = 75;
-                minRadius = 3;
-                maxRadius = 9;
-                minCraters = 6;
-                maxCraters = 14;
-            }
-
-            s = (String) choMountain.getSelectedItem();
-            if (s.equals(NONE)) {
-                mountainPeaks = 0;
-                mountainHeightMin = 4;
-                mountainHeightMax = 6;
-                mountainWidthMin = 7;
-                mountainWidthMax = 10;
-                mountainStyle = 0;
-            } else if (s.equals(LOW)) {
-                mountainPeaks = 1;
-                mountainHeightMin = 4;
-                mountainHeightMax = 6;
-                mountainWidthMin = 7;
-                mountainWidthMax = 10;
-                mountainStyle = 0;
-            } else if (s.equals(MEDIUM)) {
-                mountainPeaks = 2;
-                mountainHeightMin = 6;
-                mountainHeightMax = 8;
-                mountainWidthMin = 7;
-                mountainWidthMax = 10;
-                mountainStyle = 0;
-            } else {
-                mountainPeaks = 3;
-                mountainHeightMin = 8;
-                mountainHeightMax = 10;
-                mountainWidthMin = 9;
-                mountainWidthMax = 14;
-                mountainStyle = MapSettings.MOUNTAIN_SNOWCAPPED;
-            }
-
-            cityBlocks = 16;
-            cityMinCF = 10;
-            cityMaxCF = 100;
-            cityMinFloors = 1;
-            cityMaxFloors = 6;
-            cityDensity = 75;
-            townSize = 60;
-            algorithmToUse = 0;
-            probInvert = 0;
-            fxmod = 0;
-            flood = 0;
-            freeze = 0;
-            fire = 0;
-            drought = 0;
+        // Load the changed settings into the existing map settings object.
+        try {
+            mapSettings.load(new FileInputStream(selectedFile));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-        cityType = (String) choCity.getSelectedItem();
-        if (!advanced && cityType.equals("TOWN")) {
-            cityBlocks = 3;
-            cityMaxCF = 50;
-            cityMaxFloors = 3;
-        }
-
-        mapSettings.setBoardSize(boardWidth, boardHeight);
-        mapSettings.setElevationParams(hilliness, range, probInvert);
-        mapSettings.setCliffParam(cliffs);
-        mapSettings.setWaterParams(minWaterSpots, maxWaterSpots, minWaterSize,
-                                   maxWaterSize, probDeep);
-        mapSettings.setForestParams(minForestSpots, maxForestSpots,
-                                    minForestSize, maxForestSize, probHeavy);
-        mapSettings.setRoughParams(minRoughSpots, maxRoughSpots, minRoughSize,
-                                   maxRoughSize);
-        mapSettings.setSandParams(minSandSpots, maxSandSpots, minSandSize,
-                                  maxSandSize);
-        mapSettings.setPlantedFieldParams(minPlantedFieldSpots, maxPlantedFieldSpots, minPlantedFieldSize,
-                                          maxPlantedFieldSize);
-        mapSettings.setSwampParams(minSwampSpots, maxSwampSpots, minSwampSize,
-                                   maxSwampSize);
-        mapSettings.setPavementParams(minPavementSpots, maxPavementSpots,
-                                      minPavementSize, maxPavementSize);
-        mapSettings.setRubbleParams(minRubbleSpots, maxRubbleSpots,
-                                    minRubbleSize, maxRubbleSize);
-        mapSettings.setFortifiedParams(minFortifiedSpots, maxFortifiedSpots,
-                                       minFortifiedSize, maxFortifiedSize);
-        mapSettings.setIceParams(minIceSpots, maxIceSpots, minIceSize,
-                                 maxIceSize);
-        mapSettings.setRiverParam(probRiver);
-        mapSettings.setRoadParam(probRoad);
-        mapSettings.setCraterParam(probCrater, minCraters, maxCraters,
-                                   minRadius, maxRadius);
-        mapSettings.setSpecialFX(fxmod, fire, freeze, flood, drought);
-        mapSettings.setAlgorithmToUse(algorithmToUse);
-        mapSettings.setCityParams(cityBlocks, cityType, cityMinCF, cityMaxCF,
-                                  cityMinFloors, cityMaxFloors, cityDensity, townSize);
-        mapSettings.setMountainParams(mountainPeaks, mountainWidthMin,
-                                      mountainWidthMax, mountainHeightMin, mountainHeightMax,
-                                      mountainStyle);
-        mapSettings.setInvertNegativeTerrain(invertNegative);
-
-        mapSettings.setTheme(theme);
-
-        if (!advanced) {
-            loadValues();
-        }
-
-        //if we have a client then send an update to the server
-        if (null != client) {
-            client.sendMapSettings(mapSettings);
-        } else {
-            //otherwise just update the local settings
-            bsd.updateMapSettings(mapSettings);
-        }
-
         return true;
     }
 
-    public void focusGained(FocusEvent fe) {
-        if (fe.getSource() instanceof JTextField) {
-            JTextField tf = (JTextField) fe.getSource();
-            tf.selectAll();
+    private boolean doApply() {
+
+        // Get the new settings from the basic or advanced view.
+        MapSettings newMapSettings;
+        if (basicButton.isSelected()) {
+            newMapSettings = basicPanel.getMapSettings();
+            advancedPanel.setMapSettings(newMapSettings);
+        } else {
+            newMapSettings = advancedPanel.getMapSettings();
+            basicPanel.setMapSettings(newMapSettings);
+        }
+
+        // If we have no settings, we're done.
+        if (newMapSettings == null) {
+            return false;
+        }
+
+        // Get the general settings from this panel.
+        newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
+        newMapSettings.setTheme(mapThemeField.getText());
+        this.mapSettings = newMapSettings;
+
+        // Sent the map settings to either the server or the observer as needed.
+        if (CLIENT != null) {
+            CLIENT.sendMapSettings(newMapSettings);
+            return true;
+        }
+        MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
+        return true;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (basicButton.equals(e.getSource())) {
+            switchView(VIEW_BASIC, false);
+        } else if (advancedButton.equals(e.getSource())) {
+            switchView(VIEW_ADVANCED, false);
+        } else if (loadButton.equals(e.getSource())) {
+            doLoad();
+        } else if (saveButton.equals(e.getSource())) {
+            if (doSave()) {
+                setVisible(false);
+            }
+        } else if (okayButton.equals(e.getSource())) {
+            if (doApply()) {
+                setVisible(false);
+            }
         }
     }
-
-    public void focusLost(FocusEvent fe) {
-        if (fe.getSource() instanceof JTextField) {
-            JTextField tf = (JTextField) fe.getSource();
-            tf.select(0, 0);
-        }
-    }
-
-    public MapSettings getMapSettings() {
-        return mapSettings;
-    }
-
-    public void setMapSettings(MapSettings mapSettings) {
-        this.mapSettings = mapSettings;
-        loadValues();
-    }
-
-    private void setProperSize() {
-        validate();
-        pack();
-        /*Dimension dopt = panOptions.getPreferredSize();
-        Dimension dbt = panButtons.getPreferredSize();
-        int width = Math.min(dopt.width + dbt.width + 50,
-                getParent().getSize().width);
-        int height = Math.min(dopt.height + dbt.height + 50, getParent()
-                .getSize().height);
-                */
-        int width = 600;
-        int height = 500;
-        setPreferredSize(new Dimension(width, height));
-    }
-
-    private void setProperLocation() {
-        setLocationRelativeTo(frame);
-
-    }
-
 }

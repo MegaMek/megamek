@@ -37,7 +37,7 @@ import org.mockito.Mockito;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Deric
+ * User: Deric "Netzilla" Page (deric dot page at usa dot net)
  * Date: 8/17/13
  * Time: 9:32 AM
  */

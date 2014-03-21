@@ -17,11 +17,11 @@ package megamek.common.weapons;
 import megamek.common.TechConstants;
 
 /**
- * @author Deric Page (deric.page@usa.net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISSmallLaserPrimitive extends LaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7637928016342153078L;
 

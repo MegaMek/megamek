@@ -181,7 +181,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
     private JSlider buildSlider(String minMsgProperty, String maxMsgProperty, String toolTip, String title) {
         JSlider thisSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-        Hashtable<Integer, JLabel> sliderLabels = new Hashtable<>(3);
+        Hashtable<Integer, JLabel> sliderLabels = new Hashtable<Integer, JLabel>(3);
         sliderLabels.put(0, buildSliderLabel("0 - " + minMsgProperty));
         sliderLabels.put(10, buildSliderLabel("10 - " + maxMsgProperty));
         sliderLabels.put(5, buildSliderLabel("5"));
@@ -357,11 +357,10 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 4 Column 2.
         constraints.gridx++;
-        constraints.gridwidth = 2;
-        homeEdgeCombo = new JComboBox<>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
-                                                     Messages.getString("BotConfigDialog.southEdge"),
-                                                     Messages.getString("BotConfigDialog.westEdge"),
-                                                     Messages.getString("BotConfigDialog.eastEdge")});
+        homeEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+                                                           Messages.getString("BotConfigDialog.southEdge"),
+                                                           Messages.getString("BotConfigDialog.westEdge"),
+                                                           Messages.getString("BotConfigDialog.eastEdge")});
         homeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
         homeEdgeCombo.setSelectedIndex(0);
         panel.add(homeEdgeCombo, constraints);

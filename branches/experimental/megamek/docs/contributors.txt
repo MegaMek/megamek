@@ -75,7 +75,7 @@
      JC Brewer <bronzite@users.sourceforge.net>
      shijima <shijima@users.sourceforge.net>
      vult <vult@users.sourceforge.net>
-     Deric Page <dericpage@users.sourceforge.net>
+     Deric "Netzilla" Page <dericpage@users.sourceforge.net>
      Dylan Myers <ralgith-erian@users.sourceforge.net>
      Gil Hamilton <iarei@users.sourceforge.net>
      Neth <neoneth@users.sourceforge.net>

@@ -131,6 +131,9 @@ v0.37.9-dev (SVN)
     ejected.  This can lead to circumstances were the user might not be aware of
     why no damage was dealt.  New reports why the crew didn't take damage.
 + Bug [#4073]: NPE on unit loading in MM, Think its something with Armortype
++ Bug: vehicle_threshold is considered for rolls of 2, 8, and 12 with turrets 
+    for the automatic critical from rolling those locations, however it was 
+    *not* being considered for rolls of 12 without turrets.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

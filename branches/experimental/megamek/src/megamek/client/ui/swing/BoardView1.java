@@ -173,6 +173,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     private static final int HEX_ELEV = 12;
+    private static final int HEX_W_4TH = HEX_W / 4;
+    private static final int HEX_H_HALF = HEX_H / 2;
     
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
@@ -900,14 +902,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         	//g.translate(HEX_W, HEX_H);
     	}
         
-        if (useIsometric()) {
-            drawHexes(g, g.getClipBounds());
-        } else {
-            updateBoardImage();
-            g.drawImage(boardImage,
-                    scrollpane.getViewport().getViewPosition().x, scrollpane
-                            .getViewport().getViewPosition().y, this);
-        }
+        drawHexes(g, g.getClipBounds());
+//        if (useIsometric()) {
+//            drawHexes(g, g.getClipBounds());
+//        } else {
+//            updateBoardImage();
+//            g.drawImage(boardImage,
+//                    scrollpane.getViewport().getViewPosition().x, scrollpane
+//                            .getViewport().getViewPosition().y, this);
+//        }
 
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks() && !useIsometric()) {
@@ -1574,28 +1577,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
         int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
         
+        /*
         if (!useIsometric()) {
             // clear, if we need to
-            if (view.x < (21 * scale)) {
-                boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
-                        (int) (21 * scale) - view.x, view.height);
+        	// The first column has no hexes in it, so drawHex won't update it
+            if (view.x < (HEX_W_4TH * scale)) {
+                boardGraph.fillRect(view.x - drawRect.x, view.y - drawRect.y,
+                        (int) (HEX_W_4TH * scale) - view.x, view.height);
             }
-            if (view.y < (36 * scale)) {
-                boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
-                        view.width, (int) (36 * scale) - view.y);
+            if (view.y < (HEX_H_HALF * scale)) {
+                boardGraph.fillRect(view.x - drawRect.x, view.y - drawRect.y,
+                        view.width, (int) (HEX_H_HALF * scale) - view.y);
             }
-            if (view.x > (boardSize.width - view.width - (21 * scale))) {
-                boardGraph.clearRect(Math.min(drawRect.width, boardSize.width)
-                        - (int) (21 * scale), view.y - drawRect.y,
-                        (int) (21 * scale), view.height);
+            if (view.x > (boardSize.width - view.width - (HEX_W_4TH * scale))) {
+                boardGraph.fillRect(Math.min(drawRect.width, boardSize.width)
+                        - (int) (HEX_W_4TH * scale), view.y - drawRect.y,
+                        (int) (HEX_W_4TH * scale), view.height);
             }
-            if (view.y > (boardSize.height - view.height - (int) (36 * scale))) {
-                boardGraph.clearRect(view.x - drawRect.x,
-                        Math.min(drawRect.height, boardSize.height)
-                                - (int) (36 * scale), view.width,
-                        (int) (36 * scale));
-            }
+			if (view.y > (boardSize.height - view.height - (HEX_H_HALF * scale))) {
+				boardGraph.fillRect(view.x - drawRect.x,
+						Math.min(drawRect.height, boardSize.height)
+								- (int) (HEX_H_HALF * scale), view.width,
+						(int) (HEX_H_HALF * scale));
+			}
         }
+        */
         // draw some hexes.
         if (useIsometric()) {
             //g.clearRect(view.x, view.y, view.width, view.height);
@@ -1676,10 +1682,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // offset drawing point
         int drawX = hexLoc.x;
         int drawY = hexLoc.y;
-        if (!useIsometric()) {
-            drawX -= drawRect.x;
-            drawY -= drawRect.y;
-        }
+        //if (!useIsometric()) {
+        //    drawX -= drawRect.x;
+        //    drawY -= drawRect.y;
+        //}
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage,true);
@@ -7752,7 +7758,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Moves the board view to another area.
      */
-    private void moveBoardImage() {
+	private void moveBoardImage() {
         Rectangle viewRect = scrollpane.getViewport().getViewRect();
         // salvage the old
         boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
@@ -7788,20 +7794,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
-    private void updateBoardImage() {
+	@SuppressWarnings("unused")
+	private void updateBoardImage() {
         // draw bord only if we moved the viewport
         Rectangle viewRect = scrollpane.getViewport().getViewRect();
         if ((boardGraph == null) || (viewRect.width > drawRect.width)
                 || (viewRect.height > drawRect.height) || redrawWholeBoard) {
             drawRect = scrollpane.getViewport().getViewRect();
-            boardImage = createImage(drawRect.width, drawRect.height);
+            //boardImage = createImage(drawRect.width, drawRect.height);
+            boardImage = new BufferedImage(drawRect.width, drawRect.height, BufferedImage.TYPE_INT_ARGB);
             if (boardGraph != null) {
                 boardGraph.dispose();
             }
             // Create a handle to the graphics object of the image, so we can
             //  draw on the boardImage
             boardGraph = (Graphics2D)boardImage.getGraphics();
-            boardGraph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
             if (GUIPreferences.getInstance().getAntiAliasing()){
 	            boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 	                    RenderingHints.VALUE_ANTIALIAS_ON);

@@ -3,6 +3,9 @@ VERSION HISTORY:
 v0.37.9-exp-dev (SVN)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp
 + Bug: Go Up and Maneuver buttons were not being disabled for OOC Aeros
++ Bug: Fixed graphical artefacts on edges of map on non-isometric view, 
+    unfortunately this required removing the optimization code that caches the
+    board image and allows for faster updates with isometric view.
 
 v0.37.9-dev (SVN)
 + Data: Unit Fixes and Some renaming

@@ -945,7 +945,12 @@ public class Tank extends Entity {
                     break;
                 case 12:
                     if (ignoreTurret) {
-                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                        if (game.getOptions().booleanOption(
+                                "vehicles_threshold")) {
+                            setPotCrit(HitData.EFFECT_CRITICAL);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_CRITICAL);
+                        }
                     } else {
                         if (!hasNoDualTurret()) {
                             int roll = Compute.d6();

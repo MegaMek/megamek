@@ -125,30 +125,58 @@ public class SuperHeavyTank extends Tank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
             case 2:
-                rv.setEffect(HitData.EFFECT_CRITICAL);
+                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    setPotCrit(HitData.EFFECT_CRITICAL);
+                } else {
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                }
                 break;
             case 3:
                 if (bSide) {
-                    rv = new HitData(LOC_FRONT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv = new HitData(LOC_FRONT, false);
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                 } else if (bRear) {
-                    rv = new HitData(LOC_REARLEFT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv = new HitData(LOC_REARLEFT, false);
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                 } else if (bRearSide) {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                 } else {
-                    rv = new HitData(LOC_FRONTRIGHT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv = new HitData(LOC_FRONTRIGHT, false);
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                 }
                 rv.setMotiveMod(motiveMod);
                 break;
             case 4:
-                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else {
+                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                }
                 rv.setMotiveMod(motiveMod);
                 break;
             case 5:
                 if (bRear || !(bSide || bRearSide)) {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                     rv.setMotiveMod(motiveMod);
                 }
                 break;
@@ -156,21 +184,30 @@ public class SuperHeavyTank extends Tank {
             case 7:
                 break;
             case 8:
-                if ((bSide || bRearSide) && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                if ((bSide || bRearSide)
+                        && !game.getOptions().booleanOption(
+                                "tacops_vehicle_effective")) {
+                    if (game.getOptions().booleanOption(
+                            "vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_CRITICAL);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
                 }
                 break;
             case 9:
-                if (!game.getOptions().booleanOption("tacops_vehicle_effective")) {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if (!game.getOptions()
+                        .booleanOption("tacops_vehicle_effective")) {
+                    if (game.getOptions().booleanOption(
+                            "vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                     rv.setMotiveMod(motiveMod);
                 }
                 break;
             case 10:
-                if (!m_bHasNoTurret) {
-                    rv = new HitData(LOC_TURRET);
-                }
-                break;
             case 11:
                 if (!m_bHasNoTurret) {
                     rv = new HitData(LOC_TURRET);
@@ -178,9 +215,20 @@ public class SuperHeavyTank extends Tank {
                 break;
             case 12:
                 if (m_bHasNoTurret) {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    if (game.getOptions().booleanOption(
+                            "vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_CRITICAL);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
                 } else {
-                    rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
+                    rv = new HitData(LOC_TURRET, false);
+                    if (game.getOptions().booleanOption(
+                            "vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_CRITICAL);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
                 }
             }
         }

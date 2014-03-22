@@ -320,6 +320,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
     
+    BufferedImage bvBgBuffer = null;
     ImageIcon bvBgIcon = null;
     ImageIcon scrollPaneBgIcon = null;
     
@@ -860,19 +861,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
         
-        if (bvBgIcon != null){
-	        int w = getWidth();
-	        int h = getHeight();
+        Rectangle viewRect = scrollpane.getVisibleRect();
+		if (bvBgBuffer == null || bvBgBuffer.getWidth() != viewRect.getWidth()
+				|| bvBgBuffer.getHeight() != viewRect.getHeight()) {
+			bvBgBuffer = new BufferedImage((int)viewRect.getWidth(),
+					(int)viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics bgGraph = bvBgBuffer.getGraphics();
+			int w = (int)viewRect.getWidth();
+	        int h = (int)viewRect.getHeight();
 	        int iW = bvBgIcon.getIconWidth();
 	        int iH = bvBgIcon.getIconHeight();
-	        for (int x = g.getClipBounds().x; x < w; x+=iW){
-	            for (int y = g.getClipBounds().y; y < h; y+=iH){
-	                g.drawImage(bvBgIcon.getImage(), x, y, 
+			for (int x = 0; x < w; x+=iW){
+	            for (int y = 0; y < h; y+=iH){
+	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y, 
 	                        bvBgIcon.getImageObserver());
 	            }
+	        }
         }
-        }
-
+		g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
         
         if (useIsometric()){
         	// Used to pad the board edge
@@ -880,14 +886,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     	}
         
         drawHexes(g, g.getClipBounds());
-//        if (useIsometric()) {
-//            drawHexes(g, g.getClipBounds());
-//        } else {
-//            updateBoardImage();
-//            g.drawImage(boardImage,
-//                    scrollpane.getViewport().getViewPosition().x, scrollpane
-//                            .getViewport().getViewPosition().y, this);
-//        }
 
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks() && !useIsometric()) {

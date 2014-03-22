@@ -18523,9 +18523,10 @@ public class Server implements Runnable {
     public Vector<Report> damageCrew(Entity en, int damage) {
         Vector<Report> vDesc = new Vector<Report>();
         Crew crew = en.getCrew();
+        Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits(crew.getHits() + damage);
-            Report r = new Report(6025);
+            r = new Report(6025);
             r.subject = en.getId();
             r.indent(2);
             r.addDesc(en);
@@ -18539,6 +18540,31 @@ public class Server implements Runnable {
                 crew.setDoomed(true);
                 vDesc.addAll(destroyEntity(en, "pilot death", true));
             }
+        } else {
+            boolean isPilot = (en instanceof Mech) 
+                    || (en instanceof ConvFighter)
+                    || ((en instanceof Aero) 
+                            && !(en instanceof Dropship)
+                            && !(en instanceof SmallCraft)
+                            && !(en instanceof Jumpship)
+                            && !(en instanceof Warship));
+            if (crew.isDead() || crew.isDoomed()){
+                if (isPilot){
+                    r = new Report(6021);
+                } else {
+                    r = new Report(6022); 
+                }
+            } else {
+                if (isPilot){
+                    r = new Report(6023); 
+                } else {
+                    r = new Report(6024); 
+                }
+            }
+            r.addDesc(en);
+            r.add(crew.getName());
+            r.indent(2);
+            vDesc.add(r);
         }
         return vDesc;
     }

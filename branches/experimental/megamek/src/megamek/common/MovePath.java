@@ -879,11 +879,11 @@ public class MovePath implements Cloneable, Serializable {
                 if (front.getFinalCoords().distance(dest) < bestPath
                         .getFinalCoords().distance(dest)) {
                     bestPath = front;
-                    if (System.currentTimeMillis() > endTime) {
-                        keepLooping = false;
-                        System.out.println("Time limit reached searching " +
-                                "for path!");
-                    }
+                }
+                if (System.currentTimeMillis() > endTime) {
+                    keepLooping = false;
+                    System.out.println("Time limit reached searching " +
+                            "for path!");
                 }
             }
         } // end while

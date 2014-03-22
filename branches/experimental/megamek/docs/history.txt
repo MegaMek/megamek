@@ -10,6 +10,7 @@ v0.37.9-exp-dev (SVN)
 + Added code to BoardView1 to buffer the drawing of the tiled background image,
     which reduces the amount of time it takes to draw by an order of magnitude
 + Added some missing l10n entries for MovementDisplay
++ Added padding to the top and side of the board
 
 v0.37.9-dev (SVN)
 + Data: Unit Fixes and Some renaming

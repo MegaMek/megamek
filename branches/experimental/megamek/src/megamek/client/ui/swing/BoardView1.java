@@ -880,10 +880,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 		g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
         
-        if (useIsometric()){
-        	// Used to pad the board edge
-        	//g.translate(HEX_W, HEX_H);
-    	}
+    	// Used to pad the board edge
+    	g.translate(HEX_W, HEX_H);
         
         drawHexes(g, g.getClipBounds());
 
@@ -968,10 +966,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
         
-        if (useIsometric()){
-	        // Undo the previous translation
-	        //g.translate(-HEX_W, -HEX_H);
-        }
+        // Undo the previous translation
+        g.translate(-HEX_W, -HEX_H);
+        
         
         // draw all the "displayables"
         Rectangle rect = new Rectangle();
@@ -2207,6 +2204,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Returns the coords at the specified point
      */
     Coords getCoordsAt(Point p) {
+    	// We must account for the board translation to add padding
+    	p.x -= HEX_W;
+    	p.y -= HEX_H;
         final int x = (p.x) / (int) (HEX_WC * scale);
         final int y = ((p.y) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0))
                 / (int) (HEX_H * scale);

@@ -46,7 +46,6 @@ import megamek.common.WeaponType;
 
 /**
  * @author Ben
- * @version
  */
 public class MtfFile implements IMechLoader {
 
@@ -91,14 +90,16 @@ public class MtfFile implements IMechLoader {
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     public static final int locationOrder[] =
-        { Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG };
+            {Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG};
     public static final int rearLocationOrder[] =
-        { Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT };
+            {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(armored)";
 
-    /** Creates new MtfFile */
+    /**
+     * Creates new MtfFile
+     */
     public MtfFile(InputStream is) throws EntityLoadingException {
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
@@ -167,6 +168,12 @@ public class MtfFile implements IMechLoader {
 
             if (armorLocation >= 0) {
                 armorValues[armorLocation] = crit;
+                continue;
+            }
+            if (critData.length <= loc) {
+                continue;
+            }
+            if (critData[loc].length <= slot) {
                 continue;
             }
             critData[loc][slot++] = crit.trim();
@@ -382,7 +389,7 @@ public class MtfFile implements IMechLoader {
                 }
                 thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
                 mech.setArmorType(thisArmorType);
-            } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))){
+            } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                 mech.setArmorTechLevel(mech.getTechLevel());
                 mech.setArmorType(thisArmorType);
             }
@@ -399,13 +406,13 @@ public class MtfFile implements IMechLoader {
                     if (armorValues[x].contains("Clan")) {
                         clan = true;
                     }
-                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':')+1,armorValues[x].indexOf('('));
-                    if (!armorName.contains("Clan") 
-                            && !armorName.contains("IS")){
-                        if (clan){
+                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('('));
+                    if (!armorName.contains("Clan")
+                        && !armorName.contains("IS")) {
+                        if (clan) {
                             armorName = "Clan " + armorName;
                         } else {
-                            armorName = "IS " + armorName; 
+                            armorName = "IS " + armorName;
                         }
                     }
                     mech.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
@@ -468,7 +475,7 @@ public class MtfFile implements IMechLoader {
             // add any heat sinks not allocated
             if (laserSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_LASER_HEAT_SINK);
-            } else if (dblSinks){
+            } else if (dblSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK);
             } else if (compactSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
@@ -601,10 +608,10 @@ public class MtfFile implements IMechLoader {
             }
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
-                String critName2 = critName.substring(critName.indexOf("|")+1);
+                String critName2 = critName.substring(critName.indexOf("|") + 1);
                 etype2 = EquipmentType.get(critName2);
                 if (etype2 == null) {
-                    etype2 = EquipmentType.get(mech.isClan()?"Clan "+critName2:"IS "+critName2);
+                    etype2 = EquipmentType.get(mech.isClan() ? "Clan " + critName2 : "IS " + critName2);
                 }
                 critName = critName.substring(0, critName.indexOf("|"));
             }
@@ -612,7 +619,7 @@ public class MtfFile implements IMechLoader {
             try {
                 EquipmentType etype = EquipmentType.get(critName);
                 if (etype == null) {
-                    etype = EquipmentType.get(mech.isClan()?"Clan "+critName:"IS "+critName);
+                    etype = EquipmentType.get(mech.isClan() ? "Clan " + critName : "IS " + critName);
                 }
                 if (etype != null) {
                     if (etype.isSpreadable()) {
@@ -624,10 +631,10 @@ public class MtfFile implements IMechLoader {
                             continue;
                         }
                         m = mech.addEquipment(etype, loc, rearMounted,
-                                BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                isTurreted);
+                                              BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                              isTurreted);
                         hSharedEquip.put(etype, m);
-                    } else if (((etype instanceof WeaponType) && ((WeaponType)etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
+                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
                         // location?
                         Mounted m = null;
@@ -671,15 +678,15 @@ public class MtfFile implements IMechLoader {
                         Mounted mount = null;
                         if (etype2 == null) {
                             mount = mech.addEquipment(etype, loc, rearMounted,
-                                    BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                    isTurreted);
+                                                      BattleArmor.MOUNT_LOC_NONE, isArmored,
+                                                      isTurreted);
                         } else {
                             if (etype instanceof AmmoType) {
-                                if (!(etype2 instanceof AmmoType) || (((AmmoType)etype).getAmmoType() != ((AmmoType)etype2).getAmmoType())) {
+                                if (!(etype2 instanceof AmmoType) || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
                                     throw new EntityLoadingException("Can't combine ammo for different weapons in one slot");
                                 }
                             } else {
-                                if (!(etype.equals(etype2)) || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK) && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK )))) {
+                                if (!(etype.equals(etype2)) || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK) && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
@@ -853,7 +860,7 @@ public class MtfFile implements IMechLoader {
 
     private boolean isValidLocation(String location) {
 
-        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Left Leg:") || location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Center Leg:")|| location.trim().equalsIgnoreCase("Front Left Leg:") || location.trim().equalsIgnoreCase("Front Right Leg:") || location.trim().equalsIgnoreCase("Rear Left Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:") || location.trim().equalsIgnoreCase("Left Torso:") || location.trim().equalsIgnoreCase("Right Torso:") || location.trim().equalsIgnoreCase("Center Torso:") || location.trim().equalsIgnoreCase("Head:")) {
+        if (location.trim().equalsIgnoreCase("Left Arm:") || location.trim().equalsIgnoreCase("Right Arm:") || location.equalsIgnoreCase("Left Leg:") || location.trim().equalsIgnoreCase("Right Leg:") || location.trim().equalsIgnoreCase("Center Leg:") || location.trim().equalsIgnoreCase("Front Left Leg:") || location.trim().equalsIgnoreCase("Front Right Leg:") || location.trim().equalsIgnoreCase("Rear Left Leg:") || location.trim().equalsIgnoreCase("Rear Right Leg:") || location.trim().equalsIgnoreCase("Left Torso:") || location.trim().equalsIgnoreCase("Right Torso:") || location.trim().equalsIgnoreCase("Center Torso:") || location.trim().equalsIgnoreCase("Head:")) {
             return true;
         }
 

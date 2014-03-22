@@ -172,10 +172,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_W = 84;
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
-    private static final int HEX_ELEV = 12;
-    private static final int HEX_W_4TH = HEX_W / 4;
-    private static final int HEX_H_HALF = HEX_H / 2;
-    
+    private static final int HEX_ELEV = 12;    
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
             0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f };
@@ -215,26 +212,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private Dimension boardSize;
     private Dimension preferredSize = new Dimension(0,0);
-
-    // we keep track of the rectangle we drew, and keep a separate image of just
-    // the hexes, so we don't have to paint each hex individually during each
-    // redraw, but only when the visible hexes actually change
-    private Rectangle drawRect;
-    
-    /**
-     * An image representation of the board area used in non-isometric
-     * rendering.  With isometric turned off, the image for the current view
-     * is generated and then reused to render the board view.
-     */
-    private Image boardImage;
-    
-    /**
-     * The graphics object of <code>boardImage</code>, used in non-isometric
-     * rendering.
-     */
-    private Graphics2D boardGraph;
-    
-    private boolean redrawWholeBoard = false;
 
     // scrolly stuff:
     private JScrollPane scrollpane = null;
@@ -1560,7 +1537,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        drawRect = new Rectangle(0, 0);
         drawHexes(boardGraph, new Rectangle(boardSize));
         boardGraph.dispose();
         return entireBoard;
@@ -6641,7 +6617,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             this.selected = selected;
 
             // force a repaint of the board
-            boardGraph = null;
             updateBoard();
         }
     }
@@ -6841,7 +6816,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         IHex hex = game.getBoard().getHex(b.getCoords());
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
-        redrawWholeBoard = true;
         repaint();
     }
 
@@ -6853,7 +6827,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         tileManager.loadAllHexes();
-        redrawWholeBoard = true;
         repaint();
     }
 
@@ -7111,7 +7084,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         synchronized (this) {
             ecmHexes = table;
-            redrawWholeBoard = true;
         }
         repaint();
     }
@@ -7637,7 +7609,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             sprite.refreshZoomLevel();
         }
         this.setSize(boardSize);
-        redrawWholeBoard = true;
 
         repaint();
     }
@@ -7737,7 +7708,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawIsometric = !drawIsometric;
         updateBoard();
         repaint();
-        redrawWholeBoard = true;
         return drawIsometric;
     }
 
@@ -7753,73 +7723,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         g2d.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         g2d.dispose();
         return mask;
-    }
-
-    /**
-     * Moves the board view to another area.
-     */
-	private void moveBoardImage() {
-        Rectangle viewRect = scrollpane.getViewport().getViewRect();
-        // salvage the old
-        boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
-
-        boardGraph.copyArea(0, 0, drawRect.width, drawRect.height, drawRect.x
-                - viewRect.x, drawRect.y - viewRect.y);
-
-        // what's left to paint?
-        int midX = Math.max(viewRect.x, drawRect.x);
-        int midWidth = viewRect.width - Math.abs(viewRect.x - drawRect.x);
-        Rectangle unLeft = new Rectangle(viewRect.x, viewRect.y, drawRect.x
-                - viewRect.x, viewRect.height);
-        Rectangle unRight = new Rectangle(viewRect.x - drawRect.x, viewRect.y,
-                drawRect.x + drawRect.width, viewRect.height);
-        Rectangle unTop = new Rectangle(midX, viewRect.y, midWidth, drawRect.y
-                - viewRect.y);
-        Rectangle unBottom = new Rectangle(midX, drawRect.y + drawRect.height,
-                midWidth, viewRect.y - drawRect.y);
-
-        // update drawRect
-        drawRect = new Rectangle(viewRect);
-
-        // paint needed areas
-        if (unLeft.width > 0) {
-            drawHexes(boardGraph, unLeft);
-        } else if (unRight.width > 0) {
-            drawHexes(boardGraph, unRight);
-        }
-        if (unTop.height > 0) {
-            drawHexes(boardGraph, unTop);
-        } else if (unBottom.height > 0) {
-            drawHexes(boardGraph, unBottom);
-        }
-    }
-
-	@SuppressWarnings("unused")
-	private void updateBoardImage() {
-        // draw bord only if we moved the viewport
-        Rectangle viewRect = scrollpane.getViewport().getViewRect();
-        if ((boardGraph == null) || (viewRect.width > drawRect.width)
-                || (viewRect.height > drawRect.height) || redrawWholeBoard) {
-            drawRect = scrollpane.getViewport().getViewRect();
-            //boardImage = createImage(drawRect.width, drawRect.height);
-            boardImage = new BufferedImage(drawRect.width, drawRect.height, BufferedImage.TYPE_INT_ARGB);
-            if (boardGraph != null) {
-                boardGraph.dispose();
-            }
-            // Create a handle to the graphics object of the image, so we can
-            //  draw on the boardImage
-            boardGraph = (Graphics2D)boardImage.getGraphics();
-            if (GUIPreferences.getInstance().getAntiAliasing()){
-	            boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-	                    RenderingHints.VALUE_ANTIALIAS_ON);
-            }
-            boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
-            drawHexes(boardGraph, drawRect);
-            redrawWholeBoard = false;
-        }
-        if (!drawRect.union(viewRect).equals(drawRect)) {
-            moveBoardImage();
-        }
     }
 
     public void die() {

@@ -6,6 +6,7 @@ v0.37.9-exp-dev (SVN)
 + Bug: Fixed graphical artefacts on edges of map on non-isometric view, 
     unfortunately this required removing the optimization code that caches the
     board image and allows for faster updates with isometric view.
++ Removed the rest of the code related to caching the board image
 
 v0.37.9-dev (SVN)
 + Data: Unit Fixes and Some renaming

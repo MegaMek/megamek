@@ -43,6 +43,8 @@ import megamek.common.TargetRollModifier;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.Protomech;
 import megamek.common.RangeType;
@@ -76,11 +78,11 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     @SuppressWarnings("FieldCanBeLocal")
-    private static double COMMANDER_UTILITY = 40.0;
+    private static double COMMANDER_UTILITY = 50.0;
     @SuppressWarnings("FieldCanBeLocal")
-    private static double SUB_COMMANDER_UTILITY = 20.0;
+    private static double SUB_COMMANDER_UTILITY = 25.0;
     @SuppressWarnings("FieldCanBeLocal")
-    private static double STRATEGIC_TARGET_UTILITY = 20.0;
+    private static double STRATEGIC_TARGET_UTILITY = 50.0;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1871,15 +1873,21 @@ public class FireControl {
     /**
      * Makes sure ammo is loaded for each weapon
      */
-    public void loadAmmo(Entity shooter, Targetable target) {
+    public void loadAmmo(Entity shooter, FiringPlan plan) {
         if (shooter == null) {
             return;
         }
+        if (plan == null) {
+            return;
+        }
+        Targetable target = plan.getTarget();
 
         // Loading ammo for all my weapons.
-        Iterator<Mounted> weapons = shooter.getWeapons();
-        while (weapons.hasNext()) {
-            Mounted currentWeapon = weapons.next();
+        for (WeaponFireInfo info : plan) {
+            Mounted currentWeapon = info.getWeapon();
+            if (currentWeapon == null) {
+                continue;
+            }
             WeaponType weaponType = (WeaponType) currentWeapon.getType();
 
             // Skip weapons that don't use ammo.
@@ -1894,6 +1902,11 @@ public class FireControl {
                           shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
             }
+            WeaponAttackAction action = info.getAction();
+            action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            info.setAction(action);
+            owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
+                                 shooter.getEquipmentNum(mountedAmmo));
         }
     }
 

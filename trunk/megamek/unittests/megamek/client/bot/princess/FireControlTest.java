@@ -80,53 +80,69 @@ public class FireControlTest {
 
     // AC5
     private WeaponType mockWeaponTypeAC5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAC5Std;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAC5Std;
     private Mounted mockAmmoAC5Std;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAC5Flak;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAC5Flak;
     private Mounted mockAmmoAC5Flak;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAC5Incendiary;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAC5Incendiary;
     private Mounted mockAmmoAc5Incendiary;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAc5Flechette;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAc5Flechette;
     private Mounted mockAmmoAc5Flechette;
 
     // LB10X
     private WeaponType mockLB10X;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeLB10XSlug;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeLB10XSlug;
     private Mounted mockAmmoLB10XSlug;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeLB10XCluster;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeLB10XCluster;
     private Mounted mockAmmoLB10XCluster;
 
     // MML
     private WeaponType mockMML5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeSRM5;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeSRM5;
     private Mounted mockAmmoSRM5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeLRM5;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeLRM5;
     private Mounted mockAmmoLRM5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeInferno5;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeInferno5;
     private Mounted mockAmmoInfero5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeLrm5Frag;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeLrm5Frag;
     private Mounted mockAmmoLrm5Frag;
 
     // ATM
     private WeaponType mockAtm5;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAtm5He;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAtm5He;
     private Mounted mockAmmoAtm5He;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAtm5St;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAtm5St;
     private Mounted mockAmmoAtm5St;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAtm5Er;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAtm5Er;
     private Mounted mockAmmoAtm5Er;
-    @SuppressWarnings("FieldCanBeLocal") private AmmoType mockAmmoTypeAtm5Inferno;
+    @SuppressWarnings("FieldCanBeLocal")
+    private AmmoType mockAmmoTypeAtm5Inferno;
     private Mounted mockAmmoAtm5Inferno;
 
     private Entity mockTarget;
     private EntityState mockTargetState;
-    @SuppressWarnings("FieldCanBeLocal") private ToHitData mockTargetMoveMod;
+    @SuppressWarnings("FieldCanBeLocal")
+    private ToHitData mockTargetMoveMod;
     private Coords mockTargetCoods;
 
     private Entity mockShooter;
     private Coords mockShooterCoords;
     private EntityState mockShooterState;
-    @SuppressWarnings("FieldCanBeLocal") private ToHitData mockShooterMoveMod;
+    @SuppressWarnings("FieldCanBeLocal")
+    private ToHitData mockShooterMoveMod;
     private Crew mockCrew;
 
     private GameOptions mockGameOptions;
@@ -143,7 +159,8 @@ public class FireControlTest {
     private WeaponFireInfo mockPPCFireInfo;
     private WeaponFireInfo mockMLFireInfo;
     private WeaponFireInfo mockLRMFireInfo;
-    @SuppressWarnings("FieldCanBeLocal") private BasicPathRanker mockPathRanker;
+    @SuppressWarnings("FieldCanBeLocal")
+    private BasicPathRanker mockPathRanker;
     private BehaviorSettings mockBehavior;
 
     private FireControl testFireControl;
@@ -1999,7 +2016,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 40, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.isCommander()).thenReturn(false);
 
         // Make the target a sub-commander.
@@ -2010,7 +2027,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 20, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 25, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Make the target a Strategic Building Target.
@@ -2027,7 +2044,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 20, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBuilding.getPosition()).thenReturn(new Coords(10, 10)); // A building not on the list.
         testFiringPlan = Mockito.spy(new FiringPlan(mockBuilding));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
@@ -2047,7 +2064,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 20, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
 
         // Attack an ejected pilot.

@@ -250,7 +250,7 @@ public class Princess extends BotClient {
             // make sure weapons are loaded
             FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
             if (plan != null) {
-                fireControl.loadAmmo(shooter, plan.getTarget());
+                fireControl.loadAmmo(shooter, plan);
 
                 log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " - Best Firing Plan: " +
                                                             plan.getDebugDescription(true));

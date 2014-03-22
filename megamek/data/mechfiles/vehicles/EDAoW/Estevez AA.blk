@@ -13,8 +13,12 @@ SupportTank
 </UnitType>
 
 <Name>
-Estevez AA
+Estevez MBT
 </Name>
+
+<model>
+(Anti-Aircraft)
+</model>
 
 <Tonnage>
 80

@@ -35,8 +35,8 @@ import java.util.Set;
  */
 public class VerifiableTextField extends JTextField implements FocusListener {
 
-    public static final Color BK_INVALID = Color.red;
-    public static final Color BK_REQUIRED = Color.blue;
+    public static final Color BK_INVALID = Color.pink;
+//    public static final Color BK_REQUIRED = Color.cyan;
     public static final Color BK_DEFAULT = UIManager.getColor("TextField.background");
 
     private boolean selectAllTextOnGotFocus = false;
@@ -117,9 +117,6 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      */
     public void setRequired(boolean required) {
         this.required = required;
-        if (required && isRequired()) {
-            return;
-        }
         if (!required && !isRequired()) {
             return;
         }
@@ -127,7 +124,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         // Add a new VerifyNotNullOrEmpty verifier and exit.
         if (required) {
             verifiers.add(new VerifyNotNullOrEmpty());
-            setBackground(BK_REQUIRED);
+//            setBackground(BK_REQUIRED);
             return;
         }
 
@@ -170,16 +167,17 @@ public class VerifiableTextField extends JTextField implements FocusListener {
             return;
         }
 
-        Color goodBackground = isRequired() ? BK_REQUIRED : BK_DEFAULT;
+//        Color goodBackground = isRequired() ? BK_REQUIRED : BK_DEFAULT;
         String verifyResult = verifyText();
 
         // If verifyResult is null, no problems were found.
         if (verifyResult == null) {
-            setBackground(goodBackground);
+            setBackground(BK_DEFAULT);
             if (oldToolTip != null) {
                 setToolTipText(oldToolTip);
                 oldToolTip = null;
             }
+            return;
         }
 
         // Something failed validation.  Set the background color red and update the tooltip to inform the user.

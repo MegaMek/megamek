@@ -16,6 +16,10 @@ SupportTank
 Estevez MBT
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 80
 </Tonnage>

@@ -139,6 +139,7 @@ v0.37.9-dev (SVN)
 + Bug: Path planner could get stuck searching forever: there's code that fires
     every 256 loop iterations to check for timeout, however it only checks for
     timeout if the current best path is better than the previous best path.
++ Data: New Images and Some unit fixes.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

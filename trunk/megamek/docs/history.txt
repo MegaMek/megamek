@@ -140,7 +140,9 @@ v0.37.9-dev (SVN)
     every 256 loop iterations to check for timeout, however it only checks for
     timeout if the current best path is better than the previous best path.
 + Data: New Images and Some unit fixes.
-+ Bug: [#4076] Princess Not Using Ammo Properly
++ Bug: [#4076] Princess Not Using Ammo Properly.
++ Princess wasn't properly storing the new Priority Unit targets.  Also modified the path ranking process to prevent
+    her from wasting time chasing down ejected pilots/crews.
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

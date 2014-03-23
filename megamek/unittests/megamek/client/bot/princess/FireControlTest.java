@@ -2016,7 +2016,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + FireControl.COMMANDER_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.isCommander()).thenReturn(false);
 
         // Make the target a sub-commander.
@@ -2027,7 +2027,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 25, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + FireControl.SUB_COMMANDER_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Make the target a Strategic Building Target.
@@ -2044,7 +2044,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + FireControl.STRATEGIC_TARGET_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBuilding.getPosition()).thenReturn(new Coords(10, 10)); // A building not on the list.
         testFiringPlan = Mockito.spy(new FiringPlan(mockBuilding));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
@@ -2064,7 +2064,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + 50, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility + FireControl.STRATEGIC_TARGET_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
 
         // Attack an ejected pilot.

@@ -126,6 +126,12 @@ public class BehaviorSettings {
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
+        for (String t : getStrategicBuildingTargets()) {
+            copy.addStrategicTarget(t);
+        }
+        for (Integer p : getPriorityUnitTargets()) {
+            copy.addPriorityUnit(p);
+        }
         return copy;
     }
 

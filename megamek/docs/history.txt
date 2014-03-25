@@ -143,6 +143,7 @@ v0.37.9-dev (SVN)
 + Bug: [#4076] Princess Not Using Ammo Properly.
 + Princess wasn't properly storing the new Priority Unit targets.  Also modified the path ranking process to prevent
     her from wasting time chasing down ejected pilots/crews.
++ Bug [#4075]: Silver Bullet Gauss Rifle can aim locations
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

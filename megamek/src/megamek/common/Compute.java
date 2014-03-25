@@ -6140,8 +6140,9 @@ public class Compute {
                         case AmmoType.T_ROCKET_LAUNCHER:
                             return false;
                     }
-                    if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
-                            .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                    if (((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                            || (atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                            || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
                             && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
                         return false;
                     }
@@ -6156,9 +6157,11 @@ public class Compute {
                 if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
+                
                 if ((atype != null)
-                        && ((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
-                                .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                        && ((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                                || (atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                                || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
                         && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
                     return false;
                 }

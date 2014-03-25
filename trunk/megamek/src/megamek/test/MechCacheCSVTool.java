@@ -73,7 +73,15 @@ public class MechCacheCSVTool {
                 
                 // Internals Type
                 if (mech.getInternalsType() >= 0){
-                    csvLine.append(EquipmentType.structureNames[mech.getInternalsType()] + ",");
+                    String isString;
+                    if (mech.isClan()){
+                        isString = "Clan ";
+                    } else {
+                        isString = "IS ";
+                    }
+                    isString += EquipmentType.structureNames[mech
+                            .getInternalsType()] + ",";
+                    csvLine.append(isString);
                 }else if
                 	(mech.getInternalsType() < 0){
                     csvLine.append("Not Applicable,");

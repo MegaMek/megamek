@@ -20,12 +20,14 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.TechConstants;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -110,16 +112,32 @@ public class MechCacheCSVTool {
                	}
                 
                 // Armor type - prints different armor types on the unit
-               for (Integer armorType : mech.getArmorType()){
-                   if (armorType >= 0){
-                       csvLine.append(EquipmentType.armorNames[armorType]+",");
-                   } else if
-                      (armorType < 0){
-                       csvLine.append("Standard,");
-                   } else {
-                       csvLine.append(armorType+",");
-                   }
-               }
+                Vector<Integer> armorType, armorTech;
+                armorType = new Vector<Integer>();
+                armorTech = new Vector<Integer>();
+                int [] at, att;
+                at = mech.getArmorTypes();
+                att = mech.getArmorTechTypes();
+                for (int i = 0; i < at.length; i++){
+                    boolean contains = false;
+                    for (int j = 0; j < armorType.size(); j++){
+                        if (armorType.get(j) == at[i] 
+                                && armorTech.get(j) == att[i]){
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (!contains){
+                        armorType.add(at[i]);
+                        armorTech.add(att[i]);
+                    }
+                }
+                for (int i = 0; i < armorType.size(); i++){
+                    csvLine.append(EquipmentType.getArmorTypeName(
+                            armorType.get(i),
+                            TechConstants.isClan(armorTech.get(i)))
+                            + ",");
+                }
                 
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){

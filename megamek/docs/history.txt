@@ -146,6 +146,8 @@ v0.37.9-dev (SVN)
 + Bug [#4075]: Silver Bullet Gauss Rifle can aim locations
 + Bug [#4077]: BA with individual missile launchers attack as if the entire
     squad is armed
++ Bug [#4078]: Selected entity doesn't get cleared from FiringDisplay when 
+    using /reset
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

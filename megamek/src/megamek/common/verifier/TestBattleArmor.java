@@ -644,6 +644,13 @@ public class TestBattleArmor extends TestEntity {
                 numSSWMs++;
                 squadSupportWeapon = m;
             }
+            
+            if (m.getType().hasFlag(WeaponType.F_MISSILE) 
+                    && m.getLocation() != BattleArmor.LOC_SQUAD){
+                buff.append(m.getName() + " is mounted an individual weapon, " +
+                		"but all missile weapons must be squad mounted!");
+                correct = false;
+            }
 
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType)

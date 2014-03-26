@@ -1588,6 +1588,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
+        // In case of a /reset command, ensure the state gets reset
+        if (clientgui.getClient().getGame().getPhase() == 
+                IGame.Phase.PHASE_LOUNGE){
+            endMyTurn();
+        }
+        
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

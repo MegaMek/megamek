@@ -996,6 +996,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
+        // In case of a /reset command, ensure the state gets reset
+        if (clientgui.getClient().getGame().getPhase() == 
+                IGame.Phase.PHASE_LOUNGE){
+            endMyTurn();
+        }
+        
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

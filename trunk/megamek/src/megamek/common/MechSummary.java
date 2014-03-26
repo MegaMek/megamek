@@ -70,15 +70,26 @@ public class MechSummary implements Serializable {
 
     /** Stores the type of internal structure on this unit **/
     private int internalsType;
+    
     /**
      * Each location can have a separate armor type, but this is used for 
      * search purposes we we really only care about which types are present.
      */
-    private HashSet<Integer> armorType;
+    private HashSet<Integer> armorTypeSet;
+    
+    /**
+     * Stores the armor type for each location.
+     */
+    private int[] armorLoc;
+    
+    /**
+     * Stores the armor tech type for each location.
+     */
+    private int[] armorLocTech;
     
     
     public MechSummary(){
-        armorType = new HashSet<Integer>();
+        armorTypeSet = new HashSet<Integer>();
     }
     
     /**
@@ -386,15 +397,31 @@ public class MechSummary implements Serializable {
      * @param locsArmor  An array that stores the armor type at each location.
      */
     public void setArmorType(int[] locsArmor) {
-        armorType.clear();
+        armorTypeSet.clear();
         for (int i = 0; i < locsArmor.length; i++){
-            armorType.add(locsArmor[i]);
+            armorTypeSet.add(locsArmor[i]);
         }
         
     }
 
     public HashSet<Integer> getArmorType() {
-        return armorType;
+        return armorTypeSet;
+    }
+    
+    public int [] getArmorTypes(){
+        return armorLoc;
+    }
+    
+    public void setArmorTypes(int [] al){
+        armorLoc = al;
+    }
+    
+    public int [] getArmorTechTypes(){
+        return armorLocTech;
+    }
+    
+    public void setArmorTechTypes(int [] att){
+        armorLocTech = att;
     }
 
     public void setCockpitType(int cockpitType) {

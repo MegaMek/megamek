@@ -144,6 +144,8 @@ v0.37.9-dev (SVN)
 + Princess wasn't properly storing the new Priority Unit targets.  Also modified the path ranking process to prevent
     her from wasting time chasing down ejected pilots/crews.
 + Bug [#4075]: Silver Bullet Gauss Rifle can aim locations
++ Bug [#4077]: BA with individual missile launchers attack as if the entire
+    squad is armed
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

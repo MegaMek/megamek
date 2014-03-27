@@ -148,6 +148,7 @@ v0.37.9-dev (SVN)
     squad is armed
 + Bug [#4078]: Selected entity doesn't get cleared from FiringDisplay when 
     using /reset
++ Feature [#1236]: Increase maximum player limit
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 

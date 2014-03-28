@@ -2672,6 +2672,37 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
         
+        // BA NARCs and Tasers can only fire at one target in a round
+        if ((ae instanceof BattleArmor) && 
+                (weapon.getType().hasFlag(WeaponType.F_TASER)
+                    || wtype.getAmmoType() == AmmoType.T_NARC)){
+            // Go through all of the current actions to see if a NARC or Taser
+            //  has been fired
+            for (Enumeration<EntityAction> i = game.getActions(); i
+                    .hasMoreElements();) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                // Is this an attack from this entity to a different target?
+                if (prevAttack.getEntityId() == ae.getId() &&
+                        prevAttack.getTargetId() != target.getTargetId()) {
+                    Mounted prevWeapon = 
+                            ae.getEquipment(prevAttack.getWeaponId());
+                    WeaponType prevWtype = (WeaponType)prevWeapon.getType();
+                    if (prevWeapon.getType().hasFlag(WeaponType.F_TASER)
+                            && weapon.getType().hasFlag(WeaponType.F_TASER)){
+                        return "BA Tasers must all target the same unit!";
+                    }
+                    if (prevWtype.getAmmoType() == AmmoType.T_NARC 
+                            && wtype.getAmmoType() == AmmoType.T_NARC){
+                        return "BA NARCs must all target the same unit!";
+                    }
+                }
+            }
+        }
+        
         if (game.getOptions().booleanOption("tacops_tank_crews")
                 && (ae instanceof Tank) && ae.isUnjammingRAC()
                 && (ae.getCrew().getSize() == 1)) {

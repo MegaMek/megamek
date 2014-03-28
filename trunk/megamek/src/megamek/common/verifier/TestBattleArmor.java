@@ -616,6 +616,24 @@ public class TestBattleArmor extends TestEntity {
         Mounted squadSupportWeapon = null;
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted m : ba.getEquipment()) {
+            // BA Tasers should be mounted individually
+            if (m.getType().hasFlag(WeaponType.F_TASER)
+                    && m.getLocation() == BattleArmor.LOC_SQUAD){
+                buff.append("BA Tasers should be mounted individually " +
+                        "instead of as a squad weapon!");
+                return false;
+            }
+            
+            // BA NARC should be mounted individually
+            if ((m.getType() instanceof WeaponType)
+                    && ((WeaponType)m.getType()).getAmmoType() 
+                        == AmmoType.T_NARC
+                    && m.getLocation() == BattleArmor.LOC_SQUAD){
+                buff.append("BA NARC should be mounted individually " +
+                        "instead of as a squad weapon!");
+                return false;
+            }
+            
             // Ignore unmounted equipment, we'll deal with that elsewhere
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE) {
                 continue;

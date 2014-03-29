@@ -157,12 +157,10 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Bug: Path planner could get stuck searching forever: there's code that fires
     every 256 loop iterations to check for timeout, however it only checks for
     timeout if the current best path is better than the previous best path.
-<<<<<<< .working
 + Rebuilt the Random Map Generation dialog from the ground up to improve it's organization and work flow.  Added
     tool tips explaining the various fields and eliminated the need to save and exit the dialog before switching
     from Normal to Advanced view.  Did not update the German or Russian messages.properties files as I'm not
     nearly qualified.
-=======
 + Data: New Images and Some unit fixes.
 + Bug: [#4076] Princess Not Using Ammo Properly.
 + Princess wasn't properly storing the new Priority Unit targets.  Also modified
@@ -175,7 +173,6 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
     using /reset
 + Feature [#1236]: Increase maximum player limit
 + Bug [#3088]: BA compact narc not correct
->>>>>>> .merge-right.r10724
 
 v0.37.8-exp (2014-02-22 22:57 UTC)
 + Feature: Added the ability to specify the anti-aliasing rendering hint for the

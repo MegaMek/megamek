@@ -164,6 +164,11 @@ public class MULParser {
         pilots = new Vector<Crew>();
     }
     
+    public MULParser(InputStream fin){
+        this();
+        parse(fin);
+    }
+    
     public void parse(InputStream fin){
         // Reset the warning message.
         warning = new StringBuffer();
@@ -188,23 +193,25 @@ public class MULParser {
             return;
         }
         
-        Element unitEle = xmlDoc.getDocumentElement();
+        Element element = xmlDoc.getDocumentElement();
 
         // Get rid of empty text nodes and adjacent text nodes...
         // Stupid weird parsing of XML. At least this cleans it up.
-        unitEle.normalize();
+        element.normalize();
 
-        String version = unitEle.getAttribute(VERSION);
+        String version = element.getAttribute(VERSION);
         if (version.equals("")){
             warning.append("Warning: No version specified, correct parsing " +
                     "not guaranteed!\n");
         }
         
-        String nodeName = unitEle.getNodeName();
+        String nodeName = element.getNodeName();
         if (nodeName.equalsIgnoreCase(UNIT)){
-            parseUnit(unitEle);
+            parseUnit(element);
+        } else if (nodeName.equalsIgnoreCase(ENTITY)){
+            parseEntity(element);
         } else {
-            warning.append("Error: root element isn't a Unit tag! " +
+            warning.append("Error: root element isn't a Unit or Entity tag! " +
             		"Nothing to parse!\n");
         }
     }

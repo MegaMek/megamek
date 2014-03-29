@@ -30,6 +30,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
+import megamek.common.MechWarrior;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.TargetRoll;
@@ -427,6 +428,11 @@ public class BasicPathRanker extends PathRanker {
             double expectedDamageTaken = 0;
             boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE);
             for (Entity enemy : enemies) {
+
+                // Skip ejected pilots.
+                if (enemy instanceof MechWarrior) {
+                    continue;
+                }
 
                 // Skip units not actually on the board.
                 if (enemy.isOffBoard() || (enemy.getPosition() == null)

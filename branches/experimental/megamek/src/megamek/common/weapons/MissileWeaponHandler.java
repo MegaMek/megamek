@@ -79,12 +79,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength());
+                int shootingStrength = 1;
+                if ((weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                        && !(weapon.isSquadSupportWeapon())){
+                    shootingStrength = ((BattleArmor) ae).getShootingStrength();
+                }
+                r.add(wtype.getRackSize() * shootingStrength);
                 r.add(sSalvoType);
                 r.add(" ");
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength();
+                return shootingStrength;
             }
             Report r = new Report(3325);
             r.subject = subjectId;
@@ -213,8 +217,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             missilesHit = wtype.getRackSize();
         } else {
             if (ae instanceof BattleArmor) {
+                int shootingStrength = 1;
+                if ((weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                        && !(weapon.isSquadSupportWeapon())){
+                    shootingStrength = ((BattleArmor) ae).getShootingStrength();
+                }
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength(),
+                        * shootingStrength,
                         nMissilesModifier, weapon.isHotLoaded(), false,
                         advancedAMS && amsEnganged);
             } else {

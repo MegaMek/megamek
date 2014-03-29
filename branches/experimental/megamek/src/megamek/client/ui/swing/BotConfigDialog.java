@@ -524,10 +524,10 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             String[] target = targetsListModel.get(i).split(":");
-            if (BUILDING_TARGET.equalsIgnoreCase(target[0])) {
-                tempBehavior.addStrategicTarget(target[1]);
+            if (BUILDING_TARGET.equalsIgnoreCase(target[0].trim())) {
+                tempBehavior.addStrategicTarget(target[1].trim());
             } else {
-                tempBehavior.addPriorityUnit(target[1]);
+                tempBehavior.addPriorityUnit(target[1].trim());
             }
         }
         boolean save = false;

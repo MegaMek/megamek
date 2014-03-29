@@ -381,10 +381,14 @@ public class MechSummaryCache {
         ms.setTotalInternal(e.getTotalInternal());
         ms.setInternalsType(e.getStructureType());
         int[] armorTypes = new int[e.locations()];
+        int[] armorTechTypes = new int[e.locations()];
         for (int i = 0; i < armorTypes.length; i++) {
             armorTypes[i] = e.getArmorType(i);
+            armorTechTypes[i] = e.getArmorTechLevel(i);
         }
         ms.setArmorType(armorTypes);
+        ms.setArmorTypes(armorTypes);
+        ms.setArmorTechTypes(armorTechTypes);
 
         // Check to see if this entity has a cockpit, and if so, set it's type
         if ((e instanceof Mech)) {

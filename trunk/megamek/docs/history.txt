@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.9-dev (SVN)
+v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming
 + Bug [#4053] - BA LBX weapons missing AmmoType Tag
 + Some typo fixes and adding Primitive RL15

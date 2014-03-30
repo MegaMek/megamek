@@ -3040,7 +3040,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // no selected mech we use the mechInFirst GUIPref.
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
-            ai.attackAbsHeight = selectedEntity.absHeight()
+            ai.attackAbsHeight = ai.attackHeight
                     + selectedEntity.elevationOccupied(game.getBoard().getHex(
                             src));
             EntityMovementMode movementMode = selectedEntity.getMovementMode();

@@ -2,9 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="trunk/megamek/l10n"/>
 	<classpathentry kind="src" path="trunk/megamek/src"/>
-	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/Ostermiller.jar"/>
-	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/PngEncoder.jar"/>
-	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/TabPanel.jar"/>
 	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/TinyXML.jar"/>
 	<classpathentry kind="lib" path="trunk/megamek/lib/tinyXML07-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/cglib-nodep-2.2.jar"/>

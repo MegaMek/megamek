@@ -644,6 +644,8 @@ public class MULParser {
                     // Do nothing, this field isn't required
                 }
                 crew.setSize(crewSize);
+            } else if (pilotSize != null && pilotSize.equals("")) {
+                crew.setSize(Compute.getFullCrewSize(entity));
             }
 
             if ((null != pilotNickname) && (pilotNickname.length() > 0)) {

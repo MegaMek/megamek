@@ -95,7 +95,7 @@ public class MechView {
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
             sHead.append("<br>"); //$NON-NLS-1$
-        }        
+        }
         DecimalFormatSymbols unusualSymbols = new DecimalFormatSymbols();
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
@@ -106,7 +106,7 @@ public class MechView {
         sHead.append("<br>"); //$NON-NLS-1$
         sHead.append("Cost: ");
         sHead.append(dFormatter.format(entity.getCost(false)));
-        sHead.append(" C-bills");  
+        sHead.append(" C-bills");
         sHead.append("<br>"); //$NON-NLS-1$
         if (!entity.getSource().equals("")){
             sHead.append("Source: "); //$NON-NLS-1$
@@ -170,9 +170,9 @@ public class MechView {
                         + " hits)</font>");
             }
             if (isMech){
-                CriticalSlot engineSlot = 
+                CriticalSlot engineSlot =
                         entity.getCritical(Mech.LOC_CT,Mech.SYSTEM_ENGINE);
-                if (engineSlot != null && engineSlot.isArmored()){
+                if ((engineSlot != null) && engineSlot.isArmored()){
                     sBasic.append(" (armored)");
                 }
             }
@@ -215,16 +215,16 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + aMech.damagedHeatSinks()
                         + " damaged)</font>");
             }
-            CriticalSlot cpSlot = 
-                    aMech.getCritical(Mech.LOC_HEAD, Mech.SYSTEM_COCKPIT);            
-            if (aMech.getCockpitType() != Mech.COCKPIT_STANDARD 
-                    || (cpSlot != null && cpSlot.isArmored())) {
+            CriticalSlot cpSlot =
+                    aMech.getCritical(Mech.LOC_HEAD, Mech.SYSTEM_COCKPIT);
+            if ((aMech.getCockpitType() != Mech.COCKPIT_STANDARD)
+                    || ((cpSlot != null) && cpSlot.isArmored())) {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
                 if (cpSlot.isArmored()){
                     sBasic.append(" (armored)");
-                }  
+                }
             }
             sBasic.append("<br>");
             sBasic.append(Messages.getString("MechView.Gyro"));
@@ -233,11 +233,11 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + aMech.getGyroHits()
                         + " hits)</font>");
             }
-            CriticalSlot gyroSlot = 
+            CriticalSlot gyroSlot =
                     aMech.getCritical(Mech.LOC_CT, Mech.SYSTEM_GYRO);
-            if (gyroSlot != null && gyroSlot.isArmored()){
+            if ((gyroSlot != null) && gyroSlot.isArmored()){
                 sBasic.append(" (armored)");
-            }            
+            }
             sBasic.append("<br>");
         }
 
@@ -576,13 +576,11 @@ public class MechView {
             }
             sWeapons.append("<td>").append(mounted.getDesc()); //$NON-NLS-1$
             if (entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("IS")) { //$NON-NLS-1$
+                    && !TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
                 sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
             if (!entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("CL")) { //$NON-NLS-1$
+                    && TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             /*
@@ -654,7 +652,7 @@ public class MechView {
         sAmmo.append("<tr><th align='left'>Ammo</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Shots</th></tr>");
         for (Mounted mounted : entity.getAmmo()) {
             // Ignore ammo for one-shot launchers
-            if (mounted.getLinkedBy() != null 
+            if ((mounted.getLinkedBy() != null)
                     && mounted.getLinkedBy().isOneShot()){
                 continue;
             }

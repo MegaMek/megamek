@@ -2585,52 +2585,50 @@ Scylla 3|
 Hellion D|
 Lobo 3|
 Bloodhound B3-HND|
-Razorback RZK-10T|
+Red Shift RDS-3A|
 Chimera CMA-2k|
-Gurkha GUR-8G|
+Lightray LGH-7W|
+Legacy LGC-04-WVR|
+Sagittaire SGT-10X|
+Sha Yu SYU-6B|
+Cronus CNS-TD9|
+Uziel UZL-8S|
+Razorback RZK-10T|
+Osiris OSR-5D|
+Vanquisher VQR-7V|
+Akuma AKU-2XK|
+Templar TLR1-OF|
+Sagittaire SGT-9D|
+Razorback RZK-10S|
+Tessen TSN-C3M|
+Gurkha GUR-6G|
+Perseus P1W|
+Thanatos TNS-4T|
 Blue Flame BLF-40|
 Argus AGS-6F|
-No-Dachi NDA-3S|
-Stiletto STO-4C|
+Brigand LDT-X3|
 Fafnir FNR-6U|
 Thanatos TNS-6S|
-Gurkha GUR-6G|
-Lao Hu LHU-4E|
-Fafnir FNR-5WB|
-White Flame WHF-3C|
-Uziel UZL-8S|
-Templar TLR1-OD|
-Vanquisher VQR-7V|
-Templar TLR1-OI|
-Legacy LGC-05|
-Anubis ABS-4C|
-Brigand LDT-X3|
-Ninja-To NJT-4|
-Legacy LGC-03|
-Sagittaire SGT-10X|
-Templar TLR1-OH|
-Perseus P1P|
-Templar TLR1-OE|
-Cronus CNS-TD9|
-Brigand LDT-X4|
-Templar TLR1-OG|
-Verfolger VR6-C|
-Red Shift RDS-3A|
-Lightray LGH-7W|
 Verfolger VR6-T|
-Thanatos TNS-4T|
-Vanquisher VQR-5V|
-Hellspawn HSN-10G|
-Sagittaire SGT-9D|
-Vanquisher VQR-7U|
-Akuma AKU-2XK|
 Akuma AKU-2X|
-Sha Yu SYU-6B|
-Perseus P1E|
-Legacy LGC-04-WVR|
+Legacy LGC-03|
+Templar TLR1-OH|
+Hellspawn HSN-10G|
+Templar TLR1-OG|
+Perseus P1P|
 White Flame WHF-4C|
-Tessen TSN-C3M|
-Osiris OSR-5D|
+Gurkha GUR-8G|
+No-Dachi NDA-3S|
+Hellspawn HSN-10SR|
+Verfolger VR6-C|
+Fafnir FNR-5WB|
+Lao Hu LHU-3L|
+Legacy LGC-05|
+Vanquisher VQR-7U|
+Anubis ABS-4C|
+Templar TLR1-OE|
+White Flame WHF-3C|
+Perseus P1E|
 Argus AGS-5D|
 Razorback RZK-10S|
 Perseus P1W|
@@ -3149,6 +3147,15 @@ Dervish DV-7D|
 Hermes HER-4WB|
 Catapult CPLT-K5|
 Victor VTR-C|
+Masakari (Warhawk) H|
+Thorn THE-N2|
+Puma (Adder) B|
+Jagermech JM6-DG|
+Quickdraw QKD-8K|
+Mongoose MON-66|
+Dragonfly (Viper) G|
+Thug THG-13K|
+Exterminator EXT-5F|
 Ryoken (Stormcrow) I|
 Victor VTR-9D|
 UrbanMech UM-R63|
@@ -3637,7 +3644,11 @@ Blitzkrieg BTZ-3F|
 Arctic Fox AF1A|
 Stooping Hawk G|
 Ti Ts'ang TSG-9C|
-Blood Asp Prime|
+Ursus 2|
+Hauptmann HA1-OD|
+Matador|
+Beowulf BEO-12|
+Thunder Stallion 3|
 Blood Asp C|
 Yu Huang Y-H9GC|
 Nova Cat Prime|
@@ -4169,143 +4180,183 @@ Hatamoto-Chi HTM-27T Daniel|
 Hunchback HBK-4G Shakir|
 Cataphract CTF-2X George|
 Centurion CN11-OD|
-Scarecrow UCU-F4r "Hobbled Scarecrow"|
-Templar III TLR2-OD|
-Centurion CN11-O|
-Atlas III AS7-D3|
-Scarecrow UCU-F4|
-Prey Seeker PY-SR10|
-Gunsmith CH11-NG|
-Black Knight BLK-NT-4D|
-Black Knight BLK-NT-3A|
-Centurion CN11-OE|
 Templar III TLR2-OB|
 Atlas III AS7-D2|
-Hollander III BZK-D2|
-Centurion CN11-OB|
 Black Knight BLK-NT-5H|
-Black Knight BLK-NT-3B|
-Templar III TLR2-OC|
-Black Knight BLK-NT-2Y|
-Templar III TLR2-OA|
-Vulpes VLP-1D|
-Antlion LK-3D|
 Templar III TLR2-O|
-Hollander III BZK-D3|
-Centurion CN11-OA|
+Black Knight BLK-NT-3A|
+Centurion CN11-OB|
 Centurion CN11-OC|
+Templar III TLR2-OC|
 Hollander III BZK-D1|
-Jackalope JLP-KW "Wolpertinger"|
-Ares ARS-V1B Hades|
-Poseidon PSD-V2|
-Doloire DLR-OA|
+Hollander III BZK-D2|
+Centurion CN11-OE|
+Gunsmith CH11-NG|
+Centurion CN11-O|
+Black Knight BLK-NT-3B|
+Templar III TLR2-OA|
+Black Knight BLK-NT-2Y|
+Atlas III AS7-D3|
+Vulpes VLP-1D|
+Hollander III BZK-D3|
+Antlion LK-3D|
+Prey Seeker PY-SR10|
+Centurion CN11-OA|
+Templar III TLR2-OD|
+Black Knight BLK-NT-4D|
+Scarecrow UCU-F4|
+Tian-Zong TNZ-N2|
+Mortis MS-1P|
+Lu Wei Bing LN-4B|
+Mortis MS-1A|
+Tian-Zong TNZ-N3|
+Raven II RVN-5X|
+Gun GN-2OB|
+Yinghuochong YHC-3Y|
+Vandal LI-OB|
+Agrotera AGT-1A|
+Calliope CAL-1MAF|
+Catapult II CPLT-L7|
+Vandal LI-OA|
+Anubis ABS-5Z|
+Gun GN-2OA|
+Vandal LI-O|
+Anubis ABS-5Y|
+Gun GN-2O|
+Catapult II CPLT-L7L|
+Tian-Zong TNZ-N1|
+Yinghuochong YHC-3E|
 Lament LMT-3R|
-Kheper KPH-7R|
-Malice MAL-XV|
-Doloire DLR-OD|
-Doloire DLR-OC|
-Lament LMT-3C|
 Ares ARS-V1D Hephaestus|
+Ares ARS-V1B Hades|
+Malice MAL-XT|
+Poseidon PSD-V2|
+Jackalope JLP-BD|
+Jackalope JLP-C|
+Doloire DLR-OA|
 Doloire DLR-O|
 Lament LMT-4RC|
-Night Stalker NSR-K7|
-Ares ARS-V1A Hera|
-Night Stalker NSR-K4|
-Night Stalker NSR-K3|
-Jackalope JLP-C|
-Night Stalker NSR-KC|
-Jackalope JLP-BD|
-Ares ARS-V1C Aphrodite|
-Malice MAL-XT|
-Uraeus UAE-7R|
-Malice MAL-XP|
 Lament LMT-2R|
+Malice MAL-XV|
 Jackalope JLP-KA|
-Night Stalker NSR-K1|
+Uraeus UAE-7R|
+Night Stalker NSR-K3|
 Doloire DLR-OB|
+Ares ARS-V1A Hera|
+Night Stalker NSR-KC|
+Lament LMT-3C|
+Ares ARS-V1C Aphrodite|
+Night Stalker NSR-K1|
+Doloire DLR-OC|
+Night Stalker NSR-K7|
+Jackalope JLP-KW "Wolpertinger"|
+Malice MAL-XP|
 Ares ARS-V1 Zeus|
+Kheper KPH-7R|
 Malice MAL-XY|
-Hitotsume Kozo HKZ-1P|
-Exhumer EXR-2X|
-Avalanche AVL-1ON|
-Avalanche AVL-1OA|
-Phoenix Hawk L PXH-11K|
-Rokurokubi RK-4T|
-Dragon II DRG-11R|
-Shiro SH-1V|
-Hatamoto-Godai HTM-30Z|
-Shiro SH-2P|
-Hitotsume Kozo HKZ-1F|
-Avalanche AVL-1O|
-Wendigo B|
-Wendigo-VP A|
-Avalanche AVL-1OR|
-Rokurokubi RK-4X|
-Tenshi TN-10-OR|
-Rokurokubi RK-4K|
-Exhumer EXR-3P|
-Avalanche AVL-1OC|
-Tenshi TN-10-OB|
-Dragon II DRG-11K|
-Tenshi TN-10-O|
-Hatamoto-Suna HTM-30S|
-Wendigo (Prime)|
-Wendigo-VP (Prime)|
-Tenshi TN-10-OA|
-Avalanche AVL-1OB|
-Wendigo A|
-Wendigo C|
-Phoenix Hawk L PXH-11K2|
-Firestarter FS9-M4|
-Gauntlet GTL-1OA|
-Zeus X ZEU-X4|
-Mongrel MGL-T1|
-Viking IIC (Standard)|
-Storm Raider STM-R2|
-Gotterdammerung GTD-20S|
-Ursa URA-2C|
-Zeus X ZEU-X|
+Doloire DLR-OD|
+Night Stalker NSR-K4|
+Sarath SRTH-1O|
+Anzu ZU-G60|
+Carronade CRN-7M|
+Violator VT-U3|
+Juliano JLN-5A|
+Quasimodo QSM-3D|
+Stalker II STK-9A|
+Sarath SRTH-1OA|
+Anzu ZU-J70|
+Neanderthal NTL-UG|
+Havoc HVC-P6|
+Gambit GBT-1L|
+Sarath SRTH-1OB|
+Violator VT-U1|
+Neanderthal NTL-AG|
+Gambit GBT-1G|
 Scourge SCG-WD1|
-Gauntlet GTL-1O|
-Mongrel MGL-T2|
-Jaguar 2|
-Scourge SCG-WF1|
 Storm Raider STM-R3|
-Ursa URA-2A|
 Storm Raider STM-R4|
-Zeus X ZEU-X2|
+Mongrel MGL-T1|
+Zeus X ZEU-X|
+Gauntlet GTL-1O|
+Storm Raider STM-R2|
+Firestarter FS9-M4|
+Viking IIC (Standard)|
+Jaguar 2|
 Zeus X ZEU-X3|
-Jaguar (Standard)|
-King Crab KGC-009|
 Firestarter FS9-M2|
 Gauntlet GTL-1OC|
-Gauntlet GTL-1OB|
+King Crab KGC-009|
+Ursa URA-2A|
+Zeus X ZEU-X2|
+Gotterdammerung GTD-20S|
+Mongrel MGL-T2|
+Zeus X ZEU-X4|
+Jaguar (Standard)|
+Gauntlet GTL-1OA|
 Firestarter FS9-M3|
+Scourge SCG-WF1|
 Storm Raider STM-R1|
-Neanderthal NTL-AG|
-Anzu ZU-J70|
-Havoc HVC-P6|
-Sarath SRTH-1OB|
-Anzu ZU-G60|
-Quasimodo QSM-3D|
-Gambit GBT-1L|
-Neanderthal NTL-UG|
-Sarath SRTH-1O|
-Gambit GBT-1G|
-Juliano JLN-5A|
-Violator VT-U3|
-Sarath SRTH-1OA|
-Violator VT-U1|
-Carronade CRN-7M|
-Stalker II STK-9A|
-Fennec FEC-5CM|
-Longbow LGB-14C2|
-Javelin JVN-11P|
-Nova Cat H|
-Templar TLR1-OR|
+Ursa URA-2C|
+Gauntlet GTL-1OB|
+Thor Mk II (Grand Summoner Mk II) A|
+Warwolf C|
+Eyrie (Standard)|
+Gravedigger GDR-1D|
+Tomahawk A|
+Tomahawk II (Prime)|
+Vulture Mk III (Mad Dog Mk III) D|
+Gyrfalcon 2|
+Kodiak II (Standard)|
+Tomahawk C|
+Warwolf A|
+Warwolf B|
+Vulture Mk III (Mad Dog Mk III) (Prime)|
+Thor Mk II (Grand Summoner Mk II) B|
+Shrike (Standard)|
+Loki Mk II (Hellbringer Mk II) B|
+Gravedigger GDR-1C|
+Wulfen (Prime)|
+Gyrfalcon 4|
+Vulture Mk III (Mad Dog Mk III) A|
+Wulfen C|
+Tomahawk B|
+Thor Mk II (Grand Summoner Mk II) D|
+Gyrfalcon (Standard)|
+Tomahawk (Prime)|
+Tomahawk II A|
+Thor Mk II (Grand Summoner Mk II) (Prime)|
+Wulfen A|
+Shrike 3|
+Vulture Mk III (Mad Dog Mk III) C|
+Kodiak II 2|
+Wulfen E|
+Loki Mk II (Hellbringer Mk II) (Prime)|
+Wulfen D|
+Wulfen H|
+Warwolf (Prime)|
+Tomahawk II B|
+Shrike 2|
+Thor Mk II (Grand Summoner Mk II) C|
+Gyrfalcon 3|
+Vulture Mk III (Mad Dog Mk III) B|
+Tomahawk II C|
+Warwolf H|
+Wulfen B|
+Loki Mk II (Hellbringer Mk II) A|
+Blade BLD-7R|
+Nyx NX-100|
+Hauptmann HA1-OM|
+Tarantula ZPH-5A|
+Deimos E|
+Xanthos XNT-7O|
+Strider SR1-OM|
+Warhammer IIC 12|
+Shadow Cat F|
 Cygnus 4|
-Locust LCT-5M3|
-Nova Cat I|
+Hankyu (Arctic Cheetah) F|
+Diomede D-M3D-M|
+Thor (Summoner) AA|
+Mad Cat Mk II 6|
 Gladiator (Executioner) F|
 Jupiter 4|
 Vulture (Mad Dog) G|
@@ -4325,37 +4376,51 @@ Black Hawk (Nova) T|
 Tarantula ZPH-5A|
 Morrigan 4|
 Avatar AV1-OJ|
-Sunder SD1-OF|
-Hauptmann HA1-OM|
+Warhammer WHM-8D2|
 Dasher (Fire Moth) G|
-Hauptmann HA1-OT|
-Cougar X|
-Koschei KSC-6L|
-Black Hawk-KU BHKU-OG|
-Titan TI-1Aj|
-Mad Cat III 5|
-Hellion G|
-Gladiator (Executioner) I|
-Grand Dragon DRG-10K|
-Mad Cat III 3|
-Valkyrie VLK-QD8|
-Ti Ts'ang TSG-10L|
-Marauder MAD-9D|
-Blackjack BJ2-OG|
-Thunder Fox TFT-F11|
-Shadow Cat II 3|
-Titan TI-1Ar|
-Omen 2|
-Onager 2|
 Mangonel MNL-4S|
-Strider SR1-OH|
-Prefect PRF-3R|
-Gladiator (Executioner) G|
-Blade BLD-7R|
-Targe TRG-3M|
+Pack Hunter II 4|
+Warhammer IIC 10|
+Karhu G|
+Shadow Cat E|
+Commando COM-8S|
+Javelin JVN-11P|
+Cougar I|
+Hellion G|
+Hauptmann HA1-OF|
+Fennec FEC-5CM|
 Kuma 4|
-Ebony MEB-12|
-Flamberge D|
+Jupiter 4|
+Uller (Kit Fox) R|
+Spider SDR-10K|
+Strider SR1-OH|
+Mad Cat III 3|
+Vulture (Mad Dog) G|
+Shen Yi SHY-5B|
+Legionnaire LGN-2K|
+Omen 2|
+Thunder Fox TFT-F11|
+Shockwave SKW-8X|
+Grand Dragon DRG-10K|
+Gladiator (Executioner) G|
+Targe TRG-3M|
+Shadow Cat II 3|
+Trebaruna TR-XH|
+Salamander PPR-7T|
+Koschei KSC-6L|
+Sphinx 4|
+Daishi (Dire Wolf) E|
+Marauder II MAD-4L|
+Mad Cat III 5|
+Maelstrom MTR-7K|
+Cuirass CDR-2X|
+Mad Cat Mk II 5|
+Cougar X 3|
+Nyx NX-110|
+Uller (Kit Fox) I|
+Gladiator (Executioner) I|
+Morrigan 4|
+Berserker BRZ-D4|
 Black Hawk (Nova) I|
 Gallant GLT-10-0|
 Salamander PPR-7T|
@@ -4364,57 +4429,58 @@ Hauptmann HA1-OF|
 Cuirass CDR-2X|
 Diomede D-M3D-M|
 Warhammer IIC 11|
-Panther PNT-12KC|
-Shadow Cat F|
-Mad Cat Mk II 4|
-Spider SDR-10K|
-Warhammer IIC 12|
-Dasher II 3|
-Raptor II RPT-2X2|
-Blackjack BJ-2r|
-Trebaruna TR-XH|
-Strider SR1-OM|
-Ebony MEB-13|
-Emperor EMP-8L|
-Sphinx 3|
-Xanthos XNT-6O|
-Cougar I|
-Ocelot 4|
-Ghost GST-90|
-Sun Cobra 2|
 Men Shen MS1-OG|
-Griffin GRF-6S2|
-Warhammer IIC 10|
+Ebony MEB-13|
+Longbow LGB-14C2|
+Shadow Hawk IIC 9|
+Flamberge D|
+Sagittaire SGT-14D|
+Deimos D|
+Cougar X 2|
+Atlas AS7-K4|
+Sunder SD1-OG|
 Peacekeeper PKP-2K|
-Banshee BNC-9S2|
-Xanthos XNT-7O|
-Uller (Kit Fox) R|
-Mad Cat III 4|
-Shockwave SKW-6H|
-Marauder II MAD-4L|
-Shadow Cat II 4|
-Warhammer WHM-8D2|
-Man O' War (Gargoyle) T|
-Dasher II 4|
+Dasher II 3|
+Griffin GRF-6S2|
+Onager 2|
 Grand Titan T-IT-N13M|
-Cougar X 3|
-Loki (Hellbringer) G|
-Linebacker G|
-Tundra Wolf 5|
-Commando COM-8S|
-Thunderbolt TDR-10S|
-Wasp WSP-3K|
-Maelstrom MTR-7K|
-Uller (Kit Fox) I|
-Trebuchet TBT-9R|
-Berserker BRZ-D4|
-Morrigan 5|
-Locust LCT-5M2|
-Spider SDR-8Xr|
-Shockwave SKW-8X|
+Ti Ts'ang TSG-10L|
+Sphinx 3|
 Owens OW-1G|
-Nyx NX-100|
-Wasp WSP-3P|
+Cuirass CDR-2BC|
+Emperor EMP-8L|
+Ebony MEB-12|
+Linebacker G|
+Spider SDR-8Xr|
+Titan TI-1Ar|
+Prefect PRF-3R|
+Ghost GST-50|
+Trebuchet TBT-9R|
+Mad Cat III 4|
+Morrigan 5|
+Titan TI-1Aj|
+Quickdraw QKD-9M|
+Black Hawk-KU BHKU-OG|
+Locust LCT-5M2|
+Balius E|
+Nova Cat H|
+Ocelot 4|
+Black Hawk (Nova) T|
+Templar TLR1-OR|
+Hauptmann HA1-OT|
+Blackjack BJ2-OG|
+Man O' War (Gargoyle) T|
+Nova Cat I|
+Tundra Wolf 5|
+Marauder MAD-9D|
+Sunder SD1-OF|
+Raptor II RPT-2X2|
+Dasher II 4|
+Loki (Hellbringer) G|
+Crimson Hawk 4|
+Cougar X|
+Locust LCT-5M3|
+Gallant GLT-10-0|
 Archer ARC-9KC|
 Quickdraw QKD-9M|
 Daishi (Dire Wolf) E|
@@ -5551,7 +5617,19 @@ Planetlifter Air Transport (SuperPelican - Waddle)|
 Heavy Strike Fighter Inseki|
 Medium Strike Fighter (Crane)|
 Light Strike Fighter Suzume (Sparrow)|
-Guardian Fighter|
+Light Strike Fighter Comet|
+Heavy Strike Fighter Meteor|
+Planetlifter Air Transport (SuperPelican - Waddle)|
+Light Strike Fighter Angel|
+MechBuster (Laser)|
+Light Strike Fighter Angel (Upgrade)|
+MechBuster (LB-X)|
+Light Strike Fighter Andurien|
+Boeing Jump Bomber|
+MechBuster (SRM)|
+Heavy Strike Fighter Bat Hawk|
+Guardian Fighter B|
+Guardian Fighter D|
 MechBuster|
 Light Strike Fighter Comet|
 Light Strike Fighter Owl II|
@@ -5570,6 +5648,7 @@ Tsuru VIP Aircraft|
 Stork Light Refueling Craft (Standard)|
 Stork Light Refueling Craft (Original)|
 Saroyan Jump Bomber|
+Bluehawk Combat Support Fighter MSF-42|
 Protector Combat Support Fighter ASF-23|
 Bluehawk Combat Support Fighter MSF-42|
 Invader Jumpship (Clan)|
@@ -5663,7 +5742,6 @@ Minotaur P2|
 Svartalfa Ultra|
 Procyon (Quad)|
 Hippogriff (Standard)|
-Boggart (Quad) 2|
 Sprite 2|
 Boggart (Quad) 1|
 Sprite|

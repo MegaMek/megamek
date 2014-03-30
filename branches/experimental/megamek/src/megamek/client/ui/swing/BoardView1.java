@@ -1525,22 +1525,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
-    public Image getEntireBoardImage() {
+    public BufferedImage getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D)entireBoard.getGraphics();
         if (GUIPreferences.getInstance().getAntiAliasing()){
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        drawHexes(boardGraph, new Rectangle(boardSize));
+        drawHexes(boardGraph, new Rectangle(boardSize), true);
         boardGraph.dispose();
-        return entireBoard;
+        return (BufferedImage)entireBoard;
     }
 
+    private void drawHexes(Graphics g, Rectangle view) {
+        drawHexes(g, view, false);
+    }
+    
     /**
      * Redraws all hexes in the specified rectangle
      */
-    private void drawHexes(Graphics g, Rectangle view) {
+    private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
         int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
         int drawY = (int) (view.y / (HEX_H * scale)) - 1;
@@ -1586,7 +1590,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         Coords c = new Coords(j + drawX, i + drawY);
                         IHex hex = game.getBoard().getHex(c);
                         if ((hex != null) && (hex.getElevation() == x)) {
-                            drawHex(c, g);
+                            drawHex(c, g, saveBoardImage);
                             drawMovementEnvelopeSpritesForHex(c, g,
                                     moveEnvSprites);
                             if ((en_Deployer != null)
@@ -1603,23 +1607,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     IHex hex = game.getBoard().getHex(c);
                     if (hex != null) {
                         drawOrthograph(c, g);
-                        drawIsometricWreckSpritesForHex(c, g,
-                                isometricWreckSprites);
-                        drawIsometricSpritesForHex(c, g, isometricSprites);
+                        if (!saveBoardImage){
+                            drawIsometricWreckSpritesForHex(c, g,
+                                    isometricWreckSprites);
+                            drawIsometricSpritesForHex(c, g, isometricSprites);
+                        }
                     }
                 }
             }
-            // If we are using Isometric rendering, redraw the entity
-            // sprites at 50% transparent so sprites hidden behind hills can
-            // still be seen by the user.
-            drawIsometricSprites(g, isometricSprites);
+            if (!saveBoardImage){
+                // If we are using Isometric rendering, redraw the entity
+                // sprites at 50% transparent so sprites hidden behind hills can
+                // still be seen by the user.
+                drawIsometricSprites(g, isometricSprites);
+            }
         } else {
             // Draw hexes without regard to elevation when
             // not using Isometric, since it does not matter.
             for (int i = 0; i < drawHeight; i++) {
                 for (int j = 0; j < drawWidth; j++) {
                     Coords c = new Coords(j + drawX, i + drawY);
-                    drawHex(c, g);
+                    drawHex(c, g, saveBoardImage);
                 }
             }
         }
@@ -1629,7 +1637,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Draws a hex onto the board buffer. This assumes that drawRect is current,
      * and does not check if the hex is visible.
      */
-    private void drawHex(Coords c, Graphics boardGraph) {
+    private void drawHex(Coords c, Graphics boardGraph, 
+            boolean saveBoardImage) {
         if (!game.getBoard().contains(c)) {
             return;
         }
@@ -1838,7 +1847,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             src = null;
         }
         // Code for LoS darkening/highlighting
-        if ((src != null) && game.getBoard().contains(src)) {
+        if ((src != null) && game.getBoard().contains(src) && !saveBoardImage) {
             Point p = new Point(drawX, drawY);
             GUIPreferences gs = GUIPreferences.getInstance();
             boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
@@ -3131,7 +3140,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // no selected mech we use the mechInFirst GUIPref.
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
-            ai.attackAbsHeight = selectedEntity.absHeight()
+            ai.attackAbsHeight = ai.attackHeight
                     + selectedEntity.elevationOccupied(game.getBoard().getHex(
                             src));
             EntityMovementMode movementMode = selectedEntity.getMovementMode();

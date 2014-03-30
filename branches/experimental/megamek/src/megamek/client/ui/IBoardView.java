@@ -16,8 +16,8 @@ package megamek.client.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 import megamek.client.event.BoardViewEvent;
@@ -140,7 +140,7 @@ public interface IBoardView extends MechDisplayListener {
      */
     public abstract void processBoardViewEvent(BoardViewEvent event);
 
-    public abstract Image getEntireBoardImage();
+    public abstract BufferedImage getEntireBoardImage();
 
     /**
      * Sets the BoardView's currently selected entity.

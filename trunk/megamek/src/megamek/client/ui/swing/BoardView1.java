@@ -1443,13 +1443,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
-    public Image getEntireBoardImage() {
+    public BufferedImage getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics boardGraph = entireBoard.getGraphics();
         drawRect = new Rectangle(0, 0);
         drawHexes(boardGraph, new Rectangle(boardSize), true);
         boardGraph.dispose();
-        return entireBoard;
+        return (BufferedImage)entireBoard;
     }
 
     private void drawHexes(Graphics g, Rectangle view) {

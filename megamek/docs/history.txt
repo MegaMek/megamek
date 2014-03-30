@@ -10,6 +10,8 @@ v0.37.10-dev (SVN)
  internal name
 + Bug: Could not save a board image in isometric view
 + Bug: Saving board image with FoV tool on would cause a hex to be highlighted
++ Saving a board image needlessly uses a 3rd party PNG encoder, changed code to
+    use javax.imageio.ImageIO
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

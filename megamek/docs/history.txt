@@ -4,6 +4,7 @@ v0.37.10-dev (SVN)
 + Bug: MULParser missing constructor that takes an XML stream as input and
     also does not parse streams that do have unit tags as root elements
     instead of just an entity tag
++ Bug [#4082]: Clan Bonus Description on Random Skill Selection Pannel
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

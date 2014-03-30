@@ -7,7 +7,9 @@ v0.37.10-dev (SVN)
 + Bug [#4082]: Clan Bonus Description on Random Skill Selection Pannel
 + Bug [#4081]: Field of View in Depth 1 Water Hex
 + Bug [#408]: (clan) showing in mechview not based on actual techlevel, but on
- internal name 
+ internal name
++ Bug: Could not save a board image in isometric view
++ Bug: Saving board image with FoV tool on would cause a hex to be highlighted
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -61,7 +62,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
-import keypoint.PngEncoder;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -585,21 +585,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
-        int filter = 0; // 0 - no filter; 1 - sub; 2 - up
-        int compressionLevel = 9; // 0 to 9 with 0 being no compression
-        PngEncoder png = new PngEncoder(bv.getEntireBoardImage(),
-                PngEncoder.NO_ALPHA, filter, compressionLevel);
         try {
-            FileOutputStream outfile = new FileOutputStream(curfileImage);
-            byte[] pngbytes;
-            pngbytes = png.pngEncode();
-            if (pngbytes == null) {
-                System.out.println("Failed to save board as image:Null image"); //$NON-NLS-1$
-            } else {
-                outfile.write(pngbytes);
-            }
-            outfile.flush();
-            outfile.close();
+            ImageIO.write(bv.getEntireBoardImage(), "png", curfileImage);
         } catch (IOException e) {
             e.printStackTrace();
         }

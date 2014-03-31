@@ -27570,6 +27570,13 @@ public class Server implements Runnable {
                 String chat = (String) packet.getObject(0);
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
+                } else if (packet.getData().length > 1) {
+                    connId = (int) packet.getObject(1);
+                    if (connId == Player.PLAYER_NONE) {
+                        sendServerChat(chat);
+                    } else {
+                        sendServerChat(connId, chat);
+                    }
                 } else {
                     sendChat(player.getName(), chat);
                 }

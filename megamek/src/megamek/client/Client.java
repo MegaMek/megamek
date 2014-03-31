@@ -705,6 +705,15 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
+     * Broadcast a general chat message from the local player
+     */
+    public void sendServerChat(int connId, String message) {
+        Object[] data = { message, connId };
+        send(new Packet(Packet.COMMAND_CHAT, data));
+        flushConn();
+    }
+
+    /**
      * Sends a "player done" message to the server.
      */
     public synchronized void sendDone(boolean done) {

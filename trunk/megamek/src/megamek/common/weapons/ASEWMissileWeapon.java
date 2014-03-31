@@ -35,10 +35,10 @@ public class ASEWMissileWeapon extends CapitalMissileWeapon {
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 24;
-        this.extremeRange = 40;
+        this.shortRange = 7;
+        this.mediumRange = 14;
+        this.longRange = 21;
+        this.extremeRange = 28;
         this.tonnage = 0;
         this.criticals = 0;
         this.hittable = false;
@@ -47,7 +47,7 @@ public class ASEWMissileWeapon extends CapitalMissileWeapon {
         this.shortAV = 0;
         this.medAV = 0;
         this.longAV = 0;
-        this.maxRange = RANGE_LONG;
+        this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_ASEW_MISSILE;
         this.capital = false;
     }

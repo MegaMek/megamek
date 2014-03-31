@@ -97,10 +97,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         initGUI();
         setResizable(true);
 
-        validate();
-        mainDisplay.validate();
         pack();
-
+        validate();
+        setSize(new Dimension(600, 600));
+        setLocationRelativeTo(PARENT);
     }
 
     private void initGUI() {
@@ -112,7 +112,6 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         contentPanel.add(setupControlsPanel(), BorderLayout.SOUTH);
 
         add(contentPanel);
-        setLocationRelativeTo(PARENT);
         switchView(VIEW_BASIC, true);
     }
 

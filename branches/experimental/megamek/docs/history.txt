@@ -18,6 +18,7 @@ v0.37.10-dev (SVN)
 + Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
 + Data: Updated Camo Images.
 + Data: New Images.
++ Bug: Fixed the initial size and placement of the Random Map Dialog.
 
 v0.37.9-exp (2014-03-29 14:25 UTC)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp

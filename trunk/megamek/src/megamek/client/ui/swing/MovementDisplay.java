@@ -22,6 +22,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -58,6 +59,7 @@ import megamek.common.GameTurn;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
@@ -160,6 +162,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_END_OVER = "MoveEndOver"; //$NON-NLS-1$
 
     public static final String MOVE_ENVELOPE = "MoveEnvelope";
+    
+    // Traitor
+    public static final String MOVE_TRAITOR = "Traitor";
 
     // buttons
     private JPanel panButtons;
@@ -1152,6 +1157,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setShutdownEnabled(false);
         setStartupEnabled(false);
         setSelfDestructEnabled(false);
+        setTraitorEnabled(false);
         setEvadeAeroEnabled(false);
         setAccNEnabled(false);
         setDecNEnabled(false);
@@ -1869,6 +1875,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateShutdownButton();
             updateStartupButton();
             updateSelfDestructButton();
+            updateTraitorButton();
             updateFlyOffButton();
             updateLaunchButton();
             updateDropButton();
@@ -2398,6 +2405,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setSelfDestructEnabled(ce.getEngine().isFusion()
                 && !ce.getSelfDestructing() && !ce.getSelfDestructInitiated());
+    }
+
+    private void updateTraitorButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        setTraitorEnabled(true);
     }
 
     private void updateRecklessButton() {
@@ -4292,7 +4310,62 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         } else if (ev.getActionCommand().equals(MOVE_ENVELOPE)){
             computeMovementEnvelope();
-        }
+        } else if (ev.getActionCommand().equals(MOVE_TRAITOR)){
+            // Set up variables we need
+            // We use a vector instead of enumeration here so we can grab the size
+            Vector<IPlayer> players = clientgui.getClient().getGame().getPlayersVector();
+            Integer[] playerIds = new Integer[players.size()-1];
+            String[] playerNames = new String[players.size()-1];
+            String[] options = new String[players.size()-1];
+            Entity e = ce();
+            
+            // Loop through the players vector and fill in the arrays
+            int idx = 0;
+            for (int i = 0; i < players.size(); i++) {
+                IPlayer p = players.get(i);
+                // If this is us, we skip it since we can't transfer to ourselves
+                if (p.getName().equals(clientgui.getClient().getLocalPlayer().getName())) {
+                    continue;
+                }
+                playerIds[idx] = p.getId();
+                playerNames[idx] = p.getName();
+                options[idx] = p.getName() + " (ID: " + p.getId() + ")";
+                idx++;
+            }
+            
+            // Dialog for choosing which player to transfer to
+            String option = (String) JOptionPane.showInputDialog(
+                    clientgui.getFrame(),
+                    "Choose the player to gain ownership of this unit when it turns traitor",
+                    "Traitor",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+            
+            // Verify that we have a valid option...
+            if (option != null) {
+                // Now that we've selected a player, correctly associate the ID and name
+                int id = playerIds[Arrays.asList(options).indexOf(option)];
+                String name = playerNames[Arrays.asList(options).indexOf(option)];
+                
+                // And now we perform the actual transfer
+                int confirm = JOptionPane.showConfirmDialog(
+                        clientgui.getFrame(),
+                        e.getDisplayName() + " will switch to " + name + "'s side at the end of this turn. Are you sure?",
+                        "Confirm",
+                        JOptionPane.YES_NO_OPTION);
+                /*JOptionPane.showMessageDialog(
+                        clientgui.getFrame(),
+                        e.getDisplayName() + " will switch to " + name + "'s side at the end of this turn.",
+                        "ERROR: Can't Switch",
+                        JOptionPane.INFORMATION_MESSAGE);*/
+                if (confirm == JOptionPane.YES_OPTION) {
+                    e.setTraitorId(id);
+                    clientgui.getClient().sendUpdateEntity(e);
+                }
+            }
+        } 
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -4312,6 +4385,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateShutdownButton();
         updateStartupButton();
         updateSelfDestructButton();
+        updateTraitorButton();
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();
@@ -4679,6 +4753,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setSelfDestructEnabled(boolean enabled) {
         butSelfDestruct.setEnabled(enabled);
         clientgui.getMenuBar().setMoveSelfDestructEnabled(enabled);
+    }
+
+    private void setTraitorEnabled(boolean enabled) {
+        clientgui.getMenuBar().setMoveTraitorEnabled(enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {

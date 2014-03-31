@@ -16,6 +16,8 @@ v0.37.10-dev (SVN)
 + Saving a board image needlessly uses a 3rd party PNG encoder, changed code to
     use javax.imageio.ImageIO
 + Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
++ Data: Updated Camo Images.
++ Data: New Images.
 
 v0.37.9-exp (2014-03-29 14:25 UTC)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp

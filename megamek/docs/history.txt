@@ -15,6 +15,12 @@ v0.37.10-dev (SVN)
 + Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
 + Data: Updated Camo Images.
 + Data: New Images.
++ Added GUI version of /traitor command via right click menu on a unit when it's your
+    turn and that unit is selected. Menu item is also in the code, but I was having issues
+    with it, so it is currently commented out with a TODO:
++ Added ability to send "Server" chats from Client.java for allowing GUI components to
+    perform server commands and any other such cases
++ Cleaned up unnecessary checks in MapMenu
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

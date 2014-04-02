@@ -25811,7 +25811,7 @@ public class Server implements Runnable {
         Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
 
         // If the entity is hidden, skip; noone else will be able to detect it
-        if (!entity.isHidden()) {
+        if (!entity.isHidden() && !entity.isOffBoard()) {
             for (int i = 0; i < vEntities.size(); i++) {
                 Entity e = vEntities.elementAt(i);
                 if (vCanDetect.contains(e.getOwner()) || !e.isActive()) {

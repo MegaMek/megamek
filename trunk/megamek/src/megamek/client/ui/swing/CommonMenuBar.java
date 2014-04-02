@@ -1108,7 +1108,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveSelfDestruct.setEnabled(enabled);
     }
     public synchronized void setMoveTraitorEnabled(boolean enabled) {
-        moveTraitor.setEnabled(enabled);
+        //TODO: moveTraitor.setEnabled(enabled);
     }
     public synchronized void setMoveEvadeAeroEnabled(boolean enabled) {
         moveEvadeAero.setEnabled(enabled);

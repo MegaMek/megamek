@@ -22,6 +22,7 @@ v0.37.10-dev (SVN)
     perform server commands and any other such cases
 + Cleaned up unnecessary checks in MapMenu
 + Bug: Fixed initial size and placement of the Bot Config dialogs.
++ Bug: NPE from new GUI version of traitor in CommonMenuBar.java
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

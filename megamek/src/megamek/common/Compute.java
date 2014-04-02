@@ -4391,7 +4391,12 @@ public class Compute {
         if ((ae == null) || (a == null) || (b == null)) {
             return 0;
         }
-        if (ae.getGame().getBoard().inSpace()) {
+        IBoard board = ae.getGame().getBoard();
+        if (board.inSpace()) {
+            return 0;
+        }
+        
+        if (!board.contains(a) || !board.contains(b)){
             return 0;
         }
 

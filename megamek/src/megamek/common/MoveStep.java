@@ -2047,6 +2047,14 @@ public class MoveStep implements Serializable {
                     // N.B. The Ask Precentor Martial forum said that a 4/6
                     // tank on a road can move 5/7, **not** 5/8.
                 }
+            } else if ((entity instanceof Infantry) 
+                    && (curPos.distance(entity.getPosition()) <= 1)) {
+                if ((parent.getEntity().getMovementMode() == EntityMovementMode.VTOL)
+                        && (getElevation() > 0)) {
+                    movementType = EntityMovementType.MOVE_VTOL_WALK;
+                } else {
+                    movementType = EntityMovementType.MOVE_WALK;
+                }
             } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
                     && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
                 // store if we got the pavement Bonus for end of phase

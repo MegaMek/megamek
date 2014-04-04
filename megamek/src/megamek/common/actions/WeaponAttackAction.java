@@ -689,6 +689,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 int tcMod = 0;
                 if (ae.hasTargComp()
                         && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                        && !wtype.hasFlag(WeaponType.F_CWS)
+                        && !wtype.hasFlag(WeaponType.F_TASER)
                         && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
                                 .getAmmoType() == AmmoType.T_AC_LBX_THB)) && (atype
                                 .getMunitionType() == AmmoType.M_CLUSTER)))) {
@@ -1800,6 +1802,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         } else {
             if (ae.hasTargComp()
                     && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                    && !wtype.hasFlag(WeaponType.F_CWS)
+                    && !wtype.hasFlag(WeaponType.F_TASER)                    
                     && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
                             .getAmmoType() == AmmoType.T_AC_LBX_THB)) && (atype
                             .getMunitionType() == AmmoType.M_CLUSTER)))) {

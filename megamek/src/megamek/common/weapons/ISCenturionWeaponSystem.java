@@ -61,7 +61,8 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         maxRange = RANGE_MED;
         availRating = new int[] { RATING_F, RATING_F, RATING_F };
         techRating = RATING_E;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_CWS);
     }
     
     /*

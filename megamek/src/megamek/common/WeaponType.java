@@ -125,11 +125,14 @@ public class WeaponType extends EquipmentType {
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
+    
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
     
     //Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
 
+    public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
+    
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
     public static final int RANGE_MED = 2;

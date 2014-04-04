@@ -23,11 +23,9 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
-import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -145,19 +143,11 @@ class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                     r = new Report(3706);
                     r.addDesc(entityTarget);
                     r.indent(4);
-                    // shut down for rest of scenario, so we actually kill it
-                    // TODO: fix for salvage purposes
-                    HitData targetTrooper = entityTarget.rollHitLocation(
-                            ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                    r.add(entityTarget.getLocationAbbr(targetTrooper));
+                    // shut down for rest of scenario, treat as blown off loc
+                    r.add(entityTarget.getLocationAbbr(hit));
                     vPhaseReport.add(r);
-                    Vector<Report> critRep = server.criticalEntity(entityTarget,
-                            targetTrooper.getLocation(),
-                            targetTrooper.isRear(), 0, false, false, 0);
-                    for (Report rep : critRep){
-                        r.indent(4);
-                        vPhaseReport.add(rep);
-                    }
+                    // TODO: fix for salvage purposes
+                    entityTarget.destroyLocation(hit.getLocation());
                 } else {
                     entityTarget.setShutDown(true);
                 }

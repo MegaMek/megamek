@@ -110,6 +110,7 @@ import megamek.common.Sensor;
 import megamek.common.SmallCraft;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
+import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
@@ -1870,6 +1871,26 @@ public class MechDisplay extends JPanel {
                 mediumR = wtype.getWMediumRange();
                 longR = wtype.getWLongRange();
                 extremeR = wtype.getWExtremeRange();
+            }
+            // We need to adjust the ranges for Centurion Weapon Systems: it's 
+            //  default range is 6/12/18 but that's only for units that are 
+            //  susceptible to CWS, for those that aren't the ranges are 1/2/3
+            if (wtype.hasFlag(WeaponType.F_CWS)) {                
+                Entity target = null;
+                if ((clientgui != null) 
+                        && (clientgui.curPanel instanceof FiringDisplay)) {
+                    Targetable t = 
+                            ((FiringDisplay) clientgui.curPanel).getTarget();
+                    if (t instanceof Entity){
+                        target = (Entity) t;
+                    }
+                }            
+                if ((target == null) || !target.hasQuirk("susceptible_cws")){
+                    shortR   = 1;
+                    mediumR  = 2;
+                    longR    = 3;
+                    extremeR = 4;
+                }
             }
             if (wtype.getMinimumRange() > 0) {
                 wMinR.setText(Integer.toString(wtype.getMinimumRange()));

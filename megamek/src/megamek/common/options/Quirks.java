@@ -105,6 +105,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "poor_work", false); //$NON-NLS-1$
         addOption(negQuirk, "prototype", false); //$NON-NLS-1$
         addOption(negQuirk, "sensor_ghosts", false); //$NON-NLS-1$
+        addOption(negQuirk, "susceptible_cws", false); //$NON-NLS-1$
         addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_undercarriage", false); //$NON-NLS-1$

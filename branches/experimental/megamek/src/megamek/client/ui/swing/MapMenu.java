@@ -157,7 +157,7 @@ public class MapMenu extends JPopupMenu {
                     itemCount++;
                 }
 
-            } else if ((currentPanel instanceof FiringDisplay) && client.isMyTurn()) {
+            } else if ((currentPanel instanceof FiringDisplay)) {
 
                 if (itemCount > 0) {
                     addSeparator();
@@ -186,7 +186,7 @@ public class MapMenu extends JPopupMenu {
                     this.add(menu);
                     itemCount++;
                 }
-            } else if ((currentPanel instanceof PhysicalDisplay) && client.isMyTurn()) {
+            } else if ((currentPanel instanceof PhysicalDisplay)) {
                 menu = createPhysicalMenu(false);
 
                 if (menu.getItemCount() > 0) {
@@ -196,6 +196,21 @@ public class MapMenu extends JPopupMenu {
                 }
 
             }
+            
+            // Traitor Command
+            JMenuItem item = new JMenuItem(Messages
+                    .getString("MovementDisplay.Traitor")); //$NON-NLS-1$
+            item.setActionCommand(MovementDisplay.Command.MOVE_TRAITOR.getCmd());   
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+            this.add(item);
         }
         
         menu = createSpecialHexDisplayMenu();

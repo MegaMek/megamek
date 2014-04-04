@@ -18,8 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -44,11 +43,11 @@ public class SavePrincessDialog extends JDialog implements ActionListener {
     boolean saveTargetList = false;
     ResourceBundle bundle = ResourceBundle.getBundle("megamek.client.messages");
 
-    public SavePrincessDialog() {
-        initGUI();
+    public SavePrincessDialog(Container parent) {
+        initGUI(parent);
     }
 
-    private void initGUI() {
+    private void initGUI(Container parent) {
         setLayout(new GridLayout(3, 1));
         setModal(true);
 
@@ -77,6 +76,7 @@ public class SavePrincessDialog extends JDialog implements ActionListener {
         pack();
         validate();
         setResizable(false);
+        setLocationRelativeTo(parent);
     }
 
     @Override

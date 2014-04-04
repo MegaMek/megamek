@@ -25811,7 +25811,7 @@ public class Server implements Runnable {
         Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
 
         // If the entity is hidden, skip; noone else will be able to detect it
-        if (!entity.isHidden()) {
+        if (!entity.isHidden() && !entity.isOffBoard()) {
             for (int i = 0; i < vEntities.size(); i++) {
                 Entity e = vEntities.elementAt(i);
                 if (vCanDetect.contains(e.getOwner()) || !e.isActive()) {
@@ -27570,6 +27570,13 @@ public class Server implements Runnable {
                 String chat = (String) packet.getObject(0);
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
+                } else if (packet.getData().length > 1) {
+                    connId = (int) packet.getObject(1);
+                    if (connId == Player.PLAYER_NONE) {
+                        sendServerChat(chat);
+                    } else {
+                        sendServerChat(connId, chat);
+                    }
                 } else {
                     sendChat(player.getName(), chat);
                 }

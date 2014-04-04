@@ -15,10 +15,20 @@ v0.37.10-dev (SVN)
 + Bug: Saving board image with FoV tool on would cause a hex to be highlighted
 + Saving a board image needlessly uses a 3rd party PNG encoder, changed code to
     use javax.imageio.ImageIO
-+ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game option
++ Bug [#4026]: Intermittent Vehicle Attack Issue with tacops vehicle crews game
+    option
 + Data: Updated Camo Images.
 + Data: New Images.
 + Bug: Fixed the initial size and placement of the Random Map Dialog.
++ Added GUI version of /traitor command via right click menu on a unit when it's
+    your turn and that unit is selected. Menu item is also in the code, but I 
+    was having issues with it, so it is currently commented out with a TODO:
++ Added ability to send "Server" chats from Client.java for allowing GUI
+    components to perform server commands and any other such cases
++ Cleaned up unnecessary checks in MapMenu
++ Bug: Fixed initial size and placement of the Bot Config dialogs.
++ Bug: NPE from new GUI version of traitor in CommonMenuBar.java
++ Bug [#4086]: Offboard Units, Double Blind, and Metal Content would cause NPEs
 
 v0.37.9-exp (2014-03-29 14:25 UTC)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp

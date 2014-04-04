@@ -132,6 +132,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveShutdown;
     private JMenuItem moveStartup;
     private JMenuItem moveSelfDestruct;
+    private JMenuItem moveTraitor;
     private JMenuItem moveAcc = null;
     private JMenuItem moveDec = null;
     private JMenuItem moveAccN = null;
@@ -510,6 +511,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveSelfDestruct = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveSelfDestruct"), MovementDisplay.Command.MOVE_SELF_DESTRUCT.getCmd()); //$NON-NLS-1$
+        /* TODO: moveTraitor = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR); //$NON-NLS-1$ */
 
         //create aero movement sub-menu
         aeromenu = new JMenu(Messages.getString("CommonMenuBar.AeroMenu")); //$NON-NLS-1$
@@ -1106,6 +1110,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     }
     public synchronized void setMoveSelfDestructEnabled(boolean enabled) {
         moveSelfDestruct.setEnabled(enabled);
+    }
+    public synchronized void setMoveTraitorEnabled(boolean enabled) {
+        //TODO: moveTraitor.setEnabled(enabled);
     }
     public synchronized void setMoveEvadeAeroEnabled(boolean enabled) {
         moveEvadeAero.setEnabled(enabled);

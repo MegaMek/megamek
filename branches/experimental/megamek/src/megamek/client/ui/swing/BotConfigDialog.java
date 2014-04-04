@@ -13,14 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -124,7 +117,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         validate();
         pack();
-        setLocationRelativeTo(null);
+        setSize(new Dimension(600, 600));
+        setLocationRelativeTo(parent);
     }
 
     private JPanel switchBotPanel() {
@@ -533,7 +527,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         boolean save = false;
         boolean saveTargets = false;
         if (!tempBehavior.equals(princessBehavior)) {
-            SavePrincessDialog dialog = new SavePrincessDialog();
+            SavePrincessDialog dialog = new SavePrincessDialog(this);
             dialog.setVisible(true);
             save = dialog.doSave();
             saveTargets = dialog.doSaveTargets();

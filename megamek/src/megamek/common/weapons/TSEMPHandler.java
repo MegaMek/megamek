@@ -43,7 +43,8 @@ import megamek.server.Server;
  * 
  * @author arlith
  *
- */ class TSEMPHandler extends EnergyWeaponHandler {
+ */ 
+class TSEMPHandler extends EnergyWeaponHandler {
     /**
      *
      */

@@ -404,9 +404,9 @@ public class BattleArmor extends Infantry {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        boolean fastMove = 
+        boolean fastMove = (game != null) &&
                 game.getOptions().booleanOption("tacops_fast_infantry_move");
-        if( (game != null) && fastMove ) {
+        if(fastMove) {
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false,
                     false) + 1;
         }

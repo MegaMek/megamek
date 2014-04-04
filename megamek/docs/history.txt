@@ -25,6 +25,7 @@ v0.37.10-dev (SVN)
 + Bug: Fixed initial size and placement of the Bot Config dialogs.
 + Bug: NPE from new GUI version of traitor in CommonMenuBar.java
 + Bug [#4086]: Offboard Units, Double Blind, and Metal Content would cause NPEs
++ Bug [#3322]: Battle armor unable to use TacOps fast movement
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

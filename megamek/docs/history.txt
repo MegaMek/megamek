@@ -26,6 +26,8 @@ v0.37.10-dev (SVN)
 + Bug: NPE from new GUI version of traitor in CommonMenuBar.java
 + Bug [#4086]: Offboard Units, Double Blind, and Metal Content would cause NPEs
 + Bug [#3322]: Battle armor unable to use TacOps fast movement
++ Bug: report-messages.properties defined two 3700 reports: changed the EDP
+    related report to 3701 and updated it's usage in Server.java
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

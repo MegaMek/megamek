@@ -187,11 +187,21 @@ class TSEMPHandler extends EnergyWeaponHandler {
         String tsempEffect;
 
         // Determine the effect
+        Report baShutdownReport = null;
         if (tsempRoll >= shutdownTarget){
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
             tsempEffect = 
                     "<font color='C00000'><b>Shutdown!</b></font>";
-            entityTarget.setShutDown(true);
+            if (entityTarget instanceof BattleArmor){
+                baShutdownReport = new Report(3706);
+                baShutdownReport.addDesc(entityTarget);
+                baShutdownReport.indent(4);
+                baShutdownReport.add(entityTarget.getLocationAbbr(hit));
+                // TODO: fix for salvage purposes
+                entityTarget.destroyLocation(hit.getLocation());
+            } else {
+                entityTarget.setShutDown(true);
+            }
         } else if (tsempRoll >= interferenceTarget){
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
             tsempEffect = "<b>Interference!</b>";
@@ -201,5 +211,8 @@ class TSEMPHandler extends EnergyWeaponHandler {
         }
         r.add(tsempEffect);
         vPhaseReport.add(r); 
+        if (baShutdownReport != null){
+            vPhaseReport.add(baShutdownReport);
+        }
     }
 }

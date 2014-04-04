@@ -1305,6 +1305,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             clientgui.mechD.wPan.wRangeR
                     .setText("" + Compute.effectiveDistance(clientgui.getClient().getGame(), ce(), target)); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
+            // If we have a Centurion Weapon System selected, we may need to
+            //  update ranges.
+            if (m.getType().hasFlag(WeaponType.F_CWS)){
+                clientgui.mechD.wPan.selectWeapon(weaponId);
+            }
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
@@ -2247,5 +2252,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         return choice;
 
     } // End private Targetable chooseTarget( Coords )
+
+    public Targetable getTarget() {
+        return target;
+    }
 
 }

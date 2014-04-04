@@ -29,6 +29,7 @@ v0.37.10-dev (SVN)
 + Bug: report-messages.properties defined two 3700 reports: changed the EDP
     related report to 3701 and updated it's usage in Server.java
 + Bug [#3751]: Centurion Weapon System - Nonfunctional
++ Bug [#4087]: Tasers, TSEMP, CWS incorrectly handle Battlearmor shutdowns
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

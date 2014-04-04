@@ -793,6 +793,18 @@ public class Compute {
         if (target instanceof Entity) {
             te = (Entity) target;
         }
+        
+        // We need to adjust the ranges for Centurion Weapon Systems: it's 
+        //  default range is 6/12/18 but that's only for units that are 
+        //  susceptible to CWS, for those that aren't the ranges are 1/2/3
+        if (wtype.hasFlag(WeaponType.F_CWS) 
+                && ((te == null) || !te.hasQuirk("susceptible_cws"))){
+            weaponRanges[RangeType.RANGE_MINIMUM] = 0;
+            weaponRanges[RangeType.RANGE_SHORT]   = 1;
+            weaponRanges[RangeType.RANGE_MEDIUM]  = 2;
+            weaponRanges[RangeType.RANGE_LONG]    = 3;
+            weaponRanges[RangeType.RANGE_EXTREME] = 4;
+        }
 
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off

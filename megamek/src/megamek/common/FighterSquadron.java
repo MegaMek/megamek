@@ -41,6 +41,7 @@ public class FighterSquadron extends Aero {
     // fighter squadrons need to keep track of heat capacity apart from their
     // fighters
     private int heatcap = 0;
+    private int heatcapNoRHS = 0;
 
     public FighterSquadron() {
         super();
@@ -362,21 +363,27 @@ public class FighterSquadron extends Aero {
         }
         return sinks;
     }
-
-    @Override
-    public int getHeatCapacity() {
-        return heatcap;
+    
+    public int getHeatCapacity(boolean includeRadicalHeatSink){
+        if (includeRadicalHeatSink){
+            return heatcap;
+        } else {
+            return heatcapNoRHS;
+        }
     }
 
     public void resetHeatCapacity() {
         int capacity = 0;
+        int capacityNoRHS = 0;
         for (Integer fId : fighters) {
             Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
-                capacity += fighter.getHeatCapacity();
+                capacity += fighter.getHeatCapacity(true);
+                capacityNoRHS += fighter.getHeatCapacity(false);
             }
         }
         heatcap = capacity;
+        heatcapNoRHS = capacityNoRHS;
     }
 
     @Override

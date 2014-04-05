@@ -43,7 +43,8 @@ import megamek.server.Server;
  * 
  * @author arlith
  *
- */ class TSEMPHandler extends EnergyWeaponHandler {
+ */ 
+class TSEMPHandler extends EnergyWeaponHandler {
     /**
      *
      */
@@ -186,11 +187,21 @@ import megamek.server.Server;
         String tsempEffect;
 
         // Determine the effect
+        Report baShutdownReport = null;
         if (tsempRoll >= shutdownTarget){
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
             tsempEffect = 
                     "<font color='C00000'><b>Shutdown!</b></font>";
-            entityTarget.setShutDown(true);
+            if (entityTarget instanceof BattleArmor){
+                baShutdownReport = new Report(3706);
+                baShutdownReport.addDesc(entityTarget);
+                baShutdownReport.indent(4);
+                baShutdownReport.add(entityTarget.getLocationAbbr(hit));
+                // TODO: fix for salvage purposes
+                entityTarget.destroyLocation(hit.getLocation());
+            } else {
+                entityTarget.setShutDown(true);
+            }
         } else if (tsempRoll >= interferenceTarget){
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
             tsempEffect = "<b>Interference!</b>";
@@ -200,5 +211,8 @@ import megamek.server.Server;
         }
         r.add(tsempEffect);
         vPhaseReport.add(r); 
+        if (baShutdownReport != null){
+            vPhaseReport.add(baShutdownReport);
+        }
     }
 }

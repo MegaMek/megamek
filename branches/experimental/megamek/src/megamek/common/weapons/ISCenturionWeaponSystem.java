@@ -17,7 +17,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -57,7 +61,22 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         maxRange = RANGE_MED;
         availRating = new int[] { RATING_F, RATING_F, RATING_F };
         techRating = RATING_E;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_CWS);
     }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new CenturionWeaponSystemHandler(toHit, waa, game, server);
+    }    
 
 }

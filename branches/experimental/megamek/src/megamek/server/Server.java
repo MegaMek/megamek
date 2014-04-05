@@ -13709,7 +13709,7 @@ public class Server implements Runnable {
             addReport(damageEntity(te, hit, damage, false, DamageType.NONE,
                     false, false, throughFront));
             if (((Protomech) ae).isEDPCharged()) {
-                r = new Report(3700);
+                r = new Report(3701);
                 int taserRoll = Compute.d6(2) - 2;
                 r.add(taserRoll);
                 r.newlines = 0;

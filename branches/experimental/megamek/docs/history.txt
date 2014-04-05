@@ -29,6 +29,14 @@ v0.37.10-dev (SVN)
 + Bug: Fixed initial size and placement of the Bot Config dialogs.
 + Bug: NPE from new GUI version of traitor in CommonMenuBar.java
 + Bug [#4086]: Offboard Units, Double Blind, and Metal Content would cause NPEs
++ Bug [#3322]: Battle armor unable to use TacOps fast movement
++ Bug: report-messages.properties defined two 3700 reports: changed the EDP
+    related report to 3701 and updated it's usage in Server.java
++ Bug [#3751]: Centurion Weapon System - Nonfunctional
++ Bug [#4087]: Tasers, TSEMP, CWS incorrectly handle Battlearmor shutdowns
++ Bug: Mek and BA Tasers were getting the -1 for targeting computers, also made
+    it explicit that Centurion Weapon System should also not get this bonus
++ Bug: MULParser was incorrectly defaulting individual camo to an empty string instead of null
 
 v0.37.9-exp (2014-03-29 14:25 UTC)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp

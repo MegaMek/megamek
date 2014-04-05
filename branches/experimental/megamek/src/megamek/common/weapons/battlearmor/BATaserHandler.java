@@ -73,13 +73,9 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 r.addDesc(entityTarget);
                 // shut down for rest of scenario, so we actually kill it
                 // TODO: fix for salvage purposes
-                HitData targetTrooper = entityTarget.rollHitLocation(
-                        ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                r.add(entityTarget.getLocationAbbr(targetTrooper));
+                r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.add(r);
-                vPhaseReport.addAll(server.criticalEntity(ae,
-                        targetTrooper.getLocation(), targetTrooper.isRear(), 
-                        0, false, false, 0));
+                entityTarget.destroyLocation(hit.getLocation());
                 done = true;
             }
         } else if (entityTarget instanceof Mech) {

@@ -34,6 +34,7 @@ v0.37.10-dev (SVN)
     it explicit that Centurion Weapon System should also not get this bonus
 + Bug: MULParser was incorrectly defaulting individual camo to an empty string instead of null
 + Bug [#4007]: Squadron Issues - heat sinks
++ Bug [#4007]: Squadron Issues - over thrust
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

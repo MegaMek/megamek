@@ -12,6 +12,9 @@ Tank
 <Name>
 Tokugawa Heavy Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 60
 </Tonnage>

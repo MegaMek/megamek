@@ -12,6 +12,9 @@ VTOL
 <Name>
 Kestrel VTOL
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 25
 </Tonnage>
@@ -25,6 +28,9 @@ Kestrel VTOL
 4
 2
 </Armor>
+<armor_tech>
+3
+</armor_tech>
 <Front Equipment>
 ISMachine Gun
 ISMachine Gun

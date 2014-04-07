@@ -12,6 +12,9 @@ Warship
 <Name>
 Inazuma Corvette
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 200000
 </Tonnage>

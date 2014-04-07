@@ -16,6 +16,10 @@ VTOL
 Ferret Light Scout VTOL
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2901
 </year>
@@ -55,6 +59,10 @@ TroopSpace: 1
 2
 2
 </armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Body Equipment>
 IS Machine Gun Ammo - Half

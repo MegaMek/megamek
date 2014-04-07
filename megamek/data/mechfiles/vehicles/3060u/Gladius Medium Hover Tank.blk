@@ -12,6 +12,9 @@ Tank
 <Name>
 Gladius Medium Hover Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 40
 </Tonnage>
@@ -43,6 +46,9 @@ IS Level 1
 <armor_type>
 0
 </armor_type>
+<armor_tech>
+1
+</armor_tech>
 <engine_type>
 1
 </engine_type>

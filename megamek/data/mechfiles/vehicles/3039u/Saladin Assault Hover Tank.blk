@@ -16,6 +16,10 @@ Tank
 Saladin Assault Hover Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2942
 </year>

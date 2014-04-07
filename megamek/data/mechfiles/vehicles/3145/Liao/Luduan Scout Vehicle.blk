@@ -17,7 +17,7 @@ Luduan Scout Vehicle
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -57,6 +57,7 @@ Hover
 </armor>
 
 <Body Equipment>
+IS Vehicular Stealth
 IS Vehicular Stealth
 ISMagshotGR Ammo
 ISAngelECMSuite

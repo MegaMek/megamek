@@ -16,6 +16,10 @@ Tank
 Vedette Medium Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2943
 </year>

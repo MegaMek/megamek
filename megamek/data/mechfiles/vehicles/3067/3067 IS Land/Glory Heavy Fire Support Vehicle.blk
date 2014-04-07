@@ -12,6 +12,9 @@ Tank
 <Name>
 Glory Heavy Fire Support Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 85
 </Tonnage>
@@ -46,7 +49,7 @@ ISLRM15 Ammo Artemis-capable
 ISGuardianECM
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3067

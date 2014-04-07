@@ -12,6 +12,9 @@ Warship
 <Name>
 Kimagure Pursuit Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 780000
 </Tonnage>

@@ -16,8 +16,12 @@ Tank
 Engineering Vehicle
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
-2100
+2570
 </year>
 
 <source>

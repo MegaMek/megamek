@@ -12,8 +12,9 @@ Warship
 <Name>
 Carson Destroyer
 </Name>
-<Model>
-</Model>
+<model>
+(Standard)
+</model>
 <Tonnage>
 510000
 </Tonnage>

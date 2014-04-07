@@ -12,6 +12,9 @@ Tank
 <Name>
 Fulcrum Heavy Hovertank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50
 </Tonnage>
@@ -25,6 +28,9 @@ Fulcrum Heavy Hovertank
 20
 40
 </Armor>
+<armor_tech>
+3
+</armor_tech>
 <Turret Equipment>
 ISLargeLaser
 ISMediumLaser

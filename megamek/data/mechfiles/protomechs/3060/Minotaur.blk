@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Minotaur
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 9
 </Tonnage>

@@ -12,6 +12,9 @@ Warship
 <Name>
 Nightlord Battleship
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 1200000
 </Tonnage>

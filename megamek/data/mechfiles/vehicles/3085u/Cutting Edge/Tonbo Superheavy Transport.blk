@@ -16,6 +16,10 @@ SupportVTOL
 Tonbo Superheavy Transport
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 56
 </Tonnage>
@@ -70,7 +74,7 @@ Clan Invasion
 </armor_type>
 
 <armor_tech>
-2
+3
 </armor_tech>
 
 <engine_type>

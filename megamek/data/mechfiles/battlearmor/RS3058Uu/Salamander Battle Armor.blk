@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Salamander Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 biped
 </chassis>

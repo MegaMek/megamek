@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Hydra
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 6
 </Tonnage>

@@ -12,6 +12,9 @@ Tank
 <Name>
 Tufana Hovercraft
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 35
 </Tonnage>

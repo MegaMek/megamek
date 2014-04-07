@@ -12,6 +12,9 @@ Tank
 <Name>
 Speeder
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 5
 </Tonnage>
@@ -25,7 +28,7 @@ Speeder
 4
 </Armor>
 <type>
-IS
+IS Level 1
 </type>
 <year>
 2300

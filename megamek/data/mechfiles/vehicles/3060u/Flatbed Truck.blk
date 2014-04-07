@@ -12,6 +12,9 @@ Tank
 <Name>
 Flatbed Truck
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 10
 </Tonnage>

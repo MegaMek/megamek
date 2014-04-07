@@ -17,7 +17,7 @@ Zephyros Infantry Support Vehicle
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ Zephyros Infantry Support Vehicle
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -45,7 +45,7 @@ Wheeled
 </armor_type>
 
 <armor_tech>
-6
+2
 </armor_tech>
 
 <armor>

@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Triton
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 8
 </Tonnage>

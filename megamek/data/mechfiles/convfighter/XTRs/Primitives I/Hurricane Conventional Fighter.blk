@@ -16,6 +16,10 @@ FixedWingSupport
 Hurricane Conventional Fighter
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 25
 </Tonnage>

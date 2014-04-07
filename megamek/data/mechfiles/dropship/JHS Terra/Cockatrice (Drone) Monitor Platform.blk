@@ -15,8 +15,12 @@ Dropship
 </UnitType>
 
 <Name>
-Cockatrice (Drone) Monitor Platform
+Cockatrice Monitor Platform
 </Name>
+
+<model>
+(Drone)
+</model>
 
 <Tonnage>
 800

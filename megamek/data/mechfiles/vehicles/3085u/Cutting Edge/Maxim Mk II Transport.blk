@@ -12,6 +12,9 @@ Tank
 <Name>
 Maxim Mk II Transport
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50
 </Tonnage>

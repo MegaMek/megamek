@@ -12,6 +12,9 @@ Tank
 <Name>
 Maxim (I) Heavy Hover Transport
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50
 </Tonnage>

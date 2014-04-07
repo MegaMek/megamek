@@ -16,6 +16,10 @@ Tank
 Sturmfeur Heavy Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 3018
 </year>

@@ -16,6 +16,10 @@ Tank
 Rommel Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 3027
 </year>

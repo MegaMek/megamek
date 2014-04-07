@@ -10,10 +10,10 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Infiltrator Mk. I Battle Armor
+Infiltrator Mk. I Battle Armor Mk. I
 </Name>
 <Model>
-"Waddle"
+'Waddle'
 </Model>
 <chassis>
 biped

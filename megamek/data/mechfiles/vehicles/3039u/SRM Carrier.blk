@@ -16,6 +16,10 @@ Tank
 SRM Carrier
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2407
 </year>

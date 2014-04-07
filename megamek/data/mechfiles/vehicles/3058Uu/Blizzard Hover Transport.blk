@@ -12,6 +12,9 @@ Tank
 <Name>
 Blizzard Hover Transport
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 25
 </Tonnage>
@@ -25,6 +28,9 @@ Blizzard Hover Transport
 9
 9
 </Armor>
+<armor_tech>
+0
+</armor_tech>
 <Turret Equipment>
 ISLRM5
 </Turret Equipment>

@@ -12,6 +12,9 @@ Warship
 <Name>
 Newgrange Yardship
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 2300000
 </Tonnage>

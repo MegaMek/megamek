@@ -16,6 +16,10 @@ Tank
 Pandion Combat WiGE
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 20
 </Tonnage>
@@ -32,6 +36,10 @@ Pandion Combat WiGE
 13
 12
 </Armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Turret Equipment>
 ISERMediumLaser

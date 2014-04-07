@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Shedu Assault Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 quad
 </chassis>

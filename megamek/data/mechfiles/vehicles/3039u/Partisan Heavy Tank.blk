@@ -16,6 +16,10 @@ Tank
 Partisan Heavy Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2791
 </year>

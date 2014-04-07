@@ -10,8 +10,13 @@ MAM0
 BattleArmor
 </UnitType>
 <Name>
-Theseus Medium Battle Armor
+Trinity Medium Battle Armor
 </Name>
+
+<Model>
+(Theseus)[MRR]
+</Model>
+
 <chassis>
 biped
 </chassis>
@@ -36,7 +41,7 @@ BABattleClaw:RA
 IS Level 2
 </type>
 <year>
-3066
+3065
 </year>
 <motion_type>
 Leg

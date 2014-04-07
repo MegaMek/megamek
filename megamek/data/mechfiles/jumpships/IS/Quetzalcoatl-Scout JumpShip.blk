@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Quetzalcoatl-Scout JumpShip
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 90000
 </Tonnage>

@@ -38,6 +38,7 @@ v0.37.10-dev (SVN)
 + Bug: JUnit tests in build.xml not configured to run specifically in MegaMek
     directory, potentially resulting in build failures.
 + Data: New Images.
++ Data: Lots of Unit Names Changes this is to bring us closer to matching the MUL naming.
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming

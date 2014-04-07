@@ -12,6 +12,9 @@ VTOL
 <Name>
 Cavalry Attack Helicopter
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 25
 </Tonnage>
@@ -25,6 +28,9 @@ Cavalry Attack Helicopter
 8
 2
 </Armor>
+<armor_tech>
+1
+</armor_tech>
 <Front Equipment>
 ISSRM6
 ISSRM2

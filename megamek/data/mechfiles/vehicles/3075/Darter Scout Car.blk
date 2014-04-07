@@ -13,6 +13,7 @@ Tank
 Darter Scout Car
 </Name>
 <Model>
+(Standard)
 </Model>
 <Tonnage>
 13
@@ -36,7 +37,7 @@ TroopSpace:3
 ISMG Ammo (200)
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 2822

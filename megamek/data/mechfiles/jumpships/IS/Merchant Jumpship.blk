@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Merchant Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 120000
 </Tonnage>

@@ -12,6 +12,9 @@ Warship
 <Name>
 Quixote Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 780000
 </Tonnage>

@@ -17,7 +17,7 @@ Balac Strike VTOL
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -45,7 +45,7 @@ VTOL
 </armor_type>
 
 <armor_tech>
-6
+2
 </armor_tech>
 
 <armor>

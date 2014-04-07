@@ -16,6 +16,10 @@ Warship
 Bug-Eye Surveillance Ship
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 6100
 </Tonnage>

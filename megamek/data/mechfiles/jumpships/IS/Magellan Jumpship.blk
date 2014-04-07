@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Magellan Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 175000
 </Tonnage>

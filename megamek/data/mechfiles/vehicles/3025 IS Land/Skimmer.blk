@@ -12,6 +12,9 @@ Tank
 <Name>
 Skimmer
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 5
 </Tonnage>
@@ -31,7 +34,7 @@ ISSmallLaser
 ISFlamer
 </Rear Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 2300

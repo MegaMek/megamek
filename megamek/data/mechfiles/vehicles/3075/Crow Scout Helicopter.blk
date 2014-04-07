@@ -16,8 +16,12 @@ VTOL
 Crow Scout Helicopter
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
-3075
+3068
 </year>
 
 <source>
@@ -51,6 +55,10 @@ VTOL
 4
 2
 </armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Body Equipment>
 ISGuardianECMSuite

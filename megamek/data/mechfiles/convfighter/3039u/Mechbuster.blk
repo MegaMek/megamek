@@ -16,6 +16,10 @@ ConvFighter
 MechBuster
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 50
 </Tonnage>

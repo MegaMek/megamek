@@ -16,6 +16,10 @@ Tank
 Fury Command Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 3064
 </year>

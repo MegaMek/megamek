@@ -12,6 +12,9 @@ Tank
 <Name>
 Centipede Scout Car
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 20
 </Tonnage>
@@ -24,6 +27,9 @@ Centipede Scout Car
 14
 14
 </Armor>
+<armor_tech>
+3
+</armor_tech>
 <Front Equipment>
 ISMediumLaser
 ISBeagleActiveProbe

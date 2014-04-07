@@ -16,6 +16,10 @@ Tank
 M.A.S.H. Truck
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2671
 </year>
@@ -25,7 +29,7 @@ Star League
 </source>
 
 <type>
-IS Level 1
+IS Level 3
 </type>
 
 <tonnage>

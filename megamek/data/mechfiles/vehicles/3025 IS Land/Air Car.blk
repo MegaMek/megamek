@@ -7,11 +7,14 @@
 MAM0
 </Version>
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 <Name>
 Air Car
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 40
 </Tonnage>
@@ -24,11 +27,14 @@ Air Car
 8
 8
 </Armor>
+<barrating>
+5
+</barrating>
 <type>
-IS
+IS Level 1
 </type>
 <year>
-3025
+2200
 </year>
 <internal_type>
 0

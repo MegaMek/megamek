@@ -12,6 +12,11 @@ BattleArmor
 <Name>
 Gray Death Scout Suit
 </Name>
+
+<model>
+(Standard)
+</model>
+
 <Trooper Count>
 4
 </Trooper Count>

@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Mobile Long Tom
+Mobile Long Tom Artillery Ammunition Carriage
 </Name>
 
 <Model>
-(Ammo Carriage)
+LT-MOB-25	
 </Model>
 
 <year>

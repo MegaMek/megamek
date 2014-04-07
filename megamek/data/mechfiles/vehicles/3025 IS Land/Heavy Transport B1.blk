@@ -12,6 +12,8 @@ Tank
 <Name>
 Heavy Transport B1
 </Name>
+<Model>
+</Model>
 <Tonnage>
 20
 </Tonnage>
@@ -34,7 +36,7 @@ TroopSpace:7
 ISSRM2 Ammo
 </Body Equipment>
 <type>
-IS
+IS Level 1
 </type>
 <year>
 2370	

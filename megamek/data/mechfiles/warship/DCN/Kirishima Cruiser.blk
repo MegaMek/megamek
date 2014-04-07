@@ -12,6 +12,9 @@ Warship
 <Name>
 Kirishima Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 790000
 </Tonnage>

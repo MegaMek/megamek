@@ -17,7 +17,7 @@ Falcon Hover Tank
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -47,6 +47,10 @@ Hover
 16
 16
 </armor>
+
+<armor_tech>
+1
+</armor_tech>
 
 <Body Equipment>
 IS Ammo SRM-6

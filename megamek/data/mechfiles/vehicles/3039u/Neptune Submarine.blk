@@ -16,6 +16,10 @@ Tank
 Neptune Submarine
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2950
 </year>

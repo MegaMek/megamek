@@ -12,6 +12,9 @@ Tank
 <Name>
 Plainsman Medium Hovertank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 35
 </Tonnage>

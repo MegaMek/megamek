@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Gnome Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 biped
 </chassis>

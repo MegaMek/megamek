@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Ironhold Assault Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 biped
 </chassis>

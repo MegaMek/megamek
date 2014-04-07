@@ -12,6 +12,9 @@ Warship
 <Name>
 Avalon Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Model>
 </Model>
 <Tonnage>

@@ -12,6 +12,9 @@ Tank
 <Name>
 Morrigu Fire Support Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 80
 </Tonnage>
@@ -47,7 +50,7 @@ CLECMSuite
 CLCASE
 </Body Equipment>
 <type>
-Clan
+Clan Level 2
 </type>
 <year>
 3064

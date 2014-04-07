@@ -12,6 +12,9 @@ Tank
 <Name>
 Fortune Wheeled Assault Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 80
 </Tonnage>
@@ -40,7 +43,7 @@ ISLBXAC20 CL Ammo
 ISLBXAC20 Ammo
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3067

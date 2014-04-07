@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Harpy
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 2
 </Tonnage>

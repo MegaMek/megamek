@@ -12,6 +12,9 @@ Warship
 <Name>
 Kyushu Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 630000
 </Tonnage>

@@ -15,6 +15,9 @@ Tank
 <Name>
 Ontos Heavy Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 
 <year>
 2832

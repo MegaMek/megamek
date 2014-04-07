@@ -16,6 +16,10 @@ Tank
 Saracen Medium Hover Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2932
 </year>

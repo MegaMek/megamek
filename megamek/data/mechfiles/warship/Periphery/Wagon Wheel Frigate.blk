@@ -12,6 +12,9 @@ Warship
 <Name>
 Wagon Wheel Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 650000
 </Tonnage>

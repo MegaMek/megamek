@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-Mosquito
+Mosquito Light Fighter
 </Name>
 
 <Model>
-Light Fighter
+(Standard)
 </Model>
 
 <Tonnage>

@@ -12,6 +12,9 @@ VTOL
 <Name>
 Yellow Jacket Gunship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 30
 </Tonnage>
@@ -44,6 +47,9 @@ IS Level 2
 <armor_type>
 0
 </armor_type>
+<armor_tech>
+3
+</armor_tech>
 <engine_type>
 1
 </engine_type>

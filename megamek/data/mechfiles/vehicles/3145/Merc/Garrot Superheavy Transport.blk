@@ -17,6 +17,7 @@ Garrot Superheavy Transport
 </Name>
 
 <Model>
+(Standard)
 </Model>
 
 <year>
@@ -52,8 +53,11 @@ troopspace:1.0
 18
 </armor>
 
-<Body Equipment>
+<armor_tech>
+3
+</armor_tech>
 
+<Body Equipment>
 IS Light Machine Gun Ammo - Half
 Lift Hoist
 Lift Hoist

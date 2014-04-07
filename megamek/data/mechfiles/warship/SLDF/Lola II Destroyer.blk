@@ -12,6 +12,9 @@ Warship
 <Name>
 Lola II Destroyer
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 680000
 </Tonnage>

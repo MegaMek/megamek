@@ -12,6 +12,9 @@ VTOL
 <Name>
 Peregrine Attack VTOL
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 30
 </Tonnage>
@@ -25,6 +28,9 @@ Peregrine Attack VTOL
 1
 1
 </Armor>
+<armor_tech>
+1
+</armor_tech>
 <Front Equipment>
 ISMachine Gun
 ISMachine Gun

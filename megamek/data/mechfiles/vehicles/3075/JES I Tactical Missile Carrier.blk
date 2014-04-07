@@ -15,6 +15,9 @@ Tank
 <Name>
 JES I Tactical Missile Carrier
 </Name>
+<Model>
+(Standard)
+</Model>
 <year>
 3075
 </year>

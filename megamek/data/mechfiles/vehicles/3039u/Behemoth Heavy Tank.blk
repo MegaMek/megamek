@@ -16,6 +16,10 @@ Tank
 Behemoth Heavy Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2952
 </year>

@@ -10,11 +10,11 @@ MAM0
 Warship
 </UnitType>
 <Name>
-Stefan Amaris
+Stefan Amaris Battleship
 </Name>
-<Model>
-(BattleShip)
-</Model>
+<model>
+(Standard)
+</model>
 <Tonnage>
 1040000
 </Tonnage>

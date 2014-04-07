@@ -12,8 +12,9 @@ Warship
 <Name>
 Agamemnon Heavy Cruiser
 </Name>
-<Model>
-</Model>
+<model>
+(Standard)
+</model>
 <Tonnage>
 815000
 </Tonnage>

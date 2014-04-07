@@ -12,6 +12,11 @@ Warship
 <Name>
 Feng Huang Cruiser
 </Name>
+
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 970000
 </Tonnage>

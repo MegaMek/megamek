@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Warg Assault Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 biped
 </chassis>

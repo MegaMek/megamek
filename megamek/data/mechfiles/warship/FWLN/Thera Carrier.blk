@@ -12,6 +12,9 @@ Warship
 <Name>
 Thera Carrier
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 960000
 </Tonnage>

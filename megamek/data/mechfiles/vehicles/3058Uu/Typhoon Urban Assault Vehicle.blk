@@ -12,6 +12,9 @@ Tank
 <Name>
 Typhoon Urban Assault Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 70
 </Tonnage>

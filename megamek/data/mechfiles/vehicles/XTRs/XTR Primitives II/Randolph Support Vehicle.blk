@@ -17,6 +17,7 @@ Randolph Support Vehicle
 </Name>
 
 <Model>
+(Standard)
 </Model>
 
 <year>
@@ -24,7 +25,7 @@ Randolph Support Vehicle
 </year>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <motion_type>

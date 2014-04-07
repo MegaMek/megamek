@@ -13,7 +13,7 @@ Tank
 Huitzilopochtli Assault Tank 'Huey'
 </Name>
 <Model>
-
+(Standard)
 </Model>
 <Tonnage>
 85
@@ -59,7 +59,7 @@ CLCASE
 Clan Level 3
 </type>
 <year>
-3050
+2845
 </year>
 <internal_type>
 0

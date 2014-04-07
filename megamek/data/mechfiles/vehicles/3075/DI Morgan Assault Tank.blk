@@ -16,6 +16,10 @@ Tank
 DI Morgan Assault Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 100
 </Tonnage>
@@ -52,7 +56,7 @@ IS Level 2
 </type>
 
 <year>
-3075
+3073
 </year>
 
 <source>

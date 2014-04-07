@@ -17,6 +17,7 @@ Karnov UR Gunship
 </Name>
 
 <Model>
+(Standard)
 </Model>
 
 <year>
@@ -28,7 +29,7 @@ Succession Wars
 </source>
 
 <type>
-IS Level 1
+IS Level 2
 </type>
 
 <tonnage>
@@ -54,6 +55,10 @@ VTOL
 6
 2
 </armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Body Equipment>
 IS Machine Gun Ammo - Half

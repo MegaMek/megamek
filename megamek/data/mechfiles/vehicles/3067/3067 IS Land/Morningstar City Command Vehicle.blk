@@ -12,6 +12,9 @@ Tank
 <Name>
 Morningstar City Command Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 60
 </Tonnage>
@@ -48,7 +51,7 @@ ISTargeting Computer
 ISC3MasterComputer
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3065

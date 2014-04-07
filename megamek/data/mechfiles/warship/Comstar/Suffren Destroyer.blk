@@ -12,6 +12,9 @@ Warship
 <Name>
 Suffren Destroyer
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 540000
 </Tonnage>

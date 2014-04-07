@@ -16,6 +16,10 @@ Tank
 J-27 Ordnance Transport
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2650
 </year>

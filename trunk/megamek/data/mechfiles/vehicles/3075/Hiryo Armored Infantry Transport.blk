@@ -16,6 +16,10 @@ Tank
 Hiryo Armored Infantry Transport
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 40
 </Tonnage>
@@ -30,6 +34,10 @@ Hiryo Armored Infantry Transport
 30
 25
 </Armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Front Equipment>
 ISSNPPC

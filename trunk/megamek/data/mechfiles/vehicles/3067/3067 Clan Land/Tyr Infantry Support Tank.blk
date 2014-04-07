@@ -12,6 +12,9 @@ Tank
 <Name>
 Tyr Infantry Support Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 45
 </Tonnage>
@@ -39,7 +42,7 @@ CLStreakSRM4 Ammo
 CLCASE
 </Body Equipment>
 <type>
-Clan
+Clan Level 2
 </type>
 <year>
 3063

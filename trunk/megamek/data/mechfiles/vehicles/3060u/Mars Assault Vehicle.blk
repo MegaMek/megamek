@@ -17,7 +17,7 @@ Mars Assault Vehicle
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ Mars Assault Vehicle
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -45,7 +45,7 @@ Tracked
 </armor_type>
 
 <armor_tech>
-6
+2
 </armor_tech>
 
 <armor>

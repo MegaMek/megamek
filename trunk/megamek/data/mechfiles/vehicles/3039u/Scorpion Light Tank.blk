@@ -16,6 +16,10 @@ Tank
 Scorpion Light Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2807
 </year>

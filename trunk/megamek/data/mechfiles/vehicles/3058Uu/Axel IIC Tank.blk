@@ -12,6 +12,9 @@ Tank
 <Name>
 Axel Heavy Tank IIC
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 65
 </Tonnage>
@@ -25,6 +28,9 @@ Axel Heavy Tank IIC
 30
 35
 </Armor>
+<armor_tech>
+2
+</armor_tech>
 <Turret Equipment>
 CLLargePulseLaser
 CLLRM15

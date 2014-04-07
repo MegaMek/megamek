@@ -16,6 +16,10 @@ Tank
 Skulker Wheeled Scout Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2659
 </year>

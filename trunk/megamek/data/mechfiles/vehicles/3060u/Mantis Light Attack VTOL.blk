@@ -12,6 +12,9 @@ VTOL
 <Name>
 Mantis Light Attack VTOL
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 15
 </Tonnage>
@@ -25,6 +28,9 @@ Mantis Light Attack VTOL
 8
 2
 </Armor>
+<armor_tech>
+3
+</armor_tech>
 <Front Equipment>
 ISERSmallLaser
 ISERSmallLaser

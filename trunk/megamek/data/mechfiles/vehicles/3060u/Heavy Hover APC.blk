@@ -12,6 +12,9 @@ Tank
 <Name>
 Heavy Hover APC
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 20
 </Tonnage>
@@ -38,7 +41,7 @@ ISMG Ammo (100)
 IS Level 1
 </type>
 <year>
-2100
+2470
 </year>
 <internal_type>
 0

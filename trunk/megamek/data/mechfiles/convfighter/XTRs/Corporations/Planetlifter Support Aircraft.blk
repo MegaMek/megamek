@@ -16,6 +16,10 @@ ConvFighter
 Planetlifter Support Aircraft
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 50
 </Tonnage>

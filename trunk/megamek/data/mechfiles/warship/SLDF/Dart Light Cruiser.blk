@@ -12,6 +12,9 @@ Warship
 <Name>
 Dart Light Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 680000
 </Tonnage>

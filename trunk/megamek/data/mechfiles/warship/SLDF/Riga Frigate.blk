@@ -12,6 +12,9 @@ Warship
 <Name>
 Riga Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 750000
 </Tonnage>

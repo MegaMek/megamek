@@ -16,6 +16,10 @@ Tank
 Manticore Heavy Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2668
 </year>

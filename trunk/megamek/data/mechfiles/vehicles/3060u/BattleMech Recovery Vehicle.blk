@@ -12,6 +12,9 @@ Tank
 <Name>
 BattleMech Recovery Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50
 </Tonnage>

@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Odyssey Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 345000
 </Tonnage>

@@ -18,6 +18,10 @@ SpaceStation
 Drake SDS Control Station
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 12000
 </Tonnage>

@@ -12,6 +12,9 @@ Warship
 <Name>
 Liberator Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 830000
 </Tonnage>

@@ -12,6 +12,9 @@ Warship
 <Name>
 Eagle Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 625000
 </Tonnage>

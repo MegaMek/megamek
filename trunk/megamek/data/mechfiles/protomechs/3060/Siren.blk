@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Siren
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 3
 </Tonnage>

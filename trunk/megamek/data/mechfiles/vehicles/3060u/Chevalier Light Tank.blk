@@ -12,6 +12,9 @@ Tank
 <Name>
 Chevalier Light Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 35
 </Tonnage>

@@ -12,6 +12,9 @@ SmallCraft
 <Name>
 Condottiere Assault Craft
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 150
 </Tonnage>

@@ -12,6 +12,9 @@ Tank
 <Name>
 Maultier Hover APC
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 15
 </Tonnage>
@@ -37,7 +40,7 @@ ISStreakSRM2 Ammo
 IS Level 2
 </type>
 <year>
-2590
+2647
 </year>
 <internal_type>
 0

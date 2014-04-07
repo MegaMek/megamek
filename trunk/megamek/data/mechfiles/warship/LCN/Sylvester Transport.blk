@@ -12,6 +12,9 @@ Warship
 <Name>
 Sylvester Transport
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 280000
 </Tonnage>

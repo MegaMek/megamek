@@ -12,6 +12,9 @@ Tank
 <Name>
 Minion Advanced Tactical Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 20
 </Tonnage>
@@ -32,7 +35,7 @@ ISMediumPulseLaser
 ISC3SlaveUnit
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3064

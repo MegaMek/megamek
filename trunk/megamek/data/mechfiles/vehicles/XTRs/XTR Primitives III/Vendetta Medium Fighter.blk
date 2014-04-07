@@ -16,6 +16,10 @@ ConvFighter
 Vendetta Medium Fighter
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 60
 </Tonnage>

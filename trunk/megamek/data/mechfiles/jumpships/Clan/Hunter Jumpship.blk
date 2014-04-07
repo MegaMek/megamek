@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Hunter Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 95000
 </Tonnage>

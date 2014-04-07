@@ -12,6 +12,9 @@ Warship
 <Name>
 Zechetinu II Corvette
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 180000
 </Tonnage>

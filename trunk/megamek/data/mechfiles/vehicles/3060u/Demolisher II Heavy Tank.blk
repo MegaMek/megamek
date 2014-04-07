@@ -13,8 +13,9 @@ Tank
 Demolisher II Heavy Tank
 </Name>
 
-<model>
-</model>
+<Model>
+(Standard)
+</Model>
 
 <Tonnage>
 100

@@ -16,6 +16,10 @@ Tank
 Harasser Missile Platform
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2811
 </year>
@@ -51,6 +55,10 @@ Hover
 4
 5
 </armor>
+
+<armor_tech>
+1
+</armor_tech>
 
 <Body Equipment>
 IS Ammo SRM-6

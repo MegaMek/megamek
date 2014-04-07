@@ -16,6 +16,10 @@ Tank
 Condor Heavy Hover Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2564
 </year>
@@ -51,6 +55,10 @@ Hover
 14
 22
 </armor>
+
+<armor_tech>
+1
+</armor_tech>
 
 <Body Equipment>
 IS Ammo AC/5

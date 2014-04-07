@@ -12,6 +12,11 @@ Warship
 <Name>
 Conqueror Battlecruiser/Carrier
 </Name>
+
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 780000
 </Tonnage>

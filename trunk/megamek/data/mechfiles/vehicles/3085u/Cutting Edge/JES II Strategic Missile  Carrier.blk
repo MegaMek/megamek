@@ -12,6 +12,11 @@ Tank
 <Name>
 JES II Strategic Missile Carrier
 </Name>
+
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 95
 </Tonnage>
@@ -57,7 +62,7 @@ ISGuardianECM
 ISC3SlaveUnit
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3079

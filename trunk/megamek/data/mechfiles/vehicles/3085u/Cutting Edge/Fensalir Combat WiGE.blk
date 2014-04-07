@@ -16,6 +16,10 @@ Tank
 Fensalir Combat WiGE
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 80
 </Tonnage>
@@ -30,6 +34,10 @@ Fensalir Combat WiGE
 60
 48
 </Armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Front Equipment>
 ISHeavyGaussRifle

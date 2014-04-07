@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Mobile Long Tom
+Mobile Long Tom Artillery Support Carriage
 </Name>
 
 <Model>
-(Support Carriage)
+LT-MOB-25	
 </Model>
 
 <year>

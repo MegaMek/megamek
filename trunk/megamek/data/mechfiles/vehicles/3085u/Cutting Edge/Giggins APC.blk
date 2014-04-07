@@ -16,6 +16,10 @@ Tank
 Giggins APC
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 40
 </Tonnage>

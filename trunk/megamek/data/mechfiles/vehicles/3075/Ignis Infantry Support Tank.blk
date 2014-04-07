@@ -16,6 +16,10 @@ Tank
 Ignis Infantry Support Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2512
 </year>

@@ -12,6 +12,9 @@ VTOL
 <Name>
 Sprint Scout Helicopter
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 10
 </Tonnage>
@@ -41,6 +44,9 @@ IS Level 2
 <armor_type>
 1
 </armor_type>
+<armor_tech>
+3
+</armor_tech>
 <engine_type>
 0
 </engine_type>

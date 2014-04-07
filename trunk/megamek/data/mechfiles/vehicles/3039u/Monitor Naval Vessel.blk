@@ -16,6 +16,10 @@ Tank
 Monitor Naval Vessel
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2910
 </year>

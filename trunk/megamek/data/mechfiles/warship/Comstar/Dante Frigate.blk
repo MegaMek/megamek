@@ -12,6 +12,9 @@ Warship
 <Name>
 Dante Frigate
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 610000
 </Tonnage>

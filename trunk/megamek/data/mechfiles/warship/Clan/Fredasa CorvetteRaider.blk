@@ -12,6 +12,9 @@ Warship
 <Name>
 Fredasa Corvette/Raider
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 180000
 </Tonnage>

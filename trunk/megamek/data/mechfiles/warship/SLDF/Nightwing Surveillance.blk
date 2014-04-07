@@ -12,6 +12,10 @@ Warship
 <Name>
 Nightwing Surveillance
 </Name>
+<model>
+(Standard)
+</model>
+
 <Tonnage>
 100000
 </Tonnage>

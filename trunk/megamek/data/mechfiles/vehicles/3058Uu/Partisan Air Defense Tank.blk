@@ -12,6 +12,9 @@ Tank
 <Name>
 Partisan Air Defense Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 80
 </Tonnage>

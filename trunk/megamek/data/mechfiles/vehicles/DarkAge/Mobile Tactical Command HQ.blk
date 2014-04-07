@@ -12,6 +12,11 @@ Tank
 <Name>
 Mobile Tactical Command HQ
 </Name>
+
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 30
 </Tonnage>

@@ -16,6 +16,10 @@ Tank
 Palmoni Assault Infantry Fighting Vehicle
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 85
 </Tonnage>

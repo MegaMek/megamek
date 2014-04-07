@@ -16,6 +16,10 @@ BattleArmor
 Gray Death Heavy Suit
 </Name>
 
+<model>
+(Standard)
+</model>
+
 <chassis>
 biped
 </chassis>

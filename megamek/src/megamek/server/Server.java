@@ -23870,8 +23870,7 @@ public class Server implements Runnable {
                     && (entity instanceof Mech ? entity.getArmor(loc, true) > 0
                             : true) && (null == hex)) {
                 // functional HarJel prevents breach
-                if ((entity instanceof Mech)
-                        && ((Mech) entity).hasHarJelIn(loc)) {
+                if (entity.hasHarJelIn(loc)) {
                     r = new Report(6342);
                     r.subject = entity.getId();
                     r.indent(3);
@@ -23879,9 +23878,9 @@ public class Server implements Runnable {
                     return vDesc;
                 }
                 if ((entity instanceof Mech)
-                        && (((Mech) entity).hasHarJelIIIn(loc) || ((Mech) entity)
-                                .hasHarJelIIIIn(loc))) {
-                    r = new Report(6342);
+                        && (((Mech) entity).hasHarJelIIIn(loc) 
+                                || ((Mech) entity).hasHarJelIIIIn(loc))) {
+                    r = new Report(6343);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);

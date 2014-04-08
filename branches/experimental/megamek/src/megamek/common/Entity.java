@@ -1608,6 +1608,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 break;
             case SUBMARINE:
+                maxAlt = hex.surface() - getHeight();
+                break;
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
@@ -4479,12 +4481,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Does this entity have an undamaged HarJel system in this location?
-     * (Type-dependent, defaults to false.)
+     * (Type-dependent, defaults to false.) 
+     * Does not include Harjel II or Harjel III, as they do not prevent breach
+     * checks like Harjel does.
      *
      * @param location the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIn(int location) {
+        for (Mounted mounted : getMisc()) {
+            if ((mounted.getLocation() == location)
+                    && mounted.isReady()
+                    && (mounted.getType().hasFlag(MiscType.F_HARJEL))) {
+                return true;
+            }
+        }
         return false;
     }
 

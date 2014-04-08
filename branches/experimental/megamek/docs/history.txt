@@ -3,6 +3,17 @@ VERSION HISTORY:
 v0.37.11-exp-dev (SVN)
 
 v0.37.11-dev (SVN)
++ Bug [#3948]: Harjel fails to prevent breaches on Submarines.
++ Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It
+    wasn't clear that Harjel I prevents the breach while Harjel II/III only
+    provide a +2 bonus to the check.  Added a new report to make it clearer
++ Bug: Harjel II/III were improperly preventing breach checks
++ Bug [#3948]: Submarines couldn't 'Go Up' to the surface
++ Bug: default mechset.txt was missing entry for default_submarine
++ Bug: Added F_TANK_EQUIPMENT flag to Harjel equipment
++ Bug: Fixed issues with TestEntity and TestMech for harjel validation
++ changed data/mechfiles/dropship to data/mechfiles/dropships to be in line with all the other folders
++ updated the packaging scripts to match the change from dropship to dropships
 
 v0.37.10-exp (2014-04-08 02:26)
 

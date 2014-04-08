@@ -269,7 +269,7 @@
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
 		<zip zipfile="${localdir}/${datadir}/mechfiles/battlearmor.zip" basedir="${localdir}/${datadir}/mechfiles/battlearmor"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/convfighter.zip" basedir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip" basedir="${localdir}/${datadir}/mechfiles/dropship"/>
+		<zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip" basedir="${localdir}/${datadir}/mechfiles/dropships"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/fighters.zip" basedir="${localdir}/${datadir}/mechfiles/fighters"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/ge.zip" basedir="${localdir}/${datadir}/mechfiles/ge"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/infantry.zip" basedir="${localdir}/${datadir}/mechfiles/infantry"/>
@@ -283,7 +283,7 @@
 		<zip zipfile="${localdir}/${datadir}/mechfiles/warship.zip" basedir="${localdir}/${datadir}/mechfiles/warship"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/battlearmor"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/dropship"/>
+		<delete dir="${localdir}/${datadir}/mechfiles/dropships"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/fighters"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/ge"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/infantry"/>

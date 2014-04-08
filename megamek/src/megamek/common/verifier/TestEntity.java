@@ -37,6 +37,7 @@ import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TripodMech;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 
@@ -810,6 +811,15 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                 }
+                
+
+                if (m.getType().hasFlag(MiscType.F_HARJEL)
+                        && ((m.getLocation() == Tank.LOC_BODY) 
+                                || ((getEntity() instanceof VTOL) 
+                                    && m.getLocation() == VTOL.LOC_ROTOR))) {
+                    illegal = true;
+                    buff.append("Unable to load harjel in body or rotor.\n");
+                }
             }
         }
 
@@ -1097,10 +1107,13 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                 }
 
-                if (mounted.getType().hasFlag(MiscType.F_HARJEL)
-                        && (mounted.getLocation() == Mech.LOC_HEAD)) {
+                if ((mounted.getLocation() == Mech.LOC_CT && mech
+                        .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                        || (mounted.getLocation() == Mech.LOC_HEAD && mech
+                            .getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) {
                     illegal = true;
-                    buff.append("Unable to load harjel in head.\n");
+                    buff.append("Harjel can't be mounted in a location with a "
+                            + "cockpit!");
                 }
 
                 if (mounted.getType().hasFlag(MiscType.F_MASS)

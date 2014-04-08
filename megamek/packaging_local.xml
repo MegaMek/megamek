@@ -269,7 +269,7 @@
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
 		<zip zipfile="${localdir}/${datadir}/mechfiles/battlearmor.zip" basedir="${localdir}/${datadir}/mechfiles/battlearmor"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/convfighter.zip" basedir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip" basedir="${localdir}/${datadir}/mechfiles/dropship"/>
+		<zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip" basedir="${localdir}/${datadir}/mechfiles/dropships"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/fighters.zip" basedir="${localdir}/${datadir}/mechfiles/fighters"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/ge.zip" basedir="${localdir}/${datadir}/mechfiles/ge"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/infantry.zip" basedir="${localdir}/${datadir}/mechfiles/infantry"/>

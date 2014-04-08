@@ -16,6 +16,10 @@ ConvFighter
 Drake Medium Stealth Fighter
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 35
 </Tonnage>

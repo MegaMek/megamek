@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Chimeisho JumpShip
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 245000
 </Tonnage>

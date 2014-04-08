@@ -1,9 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.37.10-exp-dev (SVN)
+v0.37.10-exp (2014-04-08 02:26)
 
-
-v0.37.10-dev (SVN)
+v0.37.10 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and
     also does not parse streams that do have unit tags as root elements
     instead of just an entity tag
@@ -37,6 +36,12 @@ v0.37.10-dev (SVN)
 + Bug: Mek and BA Tasers were getting the -1 for targeting computers, also made
     it explicit that Centurion Weapon System should also not get this bonus
 + Bug: MULParser was incorrectly defaulting individual camo to an empty string instead of null
++ Bug [#4007]: Squadron Issues - heat sinks
++ Bug [#4007]: Squadron Issues - over thrust
++ Bug: JUnit tests in build.xml not configured to run specifically in MegaMek
+    directory, potentially resulting in build failures.
++ Data: New Images.
++ Data: Lots of Unit Names Changes this is to bring us closer to matching the MUL naming.
 
 v0.37.9-exp (2014-03-29 14:25 UTC)
 + Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp

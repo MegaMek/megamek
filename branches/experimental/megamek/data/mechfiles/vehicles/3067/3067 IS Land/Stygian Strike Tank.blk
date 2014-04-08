@@ -12,6 +12,9 @@ Tank
 <Name>
 Stygian Strike Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 40
 </Tonnage>
@@ -38,7 +41,7 @@ ISLRM15 Ammo
 ISLRM15 Ammo
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 3062

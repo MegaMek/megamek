@@ -16,6 +16,10 @@ Tank
 Gurteltier MBT
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 100
 </Tonnage>

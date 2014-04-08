@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Theseus Medium Battle Armor
+Trinity Medium Battle Armor
 </Name>
 
 <Model>
-(Support) "Killshot"
+(Theseus Support)'Killshot'
 </Model>
 
 <year>

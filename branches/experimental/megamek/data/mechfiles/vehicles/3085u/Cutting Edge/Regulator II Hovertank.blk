@@ -16,6 +16,10 @@ Tank
 Regulator II Hovertank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 50
 </Tonnage>

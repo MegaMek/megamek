@@ -12,6 +12,9 @@ Tank
 <Name>
 Padilla Heavy Artillery Tank
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 75
 </Tonnage>

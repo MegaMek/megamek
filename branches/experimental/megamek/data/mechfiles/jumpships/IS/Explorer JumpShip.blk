@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Explorer JumpShip
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50000
 </Tonnage>

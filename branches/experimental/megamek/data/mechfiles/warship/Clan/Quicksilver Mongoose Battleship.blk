@@ -12,6 +12,9 @@ Warship
 <Name>
 Quicksilver Mongoose Battleship
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 900000
 </Tonnage>

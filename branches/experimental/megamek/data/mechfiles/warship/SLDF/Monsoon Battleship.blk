@@ -12,6 +12,9 @@ Warship
 <Name>
 Monsoon Battleship
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 1310000
 </Tonnage>

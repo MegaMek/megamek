@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Roc
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 7
 </Tonnage>

@@ -18,6 +18,10 @@ Dropship
 Interdictor Pocket Warship
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 9400
 </Tonnage>

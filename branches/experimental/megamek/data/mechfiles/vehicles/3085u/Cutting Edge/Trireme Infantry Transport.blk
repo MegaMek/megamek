@@ -17,7 +17,7 @@ Trireme Infantry Transport
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -33,7 +33,7 @@ VTOL
 </motion_type>
 
 <transporters>
-troopspace:36.0
+battlearmorbay:36:1
 </transporters>
 
 <cruiseMP>
@@ -57,7 +57,7 @@ troopspace:36.0
 </armor_type>
 
 <armor_tech>
-2
+3
 </armor_tech>
 
 <Body Equipment>

@@ -12,6 +12,9 @@ Tank
 <Name>
 Goblin II Infantry Support Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 45
 </Tonnage>

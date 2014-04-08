@@ -18,6 +18,10 @@ Dropship
 Arondight Pocket Warship
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 12000
 </Tonnage>

@@ -17,7 +17,7 @@ Bellona Hover Tank
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -59,6 +59,10 @@ Hover
 21
 27
 </armor>
+
+<armor_tech>
+2
+</armor_tech>
 
 <Body Equipment>
 Clan Ultra AC/10 Ammo

@@ -12,6 +12,9 @@ Tank
 <Name>
 Light SRM Carrier
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 40
 </Tonnage>

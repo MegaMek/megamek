@@ -12,6 +12,9 @@ BattleArmor
 <Name>
 Sylph Battle Armor
 </Name>
+<Model>
+(Standard)
+</Model>
 <chassis>
 biped
 </chassis>

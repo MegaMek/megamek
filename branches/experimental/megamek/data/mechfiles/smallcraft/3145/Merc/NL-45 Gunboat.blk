@@ -12,6 +12,9 @@ SmallCraft
 <Name>
 NL-45 Gunboat
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 190
 </Tonnage>

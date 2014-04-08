@@ -12,6 +12,9 @@ Warship
 <Name>
 Luxor Heavy Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 890000
 </Tonnage>

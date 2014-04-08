@@ -12,6 +12,9 @@ Warship
 <Name>
 Tatsumaki Destroyer
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 514000
 </Tonnage>

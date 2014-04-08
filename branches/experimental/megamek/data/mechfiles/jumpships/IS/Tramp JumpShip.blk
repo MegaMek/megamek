@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Tramp JumpShip
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 250000
 </Tonnage>

@@ -16,6 +16,10 @@ VTOL
 Aeron Strike VTOL
 </Name>
 
+<model>
+(Standard)	
+</model>
+
 <Tonnage>
 25
 </Tonnage>

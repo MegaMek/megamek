@@ -16,6 +16,10 @@ Tank
 Sabaku Kaze Heavy Scout Hover Tank
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2695
 </year>
@@ -25,7 +29,7 @@ Star League
 </source>
 
 <type>
-IS Level 1
+IS Level 2
 </type>
 
 <tonnage>

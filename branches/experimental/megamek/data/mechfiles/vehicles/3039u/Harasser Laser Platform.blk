@@ -16,6 +16,10 @@ Tank
 Harasser Laser Platform
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2957
 </year>
@@ -51,6 +55,9 @@ Hover
 4
 5
 </armor>
+<armor_tech>
+1
+</armor_tech>
 
 <Body Equipment>
 </Body Equipment>

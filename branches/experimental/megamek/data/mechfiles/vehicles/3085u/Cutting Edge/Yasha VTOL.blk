@@ -16,6 +16,10 @@ VTOL
 Yasha VTOL
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 30
 </Tonnage>
@@ -32,6 +36,10 @@ Yasha VTOL
 10
 2
 </Armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Front Equipment>
 ISHeavyPPC

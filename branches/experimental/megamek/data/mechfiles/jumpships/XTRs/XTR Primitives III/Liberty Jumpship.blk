@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Liberty Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 203000
 </Tonnage>

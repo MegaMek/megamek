@@ -12,6 +12,9 @@ Tank
 <Name>
 Hover Scout
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 10
 </Tonnage>
@@ -29,7 +32,7 @@ Hover Scout
 ISMediumLaser
 </Turret Equipment>
 <type>
-IS
+IS Level 1
 </type>
 <year>
 2801

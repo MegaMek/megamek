@@ -12,6 +12,9 @@ Warship
 <Name>
 Winchester Cruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 740000
 </Tonnage>

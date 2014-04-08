@@ -12,6 +12,9 @@ Warship
 <Name>
 Impavido Destroyer
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 490000
 </Tonnage>

@@ -161,7 +161,7 @@
         <mkdir dir="${dir.build.testreport}"/>
 
         <junit fork="true" maxmemory="256m" showoutput="true" printsummary="yes" forkmode="once" haltonfailure="true"
-               haltonerror="true" failureproperty="tests.failed">
+               haltonerror="true" failureproperty="tests.failed" dir=".">
             <classpath refid="classpath.run-unittest"/>
             <formatter type="xml" usefile="true"/>
             <batchtest fork="true" todir="${dir.build.teststaging}">

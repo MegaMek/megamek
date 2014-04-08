@@ -16,6 +16,10 @@ VTOL
 Karnov UR Transport
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2600
 </year>
@@ -25,7 +29,7 @@ Star League
 </source>
 
 <type>
-IS Level 1
+IS Level 2
 </type>
 
 <tonnage>
@@ -55,6 +59,10 @@ TroopSpace:6
 6
 2
 </armor>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Body Equipment>
 </Body Equipment>

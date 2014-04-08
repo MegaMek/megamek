@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Invader Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 152000
 </Tonnage>

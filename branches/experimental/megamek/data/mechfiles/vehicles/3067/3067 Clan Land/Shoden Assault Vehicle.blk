@@ -12,6 +12,9 @@ Tank
 <Name>
 Shoden Assault Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 70
 </Tonnage>
@@ -54,7 +57,7 @@ CLLightMG Ammo (200)
 CLCASE
 </Body Equipment>
 <type>
-Clan
+Clan Level 2
 </type>
 <year>
 3064

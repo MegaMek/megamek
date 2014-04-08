@@ -12,6 +12,9 @@ Tank
 <Name>
 Heavy Wheeled APC
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 20
 </Tonnage>

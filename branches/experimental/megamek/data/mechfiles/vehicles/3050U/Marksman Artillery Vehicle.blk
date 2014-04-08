@@ -16,6 +16,10 @@ Tank
 Marksman Artillery Vehicle
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2702
 </year>
@@ -45,7 +49,7 @@ Tracked
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <armor>

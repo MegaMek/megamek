@@ -12,7 +12,9 @@ Tank
 <Name>
 Kanga Medium Hovertank
 </Name>
-
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 50
 </Tonnage>
@@ -47,7 +49,7 @@ Jump Jet
 Jump Jet
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 2653

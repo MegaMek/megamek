@@ -12,6 +12,9 @@ Warship
 <Name>
 Leviathan II Battleship
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 2400000
 </Tonnage>

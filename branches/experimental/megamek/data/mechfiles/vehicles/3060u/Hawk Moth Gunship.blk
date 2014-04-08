@@ -17,7 +17,7 @@ Hawk Moth Gunship
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -45,7 +45,7 @@ VTOL
 </armor_type>
 
 <armor_tech>
--1
+3
 </armor_tech>
 
 <armor>

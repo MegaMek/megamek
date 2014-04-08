@@ -16,12 +16,16 @@ Tank
 AC/2 Carrier
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <year>
 2520
 </year>
 
 <source>
-Star League
+TR3039
 </source>
 
 <type>

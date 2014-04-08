@@ -12,6 +12,9 @@ ProtoMech
 <Name>
 Basilisk
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 7
 </Tonnage>

@@ -16,6 +16,10 @@ Tank
 Prowler Multi-Terrain Vehicle
 </Name>
 
+<Model>
+(Standard)
+</Model>
+
 <Tonnage>
 55
 </Tonnage>

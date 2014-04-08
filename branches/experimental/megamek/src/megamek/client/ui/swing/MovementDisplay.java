@@ -1778,9 +1778,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             mpUsed = last.getMpUsed();
         }
 
-        if (((ce instanceof FighterSquadron) && (mpUsed >= ((FighterSquadron) ce)
-                .getWalkMP()))
-                || (!(ce instanceof FighterSquadron) && (mpUsed >= a.getRunMP()))) {
+        if (mpUsed >= a.getRunMP()) {
             setThrustEnabled(false);
         } else {
             setThrustEnabled(true);

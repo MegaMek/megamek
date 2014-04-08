@@ -12,6 +12,9 @@ Jumpship
 <Name>
 Monolith Jumpship
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 430000
 </Tonnage>

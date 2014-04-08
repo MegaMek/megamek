@@ -12,6 +12,9 @@ Warship
 <Name>
 Mjolnir Battlecruiser
 </Name>
+<model>
+(Standard)
+</model>
 <Tonnage>
 1350000
 </Tonnage>

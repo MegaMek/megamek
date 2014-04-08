@@ -12,6 +12,9 @@ Tank
 <Name>
 Magi Infantry Support Vehicle
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 70
 </Tonnage>
@@ -40,7 +43,7 @@ ISMG Ammo (200)
 ISCASE
 </Body Equipment>
 <type>
-IS
+IS Level 2
 </type>
 <year>
 2727

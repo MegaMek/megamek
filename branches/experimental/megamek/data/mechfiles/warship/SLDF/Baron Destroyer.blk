@@ -12,9 +12,9 @@ Warship
 <Name>
 Baron Destroyer
 </Name>
-<Model>
- 
-</Model>
+<model>
+(Standard)
+</model>
 <Tonnage>
 480000
 </Tonnage>

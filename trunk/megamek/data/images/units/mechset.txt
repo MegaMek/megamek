@@ -96,6 +96,7 @@ exact "default_warship" "warships/naga_warship.gif"
 exact "default_space_station" "Space Stations/Bastion System Defense Station.gif"
 exact "default_fighter_squadron" "defaults/fighter_squadron.gif"
 exact "default_tele_missile" "defaults/telemissile.gif"
+exact "default_submarine" "sea/neptune.gif"
 
 
 

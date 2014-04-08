@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
 v0.37.11-dev (SVN)
++ Bug [#3948]: Harjel fails to prevent breaches on Submarines.
++ Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It
+    wasn't clear that Harjel I prevents the breach while Harjel II/III only
+    provide a +2 bonus to the check.  Added a new report to make it clearer
++ Bug: Harjel II/III were improperly preventing breach checks
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

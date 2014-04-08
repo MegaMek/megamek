@@ -484,6 +484,16 @@ public class TestMech extends TestEntity {
         if (!checkSystemCriticals(buff)) {
             correct = false;
         }
+       
+        if ((mech.hasHarJelIn(Mech.LOC_CT) 
+                && mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                || ((mech.hasHarJelIn(Mech.LOC_HEAD) 
+                    && mech.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED))) {
+            correct = false;
+            buff.append("Harjel can't be mounted in a location with a " +
+            		"cockpit!");
+        }
+        
         return correct;
     }
 

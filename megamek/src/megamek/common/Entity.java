@@ -1608,6 +1608,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 break;
             case SUBMARINE:
+                maxAlt = hex.surface() - getHeight();
+                break;
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:

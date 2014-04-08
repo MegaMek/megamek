@@ -283,7 +283,7 @@
 		<zip zipfile="${localdir}/${datadir}/mechfiles/warship.zip" basedir="${localdir}/${datadir}/mechfiles/warship"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/battlearmor"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/dropship"/>
+		<delete dir="${localdir}/${datadir}/mechfiles/dropships"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/fighters"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/ge"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/infantry"/>

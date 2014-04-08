@@ -6580,30 +6580,6 @@ public abstract class Mech extends Entity {
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
-    @Override
-    public boolean hasHarJelIn(int loc) {
-        if (loc == Mech.LOC_HEAD) {
-            return false;
-        }
-        for (Mounted mounted : getMisc()) {
-            if ((mounted.getLocation() == loc)
-                    && mounted.isReady()
-                    && (mounted.getType().hasFlag(MiscType.F_HARJEL)
-                            || mounted.getType().hasFlag(MiscType.F_HARJEL_II) || mounted
-                            .getType().hasFlag(MiscType.F_HARJEL_III))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Does this mech have an undamaged HarJel system in this location?
-     *
-     * @param loc
-     *            the <code>int</code> location to check
-     * @return a <code>boolean</code> value indicating a present HarJel system
-     */
     public boolean hasHarJelIIIn(int loc) {
         if (loc == Mech.LOC_HEAD) {
             return false;

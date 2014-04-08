@@ -307,7 +307,7 @@
 		<zip zipfile="${svndir}/${datadir}/mechfiles/warship.zip" basedir="${svndir}/${datadir}/mechfiles/warship" />
 		<delete dir="${svndir}/${datadir}/mechfiles/battlearmor" />
 		<delete dir="${svndir}/${datadir}/mechfiles/convfighter" />
-		<delete dir="${svndir}/${datadir}/mechfiles/dropship" />
+		<delete dir="${svndir}/${datadir}/mechfiles/dropships" />
 		<delete dir="${svndir}/${datadir}/mechfiles/fighters" />
 		<delete dir="${svndir}/${datadir}/mechfiles/ge" />
 		<delete dir="${svndir}/${datadir}/mechfiles/infantry" />

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.10-dev (SVN)
+v0.37.10 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and
     also does not parse streams that do have unit tags as root elements
     instead of just an entity tag

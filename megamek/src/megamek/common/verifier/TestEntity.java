@@ -1107,10 +1107,13 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                 }
 
-                if ((mounted.getLocation() == Mech.LOC_CT && mech
-                        .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                        || (mounted.getLocation() == Mech.LOC_HEAD && mech
-                            .getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) {
+                if (((mounted.getType().hasFlag(MiscType.F_HARJEL))
+                        || mounted.getType().hasFlag(MiscType.F_HARJEL_II)
+                        || mounted.getType().hasFlag(MiscType.F_HARJEL_III))
+                        && ((mounted.getLocation() == Mech.LOC_CT && mech
+                            .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                            || (mounted.getLocation() == Mech.LOC_HEAD && mech
+                            .getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED))) {
                     illegal = true;
                     buff.append("Harjel can't be mounted in a location with a "
                             + "cockpit!");

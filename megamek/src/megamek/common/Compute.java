@@ -4418,13 +4418,11 @@ public class Compute {
         // affected
         int metalContent = 0;
         for (Coords c : coords) {
-            if (ae.getGame().getBoard().getHex(c)
-                    .containsTerrain(Terrains.METAL_CONTENT)) {
-                metalContent += ae.getGame().getBoard().getHex(c)
-                        .terrainLevel(Terrains.METAL_CONTENT);
+            IHex hex = board.getHex(c);
+            if (hex != null && hex.containsTerrain(Terrains.METAL_CONTENT)) {
+                metalContent += hex.terrainLevel(Terrains.METAL_CONTENT);
             }
         }
-
         return metalContent;
     }
 

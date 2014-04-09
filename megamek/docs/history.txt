@@ -10,8 +10,10 @@ v0.37.11-dev (SVN)
 + Bug: default mechset.txt was missing entry for default_submarine
 + Bug: Added F_TANK_EQUIPMENT flag to Harjel equipment
 + Bug: Fixed issues with TestEntity and TestMech for harjel validation
-+ changed data/mechfiles/dropship to data/mechfiles/dropships to be in line with all the other folders
++ changed data/mechfiles/dropship to data/mechfiles/dropships to be in line
+    with all the other folders
 + updated the packaging scripts to match the change from dropship to dropships
++ Bug [#4091]: Potential NPE in Compute.getMetalInPath
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

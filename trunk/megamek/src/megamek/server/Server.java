@@ -27564,7 +27564,6 @@ public class Server implements Runnable {
             case Packet.COMMAND_FORWARD_INITIATIVE:
                 receiveForwardIni(packet, connId);
                 break;
-
             case Packet.COMMAND_CHAT:
                 String chat = (String) packet.getObject(0);
                 if (chat.startsWith("/")) {
@@ -27715,6 +27714,7 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_SET_ARTYAUTOHITHEXES:
                 receiveArtyAutoHitHexes(packet, connId);
+                break;
             case Packet.COMMAND_CUSTOM_INITIATIVE:
                 receiveCustomInit(packet, connId);
                 resetPlayersDone();
@@ -27728,7 +27728,7 @@ public class Server implements Runnable {
                     System.out
                             .println("Error loading savegame sent from client");
                 }
-
+                break;
             case Packet.COMMAND_SQUADRON_ADD:
                 receiveSquadronAdd(packet, connId);
                 resetPlayersDone();

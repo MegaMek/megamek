@@ -360,11 +360,21 @@ public class Coords implements Serializable {
      * three hexes, sides first, add the first one that intersects and continue
      * from there. Based off of some of the formulas at Amit's game programming
      * site. (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
+     * 
+     * Note: this function can return Coordinates that are not on the board.
      */
     public static ArrayList<Coords> intervening(Coords src, Coords dest) {
         return intervening(src, dest, false);
     }
 
+    /**
+     * Note: this function can return Coordinates that are not on the board.
+     * 
+     * @param src
+     * @param dest
+     * @param split
+     * @return
+     */
     public static ArrayList<Coords> intervening(Coords src, Coords dest,
             boolean split) {
         IdealHex iSrc = IdealHex.get(src);

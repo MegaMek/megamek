@@ -55,6 +55,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.options.IOptions;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -580,140 +581,154 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC) || (at
-                            .getAmmoType() == AmmoType.T_AC_LBX))) {
+                            || (at.getAmmoType() == AmmoType.T_NARC) 
+                            || (at.getAmmoType() == AmmoType.T_AC_LBX))) {
                 continue;
             }
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
-                boolean bTechMatch = TechConstants.isLegal(
-                        entity.getTechLevel(), atCheck.getTechLevel(entity.getTechLevelYear()), true,
-                        entity.isMixedTech());
+                IOptions gameOpts = 
+                        clientgui.getClient().getGame().getOptions();
+                int atTechLvl = 
+                        atCheck.getTechLevel(gameOpts.intOption("year"));
+                int entTechLvl = entity.getTechLevel();
+                boolean bTechMatch = TechConstants.isLegal(entTechLvl,
+                        atTechLvl, true, entity.isMixedTech());
 
                 // allow all lvl2 IS units to use level 1 ammo
                 // lvl1 IS units don't need to be allowed to use lvl1 ammo,
                 // because there is no special lvl1 ammo, therefore it doesn't
                 // need to show up in this display.
                 if (!bTechMatch
-                        && (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)
-                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_INTRO_BOXSET)) {
+                        && (entTechLvl == TechConstants.T_IS_TW_NON_BOX)
+                        && (atTechLvl == TechConstants.T_INTRO_BOXSET)) {
                     bTechMatch = true;
                 }
 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                        "is_eq_limits") //$NON-NLS-1$
-                        && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
+                if (!gameOpts.booleanOption("is_eq_limits") //$NON-NLS-1$
+                        && (entTechLvl == TechConstants.T_INTRO_BOXSET)
+                        && (atTechLvl == TechConstants.T_IS_TW_NON_BOX)) {
                     bTechMatch = true;
                 }
 
                 // Possibly allow advanced/experimental ammos, possibly not.
-                if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "allow_advanced_ammo")) {
-                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                            "is_eq_limits")) {
-                        if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity
-                                .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
-                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)
-                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
+                if (gameOpts.booleanOption("allow_experimental_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_CLAN_ADVANCED)
+                                || (atTechLvl == TechConstants.T_CLAN_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
-                        if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                                || (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity
-                                .getTechLevel() == TechConstants.T_IS_ADVANCED))
-                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
-                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
+                        if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_IS_ADVANCED)
+                                || (atTechLvl == TechConstants.T_IS_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_IS_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                     }
-                } else if ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
-                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)) {
+                } else if (gameOpts.booleanOption("allow_advanced_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && (atTechLvl == TechConstants.T_CLAN_ADVANCED)) {
+                            bTechMatch = true;
+                        }
+                        if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && (atTechLvl == TechConstants.T_IS_ADVANCED)) {
+                            bTechMatch = true;
+                        }
+                    }
+                } else if ((atTechLvl == TechConstants.T_IS_ADVANCED)
+                        || (atTechLvl == TechConstants.T_CLAN_ADVANCED)) {
                     bTechMatch = false;
                 }
 
-                    // allow mixed Tech Mechs to use both IS and Clan ammo of any
-                    // level (since mixed tech is always level 3)
-                    if (entity.isMixedTech()) {
-                        bTechMatch = true;
-                    }
-
-                    // If clan_ignore_eq_limits is unchecked,
-                    // do NOT allow Clans to use IS-only ammo.
-                    // N.B. play bit-shifting games to allow "incendiary"
-                    // to be combined to other munition types.
-                    long muniType = atCheck.getMunitionType();
-                    muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                            "clan_ignore_eq_limits") //$NON-NLS-1$
-                            && entity.isClan()
-                            && ((muniType == AmmoType.M_SEMIGUIDED)
-                                    || (muniType == AmmoType.M_SWARM_I)
-                                    || (muniType == AmmoType.M_FLARE)
-                                    || (muniType == AmmoType.M_FRAGMENTATION)
-                                    || (muniType == AmmoType.M_THUNDER_AUGMENTED)
-                                    || (muniType == AmmoType.M_THUNDER_INFERNO)
-                                    || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
-                                    || (muniType == AmmoType.M_THUNDER_ACTIVE)
-                                    || (muniType == AmmoType.M_INFERNO_IV)
-                                    || (muniType == AmmoType.M_VIBRABOMB_IV)
-                                    || (muniType == AmmoType.M_LISTEN_KILL)
-                                    || (muniType == AmmoType.M_ANTI_TSM) || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
-                        bTechMatch = false;
-                    }
-
-                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                            "minefields") && //$NON-NLS-1$
-                            AmmoType.canDeliverMinefield(atCheck)) {
-                        continue;
-                    }
-
-                    // Only Protos can use Proto-specific ammo
-                    if (atCheck.hasFlag(AmmoType.F_PROTOMECH)
-                            && !(entity instanceof Protomech)) {
-                        continue;
-                    }
-
-                    // When dealing with machine guns, Protos can only
-                    // use proto-specific machine gun ammo
-                    if ((entity instanceof Protomech)
-                            && atCheck.hasFlag(AmmoType.F_MG)
-                            && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
-                        continue;
-                    }
-
-                    // Battle Armor ammo can't be selected at all.
-                    // All other ammo types need to match on rack size and tech.
-                    if (bTechMatch
-                            && (atCheck.getRackSize() == at.getRackSize())
-                            && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
-                                    .hasFlag(AmmoType.F_BATTLEARMOR))
-                            && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
-                                    .hasFlag(AmmoType.F_ENCUMBERING))
-                            && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
-                        vTypes.add(atCheck);
-                    }
+                // allow mixed Tech Mechs to use both IS and Clan ammo of any
+                // level (since mixed tech is always level 3)
+                if (entity.isMixedTech()) {
+                    bTechMatch = true;
                 }
-                if ((vTypes.size() < 1)
-                        && !client.getGame().getOptions().booleanOption(
-                                "lobby_ammo_dump")
-                        && !client.getGame().getOptions()
-                                .booleanOption("tacops_hotload")) { //$NON-NLS-1$
+
+                // If clan_ignore_eq_limits is unchecked,
+                // do NOT allow Clans to use IS-only ammo.
+                // N.B. play bit-shifting games to allow "incendiary"
+                // to be combined to other munition types.
+                long muniType = atCheck.getMunitionType();
+                muniType &= ~AmmoType.M_INCENDIARY_LRM;
+                if (!gameOpts.booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
+                        && entity.isClan()
+                        && ((muniType == AmmoType.M_SEMIGUIDED)
+                                || (muniType == AmmoType.M_SWARM_I)
+                                || (muniType == AmmoType.M_FLARE)
+                                || (muniType == AmmoType.M_FRAGMENTATION)
+                                || (muniType == AmmoType.M_THUNDER_AUGMENTED)
+                                || (muniType == AmmoType.M_THUNDER_INFERNO)
+                                || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
+                                || (muniType == AmmoType.M_THUNDER_ACTIVE)
+                                || (muniType == AmmoType.M_INFERNO_IV)
+                                || (muniType == AmmoType.M_VIBRABOMB_IV)
+                                || (muniType == AmmoType.M_LISTEN_KILL)
+                                || (muniType == AmmoType.M_ANTI_TSM) 
+                                || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
+                    bTechMatch = false;
+                }
+
+                if (!gameOpts.booleanOption("minefields") && //$NON-NLS-1$
+                        AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
-                // Protomechs need special choice panels.
-                MunitionChoicePanel mcp;
-                if (entity instanceof Protomech) {
-                    mcp = new ProtomechMunitionChoicePanel(m, vTypes);
-                } else {
-                    mcp = new MunitionChoicePanel(m, vTypes);
+
+                // Only Protos can use Proto-specific ammo
+                if (atCheck.hasFlag(AmmoType.F_PROTOMECH)
+                        && !(entity instanceof Protomech)) {
+                    continue;
                 }
-                panMunitions.add(mcp, GBC.eol());
-                m_vMunitions.add(mcp);
+
+                // When dealing with machine guns, Protos can only
+                // use proto-specific machine gun ammo
+                if ((entity instanceof Protomech)
+                        && atCheck.hasFlag(AmmoType.F_MG)
+                        && !atCheck.hasFlag(AmmoType.F_PROTOMECH)) {
+                    continue;
+                }
+
+                // Battle Armor ammo can't be selected at all.
+                // All other ammo types need to match on rack size and tech.
+                if (bTechMatch
+                        && (atCheck.getRackSize() == at.getRackSize())
+                        && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
+                                .hasFlag(AmmoType.F_BATTLEARMOR))
+                        && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
+                                .hasFlag(AmmoType.F_ENCUMBERING))
+                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                    vTypes.add(atCheck);
+                }
             }
+            if ((vTypes.size() < 1)
+                    && !client.getGame().getOptions()
+                            .booleanOption("lobby_ammo_dump")
+                    && !client.getGame().getOptions()
+                            .booleanOption("tacops_hotload")) { //$NON-NLS-1$
+                continue;
+            }
+            // Protomechs need special choice panels.
+            MunitionChoicePanel mcp;
+            if (entity instanceof Protomech) {
+                mcp = new ProtomechMunitionChoicePanel(m, vTypes);
+            } else {
+                mcp = new MunitionChoicePanel(m, vTypes);
+            }
+            panMunitions.add(mcp, GBC.eol());
+            m_vMunitions.add(mcp);
+        }
         }
 
         class MineChoicePanel extends JPanel {

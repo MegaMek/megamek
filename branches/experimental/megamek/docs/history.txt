@@ -12,8 +12,22 @@ v0.37.11-dev (SVN)
 + Bug: default mechset.txt was missing entry for default_submarine
 + Bug: Added F_TANK_EQUIPMENT flag to Harjel equipment
 + Bug: Fixed issues with TestEntity and TestMech for harjel validation
-+ changed data/mechfiles/dropship to data/mechfiles/dropships to be in line with all the other folders
++ changed data/mechfiles/dropship to data/mechfiles/dropships to be in line
+    with all the other folders
 + updated the packaging scripts to match the change from dropship to dropships
++ Bug [#4091]: Potential NPE in Compute.getMetalInPath
++ Bug: Meks with head-mounted equipment flagged as illegal
++ Bug [#4092]: Localload does not appear to work properly
++ Bug: Nail/Rivet Gun always out of range.
++ Bug: Aimed shots at immobile targets possible with iNarc/iATM.
++ Bug [#3998]: Ammo & Equipment Limits: Ammo tech level is now determined by the
+    game year instead of the unit's creation year
++ Bug [#3301]: Allow Advanced Ammunition - there are now two options: one allows
+    just advanced ammo, while the second option enables advanced, experimental,
+    and unofficial ammo
++ Bug [#4094]: Field of View bug: Version 0.37.10
++ Bug: Use of getBoolean() instead of parseBoolean() in MULParser causing incorrect values
++ Bug: Empty string for repairable defaults it to false, this needs to default to true
 
 v0.37.10-exp (2014-04-08 02:26)
 

@@ -42,9 +42,9 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
         damage = 0;
         rackSize = 1;
         shortRange = 1;
-        mediumRange = 0;
-        longRange = 0;
-        extremeRange = 0;
+        mediumRange = 1;
+        longRange = 1;
+        extremeRange = 1;
         tonnage = 0.5f;
         criticals = 1;
         bv = 1;

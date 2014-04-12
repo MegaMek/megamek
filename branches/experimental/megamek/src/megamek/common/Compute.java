@@ -4418,13 +4418,11 @@ public class Compute {
         // affected
         int metalContent = 0;
         for (Coords c : coords) {
-            if (ae.getGame().getBoard().getHex(c)
-                    .containsTerrain(Terrains.METAL_CONTENT)) {
-                metalContent += ae.getGame().getBoard().getHex(c)
-                        .terrainLevel(Terrains.METAL_CONTENT);
+            IHex hex = board.getHex(c);
+            if (hex != null && hex.containsTerrain(Terrains.METAL_CONTENT)) {
+                metalContent += hex.terrainLevel(Terrains.METAL_CONTENT);
             }
         }
-
         return metalContent;
     }
 
@@ -6128,24 +6126,26 @@ public class Compute {
                 }
                 if (atype != null) {
                     switch (atype.getAmmoType()) {
-                        case (AmmoType.T_SRM_STREAK):
-                        case (AmmoType.T_LRM_STREAK):
-                        case (AmmoType.T_LRM):
-                        case (AmmoType.T_LRM_TORPEDO):
-                        case (AmmoType.T_SRM):
-                        case (AmmoType.T_SRM_TORPEDO):
-                        case (AmmoType.T_MRM):
-                        case (AmmoType.T_NARC):
-                        case (AmmoType.T_AMS):
-                        case (AmmoType.T_ARROW_IV):
-                        case (AmmoType.T_LONG_TOM):
-                        case (AmmoType.T_SNIPER):
-                        case (AmmoType.T_THUMPER):
-                        case (AmmoType.T_SRM_ADVANCED):
-                        case (AmmoType.T_LRM_TORPEDO_COMBO):
-                        case (AmmoType.T_ATM):
-                        case (AmmoType.T_MML):
-                        case (AmmoType.T_EXLRM):
+                        case AmmoType.T_SRM_STREAK:
+                        case AmmoType.T_LRM_STREAK:
+                        case AmmoType.T_LRM:
+                        case AmmoType.T_LRM_TORPEDO:
+                        case AmmoType.T_SRM:
+                        case AmmoType.T_SRM_TORPEDO:
+                        case AmmoType.T_MRM:
+                        case AmmoType.T_NARC:
+                        case AmmoType.T_INARC:
+                        case AmmoType.T_AMS:
+                        case AmmoType.T_ARROW_IV:
+                        case AmmoType.T_LONG_TOM:
+                        case AmmoType.T_SNIPER:
+                        case AmmoType.T_THUMPER:
+                        case AmmoType.T_SRM_ADVANCED:
+                        case AmmoType.T_LRM_TORPEDO_COMBO:
+                        case AmmoType.T_ATM:
+                        case AmmoType.T_IATM:
+                        case AmmoType.T_MML:
+                        case AmmoType.T_EXLRM:
                         case AmmoType.T_TBOLT_5:
                         case AmmoType.T_TBOLT_10:
                         case AmmoType.T_TBOLT_15:

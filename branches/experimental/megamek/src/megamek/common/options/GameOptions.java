@@ -95,6 +95,7 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, "allow_advanced_units", false);
         addOption(allowed, "allow_illegal_units", false); //$NON-NLS-1$
         addOption(allowed, "allow_advanced_ammo", false); //$NON-NLS-1$
+        addOption(allowed, "allow_experimental_ammo", false); //$NON-NLS-1$
         addOption(allowed, "is_eq_limits", true); //$NON-NLS-1$
         addOption(allowed, "clan_ignore_eq_limits", false); //$NON-NLS-1$
         addOption(allowed, "no_clan_physical", false); //$NON-NLS-1$

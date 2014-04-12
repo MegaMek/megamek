@@ -3070,8 +3070,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
-            int attAbsheight = ent.absHeight()
-                    + ent.elevationOccupied(game.getBoard().getHex(dest));
+            int attAbsheight = game.getBoard().getHex(src).surface()
+                    + ent.getHeight();
             EntityMovementMode movementMode = ent.getMovementMode();
             // We will have double counted elevation for VTOL and WIGE movement
             if ((movementMode == EntityMovementMode.VTOL)

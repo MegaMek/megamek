@@ -24,6 +24,8 @@ v0.37.11-dev (SVN)
     just advanced ammo, while the second option enables advanced, experimental,
     and unofficial ammo
 + Bug [#4094]: Field of View bug: Version 0.37.10
++ Bug: Use of getBoolean() instead of parseBoolean() in MULParser causing incorrect values
++ Bug: Empty string for repairable defaults it to false, this needs to default to true
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

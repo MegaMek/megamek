@@ -23,6 +23,7 @@ v0.37.11-dev (SVN)
 + Bug [#3301]: Allow Advanced Ammunition - there are now two options: one allows
     just advanced ammo, while the second option enables advanced, experimental,
     and unofficial ammo
++ Bug [#4094]: Field of View bug: Version 0.37.10
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

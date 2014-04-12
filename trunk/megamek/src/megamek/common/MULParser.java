@@ -966,7 +966,7 @@ public class MULParser {
         String shots = slotTag.getAttribute(SHOTS);
         String hit = slotTag.getAttribute(IS_HIT);
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
-        String repairable = slotTag.getAttribute(IS_REPAIRABLE);
+        String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
         String quirks = slotTag.getAttribute(QUIRKS);
         String rfmg = slotTag.getAttribute(RFMG);
@@ -1097,13 +1097,13 @@ public class MULParser {
             }
 
             // Try to get a good isHit value.
-            boolean hitFlag = Boolean.getBoolean(hit);
+            boolean hitFlag = Boolean.parseBoolean(hit);
 
             // Is the location destroyed?
-            boolean destFlag = Boolean.getBoolean(destroyed);
+            boolean destFlag = Boolean.parseBoolean(destroyed);
  
             // Is the location repairable?
-            boolean repairFlag = Boolean.getBoolean(repairable);
+            boolean repairFlag = Boolean.parseBoolean(repairable);
 
             // Try to get the critical slot.
             CriticalSlot slot = entity.getCritical(loc, indexVal);

@@ -360,6 +360,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("allow_advanced_ammo")) {
+            if ((options.getOption("allow_experimental_ammo")).booleanValue()) {
+                optionComp.setEditable(false);
+            } else {
+                optionComp.setEditable(editable);
+            }            
         } else {
             optionComp.setEditable(editable);
         }
@@ -577,6 +583,17 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 if ("alternate_masc_enhanced".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setSelected(false);
+                }
+            }
+        }
+        if (option.getName().equals("allow_experimental_ammo")) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("allow_advanced_ammo".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    if (state){
+                        comp_i.setSelected(state);
+                    }
                 }
             }
         }

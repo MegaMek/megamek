@@ -55,6 +55,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.options.IOptions;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -580,13 +581,15 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC) || (at
-                            .getAmmoType() == AmmoType.T_AC_LBX))) {
+                            || (at.getAmmoType() == AmmoType.T_NARC) 
+                            || (at.getAmmoType() == AmmoType.T_AC_LBX))) {
                 continue;
             }
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
+                IOptions gameOpts = clientgui.getClient().getGame()
+                        .getOptions();
                 int atTechLvl = atCheck.getTechLevel(entity.getTechLevelYear());
                 int entTechLvl = entity.getTechLevel();
                 boolean bTechMatch = TechConstants.isLegal(entTechLvl,
@@ -603,31 +606,28 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                        "is_eq_limits") //$NON-NLS-1$
+                if (!gameOpts.booleanOption("is_eq_limits") //$NON-NLS-1$
                         && (entTechLvl == TechConstants.T_INTRO_BOXSET)
                         && (atTechLvl == TechConstants.T_IS_TW_NON_BOX)) {
                     bTechMatch = true;
                 }
 
                 // Possibly allow advanced/experimental ammos, possibly not.
-                if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "allow_advanced_ammo")) {
-                    if (!clientgui.getClient().getGame().getOptions().booleanOption(
-                            "is_eq_limits")) {
-                        if (((entTechLvl == TechConstants.T_CLAN_TW) || (entity
-                                .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
-                                && ((atTechLvl == TechConstants.T_CLAN_ADVANCED)
-                                        || (atTechLvl == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
+                if (gameOpts.booleanOption("allow_advanced_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_CLAN_ADVANCED)
+                                || (atTechLvl == TechConstants.T_CLAN_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                         if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
-                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) || (entity
-                                .getTechLevel() == TechConstants.T_IS_ADVANCED))
-                                && ((atTechLvl == TechConstants.T_IS_ADVANCED)
-                                        || (atTechLvl == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_IS_ADVANCED)
+                                || (atTechLvl == TechConstants.T_IS_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_IS_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                     }
@@ -648,8 +648,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 // to be combined to other munition types.
                 long muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                if (!clientgui.getClient().getGame().getOptions()
-                        .booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
+                if (!gameOpts.booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
                         && entity.isClan()
                         && ((muniType == AmmoType.M_SEMIGUIDED)
                                 || (muniType == AmmoType.M_SWARM_I)
@@ -667,8 +666,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     bTechMatch = false;
                 }
 
-                if (!clientgui.getClient().getGame().getOptions()
-                        .booleanOption("minefields") && //$NON-NLS-1$
+                if (!gameOpts.booleanOption("minefields") && //$NON-NLS-1$
                         AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }

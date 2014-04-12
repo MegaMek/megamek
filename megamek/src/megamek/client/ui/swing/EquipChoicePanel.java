@@ -614,7 +614,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
 
                 // Possibly allow advanced/experimental ammos, possibly not.
-                if (gameOpts.booleanOption("allow_advanced_ammo")) {
+                if (gameOpts.booleanOption("allow_experimental_ammo")) {
                     if (!gameOpts.booleanOption("is_eq_limits")) {
                         if (((entTechLvl == TechConstants.T_CLAN_TW) 
                                 || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
@@ -629,6 +629,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             && ((atTechLvl == TechConstants.T_IS_ADVANCED)
                                 || (atTechLvl == TechConstants.T_IS_EXPERIMENTAL) 
                                 || (atTechLvl == TechConstants.T_IS_UNOFFICIAL))) {
+                            bTechMatch = true;
+                        }
+                    }
+                } else if (gameOpts.booleanOption("allow_advanced_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && (atTechLvl == TechConstants.T_CLAN_ADVANCED)) {
+                            bTechMatch = true;
+                        }
+                        if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && (atTechLvl == TechConstants.T_IS_ADVANCED)) {
                             bTechMatch = true;
                         }
                     }

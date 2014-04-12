@@ -18,6 +18,8 @@ v0.37.11-dev (SVN)
 + Bug [#4092]: Localload does not appear to work properly
 + Bug: Nail/Rivet Gun always out of range.
 + Bug: Aimed shots at immobile targets possible with iNarc/iATM.
++ Bug [#3998] Ammo & Equipment Limits: Ammo tech level is now determined by the
+    game year instead of the unit's creation year
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

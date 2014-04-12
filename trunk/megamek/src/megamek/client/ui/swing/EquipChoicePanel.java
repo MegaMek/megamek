@@ -588,9 +588,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
-                IOptions gameOpts = clientgui.getClient().getGame()
-                        .getOptions();
-                int atTechLvl = atCheck.getTechLevel(entity.getTechLevelYear());
+                IOptions gameOpts = 
+                        clientgui.getClient().getGame().getOptions();
+                int atTechLvl = 
+                        atCheck.getTechLevel(gameOpts.intOption("year"));
                 int entTechLvl = entity.getTechLevel();
                 boolean bTechMatch = TechConstants.isLegal(entTechLvl,
                         atTechLvl, true, entity.isMixedTech());

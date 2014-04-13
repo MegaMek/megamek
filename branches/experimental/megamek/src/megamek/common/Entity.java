@@ -7923,6 +7923,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isVisibleToEnemy() {
+        // If double blind isn't on, the unit is always visible
+        if (game != null && !game.getOptions().booleanOption("double_blind")) {
+            return true;
+        }
         return visibleToEnemy;
     }
     
@@ -7931,6 +7935,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     public boolean isDetectedByEnemy(){
+        // If double blind isn't on, the unit is always detected
+        if (game != null && !game.getOptions().booleanOption("double_blind")) {
+            return true;
+        }
         return detectedByEnemy;
     }
 

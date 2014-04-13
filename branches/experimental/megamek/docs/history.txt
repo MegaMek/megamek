@@ -28,6 +28,7 @@ v0.37.11-dev (SVN)
 + Bug [#4094]: Field of View bug: Version 0.37.10
 + Bug: Use of getBoolean() instead of parseBoolean() in MULParser causing incorrect values
 + Bug: Empty string for repairable defaults it to false, this needs to default to true
++ Bug [#4093]: Firing Solution does not seem to function
 
 v0.37.10-exp (2014-04-08 02:26)
 

@@ -540,11 +540,17 @@ public class Engine implements Serializable {
         }
     }
 
-    public int getWalkHeat() {
+    public int getWalkHeat(Entity e) {
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
-                return 0;
+                // Industrial Mechs with these engines don't generate heat 
+                if (e.getStructureType() 
+                        == EquipmentType.T_STRUCTURE_INDUSTRIAL){
+                    return 0;
+                } else {
+                    return 1;
+                }
             case XXL_ENGINE:
                 return 4;
             default:
@@ -552,11 +558,17 @@ public class Engine implements Serializable {
         }
     }
 
-    public int getRunHeat() {
+    public int getRunHeat(Entity e) {
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
-                return 0;
+                // Industrial Mechs with these engines don't generate heat 
+                if (e.getStructureType() 
+                        == EquipmentType.T_STRUCTURE_INDUSTRIAL){
+                    return 0;
+                } else {
+                    return 2;
+                }
             case XXL_ENGINE:
                 return 6;
             default:

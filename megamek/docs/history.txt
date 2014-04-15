@@ -30,6 +30,7 @@ v0.37.11-dev (SVN)
 + Bug [#4096]: Deploying in Water Causes Stuck Unit
 + Bug: Non-fusion Battlemechs weren't generating heat from movement
 + Bug: Princess deploys ground units into mid-air on level 1 and higher hexes
++ Bug: "buildings_no_basement/ModCan02 16x17" map causes NumberFormatException when loaded.
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

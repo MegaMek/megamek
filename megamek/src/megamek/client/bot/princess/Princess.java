@@ -236,6 +236,8 @@ public class Princess extends BotClient {
             IHex deployHex = game.getBoard().getHex(deployCoords);
             // Entity.elevatoinOccupied performs a null check on IHex
             int deployElevation = deployEntity.elevationOccupied(deployHex);
+            // Compensate for hex elevation where != 0...
+            deployElevation -= deployHex.getElevation();
             deploy(entityNum, deployCoords, decentFacing, deployElevation);
         } finally {
             methodEnd(getClass(), METHOD_NAME);

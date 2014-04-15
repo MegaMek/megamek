@@ -11577,7 +11577,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             totalHeat += getJumpHeat(getJumpMP());
         } else {
             if ((this instanceof Mech) && !((Mech) this).isIndustrial()) {
-                totalHeat += getEngine().getRunHeat();
+                totalHeat += getEngine().getRunHeat(this);
             }
         }
 

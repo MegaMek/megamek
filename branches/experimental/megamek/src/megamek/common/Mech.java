@@ -905,7 +905,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getWalkHeat() {
-        return engine.getWalkHeat();
+        return engine.getWalkHeat(this);
     }
 
     /**
@@ -974,7 +974,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getRunHeat() {
-        return engine.getRunHeat();
+        return engine.getRunHeat(this);
     }
 
     /*

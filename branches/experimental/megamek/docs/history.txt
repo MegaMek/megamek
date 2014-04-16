@@ -26,9 +26,18 @@ v0.37.11-dev (SVN)
     just advanced ammo, while the second option enables advanced, experimental,
     and unofficial ammo
 + Bug [#4094]: Field of View bug: Version 0.37.10
-+ Bug: Use of getBoolean() instead of parseBoolean() in MULParser causing incorrect values
-+ Bug: Empty string for repairable defaults it to false, this needs to default to true
++ Bug: Use of getBoolean() instead of parseBoolean() in MULParser causing
+    incorrect values
++ Bug: Empty string for repairable defaults it to false, this needs to default
+    to true
 + Bug [#4093]: Firing Solution does not seem to function
++ Bug [#4096]: Deploying in Water Causes Stuck Unit
++ Bug: Non-fusion Battlemechs weren't generating heat from movement
++ Bug: Princess deploys ground units into mid-air on level 1 and higher hexes
++ Bug: "buildings_no_basement/ModCan02 16x17" map causes NumberFormatException
+    when loaded.
++ Bug [#4099]: Megamek failed to draw ejected pilot on physical attack round on
+    MegaMek - 0.37.10 (0.38.0 RC2)-windows
 
 v0.37.10-exp (2014-04-08 02:26)
 

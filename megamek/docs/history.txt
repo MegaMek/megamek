@@ -36,6 +36,7 @@ v0.37.11-dev (SVN)
     when loaded.
 + Bug [#4099]: Megamek failed to draw ejected pilot on physical attack round on
     MegaMek - 0.37.10 (0.38.0 RC2)-windows
++ Bug: Fixed a ClassCastException in MechDisplay$WeaponPanel
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

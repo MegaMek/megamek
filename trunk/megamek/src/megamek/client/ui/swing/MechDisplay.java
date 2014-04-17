@@ -2065,7 +2065,9 @@ public class MechDisplay extends JPanel {
          *            - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
         private void updateRangeDisplayForAmmo(Mounted mAmmo) {
-
+            if (!(mAmmo.getType() instanceof AmmoType)){
+                return;
+            }
             AmmoType atype = (AmmoType) mAmmo.getType();
             // Only override the display for the various ATM and MML ammos
             if (atype.getAmmoType() == AmmoType.T_ATM) {

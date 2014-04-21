@@ -5815,7 +5815,7 @@ public class Compute {
                 damage += Compute.d6(3);
                 break;
             case WeaponType.WEAPON_BURST_HALFD6:
-                damage = Compute.d6() / 2;
+                damage = Compute.d6() / 2.0;
                 break;
             case WeaponType.WEAPON_BURST_1D6:
                 damage = Compute.d6();

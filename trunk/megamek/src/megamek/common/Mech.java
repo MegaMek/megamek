@@ -2751,7 +2751,7 @@ public abstract class Mech extends Entity {
         addCritical(loc, cs);
         return mounted;
     }
-    
+
     /**
      * Mounts the specified weapon in the specified location.
      */
@@ -2765,7 +2765,7 @@ public abstract class Mech extends Entity {
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted, 
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
             int critSlot)
             throws LocationFullException {
         // if there's no actual location, then don't add criticals
@@ -2807,7 +2807,7 @@ public abstract class Mech extends Entity {
                     + " does not fit in " + getLocationAbbr(loc) + " on "
                     + getDisplayName()
                     + "\n        free criticals in location: "
-                    + getEmptyCriticals(loc) + ", criticals needed: " 
+                    + getEmptyCriticals(loc) + ", criticals needed: "
                     + reqSlots);
         }
         // add it
@@ -2824,17 +2824,17 @@ public abstract class Mech extends Entity {
         } else {
             // Need to ensure that we have enough contiguous critical slots
             int iterations = 0;
-            while (getContiguousNumberOfCrits(loc, critSlot) < reqSlots &&
-                    iterations < getNumberOfCriticals(loc)){
+            while ((getContiguousNumberOfCrits(loc, critSlot) < reqSlots) &&
+                    (iterations < getNumberOfCriticals(loc))){
                 critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
                 iterations++;
             }
             if (iterations >= getNumberOfCriticals(loc)){
                 throw new LocationFullException(mounted.getName()
                         + " does not fit in " + getLocationAbbr(loc) + " on "
-                        + getDisplayName() 
+                        + getDisplayName()
                         + "\n    needs "
-                        + getEmptyCriticals(loc) 
+                        + getEmptyCriticals(loc)
                         + " free contiguous criticals");
             }
             for (int i = 0; i < reqSlots; i++) {
@@ -2844,21 +2844,21 @@ public abstract class Mech extends Entity {
             }
         }
     }
-    
+
     /**
      * This method will return the number of contiguous criticals in the given
      * location, starting at the given critical slot
-     * 
+     *
      * @param unit          Unit to check critical slots on
      * @param location      The location on the unit to check slots on
      * @param startingSlot  The critical slot to start at
      * @return
      */
     private int getContiguousNumberOfCrits(int loc, int startingSlot){
-        
+
         int numCritSlots = getNumberOfCriticals(loc);
         int contiguousCrits = 0;
-        
+
         for (int slot = startingSlot; slot < numCritSlots; slot++) {
             if (getCritical(loc, slot) == null) {
                 contiguousCrits++;
@@ -5698,6 +5698,9 @@ public abstract class Mech extends Entity {
             return Mech.getGyroDisplayString(gyroType);
         }
         if (index == SYSTEM_COCKPIT) {
+            if (isIndustrial() && (cockpitType == Mech.COCKPIT_STANDARD)) {
+                return "Industrial Cockpit (adv. FCS)";
+            }
             return Mech.getCockpitDisplayString(cockpitType);
         }
         return systemNames[index];

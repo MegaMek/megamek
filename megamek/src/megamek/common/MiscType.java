@@ -1345,6 +1345,26 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISPartialWing());
         EquipmentType.addType(MiscType.createCargo1());
         EquipmentType.addType(MiscType.createHalfCargo());
+        EquipmentType.addType(MiscType.createCargo15());
+        EquipmentType.addType(MiscType.createCargo2());
+        EquipmentType.addType(MiscType.createCargo25());
+        EquipmentType.addType(MiscType.createCargo3());
+        EquipmentType.addType(MiscType.createCargo35());
+        EquipmentType.addType(MiscType.createCargo4());
+        EquipmentType.addType(MiscType.createCargo45());
+        EquipmentType.addType(MiscType.createCargo5());
+        EquipmentType.addType(MiscType.createCargo55());
+        EquipmentType.addType(MiscType.createCargo6());
+        EquipmentType.addType(MiscType.createCargo65());
+        EquipmentType.addType(MiscType.createCargo7());
+        EquipmentType.addType(MiscType.createCargo75());
+        EquipmentType.addType(MiscType.createCargo8());
+        EquipmentType.addType(MiscType.createCargo85());
+        EquipmentType.addType(MiscType.createCargo9());
+        EquipmentType.addType(MiscType.createCargo95());
+        EquipmentType.addType(MiscType.createCargo10());
+        EquipmentType.addType(MiscType.createCargo105());
+        EquipmentType.addType(MiscType.createCargo11());
         EquipmentType.addType(MiscType.createLiquidCargo1());
         EquipmentType.addType(MiscType.createHalfLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
@@ -1363,6 +1383,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISMastMount());
         EquipmentType.addType(MiscType.createFuel1());
         EquipmentType.addType(MiscType.createFuelHalf());
+        EquipmentType.addType(MiscType.createFuel2());
+        EquipmentType.addType(MiscType.createFuel25());
+        EquipmentType.addType(MiscType.createFuel3());
+        EquipmentType.addType(MiscType.createFuel35());
+        EquipmentType.addType(MiscType.createFuel4());
         EquipmentType.addType(MiscType.createBlueShield());
         EquipmentType.addType(MiscType.createISEndoComposite());
         EquipmentType.addType(MiscType.createCLEndoComposite());
@@ -5325,7 +5350,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Modular Equipment Adaptor";
-        misc.setInternalName("BAMEA"); 
+        misc.setInternalName("BAMEA");
         misc.tonnage = 0.01f;
         misc.criticals = 2;
         misc.hittable = false;
@@ -5339,7 +5364,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAArmoredGlove() {
         MiscType misc = new MiscType();
 
@@ -6796,6 +6821,426 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createCargo15() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (1.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1.5f;
+        misc.criticals = 2;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo2() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (2 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 2;
+        misc.criticals = 2;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo25() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (2.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 2.5f;
+        misc.criticals = 3;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo3() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (3 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3;
+        misc.criticals = 3;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo35() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (3.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3.5f;
+        misc.criticals = 4;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo4() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (4 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 4;
+        misc.criticals = 4;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo45() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (4.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 4.5f;
+        misc.criticals = 5;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo5() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 5;
+        misc.criticals = 5;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo55() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (5.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 5.5f;
+        misc.criticals = 6;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo6() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (6 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 6;
+        misc.criticals = 6;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo65() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (6.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 6.5f;
+        misc.criticals = 7;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo7() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (7 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 7;
+        misc.criticals = 7;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo75() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (7.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 7.5f;
+        misc.criticals = 8;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo8() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (8 ton)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 8;
+        misc.criticals = 8;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo85() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (8.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 8.5f;
+        misc.criticals = 9;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo9() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (9 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 9;
+        misc.criticals = 9;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo95() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (9.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 9.5f;
+        misc.criticals = 10;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo10() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (10 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 10;
+        misc.criticals = 10;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo105() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (10.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 10.5f;
+        misc.criticals = 11;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
+    public static MiscType createCargo11() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo (11 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 11;
+        misc.criticals = 11;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, misc.techLevel.get(3071));
+        misc.techRating = RATING_A;
+
+        return misc;
+    }
+
     public static MiscType createLiquidCargo1() {
         MiscType misc = new MiscType();
 
@@ -7113,6 +7558,116 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 500;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+
+    public static MiscType createFuel2() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (2 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 2;
+        misc.criticals = 2;
+        misc.cost = 1000;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+
+    public static MiscType createFuel25() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (2.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 2.5f;
+        misc.criticals = 3;
+        misc.cost = 1500;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+
+    public static MiscType createFuel3() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (3 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3;
+        misc.criticals = 3;
+        misc.cost = 1500;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+
+    public static MiscType createFuel35() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (3.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3.5f;
+        misc.criticals = 4;
+        misc.cost = 2000;
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+
+    public static MiscType createFuel4() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank (4 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 4;
+        misc.criticals = 4;
+        misc.cost = 2000;
         misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.explosive = true;

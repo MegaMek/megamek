@@ -1000,12 +1000,6 @@ public abstract class BotClient extends Client {
         return message;
     }
 
-    @Override
-    public void retrieveServerInfo() {
-        super.retrieveServerInfo();
-        initialize();
-    }
-
     /**
      * Pops up a dialog box showing an alert
      */

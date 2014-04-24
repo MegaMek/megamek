@@ -680,7 +680,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
-                c.retrieveServerInfo();
             }
         }
 
@@ -691,7 +690,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
-                c.retrieveServerInfo();
             }
         }
 
@@ -814,7 +812,6 @@ public class MegaMekGUI implements IMegaMekGUI {
             client.die();
         }
         launch(gui.getFrame());
-        client.retrieveServerInfo();
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,

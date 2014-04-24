@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -152,6 +151,29 @@ public class Client implements IClientCommandHandler {
     public Map<String, Client> bots = new TreeMap<String, Client>(
             StringUtil.stringComparator());
 
+    ConnectionHandler packetUpdate;
+    
+    private class ConnectionHandler implements Runnable {
+    	
+    	boolean shouldStop = false;
+    	
+    	public void signalStop(){
+    		shouldStop = true;
+    	}
+    	
+        public void run() {
+        	while (!shouldStop){
+        		updateConnection();
+        		flushConn();
+        		if (connection != null && connection.isClosed()){
+    				shouldStop = true;
+    			}
+        	}
+    	}
+    };
+    
+    private Thread connThread;
+    
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
         /**
@@ -163,8 +185,21 @@ public class Client implements IClientCommandHandler {
         }
 
         @Override
-        public void packetReceived(PacketReceivedEvent e) {
-            handlePacket(e.getPacket());
+        public void packetReceived(final PacketReceivedEvent e) {
+        	// We can't just run this directly, otherwise we open up all sorts
+        	//  of concurrency issues with the AWT event dispatch thread.
+        	// Instead, if we will have the event dispatch thread handle it,
+        	// by using SwingUtilities.invokeLater
+        	// TODO: I don't think this is really what we should do: ideally
+        	//  Client.handlePacket should play well with the AWT event queue,
+        	//  but nothing appears to really be designed to be thread safe, so
+        	//  this is a reasonable hack for now
+        	Runnable handlePacketEvent =  new Runnable(){
+        		public void run() {
+        			handlePacket(e.getPacket());
+        	     }
+        	};
+            SwingUtilities.invokeLater(handlePacketEvent);
         }
 
     };
@@ -197,30 +232,6 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AssignNovaNetworkCommand(this));
 
         rsg = new RandomSkillsGenerator();
-
-        TimerSingleton ts = TimerSingleton.getInstance();
-        /*
-         * this should be moved to UI implementations so that they are
-         * responsible for figuring out who should call update for connection..
-         * so if somebody does a text-only implementation which doesnt support
-         * AWT event queue, we dont depend on it
-         */
-        final Runnable packetUpdate = new Runnable() {
-            public void run() {
-                updateConnection();
-            }
-        };
-        final TimerTask packetUpdate2 = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    SwingUtilities.invokeLater(packetUpdate);
-                } catch (Exception ie) {
-                    // should never get here
-                }
-            }
-        };
-        ts.schedule(packetUpdate2, 500, 100);
     }
 
     public int getLocalPlayerNumber() {
@@ -249,6 +260,9 @@ public class Client implements IClientCommandHandler {
         boolean result = connection.open();
         if (result) {
             connection.addConnectionListener(connectionListener);
+            packetUpdate = new ConnectionHandler();
+            connThread = new  Thread(packetUpdate, "Client Connection");
+            connThread.start();
         }
         return result;
     }
@@ -259,11 +273,15 @@ public class Client implements IClientCommandHandler {
     public void die() {
         // If we're still connected, tell the server that we're going down.
         if (connected) {
+        	// Stop listening for in coming packets, this should be done before
+        	//  sending the close connection command
+        	packetUpdate.signalStop();
+            connThread.interrupt();
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
             flushConn();
         }
         connected = false;
-
+        
         if (connection != null) {
             connection.close();
             connection = null;
@@ -288,7 +306,7 @@ public class Client implements IClientCommandHandler {
     /**
      * The client has become disconnected from the server
      */
-    protected void disconnected() {
+    protected synchronized void disconnected() {
         if (!disconnectFlag) {
             disconnectFlag = true;
             if (connected) {
@@ -489,26 +507,6 @@ public class Client implements IClientCommandHandler {
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
-    }
-
-    /**
-     * wtf is this? waits for 5 seconds just for nothing?? - itmo fixed this to
-     * be a bit more sensible..
-     */
-    public void retrieveServerInfo() {
-        updateConnection();
-        int retry = 50;
-        while ((retry-- > 0) && !connected) {
-            synchronized (this) {
-                flushConn();
-                updateConnection();
-                try {
-                    wait(100);
-                } catch (InterruptedException ex) {
-                    // should never get here
-                }
-            }
-        }
     }
 
     /**
@@ -1154,7 +1152,9 @@ public class Client implements IClientCommandHandler {
      * after a batch of packets is sent,not separately for each packet
      */
     protected void flushConn() {
-        connection.flush();
+    	if (connection != null){
+    		connection.flush();
+    	}
     }
 
     @SuppressWarnings("unchecked")

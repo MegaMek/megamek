@@ -176,7 +176,6 @@ public class AddBotUtil {
             results.add(botName + " failed to connect.");
             return concatResults();
         }
-        botClient.retrieveServerInfo();
         botClient.setLocalPlayerNumber(playerId);
 
         StringBuilder result = new StringBuilder(botName);

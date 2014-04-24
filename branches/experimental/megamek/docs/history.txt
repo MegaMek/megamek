@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.37.11-exp-dev (SVN)
++ Feature [#1241]: Server should use a multi-threaded approach to connection
+    handling 
 
 v0.37.11-dev (SVN)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

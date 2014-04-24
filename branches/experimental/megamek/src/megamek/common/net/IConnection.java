@@ -30,6 +30,12 @@ public interface IConnection {
      * Closes the socket and releases resources
      */
     public void close();
+    
+    /**
+     * Returns true if the socket for this connection has been closed.
+     * @return
+     */
+    public boolean isClosed();
 
     /**
      * Returns the connection ID

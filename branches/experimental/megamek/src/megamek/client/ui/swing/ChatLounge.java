@@ -2497,7 +2497,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     Messages.getString("ChatLounge.AlertBot.title"),
                                     Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                c.retrieveServerInfo();
                 clientgui.getBots().put(bcd.getBotName(), c);
             }
         } else if (ev.getSource().equals(butRemoveBot)) {

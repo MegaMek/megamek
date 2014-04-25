@@ -61,4 +61,6 @@ public interface GameListener extends java.util.EventListener {
     public void gameEntityChange(GameEntityChangeEvent e);
 
     public void gameNewAction(GameNewActionEvent e);
+    
+    public void gameClientFeedbackRquest(GameCFREvent e);
 }

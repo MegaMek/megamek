@@ -83,6 +83,9 @@ import megamek.common.EntityListFile;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
+import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -94,6 +97,7 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.logging.Logger;
+import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
@@ -1666,6 +1670,68 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
         public void gameMapQuery(GameMapQueryEvent e) {
 
+        }
+        
+        @Override
+		public void gameClientFeedbackRquest(GameCFREvent evt) {
+        	switch (evt.getCFRType()){
+	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
+		        	Entity e = client.getGame().getEntity(evt.getEntityId());
+		        	MovePath stepForward = new MovePath(client.getGame(), e);
+					MovePath stepBackward = new MovePath(client.getGame(), e);
+					stepForward.addStep(MoveStepType.FORWARDS);
+					stepBackward.addStep(MoveStepType.BACKWARDS);
+					stepForward.compile(client.getGame(), e);
+					stepBackward.compile(client.getGame(), e);
+					
+					String title = Messages.getString("CFRDomino.Title");
+					String msg = Messages.getString("CFRDomino.Message",
+							new Object[] { e.getDisplayName() });
+					Object options[];
+					MovePath paths[];
+					int optionType;
+					if (stepForward.isMoveLegal() 
+							&& stepBackward.isMoveLegal()){
+						options = new Object[3];
+						paths = new MovePath[3];
+						options[0] = Messages.getString("CFRDomino.Forward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.Backward",
+								new Object[] { stepForward.getMpUsed() });
+						options[2] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepForward;
+						paths[1] = stepBackward;
+						paths[2] = null;
+						optionType = JOptionPane.YES_NO_CANCEL_OPTION;
+					} else if (stepForward.isMoveLegal()){
+						options = new Object[2];
+						paths = new MovePath[2];
+						options[0] = Messages.getString("CFRDomino.Forward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepForward;
+						paths[1] = null;
+						optionType = JOptionPane.YES_NO_OPTION;
+					} else { // No request is sent if both moves are illegal
+						options = new Object[2];
+						paths = new MovePath[2];
+						options[0] = Messages.getString("CFRDomino.Backward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepBackward;
+						paths[1] = null;
+						optionType = JOptionPane.YES_NO_OPTION;
+					}			
+					int choice = JOptionPane.showOptionDialog(frame, msg, title, 
+							optionType, JOptionPane.QUESTION_MESSAGE, null, 
+							options, options[0]);
+					// If they closed it, assume no action
+					if (choice == JOptionPane.CLOSED_OPTION){
+						choice = options.length - 1;
+					}
+					client.sendDominoCFRResponse(paths[choice]);
+	        		break;
+        	}
         }
     };
 

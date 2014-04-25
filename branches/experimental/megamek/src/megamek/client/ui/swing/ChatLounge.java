@@ -110,6 +110,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Transporter;
 import megamek.common.UnitType;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -2368,6 +2369,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 //        randomMapDialog.getMapSettings().setBoardsAvailableVector(mapSettings.getBoardsAvailableVector());
 //        randomMapDialog.getMapSettings().setBoardsSelectedVector(mapSettings.getBoardsSelectedVector());
 //        randomMapDialog.loadValues();
+    }
+    
+    @Override
+	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    	// Do nothing
     }
 
     /*

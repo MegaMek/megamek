@@ -111,6 +111,11 @@ public class Packet {
     public static final int COMMAND_SENDING_TAGINFO = 610;
     
     public static final int COMMAND_RESET_TAGINFO = 620;
+    
+    public static final int COMMAND_CLIENT_FEEDBACK_REQUEST = 700;
+    public static final int COMMAND_CFR_DOMINO_EFFECT = 705;
+    public static final int COMMAND_CFR_EDGE_PROMPT = 710;
+    
 
 
     private int command;

@@ -250,7 +250,6 @@ public class MovePath implements Cloneable, Serializable {
             } else if (null != step.getMinefield()) {
                 step = new MoveStep(this, step.getType(), step.getMinefield());
             } else {
-
                 step = new MoveStep(this, step.getType());
             }
             this.addStep(step);

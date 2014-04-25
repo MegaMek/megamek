@@ -37,6 +37,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -275,6 +276,11 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
+    }
+    
+    @Override
+	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    	//noaction default
     }
 
     public void ready() {

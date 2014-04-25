@@ -321,6 +321,12 @@ public class Server implements Runnable {
 	
 	ConcurrentLinkedQueue<ReceivedPacket> packetQueue = 
 			new ConcurrentLinkedQueue<ReceivedPacket>();
+	
+	/**
+	 * Special packet queue for client feedback requests.
+	 */
+	ConcurrentLinkedQueue<ReceivedPacket> cfrPacketQueue = 
+			new ConcurrentLinkedQueue<ReceivedPacket>();
 
 	Vector<IConnection> connectionsPending = new Vector<IConnection>(4);
 
@@ -408,9 +414,18 @@ public class Server implements Runnable {
 		public void packetReceived(PacketReceivedEvent e) {
 			ReceivedPacket rp = new  ReceivedPacket(
 					e.getConnection().getId(), e.getPacket());
-			synchronized (packetQueue){
-				packetQueue.add(rp);
-				packetQueue.notifyAll();
+			// Handled CFR packets specially
+			if (e.getPacket().getCommand() 
+					== Packet.COMMAND_CLIENT_FEEDBACK_REQUEST){
+				synchronized (cfrPacketQueue){
+					cfrPacketQueue.add(rp);
+					cfrPacketQueue.notifyAll();
+				}
+			} else {
+				synchronized (packetQueue){
+					packetQueue.add(rp);
+					packetQueue.notifyAll();
+				}
 			}
 		}
 
@@ -11138,17 +11153,123 @@ public class Server implements Runnable {
 		entityUpdate(entity.getId());
 
 		if (violation != null) {
-			vPhaseReport
-					.addAll(doEntityDisplacement(violation, dest, dest
-							.translated(direction), new PilotingRollData(
-							violation.getId(), 0, "domino effect")));
+			// Can the violating unit move out of the way?
+			//  if the direction comes from a side, Entity didn't jump, and it
+			//  has MP left to use, it can try to move.
+			MovePath stepForward = new MovePath(game, violation);
+			MovePath stepBackwards = new MovePath(game, violation);
+			stepForward.addStep(MoveStepType.FORWARDS);
+			stepBackwards.addStep(MoveStepType.BACKWARDS);
+			if (direction != violation.getFacing() 
+					&& direction != ((violation.getFacing() + 3) % 6)
+					&& !entity.getIsJumpingNow() 
+					&& (stepForward.isMoveLegal() 
+							|| stepBackwards.isMoveLegal())){
+				// First, we need to make a PSR to see if we can step out
+				int result = Compute.d6(2);
+				roll = entity.getBasePilotingRoll();
+				
+				r = new Report(2351);
+				r.indent(2);
+				r.subject = violation.getId();
+				r.addDesc(violation);
+				r.add(roll.getValue());
+				r.add(result);
+				vPhaseReport.add(r);
+				if (result < roll.getValue()){
+					r.choose(false);
+					Vector<Report> newReports = doEntityDisplacement(violation,
+							dest, dest.translated(direction),
+							new PilotingRollData(violation.getId(),
+									TargetRoll.AUTOMATIC_FAIL,
+									"failed to step out of a domino effect"));
+					for (Report newReport : newReports){
+						newReport.indent(3);
+					}
+					vPhaseReport.addAll(newReports);
+				} else {
+					r.choose(true);
+					sendDominoEffectCFR(violation);
+					synchronized (cfrPacketQueue) {
+						try {
+							cfrPacketQueue.wait();
+						} catch (InterruptedException e) {
+							// Do nothing
+						}
+						if (cfrPacketQueue.size() > 0) {
+							ReceivedPacket rp = cfrPacketQueue.poll();
+							int cfrType = (int) rp.packet.getData()[0];
+							// Make sure we got the right type of response
+							if (cfrType != Packet.COMMAND_CFR_DOMINO_EFFECT) {
+								System.err.println("Excepted a "
+									+ "COMMAND_CFR_DOMINO_EFFECT CFR packet, "
+									+ "received: " + cfrType);
+								throw new IllegalStateException();
+							}
+							MovePath mp = (MovePath) rp.packet.getData()[1];
+							// Move based on the feedback
+							if (mp != null) {
+								// Report
+								r = new Report(2352);
+								r.indent(3);
+								r.subject = violation.getId();
+								r.addDesc(violation);
+								if (mp.getLastStep().getType() 
+										== MoveStepType.FORWARDS){
+									r.choose(false);
+								} else {
+									r.choose(true);
+								}
+								r.add(mp.getLastStep().getPosition()
+										.getBoardNum());
+								vPhaseReport.add(r);
+								// Move unit
+								violation.setPosition(mp.getFinalCoords());
+								violation.mpUsed += mp.getMpUsed();
+								violation.moved = mp.getLastStepMovementType();
+							} else { // User decided to do nothing
+								r = new Report(2358);
+								r.indent(3);
+								r.subject = violation.getId();
+								r.addDesc(violation);
+								vPhaseReport.add(r);
+								vPhaseReport.addAll(doEntityDisplacement(
+										violation, dest,
+										dest.translated(direction), null));
+							}
+						} else { // If no responses, treat as no action
+							vPhaseReport.addAll(doEntityDisplacement(
+									violation, dest, dest
+											.translated(direction),
+									new PilotingRollData(violation.getId(),
+											0, "domino effect")));
+						}
+					}
+				}
+			} else { // Nope
+				r = new Report(2359);
+				r.indent(2);
+				r.subject = violation.getId();
+				r.addDesc(violation);
+				vPhaseReport.add(r);
+				vPhaseReport.addAll(doEntityDisplacement(violation, dest, dest
+						.translated(direction),
+						new PilotingRollData(violation.getId(), 0,
+								"domino effect")));
+			
+			}
 			// Update the violating entity's postion on the client,
-			// if it didn't get displaced off the board.
+		    // if it didn't get displaced off the board.
 			if (!game.isOutOfGame(violation)) {
 				entityUpdate(violation.getId());
 			}
 		}
 		return vPhaseReport;
+	}
+	
+	private void sendDominoEffectCFR(Entity e){
+		send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+				new Object[] { Packet.COMMAND_CFR_DOMINO_EFFECT, e.getId() }));
 	}
 
 	private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
@@ -18190,7 +18311,7 @@ public class Server implements Runnable {
 			toUse.append(psr);
 			// now, append all other roll's cumulative mods, not the
 			// non-cumulative
-			// ones
+			// ones 
 			for (Enumeration<PilotingRollData> j = game.getPSRs(); j
 					.hasMoreElements();) {
 				final PilotingRollData other = j.nextElement();

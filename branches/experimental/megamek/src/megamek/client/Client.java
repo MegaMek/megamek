@@ -85,6 +85,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
@@ -1409,6 +1410,16 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
                 receiveEntityNovaNetworkModeChange(c);
                 break;
+            case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
+            	int cfrType = (int)c.getData()[0];
+            	GameCFREvent cfrEvt= new GameCFREvent(this, cfrType);
+            	switch (cfrType){
+            		case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+            			cfrEvt.setEntityId((int)c.getData()[1]);
+            			break;
+            	}
+            	game.processGameEvent(cfrEvt);
+                break;
         }
     }
 
@@ -1429,6 +1440,13 @@ public class Client implements IClientCommandHandler {
             ex.printStackTrace();
         }
 
+    }
+    
+    public void sendDominoCFRResponse(MovePath mp){
+    	Object data[] = {Packet.COMMAND_CFR_DOMINO_EFFECT, mp};
+    	Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                data);
+        send(packet);
     }
 
     /**

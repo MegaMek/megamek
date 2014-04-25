@@ -517,12 +517,14 @@ public class MechTextView {
         sMisc.append("----------------------------------\n");
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
-            if ((name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
-                    || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
-                    || (name.indexOf("Heat Sink") != -1)//$NON-NLS-1$
-                    || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
+            if (name.contains("Jump Jet")
+                    || (name.contains("CASE")
+                        && !name.contains("II")
+                        && entity.isClan())
+                    || name.contains("Heat Sink")
+                    || name.contains("Endo Steel")
+                    || name.contains("Ferro-Fibrous")
+                    || name.contains("Ferro-Lamellor")) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

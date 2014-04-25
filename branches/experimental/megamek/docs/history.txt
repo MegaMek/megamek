@@ -43,6 +43,12 @@ v0.37.11-dev (SVN)
 + Bug [#4099]: Megamek failed to draw ejected pilot on physical attack round on
     MegaMek - 0.37.10 (0.38.0 RC2)-windows
 + Bug: Fixed a ClassCastException in MechDisplay$WeaponPanel
++ Added a new map pack from CarnageINC
++ Bug: SpecialHexDisplay Note icon was not displaying properly
++ Bug: D6/2 anti-infantry weapon damage rounded down, not up.
++ Bug: Clan CASE II invisible in MechView.
++ Bug: Rounded weights in TestBattleArmor.getWeightWeapon to prevent some 
+    numerical issues (like being overweight by 0.000000001)
 
 v0.37.10-exp (2014-04-08 02:26)
 

@@ -1081,7 +1081,8 @@ public class TestBattleArmor extends TestEntity {
                 weight += wt.getTonnage(getEntity());
             }
         }
-        return weight;
+        // Round weight to prevent odd behavior
+        return Math.round(weight*1000) / 1000.0f;
     }
 
     public float getWeightAmmo(int trooper) {

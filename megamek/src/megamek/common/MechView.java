@@ -698,20 +698,22 @@ public class MechView {
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
             if ((mounted.getLocation() == Entity.LOC_NONE)
-                    || (name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
-                    || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
-                    || ((name.indexOf("Heat Sink") != -1) && //$NON-NLS-1$
-                    (name.indexOf("Radical") == -1))//$NON-NLS-1$
-                    || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Reactive") != -1) //$NON-NLS-1$
-                    || (name.indexOf("BA Stealth") != -1) //$NON-NLS-1$
-                    || (name.indexOf("BA Fire Resistant") != -1) //$NON-NLS-1$
-                    || (name.indexOf("BA Mimetic") != -1) //$NON-NLS-1$
-                    || (name.indexOf("BA Standard") != -1) //$NON-NLS-1$
-                    || (name.indexOf("BA Advanced") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Reflective") != -1) //$NON-NLS-1$
-                    || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
+                    || name.contains("Jump Jet")
+                    || (name.contains("CASE")
+                        && !name.contains("II")
+                        && entity.isClan())
+                    || (name.contains("Heat Sink") 
+                        && !name.contains("Radical"))
+                    || name.contains("Endo Steel")
+                    || name.contains("Ferro-Fibrous")
+                    || name.contains("Reactive")
+                    || name.contains("BA Stealth")
+                    || name.contains("BA Fire Resistant")
+                    || name.contains("BA Mimetic")
+                    || name.contains("BA Standard")
+                    || name.contains("BA Advanced")
+                    || name.contains("Reflective")
+                    || name.contains("Ferro-Lamellor")) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

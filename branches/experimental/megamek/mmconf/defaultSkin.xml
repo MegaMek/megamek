@@ -168,7 +168,7 @@
           <edgeName>left</edgeName>>
         </edge>
       </border>
-    <background_image>kiro/hexpattern_02.png</background_image>
+    <background_image>tile.gif</background_image>
   </UI_Element>
 
 

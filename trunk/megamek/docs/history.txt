@@ -53,6 +53,7 @@ v0.37.11-dev (SVN)
     client.  The client receives the obscured reports and these state variables
     aren't required, so it's more efficient to not send them
 + Bug [#2222]: some reports not filtered with "No double blind message" set
++ Data: Warrior S-9 Stealth Helicopter fix
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

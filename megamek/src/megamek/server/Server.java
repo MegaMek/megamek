@@ -11717,20 +11717,21 @@ public class Server implements Runnable {
      * Called to what players can see what units. this is used to determine who
      * can see what in double blind reports.
      */
-
     private void resolveWhatPlayersCanSeeWhatUnits() {
-
         for (Entity entity : game.getEntitiesVector()) {
             // We are hidden once again!
             entity.clearSeenBy();
-            for (IPlayer p : game.getPlayersVector()) {
-
-                if (canSee(p, entity)) {
+            // Handle visual spotting
+            for (IPlayer p : whoCanSee(entity)) {
+                entity.addBeenSeenBy(p);
+            }
+            // Handle detection by sensors
+            for (IPlayer p : whoCanDetect(entity)){
+                if (!entity.hasSeenEntity(p)){
                     entity.addBeenSeenBy(p);
                 }
             }
         }
-
     }
 
     /**
@@ -25837,31 +25838,6 @@ public class Server implements Runnable {
     }
 
     /**
-     * can the passed <code>Player</code> see the passed <code>Entity</code>?
-     *
-     * @param p
-     *            <code>Player</code>
-     * @param e
-     *            <code>Entity</code>
-     * @return if the player can see the entity
-     */
-    private boolean canSee(IPlayer p, Entity e) {
-        if (e.getOwner().getId() == p.getId()) {
-            // The owner of an entity should be able to see it, of course.
-            return true;
-        }
-        Vector<IPlayer> playersWhoCanSee = whoCanSee(e);
-        for (int i = 0; i < playersWhoCanSee.size(); i++) {
-            IPlayer currentPlayer = playersWhoCanSee.elementAt(i);
-            if (currentPlayer.equals(p)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Adds teammates of a player to the Vector. Utility function for whoCanSee.
      */
     private void addTeammates(Vector<IPlayer> vector, IPlayer player) {
@@ -26062,9 +26038,9 @@ public class Server implements Runnable {
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER)
                 && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
-            System.err
-                    .println("Error: Attempting to filter a Report object that is not public yet has no subject.\n\t\tmessageId: "
-                            + r.messageId);
+            System.err.println("Error: Attempting to filter a Report object "
+                    + "that is not public yet has no subject.\n\t\tmessageId: "
+                    + r.messageId);
             return r;
         }
         if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
@@ -26085,12 +26061,10 @@ public class Server implements Runnable {
 
         if ((r.type != Report.PLAYER) && !omitCheck
                 && ((entity == null) || (owner == null))) {
-            System.err
-                    .println("Error: Attempting to filter a Report object that is not public but has a subject ("
-                            + entity
-                            + ") with owner ("
-                            + owner
-                            + ").\n\tmessageId: " + r.messageId);
+            System.err.println("Error: Attempting to filter a Report object "
+                    + "that is not public but has a subject (" + entity
+                    + ") with owner (" + owner + ").\n\tmessageId: "
+                    + r.messageId);
             return r;
         }
 

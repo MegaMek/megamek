@@ -45,6 +45,8 @@ v0.37.11-dev (SVN)
     numerical issues (like being overweight by 0.000000001)
 + Bug: Internal head damage ejection roll modifier not always correct (formula
     incorrect for superheavy heads, arbitrary +2 maximum)
++ Refactored code related to Server.resolveWhatPlayersCanSeeWhatUnits and also 
+    added code to consider detection by sensors
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

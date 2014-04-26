@@ -1030,56 +1030,15 @@ public class Client implements IClientCommandHandler {
 
     // Should be private?
     public String receiveReport(Vector<Report> v) {
-        boolean doubleBlind = false;
-
         if (v == null) {
             return "[null report vector]";
         }
 
         StringBuffer report = new StringBuffer();
-        for (int i = 0; i < v.size(); i++) {
-            report.append((v.elementAt(i)).getText());
+        for (Report r : v){
+                report.append(r.getText());
         }
-
-        /*
-         * This make Double blind fully blind. Its best to do this here as at
-         * the server level you can have two lines merged, i.e. no new line, and
-         * the second line doesn't have any obsuring data. This way once the
-         * line gets to the client we filter it. --Torren
-         */
-        while (game.getOptions().booleanOption(
-                "supress_all_double_blind_messages")
-                && (report.indexOf(Report.OBSCURED_STRING) != -1)) {
-            doubleBlind = true;
-            int startPos = report.indexOf(Report.OBSCURED_STRING);
-            int endPos = report.indexOf("\n", startPos);
-            if (report.lastIndexOf("\n", startPos) != -1) {
-                startPos = report.lastIndexOf("\n", startPos);
-            }
-
-            // In case we get obscured reports but not final \n
-            if (endPos <= 0) {
-                endPos = report.length();
-            }
-
-            if (startPos < 0) {
-                startPos = 0;
-            }
-
-            report.delete(startPos, endPos);
-        }
-
-        String endReport = report.toString();
-
-        // Get rid of some extra double spaces that the pasing can sometimes
-        // cause.
-        while ((endReport.indexOf("\n\n") != -1) && doubleBlind) {
-            // Looks silly but it slows the proccess down enough to keep an
-            // Inf Loop from happening. -- Torren
-            endReport = endReport.replaceAll("\n\n", "\n");
-        }
-
-        return endReport;
+        return report.toString();
     }
 
     /**

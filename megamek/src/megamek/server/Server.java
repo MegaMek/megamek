@@ -25986,7 +25986,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * filter a reportvector for double blind
+     * Filter a report vector for double blind.
      *
      * @param originalReportVector
      *            the original <code>Vector<Report></code>
@@ -25997,31 +25997,27 @@ public class Server implements Runnable {
      */
     private Vector<Report> filterReportVector(
             Vector<Report> originalReportVector, IPlayer p) {
-        // FIXME
-        // Please optimize and document me.
-        // Only bother actually doing all this crap if double-blind is in
-        // effect.
+        // If no double blind, no filtering to do
         if (!doBlind()) {
             return new Vector<Report>(originalReportVector);
         }
-
         // But if it is, then filter everything properly.
         Vector<Report> filteredReportVector = new Vector<Report>();
-        Report r;
-        for (int i = 0; i < originalReportVector.size(); i++) {
-            r = originalReportVector.elementAt(i);
-            filteredReportVector.addElement(filterReport(r, p, false));
+        for (Report r : originalReportVector) {
+            Report filteredReport = filterReport(r, p, false);
+            if (filteredReport != null){
+                filteredReportVector.addElement(filteredReport);
+            }
         }
-
         return filteredReportVector;
     }
 
     /**
      * Filter a single report so that the correct double-blind obscuration takes
-     * place. to mark a message as "thsi should be visible toanyone seeing this
+     * place. To mark a message as "this should be visible to anyone seeing this
      * entity" set r.subject to the entity id to mark a message as "only visble
-     * to the player" set r.player to that player's id and set
-     * r.type=Report.PLAYER to mark a message as visible to all , set r.type to
+     * to the player" set r.player to that player's id and set r.type to 
+     * Report.PLAYER to mark a message as visible to all, set r.type to
      * Report.PUBLIC
      *
      * @param r
@@ -26068,12 +26064,23 @@ public class Server implements Runnable {
             return r;
         }
 
+        boolean shouldObscure = omitCheck
+                || ((entity != null) && !entity.hasSeenEntity(p)) 
+                || ((r.type == Report.PLAYER) && (p.getId() != r.player));
+        // If supressing double blind messages, don't send this report at all.
+        if (game.getOptions().booleanOption("supress_all_double_blind_messages")
+                && shouldObscure) {
+            // Mark the original report to indicate it was filtered
+            if (p != null) {
+                r.addObscuredRecipient(p.getName());
+            }
+            return null;
+        }
         Report copy = new Report(r);
+        // Otherwise, obscure data in the report
         for (int j = 0; j < copy.dataCount(); j++) {
-            if (omitCheck || ((entity != null) && !entity.hasSeenEntity(p))
-                    || ((r.type == Report.PLAYER) && (p.getId() != r.player))) {
-                // Trying out new code for double blind
-                // && !canSee(p, entity))) {
+            if (shouldObscure) {
+                // This report should be obscured
                 if (r.isValueObscured(j)) {
                     copy.hideData(j);
                     // Mark the original report to indicate which players
@@ -26082,16 +26089,13 @@ public class Server implements Runnable {
                         r.addObscuredRecipient(p.getName());
                     }
                 }
-                // simulate hiding the report for *true* double-blind play
-                // ***DEBUG*** TESTING ONLY
-                // copy.markForTesting();
             }
         }
         return copy;
     }
 
     /**
-     * Returns a vector which has as it's keys the round number and as it's
+     * Returns a vector which has as its keys the round number and as its
      * elements vectors that contain all the reports for the specified player
      * that round. The reports returned this way are properly filtered for
      * double blind.
@@ -26102,46 +26106,25 @@ public class Server implements Runnable {
      */
     private Vector<Vector<Report>> filterPastReports(
             Vector<Vector<Report>> pastReports, IPlayer p) {
-        // This stuff really only needs to be printed for debug reasons. other
-        // wise the logs get
-        // filled to the brim when ever someone connects. --Torren.
-        // System.err.println("filterPastReports() begin");
-        // System.err.println(" player is " + p.getName());
-
         // Only actually bother with the filtering if double-blind is in effect.
-        if (doBlind()) {
-            // System.err.println(" pastReports vector is\n" + pastReports);
-            Vector<Vector<Report>> filteredReports = new Vector<Vector<Report>>();
-            Vector<Report> filteredRoundReports;
-            Vector<Report> roundReports = new Vector<Report>();
-            Report r;
-            for (int i = 0; i < pastReports.size(); i++) {
-                filteredRoundReports = new Vector<Report>();
-                roundReports = pastReports.elementAt(i);
-                // System.err.println(" roundReports vector is\n" +
-                // roundReports);
-                for (int j = 0; j < roundReports.size(); j++) {
-                    r = roundReports.elementAt(j);
-                    if (r.isObscuredRecipient(p.getName())) {
-                        // System.err.println(" report is " + r + "
-                        // -obscuring-");
-                        filteredRoundReports.addElement(filterReport(r, null,
-                                true));
-                    } else {
-                        // System.err.println(" report is " + r);
-                        filteredRoundReports.addElement(r);
-                    }
-                }
-                // System.err.println(" filteredRoundReport is\n" +
-                // filteredRoundReports);
-                filteredReports.addElement(filteredRoundReports);
-            }
-            // System.err.println("filterPastReports() end");
-            return filteredReports;
+        if (!doBlind()) {
+            return pastReports;
         }
-
-        // System.err.println("filterPastReports() end");
-        return pastReports;
+        // Perform filtering
+        Vector<Vector<Report>> filteredReports = new Vector<Vector<Report>>();
+        for (Vector<Report> roundReports : pastReports) {
+            Vector<Report> filteredRoundReports = new Vector<Report>();
+            for (Report r : roundReports) {
+                if (r.isObscuredRecipient(p.getName())) {
+                    r = filterReport(r, null, true);
+                } 
+                if (r != null) {
+                    filteredRoundReports.addElement(r);
+                }
+            }
+            filteredReports.addElement(filteredRoundReports);
+        }
+        return filteredReports;
     }
 
     /**

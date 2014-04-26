@@ -29761,9 +29761,9 @@ public class Server implements Runnable {
             if (autoEject) {
                 rollTarget.addModifier(1, "automatic ejection");
             }
-            if (entity.getInternal(Mech.LOC_HEAD) < 3) {
+            if (entity.getInternal(Mech.LOC_HEAD) < entity.getOInternal(Mech.LOC_HEAD)) {
                 rollTarget.addModifier(
-                        Math.min(3 - entity.getInternal(Mech.LOC_HEAD), 2),
+                        entity.getOInternal(Mech.LOC_HEAD) - entity.getInternal(Mech.LOC_HEAD),
                         "Head Internal Structure Damage");
             }
             int facing = entity.getFacing();

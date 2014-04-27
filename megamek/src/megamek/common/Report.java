@@ -144,7 +144,7 @@ public class Report implements Serializable {
      * to be obscured before sending to clients. This only applies when the
      * report type is "obscured".
      */
-    private transient Hashtable<Integer, Boolean> obscuredIndexes = 
+    private Hashtable<Integer, Boolean> obscuredIndexes = 
             new Hashtable<Integer, Boolean>();
 
     /**
@@ -152,7 +152,7 @@ public class Report implements Serializable {
      * version of this report. Used to reconstruct individual client's reports
      * from the master copy stored by the server.
      */
-    private transient Vector<String> obscuredRecipients = new Vector<String>();
+    private Vector<String> obscuredRecipients = new Vector<String>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;

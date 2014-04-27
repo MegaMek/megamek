@@ -69,10 +69,46 @@ public class Report implements Serializable {
      */
 
     private static final long serialVersionUID = -5586008091586682078L;
+        
+    private static final int MESSAGE_NONE = -1;
+    
+    /** Report Type: visible to all players. */
+    public static final int PUBLIC = 0;
+    
+    /**
+     * Report Type: visible to all players, but all data marked for obscuration
+     * remains hidden. Note: Not used at this time, since all reports are
+     * considered <code>obscured</code> unless explicitly marked
+     * <code>public</code>.
+     */
+    public static final int OBSCURED = 1;
+    
+    /**
+     * Report is only visible to those players who can see the subject. Note:
+     * Not used at this time, since all reports are considered
+     * <code>obscured</code> unless explicitly marked <code>public</code>.
+     */
+    public static final int HIDDEN = 2;
+    
+    /** Testing only - remove me later. */
+    public static final int TESTING = 3;
+    
+    /**
+     * Messages which should be sent only to the player indicated by "player"
+     */
+    public static final int PLAYER = 4;
+
+    /**
+     * The string that appears in the report to obscure certain information.
+     */
+    public static final String OBSCURED_STRING = "????";
+
+    /** Number of spaces to use per indentation level. */
+    private static final int DEFAULT_INDENTATION = 4;
+    
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
-    private static final int MESSAGE_NONE = -1;
-
+    
     /** The number of spaces this report should be indented. */
     private int indentation = 0;
 
@@ -88,39 +124,16 @@ public class Report implements Serializable {
      * How this report is handled when double-blind play is in effect. See
      * constants below for more details.
      */
-    // Maybe should be simple isPublic boolean? Or do we want to ever mix
-    // obscured and totally hidden reports?
     public transient int type = Report.HIDDEN;
-    /** Report is visible to all players. */
-    public static final int PUBLIC = 0;
-    /**
-     * Report is visible to all players, but all data marked for obscuration
-     * remains hidden. Note: Not used at this time, since all reports are
-     * considered <code>obscured</code> unless explicitly marked
-     * <code>public</code>.
-     */
-    public static final int OBSCURED = 1;
-    /**
-     * Report is only visible to those players who can see the subject. Note:
-     * Not used at this time, since all reports are considered
-     * <code>obscured</code> unless explicitly marked <code>public</code>.
-     */
-    public static final int HIDDEN = 2;
-    /** Testing only - remove me later. */
-    // debugReport
-    public static final int TESTING = 3;
-    /**
-     * messages which should be sent only to the player indicated by "player"
-     */
-    public static final int PLAYER = 4;
 
     /**
      * The entity this report concerns, if applicable. If this is left blank,
      * then the report will be considered <code>public</code>.
      */
     public transient int subject = Entity.NONE;
+    
     /**
-     * the player this report concerns, if applicable. This should be filled in
+     * The player this report concerns, if applicable. This should be filled in
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
@@ -131,25 +144,18 @@ public class Report implements Serializable {
      * to be obscured before sending to clients. This only applies when the
      * report type is "obscured".
      */
-    private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<Integer, Boolean>();
+    private transient Hashtable<Integer, Boolean> obscuredIndexes = 
+            new Hashtable<Integer, Boolean>();
 
     /**
      * Vector to store the player names of those who received an obscured
      * version of this report. Used to reconstruct individual client's reports
      * from the master copy stored by the server.
      */
-    private Vector<String> obscuredRecipients = new Vector<String>();
+    private transient Vector<String> obscuredRecipients = new Vector<String>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
-
-    /**
-     * The string that appears in the report to obscure certain information.
-     */
-    public static final String OBSCURED_STRING = "????";
-
-    /** Number of spaces to use per indentation level. */
-    private static final int DEFAULT_INDENTATION = 4;
 
     /**
      * Default constructor, note that using this means the
@@ -161,7 +167,8 @@ public class Report implements Serializable {
     /**
      * Create a new report associated with the given report text.
      *
-     * @param id the int value of the report from <i>report-messages.properties</i>
+     * @param id the int value of the report from <i>report-messages.properties
+     * </i>
      */
     public Report(int id) {
         messageId = id;
@@ -171,7 +178,8 @@ public class Report implements Serializable {
      * Create a new report associated with the given report text and having the
      * given type.
      *
-     * @param id the int value of the report from <i>report-messages.properties</i>
+     * @param id the int value of the report from <i>report-messages.properties
+     *  </i>
      * @param type the constant specifying the visibility of the report (PUBLIC,
      *            OBSCURED, or HIDDEN)
      */
@@ -255,7 +263,6 @@ public class Report implements Serializable {
             obscuredIndexes.put(new Integer(tagData.size()),
                     new Boolean(true));
         }
-
         tagData.addElement(data);
     }
 
@@ -283,8 +290,10 @@ public class Report implements Serializable {
     public void addDesc(Entity entity) {
         if (entity != null) {
             add(entity.getShortName(), true);
-            String colorcode = Integer.toHexString(PlayerColors.getColor(entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
-            add("<B><font color='" + colorcode + "'>" +entity.getOwner().getName()+"</font></B>");
+            String colorcode = Integer.toHexString(PlayerColors.getColor(
+                    entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
+            add("<B><font color='" + colorcode + "'>"
+                    + entity.getOwner().getName() + "</font></B>");
         }
     }
 
@@ -358,12 +367,11 @@ public class Report implements Serializable {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out
-                    .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
-                            + index
-                            + ") for a report with ID "
-                            + messageId
-                            + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+            System.out.println("Error: Report#getText --> Array Index out of "
+                    + "Bounds Exception (index: " + index
+                    + ") for a report with ID " + messageId
+                    + ".  Maybe Report#add wasn't called enough "
+                    + "times for the amount of tags in the message?");
             return "[Reporting Error: see megameklog.txt for details]";
         }
     }
@@ -488,7 +496,8 @@ public class Report implements Serializable {
             v.elementAt(v.size() - 1).newlines++;
         }
         catch (ArrayIndexOutOfBoundsException ex) {
-            System.err.println("Report.addNewline failed, array index out of bounds");
+            System.err.println("Report.addNewline failed, array index out " +
+            		"of bounds");
         }
     }
 

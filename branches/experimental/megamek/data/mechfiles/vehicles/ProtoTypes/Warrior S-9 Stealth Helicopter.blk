@@ -33,11 +33,11 @@ VTOL
 </motion_type>
 
 <cruiseMP>
-1
+10
 </cruiseMP>
 
 <engine_type>
-0
+2
 </engine_type>
 
 <armor_type>

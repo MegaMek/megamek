@@ -11890,25 +11890,26 @@ public class Server implements Runnable {
 		}
 	}
 
-	/**
-	 * Called to what players can see what units. this is used to determine who
-	 * can see what in double blind reports.
-	 */
-
-	private void resolveWhatPlayersCanSeeWhatUnits() {
-
-		for (Entity entity : game.getEntitiesVector()) {
-			// We are hidden once again!
-			entity.clearSeenBy();
-			for (IPlayer p : game.getPlayersVector()) {
-
-				if (canSee(p, entity)) {
-					entity.addBeenSeenBy(p);
-				}
-			}
-		}
-
-	}
+    /**
+     * Called to what players can see what units. this is used to determine who
+     * can see what in double blind reports.
+     */
+    private void resolveWhatPlayersCanSeeWhatUnits() {
+        for (Entity entity : game.getEntitiesVector()) {
+            // We are hidden once again!
+            entity.clearSeenBy();
+            // Handle visual spotting
+            for (IPlayer p : whoCanSee(entity)) {
+                entity.addBeenSeenBy(p);
+            }
+            // Handle detection by sensors
+            for (IPlayer p : whoCanDetect(entity)){
+                if (!entity.hasSeenEntity(p)){
+                    entity.addBeenSeenBy(p);
+                }
+            }
+        }
+    }
 
 	/**
 	 * Called during the weapons fire phase. Resolves anything other than
@@ -26111,8 +26112,8 @@ public class Server implements Runnable {
 				// LOS doesn't matter.
 				continue;
 			}
-
 			for (Entity spotter : vMyEntities) {
+
 				// If they're off-board, skip it; they can't see anything.
 				if (spotter.isOffBoard()) {
 					continue;
@@ -26196,81 +26197,87 @@ public class Server implements Runnable {
 		return filteredReportVector;
 	}
 
-	/**
-	 * Filter a single report so that the correct double-blind obscuration takes
-	 * place. to mark a message as "thsi should be visible toanyone seeing this
-	 * entity" set r.subject to the entity id to mark a message as "only visble
-	 * to the player" set r.player to that player's id and set
-	 * r.type=Report.PLAYER to mark a message as visible to all , set r.type to
-	 * Report.PUBLIC
-	 * 
-	 * @param r
-	 *            the Report to filter
-	 * @param p
-	 *            the Player that we are going to send the filtered report to
-	 * @param omitCheck
-	 *            boolean indicating that this report hapened in the past, so we
-	 *            no longer have access to the Player
-	 * @return a new Report, which has possibly been obscured
-	 */
-	private Report filterReport(Report r, IPlayer p, boolean omitCheck) {
+    /**
+     * Filter a single report so that the correct double-blind obscuration takes
+     * place. To mark a message as "this should be visible to anyone seeing this
+     * entity" set r.subject to the entity id to mark a message as "only visble
+     * to the player" set r.player to that player's id and set r.type to 
+     * Report.PLAYER to mark a message as visible to all, set r.type to
+     * Report.PUBLIC
+     *
+     * @param r
+     *            the Report to filter
+     * @param p
+     *            the Player that we are going to send the filtered report to
+     * @param omitCheck
+     *            boolean indicating that this report hapened in the past, so we
+     *            no longer have access to the Player
+     * @return a new Report, which has possibly been obscured
+     */
+    private Report filterReport(Report r, IPlayer p, boolean omitCheck) {
 
-		if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER)
-				&& (r.type != Report.PUBLIC)) {
-			// Reports that don't have a subject should be public.
-			System.err
-					.println("Error: Attempting to filter a Report object that is not public yet has no subject.\n\t\tmessageId: "
-							+ r.messageId);
-			return r;
-		}
-		if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
-			return r;
-		}
-		Entity entity = game.getEntity(r.subject);
-		if (entity == null) {
-			entity = game.getOutOfGameEntity(r.subject);
-		}
-		IPlayer owner = null;
-		if (entity != null) {
-			owner = entity.getOwner();
-			// off board (Artillery) units get treated as public messages
-			if (entity.isOffBoard()) {
-				return r;
-			}
-		}
+        if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER)
+                && (r.type != Report.PUBLIC)) {
+            // Reports that don't have a subject should be public.
+            System.err.println("Error: Attempting to filter a Report object "
+                    + "that is not public yet has no subject.\n\t\tmessageId: "
+                    + r.messageId);
+            return r;
+        }
+        if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
+            return r;
+        }
+        Entity entity = game.getEntity(r.subject);
+        if (entity == null) {
+            entity = game.getOutOfGameEntity(r.subject);
+        }
+        IPlayer owner = null;
+        if (entity != null) {
+            owner = entity.getOwner();
+            // off board (Artillery) units get treated as public messages
+            if (entity.isOffBoard()) {
+                return r;
+            }
+        }
 
-		if ((r.type != Report.PLAYER) && !omitCheck
-				&& ((entity == null) || (owner == null))) {
-			System.err
-					.println("Error: Attempting to filter a Report object that is not public but has a subject ("
-							+ entity
-							+ ") with owner ("
-							+ owner
-							+ ").\n\tmessageId: " + r.messageId);
-			return r;
-		}
+        if ((r.type != Report.PLAYER) && !omitCheck
+                && ((entity == null) || (owner == null))) {
+            System.err.println("Error: Attempting to filter a Report object "
+                    + "that is not public but has a subject (" + entity
+                    + ") with owner (" + owner + ").\n\tmessageId: "
+                    + r.messageId);
+            return r;
+        }
 
-		Report copy = new Report(r);
-		for (int j = 0; j < copy.dataCount(); j++) {
-			if (omitCheck || ((entity != null) && !entity.hasSeenEntity(p))
-					|| ((r.type == Report.PLAYER) && (p.getId() != r.player))) {
-				// Trying out new code for double blind
-				// && !canSee(p, entity))) {
-				if (r.isValueObscured(j)) {
-					copy.hideData(j);
-					// Mark the original report to indicate which players
-					// received an obscured version of it.
-					if (p != null) {
-						r.addObscuredRecipient(p.getName());
-					}
-				}
-				// simulate hiding the report for *true* double-blind play
-				// ***DEBUG*** TESTING ONLY
-				// copy.markForTesting();
-			}
-		}
-		return copy;
-	}
+        boolean shouldObscure = omitCheck
+                || ((entity != null) && !entity.hasSeenEntity(p)) 
+                || ((r.type == Report.PLAYER) && (p.getId() != r.player));
+        // If supressing double blind messages, don't send this report at all.
+        if (game.getOptions().booleanOption("supress_all_double_blind_messages")
+                && shouldObscure) {
+            // Mark the original report to indicate it was filtered
+            if (p != null) {
+                r.addObscuredRecipient(p.getName());
+            }
+            return null;
+        }
+        Report copy = new Report(r);
+        // Otherwise, obscure data in the report
+        for (int j = 0; j < copy.dataCount(); j++) {
+            if (shouldObscure) {
+                // This report should be obscured
+                if (r.isValueObscured(j)) {
+                    copy.hideData(j);
+                    // Mark the original report to indicate which players
+                    // received an obscured version of it.
+                    if (p != null) {
+                        r.addObscuredRecipient(p.getName());
+                    }
+                }
+            }
+        }
+        return copy;
+    }
 
 	/**
 	 * Returns a vector which has as it's keys the round number and as it's
@@ -26282,49 +26289,28 @@ public class Server implements Runnable {
 	 * @param p
 	 * @return
 	 */
-	private Vector<Vector<Report>> filterPastReports(
-			Vector<Vector<Report>> pastReports, IPlayer p) {
-		// This stuff really only needs to be printed for debug reasons. other
-		// wise the logs get
-		// filled to the brim when ever someone connects. --Torren.
-		// System.err.println("filterPastReports() begin");
-		// System.err.println(" player is " + p.getName());
-
-		// Only actually bother with the filtering if double-blind is in effect.
-		if (doBlind()) {
-			// System.err.println(" pastReports vector is\n" + pastReports);
-			Vector<Vector<Report>> filteredReports = new Vector<Vector<Report>>();
-			Vector<Report> filteredRoundReports;
-			Vector<Report> roundReports = new Vector<Report>();
-			Report r;
-			for (int i = 0; i < pastReports.size(); i++) {
-				filteredRoundReports = new Vector<Report>();
-				roundReports = pastReports.elementAt(i);
-				// System.err.println(" roundReports vector is\n" +
-				// roundReports);
-				for (int j = 0; j < roundReports.size(); j++) {
-					r = roundReports.elementAt(j);
-					if (r.isObscuredRecipient(p.getName())) {
-						// System.err.println(" report is " + r + "
-						// -obscuring-");
-						filteredRoundReports.addElement(filterReport(r, null,
-								true));
-					} else {
-						// System.err.println(" report is " + r);
-						filteredRoundReports.addElement(r);
-					}
-				}
-				// System.err.println(" filteredRoundReport is\n" +
-				// filteredRoundReports);
-				filteredReports.addElement(filteredRoundReports);
-			}
-			// System.err.println("filterPastReports() end");
-			return filteredReports;
-		}
-
-		// System.err.println("filterPastReports() end");
-		return pastReports;
-	}
+    private Vector<Vector<Report>> filterPastReports(
+            Vector<Vector<Report>> pastReports, IPlayer p) {
+        // Only actually bother with the filtering if double-blind is in effect.
+        if (!doBlind()) {
+            return pastReports;
+        }
+        // Perform filtering
+        Vector<Vector<Report>> filteredReports = new Vector<Vector<Report>>();
+        for (Vector<Report> roundReports : pastReports) {
+            Vector<Report> filteredRoundReports = new Vector<Report>();
+            for (Report r : roundReports) {
+                if (r.isObscuredRecipient(p.getName())) {
+                    r = filterReport(r, null, true);
+                } 
+                if (r != null) {
+                    filteredRoundReports.addElement(r);
+                }
+            }
+            filteredReports.addElement(filteredRoundReports);
+        }
+        return filteredReports;
+    }
 
 	/**
 	 * Updates entities graphical "visibility indications" which are used in
@@ -29914,11 +29900,11 @@ public class Server implements Runnable {
 			if (autoEject) {
 				rollTarget.addModifier(1, "automatic ejection");
 			}
-			if (entity.getInternal(Mech.LOC_HEAD) < 3) {
-				rollTarget.addModifier(
-						Math.min(3 - entity.getInternal(Mech.LOC_HEAD), 2),
-						"Head Internal Structure Damage");
-			}
+        if (entity.getInternal(Mech.LOC_HEAD) < entity.getOInternal(Mech.LOC_HEAD)) {
+            rollTarget.addModifier(
+                entity.getOInternal(Mech.LOC_HEAD) - entity.getInternal(Mech.LOC_HEAD),
+                "Head Internal Structure Damage");
+        }
 			int facing = entity.getFacing();
 			Coords targetCoords = entity.getPosition().translated(
 					(facing + 3) % 6);

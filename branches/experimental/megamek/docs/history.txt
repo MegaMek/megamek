@@ -7,6 +7,7 @@ v0.37.11-exp-dev (SVN)
 + Bug [#41]: steping out of a domino effect not possible 
 + Bug: Bot receiving CFR would hang game: both bots not reply with "no action"
     when asked if they want to step out of a domino effect.
++ Bug [#4104]: [experimental] Context menus are out of alignment
 
 v0.37.11-dev (SVN)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

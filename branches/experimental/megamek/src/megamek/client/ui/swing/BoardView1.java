@@ -7543,8 +7543,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
-        p.x += (int) (HEX_WC * scale) - scrollpane.getX();
-        p.y += (int) ((HEX_H * scale) / 2) - scrollpane.getY();
+        p.x += (int) (HEX_WC * scale) - scrollpane.getX() + HEX_W;
+        p.y += (int) ((HEX_H * scale) / 2) - scrollpane.getY() + HEX_H;
         if (((JPopupMenu) popup).getParent() == null) {
             add((JPopupMenu) popup);
         }

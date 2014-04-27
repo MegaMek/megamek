@@ -67,6 +67,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -1677,6 +1678,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         	switch (evt.getCFRType()){
 	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
 		        	Entity e = client.getGame().getEntity(evt.getEntityId());
+		        	// If the client connects to a game as a bot, it's possible
+		        	//  to have the bot respond AND have the client ask the
+		        	//  player.  This is bad, ignore this if the client is a bot
+		        	if (client instanceof BotClient){
+		        		return;
+		        	}
 		        	MovePath stepForward = new MovePath(client.getGame(), e);
 					MovePath stepBackward = new MovePath(client.getGame(), e);
 					stepForward.addStep(MoveStepType.FORWARDS);

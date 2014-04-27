@@ -5,6 +5,8 @@ v0.37.11-exp-dev (SVN)
     handling 
 + Feature [#1243]: Client Feedback Request
 + Bug [#41]: steping out of a domino effect not possible 
++ Bug: Bot receiving CFR would hang game: both bots not reply with "no action"
+    when asked if they want to step out of a domino effect.
 
 v0.37.11-dev (SVN)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

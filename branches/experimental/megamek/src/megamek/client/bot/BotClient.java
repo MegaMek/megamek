@@ -58,10 +58,12 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -106,6 +108,19 @@ public abstract class BotClient extends Client {
                     sendDone(true);
                     flushConn();
                 }
+            }
+            
+            @Override
+        	public void gameClientFeedbackRquest(GameCFREvent evt) {
+            	switch (evt.getCFRType()){
+	        		case Packet.COMMAND_CFR_DOMINO_EFFECT:
+	        			// This will always send a "no action" response.  
+	        			// In effect, it works the way it did before.  However..
+	        			// TODO: Bots should figure out how to step out of a 
+	        			//   domino effect
+	        			sendDominoCFRResponse(null);
+	        			break;
+            	}
             }
 
         });

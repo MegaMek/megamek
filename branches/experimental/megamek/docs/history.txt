@@ -62,6 +62,8 @@ v0.37.11-dev (SVN)
     unit, the location of the selected unit was being used to determine the 
     elevation of the target, leading to incorrect calculations
 + Bug: fall elevation was improperly computed when doing displacement
++ Bug: PlayerListDialog was never updating the player list, also adjusted the
+    formatting and added team information
 
 v0.37.10-exp (2014-04-08 02:26)
 

@@ -55,6 +55,10 @@ v0.37.11-dev (SVN)
     added code to consider detection by sensors
 + Bug [#2222]: some reports not filtered with "No double blind message" set
 + Data: Warrior S-9 Stealth Helicopter fix
++ Bug: FoV darkening: when considered LoS between a selected unit and another 
+    unit, the location of the selected unit was being used to determine the 
+    elevation of the target, leading to incorrect calculations
++ Bug: fall elevation was improperly computed when doing displacement
 
 v0.37.10-exp (2014-04-08 02:26)
 

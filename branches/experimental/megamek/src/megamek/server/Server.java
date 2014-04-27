@@ -11022,8 +11022,8 @@ public class Server implements Runnable {
 		}
 		int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV) ? destHex
 				.terrainLevel(Terrains.BLDG_ELEV) : 0;
-		int fallElevation = entity.getElevation()
-				- (entity.elevationOccupied(destHex) + bldgElev);
+		int fallElevation = entity.elevationOccupied(srcHex)
+                - (entity.elevationOccupied(destHex) + bldgElev);
 		if (fallElevation > 1) {
 			if (roll == null) {
 				roll = entity.getBasePilotingRoll();

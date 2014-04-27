@@ -53,11 +53,6 @@ v0.37.11-dev (SVN)
     incorrect for superheavy heads, arbitrary +2 maximum)
 + Refactored code related to Server.resolveWhatPlayersCanSeeWhatUnits and also 
     added code to consider detection by sensors
-+ Refactored Report.java and also made two more state variables transient: 
-    obscuredIndexes and obscuredRecipients.   These are only used by the Server
-    to determine which data tags should be obscured before being sent to the
-    client.  The client receives the obscured reports and these state variables
-    aren't required, so it's more efficient to not send them
 + Bug [#2222]: some reports not filtered with "No double blind message" set
 + Data: Warrior S-9 Stealth Helicopter fix
 

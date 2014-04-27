@@ -83,6 +83,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameMapQueryEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
@@ -1453,9 +1454,20 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     private GameListener gameListener = new GameListenerAdapter() {
+
+
+        public void gamePlayerChange(GamePlayerChangeEvent e){
+        	 if (playerListDialog != null) {
+                 playerListDialog.refreshPlayerList();
+             }
+        }
+    	
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-            JOptionPane.showMessageDialog(frame, Messages.getString("ClientGUI.Disconnected.message"), Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+	    		Messages.getString("ClientGUI.Disconnected.message"), //$NON-NLS-1
+	    		Messages.getString("ClientGUI.Disconnected.title"), //$NON-NLS-1
+	    		JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();
         }

@@ -26141,36 +26141,32 @@ public class Server implements Runnable {
 		}
 	}
 
-	/**
-	 * filter a reportvector for double blind
-	 * 
-	 * @param originalReportVector
-	 *            the original <code>Vector<Report></code>
-	 * @param p
-	 *            the <code>Player</code> who should see stuff only visible to
-	 *            him
-	 * @return the <code>Vector<Report></code> with stuff only Player p can see
-	 */
-	private Vector<Report> filterReportVector(
-			Vector<Report> originalReportVector, IPlayer p) {
-		// FIXME
-		// Please optimize and document me.
-		// Only bother actually doing all this crap if double-blind is in
-		// effect.
-		if (!doBlind()) {
-			return new Vector<Report>(originalReportVector);
-		}
-
-		// But if it is, then filter everything properly.
-		Vector<Report> filteredReportVector = new Vector<Report>();
-		Report r;
-		for (int i = 0; i < originalReportVector.size(); i++) {
-			r = originalReportVector.elementAt(i);
-			filteredReportVector.addElement(filterReport(r, p, false));
-		}
-
-		return filteredReportVector;
-	}
+    /**
+     * Filter a report vector for double blind.
+     *
+     * @param originalReportVector
+     *            the original <code>Vector<Report></code>
+     * @param p
+     *            the <code>Player</code> who should see stuff only visible to
+     *            him
+     * @return the <code>Vector<Report></code> with stuff only Player p can see
+     */
+    private Vector<Report> filterReportVector(
+            Vector<Report> originalReportVector, IPlayer p) {
+        // If no double blind, no filtering to do
+        if (!doBlind()) {
+            return new Vector<Report>(originalReportVector);
+        }
+        // But if it is, then filter everything properly.
+        Vector<Report> filteredReportVector = new Vector<Report>();
+        for (Report r : originalReportVector) {
+            Report filteredReport = filterReport(r, p, false);
+            if (filteredReport != null){
+                filteredReportVector.addElement(filteredReport);
+            }
+        }
+        return filteredReportVector;
+    }
 
     /**
      * Filter a single report so that the correct double-blind obscuration takes

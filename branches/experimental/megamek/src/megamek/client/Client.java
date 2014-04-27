@@ -166,7 +166,7 @@ public class Client implements IClientCommandHandler {
         	while (!shouldStop){
         		updateConnection();
         		flushConn();
-        		if (connection != null && connection.isClosed()){
+        		if (connection != null || connection.isClosed()){
     				shouldStop = true;
     			}
         	}

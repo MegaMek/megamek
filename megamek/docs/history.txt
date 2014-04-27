@@ -52,6 +52,7 @@ v0.37.11-dev (SVN)
 + Bug: FoV darkening: when considered LoS between a selected unit and another 
     unit, the location of the selected unit was being used to determine the 
     elevation of the target, leading to incorrect calculations
++ Bug: fall elevation was improperly computed when doing displacement
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

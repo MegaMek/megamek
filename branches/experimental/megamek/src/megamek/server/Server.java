@@ -25992,31 +25992,6 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * can the passed <code>Player</code> see the passed <code>Entity</code>?
-	 * 
-	 * @param p
-	 *            <code>Player</code>
-	 * @param e
-	 *            <code>Entity</code>
-	 * @return if the player can see the entity
-	 */
-	private boolean canSee(IPlayer p, Entity e) {
-		if (e.getOwner().getId() == p.getId()) {
-			// The owner of an entity should be able to see it, of course.
-			return true;
-		}
-		Vector<IPlayer> playersWhoCanSee = whoCanSee(e);
-		for (int i = 0; i < playersWhoCanSee.size(); i++) {
-			IPlayer currentPlayer = playersWhoCanSee.elementAt(i);
-			if (currentPlayer.equals(p)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Adds teammates of a player to the Vector. Utility function for whoCanSee.
 	 */
 	private void addTeammates(Vector<IPlayer> vector, IPlayer player) {

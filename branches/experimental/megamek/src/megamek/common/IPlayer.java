@@ -25,6 +25,7 @@ import java.util.Vector;
 public interface IPlayer extends ITurnOrdered {
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
+    public static final int TEAM_UNASSIGNED = -1;
     public static final String[] colorNames = { "Blue", "Red", "Green", "Cyan",
             "Pink", "Orange", "Gray", "Brown", "Purple", "Turquoise ",
             "Maroon", "Spring Green", "Gold", "Sienna", "Violet", "Navy",

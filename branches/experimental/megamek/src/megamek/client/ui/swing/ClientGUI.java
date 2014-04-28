@@ -1304,6 +1304,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     protected void loadListFile(IPlayer player, boolean reinforce) {
         boolean addedUnits = false;
 
+        if (reinforce && player.getTeam() == IPlayer.TEAM_UNASSIGNED){
+            String title = Messages.getString(
+                    "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
+            String msg = Messages.getString(
+                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+            JOptionPane.showMessageDialog(frame, msg, title,
+                    JOptionPane.OK_OPTION, null);
+            return;
+        }
         // Build the "load unit" dialog, if necessary.
         if (dlgLoadList == null) {
             dlgLoadList = new JFileChooser(".");
@@ -1349,7 +1358,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     	}
                     }
                 }
-                client.sendAddEntity(loadedUnits);
+                if (loadedUnits.size() > 0){
+                	client.sendAddEntity(loadedUnits);
+                	addedUnits = true;
+                }                
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$

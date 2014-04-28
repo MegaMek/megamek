@@ -229,6 +229,15 @@ public final class Team extends TurnOrdered {
         // The teams pass all tests, so they must match.
         return true;
     }
+    
+    @Override
+    public String toString(){
+        if (getId() == IPlayer.TEAM_NONE){
+            return "No Team";
+        } else {
+            return "Team " + getId();
+        }
+    }
 
     public boolean hasTAG(IGame game) {
         for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {

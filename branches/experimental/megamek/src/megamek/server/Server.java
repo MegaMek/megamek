@@ -858,13 +858,16 @@ public class Server implements Runnable {
 
 		// add and validate the player info
 		if (!returning) {
-			int team = IPlayer.TEAM_NONE;
-			for (IPlayer p : game.getPlayersVector()) {
-				if (p.getTeam() > team) {
-					team = p.getTeam();
-				}
+			int team = IPlayer.TEAM_UNASSIGNED;
+			if (game.getPhase() == Phase.PHASE_LOUNGE){
+			    team = IPlayer.TEAM_NONE;
+    			for (IPlayer p : game.getPlayersVector()) {
+    				if (p.getTeam() > team) {
+    					team = p.getTeam();
+    				}
+    			}
+    			team++;
 			}
-			team++;
 			IPlayer newPlayer = new Player(connId, name);
 			int colorInd = newPlayer.getColorIndex();
 			Enumeration<IPlayer> players = game.getPlayers();

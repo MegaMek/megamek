@@ -1744,8 +1744,8 @@ public class MoveStep implements Serializable {
 
                 // space stations can only turn and launch space craft
                 if ((entity instanceof SpaceStation)
-                        && !((type == MoveStepType.TURN_LEFT) 
-                                || (type == MoveStepType.TURN_RIGHT) 
+                        && !((type == MoveStepType.TURN_LEFT)
+                                || (type == MoveStepType.TURN_RIGHT)
                                 || (type == MoveStepType.LAUNCH)
                                 || (type == MoveStepType.UNDOCK))) {
                     return;
@@ -2047,7 +2047,7 @@ public class MoveStep implements Serializable {
                     // N.B. The Ask Precentor Martial forum said that a 4/6
                     // tank on a road can move 5/7, **not** 5/8.
                 }
-            } else if ((entity instanceof Infantry) 
+            } else if ((entity instanceof Infantry)
                     && (curPos.distance(entity.getPosition()) <= 1)) {
                 if ((parent.getEntity().getMovementMode() == EntityMovementMode.VTOL)
                         && (getElevation() > 0)) {
@@ -2161,9 +2161,9 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // Mechs with no arms and a missing leg cannot attempt to stand 
-        if ((stepType == MoveStepType.GET_UP ||
-                stepType == MoveStepType.CAREFUL_STAND) &&
+        // Mechs with no arms and a missing leg cannot attempt to stand
+        if (((stepType == MoveStepType.GET_UP) ||
+                (stepType == MoveStepType.CAREFUL_STAND)) &&
                 (entity instanceof Mech) &&
                 entity.isLocationBad(Mech.LOC_LARM) &&
                 entity.isLocationBad(Mech.LOC_RARM) &&
@@ -2471,10 +2471,7 @@ public class MoveStep implements Serializable {
         int nDestEl = destHex.getElevation() + elevation;
 
         mp = 1;
-        // jumping always costs 1
-        if (parent.isJumping()) {
-            return;
-        }
+
 
         // 0 MP infantry units can move 1 hex
         if (isInfantry
@@ -2521,6 +2518,11 @@ public class MoveStep implements Serializable {
 
         // VTOLs pay 1 for everything
         if (moveMode == EntityMovementMode.VTOL) {
+            return;
+        }
+
+        // jumping always costs 1, unless fog or poor light
+        if (parent.isJumping()) {
             return;
         }
 

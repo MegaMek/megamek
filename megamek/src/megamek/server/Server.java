@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -2219,6 +2219,31 @@ public class Server implements Runnable {
                         if (a.isPartOfFighterSquadron() || a.isCapitalFighter()) {
                             a.doDisbandDamage();
                         }
+                    }
+                    //fix the armor and SI of aeros if using aero sanity rules for the MUL
+                    if(game.getOptions().booleanOption("aero_sanity") && entity instanceof Aero) {
+                    	//need to rescale SI and armor
+                		int scale = 1;
+                		if(entity.isCapitalScale()) {
+                			scale = 10;
+                		}
+                		Aero a = (Aero)entity;
+                		int currentSI = a.getSI() / (2*scale);
+                		a.set0SI(a.get0SI() / (2 * scale));
+                		if(currentSI > 0) {
+                			a.setSI(currentSI);
+                		}
+                		if(scale > 1) {
+                			for(int loc = 0; loc < entity.locations(); loc++) {
+                				int currentArmor = entity.getArmor(loc)/scale;
+                				if(entity.getOArmor(loc) > 0) {
+                					entity.initializeArmor(entity.getOArmor(loc)/scale, loc);
+                				}
+                				if(entity.getArmor(loc) > 0) {
+                					entity.setArmor(currentArmor, loc);
+                				}
+                			}
+                		}
                     }
                 }
                 send(createFullEntitiesPacket());

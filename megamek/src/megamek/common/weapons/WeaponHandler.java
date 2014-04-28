@@ -1151,8 +1151,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void addHeat() {
-        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            ae.heatBuildup += (weapon.getCurrentHeat());
+        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {        	
+        	if (ae.usesWeaponBays() && !game.getOptions().booleanOption("heat_by_bay")) {
+        		int loc = weapon.getLocation();
+                boolean rearMount = weapon.isRearMounted();
+                if (!ae.hasArcFired(loc, rearMount)) {
+                    ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
+                    ae.setArcFired(loc, rearMount);
+                }
+            } else {
+            	ae.heatBuildup += (weapon.getCurrentHeat());
+            }
         }
     }
 

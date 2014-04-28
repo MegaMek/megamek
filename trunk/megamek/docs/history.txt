@@ -55,6 +55,7 @@ v0.37.11-dev (SVN)
 + Bug: fall elevation was improperly computed when doing displacement
 + Bug: PlayerListDialog was never updating the player list, also adjusted the
     formatting and added team information
++ Bug: fog level not visible in round report
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

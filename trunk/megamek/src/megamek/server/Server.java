@@ -1815,22 +1815,22 @@ public class Server implements Runnable {
         if (tanksMoveMulti) {
             multiMask += GameTurn.CLASS_TANK;
         }
-        
+
         if (meksMoveMulti) {
             multiMask += GameTurn.CLASS_MECH;
         }
-        
+
         // In certain cases, a new SpecificEntityTurn could have been added for
-        //  the Entity whose turn we are ending as the next turn.  If this has 
+        //  the Entity whose turn we are ending as the next turn.  If this has
         //  happened, the remaining entity count will be off and we must ensure
-        //  that the SpecificEntityTurn for this unit remains the next turn  
+        //  that the SpecificEntityTurn for this unit remains the next turn
         Vector<GameTurn> turnVector = game.getTurnVector();
         int turnIndex = game.getTurnIndex();
         boolean usedEntityNotDone = false;
         if ((turnIndex + 1) < turnVector.size()){
             GameTurn nextTurn = turnVector.get(turnIndex+1);
             if (nextTurn instanceof GameTurn.SpecificEntityTurn){
-                GameTurn.SpecificEntityTurn seTurn = 
+                GameTurn.SpecificEntityTurn seTurn =
                         (GameTurn.SpecificEntityTurn)nextTurn;
                 if (seTurn.getEntityNum() == entityUsed.getId()){
                     turnIndex++;
@@ -1930,7 +1930,7 @@ public class Server implements Runnable {
                 turnsChanged = true;
             }
         }
-        
+
         if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
             int remaining = game.getMechsLeft(playerId);
             if (usedEntityNotDone){
@@ -2648,8 +2648,8 @@ public class Server implements Runnable {
                 // check phase report
                 // HACK: hardcoded message ID check
                 if ((vPhaseReport.size() > 3)
-                        || (vPhaseReport.size() > 1 
-                                && vPhaseReport.elementAt(1).messageId != 1205)) {
+                        || ((vPhaseReport.size() > 1)
+                                && (vPhaseReport.elementAt(1).messageId != 1205))) {
                     game.addReports(vPhaseReport);
                     changePhase(IGame.Phase.PHASE_END_REPORT);
                 } else {
@@ -3653,10 +3653,13 @@ public class Server implements Runnable {
             rWeather.newlines = 0;
             Report rLight = new Report(1032, Report.PUBLIC);
             rLight.add(game.getPlanetaryConditions().getLightCurrentName());
+            Report rVis = new Report(1033, Report.PUBLIC);
+            rVis.add(game.getPlanetaryConditions().getFogCurrentName());
             addReport(rWindDir);
             addReport(rWindStr);
             addReport(rWeather);
             addReport(rLight);
+            addReport(rVis);
 
             if (deployment) {
                 addNewLines();
@@ -10673,7 +10676,7 @@ public class Server implements Runnable {
      * Process a fall when moving from the source hex to the destination hex.
      * Depending on the elevations of the hexes, the Entity could land in the
      * source or destination hexes. Check for any conflicts and resolve them.
-     * Deal damage to faller. 
+     * Deal damage to faller.
      *
      * @param entity
      *            The <code>Entity</code> that is falling.
@@ -10751,14 +10754,14 @@ public class Server implements Runnable {
             // If we rolled for the direction, we want to use that for the fall
             if (src.equals(dest)){
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
-                        direction, roll, false));  
+                        direction, roll, false));
             } else {
                 // Otherwise, we'll roll for the direction after the fall
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
                         roll));
             }
-            
-            
+
+
             return vPhaseReport;
         }
         vPhaseReport.add(r);
@@ -11070,9 +11073,9 @@ public class Server implements Runnable {
         if (roll != null) {
             game.addPSR(roll);
         }
-        
+
         if (waterDepth > 0){
-            PilotingRollData waterRoll = 
+            PilotingRollData waterRoll =
                     entity.checkWaterMove(waterDepth, entity.moved);
             if (waterRoll.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, waterRoll);
@@ -12226,7 +12229,7 @@ public class Server implements Runnable {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                         || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                         || (wtype.getAmmoType() == AmmoType.T_AC)
                         || (wtype.getAmmoType() == AmmoType.T_LAC))
@@ -18542,9 +18545,9 @@ public class Server implements Runnable {
                 vDesc.addAll(destroyEntity(en, "pilot death", true));
             }
         } else {
-            boolean isPilot = (en instanceof Mech) 
+            boolean isPilot = (en instanceof Mech)
                     || (en instanceof ConvFighter)
-                    || ((en instanceof Aero) 
+                    || ((en instanceof Aero)
                             && !(en instanceof Dropship)
                             && !(en instanceof SmallCraft)
                             && !(en instanceof Jumpship)
@@ -18553,13 +18556,13 @@ public class Server implements Runnable {
                 if (isPilot){
                     r = new Report(6021);
                 } else {
-                    r = new Report(6022); 
+                    r = new Report(6022);
                 }
             } else {
                 if (isPilot){
-                    r = new Report(6023); 
+                    r = new Report(6023);
                 } else {
-                    r = new Report(6024); 
+                    r = new Report(6024);
                 }
             }
             r.addDesc(en);
@@ -19529,7 +19532,7 @@ public class Server implements Runnable {
 
                     HitData passHit = passenger.getTrooperAtLocation(hit, te);
                     passHit.setGeneralDamageType(hit.getGeneralDamageType());
-                    
+
 
                     // How much damage will the passenger absorb?
                     int absorb = 0;
@@ -19538,16 +19541,16 @@ public class Server implements Runnable {
                         int armorType = passenger.getArmorType(
                                 nextPassHit.getLocation());
                         boolean armorDamageReduction = false;
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                                && ((hit.getGeneralDamageType() == 
-                                    HitData.DAMAGE_MISSILE))
-                                    || (hit.getGeneralDamageType() == 
+                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                                && ((hit.getGeneralDamageType() ==
+                                    HitData.DAMAGE_MISSILE)))
+                                    || (hit.getGeneralDamageType() ==
                                     HitData.DAMAGE_ARMOR_PIERCING_MISSILE)){
                             armorDamageReduction = true;
                         }
                         // Check for reflective armor
                         if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                                && (hit.getGeneralDamageType() == 
+                                && (hit.getGeneralDamageType() ==
                                     HitData.DAMAGE_ENERGY)){
                             armorDamageReduction = true;
                         }
@@ -19555,16 +19558,16 @@ public class Server implements Runnable {
                             absorb += passenger.getArmor(nextPassHit);
                             if (armorDamageReduction){
                                 absorb *= 2;
-                            }                            
+                            }
                         }
                         if (0 < passenger.getInternal(nextPassHit)) {
                             absorb += passenger.getInternal(nextPassHit);
-                            // Armor damage reduction, like for reflective or 
-                            //  reactive armor will divide the whole damage 
+                            // Armor damage reduction, like for reflective or
+                            //  reactive armor will divide the whole damage
                             //  total by 2 and round down.  If we have an odd
-                            //  damage total, need to add 1 to make this 
+                            //  damage total, need to add 1 to make this
                             //  evenly divisible by 2
-                            if ((absorb % 2 != 0) && armorDamageReduction){
+                            if (((absorb % 2) != 0) && armorDamageReduction){
                                 absorb++;
                             }
                         }
@@ -19575,7 +19578,7 @@ public class Server implements Runnable {
 
                     // Damage the passenger.
                     int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = 
+                    Vector<Report> newReports =
                             damageEntity(passenger, passHit, absorbedDamage);
                     for (Report newReport : newReports){
                         newReport.indent(2);
@@ -19600,7 +19603,7 @@ public class Server implements Runnable {
                 } else if (!ammoExplosion && (null != passenger)
                         && (avoidRoll < 5) && !passenger.isDoomed()
                         && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Report that a passenger that could've been missed 
+                    // Report that a passenger that could've been missed
                     // narrowly avoids damage
                     r = new Report(6084);
                     r.subject = passenger.getId();
@@ -19647,7 +19650,7 @@ public class Server implements Runnable {
 
                     // Damage the swarm.
                     int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = 
+                    Vector<Report> newReports =
                             damageEntity(swarm, passHit, absorbedDamage);
                     for (Report newReport : newReports){
                         newReport.indent(2);
@@ -23879,7 +23882,7 @@ public class Server implements Runnable {
                     return vDesc;
                 }
                 if ((entity instanceof Mech)
-                        && (((Mech) entity).hasHarJelIIIn(loc) 
+                        && (((Mech) entity).hasHarJelIIIn(loc)
                                 || ((Mech) entity).hasHarJelIIIIn(loc))) {
                     r = new Report(6343);
                     r.subject = entity.getId();
@@ -24764,7 +24767,7 @@ public class Server implements Runnable {
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
         int newElevation = 0;
-        
+
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
@@ -24785,8 +24788,8 @@ public class Server implements Runnable {
             newElevation = 0;
         // If we are in a basement, we are at a negative elevation, and so
         //  setting newElevation = 0 will cause us to "fall up"
-        } else if (entity.getMovementMode() != EntityMovementMode.VTOL
-                && game.getBoard().getBuildingAt(fallPos) != null){
+        } else if ((entity.getMovementMode() != EntityMovementMode.VTOL)
+                && (game.getBoard().getBuildingAt(fallPos) != null)){
             newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
@@ -24885,7 +24888,7 @@ public class Server implements Runnable {
 
         // If the waterDepth is larger than the fall height,
         // we fell underwater
-        if (waterDepth >= height && (waterDepth != 0 || height != 0)) {
+        if ((waterDepth >= height) && ((waterDepth != 0) || (height != 0))) {
             damage = 0;
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (height + 1)) / 2;
         }
@@ -25660,16 +25663,16 @@ public class Server implements Runnable {
         if (doBlind()) {
             Vector<IPlayer> playersVector = game.getPlayersVector();
             Vector<IPlayer> vCanSee = whoCanSee(eTarget);
-            
+
             // If this unit has ECM, players with units effected by the ECM will
             //  need to know about this entity, even if they can't see it.
             //  Otherwise, the client can't properly report things like to-hits.
-            if (eTarget.getECMRange() > 0 && eTarget.getPosition() != null){
+            if ((eTarget.getECMRange() > 0) && (eTarget.getPosition() != null)){
                 int ecmRange = eTarget.getECMRange();
                 Coords pos = eTarget.getPosition();
                 for (Entity ent : game.getEntitiesVector()){
-                    if (ent.getPosition() != null
-                            && pos.distance(ent.getPosition()) <= ecmRange) {
+                    if ((ent.getPosition() != null)
+                            && (pos.distance(ent.getPosition()) <= ecmRange)) {
                         if (!vCanSee.contains(ent.getOwner())){
                             vCanSee.add(ent.getOwner());
                         }
@@ -25699,20 +25702,20 @@ public class Server implements Runnable {
             send(createEntityPacket(nEntityID, movePath));
         }
     }
-    
+
     /**
      * Whenever updating an Entity, we also need to update all of its loaded
      * Entity's, otherwise it could cause issues with Clients.
-     * 
+     *
      * @param loader        An Entity being updated that is transporting units
      *                      that should also send an update
      * @param vCanSee       The list of Players who can see the loader.
      * @param playersVector The list of all Players
      */
-    private void entityUpdateLoadedUnits(Entity loader, 
+    private void entityUpdateLoadedUnits(Entity loader,
             Vector<IPlayer> vCanSee, Vector<IPlayer> playersVector){
         Packet pack;
-        
+
         // In double-blind, the client may not know about the loaded units,
         // so we need to send them.
         for (Entity eLoaded : loader.getLoadedUnits()) {
@@ -25742,11 +25745,11 @@ public class Server implements Runnable {
     private Vector<IPlayer> whoCanSee(Entity entity) {
         return whoCanSee(entity, true);
     }
-        
+
     /**
      * Returns a vector of which players can see the given entity, optionally
      * allowing for sensors to count.
-     * 
+     *
      * @param entity        The entity to check visiblity for
      * @param useSensors    A flag that determines whether sensors are allowed
      * @return              A vector of the players who can see the entity
@@ -25802,7 +25805,7 @@ public class Server implements Runnable {
 
         return vCanSee;
     }
-    
+
     private Vector<IPlayer> whoCanDetect(Entity entity) {
 
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
@@ -25945,13 +25948,13 @@ public class Server implements Runnable {
                     addVisibleEntity(vCanSee, e);
                     break;
                 }
-                
+
                 // If this unit has ECM, players with units effected by the ECM
                 //  will need to know about this entity, even if they can't see
-                //  it.  Otherwise, the client can't properly report things 
+                //  it.  Otherwise, the client can't properly report things
                 //  like to-hits.
-                if (e.getECMRange() > 0 && e.getPosition() != null &&
-                        spotter.getPosition() != null){
+                if ((e.getECMRange() > 0) && (e.getPosition() != null) &&
+                        (spotter.getPosition() != null)){
                     int ecmRange = e.getECMRange();
                     Coords pos = e.getPosition();
                     if (pos.distance(spotter.getPosition()) <= ecmRange){
@@ -25963,18 +25966,18 @@ public class Server implements Runnable {
 
         return vCanSee;
     }
-    
+
     /**
-     * Recursive method to add an <code>Entity</code> and all of its 
+     * Recursive method to add an <code>Entity</code> and all of its
      * transported units to the list of units visible to a particular player.
      * It is important to ensure that if a unit is in the list of visible units
-     * then all of its transported units (and their transported units, and so 
+     * then all of its transported units (and their transported units, and so
      * on) are also considered visible, otherwise it can lead to issues.   This
      * method also ensures that no duplicate Entities are added.
-     * 
+     *
      * @param vCanSee  A collection of units that can be see
-     * @param e        An Entity that is seen and needs to be added to the 
-     *                  collection of seen entities.  All of 
+     * @param e        An Entity that is seen and needs to be added to the
+     *                  collection of seen entities.  All of
      */
     private void addVisibleEntity(Vector<Entity> vCanSee, Entity e){
         if (!vCanSee.contains(e)){
@@ -25982,7 +25985,7 @@ public class Server implements Runnable {
         }
         for (Entity transported : e.getLoadedUnits()){
             addVisibleEntity(vCanSee, transported);
-        }        
+        }
     }
 
     /**
@@ -26016,7 +26019,7 @@ public class Server implements Runnable {
      * Filter a single report so that the correct double-blind obscuration takes
      * place. To mark a message as "this should be visible to anyone seeing this
      * entity" set r.subject to the entity id to mark a message as "only visble
-     * to the player" set r.player to that player's id and set r.type to 
+     * to the player" set r.player to that player's id and set r.type to
      * Report.PLAYER to mark a message as visible to all, set r.type to
      * Report.PUBLIC
      *
@@ -26065,7 +26068,7 @@ public class Server implements Runnable {
         }
 
         boolean shouldObscure = omitCheck
-                || ((entity != null) && !entity.hasSeenEntity(p)) 
+                || ((entity != null) && !entity.hasSeenEntity(p))
                 || ((r.type == Report.PLAYER) && (p.getId() != r.player));
         // If supressing double blind messages, don't send this report at all.
         if (game.getOptions().booleanOption("supress_all_double_blind_messages")
@@ -26117,7 +26120,7 @@ public class Server implements Runnable {
             for (Report r : roundReports) {
                 if (r.isObscuredRecipient(p.getName())) {
                     r = filterReport(r, null, true);
-                } 
+                }
                 if (r != null) {
                     filteredRoundReports.addElement(r);
                 }
@@ -27527,7 +27530,7 @@ public class Server implements Runnable {
                     processCommand(connId, chat);
                 } else if (packet.getData().length > 1) {
                     connId = (int) packet.getObject(1);
-                    if (connId == Player.PLAYER_NONE) {
+                    if (connId == IPlayer.PLAYER_NONE) {
                         sendServerChat(chat);
                     } else {
                         sendServerChat(connId, chat);

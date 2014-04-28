@@ -417,11 +417,8 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        // Do this stuff first, because some weapon's miss report reference
-        // the
-        // amount of shots fired and stuff.
-        addHeat();
-
+       //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported

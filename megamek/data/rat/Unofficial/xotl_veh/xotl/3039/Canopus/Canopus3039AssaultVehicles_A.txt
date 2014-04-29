@@ -31,14 +31,14 @@
 #   less than 1.                                                            #
 #############################################################################
 Canopus3039AssaultVehicles_A
-Partisan Heavy Tank,137
-Schrek AC Carrier,17
-Schrek PPC Carrier,94
-Demolisher Heavy Tank,276
+Partisan Heavy Tank (Standard),137
+Schrek AC Carrier (Standard),17
+Schrek PPC Carrier (Standard),94
+Demolisher Heavy Tank (Standard Mk. I),276
 Partisan Heavy Tank (LRM),17
-Devastator Heavy Tank,55
-Behemoth Heavy Tank,193
+Devastator Heavy Tank (Standard),55
+Behemoth Heavy Tank (Standard),193
 Rhino Fire Support Tank (Flamer),11
 Rhino Fire Support Tank (MG),11
-Rhino Fire Support Tank,83
+Rhino Fire Support Tank (Standard),83
 Rhino Fire Support Tank (SL),106

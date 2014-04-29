@@ -32,12 +32,12 @@
 #############################################################################
 Marik3039MediumVehicles_F
 Vedette Medium Tank (AC2),660
-Vedette Medium Tank,5930
+Vedette Medium Tank (Standard),5930
 Hetzer Wheeled Assault Gun (Laser),80
-Hetzer Wheeled Assault Gun,680
+Hetzer Wheeled Assault Gun (Standard),680
 Hetzer Wheeled Assault Gun (SRM),80
 Hetzer Wheeled Assault Gun (LRM),80
 Maxim Heavy Hover Transport (SRM4),110
 Prowler Multi-Terrain Vehicle (Succession Wars),530
 Maxim Heavy Hover Transport (SRM2),110
-Maxim Heavy Hover Transport,240
+Maxim Heavy Hover Transport (Standard),240

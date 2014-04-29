@@ -1,15 +1,15 @@
 3039 House Davion Vehicle Heavy
 Von Luckner Heavy Tank VNL-K65N, 1
-Rommel Tank, 2
-SRM Carrier, 3
-Bulldog Medium Tank, 4
-Patton Tank, 5
-Manticore Heavy Tank, 6
-Rommel Tank, 5
-Po Heavy Tank, 4
-LRM Carrier, 3
-Brutus Assault Tank, 2
-Pike Support Vehicle, 1
+Rommel Tank (Standard), 2
+SRM Carrier (Standard), 3
+Bulldog Medium Tank (Standard), 4
+Patton Tank (Standard), 5
+Manticore Heavy Tank (Standard), 6
+Rommel Tank (Standard), 5
+Po Heavy Tank (Standard), 4
+LRM Carrier (Standard), 3
+Brutus Assault Tank (Standard), 2
+Pike Support Vehicle (Standard), 1
 ##Version 1 - May 2011
 ##From RUS Files
 ##Editted by Dave "Hammer" Nawton

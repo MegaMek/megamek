@@ -1,0 +1,12 @@
+Marian Hegemony Heavy Aerospace Late 3075
+Eagle EGL-R6,1
+Transgressor TR-13,2
+Stuka STU-K5,3
+Thunderbird TRB-D36,4
+Eagle EGL-R6,5
+Thunderbird TRB-D36,6
+Eagle EGL-R6,5
+Chippewa CHP-W10,4
+Riever F-100,3
+Chippewa CHP-W10,2
+Stuka STU-K15,1

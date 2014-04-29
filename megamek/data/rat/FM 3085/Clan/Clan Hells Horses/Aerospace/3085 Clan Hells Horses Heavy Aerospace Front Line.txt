@@ -1,11 +1,11 @@
 3085 Clan Hell's Horses Heavy Aerospace Front Line
 Rapier RPR-100b,1
 Hammerhead HMR-HDb,2
-Hydaspes,3
+Hydaspes 2,3
 Xerxes 1,4
 Xerxes 2,5
 Xerxes 1,6
-Hydaspes,5
+Hydaspes (Standard),5
 Xerxes 2,4
 Kirghiz Prime,3
 Jengiz Prime,2

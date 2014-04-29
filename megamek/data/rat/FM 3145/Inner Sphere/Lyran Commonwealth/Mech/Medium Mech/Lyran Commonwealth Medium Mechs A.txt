@@ -7,6 +7,6 @@ Thunder Fox TFT-L8,5
 Mongoose II MON-267,6
 Mad Cat III (Standard),5
 Mongrel MGL-T1,4
-Black Hawk,3
+Black Hawk (Standard),3
 Mongrel MGL-T2,2
 Arctic Wolf II Prime,1

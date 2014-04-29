@@ -1,12 +1,12 @@
 3085 Raven Alliance Heavy Aerospace Front Line
 Rapier RPR-200,1
-Tyre,2
-Hydaspes,3
+Tyre (Standard),2
+Hydaspes (Standard),3
 Xerxes 1,4
 Huscarl HSCL-1-O,5
 Sabutai Prime,6
 Hydaspes 3,5
 Jengiz Prime,4
 Sabutai Prime,3
-Hydaspes,2
+Hydaspes 2,2
 Sabutai Prime,1

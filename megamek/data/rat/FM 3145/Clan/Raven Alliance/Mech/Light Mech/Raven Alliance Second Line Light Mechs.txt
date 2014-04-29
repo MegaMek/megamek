@@ -1,12 +1,12 @@
 Raven Alliance Second Line Light Mechs
-Piranha,1
+Piranha (Standard),1
 Rokurokubi RK-4K,2
-Morrigan,3
+Morrigan (Standard),3
 Baboon (Howler) 3 'Devil',4
 Havoc HVC-P6,5
 Wasp WSP-3A,6
-Bear Cub,5
+Bear Cub (Standard),5
 Stinger IIC (Standard),4
 Wasp WSP-3A,3
 Stinger IIC (Standard),2
-Parash,1
+Parash (Standard),1

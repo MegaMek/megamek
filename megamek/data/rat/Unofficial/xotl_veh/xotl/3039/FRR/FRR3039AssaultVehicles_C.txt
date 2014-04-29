@@ -32,15 +32,15 @@
 #############################################################################
 FRR3039AssaultVehicles_C
 Partisan Heavy Tank (AC2),100
-Partisan Heavy Tank,1000
-Schrek AC Carrier,100
-Schrek PPC Carrier,590
-Demolisher Heavy Tank,1730
+Partisan Heavy Tank (Standard),1000
+Schrek AC Carrier (Standard),100
+Schrek PPC Carrier (Standard),590
+Demolisher Heavy Tank (Standard Mk. I),1730
 Partisan Heavy Tank (LRM),100
-Devastator Heavy Tank,520
-Behemoth Heavy Tank,2600
-Sturmfeur Heavy Tank,170
+Devastator Heavy Tank (Standard),520
+Behemoth Heavy Tank (Standard),2600
+Sturmfeur Heavy Tank (Standard),170
 Rhino Fire Support Tank (Flamer),520
 Rhino Fire Support Tank (MG),520
-Rhino Fire Support Tank,1380
+Rhino Fire Support Tank (Standard),1380
 Rhino Fire Support Tank (SL),170

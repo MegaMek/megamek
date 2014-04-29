@@ -31,15 +31,15 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3039HeavyVehicles_A
-AC/2 Carrier,25
-Zhukov Heavy Tank,25
+AC/2 Carrier (Standard),25
+Zhukov Heavy Tank (Standard),25
 Bulldog Medium Tank (AC2),42
-Laser Carrier,34
-Bulldog Medium Tank,169
-Pike Support Vehicle,29
+Laser Carrier (Standard),34
+Bulldog Medium Tank (Standard),169
+Pike Support Vehicle (Standard),29
 Pike Support Vehicle (AC5),5
 Bulldog Medium Tank (LRM),42
-SRM Carrier,168
-LRM Carrier,168
-Manticore Heavy Tank,168
+SRM Carrier (Standard),168
+LRM Carrier (Standard),168
+Manticore Heavy Tank (Standard),168
 Von Luckner Heavy Tank VNL-K65N,125

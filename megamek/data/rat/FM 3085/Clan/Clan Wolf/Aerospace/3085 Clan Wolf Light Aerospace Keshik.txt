@@ -1,7 +1,7 @@
 3085 Clan Wolf Light Aerospace Keshik
 Zero ZRO-116b,1
 Rogue RGU-133Eb,2
-Chaeronea,3
+Chaeronea (Standard),3
 Swift C,4
 Sai S-4C,5
 Chaeronea 4,6

@@ -4,8 +4,8 @@ Naga Prime,2
 Mad Cat Mk II Enhanced,3
 Annihilator ANH-4A,4
 Thunder Stallion 2 "Fire Stallion",5
-Thunder Stallion,6
-Cygnus,5
+Thunder Stallion (Standard),6
+Cygnus (Standard),5
 Behemoth (Stone Rhino) 3,4
 Thunder Stallion 3,3
 Cygnus 3,2

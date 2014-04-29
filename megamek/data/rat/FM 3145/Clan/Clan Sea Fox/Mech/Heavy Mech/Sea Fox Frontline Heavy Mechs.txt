@@ -2,7 +2,7 @@ Sea Fox Frontline Heavy Mechs
 Mad Cat Mk IV (Savage Wolf) PR (Standard),1
 Black Hawk-KU BHKU-O,2
 Cauldron-Born (Ebon Jaguar) Prime,3
-Sphinx,4
+Sphinx (Standard),4
 Thor (Summoner) Prime,5
 Vulture Mk IV (Mad Dog Mk IV) Prime,6
 Vulture (Mad Dog) Prime,5

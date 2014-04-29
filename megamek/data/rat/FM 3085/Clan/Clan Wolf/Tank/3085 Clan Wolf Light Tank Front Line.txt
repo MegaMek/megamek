@@ -1,12 +1,12 @@
 3085 Clan Wolf Light Tank Front Line
-Shamash Reconnaissance Vehicle,1
+Shamash Reconnaissance Vehicle (Standard),1
 Donar Assault Helicopter (Recon),2
-Odin Scout Tank,3
+Odin Scout Tank (Standard),3
 Zorya Light Tank (Ammo),4
-Svantovit Infantry Fighting Vehicle,5
+Svantovit Infantry Fighting Vehicle (Standard),5
 Zorya Light Tank (ATM),6
 Badger (C) Tracked Transport Prime,5
-Zorya Light Tank,4
-Donar Assault Helicopter,3
+Zorya Light Tank (Standard),4
+Donar Assault Helicopter (Standard),3
 Balac Strike VTOL (LRM),2
-Asshur Fast Reconnaissance Vehicle,1
+Asshur Fast Reconnaissance Vehicle (Standard),1

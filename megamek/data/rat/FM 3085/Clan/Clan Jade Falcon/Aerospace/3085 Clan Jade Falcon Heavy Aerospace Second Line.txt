@@ -1,6 +1,6 @@
 3085 Clan Jade Falcon Heavy Aerospace Second Line
 Stuka STU-K5b,1
-Hydaspes,2
+Hydaspes (Standard),2
 Hammerhead HMR-HDb,3
 Xerxes 1,4
 Rapier RPR-100b,5
@@ -9,4 +9,4 @@ Xerxes 1,5
 Lucifer LCF-R16,4
 Scytha Prime,3
 Eisensturm EST-R3,2
-Hydaspes,1
+Hydaspes 2,1

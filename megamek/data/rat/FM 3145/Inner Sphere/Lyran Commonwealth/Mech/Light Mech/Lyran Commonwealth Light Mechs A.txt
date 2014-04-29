@@ -6,7 +6,7 @@ Havoc HVC-P6,4
 Talon TLN-6W,5
 Arctic Fox AF1,6
 Wolfhound WLF-2H,5
-Pack Hunter II,4
+Pack Hunter II (Standard),4
 Jaguar (Standard),3
 Crimson Hawk 3,2
 Koshi (Standard),1

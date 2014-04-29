@@ -14,13 +14,13 @@
 # * Civilian Mech table alone, for convenience                              #
 #############################################################################
 CivilianUnits_CivMech
-Harvester Ant KIC-3 (LRM),27
-Harvester Ant KIC-3 (MG),27
-Crosscut LoggerMech ED-X2 (Flamer),27
-Crosscut LoggerMech ED-X2 (Rocket),27
-Carbine ConstructionMech CON-1 (RL),27
-Powerman LoaderMech SC XI (Laser),27
-Powerman LoaderMech SC XI (SRM),27
-Buster Class HaulerMech BC XV (AC),27
-Buster Class HaulerMech BC XV (PPC),27
+Harvester Ant KIC-3 Agromech(LRM),27
+Harvester Ant KIC-3 Agromech(MG),27
+Crosscut ED-X2M ForestryMech(Flamer),27
+Crosscut ED-X2M2 ForestryMech(Rocket),27
+Carbine CON-1 ConstructionMech (RL),27
+Powerman XI LoaderMech (Laser),27
+Powerman XI LoaderMech (SRM),27
+Buster XV HaulerMech (AC),27
+Buster XV HaulerMech (PPC),27
 Lumberjack LM4/P,27

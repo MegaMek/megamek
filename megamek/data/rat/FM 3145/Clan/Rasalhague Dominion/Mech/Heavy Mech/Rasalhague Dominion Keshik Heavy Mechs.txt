@@ -1,6 +1,6 @@
 Rasalhague Dominion Keshik Heavy Mechs
 Vulture (Mad Dog) Prime,1
-Arcas,2
+Arcas (Standard),2
 Vulture Mk IV (Mad Dog Mk IV) Prime,3
 Vulture Mk III (Mad Dog Mk III) (Prime),4
 Karhu Prime,5

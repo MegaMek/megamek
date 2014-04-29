@@ -31,20 +31,20 @@
 #   less than 1.                                                            #
 #############################################################################
 Davion3039HeavyVehicles_A
-AC/2 Carrier,7
+AC/2 Carrier (Standard),7
 Bulldog Medium Tank (AC2),19
-Laser Carrier,38
-Bulldog Medium Tank,103
-Pike Support Vehicle,32
+Laser Carrier (Standard),38
+Bulldog Medium Tank (Standard),103
+Pike Support Vehicle (Standard),32
 Pike Support Vehicle (AC5),6
 Brutus Assault Tank (PPC),9
 Bulldog Medium Tank (LRM),19
-Brutus Assault Tank,75
-SRM Carrier,141
-LRM Carrier,141
+Brutus Assault Tank (Standard),75
+SRM Carrier (Standard),141
+LRM Carrier (Standard),141
 Brutus Assault Tank (LRM),9
-Rommel Tank,66
-Patton Tank,66
-Manticore Heavy Tank,141
+Rommel Tank (Standard),66
+Patton Tank (Standard),66
+Manticore Heavy Tank (Standard),141
 Von Luckner Heavy Tank VNL-K100,4
 Von Luckner Heavy Tank VNL-K65N,124

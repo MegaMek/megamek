@@ -1,6 +1,6 @@
 3062 Clan Blood Spirit - Heavy Vehicle
 Oro Heavy Tank (HAG),1
 Ishtar Heavy Fire Support Tank (Original),18
-Oro Heavy Tank,20
+Oro Heavy Tank (Standard),20
 Oro Heavy Tank (HAG),5
-Athena Combat Vehicle,4
+Athena Combat Vehicle (Standard),4

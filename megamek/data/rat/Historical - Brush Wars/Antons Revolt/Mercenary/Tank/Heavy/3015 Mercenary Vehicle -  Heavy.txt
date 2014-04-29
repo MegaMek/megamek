@@ -1,12 +1,12 @@
 3015 Mercenary Vehicle -  Heavy
-Bulldog Medium Tank,1
-Bulldog Medium Tank,2
-LRM Carrier,3
-LRM Carrier,4
+Bulldog Medium Tank (Standard),1
+Bulldog Medium Tank (Standard),2
+LRM Carrier (Standard),3
+LRM Carrier (Standard),4
 Von Luckner Heavy Tank VNL-K65N,5
 Von Luckner Heavy Tank VNL-K65N,6
-Manticore Heavy Tank,5
-SRM Carrier,4
-SRM Carrier,3
-Pike Support Vehicle,2
-Pike Support Vehicle,1
+Manticore Heavy Tank (Standard),5
+SRM Carrier (Standard),4
+SRM Carrier (Standard),3
+Pike Support Vehicle (Standard),2
+Pike Support Vehicle (Standard),1

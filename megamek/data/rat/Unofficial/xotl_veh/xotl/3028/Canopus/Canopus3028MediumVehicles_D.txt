@@ -31,15 +31,15 @@
 #   less than 1.                                                            #
 #############################################################################
 Canopus3028MediumVehicles_D
-Goblin Medium Tank,360
-Condor Heavy Hover Tank,360
+Goblin Medium Tank (Standard),360
+Condor Heavy Hover Tank (Standard),360
 Vedette Medium Tank (AC2),660
-Vedette Medium Tank,5950
+Vedette Medium Tank (Standard),5950
 Hetzer Wheeled Assault Gun (Laser),130
-Hetzer Wheeled Assault Gun,1500
+Hetzer Wheeled Assault Gun (Standard),1500
 Hetzer Wheeled Assault Gun (SRM),130
 Hetzer Wheeled Assault Gun (LRM),130
 Maxim Heavy Hover Transport (SRM4),110
 Prowler Multi-Terrain Vehicle (Succession Wars),300
 Maxim Heavy Hover Transport (SRM2),110
-Maxim Heavy Hover Transport,170
+Maxim Heavy Hover Transport (Standard),170

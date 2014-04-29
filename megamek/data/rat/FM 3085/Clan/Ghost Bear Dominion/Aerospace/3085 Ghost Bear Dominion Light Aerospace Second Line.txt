@@ -5,8 +5,8 @@ Rogue RGU-133Eb,3
 Sabre SB-27,4
 Sholagar SL-21L,5
 Sholagar SL-21L,6
-Chaeronea,5
-Issus,4
+Chaeronea (Standard),5
+Issus (Standard),4
 Sulla Prime,3
 Corax CRX-O,2
-Issus,1
+Issus (Standard),1

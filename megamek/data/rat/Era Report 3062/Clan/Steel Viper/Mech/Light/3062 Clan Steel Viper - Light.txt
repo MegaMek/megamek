@@ -1,5 +1,5 @@
 3062 Clan Steel Viper - Light
-Piranha,1
+Piranha (Standard),1
 Hankyu (Arctic Cheetah) C,2
 Hankyu (Arctic Cheetah) B,3
 Dasher (Fire Moth) A,4
@@ -8,5 +8,5 @@ Puma (Adder) Prime,6
 Uller (Kit Fox) Prime,5
 Uller (Kit Fox) A,4
 Koshi (Mist Lynx) B,3
-Piranha,2
-Jenner IIC,1
+Piranha (Standard),2
+Jenner IIC (Standard),1

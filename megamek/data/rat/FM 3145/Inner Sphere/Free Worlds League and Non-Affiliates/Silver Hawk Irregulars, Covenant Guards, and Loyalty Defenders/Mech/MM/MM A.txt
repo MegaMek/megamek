@@ -3,7 +3,7 @@ Shockwave SKW-4G,1
 Wolverine WVR-9M,2
 Apollo APL-4M,3
 Strider SR1-O,4
-Phoenix Hawk PXH-1c,5
+Phoenix Hawk PXH-1c "Special",5
 Quasimodo QSM-3D,6
 Griffin GRF-4R,5
 Blackjack BJ2-O,4

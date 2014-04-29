@@ -8,5 +8,5 @@ Tiburon (Standard),6
 Cougar Prime,5
 Dasher (Fire Moth) Prime,4
 Hankyu (Arctic Cheetah) Prime,3
-Solitaire,2
+Solitaire (Standard),2
 Hellion Prime,1

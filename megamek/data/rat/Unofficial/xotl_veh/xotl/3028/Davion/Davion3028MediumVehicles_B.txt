@@ -33,16 +33,16 @@
 Davion3028MediumVehicles_B
 Condor Heavy Hover Tank (Davion),50
 Vedette Medium Tank (AC2),50
-Vedette Medium Tank,450
+Vedette Medium Tank (Standard),450
 Hetzer Wheeled Assault Gun (Laser),6
 Goblin Medium Tank (MG),40
-Goblin Medium Tank,120
-Hetzer Wheeled Assault Gun,52
+Goblin Medium Tank (LRM),120
+Hetzer Wheeled Assault Gun (Standard),52
 Hetzer Wheeled Assault Gun (SRM),6
-Condor Heavy Hover Tank,20
+Condor Heavy Hover Tank (Standard),20
 Goblin Medium Tank (LRM),40
 Hetzer Wheeled Assault Gun (LRM),6
 Maxim Heavy Hover Transport (SRM4),8
 Prowler Multi-Terrain Vehicle (Succession Wars),40
 Maxim Heavy Hover Transport (SRM2),8
-Maxim Heavy Hover Transport,104
+Maxim Heavy Hover Transport (Standard),104

@@ -5,8 +5,8 @@ Shadow Hawk IIC 2,3
 Ursus 3,4
 Hunchback HBK-5N,5
 Beowulf BEO-14,6
-Ursus,5
-Ursus II,4
-Hunchback IIC,3
+Ursus (Standard),5
+Ursus II (Standard),4
+Hunchback IIC (Standard),3
 Beowulf C,2
 Shadow Hawk SHD-12C,1

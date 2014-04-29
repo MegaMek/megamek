@@ -2,10 +2,10 @@
 Orc 2,1
 Orc 3,2
 Minotaur 2,3
-Procyon,4
-Orc,5
-Hydra,6
-Minotaur,5
+Procyon (Standard),4
+Orc (Standard),5
+Hydra (Standard),6
+Minotaur (Standard),5
 Hydra 2,4
 Minotaur P2,3
 Procyon (Quad),2

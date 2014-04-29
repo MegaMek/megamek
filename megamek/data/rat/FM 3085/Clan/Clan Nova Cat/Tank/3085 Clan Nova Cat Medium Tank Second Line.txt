@@ -1,12 +1,12 @@
 3085 Clan Nova Cat Medium Tank Second Line
-Zephyr Hovertank,1
+Zephyr Hovertank (Standard),1
 Bandit (C) Hovercraft Prime,2
-Tyr Infantry Support Tank,3
+Tyr Infantry Support Tank (Standard),3
 SM3 Tank Destroyer SM3,4
 SM1 Tank Destroyer SM1,5
 Joust Medium Tank BE700,6
 SM1A Tank Destroyer SM1A,5
-Hachiman Fire Support Tank 'Huey',4
-Maxim Heavy Hover Transport,3
-Eldingar Hover Sled,2
+Hachiman Fire Support Tank (Standard),4
+Maxim Heavy Hover Transport (Standard),3
+Eldingar Hover Sled (Standard),2
 SM1 Tank Destroyer SM1,1

@@ -6,7 +6,7 @@ Elemental Battle Armor (Space) [MG],4
 Elemental Battle Armor [MG],5
 Elemental Battle Armor [MG],6
 Elemental Battle Armor [MG],5
-Salamander Battle Armor,4
-Gnome Battle Armor,3
-Gnome Battle Armor,2
+Salamander Battle Armor (Standard),4
+Gnome Battle Armor (Standard),3
+Gnome Battle Armor (Upgrade) [Bearhunter],2
 Golem Assault Armor (Standard),1

@@ -1,6 +1,6 @@
 3062 Clan Jade Falcon - Assault
 Turkina Prime,1
-Warhammer IIC,2
+Warhammer IIC (Standard),2
 Masakari (Warhawk) B,3
 Man O' War (Gargoyle) A,4
 Gladiator (Executioner) Prime,5

@@ -1,0 +1,12 @@
+Goliath Scorpion Front-Line Medium Aerospace (FMU)
+Jagatai A,1
+Turk B,2
+Visigoth C,3
+Turk Prime,4
+Visigoth B,5
+Visigoth Prime,6
+Jagatai Prime,5
+Turk A,4
+Visigoth A,3
+Turk C,2
+Jagatai C,1

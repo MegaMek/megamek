@@ -31,17 +31,17 @@
 #   less than 1.                                                            #
 #############################################################################
 Steiner3039HeavyVehicles_C
-Po Heavy Tank,70
-AC/2 Carrier,220
+Po Heavy Tank (Standard),70
+AC/2 Carrier (Standard),220
 Bulldog Medium Tank (AC2),370
-Laser Carrier,300
-Bulldog Medium Tank,1490
-Pike Support Vehicle,250
+Laser Carrier (Standard),300
+Bulldog Medium Tank (Standard),1490
+Pike Support Vehicle (Standard),250
 Pike Support Vehicle (AC5),40
 Bulldog Medium Tank (LRM),370
-SRM Carrier,1120
-LRM Carrier,1120
-Rommel Tank,1120
-Patton Tank,1120
-Manticore Heavy Tank,1490
+SRM Carrier (Standard),1120
+LRM Carrier (Standard),1120
+Rommel Tank (Standard),1120
+Patton Tank (Standard),1120
+Manticore Heavy Tank (Standard),1490
 Von Luckner Heavy Tank VNL-K65N,220

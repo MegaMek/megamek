@@ -9,4 +9,4 @@ Sentinel STN-3Lb,5
 Hunchback HBK-4G,4
 Scorpion SCP-1N,3
 Assassin ASN-21,2
-Phoenix Hawk PXH-1b,1
+Phoenix Hawk PXH-1b "Special",1

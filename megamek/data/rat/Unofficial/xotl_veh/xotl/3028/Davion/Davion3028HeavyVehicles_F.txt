@@ -31,14 +31,14 @@
 #   less than 1.                                                            #
 #############################################################################
 Davion3028HeavyVehicles_F
-AC/2 Carrier,430
+AC/2 Carrier (Standard),430
 Bulldog Medium Tank (AC2),330
-Laser Carrier,570
-Bulldog Medium Tank,1700
-Pike Support Vehicle,490
+Laser Carrier (Standard),570
+Bulldog Medium Tank (Standard),1700
+Pike Support Vehicle (Standard),490
 Pike Support Vehicle (AC5),80
 Bulldog Medium Tank (LRM),330
-SRM Carrier,2170
-LRM Carrier,2170
+SRM Carrier (Standard),2170
+LRM Carrier (Standard),2170
 Brutus Assault Tank (PPC 2),10
-Manticore Heavy Tank,1480
+Manticore Heavy Tank (Standard),1480

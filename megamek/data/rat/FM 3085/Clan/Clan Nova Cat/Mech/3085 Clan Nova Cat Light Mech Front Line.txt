@@ -1,10 +1,10 @@
 3085 Clan Nova Cat Light Mech Front Line
 Arbalest 2,1
-Pack Hunter,2
+Pack Hunter (Standard),2
 Jenner IIC 4,3
 Ocelot 3,4
-Pack Hunter,5
-Ocelot,6
+Pack Hunter (Standard),5
+Ocelot (Standard),6
 Hankyu (Arctic Cheetah) Prime,5
 Hankyu (Arctic Cheetah) Prime,4
 Ocelot 2,3

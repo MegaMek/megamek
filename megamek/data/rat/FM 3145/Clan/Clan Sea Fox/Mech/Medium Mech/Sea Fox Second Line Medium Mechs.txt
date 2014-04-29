@@ -4,9 +4,9 @@ Wolverine WVR-9M,2
 Wraith TR1,3
 Shadow Hawk IIC 5,4
 Griffin IIC 5,5
-Black Hawk,6
+Black Hawk (Standard),6
 Mad Cat III (Standard),5
 Shadow Hawk IIC 8,4
 Dasher II 2,3
-Goshawk II,2
+Goshawk II (Standard),2
 Men Shen MS1-O,1

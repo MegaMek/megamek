@@ -1,8 +1,8 @@
 3085 Clan Hell's Horses Light Aerospace Front Line
 Zero ZRO-116b,1
-Chaeronea,2
-Issus,3
-Chaeronea,4
+Chaeronea (Standard),2
+Issus (Standard),3
+Chaeronea (Standard),4
 Vandal Prime,5
 Issus 3,6
 Vandal Prime,5

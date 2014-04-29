@@ -1,12 +1,12 @@
 3062 Clan Diamond Shark - ProtoMek
 Minotaur 2,1
-Gorgon,2
+Gorgon (Standard),2
 Centaur 2,3
-Siren,4
-Satyr,5
-Harpy,6
-Centaur,5
-Hydra,4
-Roc,3
+Siren (Standard),4
+Satyr (Standard),5
+Harpy (Standard),6
+Centaur (Standard),5
+Hydra (Standard),4
+Roc 3,3
 Gorgon 2,2
-Minotaur,1
+Minotaur (Standard),1

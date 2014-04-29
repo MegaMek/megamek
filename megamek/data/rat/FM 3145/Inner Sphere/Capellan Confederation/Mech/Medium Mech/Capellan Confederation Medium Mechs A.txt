@@ -7,6 +7,6 @@ Raven II RVN-5X,5
 Men Shen MS1-O,6
 Yao Lien YOL-4C,5
 Agrotera AGT-1A,4
-Goshawk II,3
-Black Hawk,2
+Goshawk II (Standard),3
+Black Hawk (Standard),2
 Avalanche AVL-1O,1

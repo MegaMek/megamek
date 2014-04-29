@@ -7,6 +7,6 @@ Havoc HVC-P6,5
 Eagle EGL-3M,6
 Wasp WSP-8T,5
 Hammer HMR-3C "Claw-Hammer",4
-Crimson Hawk,3
+Crimson Hawk (Standard),3
 Koshi (Standard),2
 Jackalope JLP-BD,1

@@ -4,9 +4,9 @@ Ironsides IRN-SD1b,2
 Lucifer II LCF-R16KR,3
 Hellcat II HCT-213C,4
 Oni ON-1,5
-Ammon,6
+Ammon (Standard),6
 Shilone SL-18,5
 Gotha GTHA-500b,4
 Visigoth Prime,3
-Ammon,2
+Ammon (Standard),2
 Tatsu MIK-O,1

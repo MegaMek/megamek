@@ -1,5 +1,5 @@
 3062 Clan Snow Raven - Medium Vehicle
-Ku Wheeled Assault Tank,8
-Ares Medium Tank,22
-Hachiman Fire Support Tank 'Huey',14
+Ku Wheeled Assault Tank (Standard),8
+Ares Medium Tank (Standard),22
+Hachiman Fire Support Tank (Standard),14
 Epona Pursuit Tank Prime,4

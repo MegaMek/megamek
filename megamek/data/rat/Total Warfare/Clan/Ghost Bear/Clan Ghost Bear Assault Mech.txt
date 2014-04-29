@@ -1,6 +1,6 @@
 Clan Ghost Bear Assault 'Mech
 Warhammer IIC 4,1
-Kodiak,2
+Kodiak (Standard),2
 Man O' War (Gargoyle) B,3
 Masakari (Warhawk) B,4
 Daishi (Dire Wolf) Prime,5

@@ -32,14 +32,14 @@
 #############################################################################
 Liao3028HeavyVehicles_D
 Brutus Assault Tank (PPC 2),70
-Brutus Assault Tank,80
-AC/2 Carrier,320
+Brutus Assault Tank (Standard),80
+AC/2 Carrier (Standard),320
 Bulldog Medium Tank (AC2),500
-Laser Carrier,420
-Bulldog Medium Tank,2030
-Pike Support Vehicle,350
+Laser Carrier (Standard),420
+Bulldog Medium Tank (Standard),2030
+Pike Support Vehicle (Standard),350
 Pike Support Vehicle (AC5),60
 Bulldog Medium Tank (LRM),500
-SRM Carrier,2020
-LRM Carrier,2020
-Manticore Heavy Tank,1540
+SRM Carrier (Standard),2020
+LRM Carrier (Standard),2020
+Manticore Heavy Tank (Standard),1540

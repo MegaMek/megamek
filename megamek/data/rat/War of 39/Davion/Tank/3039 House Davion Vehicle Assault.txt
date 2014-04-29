@@ -1,15 +1,15 @@
 3039 House Davion Vehicle Assault
-Schrek PPC Carrier, 1
-Behemoth Heavy Tank, 2
-Partisan Heavy Tank, 3
-Ontos Heavy Tank, 4
-Behemoth Heavy Tank, 5
-Partisan Heavy Tank, 6
-Demolisher Heavy Tank, 5
-Ontos Heavy Tank, 4
-Schrek PPC Carrier, 3
-Behemoth Heavy Tank, 2
-Schrek PPC Carrier, 1
+Schrek PPC Carrier (Standard), 1
+Behemoth Heavy Tank (Standard), 2
+Partisan Heavy Tank (Standard), 3
+Ontos Heavy Tank (Fusion),4
+Behemoth Heavy Tank (Standard), 5
+Partisan Heavy Tank (Standard), 6
+Demolisher Heavy Tank (Standard Mk. I), 5
+Ontos Heavy Tank (Standard),4
+Schrek PPC Carrier (Standard), 3
+Behemoth Heavy Tank (Standard), 2
+Schrek PPC Carrier (Standard), 1
 ##Version 1 - May 2011
 ##From RUS Files
 ##Editted by Dave "Hammer" Nawton

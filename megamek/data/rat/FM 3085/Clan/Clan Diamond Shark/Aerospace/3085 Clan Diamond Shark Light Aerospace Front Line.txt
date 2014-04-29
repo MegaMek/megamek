@@ -1,8 +1,8 @@
 3085 Clan Diamond Shark Light Aerospace Front Line
 Sai S-4C,1
-Chaeronea,2
+Chaeronea (Standard),2
 Sai S-4C,3
-Chaeronea,4
+Chaeronea (Standard),4
 Corax CRX-O,5
 Dagger DARO-1,6
 Vandal Prime,5

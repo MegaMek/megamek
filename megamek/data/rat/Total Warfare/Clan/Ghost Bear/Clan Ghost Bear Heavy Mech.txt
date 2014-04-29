@@ -1,6 +1,6 @@
 Clan Ghost Bear Heavy 'Mech
-Arcas,1
-Thresher,2
+Arcas (Standard),1
+Thresher (Standard),2
 Vulture (Mad Dog) C,3
 Vulture (Mad Dog) B,4
 Thor (Summoner) Prime,5
@@ -9,6 +9,6 @@ Vulture (Mad Dog) A,5
 Thor (Summoner) C,4
 Cauldron-Born (Ebon Jaguar) Prime,3
 Nova Cat A,2
-Grizzly,1
+Grizzly (Standard),1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

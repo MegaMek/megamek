@@ -3,7 +3,7 @@ Marauder IIC 6,1
 Kraken (Bane) 4,2
 BattleMaster C,3
 Turkina Prime,4
-Jupiter,5
+Jupiter (Standard),5
 Turkina Prime,6
 Gladiator (Executioner) Prime,5
 Jupiter 3,4

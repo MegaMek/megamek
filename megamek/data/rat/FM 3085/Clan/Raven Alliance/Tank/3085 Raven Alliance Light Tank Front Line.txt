@@ -1,12 +1,12 @@
 3085 Raven Alliance Light Tank Front Line
-J. Edgar Light Hover Tank,1
-Indra Infantry Transport,2
+J. Edgar Light Hover Tank (Standard),1
+Indra Infantry Transport (Standard),2
 Balac Strike VTOL (LRM),3
-Svantovit Infantry Fighting Vehicle,4
-Hunter Light Support Tank,5
-Donar Assault Helicopter,6
-Zorya Light Tank,5
+Svantovit Infantry Fighting Vehicle (Standard),4
+Hunter Light Support Tank (Standard),5
+Donar Assault Helicopter (Standard),6
+Zorya Light Tank (Standard),5
 Donar Assault Helicopter (Recon),4
-Odin Scout Tank,3
-Asshur Fast Reconnaissance Vehicle,2
-Pegasus Scout Hover Tank,1
+Odin Scout Tank (Standard),3
+Asshur Fast Reconnaissance Vehicle (Standard),2
+Pegasus Scout Hover Tank (Standard),1

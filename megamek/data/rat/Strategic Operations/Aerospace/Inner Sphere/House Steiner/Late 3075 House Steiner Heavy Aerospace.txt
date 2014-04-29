@@ -1,0 +1,12 @@
+House Steiner Heavy Aerospace Late 3075
+Eagle EGL-R6,1
+Riever F-100,2
+Chippewa CHP-W5,3
+Stuka STU-D6,4
+Chippewa CHP-W5,5
+Chippewa CHP-W7,6
+Eisensturm EST-O,5
+Stuka STU-K5,4
+Rapier RPR-102,3
+Eisensturm EST-O,2
+Thunderbird TRB-D36,1

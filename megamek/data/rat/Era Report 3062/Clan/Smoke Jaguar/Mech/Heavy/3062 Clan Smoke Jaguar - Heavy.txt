@@ -1,5 +1,5 @@
 3062 Clan Smoke Jaguar - Heavy
-Rifleman IIC,1
+Rifleman IIC (Standard),1
 Loki (Hellbringer) C,2
 Loki (Hellbringer) B,3
 Mad Cat (Timber Wolf) A,4

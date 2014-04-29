@@ -32,17 +32,17 @@
 #############################################################################
 Davion3039AssaultVehicles_B
 Partisan Heavy Tank (AC2),90
-Partisan Heavy Tank,1310
-Schrek AC Carrier,90
-Schrek PPC Carrier,490
-Ontos Heavy Tank,580
-Demolisher Heavy Tank,1450
+Partisan Heavy Tank (Standard),1310
+Schrek AC Carrier (Standard),90
+Schrek PPC Carrier (Standard),490
+Ontos Heavy Tank (Standard),580
+Demolisher Heavy Tank (Standard Mk. I),1450
 Partisan Heavy Tank (LRM),60
-Devastator Heavy Tank,440
-Behemoth Heavy Tank,2180
+Devastator Heavy Tank (Standard),440
+Behemoth Heavy Tank (Standard),2180
 Sturmfeur Heavy Tank (SRM),90
-Sturmfeur Heavy Tank,350
+Sturmfeur Heavy Tank (Standard),350
 Rhino Fire Support Tank (Flamer),440
 Rhino Fire Support Tank (MG),440
-Rhino Fire Support Tank,1140
+Rhino Fire Support Tank (Standard),1140
 Rhino Fire Support Tank (SL),650

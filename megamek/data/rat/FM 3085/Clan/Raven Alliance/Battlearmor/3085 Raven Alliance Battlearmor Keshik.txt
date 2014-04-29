@@ -3,7 +3,7 @@ Elemental Battle Armor (Space) [MicroPL],1
 Elemental Battle Armor (Space) [MG],2
 Elemental Battle Armor [Laser],3
 Elemental Battle Armor [Flamer],4
-Sylph Battle Armor,5
+Sylph Battle Armor (Standard),5
 Elemental Battle Armor [MG],6
 Sylph Battle Armor (Enhanced),5
 Salamander Battle Armor (Anti-Infantry),4

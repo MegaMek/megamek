@@ -3,10 +3,10 @@ Archer ARC-2Rb,1
 Grizzly 2,2
 Ryoken II 2,3
 Black Hawk-KU BHKU-O,4
-Arcas,5
-Ryoken II,6
+Arcas (Standard),5
+Ryoken II (Standard),6
 Rifleman IIC 8,5
-Kuma,4
+Kuma (Standard),4
 Karhu Prime,3
-Arcas 2,2
+Arcas 2, 2
 Thor (Summoner) Prime,1

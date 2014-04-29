@@ -4,7 +4,7 @@ Xerxes 1,2
 Lucifer LCF-R16,3
 Scytha Prime,4
 Eisensturm EST-R3,5
-Hydaspes,6
+Hydaspes (Standard),6
 Sabutai Prime,5
 Kirghiz Prime,4
 Scytha Prime,3

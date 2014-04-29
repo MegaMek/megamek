@@ -1,12 +1,12 @@
 3062 Clan Jade Falcon - Assault Vehicle
-Huitzilopochtli Assault Tank 'Huey',1
+Huitzilopochtli Assault Tank 'Huey' (Standard),1
 Mars Assault Vehicle (XL),2
-Huitzilopochtli Assault Tank 'Huey',3
-Mars Assault Vehicle,4
-Mars Assault Vehicle,5
-Mars Assault Vehicle,6
-Mars Assault Vehicle,5
-Huitzilopochtli Assault Tank 'Huey',7
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (ATM),4
+Mars Assault Vehicle (Standard),5
+Mars Assault Vehicle (Standard),6
+Mars Assault Vehicle (Standard),5
+Huitzilopochtli Assault Tank 'Huey' (Standard),7
 Mars Assault Vehicle (XL),6
-Huitzilopochtli Assault Tank 'Huey',5
+Huitzilopochtli Assault Tank 'Huey' (Standard),5
 Mars Assault Vehicle (XL),4

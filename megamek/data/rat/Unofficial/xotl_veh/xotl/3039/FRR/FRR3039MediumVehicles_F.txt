@@ -32,14 +32,14 @@
 #############################################################################
 FRR3039MediumVehicles_F
 Vedette Medium Tank (AC2),590
-Vedette Medium Tank,5270
+Vedette Medium Tank (Standard),5270
 Hetzer Wheeled Assault Gun (Laser),70
-Goblin Medium Tank,300
-Hetzer Wheeled Assault Gun,960
+Goblin Medium Tank (Standard),300
+Hetzer Wheeled Assault Gun (Standard),960
 Hetzer Wheeled Assault Gun (SRM),70
 Goblin Medium Tank (SRM),50
 Hetzer Wheeled Assault Gun (LRM),70
 Maxim Heavy Hover Transport (SRM4),120
 Prowler Multi-Terrain Vehicle (Succession Wars),470
 Maxim Heavy Hover Transport (SRM2),120
-Maxim Heavy Hover Transport,410
+Maxim Heavy Hover Transport (Standard),410

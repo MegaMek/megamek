@@ -9,4 +9,4 @@ Fenris (Ice Ferret) Prime,5
 Black Hawk (Nova) A,4
 Dragonfly (Viper) B,3
 Phantom D,2
-Hunchback IIC,1
+Hunchback IIC (Standard),1

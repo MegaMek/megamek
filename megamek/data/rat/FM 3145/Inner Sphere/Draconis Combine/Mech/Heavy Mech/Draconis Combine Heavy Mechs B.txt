@@ -7,6 +7,6 @@ Daikyu DAI-03,5
 Grand Dragon DRG-7K,6
 Dragon II DRG-11K,5
 Avatar AV1-O,4
-Sphinx,3
+Sphinx (Standard),3
 Rifleman IIC 7,2
 Vulture Mk IV (Mad Dog Mk IV) Prime,1

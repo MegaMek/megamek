@@ -7,6 +7,6 @@ Cygnus 2,5
 Man O' War (Gargoyle) Prime,6
 Gladiator (Executioner) Prime,5
 Man O' War (Gargoyle) Prime,4
-Hellstar,3
+Hellstar (Standard),3
 Turkina Prime,2
 Savage Coyote Prime,1

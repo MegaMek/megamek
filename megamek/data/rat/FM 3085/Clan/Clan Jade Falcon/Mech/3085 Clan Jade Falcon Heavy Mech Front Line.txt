@@ -1,7 +1,7 @@
 3085 Clan Jade Falcon Heavy Mech Front Line
 Thor (Summoner) Prime,1
 Rifleman C 2,2
-Shadow Cat II,3
+Shadow Cat II (Standard),3
 Mad Cat (Timber Wolf) Prime,4
 Loki (Hellbringer) Prime,5
 Thor (Summoner) Prime,6
@@ -9,4 +9,4 @@ Flamberge Prime,5
 Thor (Summoner) Prime,4
 Night Gyr Prime,3
 Vulture (Mad Dog) Prime,2
-Shadow Cat II,1
+Shadow Cat II (Standard),1

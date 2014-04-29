@@ -1,9 +1,9 @@
 Wolf Empire Keshik Medium Mechs
 Griffin IIC 8,1
 Lobo 2,2
-Sun Cobra,3
-Lobo,4
-Sun Cobra,5
+Sun Cobra (Standard),3
+Lobo (Standard),4
+Sun Cobra (Standard),5
 Phantom Prime,6
 Fenris (Ice Ferret) Prime,5
 Black Hawk (Nova) Prime,4

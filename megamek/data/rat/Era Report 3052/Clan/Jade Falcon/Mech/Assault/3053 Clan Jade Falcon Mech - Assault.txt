@@ -1,11 +1,11 @@
 3053 Clan Jade Falcon Mech - Assault
 Turkina Prime,1
-Marauder IIC,2
-Warhammer IIC,3
+Marauder IIC (Standard),2
+Warhammer IIC (Standard),3
 Man O' War (Gargoyle) A,4
 Gladiator (Executioner) Prime,10
 Man O' War (Gargoyle) Prime,6
 Gladiator (Executioner) A,4
 Daishi (Dire Wolf) B,3
 Masakari (Warhawk) C,2
-Kraken (Bane),1
+Kraken (Bane) (Standard),1

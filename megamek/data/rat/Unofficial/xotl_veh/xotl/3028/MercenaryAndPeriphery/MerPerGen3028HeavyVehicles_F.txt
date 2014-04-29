@@ -31,15 +31,15 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3028HeavyVehicles_F
-AC/2 Carrier,320
+AC/2 Carrier (Standard),320
 Bulldog Medium Tank (AC2),520
-Laser Carrier,440
-Bulldog Medium Tank,2120
-Pike Support Vehicle,350
+Laser Carrier (Standard),440
+Bulldog Medium Tank (Standard),2120
+Pike Support Vehicle (Standard),350
 Pike Support Vehicle (AC5),50
 Bulldog Medium Tank (LRM),520
-SRM Carrier,2070
-LRM Carrier,2070
-Rommel Tank,10
-Patton Tank,10
-Manticore Heavy Tank,1210
+SRM Carrier (Standard),2070
+LRM Carrier (Standard),2070
+Rommel Tank (Standard),10
+Patton Tank (Standard),10
+Manticore Heavy Tank (Standard),1210

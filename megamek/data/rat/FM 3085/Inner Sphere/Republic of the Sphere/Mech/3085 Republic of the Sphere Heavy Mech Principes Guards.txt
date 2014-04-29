@@ -7,6 +7,6 @@ Thunderbolt TDR-10SE,5
 Galahad (Glass Spider) 2,6
 Caesar CES-4R,5
 Hammerhands HMH-6D,4
-Ryoken II,3
+Ryoken II (Standard),3
 Marauder MAD-9W2,2
 Koschei KSC-5I,1

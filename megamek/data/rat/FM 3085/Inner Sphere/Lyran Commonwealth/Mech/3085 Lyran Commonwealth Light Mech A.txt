@@ -7,6 +7,6 @@ Scarabus SCB-9T,5
 Talon TLN-5W,6
 Night Hawk NTK-2S,5
 Spector SPR-5F,4
-Pack Hunter II,3
+Pack Hunter II (Standard),3
 Wolfhound WLF-5,2
 Stiletto STO-6X,1

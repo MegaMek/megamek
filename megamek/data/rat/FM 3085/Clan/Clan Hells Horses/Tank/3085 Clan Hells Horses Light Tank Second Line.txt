@@ -1,11 +1,11 @@
 3085 Clan Hell's Horses Light Tank Second Line
 Zephyros Infantry Support Vehicle (Dual Turret),1
-Odin Scout Tank,2
-Balac Strike VTOL,3
-Svantovit Infantry Fighting Vehicle,4
-Donar Assault Helicopter,5
-Zephyros Infantry Support Vehicle,6
-Hephaestus Jump Tank,5
+Odin Scout Tank (Standard),2
+Balac Strike VTOL (Standard),3
+Svantovit Infantry Fighting Vehicle (Standard),4
+Donar Assault Helicopter (Standard),5
+Zephyros Infantry Support Vehicle (Standard),6
+Hephaestus Jump Tank (Standard),5
 Anhur Transport (BA),4
 Hephaestus Jump Tank (AP),3
 Hephaestus Scout Tank Prime,2

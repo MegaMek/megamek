@@ -1,0 +1,12 @@
+Cloud Cobra FL Heavy Mechs (FMU)
+Night Gyr C,1
+Vulture (Mad Dog) Prime,2
+Mad Cat (Timber Wolf) E,3
+Night Gyr E,4
+Cauldron-Born (Ebon Jaguar) B,5
+Vulture (Mad Dog) H,6
+Thor (Summoner) C,5
+Vulture (Mad Dog) D,4
+Mad Cat (Timber Wolf) D,3
+Cauldron-Born (Ebon Jaguar) H,2
+Linebacker A,1

@@ -1,12 +1,12 @@
 2865 Golden Century Heavy Mech
 Thresher 2,1
 Guillotine GLT-3N,2
-Orion IIC,3
-Galahad (Glass Spider),4
-Matador,5
+Orion IIC (Standard),3
+Galahad (Glass Spider) (Standard),4
+Matador (Standard),5
 Lupus Prime,6
-Fire Scorpion,5
-Thresher,4
+Fire Scorpion (Standard),5
+Thresher (Standard),4
 Woodsman Prime,3
 Lupus Prime,2
 Lancelot LNC25-01,1

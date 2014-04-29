@@ -32,15 +32,15 @@
 #############################################################################
 Canopus3028AssaultVehicles_F
 Partisan Heavy Tank (AC2),180
-Partisan Heavy Tank,1810
-Schrek AC Carrier,180
-Schrek PPC Carrier,1020
-Ontos Heavy Tank,350
-Demolisher Heavy Tank,3000
+Partisan Heavy Tank (Standard),1810
+Schrek AC Carrier (Standard),180
+Schrek PPC Carrier (Standard),1020
+Ontos Heavy Tank (3053 Upgrade),350
+Demolisher Heavy Tank (Standard Mk. I),3000
 Partisan Heavy Tank (LRM),180
-Devastator Heavy Tank,620
+Devastator Heavy Tank (Standard),620
 Ontos Heavy Tank (LRM),60
-Behemoth Heavy Tank,2100
+Behemoth Heavy Tank (Standard),2100
 Rhino Fire Support Tank (Flamer),170
 Rhino Fire Support Tank (MG),70
-Rhino Fire Support Tank,40
+Rhino Fire Support Tank (Standard),40

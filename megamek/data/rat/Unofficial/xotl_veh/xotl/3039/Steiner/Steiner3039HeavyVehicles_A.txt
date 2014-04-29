@@ -32,14 +32,14 @@
 #############################################################################
 Steiner3039HeavyVehicles_A
 Bulldog Medium Tank (AC2),36
-Laser Carrier,30
-Bulldog Medium Tank,149
-Pike Support Vehicle,25
+Laser Carrier (Standard),30
+Bulldog Medium Tank (Standard),149
+Pike Support Vehicle (Standard),25
 Pike Support Vehicle (AC5),4
 Bulldog Medium Tank (LRM),37
-SRM Carrier,112
-LRM Carrier,112
-Rommel Tank,112
-Patton Tank,112
-Manticore Heavy Tank,149
+SRM Carrier (Standard),112
+LRM Carrier (Standard),112
+Rommel Tank (Standard),112
+Patton Tank (Standard),112
+Manticore Heavy Tank (Standard),149
 Von Luckner Heavy Tank VNL-K65N,122

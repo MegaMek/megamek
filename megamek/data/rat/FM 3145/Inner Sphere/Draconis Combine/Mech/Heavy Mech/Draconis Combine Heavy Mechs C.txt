@@ -9,4 +9,4 @@ Daikyu DAI-03,5
 Grand Dragon DRG-7K,4
 Dragon II DRG-11K,3
 Avatar AV1-O,2
-Sphinx,1
+Sphinx (Standard),1

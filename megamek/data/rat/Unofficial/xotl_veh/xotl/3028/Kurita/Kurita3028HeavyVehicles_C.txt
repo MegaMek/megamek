@@ -32,16 +32,16 @@
 #############################################################################
 Kurita3028HeavyVehicles_C
 Von Luckner Heavy Tank VNL-K70,40
-AC/2 Carrier,320
+AC/2 Carrier (Standard),320
 Bulldog Medium Tank (AC2),530
-Laser Carrier,420
-Bulldog Medium Tank,2110
-Pike Support Vehicle,360
+Laser Carrier (Standard),420
+Bulldog Medium Tank (Standard),2110
+Pike Support Vehicle (Standard),360
 Pike Support Vehicle (AC5),60
 Bulldog Medium Tank (LRM),530
-SRM Carrier,1610
-LRM Carrier,1610
-Rommel Tank,10
-Patton Tank,10
-Manticore Heavy Tank,2120
+SRM Carrier (Standard),1610
+LRM Carrier (Standard),1610
+Rommel Tank (Standard),10
+Patton Tank (Standard),10
+Manticore Heavy Tank (Standard),2120
 Von Luckner Heavy Tank VNL-K65N,280

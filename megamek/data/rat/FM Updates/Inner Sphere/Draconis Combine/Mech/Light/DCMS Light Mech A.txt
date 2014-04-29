@@ -1,5 +1,5 @@
 DCMS Light Mechs A 3067 FM-U
-Locust IIC,1
+Locust IIC (Standard),1
 Venom SDR-9K,2
 Hitman HM-1,3
 Jenner JR7-K,4

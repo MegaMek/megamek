@@ -32,15 +32,15 @@
 #############################################################################
 Marik3028MediumVehicles_F
 Vedette Medium Tank (Liao),80
-Goblin Medium Tank,10
+Goblin Medium Tank (LRM),10
 Vedette Medium Tank (AC2),760
-Vedette Medium Tank,6910
+Vedette Medium Tank (Standard),6910
 Hetzer Wheeled Assault Gun (Laser),100
-Hetzer Wheeled Assault Gun,880
+Hetzer Wheeled Assault Gun (Standard),880
 Hetzer Wheeled Assault Gun (SRM),100
-Condor Heavy Hover Tank,130
+Condor Heavy Hover Tank (Standard),130
 Hetzer Wheeled Assault Gun (LRM),100
 Maxim Heavy Hover Transport (SRM4),130
 Prowler Multi-Terrain Vehicle (Succession Wars),490
 Maxim Heavy Hover Transport (SRM2),20
-Maxim Heavy Hover Transport,70
+Maxim Heavy Hover Transport (Standard),70

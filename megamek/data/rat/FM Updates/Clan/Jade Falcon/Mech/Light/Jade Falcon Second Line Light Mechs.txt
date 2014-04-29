@@ -1,0 +1,12 @@
+Clan Jade Falcon Second-Line Light Mechs (FMU)
+Koshi (Mist Lynx) Prime,1
+Thorn THE-N,2
+Baboon (Howler) (Standard),3
+Uller (Kit Fox) Prime,4
+Locust IIC (Standard),5
+Locust IIC (Standard),6
+Jenner IIC (Standard),5
+Spirit (Standard),4
+Mongoose MON-66,3
+Vixen (Incubus) (Standard),2
+Peregrine (Horned Owl) (Standard),1

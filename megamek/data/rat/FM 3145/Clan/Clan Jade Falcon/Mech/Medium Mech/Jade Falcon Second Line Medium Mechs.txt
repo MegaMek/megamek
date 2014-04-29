@@ -5,8 +5,8 @@ Violator VT-U1,3
 Griffin IIC 8,4
 Gyrfalcon (Standard),5
 Eisenfaust EFT-4J,6
-Ursus II,5
-Lobo,4
+Ursus II (Standard),5
+Lobo (Standard),4
 Firestarter FS9-O,3
-Hunchback IIC,2
+Hunchback IIC (Standard),2
 Shadow Cat Prime,1

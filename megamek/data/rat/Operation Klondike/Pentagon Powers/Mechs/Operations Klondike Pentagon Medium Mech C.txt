@@ -7,6 +7,6 @@ Vulcan VL-5T,5
 Hunchback HBK-4G,6
 Shadow Hawk SHD-2H,5
 Whitworth WTH-1,4
-Phoenix Hawk PXH-1b,3
+Phoenix Hawk PXH-1b "Special",3
 Crab CRB-27,2
 Griffin GRF-2N,1

@@ -1,0 +1,12 @@
+Pirate Heavy Mechs Late 3075
+Thunderbolt TDR-9M,1
+Orion ON1-M,2
+Ostroc OSR-2C,3
+Catapult CPLT-H2,4
+Warhammer WHM-8D,5
+Marauder MAD-3R,6
+Archer ARC-2R,5
+Grasshopper GHR-5J,4
+Ostsol OTL-6D,3
+JagerMech JM6-H,2
+Archer ARC-8M,1

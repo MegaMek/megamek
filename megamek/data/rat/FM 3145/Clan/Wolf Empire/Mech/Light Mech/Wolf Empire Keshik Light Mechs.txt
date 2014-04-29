@@ -1,5 +1,5 @@
 Wolf Empire Keshik Light Mechs
-Parash,1
+Parash (Standard),1
 Locust IIC 5,2
 Wulfen (Prime),3
 Wulfen (Prime),4

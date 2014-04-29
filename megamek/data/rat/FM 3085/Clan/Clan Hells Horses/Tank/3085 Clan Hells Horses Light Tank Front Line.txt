@@ -1,12 +1,12 @@
 3085 Clan Hell's Horses Light Tank Front Line
-Donar Assault Helicopter,1
-Zephyros Infantry Support Vehicle,2
-Hephaestus Jump Tank,3
+Donar Assault Helicopter (Standard),1
+Zephyros Infantry Support Vehicle (Standard),2
+Hephaestus Jump Tank (Standard),3
 Anhur Transport (BA),4
 Hephaestus Jump Tank (AP),5
 Hephaestus Scout Tank Prime,6
 Svantovit Infantry Fighting Vehicle (ATM) "Masada",5
 Donar Assault Helicopter (Close Support),4
-Donar Assault Helicopter,3
+Donar Assault Helicopter (Standard),3
 Anhur Transport (BA),2
-Zephyros Infantry Support Vehicle,1
+Zephyros Infantry Support Vehicle (Dual Turret),1

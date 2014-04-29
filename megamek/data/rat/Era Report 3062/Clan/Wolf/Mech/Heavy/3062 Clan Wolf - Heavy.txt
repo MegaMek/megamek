@@ -1,5 +1,5 @@
 3062 Clan Wolf - Heavy
-Matador,1
+Matador (Standard),1
 Mad Cat (Timber Wolf) C,2
 Vulture (Mad Dog) B,3
 Mad Cat (Timber Wolf) A,4
@@ -8,4 +8,4 @@ Mad Cat (Timber Wolf) Prime,11
 Thor (Summoner) A,4
 Mad Cat (Timber Wolf) B,3
 Linebacker Prime,2
-Orion IIC,1
+Orion IIC (Standard),1

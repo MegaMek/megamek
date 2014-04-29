@@ -1,0 +1,12 @@
+clan Fire Mandrill Dropships (FMU),
+Outpost (3063),1
+Titan (Clan),2
+Union C,3
+Overlord C,4
+Union C,5
+Union C,6
+Broadsword (Standard),5
+Overlord C,4
+Titan (Clan),3
+Overlord C,2
+Mercer (3065),1

@@ -5,8 +5,8 @@ Triumph (2593),3
 Overlord (2762),4
 Mule (Standard),5
 Union (2708),6
-Buccaneer,5
-Dictator,4
-Vulture,3
-Monarch,2
-Colossus,1
+Buccaneer (Standard),5
+Dictator (Standard),4
+Vulture (Standard),3
+Monarch (Standard),2
+Colossus Mk I,1

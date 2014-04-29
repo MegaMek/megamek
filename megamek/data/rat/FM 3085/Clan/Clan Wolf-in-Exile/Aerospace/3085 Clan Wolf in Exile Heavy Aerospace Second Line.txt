@@ -4,7 +4,7 @@ Ahab AHB-443b,2
 Chippewa CHP-W8,3
 Thunderbird TRB-D36,4
 Hammerhead HMR-HDb,5
-Hydaspes,6
+Hydaspes (Standard),6
 Xerxes 1,5
 Chippewa CHP-W8,4
 Eisensturm EST-R3,3

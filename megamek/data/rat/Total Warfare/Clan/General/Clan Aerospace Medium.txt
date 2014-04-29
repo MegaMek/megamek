@@ -2,13 +2,13 @@ Clan Aerospace Medium
 Jagatai Prime,1
 Turk Prime,2
 Visigoth Prime,3
-Ammon,4
+Ammon (Standard),4
 Turk Prime,5
 Visigoth Prime,6
 Visigoth Prime,5
 Turk Prime,4
-Tyre,3
-Issus,2
+Tyre (Standard),3
+Issus (Standard),2
 Jagatai Prime,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

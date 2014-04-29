@@ -32,16 +32,16 @@
 #############################################################################
 Liao3028HeavyVehicles_B
 Brutus Assault Tank (PPC 2),7
-Brutus Assault Tank,28
+Brutus Assault Tank (Standard),28
 Brutus Assault Tank (PPC),15
 Brutus Assault Tank (LRM),65
-AC/2 Carrier,28
+AC/2 Carrier (Standard),28
 Bulldog Medium Tank (AC2),46
-Laser Carrier,37
-Bulldog Medium Tank,185
-Pike Support Vehicle,31
+Laser Carrier (Standard),37
+Bulldog Medium Tank (Standard),185
+Pike Support Vehicle (Standard),31
 Pike Support Vehicle (AC5),6
 Bulldog Medium Tank (LRM),46
-SRM Carrier,184
-LRM Carrier,184
-Manticore Heavy Tank,138
+SRM Carrier (Standard),184
+LRM Carrier (Standard),184
+Manticore Heavy Tank (Standard),138

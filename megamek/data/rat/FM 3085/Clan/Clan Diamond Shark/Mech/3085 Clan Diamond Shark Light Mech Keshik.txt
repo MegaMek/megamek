@@ -1,7 +1,7 @@
 3085 Clan Diamond Shark Light Mech Keshik
 Ocelot 3,1
 Pack Hunter 2,2
-Solitaire,3
+Solitaire (Standard),3
 Hankyu (Arctic Cheetah) Prime,4
 Hankyu (Arctic Cheetah) Prime,5
 Hellion Prime,6

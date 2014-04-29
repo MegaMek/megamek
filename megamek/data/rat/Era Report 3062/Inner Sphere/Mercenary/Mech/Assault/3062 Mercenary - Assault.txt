@@ -1,4 +1,4 @@
-3062 Mercenary - Assault
+3062 Mercenary - Assault Mechs
 Atlas AS7-K,1
 Banshee BNC-5S,2
 Victor VTR-9K,3

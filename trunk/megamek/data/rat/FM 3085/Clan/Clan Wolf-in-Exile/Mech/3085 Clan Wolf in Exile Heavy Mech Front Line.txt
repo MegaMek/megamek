@@ -1,6 +1,6 @@
 3085 Clan Wolf in Exile Heavy Mech Front Line
 Mangonel MNL-3W,1
-Tundra Wolf,2
+Tundra Wolf (Standard),2
 Tundra Wolf 2,3
 Linebacker Prime,4
 Vulture (Mad Dog) Prime,5

@@ -1,12 +1,12 @@
 3085 Clan Jade Falcon Light Tank Front Line
 Balac Strike VTOL (Spotter),1
-Centipede Scout Car,2
-Donar Assault Helicopter,3
-Asshur Fast Reconnaissance Vehicle (PAC),4
-Indra Infantry Transport,5
+Centipede Scout Car (Standard),2
+Donar Assault Helicopter (Standard),3
+Asshur Fast Reconnaissance Vehicle (Proto AC),4
+Indra Infantry Transport (Standard),5
 Indra Infantry Transport (BA),6
-Asshur Fast Reconnaissance Vehicle,5
+Asshur Fast Reconnaissance Vehicle (Standard),5
 Zorya Light Tank (Ammo),4
 Donar Assault Helicopter (Recon),3
-J. Edgar Light Hover Tank,2
+J. Edgar Light Hover Tank (Standard),2
 Indra Infantry Transport (BA),1

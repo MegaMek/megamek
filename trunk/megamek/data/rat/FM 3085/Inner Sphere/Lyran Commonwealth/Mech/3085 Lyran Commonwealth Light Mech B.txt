@@ -9,4 +9,4 @@ Scarabus SCB-9T,5
 Talon TLN-5W,4
 Night Hawk NTK-2S,3
 Spector SPR-5F,2
-Pack Hunter II,1
+Pack Hunter II (Standard),1

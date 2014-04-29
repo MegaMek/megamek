@@ -1,0 +1,12 @@
+Late 3062 AFFS Assault Mechs, Tech Level C
+Banshee BNC-3S,1
+Gunslinger GUN-1ERD,2
+Awesome AWS-9M,3
+Zeus ZEU-9S,4
+Awesome AWS-8Q,5
+Atlas AS7-S,6
+Victor VTR-9K,5
+Banshee BNC-5S,4
+Longbow LGB-7Q,3
+Devastator DVS-2,2
+Nightstar NSR-9J,1

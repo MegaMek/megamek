@@ -1,10 +1,10 @@
 3085 Clan Jade Falcon Medium Aerospace Front Line
-Tyre,1
+Tyre (Standard),1
 Gotha GTHA-500b,2
 Hellcat II HCT-213C,3
 Hellcat II HCT-213C,4
 Persepolis (Standard),5
-Ammon,6
+Ammon (Standard),6
 Persepolis (Standard),5
 Tyre 2,4
 Jagatai Prime,3

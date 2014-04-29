@@ -1,12 +1,12 @@
 3085 Ghost Bear Dominion Medium Mech Keshik
 Shadow Hawk SHD-12C,1
-Clint IIC,2
-Ursus II,3
-Ursus,4
+Clint IIC (Standard),2
+Ursus II (Standard),3
+Ursus (Standard),4
 Dragonfly (Viper) Prime,5
 Dragonfly (Viper) Prime,6
 Ryoken (Stormcrow) Prime,5
 Ryoken (Stormcrow) Prime,4
-Black Hawk,3
+Black Hawk (Standard),3
 Dasher II 2,2
 Dragonfly (Viper) Prime,1

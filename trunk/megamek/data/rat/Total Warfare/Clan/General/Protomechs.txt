@@ -1,14 +1,14 @@
 Protomechs
-Harpy, 1
-Siren, 2
-Satyr, 3
-Centaur, 4
-Hydra, 5
-Roc, 6
-Roc, 5
-Gorgon, 4
-Gorgon, 3
-Minotaur, 2
-Minotaur, 1
+Harpy (Standard), 1
+Siren (Standard), 2
+Satyr (Standard), 3
+Centaur (Standard), 4
+Hydra (Standard), 5
+Roc,6
+Roc 2,5
+Gorgon (Standard), 4
+Gorgon 2, 3
+Minotaur (Standard), 2
+Minotaur 2, 1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

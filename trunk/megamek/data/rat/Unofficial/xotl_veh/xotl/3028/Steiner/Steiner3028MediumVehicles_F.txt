@@ -31,15 +31,15 @@
 #   less than 1.                                                            #
 #############################################################################
 Steiner3028MediumVehicles_F
-Condor Heavy Hover Tank,1520
-Goblin Medium Tank,20
+Condor Heavy Hover Tank (Standard),1520
+Goblin Medium Tank (Standard),20
 Vedette Medium Tank (AC2),610
-Vedette Medium Tank,5450
+Vedette Medium Tank (Standard),5450
 Hetzer Wheeled Assault Gun (Laser),80
-Hetzer Wheeled Assault Gun,630
+Hetzer Wheeled Assault Gun (Standard),630
 Hetzer Wheeled Assault Gun (SRM),80
 Hetzer Wheeled Assault Gun (LRM),80
 Maxim Heavy Hover Transport (SRM4),120
 Prowler Multi-Terrain Vehicle (Succession Wars),470
 Maxim Heavy Hover Transport (SRM2),110
-Maxim Heavy Hover Transport,610
+Maxim Heavy Hover Transport (Standard),610

@@ -1,0 +1,12 @@
+Wolf (in-Exile) 2nd-Line Heavy Mechs (FMU)
+Exterminator EXT-4D,1
+Flashman FLS-8K,2
+Viper (Black Python) (Standard),3
+Orion IIC (Standard),4
+Verfolger VR5-R,5
+Verfolger VR5-R,6
+Galahad (Glass Spider) (Standard),5
+Black Knight BL-6-KNT,4
+Guillotine IIC (Standard),3
+Galahad (Glass Spider) 2,2
+Linebacker Prime,1

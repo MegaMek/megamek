@@ -1,5 +1,5 @@
 3062 Clan Ghost Bear - Assault
-Kodiak,1
+Kodiak (Standard),1
 Kingfisher C,2
 Gladiator (Executioner) B,6
 Masakari (Warhawk) A,4

@@ -1,0 +1,12 @@
+Clan Blood Spirit Heavy Vehicles (FMU)
+Ishtar Heavy Fire Support Tank (Standard),1
+Demon Tank (Standard),2
+Magi Infantry Support Vehicle (Standard),3
+Pike Support Vehicle (Clan),4
+Ishtar Heavy Fire Support Tank (Standard),5
+Oro Heavy Tank (Standard),6
+Pike Support Vehicle (Clan),5
+Ishtar Heavy Fire Support Tank (Standard),4
+Magi Infantry Support Vehicle (Standard),3
+Pike Support Vehicle (Clan),2
+Demon Tank (Standard),1

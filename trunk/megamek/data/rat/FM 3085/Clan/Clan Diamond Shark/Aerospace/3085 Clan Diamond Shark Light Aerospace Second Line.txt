@@ -4,9 +4,9 @@ Swift C,2
 Zero ZRO-116b,3
 Poignard PGD-Y3,4
 Sai S-4C,5
-Chaeronea,6
+Chaeronea (Standard),6
 Sai S-4C,5
-Chaeronea,4
+Chaeronea (Standard),4
 Corax CRX-O,3
 Dagger DARO-1,2
 Vandal Prime,1

@@ -9,6 +9,6 @@ Grendel (Mongrel) Prime,5
 Ryoken (Stormcrow) D,4
 Shadow Cat B,3
 Phantom H,2
-Clint IIC,1
+Clint IIC (Standard),1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

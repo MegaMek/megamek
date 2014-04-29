@@ -1,12 +1,12 @@
 Wolf Empire Second Line Heavy Mechs
-Galahad (Glass Spider),1
-Guillotine IIC,2
+Galahad (Glass Spider) (Standard),1
+Guillotine IIC (Standard),2
 Galahad (Glass Spider) 2,3
 Rifleman IIC 8,4
-Orion IIC,5
-Arcas,6
+Orion IIC (Standard),5
+Arcas (Standard),6
 Tundra Wolf 2,5
 Karhu Prime,4
 Warwolf (Prime),3
-Blood Reaper,2
-Tundra Wolf,1
+Blood Reaper (Standard),2
+Tundra Wolf (Standard),1

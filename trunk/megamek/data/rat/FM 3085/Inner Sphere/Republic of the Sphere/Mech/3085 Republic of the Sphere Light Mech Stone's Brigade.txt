@@ -4,9 +4,9 @@ Blade BLD-XL,2
 Stiletto STO-4B,3
 Talon TLN-6W,4
 Spector SPR-5F,5
-Morrigan,6
+Morrigan (Standard),6
 Hankyu (Arctic Cheetah) Prime,5
 Wolfhound WLF-5,4
 Puma (Adder) Prime,3
-Pack Hunter II,2
+Pack Hunter II (Standard),2
 Wolfhound WLF-2H,1

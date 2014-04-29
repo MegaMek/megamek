@@ -1,7 +1,7 @@
 3085 Clan Diamond Shark Medium Mech Front Line
-Sun Cobra,1
+Sun Cobra (Standard),1
 Men Shen MS1-O,2
-Black Hawk,3
+Black Hawk (Standard),3
 Shadow Hawk IIC 8,4
 Griffin IIC 4,5
 Grendel (Mongrel) Prime,6

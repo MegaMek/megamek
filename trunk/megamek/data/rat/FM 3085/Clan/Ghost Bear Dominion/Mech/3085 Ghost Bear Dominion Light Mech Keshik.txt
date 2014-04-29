@@ -1,5 +1,5 @@
 3085 Ghost Bear Dominion Light Mech Keshik
-Solitaire,1
+Solitaire (Standard),1
 Locust IIC 5,2
 Locust IIC 8,3
 Dasher (Fire Moth) Prime,4
@@ -9,4 +9,4 @@ Puma (Adder) Prime,5
 Dasher (Fire Moth) Prime,4
 Puma (Adder) Prime,3
 Hankyu (Arctic Cheetah) Prime,2
-Ocelot,1
+Ocelot (Standard),1

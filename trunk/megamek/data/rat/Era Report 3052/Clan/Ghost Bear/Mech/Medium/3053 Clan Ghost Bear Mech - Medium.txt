@@ -1,5 +1,5 @@
 3053 Clan Ghost Bear Mech - Medium
-Griffin IIC,1
+Griffin IIC (Standard),1
 Ryoken (Stormcrow) C,2
 Dragonfly (Viper) B,3
 Black Hawk (Nova) A,4
@@ -7,4 +7,4 @@ Dragonfly (Viper) Prime,16
 Black Hawk (Nova) A,4
 Ryoken (Stormcrow) B,3
 Fenris (Ice Ferret) C,2
-Hellhound (Conjurer),1
+Hellhound (Conjurer) (Standard),1

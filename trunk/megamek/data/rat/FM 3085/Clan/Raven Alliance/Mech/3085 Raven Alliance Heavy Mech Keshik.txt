@@ -1,5 +1,5 @@
 3085 Raven Alliance Heavy Mech Keshik
-Thresher,1
+Thresher (Standard),1
 Crossbow Prime,2
 Thor (Summoner) Prime,3
 Vulture (Mad Dog) Prime,4

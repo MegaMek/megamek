@@ -2,13 +2,13 @@
 Thunderbird TRB-D36, 1
 Thunderbird TRB-D36, 2
 Transgressor TR-13A, 3
-Transgressor TR-14 AC, 4
+Transgressor TR-14 "AC", 4
 Eagle EGL-R6, 5
 Transgressor TR-13, 6
 Transgressor TR-13, 5
 Eagle EGL-R6, 4
 Thunderbird TRB-D36, 3
-Transgressor TR-14 AC, 2
+Transgressor TR-14 "AC", 2
 Thunderbird TRB-D36, 1
 ##Version 1 - May 2011
 ##From RUS Files

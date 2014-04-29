@@ -1,0 +1,12 @@
+Pirates Medium Mechs 3067 FM-U
+Hatchetman HCT-3F,1
+Hermes II HER-5S,2
+Blackjack BJ-3,3
+Hunchback HBK-5H,4
+Griffin GRF-1N,5
+Phoenix Hawk PXH-1D,6
+Wolverine WVR-6M,5
+Whitworth WTH-1H,4
+Cronus CNS-3M,3
+Marshal MHL-2L,2
+Vindicator VND-3L,1

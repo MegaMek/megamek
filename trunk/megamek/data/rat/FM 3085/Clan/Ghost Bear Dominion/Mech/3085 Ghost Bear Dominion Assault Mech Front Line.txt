@@ -1,5 +1,5 @@
 3085 Ghost Bear Dominion Assault Mech Front Line
-Bruin,1
+Bruin (Standard),1
 Mad Cat Mk II Enhanced,2
 Marauder IIC 4,3
 Warhammer IIC 6,4
@@ -8,5 +8,5 @@ Gladiator (Executioner) Prime,6
 Kingfisher Prime,5
 Gladiator (Executioner) Prime,4
 Masakari (Warhawk) Prime,3
-Kodiak,2
+Kodiak (Standard),2
 Gladiator (Executioner) Prime,1

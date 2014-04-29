@@ -32,14 +32,14 @@
 #############################################################################
 Kurita3028AssaultVehicles_B
 Partisan Heavy Tank (AC2),11
-Partisan Heavy Tank,102
-Schrek AC Carrier,11
-Schrek PPC Carrier,60
-Demolisher Heavy Tank,175
+Partisan Heavy Tank (Standard),102
+Schrek AC Carrier (Standard),11
+Schrek PPC Carrier (Standard),60
+Demolisher Heavy Tank (Standard Mk. I),175
 Partisan Heavy Tank (LRM),11
-Devastator Heavy Tank,53
-Behemoth Heavy Tank,263
+Devastator Heavy Tank (Standard),53
+Behemoth Heavy Tank (Standard),263
 Rhino Fire Support Tank (Flamer),53
 Rhino Fire Support Tank (MG),53
-Rhino Fire Support Tank,140
+Rhino Fire Support Tank (Standard),140
 Rhino Fire Support Tank (SL),68

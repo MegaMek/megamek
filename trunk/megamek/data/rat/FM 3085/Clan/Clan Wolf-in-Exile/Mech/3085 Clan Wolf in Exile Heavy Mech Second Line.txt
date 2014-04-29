@@ -1,12 +1,12 @@
 3085 Clan Wolf in Exile Heavy Mech Second Line
-Guillotine IIC,1
+Guillotine IIC (Standard),1
 Falconer FLC-8R,2
 Gallowglas WD,3
 Guillotine IIC 2,4
 Mangonel MNL-3L,5
-Ha Otoko,6
+Ha Otoko (Standard),6
 Mangonel MNL-3L,5
 War Dog WR-DG-03FC,4
 Mangonel MNL-3W,3
-Tundra Wolf,2
+Tundra Wolf (Standard),2
 Tundra Wolf 2,1

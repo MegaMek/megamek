@@ -1,8 +1,8 @@
 Jade Falcon Frontline Medium Mechs
-Hunchback IIC,1
+Hunchback IIC (Standard),1
 Shadow Cat Prime,2
-Sun Cobra,3
-Black Hawk,4
+Sun Cobra (Standard),3
+Black Hawk (Standard),4
 Gyrfalcon 2,5
 Black Hawk (Nova) Prime,6
 Gyrfalcon (Standard),5

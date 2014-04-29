@@ -32,16 +32,16 @@
 #############################################################################
 Steiner3028AssaultVehicles_B
 Sturmfeur Heavy Tank (SRM),15
-Sturmfeur Heavy Tank,61
+Sturmfeur Heavy Tank (Standard),61
 Partisan Heavy Tank (AC2),11
-Partisan Heavy Tank,110
-Schrek AC Carrier,11
-Schrek PPC Carrier,65
-Demolisher Heavy Tank,191
+Partisan Heavy Tank (Standard),110
+Schrek AC Carrier (Standard),11
+Schrek PPC Carrier (Standard),65
+Demolisher Heavy Tank (Standard Mk. I),191
 Partisan Heavy Tank (LRM),11
-Devastator Heavy Tank,57
-Behemoth Heavy Tank,133
+Devastator Heavy Tank (Standard),57
+Behemoth Heavy Tank (Standard),133
 Rhino Fire Support Tank (Flamer),57
 Rhino Fire Support Tank (MG),57
-Rhino Fire Support Tank,152
+Rhino Fire Support Tank (Standard),152
 Rhino Fire Support Tank (SL),69

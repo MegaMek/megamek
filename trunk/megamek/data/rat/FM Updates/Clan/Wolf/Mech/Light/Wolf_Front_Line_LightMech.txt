@@ -1,12 +1,12 @@
 Crusader Clan Front-Line Light Mechs (Wolf)
-Dasher (Fire Moth) Prime,1
-Puma (Adder) C,2
-Puma (Adder) B,3
-Uller (Kit Fox) Prime,4
-Puma (Adder) A,5
+Dasher (Fire Moth) H,1
+Uller (Kit Fox) Prime,2
+Puma (Adder) C,3
+Puma (Adder) B,4
+Koshi (Mist Lynx) Prime,5
 Puma (Adder) Prime,6
-Puma (Adder) Prime,5
-Koshi (Mist Lynx) Prime,4
+Uller (Kit Fox) H,5
+Puma (Adder) A,4
 Koshi (Mist Lynx) A,3
-Uller (Kit Fox) B,2
-Puma (Adder) D,1
+Uller (Kit Fox) A,2
+Hankyu (Arctic Cheetah) D,1

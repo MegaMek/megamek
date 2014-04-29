@@ -33,28 +33,28 @@
 Liao3028LightVehicles_A
 Warrior Attack Helicopter H-7A,1
 Warrior Attack Helicopter H-7,32
-Scorpion Light Tank,158
-Skulker Wheeled Scout Tank,32
+Scorpion Light Tank (Standard),158
+Skulker Wheeled Scout Tank (Standard),32
 Scorpion Light Tank (ML),16
-Harasser Laser Platform,13
+Harasser Laser Platform (Standard),13
 Packrat LRPV PKR-T5,36
 Scorpion Light Tank (SRM),48
 Harasser Missile Platform (LRM),11
-Harasser Missile Platform,32
+Harasser Missile Platform (Standard),32
 Scorpion Light Tank (LRM),16
 J. Edgar Light Hover Tank (ICE),6
 J. Edgar Light Hover Tank (Flamer),3
 Warrior Attack Helicopter H-7C,8
 J. Edgar Light Hover Tank (MG),3
-Peregrine Attack VTOL,55
-Scimitar Medium Hover Tank,55
-J. Edgar Light Hover Tank,19
-Striker Light Tank,22
+Peregrine Attack VTOL (Standard),55
+Scimitar Medium Hover Tank (Standard),55
+J. Edgar Light Hover Tank (Standard),19
+Striker Light Tank (Standard),22
 Striker Light Tank (SRM),5
-Saladin Assault Hover Tank,55
+Saladin Assault Hover Tank (Standard),55
 Hunter Light Support Tank (LRM15),8
 Striker Light Tank (LRM),5
-Pegasus Scout Hover Tank,158
+Pegasus Scout Hover Tank (Standard),158
 Hunter Light Support Tank (LRM10),8
-Hunter Light Support Tank,40
-Saracen Medium Hover Tank,155
+Hunter Light Support Tank (Standard),40
+Saracen Medium Hover Tank (Standard),155

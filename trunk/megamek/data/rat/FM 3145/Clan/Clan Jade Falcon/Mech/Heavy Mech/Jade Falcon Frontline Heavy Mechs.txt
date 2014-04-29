@@ -1,5 +1,5 @@
 Jade Falcon Frontline Heavy Mechs
-Shadow Cat II,1
+Shadow Cat II (Standard),1
 Mad Cat Mk IV (Savage Wolf) PR 2,2
 Loki (Hellbringer) Prime,3
 Flamberge Prime,4
@@ -9,4 +9,4 @@ Flamberge Prime,5
 Thor Mk II (Grand Summoner Mk II) (Prime),4
 Vulture (Mad Dog) Prime,3
 Shadow Cat II 2,2
-Tundra Wolf,1
+Tundra Wolf (Standard),1

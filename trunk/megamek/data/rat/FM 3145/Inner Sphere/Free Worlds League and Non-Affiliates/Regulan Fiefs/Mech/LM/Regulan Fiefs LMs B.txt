@@ -9,4 +9,4 @@ Havoc HVC-P6,5
 Ebony MEB-9,4
 Wasp WSP-8T,3
 Hammer HMR-3C "Claw-Hammer",2
-Crimson Hawk,1
+Crimson Hawk (Standard),1

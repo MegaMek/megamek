@@ -4,7 +4,7 @@ Assassin ASN-23,2
 Enforcer ENF-4R,3
 Marshal MHL-2L,4
 Phoenix Hawk PXH-4W,5
-Black Hawk,6
+Black Hawk (Standard),6
 Centurion CN9-Ar,5
 Starslayer STY-3Dr,4
 Black Hawk 3,3

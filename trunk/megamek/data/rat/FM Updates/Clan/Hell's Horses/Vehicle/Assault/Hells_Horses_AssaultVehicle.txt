@@ -1,0 +1,12 @@
+Clan Hell's Horses Assault Vehicles (FMU)
+Rhino Fire Support Tank (Standard),1
+Demolisher Heavy Tank (Clan),2
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (XL),4
+Mars Assault Vehicle (Standard),5
+Mars Assault Vehicle (Standard),6
+Mars Assault Vehicle (Standard),5
+Fury Command Tank (Standard),4
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Puma Assault Tank PAT-001,2
+Mars Assault Vehicle (Standard),1

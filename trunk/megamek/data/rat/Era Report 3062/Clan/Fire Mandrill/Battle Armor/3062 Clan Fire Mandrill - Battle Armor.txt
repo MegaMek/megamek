@@ -1,9 +1,9 @@
 3062 Clan Fire Mandrill - Battle Armor
-Sylph Battle Armor,1
-Gnome Battle Armor,10
+Sylph Battle Armor (Standard),1
+Gnome Battle Armor (Standard),10
 Elemental Battle Armor [ER Laser],4
-Elemental Battle Armor [Pulse Laser],5
+Elemental Battle Armor [MicroPL],5
 Elemental Battle Armor [Laser],6
 Elemental Battle Armor [Flamer],5
 Elemental Battle Armor [HMG],4
-Undine Battle Armor,1
+Undine Battle Armor (Standard),1

@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Medium Mechs (Fire Mandrill),
+Hellhound (Conjurer) (Standard),1
+Hellhound (Conjurer) 2,2
+Wyvern WVE-5N,3
+Sentinel STN-3L,4
+Shadow Hawk IIC (Standard),5
+Griffin IIC (Standard),6
+Griffin IIC 2,5
+Shadow Hawk IIC (Standard),4
+Hunchback IIC (Standard),3
+Sentinel STN-3L,2
+Goshawk (Vapor Eagle) (Standard),31

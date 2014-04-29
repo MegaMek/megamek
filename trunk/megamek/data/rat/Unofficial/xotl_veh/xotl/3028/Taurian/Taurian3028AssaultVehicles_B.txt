@@ -32,14 +32,14 @@
 #############################################################################
 Taurian3028AssaultVehicles_B
 Partisan Heavy Tank (AC2),17
-Partisan Heavy Tank,162
-Schrek AC Carrier,17
-Schrek PPC Carrier,95
-Demolisher Heavy Tank,279
+Partisan Heavy Tank (Standard),162
+Schrek AC Carrier (Standard),17
+Schrek PPC Carrier (Standard),95
+Demolisher Heavy Tank (Standard Mk. I),279
 Partisan Heavy Tank (LRM),17
-Devastator Heavy Tank,56
-Behemoth Heavy Tank,195
+Devastator Heavy Tank (Standard),56
+Behemoth Heavy Tank (Standard),195
 Rhino Fire Support Tank (Flamer),11
 Rhino Fire Support Tank (MG),11
-Rhino Fire Support Tank,84
+Rhino Fire Support Tank (Standard),84
 Rhino Fire Support Tank (SL),56

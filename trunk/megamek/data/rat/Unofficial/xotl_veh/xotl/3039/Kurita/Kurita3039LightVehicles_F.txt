@@ -33,34 +33,34 @@
 Kurita3039LightVehicles_F
 Galleon Light Tank GAL-100,500
 Galleon Light Tank GAL-200,30
-Karnov UR Gunship,110
+Karnov UR Gunship (Standard),110
 Skulker Wheeled Scout Tank (MG),50
 Warrior Attack Helicopter H-7A,110
 Warrior Attack Helicopter H-7,210
-Scorpion Light Tank,1070
-Skulker Wheeled Scout Tank,430
+Scorpion Light Tank (Standard),1070
+Skulker Wheeled Scout Tank (Standard),430
 Skulker Wheeled Scout Tank (SRM),50
 Scorpion Light Tank (ML),110
-Harasser Laser Platform,90
+Harasser Laser Platform (Standard),90
 Packrat LRPV PKR-T5,380
 Scorpion Light Tank (SRM),320
 Harasser Missile Platform (LRM),80
-Harasser Missile Platform,210
-Plainsman Medium Hovertank,210
+Harasser Missile Platform (Standard),210
+Plainsman Medium Hovertank (Standard),210
 Scorpion Light Tank (LRM),110
 J. Edgar Light Hover Tank (ICE),110
 J. Edgar Light Hover Tank (Flamer),50
 Warrior Attack Helicopter H-7C,50
 J. Edgar Light Hover Tank (MG),50
-Peregrine Attack VTOL,210
-Scimitar Medium Hover Tank,1070
-J. Edgar Light Hover Tank,320
-Striker Light Tank,120
+Peregrine Attack VTOL (Standard),210
+Scimitar Medium Hover Tank (Standard),1070
+J. Edgar Light Hover Tank (Standard),320
+Striker Light Tank (Standard),120
 Striker Light Tank (SRM),20
-Saladin Assault Hover Tank,960
+Saladin Assault Hover Tank (Standard),960
 Saladin Assault Hover Tank (Armor),110
 Hunter Light Support Tank (LRM15),50
 Striker Light Tank (LRM),20
-Pegasus Scout Hover Tank,1070
+Pegasus Scout Hover Tank (Standard),1070
 Hunter Light Support Tank (LRM10),50
-Hunter Light Support Tank,70
+Hunter Light Support Tank (Standard),70

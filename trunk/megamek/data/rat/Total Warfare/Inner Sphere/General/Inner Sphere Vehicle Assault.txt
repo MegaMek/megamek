@@ -1,13 +1,13 @@
 Inner Sphere Vehicle Assault
-Demolisher II Heavy Tank,1
-Behemoth Heavy Tank,2
+Demolisher II Heavy Tank (Standard),1
+Behemoth Heavy Tank (Standard),2
 Ontos Heavy Tank (3053 Upgrade),3
-Ontos Heavy Tank,4
-Schrek PPC Carrier,5
-Demolisher Heavy Tank,6
-Partisan Heavy Tank,5
-Partisan Air Defense Tank,4
-Heavy LRM Carrier,3
+Ontos Heavy Tank (Standard),4
+Schrek PPC Carrier (Standard),5
+Demolisher Heavy Tank (Standard Mk. I),6
+Partisan Heavy Tank (Standard),5
+Partisan Air Defense Tank (Standard),4
+Heavy LRM Carrier (Standard),3
 Challenger MBT X,2
 Alacorn Heavy Tank Mk VI,1
 #Edited by Harold "BATTLEMASTER" N.

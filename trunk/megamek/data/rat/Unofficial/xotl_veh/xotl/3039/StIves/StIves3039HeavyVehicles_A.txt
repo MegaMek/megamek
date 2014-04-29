@@ -32,14 +32,14 @@
 #############################################################################
 StIves3039HeavyVehicles_A
 Bulldog Medium Tank (AC2),32
-Laser Carrier,37
-Bulldog Medium Tank,183
-Pike Support Vehicle,31
+Laser Carrier (Standard),37
+Bulldog Medium Tank (Standard),183
+Pike Support Vehicle (Standard),31
 Pike Support Vehicle (AC5),5
 Brutus Assault Tank (PPC),18
 Bulldog Medium Tank (LRM),46
-Brutus Assault Tank,27
-SRM Carrier,183
-LRM Carrier,183
+Brutus Assault Tank (Standard),27
+SRM Carrier (Standard),183
+LRM Carrier (Standard),183
 Brutus Assault Tank (LRM),18
-Manticore Heavy Tank,237
+Manticore Heavy Tank (Standard),237

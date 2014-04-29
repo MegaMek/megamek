@@ -2,7 +2,7 @@
 Locust IIC 7,1
 Hellion Prime,2
 Dasher (Fire Moth) Prime,3
-Parash,4
+Parash (Standard),4
 Uller (Kit Fox) Prime,5
 Parash 2,6
 Dasher (Fire Moth) Prime,5

@@ -1,7 +1,7 @@
 3085 Ghost Bear Dominion Light Mech Front Line
 Bear Cub 3,1
 Peregrine (Horned Owl) 3,2
-Solitaire,3
+Solitaire (Standard),3
 Locust IIC 5,4
 Locust IIC 8,5
 Dasher (Fire Moth) Prime,6

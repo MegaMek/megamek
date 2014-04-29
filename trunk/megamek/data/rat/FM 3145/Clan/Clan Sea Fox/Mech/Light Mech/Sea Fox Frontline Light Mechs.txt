@@ -9,4 +9,4 @@ Tiburon (Standard),5
 Cougar Prime,4
 Dasher (Fire Moth) Prime,3
 Hankyu (Arctic Cheetah) Prime,2
-Solitaire,1
+Solitaire (Standard),1

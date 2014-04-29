@@ -1,0 +1,12 @@
+Cloud Cobra SL Assault Mechs (FMU)
+Kraken (Bane) (Standard),1
+Behemoth (Stone Rhino) (Standard),2
+Kraken (Bane) 3,3
+Warhammer IIC (Standard),4
+Marauder IIC (Standard),5
+Supernova (Standard),6
+Highlander IIC (Standard),5
+Phoenix Hawk IIC (Standard),4
+Blood Kite 2,3
+Marauder IIC (Standard),2
+Kodiak (Standard),1

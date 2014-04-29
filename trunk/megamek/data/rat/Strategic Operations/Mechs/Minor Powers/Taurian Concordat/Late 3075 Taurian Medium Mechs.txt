@@ -1,0 +1,12 @@
+Taurian Concordat Medium Mechs Late 3075
+Hunchback HBK-4G,1
+Vindicator VND-3L,2
+Clint CLNT-3-3T,3
+Hatchetman HCT-3F,4
+Huron Warrior HUR-WO-R4L,5
+Marshal MHL-X1,6
+Blackjack BJ-2,5
+Snake SNK-1V,4
+Phoenix Hawk PXH-4L,3
+Dervish DV-7D,2
+Shadow Hawk SHD-7M,1

@@ -9,4 +9,4 @@ Griffin GRF-1N,5
 Starslayer STY-3C,4
 Shadow Hawk SHD-2Hb,3
 Hunchback HBK-4G,2
-Phoenix Hawk PXH-1b,1
+Phoenix Hawk PXH-1b "Special",1

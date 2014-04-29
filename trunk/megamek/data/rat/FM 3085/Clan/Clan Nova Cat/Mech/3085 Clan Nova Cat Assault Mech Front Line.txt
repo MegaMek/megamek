@@ -1,7 +1,7 @@
 3085 Clan Nova Cat Assault Mech Front Line
 Supernova 2,1
 Marauder IIC 4,2
-Supernova,3
+Supernova (Standard),3
 Deimos Prime,4
 Mad Cat Mk II (Standard),5
 Supernova 3,6

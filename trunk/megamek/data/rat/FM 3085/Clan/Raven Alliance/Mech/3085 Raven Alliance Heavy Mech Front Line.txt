@@ -1,7 +1,7 @@
 3085 Raven Alliance Heavy Mech Front Line
-Rifleman IIC,1
+Rifleman IIC (Standard),1
 Bombardier BMB-12D,2
-Thresher,3
+Thresher 2,3
 Crossbow Prime,4
 Thor (Summoner) Prime,5
 Vulture (Mad Dog) Prime,6

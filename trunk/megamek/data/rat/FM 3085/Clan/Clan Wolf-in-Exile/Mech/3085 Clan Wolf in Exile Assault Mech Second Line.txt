@@ -1,6 +1,6 @@
 3085 Clan Wolf in Exile Assault Mech Second Line
-Supernova,1
-Zeus X ZEU-9WD,2
+Supernova (Standard),1
+Zeus-X ZEU-9WD,2
 Mad Cat Mk II (Standard),3
 Warhammer IIC 8,4
 Naga Prime,5

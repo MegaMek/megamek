@@ -33,17 +33,17 @@
 Kurita3028MediumVehicles_F
 Goblin Medium Tank (SRM),50
 Goblin Medium Tank (MG),30
-Goblin Medium Tank,420
+Goblin Medium Tank (Standard),420
 Condor Heavy Hover Tank (Davion),40
 Goblin Medium Tank (LRM),30
 Vedette Medium Tank (AC2),720
-Vedette Medium Tank,6450
+Vedette Medium Tank (Standard),6450
 Hetzer Wheeled Assault Gun (Laser),80
-Hetzer Wheeled Assault Gun,750
+Hetzer Wheeled Assault Gun (Standard),750
 Hetzer Wheeled Assault Gun (SRM),80
-Condor Heavy Hover Tank,130
+Condor Heavy Hover Tank (Standard),130
 Hetzer Wheeled Assault Gun (LRM),80
 Maxim Heavy Hover Transport (SRM4),150
 Prowler Multi-Terrain Vehicle (Succession Wars),540
 Maxim Heavy Hover Transport (SRM2),140
-Maxim Heavy Hover Transport,80
+Maxim Heavy Hover Transport (Standard),80

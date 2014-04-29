@@ -32,15 +32,15 @@
 #############################################################################
 Steiner3039MediumVehicles_A
 Vedette Medium Tank (AC2),14
-Vedette Medium Tank,394
+Vedette Medium Tank (Ultra),394
 Hetzer Wheeled Assault Gun (Laser),5
-Hetzer Wheeled Assault Gun,46
+Hetzer Wheeled Assault Gun (Standard),46
 Hetzer Wheeled Assault Gun (SRM),5
-Condor Heavy Hover Tank,132
+Condor Heavy Hover Tank (Standard),132
 Hetzer Wheeled Assault Gun (LRM),5
 Maxim Heavy Hover Transport (SRM4),9
 Prowler Multi-Terrain Vehicle (Succession Wars),35
 Maxim Heavy Hover Transport (SRM2),9
-Maxim Heavy Hover Transport,114
+Maxim Heavy Hover Transport (Standard),114
 Drillson Heavy Hover Tank (SRM),18
-Drillson Heavy Hover Tank,214
+Drillson Heavy Hover Tank (Standard),214

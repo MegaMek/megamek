@@ -1,5 +1,5 @@
 3085 Clan Nova Cat Assault Mech Keshik
-Supernova,1
+Supernova (Standard),1
 Deimos Prime,2
 Mad Cat Mk II (Standard),3
 Supernova 3,4

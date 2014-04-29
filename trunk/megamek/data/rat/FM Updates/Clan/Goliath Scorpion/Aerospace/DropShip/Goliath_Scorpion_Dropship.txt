@@ -1,0 +1,12 @@
+Goliath Scorpion Dropships (FMU)
+Titan (Clan),1
+Condor (3054),2
+Sassanid (Standard),3
+Overlord C,4
+Broadsword (Standard),5
+Union C,6
+Broadsword (Standard),5
+Noruff (Standard),4
+Triumph (3057),3
+Gazelle (3055),2
+Lion (Clan),1

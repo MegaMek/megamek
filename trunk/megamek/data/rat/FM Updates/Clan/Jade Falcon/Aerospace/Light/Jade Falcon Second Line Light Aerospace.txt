@@ -1,0 +1,12 @@
+Clan Jade Falcon Second-Line Light Aerospace (FMU)
+Tomahawk THK-63,1
+Bashkir Prime,2
+Avar B,3
+Rogue RGU-133E,4
+Batu C,5
+Trident TRN-3T,6
+Spad SPD-502,5
+Swift SWF-606,4
+Sulla A,3
+Vandal C,2
+Zero ZRO-114,1

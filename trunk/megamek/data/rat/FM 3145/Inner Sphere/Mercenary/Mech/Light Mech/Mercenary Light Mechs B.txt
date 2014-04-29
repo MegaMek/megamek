@@ -9,4 +9,4 @@ Phoenix Hawk L PXH-11K,5
 Spector SPR-5S,4
 Gambit GBT-1G,3
 Wolfhound WLF-2H,2
-Arbalest,1
+Arbalest (Standard),1

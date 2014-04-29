@@ -9,4 +9,4 @@ Peacekeeper PKP-1B,5
 Mad Cat Mk II (Standard),4
 Warhammer IIC 8,3
 Phoenix Hawk IIC 2,2
-Supernova,1
+Supernova (Standard),1

@@ -1,0 +1,12 @@
+Nova Cat 2nd-Line Medium Mechs (FMU)
+Arctic Wolf Prime,1
+Arctic Wolf 2,2
+Beowulf BEO-12,3
+Griffin IIC 2,4
+Clint IIC (Standard),5
+Shadow Hawk IIC 3,6
+Shadow Hawk IIC 4,5
+Griffin IIC 3,4
+Wyvern IIC (Standard),3
+Griffin IIC 4,2
+Wolverine WVR-8K,1

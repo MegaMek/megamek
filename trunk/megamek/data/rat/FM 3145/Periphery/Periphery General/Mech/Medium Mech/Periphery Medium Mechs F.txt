@@ -1,5 +1,5 @@
 Periphery Medium Mechs F
-Buster Class HaulerMech BC XV (AC),1
+Buster XV HaulerMech (AC),1
 Quasit MilitiaMech QUA-51T,2
 Dervish DV-1S,3
 Gladiator GLD-1R,4

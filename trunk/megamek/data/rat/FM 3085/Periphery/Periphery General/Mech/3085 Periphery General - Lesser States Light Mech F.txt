@@ -1,5 +1,5 @@
 3085 Periphery General - Lesser States Light Mech F
-Crosscut LoggerMech ED-X2,1
+Crosscut ED-X2 ForestryMech,1
 UrbanMech UM-R60,2
 Stinger STG-3R,3
 Firestarter FS9-H,4

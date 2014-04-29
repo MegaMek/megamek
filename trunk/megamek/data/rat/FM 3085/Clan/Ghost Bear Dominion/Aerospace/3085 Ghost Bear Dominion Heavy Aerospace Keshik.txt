@@ -1,6 +1,6 @@
 3085 Ghost Bear Dominion Heavy Aerospace Keshik
 Huscarl HSCL-1-O,1
-Hydaspes,2
+Hydaspes (Standard),2
 Xerxes 1,3
 Jengiz Prime,4
 Huscarl HSCL-1-O,5

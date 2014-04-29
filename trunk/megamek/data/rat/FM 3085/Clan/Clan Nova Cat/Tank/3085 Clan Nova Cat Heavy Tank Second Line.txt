@@ -1,12 +1,12 @@
 3085 Clan Nova Cat Heavy Tank Second Line
-Burke Defense Tank,1
-Demon Tank,2
-Tokugawa Heavy Tank,3
+Burke Defense Tank (Standard),1
+Demon Tank (Standard),2
+Tokugawa Heavy Tank (Standard),3
 Ishtar Heavy Fire Support Tank (Original),4
-Shoden Assault Vehicle (SSRM),5
-Shoden Assault Vehicle,6
+Shoden Assault Vehicle (Streak),5
+Shoden Assault Vehicle (Standard),6
 Ishtar Heavy Fire Support Tank (Original),5
-Shoden Assault Vehicle,4
-Shoden Assault Vehicle,3
+Shoden Assault Vehicle (Standard),4
+Shoden Assault Vehicle (Standard),3
 Tokugawa Heavy Tank (Streak),2
-Athena Combat Vehicle,1
+Athena Combat Vehicle (Standard),1

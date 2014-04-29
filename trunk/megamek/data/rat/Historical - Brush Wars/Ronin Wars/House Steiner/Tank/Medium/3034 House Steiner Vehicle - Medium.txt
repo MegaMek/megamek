@@ -1,12 +1,12 @@
 3034 House Steiner Vehicle - Medium
-Goblin Medium Tank,1
-Condor Heavy Hover Tank,2
-Vedette Medium Tank,3
-Goblin Medium Tank,4
-Drillson Heavy Hover Tank,5
-Vedette Medium Tank,6
-Maxim Heavy Hover Transport,5
-Condor Heavy Hover Tank,4
-Drillson Heavy Hover Tank,3
-Condor Heavy Hover Tank,2
-Drillson Heavy Hover Tank,1
+Goblin Medium Tank (LRM),1
+Condor Heavy Hover Tank (Standard),2
+Vedette Medium Tank (Ultra),3
+Goblin Medium Tank (Standard),4
+Drillson Heavy Hover Tank (Standard),5
+Vedette Medium Tank (Standard),6
+Maxim Heavy Hover Transport (Standard),5
+Condor Heavy Hover Tank (Standard),4
+Drillson Heavy Hover Tank (Standard),3
+Condor Heavy Hover Tank (Standard),2
+Drillson Heavy Hover Tank (Standard),1

@@ -1,0 +1,12 @@
+Ghost Bear Dropships (FMU)
+Titan (Clan),1
+Condor (3054),2
+Miraborg (Standard),3
+Overlord C,4
+Confederate (Clan),5
+Union C,6
+Broadsword (Standard),5
+Sassanid (Standard),4
+Noruff (Standard),3
+Gazelle (3055),2
+Lion (Clan),1

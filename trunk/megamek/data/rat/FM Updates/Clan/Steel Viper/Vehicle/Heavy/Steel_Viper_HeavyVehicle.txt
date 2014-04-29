@@ -1,0 +1,12 @@
+Steel Viper Heavy Vehicle (FMU)
+Ishtar Heavy Fire Support Tank (Standard),1
+Shoden Assault Vehicle (Standard),2
+Shoden Assault Vehicle (Standard),3
+Oro Heavy Tank (Standard),4
+Ishtar Heavy Fire Support Tank (Standard),5
+Athena Combat Vehicle (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+Oro Heavy Tank (Standard),4
+Oro Heavy Tank (Standard),3
+Athena Combat Vehicle (Standard),2
+Ishtar Heavy Fire Support Tank (Standard),1

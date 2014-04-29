@@ -14,7 +14,7 @@
 # * Civilian Vehicle table alone, for convenience                           #
 #############################################################################
 CivilianUnits_CivVeh
-J-27 Ordnance Transport,27
+J-27 Ordnance Transport (Standard),27
 J-27 Ordnance Transport K-27 "Killjoy",27
 Flatbed Truck (SRM),27
 Flatbed Truck (LRM),27

@@ -1,0 +1,12 @@
+Cloud Cobra FL Assault Mechs (FMU)
+Gladiator (Executioner) H,1
+Savage Coyote C,2
+Masakari (Warhawk) H,3
+Masakari (Warhawk) C,4
+Gladiator (Executioner) A,5
+Man O' War (Gargoyle) D,6
+Blood Asp A,5
+Man O' War (Gargoyle) C,4
+Blood Asp E,3
+Daishi (Dire Wolf) Prime,2
+Turkina B,1

@@ -1,5 +1,5 @@
 3053 Clan Ghost Bear Mech - Light
-Peregrine (Horned Owl),1
+Peregrine (Horned Owl) (Standard),1
 Koshi (Mist Lynx) C,2
 Uller (Kit Fox) B,3
 Puma (Adder) A,4

@@ -2,9 +2,9 @@ Rasalhague Dominion Frontline Light Mechs
 Locust IIC 7,1
 Bear Cub 3,2
 Wulfen (Prime),3
-Bear Cub,4
+Bear Cub (Standard),4
 Locust IIC 8,5
-Parash,6
+Parash (Standard),6
 Locust IIC 8,5
 Dasher (Fire Moth) Prime,4
 Puma (Adder) Prime,3

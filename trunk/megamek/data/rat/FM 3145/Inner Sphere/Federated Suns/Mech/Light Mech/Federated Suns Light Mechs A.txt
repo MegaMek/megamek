@@ -8,5 +8,5 @@ Hollander III BZK-D1,6
 Gambit GBT-1G,5
 Osiris OSR-5D,4
 Koshi (Standard),3
-Crimson Hawk,2
-Arbalest,1
+Crimson Hawk (Standard),2
+Arbalest (Standard),1

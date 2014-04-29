@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Assault Mechs (Blood Spirit),
+Highlander HGN-732,1
+Marauder IIC (Standard),2
+Behemoth (Stone Rhino) (Standard),3
+Blood Kite 2,4
+Blood Kite (Standard),5
+Blood Kite 2,6
+Blood Kite (Standard),5
+Crockett CRK-5003-1,4
+Warhammer IIC (Standard),3
+Warhammer IIC 2,2
+Supernova (Standard),1

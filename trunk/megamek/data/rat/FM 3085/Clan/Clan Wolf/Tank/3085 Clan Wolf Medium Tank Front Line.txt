@@ -1,12 +1,12 @@
 3085 Clan Wolf Medium Tank Front Line
-Hachiman Fire Support Tank 'Huey',1
-Maxim Heavy Hover Transport,2
-Chalchiuhtotolin Support Tank,3
-Chalchiuhtotolin Support Tank,4
+Hachiman Fire Support Tank (Standard),1
+Maxim Heavy Hover Transport (Standard),2
+Chalchiuhtotolin Support Tank (Bombast Laser),3
+Chalchiuhtotolin Support Tank (Standard),4
 Bandit (C) Hovercraft Prime,5
-Ares Medium Tank,6
+Ares Medium Tank (Standard),6
 Bandit (C) Hovercraft Prime,5
 Ares Medium Tank (Plasma),4
-Ares Medium Tank,3
-Maxim Heavy Hover Transport,2
+Ares Medium Tank (Standard),3
+Maxim Heavy Hover Transport (Standard),2
 Epona Pursuit Tank Prime,1

@@ -1,7 +1,7 @@
 Mercenary Medium Mechs A
 Exhumer EXR-2X,1
 Mongrel MGL-T2,2
-Black Hawk,3
+Black Hawk (Standard),3
 Dasher II 2,4
 Mad Cat III (Standard),5
 Gravedigger GDR-1D,6

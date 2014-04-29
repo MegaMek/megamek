@@ -1,11 +1,11 @@
 Sea Fox Keshik Assault Mechs
 Sunder SD1-O,1
 Man O' War (Gargoyle) Prime,2
-Jupiter,3
+Jupiter (Standard),3
 Mad Cat Mk II Enhanced,4
 Gladiator (Executioner) Prime,5
 Mad Cat Mk II 3,6
-Hellstar,5
+Hellstar (Standard),5
 Deimos Prime,4
 Kingfisher Prime,3
 Daishi (Dire Wolf) Prime,2

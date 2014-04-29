@@ -7,6 +7,6 @@ Osprey OSP-26,5
 Mad Cat III (Standard),6
 Shadow Hawk IIC 8,5
 Kheper KPH-7R,4
-Black Hawk,3
+Black Hawk (Standard),3
 Dragonfly (Viper) Prime,2
 Raptor II RPT-5X,1

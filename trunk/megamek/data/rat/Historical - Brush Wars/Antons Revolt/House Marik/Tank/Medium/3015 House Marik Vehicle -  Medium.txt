@@ -1,12 +1,12 @@
 3015 House Marik Vehicle - Medium
-Hetzer Wheeled Assault Gun,1
-Hetzer Wheeled Assault Gun,2
-Maxim Heavy Hover Transport,3
-Maxim Heavy Hover Transport,4
-Maxim Heavy Hover Transport,5
-Vedette Medium Tank,6
-Vedette Medium Tank,5
-Vedette Medium Tank,4
-Condor Heavy Hover Tank,3
-Condor Heavy Hover Tank,2
-Condor Heavy Hover Tank,1
+Hetzer Wheeled Assault Gun (Standard),1
+Hetzer Wheeled Assault Gun (Standard),2
+Maxim Heavy Hover Transport (Standard),3
+Maxim Heavy Hover Transport (Standard),4
+Maxim Heavy Hover Transport (Standard),5
+Vedette Medium Tank (Standard),6
+Vedette Medium Tank (AC2),5
+Vedette Medium Tank (Liao),4
+Condor Heavy Hover Tank (Standard),3
+Condor Heavy Hover Tank (Standard),2
+Condor Heavy Hover Tank (Standard),1

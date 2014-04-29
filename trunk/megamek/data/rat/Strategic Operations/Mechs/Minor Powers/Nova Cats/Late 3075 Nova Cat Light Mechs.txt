@@ -1,0 +1,12 @@
+Clan Nova Cat Light Mechs Late 3075
+Panther PNT-10K,1
+Arctic Fox AF1A,2
+Ocelot (Standard),3
+Jenner IIC 4,4
+Hankyu (Arctic Cheetah) Prime,5
+Hellion Prime,6
+Hankyu (Arctic Cheetah) B,5
+Ocelot (Standard),4
+Arctic Fox AF1,3
+Venom SDR-9K,2
+Owens OW-1,1

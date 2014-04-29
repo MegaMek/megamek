@@ -95,7 +95,7 @@ Black Hawk (Nova) C,110
 Black Hawk (Nova) B,240
 Fenris (Ice Ferret) D,460
 Fenris (Ice Ferret) Prime,1350
-Hunchback IIC,660
+Hunchback IIC (Standard),660
 Dragonfly (Viper) D,400
 Dragonfly (Viper) B,240
 Ryoken (Stormcrow) D,490

@@ -1,5 +1,5 @@
 3053 Clan Jade Falcon Mech - Light
-Vixen (Incubus),1
+Vixen (Incubus) (Standard),1
 Fire Falcon C,2
 Dasher (Fire Moth) B,3
 Puma (Adder) A,4
@@ -8,5 +8,5 @@ Uller (Kit Fox) Prime,6
 Puma (Adder) Prime,5
 Koshi (Mist Lynx) A,4
 Dasher (Fire Moth) B,3
-Baboon (Howler),2
+Baboon (Howler) (Standard),2
 Locust IIC 2,1

@@ -8,5 +8,5 @@ Shadow Hawk SHD-12C,6
 Komodo KIM-2C,5
 Griffin IIC 6,4
 Shadow Cat Prime,3
-Goshawk II,2
+Goshawk II (Standard),2
 Nobori-nin (Huntsman) Prime,1

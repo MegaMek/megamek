@@ -1,6 +1,6 @@
 3085 Clan Wolf in Exile Heavy Aerospace Front Line
 Hammerhead HMR-HDb,1
-Hydaspes,2
+Hydaspes (Standard),2
 Xerxes 1,3
 Chippewa CHP-W8,4
 Eisensturm EST-R3,5

@@ -1,5 +1,5 @@
 3085 Clan Nova Cat Medium Mech Front Line
-Dasher II,1
+Dasher II (Standard),1
 Shadow Hawk IIC 3,2
 Hellhound (Conjurer) 4,3
 Griffin IIC 4,4

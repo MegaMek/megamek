@@ -1,12 +1,12 @@
-Crusader Clan Front-Line Medium Mechs (Star Adder)
-Dragonfly (Viper) Prime,1
-Nobori-nin (Huntsman) B,2
-Black Hawk (Nova) C,3
-Dragonfly (Viper) C,4
+Clan Star Adder Front-Line Medium Mechs (FMU)
+Pouncer H,1
+Nobori-nin (Huntsman) H,2
+Black Hawk (Nova) H,3
+Dragonfly (Viper) H,4
 Grendel (Mongrel) A,5
 Black Hawk (Nova) Prime,6
 Ryoken (Stormcrow) B,5
-Grendel (Mongrel) B,4
-Ryoken (Stormcrow) Prime,3
-Black Hawk (Nova) Prime,2
+Ryoken (Stormcrow) Prime,4
+Ryoken (Stormcrow) H,3
+Dragonfly (Viper) E,2
 Dragonfly (Viper) Prime,1

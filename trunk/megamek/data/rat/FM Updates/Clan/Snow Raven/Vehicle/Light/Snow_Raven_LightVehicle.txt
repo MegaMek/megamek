@@ -1,0 +1,12 @@
+Snow Raven Light Vehicle (FMU)
+Indra Infantry Transport (Standard),1
+Indra Infantry Transport (Standard),2
+Svantovit Infantry Fighting Vehicle (Standard),3
+Mithras Light Tank (Standard),4
+Donar Assault Helicopter (Standard),5
+Donar Assault Helicopter (Standard),6
+Asshur Fast Reconnaissance Vehicle (Standard),5
+Zorya Light Tank (Standard),4
+Mithras Light Tank (Standard),3
+Odin Scout Tank (Standard),2
+Odin Scout Tank (Standard),1

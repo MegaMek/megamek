@@ -5,8 +5,8 @@ Lightning LTN-G15,3
 Lightning LTN-G15,4
 Hellcat HCT-213,5
 Hellcat HCT-213,6
-Ammon,5
+Ammon (Standard),5
 Tyre 2,4
 Tyre 3,3
-Ammon,2
-Ammon,1
+Ammon (Standard),2
+Ammon (Standard),1

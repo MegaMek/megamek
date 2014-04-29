@@ -1,5 +1,5 @@
 3085 Clan Wolf in Exile Heavy Aerospace Keshik
-Hydaspes,1
+Hydaspes (Standard),1
 Xerxes 1,2
 Chippewa CHP-W8,3
 Eisensturm EST-R3,4
@@ -9,4 +9,4 @@ Sabutai Prime,5
 Scytha Prime,4
 Jengiz Prime,3
 Kirghiz Prime,2
-Hydaspes,1
+Hydaspes 2,1

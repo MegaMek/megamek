@@ -1,5 +1,5 @@
 3085 Clan Wolf in Exile Light Aerospace Keshik
-Chaeronea,1
+Chaeronea (Standard),1
 Seydlitz SYD-Z3A,2
 Zero ZRO-116b,3
 Sai S-4C,4

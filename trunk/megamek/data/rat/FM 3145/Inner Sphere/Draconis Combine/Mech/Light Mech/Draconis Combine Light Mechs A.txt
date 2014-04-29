@@ -8,5 +8,5 @@ Spider SDR-8X,6
 Owens OW-1,5
 Arbalest 2,4
 Ocelot 3,3
-Morrigan,2
+Morrigan (Standard),2
 Hankyu (Arctic Cheetah) Prime,1

@@ -31,32 +31,32 @@
 #   less than 1.                                                            #
 #############################################################################
 Liao3039LightVehicles_B
-Karnov UR Gunship,150
+Karnov UR Gunship (Standard),150
 Packrat LRPV PKR-T5 (SRM2),190
 Warrior Attack Helicopter H-7A,150
 Warrior Attack Helicopter H-7,310
-Scorpion Light Tank,1540
-Skulker Wheeled Scout Tank,540
+Scorpion Light Tank (Standard),1540
+Skulker Wheeled Scout Tank (Standard),540
 Scorpion Light Tank (ML),150
-Harasser Laser Platform,120
+Harasser Laser Platform (Standard),120
 Packrat LRPV PKR-T5,350
 Scorpion Light Tank (SRM),460
 Harasser Missile Platform (LRM),110
-Harasser Missile Platform,310
+Harasser Missile Platform (Standard),310
 Scorpion Light Tank (LRM),150
 J. Edgar Light Hover Tank (ICE),60
 J. Edgar Light Hover Tank (Flamer),30
 Warrior Attack Helicopter H-7C,80
 J. Edgar Light Hover Tank (MG),30
-Peregrine Attack VTOL,540
-Scimitar Medium Hover Tank,540
-J. Edgar Light Hover Tank,190
-Striker Light Tank,170
+Peregrine Attack VTOL (Standard),540
+Scimitar Medium Hover Tank (Standard),540
+J. Edgar Light Hover Tank (Standard),190
+Striker Light Tank (Standard),170
 Striker Light Tank (SRM),30
-Saladin Assault Hover Tank,540
+Saladin Assault Hover Tank (Standard),540
 Hunter Light Support Tank (LRM15),80
 Striker Light Tank (LRM),30
-Pegasus Scout Hover Tank,1540
+Pegasus Scout Hover Tank (Standard),1540
 Hunter Light Support Tank (LRM10),80
-Hunter Light Support Tank,390
-Saracen Medium Hover Tank,1040
+Hunter Light Support Tank (Standard),390
+Saracen Medium Hover Tank (Standard),1040

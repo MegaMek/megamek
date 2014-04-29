@@ -1,12 +1,12 @@
 3053 Clan Nova Cat Mech - Light
 Dasher (Fire Moth) Prime,1
 Hankyu (Arctic Cheetah) C,2
-Jenner IIC,3
+Jenner IIC (Standard),3
 Uller (Kit Fox) A,4
 Koshi (Mist Lynx) Prime,5
 Hankyu (Arctic Cheetah) Prime,6
 Puma (Adder) Prime,5
 Dasher (Fire Moth) A,4
 Koshi (Mist Lynx) B,3
-Piranha,2
+Piranha (Standard),2
 Hankyu (Arctic Cheetah) Prime,1

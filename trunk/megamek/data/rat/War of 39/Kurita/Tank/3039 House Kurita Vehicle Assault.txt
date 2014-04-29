@@ -1,15 +1,15 @@
 3039 House Kurita Vehicle Assault
-Demolisher Heavy Tank, 1
-Sturmfeur Heavy Tank, 2
-Schrek PPC Carrier, 3
-Partisan Heavy Tank, 4
-Demolisher Heavy Tank, 5
-Ontos Heavy Tank, 6
-Behemoth Heavy Tank, 5
-Schrek PPC Carrier, 4
-Partisan Heavy Tank, 3
-Behemoth Heavy Tank, 2
-Sturmfeur Heavy Tank, 1
+Demolisher Heavy Tank (Standard Mk. I), 1
+Sturmfeur Heavy Tank (Standard), 2
+Schrek PPC Carrier (Standard), 3
+Partisan Heavy Tank (Standard), 4
+Demolisher Heavy Tank (Standard Mk. I), 5
+Ontos Heavy Tank (Standard), 6
+Behemoth Heavy Tank (Standard), 5
+Schrek PPC Carrier (Standard), 4
+Partisan Heavy Tank (Standard), 3
+Behemoth Heavy Tank (Standard), 2
+Sturmfeur Heavy Tank (Standard), 1
 ##Version 1 - May 2011
 ##From RUS Files
 ##Editted by Dave "Hammer" Nawton

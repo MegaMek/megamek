@@ -31,17 +31,17 @@
 #   less than 1.                                                            #
 #############################################################################
 Marik3028HeavyVehicles_C
-Brutus Assault Tank,10
-AC/2 Carrier,340
+Brutus Assault Tank (Standard),10
+AC/2 Carrier (Standard),340
 Bulldog Medium Tank (AC2),550
-Laser Carrier,450
-Bulldog Medium Tank,2250
-Pike Support Vehicle,380
+Laser Carrier (Standard),450
+Bulldog Medium Tank (Standard),2250
+Pike Support Vehicle (Standard),380
 Pike Support Vehicle (AC5),60
 Bulldog Medium Tank (LRM),550
-SRM Carrier,1690
-LRM Carrier,1690
-Rommel Tank,10
-Patton Tank,10
-Manticore Heavy Tank,1680
+SRM Carrier (Standard),1690
+LRM Carrier (Standard),1690
+Rommel Tank (Standard),10
+Patton Tank (Standard),10
+Manticore Heavy Tank (Standard),1680
 Von Luckner Heavy Tank VNL-K65N,330

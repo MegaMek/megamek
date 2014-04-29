@@ -9,4 +9,4 @@ Hunchback HBK-6N,5
 Shadow Hawk SHD-7M,4
 Shockwave SKW-4G,3
 Wolverine WVR-9M,2
-Black Hawk,1
+Black Hawk (Standard),1

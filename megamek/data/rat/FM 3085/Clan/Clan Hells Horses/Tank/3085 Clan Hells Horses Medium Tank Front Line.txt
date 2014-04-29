@@ -1,12 +1,12 @@
 3085 Clan Hell's Horses Medium Tank Front Line
 Enyo Strike Tank ER Pulse,1
 Bellona Hover Tank (Laser),2
-Bellona Hover Tank,3
-Garuda Heavy VTOL,4
+Bellona Hover Tank (Standard),3
+Garuda Heavy VTOL (Standard),4
 Ku Wheeled Assault Tank (IFV) "Turhan II",5
 Epona Pursuit Tank Prime,6
-Enyo Strike Tank,5
-Hachiman Fire Support Tank 'Huey',4
+Enyo Strike Tank (Standard),5
+Hachiman Fire Support Tank (Standard),4
 Ku Wheeled Assault Tank (IFV) "Turhan II",3
 Epona Pursuit Tank Prime,2
-Enyo Strike Tank,1
+Enyo Strike Tank (Standard),1

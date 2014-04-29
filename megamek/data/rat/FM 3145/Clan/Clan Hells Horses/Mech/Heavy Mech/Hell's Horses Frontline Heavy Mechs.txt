@@ -1,6 +1,6 @@
 Hell's Horses Frontline Heavy Mechs
-Tundra Wolf,1
-Blood Reaper,2
+Tundra Wolf (Standard),1
+Blood Reaper (Standard),2
 Rifleman IIC 8,3
 Thor (Summoner) Prime,4
 Loki (Hellbringer) Prime,5

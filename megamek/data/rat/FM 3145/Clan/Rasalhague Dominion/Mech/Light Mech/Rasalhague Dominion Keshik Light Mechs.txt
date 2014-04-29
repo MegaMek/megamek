@@ -1,9 +1,9 @@
 Rasalhague Dominion Keshik Light Mechs
 Bear Cub 3,1
 Wulfen (Prime),2
-Bear Cub,3
+Bear Cub (Standard),3
 Locust IIC 8,4
-Parash,5
+Parash (Standard),5
 Locust IIC 8,6
 Dasher (Fire Moth) Prime,5
 Puma (Adder) Prime,4

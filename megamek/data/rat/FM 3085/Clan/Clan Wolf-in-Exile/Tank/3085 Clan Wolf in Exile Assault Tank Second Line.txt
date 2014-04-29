@@ -1,5 +1,5 @@
 3085 Clan Wolf in Exile Assault Tank Second Line
-Sturmfeur Heavy Tank,1
+Sturmfeur Heavy Tank (Standard),1
 Demolisher Heavy Tank (Clan),2
 Fensalir Combat WiGE (HAG),3
 Alacorn Heavy Tank Mk VII,4

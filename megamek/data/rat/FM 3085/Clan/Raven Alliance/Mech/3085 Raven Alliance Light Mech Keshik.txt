@@ -1,6 +1,6 @@
 3085 Raven Alliance Light Mech Keshik
 Stinger IIC (Standard),1
-Baboon (Howler) 3 'Devil',2
+Baboon (Howler) (Standard),2
 Dasher (Fire Moth) Prime,3
 Uller (Kit Fox) Prime,15
 Dasher (Fire Moth) Prime,5

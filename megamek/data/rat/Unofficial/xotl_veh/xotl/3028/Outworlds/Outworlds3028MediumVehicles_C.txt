@@ -33,16 +33,16 @@
 Outworlds3028MediumVehicles_C
 Goblin Medium Tank (MG),10
 Condor Heavy Hover Tank (Davion),10
-Condor Heavy Hover Tank,360
+Condor Heavy Hover Tank (Standard),360
 Goblin Medium Tank (LRM),10
 Vedette Medium Tank (AC2),620
-Vedette Medium Tank,5570
+Vedette Medium Tank (Standard),5570
 Hetzer Wheeled Assault Gun (Laser),120
-Goblin Medium Tank,400
-Hetzer Wheeled Assault Gun,1460
+Goblin Medium Tank (Standard),400
+Hetzer Wheeled Assault Gun (Standard),1460
 Hetzer Wheeled Assault Gun (SRM),120
 Hetzer Wheeled Assault Gun (LRM),120
 Maxim Heavy Hover Transport (SRM4),100
 Prowler Multi-Terrain Vehicle (Succession Wars),260
 Maxim Heavy Hover Transport (SRM2),100
-Maxim Heavy Hover Transport,680
+Maxim Heavy Hover Transport (Standard),680

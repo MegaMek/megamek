@@ -7,6 +7,6 @@ Shockwave SKW-4G,5
 Wolverine WVR-9M,6
 Vulcan VT-6M,5
 Strider SR1-O,4
-Phoenix Hawk PXH-1c,3
+Phoenix Hawk PXH-1c "Special",3
 Scorpion SCP-10M,2
 Griffin GRF-4R,1

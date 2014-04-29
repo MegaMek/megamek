@@ -1,7 +1,7 @@
 Jade Falcon Keshik Medium Mechs
 Shadow Cat Prime,1
-Sun Cobra,2
-Black Hawk,3
+Sun Cobra (Standard),2
+Black Hawk (Standard),3
 Gyrfalcon 2,4
 Black Hawk (Nova) Prime,5
 Gyrfalcon (Standard),6

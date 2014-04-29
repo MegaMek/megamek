@@ -8,5 +8,5 @@ Assassin ASN-23,6
 Enforcer ENF-4R,5
 Marshal MHL-2L,4
 Phoenix Hawk PXH-4W,3
-Black Hawk,2
+Black Hawk (Standard),2
 Centurion CN9-Ar,1

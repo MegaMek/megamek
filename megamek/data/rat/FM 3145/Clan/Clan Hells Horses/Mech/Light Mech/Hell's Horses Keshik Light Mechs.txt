@@ -1,8 +1,8 @@
 Hell's Horses Keshik Light Mechs
 Vixen (Incubus) 4,1
-Incubus II,2
-Bear Cub,3
-Parash,4
+Incubus II (Standard),2
+Bear Cub (Standard),3
+Parash (Standard),4
 Locust IIC 7,5
 Uller (Kit Fox) Prime,6
 Fire Falcon Prime,5

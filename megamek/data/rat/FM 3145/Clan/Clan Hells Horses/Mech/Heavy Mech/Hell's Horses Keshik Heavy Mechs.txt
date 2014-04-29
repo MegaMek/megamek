@@ -1,5 +1,5 @@
 Hell's Horses Keshik Heavy Mechs
-Blood Reaper,1
+Blood Reaper (Standard),1
 Rifleman IIC 8,2
 Thor (Summoner) Prime,3
 Loki (Hellbringer) Prime,4

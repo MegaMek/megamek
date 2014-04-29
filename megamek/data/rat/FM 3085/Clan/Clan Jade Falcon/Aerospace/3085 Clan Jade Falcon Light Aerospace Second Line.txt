@@ -8,5 +8,5 @@ Trident TRN-3Tb,6
 Swift C,5
 Seydlitz SYD-Z4,4
 Vandal Prime,3
-Chaeronea,2
+Chaeronea (Standard),2
 Avar Prime,1

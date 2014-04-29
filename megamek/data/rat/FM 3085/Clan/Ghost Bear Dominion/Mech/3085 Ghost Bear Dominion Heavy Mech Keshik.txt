@@ -1,6 +1,6 @@
 3085 Ghost Bear Dominion Heavy Mech Keshik
 Thor (Summoner) Prime,1
-Arcas,2
+Arcas (Standard),2
 Vulture (Mad Dog) Prime,3
 Karhu Prime,4
 Vulture (Mad Dog) Prime,5

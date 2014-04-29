@@ -69,7 +69,7 @@ Dragonfly (Viper) Prime,640
 Fenris (Ice Ferret) B,380
 Fenris (Ice Ferret) D,380
 Fenris (Ice Ferret) Prime,530
-Hunchback IIC,630
+Hunchback IIC (Standard),630
 Dragonfly (Viper) D,390
 Dragonfly (Viper) B,250
 Ryoken (Stormcrow) D,1150

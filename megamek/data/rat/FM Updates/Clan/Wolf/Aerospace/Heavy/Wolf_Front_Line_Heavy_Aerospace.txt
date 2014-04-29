@@ -1,0 +1,12 @@
+Wolf Front-Line Heavy Aerospace (FMU)
+Xerxes 1,1
+Jengiz Prime,2
+Scytha Prime,3
+Kirghiz Prime,4
+Jengiz A,5
+Jengiz B,6
+Kirghiz A,5
+Scytha B,4
+Scytha C,3
+Hydaspes (Standard),2
+Kirghiz C,1

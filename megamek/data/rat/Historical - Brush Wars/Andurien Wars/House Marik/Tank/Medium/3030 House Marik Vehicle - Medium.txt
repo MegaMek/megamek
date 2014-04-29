@@ -1,12 +1,12 @@
 3030 House Marik Vehicle - Medium
-Maxim Heavy Hover Transport,1
-Hetzer Wheeled Assault Gun,2
-Hetzer Wheeled Assault Gun,3
-Goblin Medium Tank,4
-Goblin Medium Tank,5
-Drillson Heavy Hover Tank,6
-Drillson Heavy Hover Tank,5
-Vedette Medium Tank,4
-Vedette Medium Tank,3
-Condor Heavy Hover Tank,2
-Condor Heavy Hover Tank,1
+Maxim Heavy Hover Transport (Standard),1
+Hetzer Wheeled Assault Gun (Standard),2
+Hetzer Wheeled Assault Gun (Standard),3
+Goblin Medium Tank (Standard),4
+Goblin Medium Tank (Standard),5
+Drillson Heavy Hover Tank (Standard),6
+Drillson Heavy Hover Tank (Standard),5
+Vedette Medium Tank (Standard),4
+Vedette Medium Tank (Ultra),3
+Condor Heavy Hover Tank (Standard),2
+Condor Heavy Hover Tank (Standard),1

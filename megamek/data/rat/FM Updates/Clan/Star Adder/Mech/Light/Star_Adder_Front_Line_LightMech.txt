@@ -1,12 +1,12 @@
-Crusader Clan Front-Line Light Mechs (Star Adder)
-Uller (Kit Fox) A,1
-Koshi (Mist Lynx) Prime,2
-Uller (Kit Fox) D,3
-Dasher (Fire Moth) A,4
-Puma (Adder) A,5
-Koshi (Mist Lynx) B,6
-Puma (Adder) C,5
+Clan Star Adder Front-Line Light Mechs (FMU)
+Hellion B,1
+Uller (Kit Fox) D,2
+Uller (Kit Fox) H,3
+Puma (Adder) C,4
+Dasher (Fire Moth) D,5
+Puma (Adder) A,6
+Puma (Adder) H,5
 Dasher (Fire Moth) Prime,4
 Hankyu (Arctic Cheetah) Prime,3
-Dasher (Fire Moth) D,2
+Uller (Kit Fox) E,2
 Hankyu (Arctic Cheetah) C,1

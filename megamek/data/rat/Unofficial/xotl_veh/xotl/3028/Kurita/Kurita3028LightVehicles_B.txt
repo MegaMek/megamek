@@ -36,31 +36,31 @@ Skulker Wheeled Scout Tank (MG),6
 Skulker Wheeled Scout Tank (SRM),6
 Saladin Assault Hover Tank (Armor),10
 Galleon Light Tank GAL-100,56
-Karnov UR Gunship,12
+Karnov UR Gunship (Standard),12
 Warrior Attack Helicopter H-7A,12
 Warrior Attack Helicopter H-7,24
-Scorpion Light Tank,120
-Skulker Wheeled Scout Tank,48
+Scorpion Light Tank (Standard),120
+Skulker Wheeled Scout Tank (Standard),48
 Scorpion Light Tank (ML),12
-Harasser Laser Platform,10
+Harasser Laser Platform (Standard),10
 Packrat LRPV PKR-T5,42
 Scorpion Light Tank (SRM),36
 Harasser Missile Platform (LRM),8
-Harasser Missile Platform,24
+Harasser Missile Platform (Standard),24
 Scorpion Light Tank (LRM),12
 J. Edgar Light Hover Tank (ICE),12
 J. Edgar Light Hover Tank (Flamer),6
 Warrior Attack Helicopter H-7C,6
 J. Edgar Light Hover Tank (MG),6
-Peregrine Attack VTOL,24
-Scimitar Medium Hover Tank,90
-J. Edgar Light Hover Tank,36
-Striker Light Tank,17
+Peregrine Attack VTOL (Standard),24
+Scimitar Medium Hover Tank (Standard),90
+J. Edgar Light Hover Tank (Standard),36
+Striker Light Tank (Standard),17
 Striker Light Tank (SRM),4
-Saladin Assault Hover Tank,81
+Saladin Assault Hover Tank (Standard),81
 Hunter Light Support Tank (LRM15),6
 Striker Light Tank (LRM),4
-Pegasus Scout Hover Tank,120
+Pegasus Scout Hover Tank (Standard),120
 Hunter Light Support Tank (LRM10),6
-Hunter Light Support Tank,30
-Saracen Medium Hover Tank,110
+Hunter Light Support Tank (Standard),30
+Saracen Medium Hover Tank (Standard),110

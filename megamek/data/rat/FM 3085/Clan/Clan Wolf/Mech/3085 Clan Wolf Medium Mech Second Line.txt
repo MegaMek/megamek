@@ -4,9 +4,9 @@ Shadow Hawk C,2
 Wyvern IIC 2,3
 Crab CRB-27b,4
 Lobo 2,5
-Sun Cobra,6
-Clint IIC,5
-Lobo,4
-Sun Cobra,3
-Hunchback IIC,2
+Sun Cobra (Standard),6
+Clint IIC (Standard),5
+Lobo (Standard),4
+Sun Cobra (Standard),3
+Hunchback IIC (Standard),2
 Griffin IIC 8,1

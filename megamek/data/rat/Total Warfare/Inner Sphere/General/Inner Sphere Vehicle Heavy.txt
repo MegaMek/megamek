@@ -1,13 +1,13 @@
 Inner Sphere Vehicle Heavy
 Manticore Heavy Tank (3055 Upgrade),1
 LRM Carrier (3055 Upgrade),2
-LRM Carrier,3
-Po Heavy Tank,4
-Patton Tank,5
-Manticore Heavy Tank,6
-Rommel Tank,5
+LRM Carrier (Standard),3
+Po Heavy Tank (Standard),4
+Patton Tank (Standard),5
+Manticore Heavy Tank (Standard),6
+Rommel Tank (Standard),5
 Von Luckner Heavy Tank VNL-K100,4
-SRM Carrier,3
+SRM Carrier (Standard),3
 SRM Carrier (3054 Upgrade),2
 Von Luckner Heavy Tank (Star League),1
 #Edited by Harold "BATTLEMASTER" N.

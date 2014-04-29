@@ -1,0 +1,12 @@
+ComStar Heavy Aerospace 3067 (FMU)
+Huscarl HSCL-1-O,1
+Hammerhead HMR-HD,2
+Rapier RPR-100,3
+Hammerhead HMR-HD,4
+Ahab AHB-443,5
+Hammerhead HMR-HD,6
+Eagle EGL-R6,5
+Ahab AHB-443,4
+Eagle EGL-R6,3
+Rapier RPR-100,2
+Ahab AHB-443,1

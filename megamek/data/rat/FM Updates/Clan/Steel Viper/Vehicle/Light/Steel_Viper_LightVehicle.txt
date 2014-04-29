@@ -1,0 +1,12 @@
+Steel Viper Light Vehicle (FMU)
+Indra Infantry Transport (Standard),1
+Asshur Fast Reconnaissance Vehicle (Standard),2
+Donar Assault Helicopter (Standard),3
+Mithras Light Tank (Standard),4
+Odin Scout Tank (Standard),5
+Donar Assault Helicopter (Standard),6
+Mithras Light Tank (Standard),5
+Zorya Light Tank (Standard),4
+Svantovit Infantry Fighting Vehicle (Standard),3
+Indra Infantry Transport (Standard),2
+Asshur Fast Reconnaissance Vehicle (Standard),1

@@ -31,20 +31,20 @@
 #   less than 1.                                                            #
 #############################################################################
 FRR3039HeavyVehicles_B
-Po Heavy Tank,8
-AC/2 Carrier,24
+Po Heavy Tank (Standard),8
+AC/2 Carrier (Standard),24
 Bulldog Medium Tank (AC2),41
-Laser Carrier,32
-Bulldog Medium Tank,163
-Pike Support Vehicle,28
+Laser Carrier (Standard),32
+Bulldog Medium Tank (Standard),163
+Pike Support Vehicle (Standard),28
 Pike Support Vehicle (AC5),5
 Bulldog Medium Tank (LRM),41
-SRM Carrier,122
-LRM Carrier,122
+SRM Carrier (Standard),122
+LRM Carrier (Standard),122
 Axel Heavy Tank Mk 2,57
 Axel Heavy Tank Mk 1,57
-Rommel Tank,32
-Patton Tank,32
-Manticore Heavy Tank,162
+Rommel Tank (Standard),32
+Patton Tank (Standard),32
+Manticore Heavy Tank (Standard),162
 Von Luckner Heavy Tank VNL-K70,3
 Von Luckner Heavy Tank VNL-K65N,71

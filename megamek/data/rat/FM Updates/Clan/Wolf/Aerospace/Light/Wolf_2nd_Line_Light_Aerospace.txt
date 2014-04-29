@@ -1,0 +1,12 @@
+Wolf 2nd-Line Light Aerospace (FMU)
+Sai S-4C,1
+Swift SWF-606,2
+Chaeronea (Standard),3
+Rogue RGU-133E,4
+Sulla Prime,5
+Chaeronea (Standard),6
+Batu Prime,5
+Zero ZRO-114,4
+Sulla Prime,3
+Vandal Prime,2
+Avar Prime,1

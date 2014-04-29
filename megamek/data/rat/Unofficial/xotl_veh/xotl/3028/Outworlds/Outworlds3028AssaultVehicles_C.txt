@@ -31,13 +31,13 @@
 #   less than 1.                                                            #
 #############################################################################
 Outworlds3028AssaultVehicles_C
-Partisan Heavy Tank,720
-Schrek AC Carrier,200
-Schrek PPC Carrier,1140
-Demolisher Heavy Tank,3360
-Devastator Heavy Tank,680
-Behemoth Heavy Tank,2420
+Partisan Heavy Tank (Standard),720
+Schrek AC Carrier (Standard),200
+Schrek PPC Carrier (Standard),1140
+Demolisher Heavy Tank (Standard Mk. I),3360
+Devastator Heavy Tank (Standard),680
+Behemoth Heavy Tank (Standard),2420
 Rhino Fire Support Tank (Flamer),150
 Rhino Fire Support Tank (MG),150
-Rhino Fire Support Tank,1050
+Rhino Fire Support Tank (Standard),1050
 Rhino Fire Support Tank (SL),70

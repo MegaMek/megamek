@@ -1,12 +1,12 @@
 3034 House Steiner Vehicle - Assault
-Partisan Heavy Tank,1
-Schrek PPC Carrier,2
-Schrek PPC Carrier,3
-Partisan Heavy Tank,4
-Demolisher Heavy Tank,5
-Ontos Heavy Tank,6
-Sturmfeur Heavy Tank,5
-Demolisher Heavy Tank,4
-Sturmfeur Heavy Tank,3
-Partisan Heavy Tank,2
-Behemoth Heavy Tank,1
+Partisan Heavy Tank (Standard),1
+Schrek PPC Carrier (Standard),2
+Schrek PPC Carrier (Standard),3
+Partisan Heavy Tank (Standard),4
+Demolisher Heavy Tank (Standard Mk. I),5
+Ontos Heavy Tank (Standard),6
+Sturmfeur Heavy Tank (Standard),5
+Demolisher Heavy Tank (Standard Mk. I),4
+Sturmfeur Heavy Tank (Standard),3
+Partisan Heavy Tank (Standard),2
+Behemoth Heavy Tank (Standard),1

@@ -32,14 +32,14 @@
 #############################################################################
 Kurita3028MediumVehicles_B
 Goblin Medium Tank (SRM),5
-Goblin Medium Tank,33
+Goblin Medium Tank (Standard),33
 Vedette Medium Tank (AC2),64
-Vedette Medium Tank,577
+Vedette Medium Tank (Standard),577
 Hetzer Wheeled Assault Gun (Laser),8
-Hetzer Wheeled Assault Gun,67
+Hetzer Wheeled Assault Gun (Standard),67
 Hetzer Wheeled Assault Gun (SRM),8
 Hetzer Wheeled Assault Gun (LRM),8
 Maxim Heavy Hover Transport (SRM4),13
 Prowler Multi-Terrain Vehicle (Succession Wars),51
 Maxim Heavy Hover Transport (SRM2),13
-Maxim Heavy Hover Transport,153
+Maxim Heavy Hover Transport (Standard),153

@@ -34,18 +34,18 @@ MerPerGen3028MediumVehicles_C
 Condor Heavy Hover Tank (Davion),10
 Vedette Medium Tank (Liao),20
 Goblin Medium Tank (MG),10
-Goblin Medium Tank,370
+Goblin Medium Tank (Standard),370
 Goblin Medium Tank (LRM),10
 Condor Heavy Hover Tank (Liao),10
 Vedette Medium Tank (AC2),610
-Vedette Medium Tank,5570
+Vedette Medium Tank (Standard),5570
 Hetzer Wheeled Assault Gun (Laser),110
-Hetzer Wheeled Assault Gun,1420
+Hetzer Wheeled Assault Gun (Standard),1420
 Hetzer Wheeled Assault Gun (SRM),110
-Condor Heavy Hover Tank,370
+Condor Heavy Hover Tank (Standard),370
 Hetzer Wheeled Assault Gun (LRM),110
 Maxim Heavy Hover Transport (SRM4),90
 Prowler Multi-Terrain Vehicle (Succession Wars),280
 Maxim Heavy Hover Transport (SRM2),90
-Maxim Heavy Hover Transport,710
-Drillson Heavy Hover Tank,10
+Maxim Heavy Hover Transport (Standard),710
+Drillson Heavy Hover Tank (Standard),10

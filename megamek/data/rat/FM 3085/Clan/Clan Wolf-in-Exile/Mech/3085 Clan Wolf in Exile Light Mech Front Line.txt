@@ -1,5 +1,5 @@
 3085 Clan Wolf in Exile Light Mech Front Line
-Pack Hunter II,1
+Pack Hunter II (Standard),1
 Pack Hunter II 3,2
 Pack Hunter 4,3
 Pack Hunter 3,4

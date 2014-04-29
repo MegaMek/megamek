@@ -31,12 +31,12 @@
 #   less than 1.                                                            #
 #############################################################################
 Canopus3028MediumVehicles_F
-Goblin Medium Tank,360
-Condor Heavy Hover Tank,360
+Goblin Medium Tank (Standard),360
+Condor Heavy Hover Tank (Standard),360
 Vedette Medium Tank (AC2),690
-Vedette Medium Tank,6260
+Vedette Medium Tank (Standard),6260
 Hetzer Wheeled Assault Gun (Laser),130
-Hetzer Wheeled Assault Gun,1540
+Hetzer Wheeled Assault Gun (Standard),1540
 Hetzer Wheeled Assault Gun (SRM),130
 Hetzer Wheeled Assault Gun (LRM),130
 Maxim Heavy Hover Transport (SRM4),100

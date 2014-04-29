@@ -31,33 +31,33 @@
 #   less than 1.                                                            #
 #############################################################################
 Outworlds3028LightVehicles_F
-Ferret Light Scout VTOL,330
+Ferret Light Scout VTOL (Standard),330
 Ferret Light Scout VTOL (Armor) "Wild Weasel",100
-Darter Scout Car,30
+Darter Scout Car (Standard),30
 Galleon Light Tank GAL-100,410
-Karnov UR Gunship,200
+Karnov UR Gunship (Standard),200
 Warrior Attack Helicopter H-7A,200
 Warrior Attack Helicopter H-7,390
-Scorpion Light Tank,1960
-Skulker Wheeled Scout Tank,240
+Scorpion Light Tank (Standard),1960
+Skulker Wheeled Scout Tank (Standard),240
 Scorpion Light Tank (ML),200
-Harasser Laser Platform,160
+Harasser Laser Platform (Standard),160
 Packrat LRPV PKR-T5,350
 Scorpion Light Tank (SRM),590
 Harasser Missile Platform (LRM),140
-Harasser Missile Platform,390
+Harasser Missile Platform (Standard),390
 Scorpion Light Tank (LRM),200
 J. Edgar Light Hover Tank (ICE),80
 J. Edgar Light Hover Tank (Flamer),40
 Warrior Attack Helicopter H-7C,90
 J. Edgar Light Hover Tank (MG),40
-Peregrine Attack VTOL,390
-Scimitar Medium Hover Tank,450
-J. Edgar Light Hover Tank,250
-Striker Light Tank,250
+Peregrine Attack VTOL (Standard),390
+Scimitar Medium Hover Tank (Standard),450
+J. Edgar Light Hover Tank (Standard),250
+Striker Light Tank (Standard),250
 Striker Light Tank (SRM),50
-Saladin Assault Hover Tank,980
+Saladin Assault Hover Tank (Standard),980
 Saladin Assault Hover Tank (Armor),10
 Hunter Light Support Tank (LRM15),40
 Striker Light Tank (LRM),50
-Pegasus Scout Hover Tank,1150
+Pegasus Scout Hover Tank (Standard),1150

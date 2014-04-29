@@ -32,16 +32,16 @@
 #############################################################################
 Outworlds3039MediumVehicles_B
 Vedette Medium Tank (AC2),55
-Vedette Medium Tank,497
+Vedette Medium Tank (Standard),497
 Hetzer Wheeled Assault Gun (Laser),11
-Goblin Medium Tank,33
-Hetzer Wheeled Assault Gun,133
+Goblin Medium Tank (Standard),33
+Hetzer Wheeled Assault Gun (Standard),133
 Hetzer Wheeled Assault Gun (SRM),11
-Condor Heavy Hover Tank,33
+Condor Heavy Hover Tank (Standard),33
 Hetzer Wheeled Assault Gun (LRM),11
 Maxim Heavy Hover Transport (SRM4),9
 Prowler Multi-Terrain Vehicle (Succession Wars),44
 Maxim Heavy Hover Transport (SRM2),9
-Maxim Heavy Hover Transport,60
+Maxim Heavy Hover Transport (Standard),60
 Drillson Heavy Hover Tank (SRM),9
-Drillson Heavy Hover Tank,85
+Drillson Heavy Hover Tank (Standard),85

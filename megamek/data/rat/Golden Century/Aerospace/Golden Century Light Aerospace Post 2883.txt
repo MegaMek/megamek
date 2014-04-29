@@ -1,12 +1,12 @@
 2883 Golden Century Light Aerospace
 Avar Prime,1
 Zero ZRO-116b,2
-Chaeronea,3
+Chaeronea (Standard),3
 Chaeronea 2,4
-Chaeronea,5
+Chaeronea (Standard),5
 Swift C,6
 Avar Prime,5
-Issus,4
+Issus (Standard),4
 Tomahawk C,3
 Spad SPD-502,2
 Chaeronea 2,1

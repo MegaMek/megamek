@@ -1,0 +1,12 @@
+Clan Star Adder Dropships (FMU)
+Miraborg (Standard),1
+Noruff (Standard),2
+Union C,3
+Titan (Clan),4
+Lion (Clan),5
+Overlord C,6
+Union C,5
+Overlord C,4
+Triumph (3057),3
+Sassanid (Standard),2
+Fortress (3058),1

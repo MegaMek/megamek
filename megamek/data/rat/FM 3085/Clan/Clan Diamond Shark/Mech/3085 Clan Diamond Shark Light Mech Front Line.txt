@@ -1,9 +1,9 @@
 3085 Clan Diamond Shark Light Mech Front Line
-Arbalest,1
-Morrigan,2
+Arbalest (Standard),1
+Morrigan (Standard),2
 Ocelot 3,3
 Pack Hunter 2,4
-Solitaire,5
+Solitaire (Standard),5
 Hankyu (Arctic Cheetah) Prime,6
 Hankyu (Arctic Cheetah) Prime,5
 Hellion Prime,4

@@ -1,0 +1,12 @@
+Wolf (in-Exile) 2nd-Line Medium ASF (FMU)
+Turk Prime,1
+Jagatai Prime,2
+Hellcat II HCT-213B,3
+Hellcat II HCT-213B,4
+Ammon (Standard),5
+Ironsides IRN-SD1,6
+Visigoth Prime,5
+Gotha GTHA-500,4
+Gotha GTHA-500,3
+Turk Prime,2
+Visigoth Prime,1

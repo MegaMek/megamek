@@ -34,11 +34,11 @@ Davion3028HeavyVehicles_A
 Von Luckner Heavy Tank VNL-K100,5
 Von Luckner Heavy Tank VNL-K65N,133
 Bulldog Medium Tank (AC2),15
-Laser Carrier,51
-Bulldog Medium Tank,141
-Pike Support Vehicle,44
+Laser Carrier (Standard),51
+Bulldog Medium Tank (Standard),141
+Pike Support Vehicle (Standard),44
 Pike Support Vehicle (AC5),8
 Bulldog Medium Tank (LRM),26
-SRM Carrier,192
-LRM Carrier,192
-Manticore Heavy Tank,193
+SRM Carrier (Standard),192
+LRM Carrier (Standard),192
+Manticore Heavy Tank (Standard),193

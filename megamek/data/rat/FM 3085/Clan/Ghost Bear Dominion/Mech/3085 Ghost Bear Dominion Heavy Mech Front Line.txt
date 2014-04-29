@@ -1,8 +1,8 @@
 3085 Ghost Bear Dominion Heavy Mech Front Line
 Karhu Prime,1
-Arcas 2,2
+Arcas 2, 2
 Thor (Summoner) Prime,3
-Arcas,4
+Arcas (Standard),4
 Vulture (Mad Dog) Prime,5
 Karhu Prime,6
 Vulture (Mad Dog) Prime,5

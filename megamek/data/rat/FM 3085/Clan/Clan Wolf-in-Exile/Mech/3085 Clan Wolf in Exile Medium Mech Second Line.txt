@@ -1,12 +1,12 @@
 3085 Clan Wolf in Exile Medium Mech Second Line
 Hatchetman HCT-5S,1
 Griffin IIC 8,2
-Hunchback IIC,3
+Hunchback IIC (Standard),3
 Bushwacker BSW-X2,4
-Ursus II,5
-Arctic Wolf,6
+Ursus II (Standard),5
+Arctic Wolf (Standard),6
 Arctic Wolf 2,5
 Firestarter FS9-O,4
-Black Hawk,3
-Ursus II,2
+Black Hawk (Standard),3
+Ursus II (Standard),2
 Fenris (Ice Ferret) Prime,1

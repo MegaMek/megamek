@@ -1,12 +1,12 @@
 WoB Medium Vehicles (Blake Docs)
-Chaparral Missile Artillery Tank,1
+Chaparral Missile Artillery Tank (CASE),1
 Thor Artillery Vehicle (C3i),2
 Turhan Urban Combat Vehicle (Standard Armor),3
-Condor Heavy Hover Tank (Upgrade Laser),4
-Goblin Infantry Support Vehicle,5
+Condor Heavy Hover Tank (Upgrade) (Laser),4
+Goblin Infantry Support Vehicle (Standard),5
 Zephyr Hovertank (C3i),6
-Maxim (I) Heavy Hover Transport,5
+Maxim (I) Heavy Hover Transport (Standard),5
 Drillson Heavy Hover Tank (Sealed),4
-Stygian Strike Tank,3
-Regulator Hovertank,2
-Chaparral Missile Artillery Tank,1
+Stygian Strike Tank (WOB),3
+Regulator Hovertank (Standard),2
+Chaparral Missile Artillery Tank (ERML),1

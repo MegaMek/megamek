@@ -1,12 +1,12 @@
 3085 Clan Nova Cat Protomech Front Line
-Satyr,1
-Roc,2
-Gorgon,3
+Satyr (Standard),1
+Roc (Standard),2
+Gorgon 4,3
 Roc 2,4
-Chrysaor,5
+Chrysaor (Standard),5
 Satyr XP,6
-Gorgon,5
-Roc,4
-Satyr,3
-Centaur,2
+Gorgon (Standard),5
+Roc 2,4
+Satyr (Standard),3
+Centaur 4,2
 Satyr 2,1

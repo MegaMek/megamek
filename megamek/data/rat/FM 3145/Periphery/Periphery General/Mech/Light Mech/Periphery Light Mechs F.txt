@@ -1,5 +1,5 @@
 Periphery Light Mechs F
-Crosscut LoggerMech ED-XX "Icabod",1
+Crosscut ED-XX "Ichabod",1
 Locust LCT-1V,2
 Stinger STG-3R,3
 Wasp WSP-1A,4

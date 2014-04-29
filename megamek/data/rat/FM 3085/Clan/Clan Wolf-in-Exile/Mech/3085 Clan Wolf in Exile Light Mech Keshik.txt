@@ -8,5 +8,5 @@ Puma (Adder) Prime,6
 Puma (Adder) Prime,5
 Arctic Fox AF1,4
 Arctic Fox AF1,3
-Incubus II,2
+Incubus II (Standard),2
 Cougar Prime,1

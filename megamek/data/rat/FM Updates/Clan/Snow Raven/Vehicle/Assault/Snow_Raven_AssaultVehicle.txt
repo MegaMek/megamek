@@ -1,0 +1,12 @@
+Snow Raven Assault Vehicle (FMU)
+Heimdall Ground Monitor Tank Prime,1
+Demolisher Heavy Tank (Clan),2
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (Standard),4
+Huitzilopochtli Assault Tank 'Huey' (Standard),5
+Mars Assault Vehicle (Standard),6
+Mars Assault Vehicle (Standard),5
+Mars Assault Vehicle (Standard),4
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (Standard),2
+Huitzilopochtli Assault Tank 'Huey' (Standard),1

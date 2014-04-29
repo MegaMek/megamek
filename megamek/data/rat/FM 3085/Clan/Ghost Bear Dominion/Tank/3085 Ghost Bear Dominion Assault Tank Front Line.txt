@@ -1,12 +1,12 @@
 3085 Ghost Bear Dominion Assault Tank Front Line
-Behemoth,1
+Behemoth Heavy Tank (Standard),1
 Morrigu Fire Support Vehicle (Laser),2
-Mars Assault Vehicle,3
+Mars Assault Vehicle (Standard),3
 Huitzilopochtli Assault Tank 'Huey' (AAA),4
-Mars Assault Vehicle,5
+Mars Assault Vehicle (Standard),5
 Mars Assault Vehicle (HAG),6
 Huitzilopochtli Assault Tank 'Huey' (AAA),5
-Huitzilopochtli Assault Tank 'Huey',4
+Huitzilopochtli Assault Tank 'Huey' (Standard),4
 Demolisher Heavy Tank (Clan),3
-Huitzilopochtli Assault Tank 'Huey',2
-Morrigu Fire Support Vehicle,1
+Huitzilopochtli Assault Tank 'Huey' (Standard),2
+Morrigu Fire Support Vehicle (Standard),1

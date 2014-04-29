@@ -1,0 +1,12 @@
+Clan Blood Spirit Front-Line Heavy Mechs (FMU)
+Hellfire 2,1
+Thresher (Standard),2
+Vulture (Mad Dog) B,3
+Mad Cat (Timber Wolf) D,4
+Thor (Summoner) A,5
+Crossbow Prime,6
+Crossbow Prime,5
+Grizzly (Standard),4
+Crossbow B,3
+Rifleman IIC (Standard),2
+Grizzly 2,1

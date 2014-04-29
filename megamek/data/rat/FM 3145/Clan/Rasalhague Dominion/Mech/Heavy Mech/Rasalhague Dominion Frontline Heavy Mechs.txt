@@ -1,7 +1,7 @@
 Rasalhague Dominion Frontline Heavy Mechs
-Arcas 2,1
+Arcas 2, 1
 Vulture (Mad Dog) Prime,2
-Arcas,3
+Arcas (Standard),3
 Vulture Mk IV (Mad Dog Mk IV) Prime,4
 Vulture Mk III (Mad Dog Mk III) (Prime),5
 Karhu Prime,6

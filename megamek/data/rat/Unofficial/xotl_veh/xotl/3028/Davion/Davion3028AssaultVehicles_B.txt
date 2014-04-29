@@ -32,14 +32,14 @@
 #############################################################################
 Davion3028AssaultVehicles_B
 Partisan Heavy Tank (AC2),10
-Partisan Heavy Tank,150
-Schrek AC Carrier,10
-Schrek PPC Carrier,57
-Demolisher Heavy Tank,166
+Partisan Heavy Tank (Standard),150
+Schrek AC Carrier (Standard),10
+Schrek PPC Carrier (Standard),57
+Demolisher Heavy Tank (Standard Mk. I),166
 Partisan Heavy Tank (LRM),7
-Devastator Heavy Tank,50
-Behemoth Heavy Tank,250
+Devastator Heavy Tank (Standard),50
+Behemoth Heavy Tank (Standard),250
 Rhino Fire Support Tank (Flamer),50
 Rhino Fire Support Tank (MG),50
-Rhino Fire Support Tank,133
+Rhino Fire Support Tank (Standard),133
 Rhino Fire Support Tank (SL),67

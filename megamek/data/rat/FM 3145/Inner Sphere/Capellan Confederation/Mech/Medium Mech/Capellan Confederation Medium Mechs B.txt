@@ -9,4 +9,4 @@ Raven II RVN-5X,5
 Men Shen MS1-O,4
 Yao Lien YOL-4C,3
 Agrotera AGT-1A,2
-Goshawk II,1
+Goshawk II (Standard),1

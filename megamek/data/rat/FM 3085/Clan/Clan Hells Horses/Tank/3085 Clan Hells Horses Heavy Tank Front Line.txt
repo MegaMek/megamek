@@ -1,12 +1,12 @@
 3085 Clan Hell's Horses Heavy Tank Front Line
 Ishtar Heavy Fire Support Tank (Original),1
-Athena Combat Vehicle,2
+Athena Combat Vehicle (Standard),2
 Ishtar Heavy Fire Support Tank (Gauss),3
-Oro Heavy Tank,4
-Athena Combat Vehicle,5
+Oro Heavy Tank (Standard),4
+Athena Combat Vehicle (Standard),5
 Ishtar Heavy Fire Support Tank (Gauss),6
-Athena Combat Vehicle (HAG),5
+Athena Combat Vehicle (Standard),5
 Athena Combat Vehicle (HAG),4
-Athena Combat Vehicle,3
+Athena Combat Vehicle (Standard),3
 Ishtar Heavy Fire Support Tank (Gauss),2
-Oro Heavy Tank,1
+Oro Heavy Tank (Standard),1

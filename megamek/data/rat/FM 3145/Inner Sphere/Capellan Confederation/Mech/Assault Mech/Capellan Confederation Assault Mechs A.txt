@@ -9,4 +9,4 @@ Pillager PLG-5Z,5
 Phoenix Hawk IIC 3,4
 Mad Cat Mk II (Standard),3
 Warhammer IIC 4,2
-Hellstar,1
+Hellstar (Standard),1

@@ -3,7 +3,7 @@ Mad Cat Mk II Enhanced,1
 Warhammer IIC 7,2
 Mad Cat Mk II Enhanced,3
 Deimos Prime,4
-Omen,5
+Omen (Standard),5
 Gladiator (Executioner) Prime,6
 Deimos Prime,5
 Kingfisher Prime,4

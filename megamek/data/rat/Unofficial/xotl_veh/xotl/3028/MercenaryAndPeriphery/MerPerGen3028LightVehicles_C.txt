@@ -31,35 +31,35 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3028LightVehicles_C
-Darter Scout Car,10
-Ferret Light Scout VTOL,300
+Darter Scout Car (Standard),10
+Ferret Light Scout VTOL (Standard),300
 Ferret Light Scout VTOL (Armor) "Wild Weasel",90
 Galleon Light Tank GAL-100,400
-Karnov UR Gunship,170
+Karnov UR Gunship (Standard),170
 Warrior Attack Helicopter H-7A,170
 Warrior Attack Helicopter H-7,380
-Scorpion Light Tank,1850
-Skulker Wheeled Scout Tank,200
+Scorpion Light Tank (Standard),1850
+Skulker Wheeled Scout Tank (Standard),200
 Scorpion Light Tank (ML),170
-Harasser Laser Platform,140
+Harasser Laser Platform (Standard),140
 Packrat LRPV PKR-T5,320
 Scorpion Light Tank (SRM),570
 Harasser Missile Platform (LRM),120
-Harasser Missile Platform,380
+Harasser Missile Platform (Standard),380
 Scorpion Light Tank (LRM),170
 J. Edgar Light Hover Tank (ICE),70
 J. Edgar Light Hover Tank (Flamer),30
 Warrior Attack Helicopter H-7C,90
 J. Edgar Light Hover Tank (MG),30
-Peregrine Attack VTOL,370
-Scimitar Medium Hover Tank,410
-J. Edgar Light Hover Tank,230
-Striker Light Tank,200
+Peregrine Attack VTOL (Standard),370
+Scimitar Medium Hover Tank (Standard),410
+J. Edgar Light Hover Tank (Standard),230
+Striker Light Tank (Standard),200
 Striker Light Tank (SRM),30
-Saladin Assault Hover Tank,670
+Saladin Assault Hover Tank (Standard),670
 Hunter Light Support Tank (LRM15),30
 Striker Light Tank (LRM),30
-Pegasus Scout Hover Tank,1410
+Pegasus Scout Hover Tank (Standard),1410
 Hunter Light Support Tank (LRM10),30
-Hunter Light Support Tank,340
-Saracen Medium Hover Tank,410
+Hunter Light Support Tank (Standard),340
+Saracen Medium Hover Tank (Standard),410

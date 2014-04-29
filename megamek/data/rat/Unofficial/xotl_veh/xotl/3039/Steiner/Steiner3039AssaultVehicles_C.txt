@@ -32,17 +32,17 @@
 #############################################################################
 Steiner3039AssaultVehicles_C
 Partisan Heavy Tank (AC2),100
-Partisan Heavy Tank,950
-Schrek AC Carrier,100
-Schrek PPC Carrier,550
-Ontos Heavy Tank,650
-Demolisher Heavy Tank,1630
+Partisan Heavy Tank (Standard),950
+Schrek AC Carrier (Standard),100
+Schrek PPC Carrier (Standard),550
+Ontos Heavy Tank (Standard),650
+Demolisher Heavy Tank (Standard Mk. I),1630
 Partisan Heavy Tank (LRM),100
-Devastator Heavy Tank,490
-Behemoth Heavy Tank,1140
+Devastator Heavy Tank (Standard),490
+Behemoth Heavy Tank (Standard),1140
 Sturmfeur Heavy Tank (SRM),160
-Sturmfeur Heavy Tank,980
+Sturmfeur Heavy Tank (Standard),980
 Rhino Fire Support Tank (Flamer),490
 Rhino Fire Support Tank (MG),490
-Rhino Fire Support Tank,1310
+Rhino Fire Support Tank (Standard),1310
 Rhino Fire Support Tank (SL),160

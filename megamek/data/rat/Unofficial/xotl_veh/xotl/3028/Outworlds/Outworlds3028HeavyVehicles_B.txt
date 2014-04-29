@@ -31,14 +31,14 @@
 #   less than 1.                                                            #
 #############################################################################
 Outworlds3028HeavyVehicles_B
-AC/2 Carrier,27
+AC/2 Carrier (Standard),27
 Bulldog Medium Tank (AC2),46
-Laser Carrier,37
-Bulldog Medium Tank,183
-Pike Support Vehicle,31
+Laser Carrier (Standard),37
+Bulldog Medium Tank (Standard),183
+Pike Support Vehicle (Standard),31
 Pike Support Vehicle (AC5),5
 Bulldog Medium Tank (LRM),46
-SRM Carrier,183
-LRM Carrier,183
-Manticore Heavy Tank,182
+SRM Carrier (Standard),183
+LRM Carrier (Standard),183
+Manticore Heavy Tank (Standard),182
 Von Luckner Heavy Tank VNL-K65N,77

@@ -32,15 +32,15 @@
 #############################################################################
 Liao3028AssaultVehicles_D
 Partisan Heavy Tank (AC2),110
-Partisan Heavy Tank,1180
-Schrek AC Carrier,110
-Schrek PPC Carrier,660
-Ontos Heavy Tank,1010
-Demolisher Heavy Tank,1940
+Partisan Heavy Tank (Standard),1180
+Schrek AC Carrier (Standard),110
+Schrek PPC Carrier (Standard),660
+Ontos Heavy Tank (Standard),1010
+Demolisher Heavy Tank (Standard Mk. I),1940
 Partisan Heavy Tank (LRM),110
-Devastator Heavy Tank,580
+Devastator Heavy Tank (Standard),580
 Ontos Heavy Tank (LRM),380
-Behemoth Heavy Tank,1420
+Behemoth Heavy Tank (Standard),1420
 Rhino Fire Support Tank (Flamer),580
 Rhino Fire Support Tank (MG),580
-Rhino Fire Support Tank,1200
+Rhino Fire Support Tank (Standard),1200

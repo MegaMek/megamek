@@ -8,5 +8,5 @@ Elemental Battle Armor [MG],6
 Elemental Battle Armor [MG],5
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],3
-Gnome Battle Armor,2
+Gnome Battle Armor (Standard),2
 Gnome Battle Armor (Upgrade) [Bearhunter],1

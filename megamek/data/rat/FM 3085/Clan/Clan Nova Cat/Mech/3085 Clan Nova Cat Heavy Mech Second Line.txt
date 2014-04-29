@@ -1,12 +1,12 @@
 3085 Clan Nova Cat Heavy Mech Second Line
 Rifleman IIC 2,1
 Maelstrom MTR-5K,2
-Ha Otoko,3
+Ha Otoko (Standard),3
 Black Knight BL-6b-KNT,4
-Ha Otoko,5
+Ha Otoko (Standard),5
 Dragon Fire DGR-3F,6
-Sphinx,5
+Sphinx (Standard),5
 Ha Otoko 3,4
-Guillotine IIC,3
-Rifleman IIC,2
+Guillotine IIC (Standard),3
+Rifleman IIC (Standard),2
 Rifleman IIC 7,1

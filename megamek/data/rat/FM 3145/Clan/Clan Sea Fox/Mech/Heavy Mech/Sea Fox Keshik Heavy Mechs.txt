@@ -1,7 +1,7 @@
 Sea Fox Keshik Heavy Mechs
 Black Hawk-KU BHKU-O,1
 Cauldron-Born (Ebon Jaguar) Prime,2
-Sphinx,3
+Sphinx (Standard),3
 Thor (Summoner) Prime,4
 Vulture Mk IV (Mad Dog Mk IV) Prime,5
 Vulture (Mad Dog) Prime,6

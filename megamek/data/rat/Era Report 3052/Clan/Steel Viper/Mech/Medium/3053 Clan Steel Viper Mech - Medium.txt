@@ -2,7 +2,7 @@
 Goshawk (Vapor Eagle) 4,1
 Griffin IIC 2,2
 Shadow Cat B,3
-Goshawk (Vapor Eagle) 2,4
+Goshawk (Vapor Eagle) (Standard),34
 Nobori-nin (Huntsman) Prime,5
 Ryoken (Stormcrow) Prime,6
 Black Hawk (Nova) Prime,5

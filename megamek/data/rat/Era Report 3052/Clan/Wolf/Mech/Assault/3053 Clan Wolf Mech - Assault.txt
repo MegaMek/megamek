@@ -8,4 +8,4 @@ Man O' War (Gargoyle) Prime,11
 Gladiator (Executioner) A,4
 Daishi (Dire Wolf) B,3
 Man O' War (Gargoyle) C,2
-Marauder IIC,1
+Marauder IIC (Standard),1

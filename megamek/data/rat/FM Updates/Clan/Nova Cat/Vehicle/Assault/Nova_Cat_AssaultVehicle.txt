@@ -1,0 +1,12 @@
+Nova Cat Assault Vehicle (FMU)
+Partisan Air Defense Tank (Standard),1
+Puma Assault Tank PAT-001,2
+Rhino Fire Support Tank (Standard),3
+Sturmfeur Heavy Tank (Standard),4
+Ontos Heavy Tank (Standard),5
+Behemoth Heavy Tank (Standard),6
+Alacorn Heavy Tank Mk I,5
+Heimdall Ground Monitor Tank Prime,4
+Schrek PPC Carrier (Standard),3
+Huitzilopochtli Assault Tank 'Huey' (Standard),2
+Demolisher Heavy Tank (Clan),1

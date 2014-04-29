@@ -31,18 +31,18 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3028AssaultVehicles_C
-Ontos Heavy Tank,70
+Ontos Heavy Tank (Standard),70
 Ontos Heavy Tank (LRM),20
 Partisan Heavy Tank (AC2),160
-Partisan Heavy Tank,1640
-Schrek AC Carrier,160
-Schrek PPC Carrier,950
-Demolisher Heavy Tank,2030
+Partisan Heavy Tank (Standard),1640
+Schrek AC Carrier (Standard),160
+Schrek PPC Carrier (Standard),950
+Demolisher Heavy Tank (Standard Mk. I),2030
 Partisan Heavy Tank (LRM),160
-Devastator Heavy Tank,580
-Behemoth Heavy Tank,2820
-Sturmfeur Heavy Tank,10
+Devastator Heavy Tank (Standard),580
+Behemoth Heavy Tank (Standard),2820
+Sturmfeur Heavy Tank (Standard),10
 Rhino Fire Support Tank (Flamer),160
 Rhino Fire Support Tank (MG),160
-Rhino Fire Support Tank,930
+Rhino Fire Support Tank (Standard),930
 Rhino Fire Support Tank (SL),50

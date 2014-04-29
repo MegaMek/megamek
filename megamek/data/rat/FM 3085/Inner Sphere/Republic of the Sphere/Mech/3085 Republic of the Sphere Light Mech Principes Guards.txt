@@ -3,7 +3,7 @@ Jackal JA-KL-55,1
 Falcon Hawk FNHK-9K1A,2
 Garm GRM-01A2,3
 Locust IIC 8,4
-Arbalest,5
+Arbalest (Standard),5
 Jenner IIC 4,6
 Bear Cub 3,5
 Wight WGT-3SC,4

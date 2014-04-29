@@ -1,12 +1,12 @@
 3085 Raven Alliance Protomech Keshik
-Roc,1
-Cecerops,2
-Gorgon,3
-Roc,4
-Chrysaor,5
-Roc 2,6
-Gorgon 3,5
-Satyr,4
+Roc 3,1
+Cecerops (Standard),2
+Gorgon 2,3
+Roc 2,4
+Chrysaor (Standard),5
+Roc (Standard),6
+Gorgon (Standard),5
+Satyr (Standard),4
 Chrysaor 2,3
-Satyr,2
+Satyr (Standard),2
 Roc 4,1

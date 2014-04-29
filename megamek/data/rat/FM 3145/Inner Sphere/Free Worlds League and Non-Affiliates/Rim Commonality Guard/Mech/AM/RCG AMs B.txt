@@ -6,7 +6,7 @@ Awesome AWS-10KM,4
 Gunslinger GUN-1ERD,5
 Longbow LGB-13C,6
 Cerberus MR-5M,5
-Emperor EMP-6ME (Mercury Elite),4
+Emperor EMP-6ME "Mercury Elite",4
 Trebaruna TR-XB,3
 Warhammer IIC 8,2
 Goliath GOL-6M,1

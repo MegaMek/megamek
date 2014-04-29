@@ -9,4 +9,4 @@ Osprey OSP-26,5
 Men Shen MS1-O,4
 Griffin GRF-5L,3
 Sha Yu SYU-6B,2
-Black Hawk,1
+Black Hawk (Standard),1

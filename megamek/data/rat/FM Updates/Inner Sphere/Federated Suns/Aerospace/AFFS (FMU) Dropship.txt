@@ -6,7 +6,7 @@ Avenger (3048),4
 Union (3055),5
 Overlord (3056),6
 Triumph (3057),5
-Leopard (3054),4
+Leopard (3056),4
 Achilles (3055),3
 Fortress (3058),2
-Hercules,1
+Hercules (Standard),1

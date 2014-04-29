@@ -1,11 +1,11 @@
 Sea Fox Keshik Medium Mechs
 Men Shen MS1-O,1
 Avalanche AVL-1O,2
-Sun Cobra,3
+Sun Cobra (Standard),3
 Black Hawk (Nova) Prime,4
 Arctic Wolf II Prime,5
 Wendigo (Prime),6
-Goshawk II,5
+Goshawk II (Standard),5
 Grendel (Mongrel) Prime,4
 Shadow Cat Prime,3
 Ryoken (Stormcrow) Prime,2

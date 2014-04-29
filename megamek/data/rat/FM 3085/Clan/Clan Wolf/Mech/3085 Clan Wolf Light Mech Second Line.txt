@@ -3,10 +3,10 @@ Panther PNT-9R,1
 Mongoose MON-66b,2
 Thorn THE-Nb,3
 Locust IIC 4,4
-Icestorm,5
+Icestorm (Standard),5
 Locust IIC 5,6
-Locust IIC,5
-Jenner IIC,4
+Locust IIC (Standard),5
+Jenner IIC (Standard),4
 Icestorm 2,3
 Locust IIC 6,2
 Puma (Adder) Prime,1

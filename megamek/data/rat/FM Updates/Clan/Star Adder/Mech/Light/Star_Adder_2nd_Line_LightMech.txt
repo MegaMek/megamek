@@ -1,12 +1,12 @@
-Crusader Clan Second-Line Light Mechs (Star Adder),
-Locust IIC,1
-Hussar HSR-200-D,2
-Jenner IIC,3
-Hermes HER-1S,4
-Vixen (Incubus),5
-Jenner IIC,6
-Baboon (Howler),5
-Peregrine (Horned Owl),4
-Peregrine (Horned Owl),3
-Locust IIC,2
-Mercury MCY-97,1
+Clan Star Adder Second-Line Light Mechs (FMU)
+Locust IIC (Standard),1
+Locust IIC (Standard),2
+Locust IIC 3,3
+Jenner IIC (Standard),4
+Peregrine (Horned Owl) (Standard),5
+Jenner IIC 2,6
+Vixen (Incubus) (Standard),5
+Peregrine (Horned Owl) 2,4
+Baboon (Howler) (Standard),3
+Pack Hunter (Standard),2
+Firefly C,1

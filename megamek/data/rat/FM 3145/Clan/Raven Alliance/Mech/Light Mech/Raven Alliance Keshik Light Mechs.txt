@@ -1,10 +1,10 @@
 Raven Alliance Keshik Light Mechs
-Parash,1
+Parash (Standard),1
 Jaguar (Standard),2
-Bear Cub,3
+Bear Cub (Standard),3
 Stinger IIC (Standard),4
 Locust IIC 8,5
-Parash,6
+Parash (Standard),6
 Uller (Kit Fox) Prime,5
 Uller (Kit Fox) A,4
 Dasher (Fire Moth) Prime,3

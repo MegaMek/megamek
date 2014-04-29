@@ -4,9 +4,9 @@ Spad SPD-503,2
 Swift C,3
 Rogue RGU-133Eb,4
 Zero ZRO-116b,5
-Chaeronea,6
-Issus,5
-Chaeronea,4
+Chaeronea (Standard),6
+Issus (Standard),5
+Chaeronea (Standard),4
 Vandal Prime,3
 Issus 3,2
 Vandal Prime,1

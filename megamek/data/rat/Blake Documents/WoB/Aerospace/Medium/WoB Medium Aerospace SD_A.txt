@@ -1,6 +1,6 @@
 WoB Medium Aerospace SD/A
-Rusalka S-RSL-0 Invictus (Primary),1
-Rusalka S-RSL-0 Invictus (Primary),2
+Rusalka S-RSL-OC Comminus,1
+Rusalka S-RSL-O Invictus,2
 Ironsides IRN-SD3,3
 Defiance DFC-O,4
 Hellcat II HCT-215,5
@@ -8,5 +8,5 @@ Hellcat II HCT-215,6
 Gotha GTHA-600,5
 Lightning LTN-G15b,4
 Stingray F-94,3
-Rusalka S-RSL-0 Invictus (Primary),2
-Rusalka S-RSL-0 Invictus (Primary),1
+Rusalka S-RSL-OA Dominus,2
+Rusalka S-RSL-OD Luminos,1

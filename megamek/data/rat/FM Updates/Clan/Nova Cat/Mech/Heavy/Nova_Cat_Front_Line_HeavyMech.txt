@@ -1,0 +1,12 @@
+Nova Cat Front-Line Heavy Mechs (FMU)
+Mad Cat (Timber Wolf) Prime,1
+Nova Cat A,2
+Thor (Summoner) D,3
+Mad Cat (Timber Wolf) A,4
+Nova Cat A,5
+Nova Cat Prime,6
+Nova Cat C,5
+Nova Cat D,4
+Nova Cat E,3
+Mad Cat (Timber Wolf) D,2
+Mad Cat (Timber Wolf) B,1

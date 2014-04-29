@@ -32,14 +32,14 @@
 #############################################################################
 MerPerGen3028AssaultVehicles_A
 Partisan Heavy Tank (AC2),16
-Partisan Heavy Tank,153
-Schrek AC Carrier,16
-Schrek PPC Carrier,90
-Demolisher Heavy Tank,185
+Partisan Heavy Tank (Standard),153
+Schrek AC Carrier (Standard),16
+Schrek PPC Carrier (Standard),90
+Demolisher Heavy Tank (Standard Mk. I),185
 Partisan Heavy Tank (LRM),16
-Devastator Heavy Tank,53
-Behemoth Heavy Tank,265
+Devastator Heavy Tank (Standard),53
+Behemoth Heavy Tank (Standard),265
 Rhino Fire Support Tank (Flamer),11
 Rhino Fire Support Tank (MG),11
-Rhino Fire Support Tank,79
+Rhino Fire Support Tank (Standard),79
 Rhino Fire Support Tank (SL),105

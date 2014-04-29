@@ -1,5 +1,5 @@
 3085 Clan Diamond Shark Medium Mech Second Line
-Dasher II,1
+Dasher II (Standard),1
 Crab CRB-27b,2
 Hellhound (Conjurer) 2,3
 Shadow Hawk IIC 5,4
@@ -7,6 +7,6 @@ Griffin IIC 5,5
 Dasher II 2,6
 Shadow Hawk IIC 3,5
 Griffin IIC 3,4
-Sun Cobra,3
+Sun Cobra (Standard),3
 Men Shen MS1-O,2
-Black Hawk,1
+Black Hawk (Standard),1

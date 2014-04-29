@@ -1,12 +1,12 @@
 LAAF Light Vehicles 3067 (FMU)
 Warrior Attack Helicopter H-8,1
-Cavalry Attack Helicopter,2
+Cavalry Attack Helicopter (Standard),2
 Pegasus Scout Hover Tank (3058 Upgrade),3
 Hunter Light Support Tank (3054 Upgrade),4
-Harasser Missile Platform,5
+Harasser Missile Platform (Standard),5
 Striker Light Tank (3053 Upgrade),6
-J. Edgar Light Hover Tank,5
-Scorpion Light Tank,4
-Centipede Scout Car,3
+J. Edgar Light Hover Tank (Standard),5
+Scorpion Light Tank (Standard),4
+Centipede Scout Car (Standard),3
 Galleon Light Tank GAL-102,2
-Yellow Jacket Gunship,1
+Yellow Jacket Gunship (Standard),1

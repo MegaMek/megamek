@@ -8,4 +8,4 @@ Ryoken (Stormcrow) Prime,11
 Black Hawk (Nova) A,4
 Fenris (Ice Ferret) B,3
 Grendel (Mongrel) Prime,2
-Stalking Spider,1
+Stalking Spider (Standard),1

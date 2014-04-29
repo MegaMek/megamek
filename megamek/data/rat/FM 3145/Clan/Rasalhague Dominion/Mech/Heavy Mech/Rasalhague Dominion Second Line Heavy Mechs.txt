@@ -1,12 +1,12 @@
 Rasalhague Dominion Second Line Heavy Mechs
 Grizzly 2,1
-Arcas,2
-Ryoken II,3
+Arcas (Standard),2
+Ryoken II (Standard),3
 Scourge SCG-WF1,4
-Kuma,5
-Arcas,6
+Kuma (Standard),5
+Arcas (Standard),6
 Vulture (Mad Dog) Prime,5
 Karhu Prime,4
 Rifleman IIC 8,3
-Arcas 2,2
+Arcas 2, 2
 Vulture (Mad Dog) Prime,1

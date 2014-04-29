@@ -1,4 +1,4 @@
 3062 Clan Hell's Horses - Assault Vehicle
-Huitzilopochtli Assault Tank 'Huey',16
-Mars Assault Vehicle,20
+Huitzilopochtli Assault Tank 'Huey' (Standard),16
+Mars Assault Vehicle (Standard),20
 Mars Assault Vehicle (XL),12

@@ -1,7 +1,7 @@
 3085 Clan Hell's Horses Light Aerospace Keshik
-Chaeronea,1
-Issus,2
-Chaeronea,3
+Chaeronea (Standard),1
+Issus (Standard),2
+Chaeronea (Standard),3
 Vandal Prime,4
 Issus 3,5
 Vandal Prime,6

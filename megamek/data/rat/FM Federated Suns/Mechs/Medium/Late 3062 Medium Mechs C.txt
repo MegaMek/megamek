@@ -1,0 +1,12 @@
+Late 3062 AFFS Medium Mechs, Tech Level C
+Firestarter FS9-O,1
+Sentry SNT-04,2
+Blackjack BJ-2,3
+Watchman WTC-4M,4
+Bushwacker BSW-X1,5
+Enforcer ENF-5D,6
+Trebuchet TBT-7M,5
+Stealth STH-1D,4
+Enforcer ENF-5D,3
+Blackjack BJ-3,2
+Nightsky NGS-4S,1

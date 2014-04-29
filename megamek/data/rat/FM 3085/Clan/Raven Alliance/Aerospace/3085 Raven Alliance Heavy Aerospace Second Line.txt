@@ -1,11 +1,11 @@
 3085 Raven Alliance Heavy Aerospace Second Line
-Hydaspes 3,1
+Hydaspes 2,1
 Stuka STU-K5,2
 Slayer SL-15R,3
 Slayer SL-15R,4
 Rapier RPR-200,5
-Tyre,6
-Hydaspes,5
+Tyre (Standard),6
+Hydaspes (Standard),5
 Xerxes 1,4
 Huscarl HSCL-1-O,3
 Sabutai Prime,2

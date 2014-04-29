@@ -1,5 +1,5 @@
 Raven Alliance Frontline Heavy Mechs
-Arcas,1
+Arcas (Standard),1
 Rifleman IIC 8,2
 Crossbow Prime,3
 Ryoken II 3,4

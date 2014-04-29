@@ -1,12 +1,12 @@
 3085 Clan Diamond Shark Light Tank Second Line
-Centipede Scout Car,1
-Chevalier Light Tank,2
-Striker Light Tank,3
+Centipede Scout Car (Standard),1
+Chevalier Light Tank (Standard),2
+Striker Light Tank (Standard),3
 Shamash Reconnaissance Vehicle (Flamer),4
-Donar Assault Helicopter,5
-Balac Strike VTOL,6
-Shamash Reconnaissance Vehicle,5
-Odin Scout Tank,4
+Donar Assault Helicopter (Standard),5
+Balac Strike VTOL (Standard),6
+Shamash Reconnaissance Vehicle (Standard),5
+Odin Scout Tank (Standard),4
 Balac Strike VTOL (Spotter),3
-Svantovit Infantry Fighting Vehicle,2
-Asshur Fast Reconnaissance Vehicle,1
+Svantovit Infantry Fighting Vehicle (Standard),2
+Asshur Fast Reconnaissance Vehicle (Standard),1

@@ -1,5 +1,5 @@
 Clan Snow Raven Heavy 'Mech
-Guillotine IIC,1
+Guillotine IIC (Standard),1
 Cauldron-Born (Ebon Jaguar) C,2
 Linebacker D,3
 Mad Cat (Timber Wolf) C,4
@@ -9,6 +9,6 @@ Vulture (Mad Dog) B,5
 Loki (Hellbringer) Prime,4
 Loki (Hellbringer) A,3
 Vulture (Mad Dog) A,2
-Grizzly,1
+Grizzly (Standard),1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

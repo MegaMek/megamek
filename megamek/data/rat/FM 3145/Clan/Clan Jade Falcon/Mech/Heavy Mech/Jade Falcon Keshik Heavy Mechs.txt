@@ -8,5 +8,5 @@ Flamberge Prime,6
 Thor Mk II (Grand Summoner Mk II) (Prime),5
 Vulture (Mad Dog) Prime,4
 Shadow Cat II 2,3
-Tundra Wolf,2
+Tundra Wolf (Standard),2
 Night Gyr Prime,1

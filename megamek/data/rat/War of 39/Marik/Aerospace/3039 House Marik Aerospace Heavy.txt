@@ -1,5 +1,5 @@
 3039 House Marik Aerospace Heavy
-Transgressor TR-14 AC, 1
+Transgressor TR-14 "AC", 1
 Chippewa CHP-W5, 2
 Chippewa CHP-W5, 3
 Eagle EGL-R6, 4

@@ -1,0 +1,12 @@
+DCMS Light Mechs Early 3059, Tech Level F
+UrbanMech UM-R60,1
+Firestarter FS9-H,2
+Panther PNT-9R,3
+Javelin JVN-10N,4
+Locust LCT-1V,5
+Panther PNT-9R,6
+Stinger STG-3R,5
+Wasp WSP-1K,4
+Wasp WSP-1A,3
+Jenner JR7-D,2
+Spider SDR-5K,1

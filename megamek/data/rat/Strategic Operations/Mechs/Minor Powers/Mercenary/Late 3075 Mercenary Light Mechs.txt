@@ -1,0 +1,12 @@
+Mercenary Light Mechs Late 3075
+Hornet HNT-171,1
+Valiant V4-LNT-K7,2
+Spider SDR-7M,3
+Falcon FLC-4P,4
+Scarabus SCB-9A,5
+Battle Hawk BH-K305,6
+Talon TLN-5W,5
+Falcon Hawk FNHK-9K,4
+Firestarter FS9-S,3
+Wolfhound WLF-2,2
+Arctic Fox AF1,1

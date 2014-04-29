@@ -75,6 +75,12 @@ public final class Player extends TurnOrdered implements IPlayer {
     private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
 
     private boolean admitsDefeat = false;
+    
+    /**
+     * Boolean that keeps track of whether a player has accepted another 
+     * player's request to chang teams.
+     */
+    private boolean allowingTeamChange = false;
 
     @Override
     public Vector<Minefield> getMinefields() {
@@ -345,6 +351,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public boolean admitsDefeat() {
         return admitsDefeat;
+    }
+    
+    @Override
+    public void setAllowTeamChange(boolean allowChange){
+        allowingTeamChange = allowChange;
+    }
+    
+    @Override
+    public boolean isAllowingTeamChange(){
+        return allowingTeamChange;
     }
 
     @Override

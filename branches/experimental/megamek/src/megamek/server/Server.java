@@ -215,12 +215,14 @@ import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.commands.AddBotCommand;
+import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
 import megamek.server.commands.CheckBVCommand;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
+import megamek.server.commands.JoinTeamCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.ListEntitiesCommand;
 import megamek.server.commands.ListSavesCommand;
@@ -375,6 +377,22 @@ public class Server implements Runnable {
 	private String serverAccessKey = null;
 
 	private Timer t = new Timer(true);
+	
+	/**
+	 * Keeps track of what team a player requested to join.
+	 */
+	private int requestedTeam = IPlayer.TEAM_NONE;
+	
+	/**
+	 * Keeps track of what player made a request to change teams.
+	 */
+	private IPlayer playerChangingTeam = null;
+	
+	/**
+	 * Flag that is set to true when all players have voted to allow another
+	 * player to change teams.
+	 */
+	private boolean changePlayersTeam = false;
 
 	/**
 	 * Stores a set of <code>Coords</code> that have changed during this phase.
@@ -510,6 +528,8 @@ public class Server implements Runnable {
 		registerCommand(new TraitorCommand(this));
 		registerCommand(new ListEntitiesCommand(this));
 		registerCommand(new AssignNovaNetServerCommand(this));
+		registerCommand(new AllowTeamChangeCommand(this));
+		registerCommand(new JoinTeamCommand(this));
 
 		// register terrain processors
 		terrainProcessors.add(new FireProcessor(this));
@@ -1799,6 +1819,38 @@ public class Server implements Runnable {
 		game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
 		game.setVictoryTeam(IPlayer.TEAM_NONE);
 	}
+	
+	public void requestTeamChange(int team, IPlayer player){
+	    requestedTeam = team;
+	    playerChangingTeam = player;	
+	    changePlayersTeam = false;
+	}
+	
+	public void allowTeamChange(){
+	    changePlayersTeam = true;
+	}
+	
+	public boolean isTeamChangeRequestInProgress(){
+	    return playerChangingTeam != null;
+	}
+	
+	private void processTeamChange(){
+	    if (playerChangingTeam != null){
+	        playerChangingTeam.setTeam(requestedTeam);
+	        game.setupTeams();
+	        send(createPlayerUpdatePacket(playerChangingTeam.getId()));
+	        String teamString = "Team " + requestedTeam + "!";
+            if (requestedTeam == IPlayer.TEAM_UNASSIGNED){
+                teamString = " unassigned!";
+            } else if (requestedTeam == IPlayer.TEAM_NONE){
+                teamString = " lone wolf!";
+            }
+            sendServerChat(playerChangingTeam.getName()
+                    + " has changed teams to " + teamString);
+	        playerChangingTeam = null;
+	    }
+	    changePlayersTeam = false;
+	}
 
 	/**
 	 * Called when a player declares that he is "done." Checks to see if all
@@ -2748,6 +2800,9 @@ public class Server implements Runnable {
 			}
 			break;
 		case PHASE_END_REPORT:
+		    if (changePlayersTeam){
+		        processTeamChange();
+		    }
 			if (victory()) {
 				changePhase(IGame.Phase.PHASE_VICTORY);
 			} else {

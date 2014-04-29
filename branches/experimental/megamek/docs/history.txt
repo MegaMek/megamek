@@ -10,6 +10,9 @@ v0.37.11-exp-dev (SVN)
 + Bug [#4104]: [experimental] Context menus are out of alignment
 + Bug [#4105]: Make a clear distinction between players present in the lounge
     and those joined aftwards
++ Feature: Added the ability for players to join a team via the /joinTeam 
+    command, this also allows players who join in the middle of a game to join
+    a team and reinforce units (or have units given to them via /traitor)
 
 v0.37.11-dev (SVN)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

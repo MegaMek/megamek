@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -2350,6 +2350,31 @@ public class Server implements Runnable {
                         a.doDisbandDamage();
                     }
                 }
+                //fix the armor and SI of aeros if using aero sanity rules for the MUL
+                if(game.getOptions().booleanOption("aero_sanity") && entity instanceof Aero) {
+                    //need to rescale SI and armor
+                    int scale = 1;
+                    if(entity.isCapitalScale()) {
+                        scale = 10;
+                    }
+                    Aero a = (Aero)entity;
+                    int currentSI = a.getSI() / (2*scale);
+                    a.set0SI(a.get0SI() / (2 * scale));
+                    if(currentSI > 0) {
+                        a.setSI(currentSI);
+                    }
+                    if(scale > 1) {
+                        for(int loc = 0; loc < entity.locations(); loc++) {
+                            int currentArmor = entity.getArmor(loc)/scale;
+                            if(entity.getOArmor(loc) > 0) {
+                                entity.initializeArmor(entity.getOArmor(loc)/scale, loc);
+                            }
+                            if(entity.getArmor(loc) > 0) {
+                                entity.setArmor(currentArmor, loc);
+                            }
+                        }
+                    }
+                }
             }
             send(createFullEntitiesPacket());
             send(createReportPacket(null));
@@ -3784,10 +3809,13 @@ public class Server implements Runnable {
             rWeather.newlines = 0;
             Report rLight = new Report(1032, Report.PUBLIC);
             rLight.add(game.getPlanetaryConditions().getLightCurrentName());
+            Report rVis = new Report(1033, Report.PUBLIC);
+            rVis.add(game.getPlanetaryConditions().getFogCurrentName());
             addReport(rWindDir);
             addReport(rWindStr);
             addReport(rWeather);
             addReport(rLight);
+            addReport(rVis);
 
             if (deployment) {
                 addNewLines();
@@ -18774,7 +18802,8 @@ public class Server implements Runnable {
         } else {
             boolean isPilot = (en instanceof Mech)
                     || (en instanceof ConvFighter)
-                    || ((en instanceof Aero) && !(en instanceof Dropship)
+                    || ((en instanceof Aero)
+                            && !(en instanceof Dropship)
                             && !(en instanceof SmallCraft)
                             && !(en instanceof Jumpship) && !(en instanceof Warship));
             if (crew.isDead() || crew.isDoomed()) {
@@ -19750,6 +19779,7 @@ public class Server implements Runnable {
                     HitData passHit = passenger.getTrooperAtLocation(hit, te);
                     passHit.setGeneralDamageType(hit.getGeneralDamageType());
 
+
                     // How much damage will the passenger absorb?
                     int absorb = 0;
                     HitData nextPassHit = passHit;
@@ -19757,14 +19787,17 @@ public class Server implements Runnable {
                         int armorType = passenger.getArmorType(nextPassHit
                                 .getLocation());
                         boolean armorDamageReduction = false;
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                                && ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))
-                                || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                                && ((hit.getGeneralDamageType() ==
+                                    HitData.DAMAGE_MISSILE)))
+                                    || (hit.getGeneralDamageType() ==
+                                    HitData.DAMAGE_ARMOR_PIERCING_MISSILE)){
                             armorDamageReduction = true;
                         }
                         // Check for reflective armor
                         if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                                && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+                                && (hit.getGeneralDamageType() ==
+                                    HitData.DAMAGE_ENERGY)){
                             armorDamageReduction = true;
                         }
                         if (0 < passenger.getArmor(nextPassHit)) {
@@ -24077,8 +24110,8 @@ public class Server implements Runnable {
                     return vDesc;
                 }
                 if ((entity instanceof Mech)
-                        && (((Mech) entity).hasHarJelIIIn(loc) || ((Mech) entity)
-                                .hasHarJelIIIIn(loc))) {
+                        && (((Mech) entity).hasHarJelIIIn(loc)
+                                || ((Mech) entity).hasHarJelIIIIn(loc))) {
                     r = new Report(6343);
                     r.subject = entity.getId();
                     r.indent(3);
@@ -24985,8 +25018,8 @@ public class Server implements Runnable {
             newElevation = 0;
             // If we are in a basement, we are at a negative elevation, and so
             // setting newElevation = 0 will cause us to "fall up"
-        } else if (entity.getMovementMode() != EntityMovementMode.VTOL
-                && game.getBoard().getBuildingAt(fallPos) != null) {
+        } else if ((entity.getMovementMode() != EntityMovementMode.VTOL)
+                && (game.getBoard().getBuildingAt(fallPos) != null)){
             newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
@@ -25085,7 +25118,7 @@ public class Server implements Runnable {
 
         // If the waterDepth is larger than the fall height,
         // we fell underwater
-        if (waterDepth >= height && (waterDepth != 0 || height != 0)) {
+        if ((waterDepth >= height) && ((waterDepth != 0) || (height != 0))) {
             damage = 0;
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (height + 1)) / 2;
         }
@@ -25863,14 +25896,14 @@ public class Server implements Runnable {
             Vector<IPlayer> vCanSee = whoCanSee(eTarget);
 
             // If this unit has ECM, players with units effected by the ECM will
-            // need to know about this entity, even if they can't see it.
-            // Otherwise, the client can't properly report things like to-hits.
-            if (eTarget.getECMRange() > 0 && eTarget.getPosition() != null) {
+            //  need to know about this entity, even if they can't see it.
+            //  Otherwise, the client can't properly report things like to-hits.
+            if ((eTarget.getECMRange() > 0) && (eTarget.getPosition() != null)){
                 int ecmRange = eTarget.getECMRange();
                 Coords pos = eTarget.getPosition();
                 for (Entity ent : game.getEntitiesVector()) {
-                    if (ent.getPosition() != null
-                            && pos.distance(ent.getPosition()) <= ecmRange) {
+                    if ((ent.getPosition() != null)
+                            && (pos.distance(ent.getPosition()) <= ecmRange)) {
                         if (!vCanSee.contains(ent.getOwner())) {
                             vCanSee.add(ent.getOwner());
                         }
@@ -25904,7 +25937,7 @@ public class Server implements Runnable {
     /**
      * Whenever updating an Entity, we also need to update all of its loaded
      * Entity's, otherwise it could cause issues with Clients.
-     * 
+     *
      * @param loader
      *            An Entity being updated that is transporting units that should
      *            also send an update
@@ -25950,7 +25983,7 @@ public class Server implements Runnable {
     /**
      * Returns a vector of which players can see the given entity, optionally
      * allowing for sensors to count.
-     * 
+     *
      * @param entity
      *            The entity to check visiblity for
      * @param useSensors
@@ -26153,11 +26186,11 @@ public class Server implements Runnable {
                 }
 
                 // If this unit has ECM, players with units effected by the ECM
-                // will need to know about this entity, even if they can't see
-                // it. Otherwise, the client can't properly report things
-                // like to-hits.
-                if (e.getECMRange() > 0 && e.getPosition() != null
-                        && spotter.getPosition() != null) {
+                //  will need to know about this entity, even if they can't see
+                //  it.  Otherwise, the client can't properly report things
+                //  like to-hits.
+                if ((e.getECMRange() > 0) && (e.getPosition() != null) &&
+                        (spotter.getPosition() != null)){
                     int ecmRange = e.getECMRange();
                     Coords pos = e.getPosition();
                     if (pos.distance(spotter.getPosition()) <= ecmRange) {
@@ -26177,7 +26210,7 @@ public class Server implements Runnable {
      * all of its transported units (and their transported units, and so on) are
      * also considered visible, otherwise it can lead to issues. This method
      * also ensures that no duplicate Entities are added.
-     * 
+     *
      * @param vCanSee
      *            A collection of units that can be see
      * @param e

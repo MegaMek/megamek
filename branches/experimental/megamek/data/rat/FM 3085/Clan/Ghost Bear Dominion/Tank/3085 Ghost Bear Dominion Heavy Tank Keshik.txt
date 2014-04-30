@@ -1,12 +1,12 @@
 3085 Ghost Bear Dominion Heavy Tank Keshik
-Tokugawa Heavy Tank,1
-Shoden Assault Vehicle,2
+Tokugawa Heavy Tank (Standard),1
+Shoden Assault Vehicle (Standard),2
 Ishtar Heavy Fire Support Tank (Original),3
-Oro Heavy Tank,4
-Vidar Heavy Defense Tank,5
-Axel Heavy Tank IIC,6
+Oro Heavy Tank (Standard),4
+Vidar Heavy Defense Tank (Standard),5
+Axel Heavy Tank IIC (Standard),6
 Axel Heavy Tank IIC (XL),5
 Oro Heavy Tank (HAG),4
-Axel Heavy Tank IIC,3
-Athena Combat Vehicle,2
-LRM Carrier,1
+Axel Heavy Tank IIC (Standard),3
+Athena Combat Vehicle (Standard),2
+LRM Carrier (Standard),1

@@ -31,19 +31,19 @@
 #   less than 1.                                                            #
 #############################################################################
 Liao3039HeavyVehicles_A
-Po Heavy Tank,38
-AC/2 Carrier,23
-Zhukov Heavy Tank,55
+Po Heavy Tank (Standard),38
+AC/2 Carrier (Standard),23
+Zhukov Heavy Tank (Standard),55
 Bulldog Medium Tank (AC2),39
-Laser Carrier,31
-Bulldog Medium Tank,157
-Pike Support Vehicle,27
+Laser Carrier (Standard),31
+Bulldog Medium Tank (Standard),157
+Pike Support Vehicle (Standard),27
 Pike Support Vehicle (AC5),5
 Bulldog Medium Tank (LRM),39
-SRM Carrier,157
-LRM Carrier,157
+SRM Carrier (Standard),157
+LRM Carrier (Standard),157
 Brutus Assault Tank (PPC 2),6
-Manticore Heavy Tank,117
-Brutus Assault Tank,23
+Manticore Heavy Tank (Standard),117
+Brutus Assault Tank (Standard),23
 Brutus Assault Tank (PPC),13
 Brutus Assault Tank (LRM),113

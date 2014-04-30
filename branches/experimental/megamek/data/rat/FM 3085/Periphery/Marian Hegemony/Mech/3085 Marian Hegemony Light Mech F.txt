@@ -1,5 +1,5 @@
 3085 Marian Hegemony Light Mech F
-Crosscut LoggerMech ED-X2 (Flamer),1
+Crosscut ED-X2M ForestryMech(Flamer),1
 Stinger STG-3R,2
 Firestarter FS9-H,3
 Wasp WSP-1A,4

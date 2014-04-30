@@ -31,13 +31,13 @@
 #   less than 1.                                                            #
 #############################################################################
 Taurian3028HeavyVehicles_D
-AC/2 Carrier,310
+AC/2 Carrier (Standard),310
 Bulldog Medium Tank (AC2),490
-Laser Carrier,420
-Bulldog Medium Tank,1970
-Pike Support Vehicle,350
+Laser Carrier (Standard),420
+Bulldog Medium Tank (Standard),1970
+Pike Support Vehicle (Standard),350
 Pike Support Vehicle (AC5),60
 Bulldog Medium Tank (LRM),490
-SRM Carrier,2020
-LRM Carrier,2020
-Manticore Heavy Tank,1770
+SRM Carrier (Standard),2020
+LRM Carrier (Standard),2020
+Manticore Heavy Tank (Standard),1770

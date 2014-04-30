@@ -31,17 +31,17 @@
 #   less than 1.                                                            #
 #############################################################################
 StIves3039HeavyVehicles_D
-Po Heavy Tank,90
-AC/2 Carrier,270
+Po Heavy Tank (Standard),90
+AC/2 Carrier (Standard),270
 Bulldog Medium Tank (AC2),460
-Laser Carrier,370
-Bulldog Medium Tank,1830
-Pike Support Vehicle,310
+Laser Carrier (Standard),370
+Bulldog Medium Tank (Standard),1830
+Pike Support Vehicle (Standard),310
 Pike Support Vehicle (AC5),50
 Brutus Assault Tank (PPC),180
 Bulldog Medium Tank (LRM),460
-Brutus Assault Tank,270
-SRM Carrier,1830
-LRM Carrier,1830
+Brutus Assault Tank (Standard),270
+SRM Carrier (Standard),1830
+LRM Carrier (Standard),1830
 Brutus Assault Tank (LRM),180
-Manticore Heavy Tank,870
+Manticore Heavy Tank (Standard),870

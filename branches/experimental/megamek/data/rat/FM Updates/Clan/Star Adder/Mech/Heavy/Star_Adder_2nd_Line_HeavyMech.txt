@@ -1,12 +1,12 @@
-Crusader Clan Second-Line Heavy Mechs (Star Adder),
-Rifleman IIC,1
-Lancelot LNC25-01,2
-Galahad (Glass Spider),3
-Hellfire,4
-Galahad (Glass Spider),5
-Hellfire,6
-Grizzly,5
-Hellfire,4
-Grizzly,3
-Viper (Black Python),2
-Guillotine GLT-3N,1
+Clan Star Adder Second-Line Heavy Mechs (FMU)
+Rifleman IIC 3,1
+Predator (Standard),2
+Grizzly (Standard),3
+Hellfire (Standard),4
+Rifleman IIC (Standard),5
+Galahad (Glass Spider) (Standard),6
+Burrock (Standard),5
+Hellfire 2,4
+Galahad (Glass Spider) 2,3
+Viper (Black Python) (Standard),2
+Guillotine IIC (Standard),1

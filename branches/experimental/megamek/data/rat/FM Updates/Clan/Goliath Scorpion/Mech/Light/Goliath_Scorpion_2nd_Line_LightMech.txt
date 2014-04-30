@@ -1,0 +1,12 @@
+Goliath Scorpion 2nd-Line Light Mechs (FMU)
+Spirit (Standard),1
+Mercury MCY-97,2
+UrbanMech IIC (Standard),3
+Jenner IIC (Standard),4
+Peregrine (Horned Owl) (Standard),5
+Vixen (Incubus) (Standard),6
+Peregrine (Horned Owl) (Standard),5
+Locust IIC (Standard),4
+Commando IIC (Standard),3
+Mongoose MON-66,2
+Piranha (Standard),1

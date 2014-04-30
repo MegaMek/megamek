@@ -1,12 +1,12 @@
 2858 Golden Century Assault Mech
 Shogun C,1
-Marauder IIC,2
+Marauder IIC (Standard),2
 Wakazashi (Standard),3
 Annihilator C,4
-Kraken (Bane),5
-Marauder IIC,6
-Behemoth (Stone Rhino),5
-Supernova,4
-Highlander IIC,3
+Kraken (Bane) (Standard),5
+Marauder IIC (Standard),6
+Behemoth (Stone Rhino) (Standard),5
+Supernova (Standard),4
+Highlander IIC (Standard),3
 Pulverizer PUL-2V,2
 Imp IMP-1A,1

@@ -1,12 +1,12 @@
 Jade Falcon Frontline Assault Mechs
-Onager,1
-Jupiter,2
+Onager (Standard),1
+Jupiter (Standard),2
 Mad Cat Mk II Enhanced,3
 Shrike (Standard),4
 Shrike 2,5
 Jupiter 4,6
-Cygnus,5
+Cygnus (Standard),5
 Turkina Prime,4
 Gladiator (Executioner) Prime,3
 Shrike 2,2
-Hellstar,1
+Hellstar (Standard),1

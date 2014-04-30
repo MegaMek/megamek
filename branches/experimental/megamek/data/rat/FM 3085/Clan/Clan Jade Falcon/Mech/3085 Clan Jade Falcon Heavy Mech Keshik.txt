@@ -1,5 +1,5 @@
 3085 Clan Jade Falcon Heavy Mech Keshik
-Shadow Cat II,1
+Shadow Cat II (Standard),1
 Mad Cat (Timber Wolf) Prime,2
 Loki (Hellbringer) Prime,3
 Thor (Summoner) Prime,4
@@ -7,6 +7,6 @@ Flamberge Prime,5
 Thor (Summoner) Prime,6
 Night Gyr Prime,5
 Vulture (Mad Dog) Prime,4
-Shadow Cat II,3
+Shadow Cat II (Standard),3
 Flamberge Prime,2
 Vulture (Mad Dog) Prime,1

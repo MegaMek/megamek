@@ -1,6 +1,6 @@
 Inner Sphere Battle Armor
 Kage Light Battle Armor [MG],1
-Infiltrator Mk. II Battle Armor "Puma",2
+Infiltrator Mk. II Battle Armor 'Puma',2
 Fa Shih Battle Armor [MG],3
 Achileus Light Battle Armor [MG], 4
 Gray Death Standard Suit [MG],5

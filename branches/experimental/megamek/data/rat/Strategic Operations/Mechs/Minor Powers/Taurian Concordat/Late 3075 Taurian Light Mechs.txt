@@ -1,0 +1,12 @@
+Taurian Concordat Light Mechs Late 3075
+Stinger STG-5R,1
+Firestarter FS9-S,2
+Wasp WSP-3L,3
+Raven RVN-3L,4
+Anubis ABS-3L,5
+Commando COM-2D,6
+Duan Gung D9-G9,5
+Jenner JR7-D,4
+Locust LCT-5V,3
+Valkyrie VLK-QD1,2
+Garm GRM-01A,1

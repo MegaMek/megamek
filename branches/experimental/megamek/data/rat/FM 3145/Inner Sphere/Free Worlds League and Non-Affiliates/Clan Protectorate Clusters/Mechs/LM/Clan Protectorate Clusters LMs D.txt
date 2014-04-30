@@ -7,6 +7,6 @@ Wight WGT-2SC,5
 Stinger STG-3Gb,6
 Falcon Hawk FNHK-9K,5
 Locust LCT-5W2,4
-Crimson Hawk,3
+Crimson Hawk (Standard),3
 Hermes HER-4K,2
 Havoc HVC-P6,1

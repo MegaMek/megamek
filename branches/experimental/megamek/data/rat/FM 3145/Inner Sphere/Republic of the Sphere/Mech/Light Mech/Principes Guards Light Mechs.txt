@@ -6,7 +6,7 @@ Locust IIC 8,3
 Spider SDR-8R,5
 Locust LCT-5W2,6
 Nyx NX-80,5
-Arbalest,4
+Arbalest (Standard),4
 Jenner IIC 4,3
 Ostscout OTT-11J,2
 Crimson Hawk 3,1

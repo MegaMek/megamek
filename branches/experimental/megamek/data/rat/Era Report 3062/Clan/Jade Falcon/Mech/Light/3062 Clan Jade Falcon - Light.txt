@@ -8,4 +8,4 @@ Cougar Prime,5
 Puma (Adder) A,4
 Koshi (Mist Lynx) B,3
 Dasher (Fire Moth) C,2
-Baboon (Howler),1
+Baboon (Howler) (Standard),1

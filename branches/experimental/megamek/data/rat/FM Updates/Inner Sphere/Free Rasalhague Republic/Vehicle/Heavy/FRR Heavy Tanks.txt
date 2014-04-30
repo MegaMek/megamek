@@ -1,0 +1,12 @@
+FRR Heavy Tanks 3067
+Po Heavy Tank (Standard),1
+Magi Infantry Support Vehicle (Standard),2
+Bulldog Medium Tank (Standard),3
+SRM Carrier (3054 Upgrade),4
+LRM Carrier (Standard),5
+Manticore Heavy Tank (Standard),6
+SRM Carrier (Standard),5
+LRM Carrier (3055 Upgrade),4
+Pike Support Vehicle (Standard),3
+Bulldog Medium Tank (Standard),2
+Demon Tank (Standard),1

@@ -9,4 +9,4 @@ Mad Cat (Timber Wolf) Prime,5
 Thor (Summoner) A,4
 Mad Cat (Timber Wolf) B,3
 Grizzly 2,2
-Guillotine IIC,1
+Guillotine IIC (Standard),1

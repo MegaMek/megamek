@@ -8,7 +8,7 @@ Dragonfly (Viper) Prime,6
 Dragonfly (Viper) B,5
 Ryoken (Stormcrow) C,4
 Dragonfly (Viper) C,3
-Ursus,2
-Arctic Wolf,1
+Ursus (Standard),2
+Arctic Wolf Prime,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

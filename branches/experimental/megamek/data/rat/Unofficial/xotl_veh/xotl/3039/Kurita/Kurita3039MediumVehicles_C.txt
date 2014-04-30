@@ -32,16 +32,16 @@
 #############################################################################
 Kurita3039MediumVehicles_C
 Vedette Medium Tank (AC2),600
-Vedette Medium Tank,5430
+Vedette Medium Tank (Standard),5430
 Hetzer Wheeled Assault Gun (Laser),70
-Goblin Medium Tank,310
-Hetzer Wheeled Assault Gun,630
+Goblin Medium Tank (Standard),310
+Hetzer Wheeled Assault Gun (Standard),630
 Hetzer Wheeled Assault Gun (SRM),70
 Goblin Medium Tank (SRM),50
 Hetzer Wheeled Assault Gun (LRM),70
 Maxim Heavy Hover Transport (SRM4),120
 Prowler Multi-Terrain Vehicle (Succession Wars),480
 Maxim Heavy Hover Transport (SRM2),120
-Maxim Heavy Hover Transport,960
+Maxim Heavy Hover Transport (Standard),960
 Drillson Heavy Hover Tank (SRM),100
-Drillson Heavy Hover Tank,390
+Drillson Heavy Hover Tank (Standard),390

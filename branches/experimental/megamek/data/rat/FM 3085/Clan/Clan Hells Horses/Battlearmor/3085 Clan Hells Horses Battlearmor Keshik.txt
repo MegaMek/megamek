@@ -1,11 +1,11 @@
 3085 Clan Hell's Horses Battlearmor Keshik
-Gnome Battle Armor,1
+Gnome Battle Armor (Upgrade) [MRR],1
 Elemental Battle Armor [MG],2
 Afreet Medium Battle Armor (Hell's Horses),3
 Gnome Battle Armor (LRM),4
 Gnome Battle Armor (Upgrade) [Bearhunter],5
 Golem Assault Armor (Rock Golem),6
-Gnome Battle Armor,5
+Gnome Battle Armor (Standard),5
 Golem Assault Armor (Fast Assault),4
 Elemental Battle Armor (Fire) [AP Gauss],3
 Golem Assault Armor (Standard),2

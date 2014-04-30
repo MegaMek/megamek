@@ -1,9 +1,9 @@
 3085 Clan Nova Cat Heavy Mech Keshik
 Rifleman IIC 7,1
-Sphinx,2
+Sphinx (Standard),2
 Sphinx 2,3
 Nova Cat Prime,4
-Sphinx,5
+Sphinx (Standard),5
 Nova Cat Prime,6
 Thor (Summoner) Prime,5
 Cauldron-Born (Ebon Jaguar) Prime,4

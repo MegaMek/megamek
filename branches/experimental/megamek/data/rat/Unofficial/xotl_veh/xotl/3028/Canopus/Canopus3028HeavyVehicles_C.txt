@@ -31,14 +31,14 @@
 #   less than 1.                                                            #
 #############################################################################
 Canopus3028HeavyVehicles_C
-AC/2 Carrier,270
+AC/2 Carrier (Standard),270
 Bulldog Medium Tank (AC2),440
-Laser Carrier,350
-Bulldog Medium Tank,1770
-Pike Support Vehicle,1180
+Laser Carrier (Standard),350
+Bulldog Medium Tank (Standard),1770
+Pike Support Vehicle (Standard),1180
 Pike Support Vehicle (AC5),80
 Bulldog Medium Tank (LRM),440
-SRM Carrier,1730
-LRM Carrier,1730
-Manticore Heavy Tank,1730
+SRM Carrier (Standard),1730
+LRM Carrier (Standard),1730
+Manticore Heavy Tank (Standard),1730
 Von Luckner Heavy Tank VNL-K65N,270

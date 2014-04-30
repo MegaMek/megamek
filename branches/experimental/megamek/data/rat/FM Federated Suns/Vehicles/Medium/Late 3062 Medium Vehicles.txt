@@ -1,0 +1,12 @@
+AFFS Medium Vehicles Late 3062
+Regulator Hovertank (Standard),1
+Condor Heavy Hover Tank (Standard),2
+Maxim Heavy Hover Transport (Standard),3
+Goblin Infantry Support Vehicle (Standard),4
+Drillson Heavy Hover Tank (Standard),5
+Vedette Medium Tank (Standard),6
+Condor Heavy Hover Tank (Davion),5
+Goblin Medium Tank (Standard),4
+Drillson Heavy Hover Tank (Standard),3
+Myrmidon Medium Tank (Standard),2
+Fulcrum Heavy Hovertank (Standard),1

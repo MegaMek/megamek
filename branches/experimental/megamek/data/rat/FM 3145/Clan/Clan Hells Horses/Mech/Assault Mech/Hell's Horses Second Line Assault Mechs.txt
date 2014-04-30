@@ -3,8 +3,8 @@ Thunder Stallion 2 "Fire Stallion",1
 Thunder Stallion 3,2
 Behemoth (Stone Rhino) 3,3
 Marauder IIC 7,4
-Bruin,5
-Night Wolf,6
+Bruin (Standard),5
+Night Wolf (Standard),6
 Phoenix Hawk IIC 7,5
 Warhammer IIC 8,4
 Cygnus 2,3

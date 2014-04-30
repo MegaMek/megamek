@@ -1,12 +1,12 @@
 3053 Clan Cloud Cobra Mech - Assault
-Marauder IIC,1
+Marauder IIC (Standard),1
 Gladiator (Executioner) B,2
-Kraken (Bane),3
-Supernova,4
+Kraken (Bane) (Standard),3
+Supernova (Standard),4
 Kingfisher Prime,5
 Naga Prime,6
 Man O' War (Gargoyle) A,5
-Phoenix Hawk IIC,4
+Phoenix Hawk IIC (Standard),4
 Daishi (Dire Wolf) B,3
-Warhammer IIC,2
-Behemoth (Stone Rhino),1
+Warhammer IIC (Standard),2
+Behemoth (Stone Rhino) (Standard),1

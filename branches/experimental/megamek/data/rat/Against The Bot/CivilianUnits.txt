@@ -18,7 +18,7 @@
 #       d10(type)*d10(unit)*d9(heavy apc reroll)                            #
 #############################################################################
 CivilianUnits
-J-27 Ordnance Transport,27
+J-27 Ordnance Transport (Standard),27
 J-27 Ordnance Transport K-27 "Killjoy",27
 Flatbed Truck (SRM),27
 Flatbed Truck (LRM),27
@@ -46,19 +46,19 @@ Heavy Tracked APC (SRM),3
 Heavy Wheeled APC (LRM),3
 Heavy Wheeled APC (MG),3
 Heavy Wheeled APC (SRM),3
-Harvester Ant KIC-3 (LRM),27
-Harvester Ant KIC-3 (MG),27
-Crosscut LoggerMech ED-X2 (Flamer),27
-Crosscut LoggerMech ED-X2 (Rocket),27
-Carbine ConstructionMech CON-1 (RL),27
-Powerman LoaderMech SC XI (Laser),27
-Powerman LoaderMech SC XI (SRM),27
-Buster Class HaulerMech BC XV (AC),27
-Buster Class HaulerMech BC XV (PPC),27
+Harvester Ant KIC-3 Agromech(LRM),27
+Harvester Ant KIC-3 Agromech(MG),27
+Crosscut ED-X2M ForestryMech(Flamer),27
+Crosscut ED-X2M2 ForestryMech(Rocket),27
+Carbine CON-1 ConstructionMech (RL),27
+Powerman XI LoaderMech (Laser),27
+Powerman XI LoaderMech (SRM),27
+Buster XV HaulerMech (AC),27
+Buster XV HaulerMech (PPC),27
 Lumberjack LM4/P,27
 Wasp WSP-1,9
 Commando COM-1A,9
-Firebee FRB-1E(WAM-B),9
+Firebee FRB-1E (WAM-B),9
 Toro TR-A-1,9
 Quasit MilitiaMech QUA-51T,9
 Kyudo KY2-D-01,9

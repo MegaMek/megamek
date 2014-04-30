@@ -2,10 +2,10 @@
 Champion C,1
 Ryoken II 3,2
 Thresher 2,3
-Bowman,4
+Bowman (Standard),4
 Ha Otoko 3,5
-Guillotine IIC,6
-Thresher,5
+Guillotine IIC (Standard),6
+Thresher (Standard),5
 Bowman 3,4
 Loki (Hellbringer) Prime,3
 Bowman 2,2

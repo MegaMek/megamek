@@ -1,12 +1,12 @@
 3085 Clan Diamond Shark Medium Tank Keshik
-Garuda Heavy VTOL,1
-Tyr Infantry Support Tank,2
-Maxim Heavy Hover Transport,3
+Garuda Heavy VTOL (Standard),1
+Tyr Infantry Support Tank (Standard),2
+Maxim Heavy Hover Transport (Standard),3
 Bandit (C) Hovercraft Prime,4
 SM1 Tank Destroyer SM1,5
-Hachiman Fire Support Tank 'Huey',6
-Regulator II Hovertank,5
+Hachiman Fire Support Tank (Standard),6
+Regulator II Hovertank (Standard),5
 Hachiman Fire Support Tank (AAA),4
-Zephyr Hovertank,3
+Zephyr Hovertank (Standard),3
 Joust Medium Tank BE700,2
 Epona Pursuit Tank Prime,1

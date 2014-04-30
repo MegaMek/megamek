@@ -1,10 +1,10 @@
 3085 Ghost Bear Dominion Light Aerospace Keshik
 Sholagar SL-21L,1
-Chaeronea,2
-Issus,3
+Chaeronea (Standard),2
+Issus (Standard),3
 Sulla Prime,4
 Corax CRX-O,5
-Issus,6
+Issus (Standard),6
 Avar Prime,5
 Bashkir Prime,4
 Sulla Prime,3

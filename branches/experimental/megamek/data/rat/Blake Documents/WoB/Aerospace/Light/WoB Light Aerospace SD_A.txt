@@ -1,6 +1,6 @@
 WoB Light Aerospace SD/A
-Shade S-HA-0 Invictus,1
-Shade S-HA-0 Invictus,2
+Shade S-HA-O Invictus,1
+Shade S-HA-OA Dominus,2
 Zero ZRO-115,3
 Rogue RGU-133LP,4
 Spad SPD-504,5
@@ -9,4 +9,4 @@ Cheetah F-12-S,5
 Rogue RGU-133E,4
 Tomahawk THK-63CS,3
 Tomahawk THK-63CS,2
-Shade S-HA-0 Invictus,1
+Shade S-HA-OB Infernus,1

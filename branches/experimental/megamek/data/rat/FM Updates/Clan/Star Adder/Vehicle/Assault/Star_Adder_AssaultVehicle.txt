@@ -1,0 +1,12 @@
+Clan Star Adder Assault Vehicles (FMU)
+Mars Assault Vehicle (XL),1
+Mars Assault Vehicle (XL),2
+Mars Assault Vehicle (Standard),3
+Morrigu Fire Support Vehicle (Laser),4
+Morrigu Fire Support Vehicle (Standard),5
+Demolisher Heavy Tank (Clan),6
+Mars Assault Vehicle (Standard),5
+Demolisher Heavy Tank (Clan),4
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Demolisher Heavy Tank (Clan),2
+Mars Assault Vehicle (Standard),1

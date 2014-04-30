@@ -31,17 +31,17 @@
 #   less than 1.                                                            #
 #############################################################################
 Marik3028AssaultVehicles_B
-Ontos Heavy Tank,234
+Ontos Heavy Tank (Standard),234
 Ontos Heavy Tank (LRM),41
 Partisan Heavy Tank (AC2),8
-Partisan Heavy Tank,124
-Schrek AC Carrier,8
-Schrek PPC Carrier,47
-Demolisher Heavy Tank,138
+Partisan Heavy Tank (Standard),124
+Schrek AC Carrier (Standard),8
+Schrek PPC Carrier (Standard),47
+Demolisher Heavy Tank (Standard Mk. I),138
 Partisan Heavy Tank (LRM),6
-Devastator Heavy Tank,41
-Behemoth Heavy Tank,97
+Devastator Heavy Tank (Standard),41
+Behemoth Heavy Tank (Standard),97
 Rhino Fire Support Tank (Flamer),41
 Rhino Fire Support Tank (MG),41
-Rhino Fire Support Tank,110
+Rhino Fire Support Tank (Standard),110
 Rhino Fire Support Tank (SL),64

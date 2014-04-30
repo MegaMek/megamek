@@ -8,5 +8,5 @@ Scourge SCG-WF1,6
 Crusader CRD-7W,5
 Rifleman RFL-7X,4
 Black Knight BL-6b-KNT,3
-Ryoken II,2
+Ryoken II (Standard),2
 Shootist ST-8A,1

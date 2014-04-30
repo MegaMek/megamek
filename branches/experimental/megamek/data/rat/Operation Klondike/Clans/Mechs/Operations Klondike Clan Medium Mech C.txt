@@ -1,7 +1,7 @@
 2821 Operations Klondike Clan Medium Mech C 
 Sentinel STN-3Lb,1
 Griffin GRF-1N,2
-Phoenix Hawk PXH-1b,3
+Phoenix Hawk PXH-1b "Special",3
 Wyvern WVE-5Nb,4
 Hunchback HBK-4G,5
 Shadow Hawk SHD-2Hb,6

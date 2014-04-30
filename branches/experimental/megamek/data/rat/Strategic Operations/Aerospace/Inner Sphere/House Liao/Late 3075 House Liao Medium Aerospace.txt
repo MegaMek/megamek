@@ -1,0 +1,12 @@
+Liao Medium Aerospace Late 3075
+Lightning LTN-G15,1
+Corsair CSR-V12,2
+Troika CMT-3T,3
+Stingray F-92,4
+Transit TR-11,5
+Transit TR-10,6
+Transit TR-11,5
+Stingray F-94,4
+Defiance DFC-O,3
+Defiance DFC-O,2
+Lightning LTN-G16L,1

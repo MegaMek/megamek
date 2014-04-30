@@ -8,5 +8,5 @@ Ryoken (Stormcrow) Prime,6
 Ryoken (Stormcrow) Prime,5
 Black Hawk (Nova) A,4
 Fenris (Ice Ferret) B,3
-Shadow Hawk IIC,2
+Shadow Hawk IIC (Standard),2
 Shadow Cat Prime,1

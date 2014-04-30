@@ -1,12 +1,12 @@
-Crusader Clan Front-Line Heavy Mechs (Star Adder)
-Cauldron-Born (Ebon Jaguar) Prime,1
-Vulture (Mad Dog) Prime,2
-Vulture (Mad Dog) A,3
-Night Gyr Prime,4
-Mad Cat (Timber Wolf) Prime,5
+Clan Star Adder Front-Line Heavy Mechs (FMU)
+Cauldron-Born (Ebon Jaguar) B,1
+Vulture (Mad Dog) H,2
+Vulture (Mad Dog) Prime,3
+Vulture (Mad Dog) D,4
+Mad Cat (Timber Wolf) D,5
 Cauldron-Born (Ebon Jaguar) A,6
-Loki (Hellbringer) Prime,5
-Thor (Summoner) C,4
-Mad Cat (Timber Wolf) D,3
-Cauldron-Born (Ebon Jaguar) B,2
+Night Gyr Prime,5
+Nova Cat D,4
+Cauldron-Born (Ebon Jaguar) H,3
+Mad Cat (Timber Wolf) Prime,2
 Cauldron-Born (Ebon Jaguar) C,1

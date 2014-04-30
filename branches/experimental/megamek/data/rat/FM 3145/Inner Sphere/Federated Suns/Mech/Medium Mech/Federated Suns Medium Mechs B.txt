@@ -9,4 +9,4 @@ Centurion CN11-O,5
 Griffin GRF-6S,4
 Fennec FEC-1CM,3
 Rook NH-2,2
-Black Hawk,1
+Black Hawk (Standard),1

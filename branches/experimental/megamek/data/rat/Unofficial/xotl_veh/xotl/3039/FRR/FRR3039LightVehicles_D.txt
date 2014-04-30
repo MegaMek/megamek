@@ -33,34 +33,34 @@
 FRR3039LightVehicles_D
 Galleon Light Tank GAL-100,520
 Galleon Light Tank GAL-200,30
-Karnov UR Gunship,110
+Karnov UR Gunship (Standard),110
 Skulker Wheeled Scout Tank (MG),60
 Warrior Attack Helicopter H-7A,110
 Warrior Attack Helicopter H-7,220
-Scorpion Light Tank,1090
-Skulker Wheeled Scout Tank,440
+Scorpion Light Tank (Standard),1090
+Skulker Wheeled Scout Tank (Standard),440
 Skulker Wheeled Scout Tank (SRM),60
 Scorpion Light Tank (ML),110
-Harasser Laser Platform,90
+Harasser Laser Platform (Standard),90
 Packrat LRPV PKR-T5,390
 Scorpion Light Tank (SRM),330
 Harasser Missile Platform (LRM),80
-Harasser Missile Platform,220
+Harasser Missile Platform (Standard),220
 Scorpion Light Tank (LRM),110
 J. Edgar Light Hover Tank (ICE),110
 J. Edgar Light Hover Tank (Flamer),60
 Warrior Attack Helicopter H-7C,60
 J. Edgar Light Hover Tank (MG),60
-Peregrine Attack VTOL,220
-Scimitar Medium Hover Tank,1100
-J. Edgar Light Hover Tank,330
-Striker Light Tank,120
+Peregrine Attack VTOL (Standard),220
+Scimitar Medium Hover Tank (Standard),1100
+J. Edgar Light Hover Tank (Standard),330
+Striker Light Tank (Standard),120
 Striker Light Tank (SRM),20
-Saladin Assault Hover Tank,990
+Saladin Assault Hover Tank (Standard),990
 Saladin Assault Hover Tank (Armor),110
 Hunter Light Support Tank (LRM15),60
 Striker Light Tank (LRM),20
-Pegasus Scout Hover Tank,1100
+Pegasus Scout Hover Tank (Standard),1100
 Hunter Light Support Tank (LRM10),60
-Hunter Light Support Tank,280
-Saracen Medium Hover Tank,330
+Hunter Light Support Tank (Standard),280
+Saracen Medium Hover Tank (Standard),330

@@ -1,12 +1,12 @@
 LAAF Heavy Tanks 3067 (FMU)
-Pike Support Vehicle,1
+Pike Support Vehicle (Standard),1
 Manteuffel Attack Tank Prime,2
 SRM Carrier (3054 Upgrade),3
-Brutus Assault Tank,4
-Patton Tank,5
+Brutus Assault Tank (Standard),4
+Patton Tank (Standard),5
 Manticore Heavy Tank (3055 Upgrade),6
-Rommel Tank,5
+Rommel Tank (Standard),5
 LRM Carrier (3055 Upgrade),4
-Bulldog Medium Tank,3
-Typhoon Urban Assault Vehicle,2
-Po Heavy Tank,1
+Bulldog Medium Tank (Standard),3
+Typhoon Urban Assault Vehicle (Standard),2
+Po Heavy Tank (Standard),1

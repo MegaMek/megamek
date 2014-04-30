@@ -1,0 +1,12 @@
+Steel Viper Assault Vehicle (FMU)
+Huitzilopochtli Assault Tank 'Huey' (Standard),1
+Mars Assault Vehicle (ATM),2
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (Standard),4
+Mars Assault Vehicle (Standard),5
+Mars Assault Vehicle (Standard),6
+Huitzilopochtli Assault Tank 'Huey' (Standard),5
+Demolisher Heavy Tank (Clan),4
+Huitzilopochtli Assault Tank 'Huey' (Standard),3
+Mars Assault Vehicle (Standard),2
+Mars Assault Vehicle (Standard),1

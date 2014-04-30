@@ -1,0 +1,12 @@
+Clan Blood Spirit Front-Line Medium Aerospace (FMU)
+Visigoth B,1
+Sulla Prime,2
+Tyre 3,3
+Turk Prime,4
+Jagatai Prime,5
+Turk Prime,6
+Jagatai Prime,5
+Tyre (Standard),4
+Turk C,3
+Tyre (Standard),2
+Tyre 2,1

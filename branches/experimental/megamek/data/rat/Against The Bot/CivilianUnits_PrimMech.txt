@@ -18,7 +18,7 @@
 CivilianUnits_PrimMech
 Wasp WSP-1,9
 Commando COM-1A,9
-Firebee FRB-1E(WAM-B),9
+Firebee FRB-1E (WAM-B),9
 Toro TR-A-1,9
 Quasit MilitiaMech QUA-51T,9
 Kyudo KY2-D-01,9

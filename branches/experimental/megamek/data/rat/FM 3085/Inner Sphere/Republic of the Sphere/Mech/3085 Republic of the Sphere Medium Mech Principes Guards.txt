@@ -8,5 +8,5 @@ Shockwave SKW-2F,6
 Lynx LNX-9R,5
 Cronus CNS-5M,4
 Dervish DV-8D,3
-Ursus,2
+Ursus (Standard),2
 Griffin GRF-6S,1

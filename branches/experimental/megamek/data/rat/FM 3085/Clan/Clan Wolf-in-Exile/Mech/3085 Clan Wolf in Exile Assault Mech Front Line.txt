@@ -2,11 +2,11 @@
 Marauder IIC 5,1
 Mad Cat Mk II Enhanced,2
 Warhammer IIC 4,3
-Hellstar,4
+Hellstar (Standard),4
 Man O' War (Gargoyle) Prime,5
-Cygnus,6
+Cygnus (Standard),6
 Hellstar 3,5
-Hellstar,4
+Hellstar (Standard),4
 Hellstar 2,3
-Cygnus,2
+Cygnus (Standard),2
 Daishi (Dire Wolf) Prime,1

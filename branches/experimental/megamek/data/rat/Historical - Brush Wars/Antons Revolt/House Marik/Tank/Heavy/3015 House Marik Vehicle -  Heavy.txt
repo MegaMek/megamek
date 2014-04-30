@@ -1,12 +1,12 @@
 3015 House Marik Vehicle - Heavy
-Pike Support Vehicle,1
-Pike Support Vehicle,2
-LRM Carrier,3
-LRM Carrier,4
+Pike Support Vehicle (Standard),1
+Pike Support Vehicle (Standard),2
+LRM Carrier (Standard),3
+LRM Carrier (Standard),4
 Von Luckner Heavy Tank VNL-K65N,5
 Von Luckner Heavy Tank VNL-K65N,6
-Manticore Heavy Tank,5
-Manticore Heavy Tank,4
-SRM Carrier,3
-SRM Carrier,2
-SRM Carrier,1
+Manticore Heavy Tank (Standard),5
+Manticore Heavy Tank (Standard),4
+SRM Carrier (Standard),3
+SRM Carrier (Standard),2
+SRM Carrier (Standard),1

@@ -617,8 +617,7 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)
-                // sub can't flank underwater
-                && !((elevation == 0) && (entity.getMovementMode() == EntityMovementMode.SUBMARINE))
+                && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (entity.getMovementMode() != EntityMovementMode.VTOL)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
             setRunProhibited(true);

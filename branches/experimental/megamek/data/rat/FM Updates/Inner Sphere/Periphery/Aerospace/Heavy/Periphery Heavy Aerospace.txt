@@ -1,0 +1,12 @@
+Periphery Heavy Aerospace
+Stuka STU-K15,1
+Chippewa CHP-W10,2
+Riever F-100,3
+Chippewa CHP-W5,4
+Thunderbird TRB-D36,5
+Eagle EGL-R6,6
+Thunderbird TRB-D36,5
+Eagle EGL-R6,4
+Stuka STU-K5,3
+Slayer SL-15,2
+Transgressor TR-13,1

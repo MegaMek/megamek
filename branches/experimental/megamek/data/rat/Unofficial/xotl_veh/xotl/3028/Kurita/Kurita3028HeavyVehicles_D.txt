@@ -31,15 +31,15 @@
 #   less than 1.                                                            #
 #############################################################################
 Kurita3028HeavyVehicles_D
-AC/2 Carrier,330
+AC/2 Carrier (Standard),330
 Bulldog Medium Tank (AC2),540
-Laser Carrier,450
-Bulldog Medium Tank,2180
-Pike Support Vehicle,380
+Laser Carrier (Standard),450
+Bulldog Medium Tank (Standard),2180
+Pike Support Vehicle (Standard),380
 Pike Support Vehicle (AC5),60
 Bulldog Medium Tank (LRM),540
-SRM Carrier,1690
-LRM Carrier,1690
-Rommel Tank,10
-Patton Tank,10
-Manticore Heavy Tank,1990
+SRM Carrier (Standard),1690
+LRM Carrier (Standard),1690
+Rommel Tank (Standard),10
+Patton Tank (Standard),10
+Manticore Heavy Tank (Standard),1990

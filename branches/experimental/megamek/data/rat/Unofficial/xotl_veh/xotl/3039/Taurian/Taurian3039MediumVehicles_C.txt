@@ -32,16 +32,16 @@
 #############################################################################
 Taurian3039MediumVehicles_C
 Vedette Medium Tank (AC2),550
-Vedette Medium Tank,4970
+Vedette Medium Tank (Standard),4970
 Hetzer Wheeled Assault Gun (Laser),110
-Goblin Medium Tank,330
-Hetzer Wheeled Assault Gun,1330
+Goblin Medium Tank (Standard),330
+Hetzer Wheeled Assault Gun (Standard),1330
 Hetzer Wheeled Assault Gun (SRM),110
-Condor Heavy Hover Tank,330
+Condor Heavy Hover Tank (Standard),330
 Hetzer Wheeled Assault Gun (LRM),110
 Maxim Heavy Hover Transport (SRM4),90
 Prowler Multi-Terrain Vehicle (Succession Wars),440
 Maxim Heavy Hover Transport (SRM2),90
-Maxim Heavy Hover Transport,600
+Maxim Heavy Hover Transport (Standard),600
 Drillson Heavy Hover Tank (SRM),90
-Drillson Heavy Hover Tank,350
+Drillson Heavy Hover Tank (Standard),350

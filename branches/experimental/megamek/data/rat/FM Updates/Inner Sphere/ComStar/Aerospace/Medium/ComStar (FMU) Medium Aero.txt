@@ -1,0 +1,12 @@
+ComStar Medium Aerospace 3067 (FMU)
+Ironsides IRN-SD1,1
+Hellcat II HCT-213B,2
+Stingray F-92,3
+Ironsides IRN-SD1,4
+Ironsides IRN-SD1,5
+Hellcat II HCT-213B,6
+Gotha GTHA-500,5
+Gotha GTHA-500,4
+Hellcat II HCT-213B,3
+Lightning LTN-G15,2
+Stingray F-94,1

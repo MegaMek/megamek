@@ -3,10 +3,10 @@ Trident TRN-3Tb,1
 Swift C,2
 Seydlitz SYD-Z4,3
 Vandal Prime,4
-Chaeronea,5
+Chaeronea (Standard),5
 Avar Prime,6
 Vandal Prime,5
-Chaeronea,4
+Chaeronea (Standard),4
 Vandal Prime,3
 Sulla Prime,2
 Bashkir Prime,1

@@ -1,6 +1,6 @@
 Wolf Empire Frontline Light Mechs
 Locust IIC 6,1
-Parash,2
+Parash (Standard),2
 Locust IIC 5,3
 Wulfen (Prime),4
 Wulfen (Prime),5

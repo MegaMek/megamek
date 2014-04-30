@@ -1,0 +1,12 @@
+Outworlds Alliance Light Aerospace Late 3075
+Chaeronea (Standard),1
+Trident TRN-3T,2
+Seydlitz SYD-Z2A,3
+Centurion CNT-1D,4
+Sabre SB-27,5
+Seydlitz SYD-Z4,6
+Sparrowhawk SPR-H5,5
+Sholagar SL-21,4
+Corax CRX-O,3
+Spad SPD-502,2
+Bashkir Prime,1

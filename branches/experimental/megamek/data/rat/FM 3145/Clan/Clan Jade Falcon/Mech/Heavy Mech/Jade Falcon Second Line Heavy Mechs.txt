@@ -1,12 +1,12 @@
 Jade Falcon Second Line Heavy Mechs
 Mad Cat Mk IV (Savage Wolf) PR (Standard),1
 Ursa URA-2A,2
-Shadow Cat II,3
+Shadow Cat II (Standard),3
 Rifleman IIC 8,4
 Loki (Hellbringer) Prime,5
 Rifleman IIC 5,6
 Thor (Summoner) Prime,5
 Rifleman C 2,4
 Jade Hawk (Standard),3
-Shadow Cat II,2
+Shadow Cat II (Standard),2
 Mad Cat Mk IV (Savage Wolf) PR 2,1

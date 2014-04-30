@@ -1,0 +1,12 @@
+Clan Nova Cat Heavy Mechs Late 3075
+Black Hawk-KU BHKU-O,1
+Grand Dragon DRG-5K,2
+Nova Cat D,3
+Nova Cat B,4
+Nova Cat Prime,5
+Nova Cat Prime,6
+Nova Cat A,5
+Nova Cat C,4
+Nova Cat B,3
+Ha Otoko (Standard),2
+Mad Cat (Timber Wolf) Prime,1

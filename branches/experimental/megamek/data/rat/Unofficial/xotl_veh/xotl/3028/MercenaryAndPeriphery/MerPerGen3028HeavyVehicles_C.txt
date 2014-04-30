@@ -31,17 +31,17 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3028HeavyVehicles_C
-Brutus Assault Tank,10
-AC/2 Carrier,310
+Brutus Assault Tank (Standard),10
+AC/2 Carrier (Standard),310
 Bulldog Medium Tank (AC2),480
-Laser Carrier,400
-Bulldog Medium Tank,1930
-Pike Support Vehicle,340
+Laser Carrier (Standard),400
+Bulldog Medium Tank (Standard),1930
+Pike Support Vehicle (Standard),340
 Pike Support Vehicle (AC5),50
 Bulldog Medium Tank (LRM),480
-SRM Carrier,1900
-LRM Carrier,1900
-Rommel Tank,10
-Patton Tank,10
-Manticore Heavy Tank,1910
+SRM Carrier (Standard),1900
+LRM Carrier (Standard),1900
+Rommel Tank (Standard),10
+Patton Tank (Standard),10
+Manticore Heavy Tank (Standard),1910
 Von Luckner Heavy Tank VNL-K65N,300

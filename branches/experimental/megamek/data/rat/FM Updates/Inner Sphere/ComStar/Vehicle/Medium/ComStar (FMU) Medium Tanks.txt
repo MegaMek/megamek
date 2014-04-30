@@ -1,0 +1,12 @@
+ComStar Medium Vehicles 3067 (FMU)
+Drillson Heavy Hover Tank (Standard),1
+Thor Artillery Vehicle (Standard),2
+Maxim Heavy Hover Transport (3052 Upgrade),3
+Chaparral Missile Artillery Tank (Standard),4
+Goblin Medium Tank (Standard),5
+Vedette Medium Tank (Standard),6
+Zephyr Hovertank (Standard),5
+Condor Heavy Hover Tank (Standard),4
+Regulator Hovertank (Standard),3
+Maxim Heavy Hover Transport (Standard),2
+Hetzer Wheeled Assault Gun (Standard),1

@@ -9,6 +9,6 @@ Gladiator (Executioner) Prime,5
 Man O' War (Gargoyle) A,4
 Daishi (Dire Wolf) Prime,3
 Masakari (Warhawk) Prime,2
-Supernova,1
+Supernova (Standard),1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

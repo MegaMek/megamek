@@ -32,16 +32,16 @@
 #############################################################################
 MerPerGen3039MediumVehicles_C
 Vedette Medium Tank (AC2),520
-Vedette Medium Tank,4730
+Vedette Medium Tank (Standard),4730
 Hetzer Wheeled Assault Gun (Laser),100
-Goblin Medium Tank,310
-Hetzer Wheeled Assault Gun,1260
+Goblin Medium Tank (Standard),310
+Hetzer Wheeled Assault Gun (Standard),1260
 Hetzer Wheeled Assault Gun (SRM),100
-Condor Heavy Hover Tank,310
+Condor Heavy Hover Tank (Standard),310
 Hetzer Wheeled Assault Gun (LRM),100
 Maxim Heavy Hover Transport (SRM4),80
 Prowler Multi-Terrain Vehicle (Succession Wars),420
 Maxim Heavy Hover Transport (SRM2),80
-Maxim Heavy Hover Transport,570
+Maxim Heavy Hover Transport (Standard),570
 Drillson Heavy Hover Tank (SRM),80
-Drillson Heavy Hover Tank,340
+Drillson Heavy Hover Tank (Standard),340

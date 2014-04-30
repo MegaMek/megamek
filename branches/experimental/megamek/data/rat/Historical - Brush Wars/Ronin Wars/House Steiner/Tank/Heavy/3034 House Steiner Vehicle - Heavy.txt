@@ -1,12 +1,12 @@
 3034 House Steiner Vehicle - Heavy
-Pike Support Vehicle,1
-Manticore Heavy Tank,2
-LRM Carrier,3
-SRM Carrier,4
-Patton Tank,5
-Manticore Heavy Tank,6
-Rommel Tank,5
-Rommel Tank,4
-Bulldog Medium Tank,3
-Brutus Assault Tank,2
-Po Heavy Tank,1
+Pike Support Vehicle (Standard),1
+Manticore Heavy Tank (Standard),2
+LRM Carrier (Standard),3
+SRM Carrier (Standard),4
+Patton Tank (Standard),5
+Manticore Heavy Tank (Standard),6
+Rommel Tank (Standard),5
+Rommel Tank (Standard),4
+Bulldog Medium Tank (Standard),3
+Brutus Assault Tank (Standard),2
+Po Heavy Tank (Standard),1

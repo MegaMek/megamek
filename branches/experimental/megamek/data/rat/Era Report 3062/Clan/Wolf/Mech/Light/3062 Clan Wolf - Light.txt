@@ -1,5 +1,5 @@
 3062 Clan Wolf - Light
-Pack Hunter,1
+Pack Hunter (Standard),1
 Uller (Kit Fox) C,2
 Koshi (Mist Lynx) B,3
 Koshi (Mist Lynx) A,4

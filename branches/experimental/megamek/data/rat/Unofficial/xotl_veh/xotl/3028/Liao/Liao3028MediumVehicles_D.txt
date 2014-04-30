@@ -34,17 +34,17 @@ Liao3028MediumVehicles_D
 Vedette Medium Tank (Liao),1020
 Condor Heavy Hover Tank (Liao),10
 Goblin Medium Tank (MG),80
-Goblin Medium Tank,140
+Goblin Medium Tank (LRM),140
 Condor Heavy Hover Tank (Davion),20
-Condor Heavy Hover Tank,210
+Condor Heavy Hover Tank (Standard),210
 Goblin Medium Tank (LRM),80
 Vedette Medium Tank (AC2),370
-Vedette Medium Tank,4330
+Vedette Medium Tank (Standard),4330
 Hetzer Wheeled Assault Gun (Laser),200
-Hetzer Wheeled Assault Gun,1500
+Hetzer Wheeled Assault Gun (Standard),1500
 Hetzer Wheeled Assault Gun (SRM),200
 Hetzer Wheeled Assault Gun (LRM),200
 Maxim Heavy Hover Transport (SRM4),110
 Prowler Multi-Terrain Vehicle (Succession Wars),460
 Maxim Heavy Hover Transport (SRM2),110
-Maxim Heavy Hover Transport,830
+Maxim Heavy Hover Transport (Standard),830

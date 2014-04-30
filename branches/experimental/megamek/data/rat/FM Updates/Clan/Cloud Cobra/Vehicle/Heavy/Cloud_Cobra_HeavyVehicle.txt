@@ -1,0 +1,12 @@
+Cloud Cobra Heavy Vehicles (FMU)
+Oro Heavy Tank (Standard),1
+Athena Combat Vehicle (Standard),2
+Pike Support Vehicle (Clan),3
+Ishtar Heavy Fire Support Tank (Standard),4
+Pike Support Vehicle (Clan),5
+Oro Heavy Tank (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+Ishtar Heavy Fire Support Tank (Standard),4
+Oro Heavy Tank (Standard),3
+Shoden Assault Vehicle (Standard),2
+Athena Combat Vehicle (Standard),1

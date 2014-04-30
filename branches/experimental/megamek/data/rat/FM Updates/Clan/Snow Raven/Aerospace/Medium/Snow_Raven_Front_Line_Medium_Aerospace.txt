@@ -1,0 +1,12 @@
+Snow Raven Front-Line Medium ASF (FMU)
+Visigoth B,1
+Turk A,2
+Turk Prime,3
+Visigoth Prime,4
+Turk B,5
+Jagatai Prime,6
+Visigoth A,5
+Visigoth C,4
+Tyre (Standard),3
+Tyre 2,2
+Jagatai C,1

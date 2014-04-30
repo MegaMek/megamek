@@ -32,17 +32,17 @@
 #############################################################################
 StIves3039AssaultVehicles_C
 Partisan Heavy Tank (AC2),110
-Partisan Heavy Tank,1080
-Schrek AC Carrier,110
-Schrek PPC Carrier,630
-Ontos Heavy Tank,930
-Demolisher Heavy Tank,1300
+Partisan Heavy Tank (Standard),1080
+Schrek AC Carrier (Standard),110
+Schrek PPC Carrier (Standard),630
+Ontos Heavy Tank (Standard),930
+Demolisher Heavy Tank (Standard Mk. I),1300
 Partisan Heavy Tank (LRM),110
-Devastator Heavy Tank,560
+Devastator Heavy Tank (Standard),560
 Ontos Heavy Tank (LRM),370
-Behemoth Heavy Tank,1300
-Sturmfeur Heavy Tank,190
+Behemoth Heavy Tank (Standard),1300
+Sturmfeur Heavy Tank (Standard),190
 Rhino Fire Support Tank (Flamer),560
 Rhino Fire Support Tank (MG),560
-Rhino Fire Support Tank,1500
+Rhino Fire Support Tank (Standard),1500
 Rhino Fire Support Tank (SL),190

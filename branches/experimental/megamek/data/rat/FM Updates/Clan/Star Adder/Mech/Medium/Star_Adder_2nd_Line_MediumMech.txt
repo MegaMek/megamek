@@ -1,12 +1,12 @@
-Crusader Clan Second-Line Medium Mechs (Star Adder),
-Goshawk (Vapor Eagle),1
-Shadow Hawk IIC,2
-Griffin IIC,3
-Kintaro KTO-19,4
-Hunchback IIC,5
-Shadow Hawk IIC,6
-Hellhound (Conjurer),5
-Hellhound (Conjurer),4
-Griffin IIC,3
-Wyvern WVE-5N,2
-Goshawk (Vapor Eagle),1
+Clan Star Adder Second-Line Medium Mechs (FMU)
+Hoplite C,1
+Shadow Hawk IIC 3,2
+Great Wyrm (Standard),3
+Griffin IIC 4,4
+Hunchback IIC (Standard),5
+Shadow Hawk IIC (Standard),6
+Hellhound (Conjurer) (Standard),5
+Wyvern IIC (Standard),4
+Goshawk (Vapor Eagle) (Standard),33
+Griffin IIC 3,2
+Clint IIC (Standard),1

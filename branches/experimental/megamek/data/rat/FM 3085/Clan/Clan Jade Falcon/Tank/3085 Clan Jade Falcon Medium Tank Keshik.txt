@@ -1,12 +1,12 @@
 3085 Clan Jade Falcon Medium Tank Keshik
 Chalchiuhtotolin Support Tank (Chemical Laser),1
-Hachiman Fire Support Tank 'Huey',2
-Sokar Urban Combat Unit,3
-Condor Heavy Hover Tank,4
-Chalchiuhtotolin Support Tank,5
-Chalchiuhtotolin Support Tank,6
-Sokar Urban Combat Unit,5
-Ares Medium Tank,4
-Hachiman Fire Support Tank 'Huey',3
+Hachiman Fire Support Tank (Standard),2
+Sokar Urban Combat Unit (Standard),3
+Condor Heavy Hover Tank (Standard),4
+Chalchiuhtotolin Support Tank (Bombast Laser),5
+Chalchiuhtotolin Support Tank (Standard),6
+Sokar Urban Combat Unit (Standard),5
+Ares Medium Tank (Standard),4
+Hachiman Fire Support Tank (Standard),3
 Ku Wheeled Assault Tank (IFV) "Turhan II",2
-Enyo Strike Tank,1
+Enyo Strike Tank (Standard),1

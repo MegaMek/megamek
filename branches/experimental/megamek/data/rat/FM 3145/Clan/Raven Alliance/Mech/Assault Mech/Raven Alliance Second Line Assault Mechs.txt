@@ -1,11 +1,11 @@
 Raven Alliance Second Line Assault Mechs
 Naga Prime,1
-Omen,2
-Kraken (Bane),3
+Omen (Standard),2
+Kraken (Bane) (Standard),3
 Viking VKG-2F,4
-Omen,5
+Omen (Standard),5
 Marauder IIC 7,6
-Omen,5
+Omen (Standard),5
 Bruin 2,4
 Warhammer IIC 8,3
 Phoenix Hawk IIC 7,2

@@ -1,5 +1,5 @@
 WoB Heavy Aerospace SD/A
-Striga S-STR-0 Invictus (Primary),1
+Striga S-STR-O Invictus,1
 Shiva SHV-O,2
 Shiva SHV-O,3
 Riever F-700,4
@@ -9,4 +9,4 @@ Ahab AHB-643,5
 Ahab AHB-MD,4
 Rapier RPR-200,3
 Shiva SHV-O,2
-Striga S-STR-0 Invictus (Primary),1
+Striga S-STR-OA Dominus,1

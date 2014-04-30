@@ -1,6 +1,6 @@
 3085 Republic of the Sphere Medium Mech Hastati Sentinels
 Dervish DV-8D,1
-Ursus,2
+Ursus (Standard),2
 Griffin GRF-6S,3
 Starslayer STY-3Dr,4
 Crab CRB-27b,5

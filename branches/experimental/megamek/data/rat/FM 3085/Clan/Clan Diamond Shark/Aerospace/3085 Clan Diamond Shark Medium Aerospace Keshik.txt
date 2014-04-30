@@ -1,12 +1,12 @@
 3085 Clan Diamond Shark Medium Aerospace Keshik
-Tyre,1
-Ammon,2
+Tyre (Standard),1
+Ammon (Standard),2
 Troika CMT-3T,3
-Ammon,4
+Ammon (Standard),4
 Tatsu MIK-O,5
-Ammon,6
+Ammon (Standard),6
 Turk Prime,5
-Ammon,4
+Ammon (Standard),4
 Jagatai Prime,3
 Visigoth Prime,2
 Turk Prime,1

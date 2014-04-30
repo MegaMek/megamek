@@ -1,12 +1,12 @@
 3085 Clan Wolf in Exile Assault Mech Keshik
 Warhammer IIC 4,1
-Hellstar,2
+Hellstar (Standard),2
 Man O' War (Gargoyle) Prime,3
-Cygnus,4
+Cygnus (Standard),4
 Hellstar 3,5
-Hellstar,6
+Hellstar (Standard),6
 Hellstar 2,5
-Cygnus,4
+Cygnus (Standard),4
 Daishi (Dire Wolf) Prime,3
 Daishi (Dire Wolf) Prime,2
 Hellstar 3,1

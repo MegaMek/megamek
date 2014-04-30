@@ -1,12 +1,12 @@
 3085 Raven Alliance Light Aerospace Front Line
 Corax CRX-O,1
 Seydlitz SYD-Z4,2
-Chaeronea,3
-Issus,4
+Chaeronea (Standard),3
+Issus (Standard),4
 Chaeronea 3,5
 Corax C,6
 Corax CRX-O,5
-Issus,4
-Chaeronea,3
+Issus (Standard),4
+Chaeronea (Standard),3
 Bashkir Prime,2
 Sulla Prime,1

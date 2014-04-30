@@ -1,12 +1,12 @@
 3085 Raven Alliance Assault Tank Second Line
-Schrek PPC Carrier,1
+Schrek PPC Carrier (Standard),1
 Mars Assault Vehicle (ATM),2
-Mars Assault Vehicle,3
-Huitzilopochtli Assault Tank 'Huey',4
-Schrek PPC Carrier,5
-Mars Assault Vehicle,6
-Huitzilopochtli Assault Tank 'Huey',5
+Mars Assault Vehicle (Standard),3
+Huitzilopochtli Assault Tank 'Huey' (Standard),4
+Schrek PPC Carrier (Standard),5
+Mars Assault Vehicle (Standard),6
+Huitzilopochtli Assault Tank 'Huey' (Standard),5
 Morrigu Fire Support Vehicle (Laser),4
 Huitzilopochtli Assault Tank 'Huey' (AAA),3
-Morrigu Fire Support Vehicle,2
+Morrigu Fire Support Vehicle (Standard),2
 Heimdall Ground Monitor Tank Prime,1

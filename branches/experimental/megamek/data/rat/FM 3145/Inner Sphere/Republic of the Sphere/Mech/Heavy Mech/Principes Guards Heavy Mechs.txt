@@ -1,6 +1,6 @@
 Principes Guards Heavy Mechs
 Black Knight BL-6b-KNT,1
-Ryoken II,2
+Ryoken II (Standard),2
 Shootist ST-8A,3
 Ostsol OTL-9R,4
 Tempest TMP-3M2 "Storm Tempest",5

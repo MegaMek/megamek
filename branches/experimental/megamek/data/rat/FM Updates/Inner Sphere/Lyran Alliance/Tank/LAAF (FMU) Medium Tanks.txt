@@ -1,12 +1,12 @@
 LAAF Medium Vehicles 3067 (FMU)
-Goblin Medium Tank,1
-Condor Heavy Hover Tank,2
-Vedette Medium Tank,3
-Goblin Infantry Support Vehicle,4
-Drillson Heavy Hover Tank,5
+Goblin Medium Tank (LRM),1
+Condor Heavy Hover Tank (Standard),2
+Vedette Medium Tank (Ultra),3
+Goblin Infantry Support Vehicle (Standard),4
+Drillson Heavy Hover Tank (Standard),5
 Vedette Medium Tank (NETC),6
-Myrmidon Medium Tank,5
-Fulcrum Heavy Hovertank,4
+Myrmidon Medium Tank (Standard),5
+Fulcrum Heavy Hovertank (Standard),4
 Drillson Heavy Hover Tank (Streak),3
 Maxim Heavy Hover Transport (3052 Upgrade),2
-Fulcrum Heavy Hovertank,1
+Fulcrum Heavy Hovertank II,1

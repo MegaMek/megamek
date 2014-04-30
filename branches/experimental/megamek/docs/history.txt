@@ -77,6 +77,11 @@ v0.37.11-dev (SVN)
 + Bug [#4108]: jumping in fog does not cost extra MP
 + reset armor and si of Aeros during victory phase when using aero sanity rules
 + Bug [#4059]: Aero Sanity Mod for Damage causing double heat
++ Data: New Images and unit fixes.
++ Data: Lots of Fixed RATs
++ Bug [#4046]: Submarines limited to cruising speed underwater
++ Bug: Units reinforced on or before the movement phase could be selected, but
+    if selected, numerous errors would be thrown
 
 v0.37.10-exp (2014-04-08 02:26)
 

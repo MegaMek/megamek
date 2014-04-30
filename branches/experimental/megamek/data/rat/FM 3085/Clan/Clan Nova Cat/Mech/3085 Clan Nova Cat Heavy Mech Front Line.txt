@@ -1,11 +1,11 @@
 3085 Clan Nova Cat Heavy Mech Front Line
-Guillotine IIC,1
-Rifleman IIC,2
+Guillotine IIC (Standard),1
+Rifleman IIC (Standard),2
 Rifleman IIC 7,3
-Sphinx,4
+Sphinx (Standard),4
 Sphinx 2,5
 Nova Cat Prime,6
-Sphinx,5
+Sphinx (Standard),5
 Nova Cat Prime,4
 Thor (Summoner) Prime,3
 Cauldron-Born (Ebon Jaguar) Prime,2

@@ -1,5 +1,5 @@
 3085 Raven Alliance Assault Mech Front Line
-Kraken (Bane),1
+Kraken (Bane) (Standard),1
 Warhammer IIC 7,2
 Mad Cat Mk II Enhanced,3
 Marauder IIC 4,4

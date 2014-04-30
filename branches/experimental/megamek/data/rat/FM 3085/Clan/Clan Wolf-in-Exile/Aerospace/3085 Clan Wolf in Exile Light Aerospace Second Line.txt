@@ -4,7 +4,7 @@ Sai S-4C,2
 Swift C,3
 Rogue RGU-133Eb,4
 Seydlitz SYD-Z4,5
-Chaeronea,6
+Chaeronea (Standard),6
 Seydlitz SYD-Z3A,5
 Zero ZRO-116b,4
 Sai S-4C,3

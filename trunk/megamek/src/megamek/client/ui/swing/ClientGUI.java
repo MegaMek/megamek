@@ -1277,6 +1277,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     if (reinforce) {
                     	entity.setDeployRound(client.getGame().getRoundCount()+1);
                     	entity.setGame(client.getGame());
+                    	// Set these to true, otherwise units reinforced in
+                    	// the movement turn are considered selectable
+                    	entity.setDone(true);
+                    	entity.setUnloaded(true);
                     	if (entity instanceof Aero) {
                     	    ((Aero)entity).applyBombs();
                     	}

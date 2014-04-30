@@ -437,6 +437,10 @@ WindowListener, TreeSelectionListener {
                     if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
                         e.setDeployRound(c.getGame().getRoundCount()+1);
                         e.setGame(c.getGame());
+                        // Set these to true, otherwise units reinforced in
+                        // the movement turn are considered selectable
+                        e.setDone(true);
+                        e.setUnloaded(true);
                     }
                     entities.add(e);
                 } catch (EntityLoadingException ex) {

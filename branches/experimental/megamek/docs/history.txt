@@ -17,6 +17,8 @@ v0.37.11-exp-dev (SVN)
 + Removed code to dispose of RandomUnitGenerator, since it no longer takes up
     so much memory (also required to reinforce from the RandomArmyDialog)
 + Feature [#1205]: Added ability to reinforce from the RandomArmyDialog
++ Bug: Units reinforced on or before the movement phase could be selected, but
+    if selected, numerous errors would be thrown (fixed for Reinforce RAT)
 
 v0.37.11-dev (SVN)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

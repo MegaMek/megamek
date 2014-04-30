@@ -64,6 +64,7 @@ v0.37.11-dev (SVN)
 + Bug [#4046]: Submarines limited to cruising speed underwater
 + Bug: Units reinforced on or before the movement phase could be selected, but
     if selected, numerous errors would be thrown
++ Bug: MovementDisplay.updateSelfDestructButton throws an NPE with squadrons
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
 
-import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
@@ -64,7 +63,7 @@ public class RandomUnitGenerator implements Serializable {
     // and the vectors just contain the unit names listed a number of times
     // equal to
     // the frequency
-    Map<String, Vector<String>> rats;
+    Map<String, RatEntry> rats;
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
     private static boolean dispose = false;
@@ -73,7 +72,7 @@ public class RandomUnitGenerator implements Serializable {
     private boolean initializing;
     
     private ArrayList<ActionListener> listeners;
-
+    
     /**
      * Plain old data class used to represent nodes in a Random Assignment Table
      * tree. RATs are grouped into categories based on directory structure, and
@@ -92,6 +91,23 @@ public class RandomUnitGenerator implements Serializable {
         public String name;
         public Vector<RatTreeNode> children;
     }
+    
+    /**
+     * Keeps track of a RAT entry, stores the name of a unit in the RAT, and 
+     * its change of appearing (weight).
+     * 
+     * @author arlith
+     *
+     */
+    private class RatEntry {
+        public Vector<String> units;
+        public Vector<Float> weights;
+        
+        RatEntry(){
+            units = new Vector<String>();
+            weights = new Vector<Float>();
+        }
+    }
 
     private RatTreeNode ratTree;
     private RatTreeNode currentNode;
@@ -104,7 +120,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public synchronized void populateUnits() {
-        rats = new HashMap<String, Vector<String>>();
+        rats = new HashMap<String, RatEntry>();
         ratTree = new RatTreeNode("Random Assignment Tables");
 
         loadRatsFromDirectory(Configuration.armyTablesDir());
@@ -162,14 +178,13 @@ public class RandomUnitGenerator implements Serializable {
 
         Scanner input = null;
 
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             // Check to see if we've been interrupted
             if (interrupted) {
                 return;
             }
 
             // READ IN RATS
-            File file = files[i];
             if (file.isDirectory()) {
                 if (file.getName().toLowerCase().equals("_svn")
                         || file.getName().toLowerCase().equals(".svn")) {
@@ -207,7 +222,7 @@ public class RandomUnitGenerator implements Serializable {
                 input = new Scanner(ratst, "UTF-8");
                 int linen = 0;
                 String key = "Huh";
-                Vector<String> v = new Vector<String>();
+                RatEntry re = new RatEntry();
                 while (input.hasNextLine()) {
                     if (interrupted) {
                         return;
@@ -227,7 +242,7 @@ public class RandomUnitGenerator implements Serializable {
                             continue;
                         }
                         String name = values[0];
-                        int weight = 0;
+                        float weight = 0;
                         try {
                             weight = Integer.parseInt(values[1].trim());
                         } catch (NumberFormatException nef) {
@@ -243,16 +258,20 @@ public class RandomUnitGenerator implements Serializable {
                                     + " could not be found in the " + key
                                     + " RAT");
                         } else {
-                            int j = 0;
-                            while (j < weight) {
-                                v.add(name);
-                                j++;
-                            }
+                            re.units.add(name);
+                            re.weights.add(weight);
                         }
                     }
                 }
-                if (v.size() > 0) {
-                    rats.put(key, v);
+                if (re.units.size() > 0) {
+                    float sum = 0;
+                    for (int i = 0; i < re.weights.size(); i++){
+                        sum += re.weights.get(i);
+                    }
+                    for (int i = 0; i < re.weights.size(); i++){
+                        re.weights.set(i, re.weights.get(i)/sum);
+                    }  
+                    rats.put(key, re);
                     if (null != currentNode) {
                         currentNode.children.add(new RatTreeNode(key));
                     }
@@ -278,14 +297,20 @@ public class RandomUnitGenerator implements Serializable {
      * 
      * @return - a string giving the name
      */
-    public ArrayList<MechSummary> generate(int n) {
+    public ArrayList<MechSummary> generate(int numRolls) {
         ArrayList<MechSummary> units = new ArrayList<MechSummary>();
 
         if (null != rats) {
-            Vector<String> rat = rats.get(chosenRAT);
-            if ((null != rat) && (rat.size() > 0)) {
-                for (int i = 0; i < n; i++) {
-                    String name = rat.get(Compute.randomInt(rat.size()));
+            RatEntry re = rats.get(chosenRAT);
+            if ((null != re) && (re.units.size() > 0)) {
+                for (int roll = 0; roll < numRolls; roll++) {
+                    double rand = Math.random();
+                    int i = 0;
+                    while (i < re.weights.size() && rand > re.weights.get(i)) {
+                        i++;
+                        rand -= re.weights.get(i);
+                    }
+                    String name = re.units.get(i);
                     MechSummary unit = MechSummaryCache.getInstance().getMech(
                             name);
                     if (null != unit) {

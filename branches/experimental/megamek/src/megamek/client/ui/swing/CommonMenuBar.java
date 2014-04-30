@@ -65,6 +65,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      */
     private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
+    private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
@@ -281,6 +282,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fileUnitsReinforce.addActionListener(this);
         fileUnitsReinforce.setActionCommand("fileUnitsReinforce"); //$NON-NLS-1$
         submenu.add(fileUnitsReinforce);
+        fileUnitsReinforceRAT = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsReinforceRAT")); //$NON-NLS-1$
+        fileUnitsReinforceRAT.addActionListener(this);
+        fileUnitsReinforceRAT.setActionCommand("fileUnitsReinforceRAT"); //$NON-NLS-1$
+        submenu.add(fileUnitsReinforceRAT);
         fileUnitsOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
         fileUnitsOpen.addActionListener(this);
@@ -849,6 +855,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         }
         // Reinforcements cannot be added in the lounge!
         fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
+        fileUnitsReinforceRAT.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
 
         // If an entity has been selected, we can view it.
         if (entity != null) {

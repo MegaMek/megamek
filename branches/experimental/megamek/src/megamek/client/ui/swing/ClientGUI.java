@@ -666,6 +666,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             loadListFile(client.getLocalPlayer(), true);
             ignoreHotKeys = false;
         }
+        if ("fileUnitsReinforceRAT".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
+            getRandomArmyDialog().setVisible(true);
+            ignoreHotKeys = false;
+        }
         if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
         }

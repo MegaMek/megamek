@@ -58,6 +58,7 @@ import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
+import megamek.common.IGame.Phase;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -433,6 +434,10 @@ WindowListener, TreeSelectionListener {
   
                     autoSetSkillsAndName(e);
                     e.setOwner(c.getLocalPlayer());
+                    if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
+                        e.setDeployRound(c.getGame().getRoundCount()+1);
+                        e.setGame(c.getGame());
+                    }
                     entities.add(e);
                 } catch (EntityLoadingException ex) {
                     System.out.println("Unable to load mech: " + //$NON-NLS-1$ 

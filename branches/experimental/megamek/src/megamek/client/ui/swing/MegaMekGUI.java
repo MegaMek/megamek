@@ -52,7 +52,6 @@ import javax.swing.filechooser.FileFilter;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.RandomNameGenerator;
-import megamek.client.RandomUnitGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
@@ -487,7 +486,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         //  This normally happens in the deployment phase in Client, but
         //  if we are loading a game, this phase may not be reached
         MechFileParser.dispose();
-        RandomUnitGenerator.getInstance().dispose();
         RandomNameGenerator.getInstance().dispose();
         //We must do this last, as the name and unit generators can create
         // a new instance if they are running

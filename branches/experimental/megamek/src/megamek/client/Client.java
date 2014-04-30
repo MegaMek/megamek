@@ -454,7 +454,6 @@ public class Client implements IClientCommandHandler {
             case PHASE_DEPLOYMENT:
                 // free some memory thats only needed in lounge
                 MechFileParser.dispose();
-                RandomUnitGenerator.getInstance().dispose();
                 getRandomNameGenerator().dispose();
                 // We must do this last, as the name and unit generators can
                 // create

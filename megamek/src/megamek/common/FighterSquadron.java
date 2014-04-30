@@ -948,4 +948,12 @@ public class FighterSquadron extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_FIGHTER_SQUADRON;
     }
+    
+    @Override
+    public Engine getEngine() {
+        // The engine state variable will be null, so we'll just return the
+        //  engine of the first fighter in the squadron.
+        return getFighter(0).getEngine();
+    }
+    
 }

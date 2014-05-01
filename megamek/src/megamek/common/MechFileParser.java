@@ -25,7 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
@@ -835,7 +835,8 @@ public class MechFileParser {
                 // init the list.
                 BufferedReader br = null;
                 try {
-                    br = new BufferedReader(new FileReader(new File(Configuration.unitsDir(), FILENAME_OFFICIAL_UNITS)));
+                    br = new BufferedReader(new FileReader(new File(
+                            Configuration.docsDir(), FILENAME_OFFICIAL_UNITS)));
                     String s;
                     String name;
                     while ((s = br.readLine()) != null) {
@@ -845,19 +846,17 @@ public class MechFileParser {
                             canonUnitNames.addElement(name);
                         }
                     }
+                    Collections.sort(canonUnitNames);
                 } catch (FileNotFoundException e) {
                 }
             }
         } catch (IOException e) {
         }
-        for (Enumeration<String> i = canonUnitNames.elements(); i
-                .hasMoreElements();) {
-            String s = i.nextElement();
-            if (s.equals(ent.getShortNameRaw())) {
-                ent.setCanon(true);
-                break;
-            }
-        }
+        int index = Collections.binarySearch(canonUnitNames,
+                ent.getShortNameRaw()); 
+        if (index >= 0) {
+            ent.setCanon(true);
+        }        
         ent.initMilitary();
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException

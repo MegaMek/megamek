@@ -24134,7 +24134,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code> objects that can be
      *         sent to the output log.
      */
-    private Vector<Report> destroyEntity(Entity entity, String reason,
+    public Vector<Report> destroyEntity(Entity entity, String reason,
             boolean survivable) {
         // Generally, the entity can still be salvaged.
         return destroyEntity(entity, reason, survivable, true);

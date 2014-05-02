@@ -297,7 +297,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
-            chSearchlight.setSelected(entity.hasSpotlight());
+            chSearchlight.setSelected(entity.hasSpotlight()
+                    || entity.hasQuirk("searchlight"));
         }
 
         // Set up mines

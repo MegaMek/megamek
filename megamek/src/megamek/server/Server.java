@@ -2442,7 +2442,9 @@ public class Server implements Runnable {
                     a.setSI(currentSI);
                 }
             }
-
+            // Give the unit a spotlight, if it has the spotlight quirk
+            entity.setExternalSpotlight(entity.hasExternaSpotlight()
+                    || entity.hasQuirk("searchlight"));
             entityUpdate(entity.getId());
         }
     }

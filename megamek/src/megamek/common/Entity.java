@@ -8486,6 +8486,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setExternalSpotlight(boolean arg) {
         hasExternalSpotlight = arg;
     }
+    
+    /**
+     * Returns state of hasExternalSpotlight, does not consider mounted 
+     * spotlights.
+     * 
+     * @return
+     */
+    public boolean hasExternaSpotlight() {
+        return hasExternalSpotlight;
+    }
 
     /**
      * Returns true if the unit has a usable spotlight. It considers both

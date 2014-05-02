@@ -69,6 +69,8 @@ v0.37.11-dev (SVN)
 + Bug [#4113]: Hull-down meks making falling PSR
 + Bug [#4107]: searchlight quirk does not actually give searchlight
 + Bug [#4114]: Some bugs in TSEMP handling...
++ Refactored BotClient.getStartingCoordsArray().  Uses a LinkedList instead of
+    manually trying to size a Coords[].
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

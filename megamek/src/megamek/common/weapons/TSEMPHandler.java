@@ -199,11 +199,21 @@ class TSEMPHandler extends EnergyWeaponHandler {
                 baShutdownReport.add(entityTarget.getLocationAbbr(hit));
                 // TODO: fix for salvage purposes
                 entityTarget.destroyLocation(hit.getLocation());
+                // Check to see if the squad has been eliminated
+                if (entityTarget.getTransferLocation(hit).getLocation() == 
+                        Entity.LOC_DESTROYED) {
+                    vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                            "all troopers eliminated", false));
+                }
             } else {
                 entityTarget.setShutDown(true);
             }
         } else if (tsempRoll >= interferenceTarget){
-            entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+            int targetEffect = entityTarget.getTsempEffect();
+            if (targetEffect != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
+                entityTarget.setTsempEffect(
+                        TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+            }
             tsempEffect = "<b>Interference!</b>";
         } else {
             // No effect roll

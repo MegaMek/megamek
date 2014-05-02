@@ -148,6 +148,12 @@ class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                     vPhaseReport.add(r);
                     // TODO: fix for salvage purposes
                     entityTarget.destroyLocation(hit.getLocation());
+                    // Check to see if the squad has been eliminated
+                    if (entityTarget.getTransferLocation(hit).getLocation() == 
+                            Entity.LOC_DESTROYED) {
+                        vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                                "all troopers eliminated", false));
+                    }
                 } else {
                     entityTarget.setShutDown(true);
                 }

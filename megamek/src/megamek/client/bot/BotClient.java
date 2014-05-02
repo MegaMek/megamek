@@ -20,9 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -43,7 +44,9 @@ import megamek.common.EntityListFile;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
+import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -93,7 +96,8 @@ public abstract class BotClient extends Client {
                 if (isMyTurn()) {
                     //Run bot's turn processing in a separate thread.
                     //This way the server's thread is free to process the other client actions.
-                    Thread worker = new Thread(new CalculateBotTurn());
+                    Thread worker = new Thread(new CalculateBotTurn(),
+                            getName() + " Turn Calc Thread");
                     worker.start();
                 }
             }
@@ -342,7 +346,7 @@ public abstract class BotClient extends Client {
     /**
      * Gets valid & empty starting coords around the specified point
      */
-    protected Coords getCoordsAround(Entity deploy_me, Coords[] c) {
+    protected Coords getCoordsAround(Entity deploy_me, LinkedList<Coords> c) {
         int mech_count;
         int conv_fcount; // Friendly conventional units
         int conv_ecount; // Enemy conventional units
@@ -409,120 +413,62 @@ public abstract class BotClient extends Client {
     // Highest rating wins out; if this applies to multiple hexes then randomly
     // select among them
     protected Coords getStartingCoords() {
-        Coords[] calc = getStartingCoordsArray();
-        if (calc != null) {
-            if (calc.length > 0) {
-                return calc[0];
-            }
+        LinkedList<Coords> calc = getStartingCoordsArray();
+        if (calc != null && calc.size() > 0) {
+            return calc.peek();
         }
         return null;
     }
 
-    protected Coords[] getStartingCoordsArray() {
-        int test_x, test_y, highest_elev, lowest_elev;
-        int counter, valid_arr_index, arr_x_index;
+    protected LinkedList<Coords> getStartingCoordsArray() {
+        int highest_elev, lowest_elev;
         int weapon_count;
 
-        double av_range, best_fitness, ideal_elev;
+        IBoard board = game.getBoard();
+        double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
 
-        Coords highest_hex;
-        Coords test_hex = new Coords();
-        Coords[] valid_array;
-
-        Entity test_ent, deployed_ent;
+        Coords highestHex;
+        LinkedList<Coords> validCoords = new LinkedList<Coords>();
 
         Vector<Entity> valid_attackers;
 
-        deployed_ent = getEntity(game.getFirstDeployableEntityNum());
+        Entity deployed_ent = getEntity(game.getFirstDeployableEntityNum());
 
         WeaponAttackAction test_attack;
 
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
-
-        switch (getLocalPlayer().getStartingPos()) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-                valid_array = new Coords[((3 * game.getBoard().getWidth())
-                        + (3 * game.getBoard().getHeight())) - 9];
-                break;
-            case 2:
-            case 6:
-                valid_array = new Coords[game.getBoard().getWidth() * 3];
-                break;
-            case 4:
-            case 8:
-                valid_array = new Coords[game.getBoard().getHeight() * 3];
-                break;
-            case 0:
-            default:
-                valid_array = new Coords[game.getBoard().getWidth()
-                        * game.getBoard().getHeight()];
-                break;
-        }
-
-        counter = 0;
-        for (test_x = 0; test_x <= game.getBoard().getWidth(); test_x++) {
-            for (test_y = 0; test_y <= game.getBoard().getHeight(); test_y++) {
-                test_hex.x = test_x;
-                test_hex.y = test_y;
-                if (game.getBoard().isLegalDeployment(test_hex,
-                                                      deployed_ent.getStartingPos())) {
-                    if (!deployed_ent.isLocationProhibited(test_hex)) {
-                        valid_array[counter] = new Coords(test_hex);
-                        counter++;
-                    }
+        for (int x = 0; x <= board.getWidth(); x++) {
+            for (int y = 0; y <= board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                if (board.isLegalDeployment(c, deployed_ent.getStartingPos())
+                        && !deployed_ent.isLocationProhibited(c)) {
+                    validCoords.add(new Coords(c));
                 }
             }
         }
 
-        // Randomize hexes so hexes are not in order
-        // This is to prevent clumping at the upper-left corner on very flat
-        // maps
-
-        for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++) {
-            arr_x_index = Compute.randomInt(counter);
-            if (arr_x_index < 0) {
-                arr_x_index = 0;
-            }
-            test_hex = valid_array[valid_arr_index];
-            valid_array[valid_arr_index] = valid_array[arr_x_index];
-            valid_array[arr_x_index] = test_hex;
-        }
-
-        // copy valid hexes into a new array of the correct size,
-        // so we don't return an array that contains null Coords
-
-        Coords[] valid_new = new Coords[counter];
-        System.arraycopy(valid_array, 0, valid_new, 0, counter);
-        valid_array = valid_new;
+        // Randomize hexes to prevent clumping at the upper-left corner on 
+        // very flat maps
+        Collections.shuffle(validCoords);
 
         // Now get minimum and maximum elevation levels for these hexes
-
-        highest_elev = -100;
-        lowest_elev = 100;
-        for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++) {
-            if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                       valid_array[valid_arr_index].y).getElevation() > highest_elev) {
-                highest_elev = game.getBoard().getHex(
-                        valid_array[valid_arr_index].x,
-                        valid_array[valid_arr_index].y).getElevation();
+        highest_elev = Integer.MIN_VALUE;;
+        lowest_elev = Integer.MAX_VALUE;
+        for (Coords c : validCoords) {
+            int elev = board.getHex(c.x, c.y).getElevation();
+            if (elev > highest_elev) {
+                highest_elev = board.getHex(c.x, c.y).getElevation();
             }
-            if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                       valid_array[valid_arr_index].y).getElevation() < lowest_elev) {
-                lowest_elev = game.getBoard().getHex(
-                        valid_array[valid_arr_index].x,
-                        valid_array[valid_arr_index].y).getElevation();
+            if (elev < lowest_elev) {
+                lowest_elev = board.getHex(c.x, c.y).getElevation();
             }
         }
 
         // Calculate average range of all weapons
         // Do not include ATMs, but DO include each bin of ATM ammo
         // Increase average range if the unit has an active c3 link
-
         av_range = 0.0;
         weapon_count = 0;
         for (Mounted mounted : deployed_ent.getWeaponList()) {
@@ -559,84 +505,64 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-
         av_range = av_range / weapon_count;
 
         // Calculate ideal elevation as a factor of average range of 18 being
         // highest elevation.  Fast, non-jumping units should deploy towards
         // the middle elevations to avoid getting stuck up a cliff.
-
-
         if ((deployed_ent.getJumpMP() == 0) &&
                 (deployed_ent.getWalkMP() > 5)) {
-
             ideal_elev = lowest_elev + ((highest_elev - lowest_elev) / 3.0);
-
-
         } else {
-
             ideal_elev = lowest_elev
                     + ((av_range / 18) * (highest_elev - lowest_elev));
-
         }
         if (ideal_elev > highest_elev) {
             ideal_elev = highest_elev;
         }
 
-        best_fitness = -100.0;
-        for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++) {
-
+        for (Coords coord : validCoords) {
             // Calculate the fitness factor for each hex and save it to the
             // array
             // -> Absolute difference between hex elevation and ideal elevation
             // decreases fitness
-
-            valid_array[valid_arr_index].fitness = -1
+            coord.fitness = -1
                     * (Math.abs(ideal_elev
-                                        - game.getBoard().getHex(
-                    valid_array[valid_arr_index].x,
-                    valid_array[valid_arr_index].y)
-                                              .getElevation()));
+                            - board.getHex(coord.x, coord.y).getElevation()));
 
             // -> Approximate total damage taken in the current position; this
             // keeps units from deploying into x-fires
             total_damage = 0.0;
-            deployed_ent.setPosition(valid_array[valid_arr_index]);
+            deployed_ent.setPosition(coord);
             valid_attackers = game.getValidTargets(deployed_ent);
-            for (Enumeration<Entity> i = valid_attackers.elements(); i
-                    .hasMoreElements(); ) {
-                test_ent = i.nextElement();
+            for (Entity test_ent : valid_attackers) {
                 if ((test_ent.isDeployed()) && !test_ent.isOffBoard()) {
                     for (Mounted mounted : test_ent.getWeaponList()) {
                         test_attack = new WeaponAttackAction(test_ent.getId(),
-                                                             deployed_ent.getId(), test_ent
-                                .getEquipmentNum(mounted));
-                        adjusted_damage = BotClient.getDeployDamage(game, test_attack);
+                                deployed_ent.getId(),
+                                test_ent.getEquipmentNum(mounted));
+                        adjusted_damage = BotClient.getDeployDamage(game,
+                                test_attack);
                         total_damage += adjusted_damage;
                     }
-
                 }
-
             }
-
-            valid_array[valid_arr_index].fitness -= (total_damage / 10);
+            coord.fitness -= (total_damage / 10);
 
             // -> Find the best target for each weapon and approximate the
             // damage; maybe we can kill stuff without moving!
             // -> Conventional infantry ALWAYS come out on the short end of the
             // stick in damage given/taken... solutions?
-
             total_damage = 0.0;
             for (Mounted mounted : deployed_ent.getWeaponList()) {
                 max_damage = 0.0;
-                for (Enumeration<Entity> j = valid_attackers.elements(); j
-                        .hasMoreElements(); ) {
-                    test_ent = j.nextElement();
+                for (Entity test_ent : valid_attackers) {
                     if ((test_ent.isDeployed()) && !test_ent.isOffBoard()) {
-                        test_attack = new WeaponAttackAction(deployed_ent
-                                                                     .getId(), test_ent.getId(), deployed_ent
-                                                                     .getEquipmentNum(mounted));
-                        adjusted_damage = BotClient.getDeployDamage(game, test_attack);
+                        test_attack = new WeaponAttackAction(
+                                deployed_ent.getId(), test_ent.getId(),
+                                deployed_ent.getEquipmentNum(mounted));
+                        adjusted_damage = BotClient.getDeployDamage(game,
+                                test_attack);
                         if (adjusted_damage > max_damage) {
                             max_damage = adjusted_damage;
                         }
@@ -644,29 +570,26 @@ public abstract class BotClient extends Client {
                 }
                 total_damage += max_damage;
             }
-            valid_array[valid_arr_index].fitness += (total_damage / 10);
+            coord.fitness += (total_damage / 10);
 
             // Mech
-
             if (deployed_ent instanceof Mech) {
                 // -> Trees are good
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
-
-                int x = valid_array[valid_arr_index].x;
-                int y = valid_array[valid_arr_index].y;
-                if (game.getBoard().getHex(x, y).containsTerrain(Terrains.WOODS)) {
-                    valid_array[valid_arr_index].fitness += 1;
+                int x = coord.x;
+                int y = coord.y;
+                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)) {
+                    coord.fitness += 1;
                 }
-                if (game.getBoard().getHex(x, y).containsTerrain(Terrains.WATER)) {
-                    if (game.getBoard().getHex(x, y).depth() > 1) {
-                        valid_array[valid_arr_index].fitness -= game.getBoard().getHex(x, y).depth();
+                if (board.getHex(x, y).containsTerrain(Terrains.WATER)) {
+                    if (board.getHex(x, y).depth() > 1) {
+                        coord.fitness -= board.getHex(x, y).depth();
                     }
                 }
-                //If this is a building, make sure it's not too heavy to safely move out of.
-                valid_array[valid_arr_index].fitness -= potentialBuildingDamage(valid_array[valid_arr_index].x,
-                                                                                valid_array[valid_arr_index].y,
-                                                                                deployed_ent);
+                //If building, make sure not too heavy to safely move out of
+                coord.fitness -= potentialBuildingDamage(coord.x, coord.y,
+                        deployed_ent);
             }
 
             // Infantry
@@ -676,48 +599,40 @@ public abstract class BotClient extends Client {
                 // infantry
                 // rough is nice, too
                 // -> Massed infantry is more effective, so try to cluster them
-
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                           valid_array[valid_arr_index].y).containsTerrain(
+                if (board.getHex(coord.x, coord.y).containsTerrain(
                         Terrains.ROUGH)) {
-                    valid_array[valid_arr_index].fitness += 1.5;
+                    coord.fitness += 1.5;
                 }
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                           valid_array[valid_arr_index].y).containsTerrain(
+                if (board.getHex(coord.x, coord.y).containsTerrain(
                         Terrains.WOODS)) {
-                    valid_array[valid_arr_index].fitness += 2;
+                    coord.fitness += 2;
                 }
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                           valid_array[valid_arr_index].y).containsTerrain(
+                if (board.getHex(coord.x, coord.y).containsTerrain(
                         Terrains.BUILDING)) {
-                    valid_array[valid_arr_index].fitness += 4;
+                    coord.fitness += 4;
                 }
-                highest_hex = valid_array[valid_arr_index];
-                Enumeration<Entity> ent_list = game.getEntities(highest_hex);
-                while (ent_list.hasMoreElements()) {
-                    test_ent = ent_list.nextElement();
+                highestHex = coord;
+                for (Entity test_ent : game.getEntitiesVector(highestHex)) {
                     if ((deployed_ent.getOwner().equals(test_ent.getOwner()))
                             && !deployed_ent.equals(test_ent)) {
                         if (test_ent instanceof Infantry) {
-                            valid_array[valid_arr_index].fitness += 2;
+                            coord.fitness += 2;
                             break;
                         }
                     }
                 }
-                outer_loop:
-                for (int x = 0; x < 6; x++) {
-                    highest_hex = valid_array[valid_arr_index];
-                    highest_hex = highest_hex.translated(x);
-                    Enumeration<Entity> adj_ents = game
-                            .getEntities(highest_hex);
-                    while (adj_ents.hasMoreElements()) {
-                        test_ent = adj_ents.nextElement();
-                        if ((deployed_ent.getOwner().equals(test_ent.getOwner()))
-                                && !deployed_ent.equals(test_ent)) {
-                            if (test_ent instanceof Infantry) {
-                                valid_array[valid_arr_index].fitness += 1;
-                                break outer_loop;
-                            }
+                boolean foundAdj = false;
+                IPlayer owner = deployed_ent.getOwner();
+                for (int x = 0; x < 6 && !foundAdj; x++) {
+                    highestHex = coord.translated(x);
+                    for (Entity test_ent : game.getEntitiesVector(highestHex)) {
+                        if ((owner.equals(test_ent.getOwner()))
+                                && !deployed_ent.equals(test_ent)
+                                && (test_ent instanceof Infantry)) {
+
+                            coord.fitness += 1;
+                            foundAdj = true;
+
                         }
                     }
                 }
@@ -725,12 +640,10 @@ public abstract class BotClient extends Client {
                 // Not sure why bot tries to deploy infantry in water, it SHOULD
                 // be caught by the isHexProhibited method when
                 // selecting hexes, but sometimes it has a mind of its own so...
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                           valid_array[valid_arr_index].y).containsTerrain(
+                if (board.getHex(coord.x, coord.y).containsTerrain(
                         Terrains.WATER)) {
-                    valid_array[valid_arr_index].fitness -= 10;
+                    coord.fitness -= 10;
                 }
-
             }
 
             // VTOL *PLACEHOLDER*
@@ -740,14 +653,12 @@ public abstract class BotClient extends Client {
             // fixed.
             // FIXME
             if (deployed_ent instanceof Tank) {
-
                 // Tracked vehicle
                 // -> Trees increase fitness
                 if (deployed_ent.getMovementMode() == EntityMovementMode.TRACKED) {
-                    if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                               valid_array[valid_arr_index].y).containsTerrain(
+                    if (board.getHex(coord.x, coord.y).containsTerrain(
                             Terrains.WOODS)) {
-                        valid_array[valid_arr_index].fitness += 2;
+                        coord.fitness += 2;
                     }
                 }
 
@@ -758,41 +669,31 @@ public abstract class BotClient extends Client {
                 // -> Water in hex increases fitness, hover vehicles have an
                 // advantage in water areas
                 if (deployed_ent.getMovementMode() == EntityMovementMode.HOVER) {
-                    if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                               valid_array[valid_arr_index].y).containsTerrain(
+                    if (board.getHex(coord.x, coord.y).containsTerrain(
                             Terrains.WATER)) {
-                        valid_array[valid_arr_index].fitness += 2;
+                        coord.fitness += 2;
                     }
                 }
-                //If this is a building, make sure it's not too heavy to safely move out of.
-                valid_array[valid_arr_index].fitness -= potentialBuildingDamage(valid_array[valid_arr_index].x,
-                                                                                valid_array[valid_arr_index].y,
-                                                                                deployed_ent);
+                // If building, make sure not too heavy to safely move out of.
+                coord.fitness -= potentialBuildingDamage(coord.x, coord.y,
+                        deployed_ent);
             }
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
-
             if (deployed_ent instanceof Protomech) {
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                                           valid_array[valid_arr_index].y).containsTerrain(
+                if (board.getHex(coord.x, coord.y).containsTerrain(
                         Terrains.WOODS)) {
-                    valid_array[valid_arr_index].fitness += 2;
+                    coord.fitness += 2;
                 }
-            }
-
-            // Record the highest fitness factor
-
-            if (valid_array[valid_arr_index].fitness > best_fitness) {
-                best_fitness = valid_array[valid_arr_index].fitness;
             }
         }
 
         // Now sort the valid array.
         // We're just going to trust Java to not suck at this.
-        Arrays.sort(valid_array, new FitnessComparator());
+        Collections.sort(validCoords, new FitnessComparator());
 
-        return valid_array;
+        return validCoords;
     }
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {

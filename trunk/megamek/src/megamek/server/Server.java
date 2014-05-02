@@ -17639,7 +17639,8 @@ public class Server implements Runnable {
                     continue;
                 }
                 // if this mech has 20+ damage, add another roll to the list.
-                if (entity.damageThisPhase >= 20) {
+                // Hulldown 'mechs ignore this rule, TO Errata
+                if (entity.damageThisPhase >= 20  && !entity.isHullDown()) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());

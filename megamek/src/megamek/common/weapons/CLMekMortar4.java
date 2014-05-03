@@ -47,7 +47,7 @@ public class CLMekMortar4 extends MekMortarWeapon {
         tonnage = 3.5f;
         cost = 32000;
         techRating = RATING_B;
-        availRating = new int[] { RATING_D, RATING_F, RATING_E };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         introDate = 2840;
         techLevel.put(2840, techLevel.get(3071));
     }

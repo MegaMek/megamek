@@ -51,5 +51,12 @@ public class ISHERPPC extends PPCWeapon {
         this.criticals = 3;
         this.bv = 229;
         this.cost = 450000;
+        //Since this is a SL Era ER PPC variant mentioned in Spartan Fluff
+        //I'm using the ER PPC Rules and limiting it to the SL and Early Clan era.
+        introDate = 2751;
+        techLevel.put(2751, techLevel.get(3071));
+        extinctDate = 2828;
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        techRating = RATING_E;
     }
 }

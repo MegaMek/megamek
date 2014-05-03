@@ -60,9 +60,9 @@ public class CLBASmallPulseLaser extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 2829;
-        techLevel.put(2829, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_E, RATING_D };
         techRating = RATING_F;
     }
 

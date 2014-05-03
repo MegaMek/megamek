@@ -51,9 +51,9 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis, Model, Engine Name, Internals Name, " +
-            		"Myomer Name, Cockpit name, Gyro Name, " +
-            		"Armor Types (multiple entries), " +
+            csvLine.append("Chassis,Model,Weight,Intro Date,Unit Type,Rules,Engine Name,Internal Structure," +
+            		"Myomer,Cockpit Type,Gyro Type," +
+            		"Armor Types," +
             		"Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
@@ -65,11 +65,25 @@ public class MechCacheCSVTool {
                 // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
-                if (mech.getModel().equals("")){
-                    csvLine.append("(Standard),");
-                } else {                    
-                    csvLine.append(mech.getModel() + ",");
-                }
+                csvLine.append(mech.getModel() + ",");
+                
+                
+                //if (mech.getModel().equals("")){
+                //    csvLine.append("(Standard),");
+                //} else {                    
+                //    csvLine.append(mech.getModel() + ",");
+                //}
+                
+                //Weight
+                csvLine.append(mech.getTons() + ",");
+                
+                // IntroDate
+                csvLine.append(mech.getYear() + ",");
+                
+                //Unit Type
+                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
+
+                csvLine.append(mech.getLevel() + ",");
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
                 

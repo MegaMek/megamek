@@ -878,7 +878,7 @@ public class EquipmentType {
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV");
+            w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                     .hasMoreElements();) {
@@ -904,6 +904,7 @@ public class EquipmentType {
                             + TechConstants.getLevelName(type
                                     .getTechLevel(year)));
                 }
+
                 w.write(",");
                 w.write(type.getFullRatingName());
                 w.write(",");
@@ -935,6 +936,12 @@ public class EquipmentType {
                     w.write("Variable");
                 } else {
                     w.write(Double.toString(type.bv));
+                }
+                w.write(",");
+                for (Enumeration<String> names = type.getNames(); names
+                        .hasMoreElements();) {
+                    String name = names.nextElement();
+                    w.write(name + ",");
                 }
                 w.newLine();
             }

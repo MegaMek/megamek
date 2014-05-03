@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -51,8 +51,8 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 1950;
-        techLevel.put(1950, techLevel.get(3071));
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_B };
         techRating = RATING_C;
     }

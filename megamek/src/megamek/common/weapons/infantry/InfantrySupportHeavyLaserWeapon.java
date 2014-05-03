@@ -44,6 +44,7 @@ public class InfantrySupportHeavyLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.47;
         infantryRange = 5;
         crew = 3;
+        introDate = 2405;
         availRating = new int[]{RATING_E,RATING_E,RATING_D};
         techRating = RATING_D;
     }

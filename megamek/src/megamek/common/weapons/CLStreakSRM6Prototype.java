@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechConstants;
+
 /**
  * @author Sebastian Brocks
  */
@@ -28,6 +30,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
      */
     public CLStreakSRM6Prototype() {
         super();
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Streak SRM 6 (CP)";
         setInternalName("CLStreakSRM6Prototype");
         heat = 4;
@@ -42,5 +45,10 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         cost = 80000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
+        introDate = 2820;
+        extinctDate = 2825;
+        availRating = new int[] { RATING_X, RATING_E, RATING_F };
+        techRating = RATING_F;
+        techLevel.put(2820, techLevel.get(3071));
     }
 }

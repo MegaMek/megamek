@@ -34,7 +34,7 @@ public class CLERSmallLaserPrototype extends LaserWeapon {
      */
     public CLERSmallLaserPrototype() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Small Laser (CP)";
         setInternalName("CLERSmallLaserPrototype");
         heat = 2;
@@ -54,5 +54,10 @@ public class CLERSmallLaserPrototype extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
+        introDate = 2820;
+        extinctDate = 2825;
+        techLevel.put(2820, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_E, RATING_F };
+        techRating = RATING_F;
     }
 }

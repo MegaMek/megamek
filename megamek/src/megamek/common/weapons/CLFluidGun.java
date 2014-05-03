@@ -46,6 +46,6 @@ public class CLFluidGun extends FluidGunWeapon {
         cost = 35000;
         introDate = 2820;
         techRating = RATING_B;
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        availRating = new int[] { RATING_X, RATING_B, RATING_B };
     }
 }

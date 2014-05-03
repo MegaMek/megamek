@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -56,6 +57,11 @@ public class CLWERPPC extends PPCWeapon {
         this.medAV = 20;
         this.longAV = 20;
         this.maxRange = RANGE_LONG;
+        this.introDate = 2820;
+        this.techLevel.put(2820, techLevel.get(3071));
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_D, EquipmentType.RATING_F };
+        this.techRating = RATING_D;
 
     }
 }

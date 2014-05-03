@@ -57,5 +57,6 @@ public class ISLargeLaser extends LaserWeapon {
                 EquipmentType.RATING_D, EquipmentType.RATING_C };
         introDate = 2316;
         techLevel.put(2316, techLevel.get(3071));
+        techRating = RATING_C;
     }
 }

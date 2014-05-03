@@ -55,5 +55,11 @@ public class ISEHERPPC extends PPCWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_LONG;
+        //This is the Clan Wolverine PPC mentioned in Blake Documents
+        introDate = 2823;
+        extinctDate = 2828;
+        techLevel.put(2828, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_F, RATING_X };
+        techRating = RATING_F;
     }
 }

@@ -55,7 +55,7 @@ public class CLUAC5 extends UACWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = damage;
         this.techRating = RATING_F;
-        availRating = new int[] { RATING_D, RATING_F, RATING_D };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         introDate = 2825;
         techLevel.put(2825, techLevel.get(3071));
     }

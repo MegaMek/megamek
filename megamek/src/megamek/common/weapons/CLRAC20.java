@@ -50,5 +50,8 @@ public class CLRAC20 extends RACWeapon {
         bv = 823;
         cost = 960000;
         techRating = RATING_F;
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        introDate = 3073;
+        techLevel.put(3073, techLevel.get(3071));
     }
 }

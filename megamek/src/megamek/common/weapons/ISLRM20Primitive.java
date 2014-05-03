@@ -32,7 +32,7 @@ public class ISLRM20Primitive extends LRMWeapon {
 
     public ISLRM20Primitive() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
+        //techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "LRM 20p";
         setInternalName(name);
         addLookupName("IS LRM-20 Primitive");
@@ -50,6 +50,11 @@ public class ISLRM20Primitive extends LRMWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_PRIMITIVE;
+        //Per Blake Documents Intro Date is 10 years early, with same tech levels
+        introDate = 2305;
+        techLevel.put(2305, TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        techRating = RATING_C;
     }
 
     @Override

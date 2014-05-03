@@ -59,6 +59,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
+        introDate = 2762;
         availRating = new int[] { RATING_F, RATING_F, RATING_F };
         techRating = RATING_E;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)

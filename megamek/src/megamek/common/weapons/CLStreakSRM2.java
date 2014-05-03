@@ -50,7 +50,7 @@ public class CLStreakSRM2 extends StreakSRMWeapon {
         maxRange = RANGE_MED;
         introDate = 2822;
         techLevel.put(2822, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_F;
     }
 }

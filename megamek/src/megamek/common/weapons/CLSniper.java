@@ -53,7 +53,7 @@ public class CLSniper extends ArtilleryWeapon {
         bv = 85;
         cost = 300000;
         techRating = RATING_B;
-        techLevel.put(2820, techLevel.get(3067));
+        techLevel.put(2820, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_C, RATING_B };
         introDate = 2820;
     }

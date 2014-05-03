@@ -8259,6 +8259,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 9;
         ammo.cost = 10000;
         ammo.techRating = RATING_D;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3068;
+        ammo.techLevel.put(3068, ammo.techLevel.get(3067));
 
         return ammo;
     }
@@ -8280,6 +8284,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 15;
         ammo.cost = 20000;
         ammo.techRating = RATING_D;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3068;
+        ammo.techLevel.put(3068, ammo.techLevel.get(3067));
 
         return ammo;
     }
@@ -9217,7 +9225,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/10 Ammo";
         ammo.setInternalName("Ammo NAC/10");
         ammo.addLookupName("NAC10 Ammo");
@@ -9241,7 +9249,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/20 Ammo";
         ammo.setInternalName("Ammo NAC/20");
         ammo.addLookupName("NAC20 Ammo");
@@ -9265,7 +9273,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC25Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/25 Ammo";
         ammo.setInternalName("Ammo NAC/25");
         ammo.addLookupName("NAC25 Ammo");
@@ -9289,7 +9297,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC30Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/30 Ammo";
         ammo.setInternalName("Ammo NAC/30");
         ammo.addLookupName("NAC30 Ammo");
@@ -9313,7 +9321,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC35Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/35 Ammo";
         ammo.setInternalName("Ammo NAC/35");
         ammo.addLookupName("NAC35 Ammo");
@@ -9337,7 +9345,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createNAC40Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "NAC/40 Ammo";
         ammo.setInternalName("Ammo NAC/40");
         ammo.addLookupName("NAC40 Ammo");
@@ -9589,7 +9597,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createKrakenAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "Kraken-T Ammo";
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");

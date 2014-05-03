@@ -420,21 +420,15 @@ public abstract class BotClient extends Client {
         return null;
     }
 
-    protected LinkedList<Coords> getStartingCoordsArray() {
-        int highest_elev, lowest_elev;
-        int weapon_count;
-
-        IBoard board = game.getBoard();
+    protected LinkedList<Coords> getStartingCoordsArray() {        
+        int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
-
+        IBoard board = game.getBoard();
         Coords highestHex;
         LinkedList<Coords> validCoords = new LinkedList<Coords>();
-
         Vector<Entity> valid_attackers;
-
         Entity deployed_ent = getEntity(game.getFirstDeployableEntityNum());
-
         WeaponAttackAction test_attack;
 
         // Create array of hexes in the deployment zone that can be deployed to
@@ -530,21 +524,36 @@ public abstract class BotClient extends Client {
                     * (Math.abs(ideal_elev
                             - board.getHex(coord.x, coord.y).getElevation()));
 
-            // -> Approximate total damage taken in the current position; this
-            // keeps units from deploying into x-fires
             total_damage = 0.0;
             deployed_ent.setPosition(coord);
-            valid_attackers = game.getValidTargets(deployed_ent);
-            for (Entity test_ent : valid_attackers) {
-                if ((test_ent.isDeployed()) && !test_ent.isOffBoard()) {
-                    for (Mounted mounted : test_ent.getWeaponList()) {
-                        test_attack = new WeaponAttackAction(test_ent.getId(),
-                                deployed_ent.getId(),
-                                test_ent.getEquipmentNum(mounted));
-                        adjusted_damage = BotClient.getDeployDamage(game,
-                                test_attack);
-                        total_damage += adjusted_damage;
+            // Create a list of potential attackers/targets for this location
+            Vector<Entity> potentialAttackers = 
+                    game.getValidTargets(deployed_ent); 
+            valid_attackers = new Vector<Entity>(potentialAttackers.size());
+            for (Entity e : potentialAttackers){
+                // Unit must be deployed and not off board, with valid position
+                if ((e.isDeployed()) && !e.isOffBoard() 
+                        && e.getPosition() != null) {
+                    int dist = deployed_ent.getPosition().distance(
+                            e.getPosition());
+                    // Approximation of effective range, we could use av_range,
+                    //  however that could bad if deploy_ent is short ranged
+                    //  and a potential  target is long range
+                    if (dist < 18) {
+                        valid_attackers.add(e);
                     }
+                }
+            }
+            // -> Approximate total damage taken in the current position; this
+            // keeps units from deploying into x-fires
+            for (Entity test_ent : valid_attackers) {
+                for (Mounted mounted : test_ent.getWeaponList()) {
+                    test_attack = new WeaponAttackAction(test_ent.getId(),
+                            deployed_ent.getId(),
+                            test_ent.getEquipmentNum(mounted));
+                    adjusted_damage = BotClient.getDeployDamage(game,
+                            test_attack);
+                    total_damage += adjusted_damage;
                 }
             }
             coord.fitness -= (total_damage / 10);
@@ -557,15 +566,13 @@ public abstract class BotClient extends Client {
             for (Mounted mounted : deployed_ent.getWeaponList()) {
                 max_damage = 0.0;
                 for (Entity test_ent : valid_attackers) {
-                    if ((test_ent.isDeployed()) && !test_ent.isOffBoard()) {
-                        test_attack = new WeaponAttackAction(
-                                deployed_ent.getId(), test_ent.getId(),
-                                deployed_ent.getEquipmentNum(mounted));
-                        adjusted_damage = BotClient.getDeployDamage(game,
-                                test_attack);
-                        if (adjusted_damage > max_damage) {
-                            max_damage = adjusted_damage;
-                        }
+                    test_attack = new WeaponAttackAction(deployed_ent.getId(),
+                            test_ent.getId(),
+                            deployed_ent.getEquipmentNum(mounted));
+                    adjusted_damage = BotClient.getDeployDamage(game,
+                            test_attack);
+                    if (adjusted_damage > max_damage) {
+                        max_damage = adjusted_damage;
                     }
                 }
                 total_damage += max_damage;
@@ -688,11 +695,9 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-
         // Now sort the valid array.
-        // We're just going to trust Java to not suck at this.
         Collections.sort(validCoords, new FitnessComparator());
-
+        
         return validCoords;
     }
 

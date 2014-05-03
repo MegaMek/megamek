@@ -29,10 +29,10 @@ GAL-200 (RL)
 18
 </Armor>
 <front Equipment>
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
 </front Equipment>
 <Turret Equipment>
 IS Machine Gun

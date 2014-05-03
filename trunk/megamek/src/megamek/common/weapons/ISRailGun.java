@@ -51,5 +51,10 @@ public class ISRailGun extends GaussWeapon {
         this.bv = 411;
         this.cost = 300000;
         this.explosionDamage = 20;
+        //This appears to be like the Heavy Gauss using those stats.
+        introDate = 3061;
+        techLevel.put(3061, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

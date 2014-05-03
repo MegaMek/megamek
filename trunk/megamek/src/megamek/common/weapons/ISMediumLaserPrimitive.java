@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -48,5 +49,10 @@ public class ISMediumLaserPrimitive extends LaserWeapon {
         this.cost = 40000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
+        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
+        this.availRating = new int[] { EquipmentType.RATING_C,EquipmentType.RATING_D, EquipmentType.RATING_C };
+        introDate = 2290;
+        techLevel.put(2290, techLevel.get(3071));
+        techRating = RATING_C;
     }
 }

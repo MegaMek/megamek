@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -35,9 +36,14 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
      */
     public PlasmaMFUKWeapon() {
         super();
+        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK);
         ammoType = AmmoType.T_NA;
         atClass = CLASS_PLASMA;
+        introDate = 3068;
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 
     /*

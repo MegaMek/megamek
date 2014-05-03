@@ -35,7 +35,7 @@ public class ISStreakSRM6OS extends StreakSRMWeapon {
         setInternalName("ISStreakSRM6OS");
         addLookupName("ISStreakSRM6 (OS)"); // mtf
         addLookupName("IS Streak SRM 6 (OS)"); // tdb
-        addLookupName("OS Streak SRM-6"); // mep
+        //addLookupName("OS Streak SRM-6"); // mep
         heat = 4;
         rackSize = 6;
         shortRange = 3;

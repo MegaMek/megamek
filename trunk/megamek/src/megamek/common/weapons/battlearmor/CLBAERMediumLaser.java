@@ -57,9 +57,9 @@ public class CLBAERMediumLaser extends LaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 2824;
-        techLevel.put(2824, techLevel.get(3071));
+                EquipmentType.RATING_D, EquipmentType.RATING_C };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
         techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
     }

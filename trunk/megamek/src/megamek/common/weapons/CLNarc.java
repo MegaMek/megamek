@@ -45,9 +45,9 @@ public class CLNarc extends NarcWeapon {
         this.criticals = 1;
         this.bv = 30;
         this.cost = 100000;
-        introDate = 2828;
-        techLevel.put(2828, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_E, RATING_D };
         techRating = RATING_F;
     }
 }

@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -28,7 +29,7 @@ public class ISLargeLaserPrimitive extends LaserWeapon {
 
     public ISLargeLaserPrimitive() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         this.name = "Large Laser Prototype";
         this.setInternalName(this.name);
         this.addLookupName("IS Large Laser Prototype");
@@ -50,5 +51,10 @@ public class ISLargeLaserPrimitive extends LaserWeapon {
         this.shortAV = 8;
         this.medAV = 8;
         this.maxRange = RANGE_MED;
+        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
+        this.availRating = new int[] { EquipmentType.RATING_C,EquipmentType.RATING_D, EquipmentType.RATING_C };
+        introDate = 2306;
+        techLevel.put(2306, techLevel.get(3071));
+        techRating = RATING_C;
     }
 }

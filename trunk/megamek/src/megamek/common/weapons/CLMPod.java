@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -38,5 +39,10 @@ public class CLMPod extends MPodWeapon {
         this.name = "M-Pod";
         this.setInternalName("CLMPod");
         this.addLookupName("CLM-Pod");
+        this.introDate = 3064;
+        this.techLevel.put(3064, techLevel.get(3071));
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_D };
+        this.techRating = RATING_D;
     }
 }

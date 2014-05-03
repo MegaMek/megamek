@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechConstants;
+
 /**
  * @author Andrew Hunter
  */
@@ -33,6 +35,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
     public CLLB5XACPrototype() {
         super();
         name = "LB 5-X AC (CP)";
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         setInternalName("CLLBXAC5Prototype");
         heat = 1;
         damage = 5;
@@ -50,5 +53,10 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
+        techRating = RATING_F;
+        availRating = new int[] { RATING_X, RATING_E, RATING_F };
+        introDate = 2820;
+        extinctDate = 2826;	
+        techLevel.put(2820, techLevel.get(3071));
     }
 }

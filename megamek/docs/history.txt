@@ -72,6 +72,9 @@ v0.37.11-dev (SVN)
 + Refactored BotClient.getStartingCoordsArray().  Uses a LinkedList instead of
     manually trying to size a Coords[].
 + Bug [#4097]: Swarm missiles fired at non-unit targets cause NPE on miss
++ Data: A lot of date and tech level Changes.
++ Added Clan versions of IS naval weapons.
++ Data: Unit fixes and images.
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

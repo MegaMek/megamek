@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -56,5 +57,11 @@ public class ISAC15 extends ACWeapon {
         medAV = 15;
         maxRange = RANGE_MED;
         explosionDamage = damage;
+        //This being an official Weapon I'm using the AC20 information
+        availRating = new int[] { EquipmentType.RATING_D,
+                EquipmentType.RATING_E, EquipmentType.RATING_D };
+        introDate = 2500;
+        techLevel.put(2500, techLevel.get(3071));
+        techRating = RATING_C;
     }
 }

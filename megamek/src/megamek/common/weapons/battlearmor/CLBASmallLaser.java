@@ -34,7 +34,7 @@ public class CLBASmallLaser extends LaserWeapon {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Small Laser";
-        setInternalName("ClBASmall Laser");
+        setInternalName("CLBASmall Laser");
         addLookupName("CL BA Small Laser");
         addLookupName("CLBASmallLaser");
         heat = 1;
@@ -53,9 +53,9 @@ public class CLBASmallLaser extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 2400;
-        techLevel.put(2400, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_E;
     }
 }

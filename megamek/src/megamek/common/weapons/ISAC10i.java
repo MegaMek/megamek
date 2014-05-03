@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -61,5 +62,11 @@ public class ISAC10i extends ACWeapon {
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_ACi;
         atClass = CLASS_AC;
+        //Since this is an unoffical Weapon I'm using the Normal AC10 Stats
+        availRating = new int[] { EquipmentType.RATING_C,
+                EquipmentType.RATING_D, EquipmentType.RATING_D };
+        introDate = 2460;
+        techLevel.put(2460, techLevel.get(3071));
+        techRating = RATING_C;
     }
 }

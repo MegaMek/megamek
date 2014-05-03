@@ -56,8 +56,8 @@ public class ISSmallLaser extends LaserWeapon {
         atClass = CLASS_POINT_DEFENSE;
         this.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
-        introDate = 2400;
-        techLevel.put(2400, techLevel.get(3071));
+        introDate = 2300;
+        techLevel.put(2300, techLevel.get(3071));
         techRating = RATING_C;
     }
 }

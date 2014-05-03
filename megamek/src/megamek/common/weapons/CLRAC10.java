@@ -50,5 +50,8 @@ public class CLRAC10 extends RACWeapon {
         this.bv = 617;
         this.cost = 640000;
         this.techRating = RATING_F;
+        this.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        this.introDate = 3073;
+        this.techLevel.put(3073, techLevel.get(3071));
     }
 }

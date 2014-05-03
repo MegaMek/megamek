@@ -56,7 +56,7 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
         		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         introDate = 2100;
         techLevel.put(2100, techLevel.get(3071));
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        availRating = new int[] { RATING_X, RATING_B, RATING_A };
         techRating = RATING_C;
     }
 

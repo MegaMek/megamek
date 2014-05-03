@@ -51,7 +51,7 @@ public class CLFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        availRating = new int[] { RATING_X, RATING_B, RATING_A };
         introDate = 2827;
         techLevel.put(2827, techLevel.get(3071));
         techRating = RATING_C;

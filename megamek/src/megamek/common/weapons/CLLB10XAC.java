@@ -54,7 +54,7 @@ public class CLLB10XAC extends LBXACWeapon {
         this.techRating = RATING_F;
         introDate = 2824;
         techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        availRating = new int[] { RATING_X, RATING_C, RATING_B };
 
     }
 }

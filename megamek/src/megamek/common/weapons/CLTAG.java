@@ -47,9 +47,9 @@ public class CLTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
-        introDate = 2600;
-        techLevel.put(2600, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        introDate = 2820;
+        techLevel.put(2820, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_E, RATING_D };
         techRating = RATING_E;
         this.flags = flags.andNot(F_BA_WEAPON);
     }

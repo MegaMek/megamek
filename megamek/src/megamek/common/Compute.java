@@ -5576,9 +5576,8 @@ public class Compute {
      * @return the new target <code>Entity</code>. May return null if no new
      *         target available
      */
-    public static Entity getSwarmMissileTarget(IGame game, int aeId, Entity te,
-            int weaponId) {
-        Coords coords = te.getPosition();
+    public static Entity getSwarmMissileTarget(IGame game, int aeId, 
+            Coords coords, int weaponId) {
         Entity tempEntity = null;
         // first, check the hex of the original target
         Enumeration<Entity> entities = game.getEntities(coords);

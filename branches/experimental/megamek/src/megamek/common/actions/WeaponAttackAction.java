@@ -92,6 +92,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
     private int oldTargetId = -1;
+    private int oldTargetType;
     private int swarmMissiles = 0;
 
     // bomb stuff
@@ -200,7 +201,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         return WeaponAttackAction.toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()), getWeaponId(),
                 getAimedLocation(), getAimingMode(), nemesisConfused,
-                swarmingMissiles, game.getEntity(oldTargetId));
+                swarmingMissiles,
+                game.getTarget(getOldTargetType(), getOldTargetId()));
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
@@ -222,7 +224,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Entity oldTarget) {
+            Targetable oldTarget) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
 
@@ -247,7 +249,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // and movement mods, and add those for the new target
             Targetable tempTarget = target;
             target = oldTarget;
-            oldTarget = (Entity) tempTarget;
+            oldTarget = tempTarget;
         }
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1981,15 +1983,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(-toSubtract, "original target mods");
             toHit.append(Compute
                     .getImmobileMod(oldTarget, aimingAt, aimingMode));
-            toHit.append(Compute.getTargetMovementModifier(game,
-                    oldTarget.getId()));
-            toHit.append(Compute.getTargetTerrainModifier(game,
-                    game.getEntity(oldTarget.getId()), eistatus,
-                    inSameBuilding, underWater));
+            toHit.append(Compute.getTargetTerrainModifier(
+                    game,
+                    game.getTarget(oldTarget.getTargetType(),
+                            oldTarget.getTargetId()), eistatus, inSameBuilding,
+                    underWater));
             toHit.setCover(LosEffects.COVER_NONE);
             distance = Compute.effectiveDistance(game, ae, oldTarget);
-            LosEffects swarmlos = LosEffects.calculateLos(game, te.getId(),
-                    oldTarget);
+            
+            LosEffects swarmlos;
+            // If te is null, then the original target was a building
+            if (te == null) {
+                swarmlos = LosEffects.calculateLos(game,
+                        oldTarget.getTargetId(), target);
+            } else {
+                swarmlos = LosEffects.calculateLos(game, te.getId(), oldTarget);
+            }
+                    
             // reset cover
             if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
                 if (game.getOptions().booleanOption("tacops_partial_cover")) {
@@ -2004,34 +2014,40 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             targHex = game.getBoard().getHex(oldTarget.getPosition());
             targEl = oldTarget.absHeight();
 
-            if ((oldTarget.getTargetType() == Targetable.TYPE_ENTITY)
-                    && targHex.containsTerrain(Terrains.WATER)
-                    && (targHex.terrainLevel(Terrains.WATER) == 1)
-                    && (targEl == 0) && (oldTarget.height() > 0)) { // target
-                                                                    // in
-                                                                    // partial
-                                                                    // water
-                toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
-            }
-
-            if (oldTarget.isProne()) {
-                // easier when point-blank
-                if (distance <= 1) {
-                    proneMod = new ToHitData(-2, "target prone and adjacent");
-                } else {
-                    // Harder at range.
-                    proneMod = new ToHitData(1, "target prone and at range");
+            if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                Entity oldEnt = game.getEntity(oldTarget.getTargetId());
+                toHit.append(Compute.getTargetMovementModifier(game,
+                        oldEnt.getId()));
+                // target in partial water
+                if ((oldTarget.getTargetType() == Targetable.TYPE_ENTITY)
+                        && targHex.containsTerrain(Terrains.WATER)
+                        && (targHex.terrainLevel(Terrains.WATER) == 1)
+                        && (targEl == 0) && (oldEnt.height() > 0)) { 
+                    toHit.setCover(toHit.getCover()
+                            | LosEffects.COVER_HORIZONTAL);
                 }
-            }
-            toHit.append(proneMod);
-            if (!isECMAffected
-                    && (atype != null)
-                    && !oldTarget.isEnemyOf(ae)
-                    && !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                            Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
-                    && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
-                toHit.addModifier(+2,
-                        "Swarm-I at friendly unit with intact sensors");
+                // Prone
+                if (oldEnt.isProne()) {
+                    // easier when point-blank
+                    if (distance <= 1) {
+                        proneMod = new ToHitData(-2,
+                                "target prone and adjacent");
+                    } else {
+                        // Harder at range.
+                        proneMod = new ToHitData(1, "target prone and at range");
+                    }
+                }
+                // I-Swarm bonus
+                toHit.append(proneMod);
+                if (!isECMAffected
+                        && (atype != null)
+                        && !oldEnt.isEnemyOf(ae)
+                        && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+                        && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
+                    toHit.addModifier(+2,
+                            "Swarm-I at friendly unit with intact sensors");
+                }
             }
         }
 
@@ -4027,6 +4043,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     public void setOldTargetId(int id) {
         oldTargetId = id;
+    }
+    
+    public int getOldTargetId() {
+        return oldTargetId;
+    }
+    
+    public void setOldTargetType(int t) {
+        oldTargetType = t;
+    }
+    
+    public int getOldTargetType() {
+        return oldTargetType;
     }
 
     public int getSwarmMissiles() {

@@ -52,8 +52,9 @@ public class CLLongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         techRating = RATING_B;
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        introDate = 2800;
+        techLevel.put(2820, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        introDate = 2820;
     }
 
 }

@@ -42,8 +42,8 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.37;
         infantryRange = 0;
-        introDate = 2800;
-        techLevel.put(2800,techLevel.get(3071));
+        introDate = 2820;
+        techLevel.put(2820,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

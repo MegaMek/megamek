@@ -2572,7 +2572,9 @@ public class Server implements Runnable {
                     a.setSI(currentSI);
                 }
             }
-
+            // Give the unit a spotlight, if it has the spotlight quirk
+            entity.setExternalSpotlight(entity.hasExternaSpotlight()
+                    || entity.hasQuirk("searchlight"));
             entityUpdate(entity.getId());
         }
     }
@@ -17871,7 +17873,8 @@ public class Server implements Runnable {
                     continue;
                 }
                 // if this mech has 20+ damage, add another roll to the list.
-                if (entity.damageThisPhase >= 20) {
+                // Hulldown 'mechs ignore this rule, TO Errata
+                if (entity.damageThisPhase >= 20  && !entity.isHullDown()) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
@@ -24334,7 +24337,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code> objects that can be
      *         sent to the output log.
      */
-    private Vector<Report> destroyEntity(Entity entity, String reason,
+    public Vector<Report> destroyEntity(Entity entity, String reason,
             boolean survivable) {
         // Generally, the entity can still be salvaged.
         return destroyEntity(entity, reason, survivable, true);

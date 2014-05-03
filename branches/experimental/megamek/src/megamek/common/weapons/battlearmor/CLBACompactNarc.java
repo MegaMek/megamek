@@ -49,9 +49,9 @@ public class CLBACompactNarc extends NarcWeapon {
         tonnage = .15f;
         criticals = 1;
         cost = 15000;
-        introDate = 2825;
-        techLevel.put(2825, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_E, RATING_D };
         techRating = RATING_E;
     }
 

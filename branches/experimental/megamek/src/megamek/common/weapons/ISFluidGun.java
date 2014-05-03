@@ -44,6 +44,7 @@ public class ISFluidGun extends FluidGunWeapon {
         criticals = 2;
         tonnage = 2;
         cost = 35000;
+        introDate = 1950;
         techRating = RATING_B;
         availRating = new int[] { RATING_B, RATING_B, RATING_B };
     }

@@ -47,6 +47,9 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         introDate = 2801;
+        extinctDate =2823;
         techLevel.put(2801, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_C, RATING_X };
+        techRating = RATING_C;
     }
 }

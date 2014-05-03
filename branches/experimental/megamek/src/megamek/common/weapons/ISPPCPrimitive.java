@@ -54,5 +54,10 @@ public class ISPPCPrimitive extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
+        //Per Blake Documents Intro Date is 10 years early, with same tech levels
+        introDate = 2450;
+        techLevel.put(2450, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        techRating = RATING_D;
     }
 }

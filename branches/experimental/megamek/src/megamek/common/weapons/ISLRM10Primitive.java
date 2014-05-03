@@ -50,6 +50,11 @@ public class ISLRM10Primitive extends LRMWeapon {
         longAV = 6;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_PRIMITIVE;
+        //Per Blake Documents Intro Date is 10 years early, with same tech levels
+        introDate = 2290;
+        techLevel.put(2290, TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        techRating = RATING_C;
     }
 
     @Override

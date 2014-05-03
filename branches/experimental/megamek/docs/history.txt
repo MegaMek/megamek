@@ -84,6 +84,19 @@ v0.37.11-dev (SVN)
 + Bug [#4046]: Submarines limited to cruising speed underwater
 + Bug: Units reinforced on or before the movement phase could be selected, but
     if selected, numerous errors would be thrown
++ Bug: MovementDisplay.updateSelfDestructButton throws an NPE with squadrons
++ Bug [#4110]: Canon Units option leaves MechSelectorDialog blank
++ Bug [#4113]: Hull-down meks making falling PSR
++ Bug [#4107]: searchlight quirk does not actually give searchlight
++ Bug [#4114]: Some bugs in TSEMP handling...
++ Refactored BotClient.getStartingCoordsArray().  Uses a LinkedList instead of
+    manually trying to size a Coords[].
++ Bug [#4097]: Swarm missiles fired at non-unit targets cause NPE on miss
++ Data: A lot of date and tech level Changes.
++ Added Clan versions of IS naval weapons.
++ Data: Unit fixes and images.
++ Bug: Messed up a couple of tech constants
++ Bug [#4115]: Bot deployment is computationally expensive
 
 v0.37.10-exp (2014-04-08 02:26)
 

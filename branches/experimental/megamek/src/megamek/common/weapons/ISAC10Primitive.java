@@ -15,6 +15,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -57,6 +58,12 @@ public class ISAC10Primitive extends ACWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         explosionDamage = damage;
+        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
+        availRating = new int[] { EquipmentType.RATING_C,
+                EquipmentType.RATING_D, EquipmentType.RATING_D };
+        introDate = 2450;
+        techLevel.put(2450, techLevel.get(3071));
+        techRating = RATING_C;
     }
 
     @Override

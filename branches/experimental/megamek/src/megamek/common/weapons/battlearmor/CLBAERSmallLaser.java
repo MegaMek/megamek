@@ -56,9 +56,9 @@ public class CLBAERSmallLaser extends LaserWeapon {
         cost = 11250;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        introDate = 2825;
-        techLevel.put(2825, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        introDate = 2868;
+        techLevel.put(2868, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_F;
     }
 }

@@ -51,6 +51,11 @@ public class ISSRM4Primitive extends SRMWeapon {
         this.shortAV = 4;
         this.maxRange = RANGE_SHORT;
         ammoType = AmmoType.T_SRM_PRIMITIVE;
+        //Per Blake Documents Intro Date is 10 years early, with same tech levels
+        introDate = 2360;
+        techLevel.put(2360, TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        techRating = RATING_C;
     }
 
     @Override

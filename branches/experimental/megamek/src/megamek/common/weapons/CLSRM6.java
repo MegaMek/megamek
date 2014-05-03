@@ -50,7 +50,7 @@ public class CLSRM6 extends SRMWeapon {
         maxRange = RANGE_SHORT;
         introDate = 2824;
         techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        availRating = new int[] { RATING_X, RATING_C, RATING_B };
         techRating = RATING_F;
     }
 }

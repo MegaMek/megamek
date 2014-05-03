@@ -55,7 +55,7 @@ public class CLMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         introDate = 2825;
         techLevel.put(2825, techLevel.get(3071));
-        availRating = new int[] { RATING_A, RATING_A, RATING_B };
+        availRating = new int[] { RATING_X, RATING_A, RATING_A };
         techRating = RATING_B;
 
     }

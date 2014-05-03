@@ -46,7 +46,7 @@ public class CLBASRM1OS extends SRMWeapon {
         cost = 2500;
         introDate = 2868;
         techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_F;
     }
 }

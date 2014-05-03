@@ -59,6 +59,6 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
 
     public CLLBXACPrototypeWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
     }
 }

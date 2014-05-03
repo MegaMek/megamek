@@ -30,23 +30,23 @@ RTR Armor:3
 RTC Armor:3
 
 Weapons:9
-1 CLRL10Prototype, Left Arm
-1 CLRL10Prototype, Left Arm
-1 CLRL10Prototype, Left Arm
-1 CLRL10Prototype, Left Arm
-1 CLRL10Prototype, Right Arm
-1 CLRL10Prototype, Right Arm
-1 CLRL10Prototype, Right Arm
-1 CLRL10Prototype, Right Arm
+1 CLRocketLauncher10Prototype, Left Arm
+1 CLRocketLauncher10Prototype, Left Arm
+1 CLRocketLauncher10Prototype, Left Arm
+1 CLRocketLauncher10Prototype, Left Arm
+1 CLRocketLauncher10Prototype, Right Arm
+1 CLRocketLauncher10Prototype, Right Arm
+1 CLRocketLauncher10Prototype, Right Arm
+1 CLRocketLauncher10Prototype, Right Arm
 1 Lift Hoist, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
 -Empty-
 -Empty-
 -Empty-
@@ -57,10 +57,10 @@ CLRL10Prototype
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
-CLRL10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
+CLRocketLauncher10Prototype
 -Empty-
 -Empty-
 -Empty-

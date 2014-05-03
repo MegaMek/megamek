@@ -212,13 +212,13 @@ public class LRMSwarmHandler extends LRMHandler {
             if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                     || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                 handleIgnitionDamage(vPhaseReport, bldg, hits);
-                return false;
+                hits = 0;
             }
             // targeting a hex for clearing
             if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                 nDamage = nDamPerHit * hits;
                 handleClearDamage(vPhaseReport, bldg, nDamage);
-                return false;
+                hits = 0;
             }
             // Targeting a building.
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
@@ -226,8 +226,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 nDamage = nDamPerHit * hits;
                 handleBuildingDamage(vPhaseReport, bldg, nDamage,
                         target.getPosition());
-                // And we're done!
-                return false;
+                hits = 0;
             }
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
@@ -239,7 +238,7 @@ public class LRMSwarmHandler extends LRMHandler {
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
             Entity swarmTarget = Compute.getSwarmMissileTarget(game,
-                    ae.getId(), entityTarget, waa.getWeaponId());
+                    ae.getId(), target.getPosition(), waa.getWeaponId());
             boolean stoppedByECM = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition())
                     && !(this instanceof LRMSwarmIHandler);
@@ -255,6 +254,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setSwarmMissiles(swarmMissilesNowLeft);
                 newWaa.setOldTargetId(target.getTargetId());
+                newWaa.setOldTargetType(target.getTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
@@ -312,7 +312,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
-                entityTarget, waa.getWeaponId());
+                target.getPosition(), waa.getWeaponId());
         boolean stoppedByECM = Compute.isAffectedByECM(ae,
                 target.getPosition(), target.getPosition())
                 && !(this instanceof LRMSwarmIHandler);
@@ -328,6 +328,7 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setSwarmingMissiles(true);
             newWaa.setSwarmMissiles(swarmMissilesNowLeft);
             newWaa.setOldTargetId(target.getTargetId());
+            newWaa.setOldTargetType(target.getTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
@@ -417,6 +418,7 @@ public class LRMSwarmHandler extends LRMHandler {
         r.add(missilesHit);
         r.add(sSalvoType);
         r.add(toHit.getTableDesc());
+        r.newlines = 0;
         vPhaseReport.addElement(r);
         r = new Report(3345);
         r.subject = subjectId;

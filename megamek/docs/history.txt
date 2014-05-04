@@ -78,6 +78,7 @@ v0.37.11-dev (SVN)
 + Bug: Messed up a couple of tech constants
 + Bug [#4115]: Bot deployment is computationally expensive
 + Bug [#4117]: Princess doesn't clean up after itself
++ Bug [#4116]: Simultaneous phases, Bots, and thread safety
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

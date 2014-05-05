@@ -6145,6 +6145,7 @@ public class Compute {
                         case AmmoType.T_IATM:
                         case AmmoType.T_MML:
                         case AmmoType.T_EXLRM:
+                        case AmmoType.T_NLRM:
                         case AmmoType.T_TBOLT_5:
                         case AmmoType.T_TBOLT_10:
                         case AmmoType.T_TBOLT_15:

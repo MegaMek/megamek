@@ -1312,7 +1312,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Armor-Piercing", 2, M_ARMOR_PIERCING, 3059, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 3055, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC, 3059, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER, 2300, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER, 2310, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK, 2310, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
@@ -10703,7 +10703,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 24;
         ammo.bv = 1.2;
-        ammo.cost = 10000;
+        ammo.cost = 28000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2531;
@@ -10727,7 +10727,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 12;
         ammo.bv = 2.4;
-        ammo.cost = 10000;
+        ammo.cost = 28000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2531;
@@ -10751,7 +10751,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 6;
         ammo.bv = 3.6;
-        ammo.cost = 10000;
+        ammo.cost = 28000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2531;
@@ -10775,7 +10775,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 4;
         ammo.bv = 7.2;
-        ammo.cost = 10000;
+        ammo.cost = 28000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2531;
@@ -10799,8 +10799,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 24;
         ammo.bv = 1.2;
-        ammo.cost = 10000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
+        ammo.cost = 28000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2840;
         ammo.techLevel.put(2840, ammo.techLevel.get(3067));
@@ -10823,8 +10823,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 12;
         ammo.bv = 2.4;
-        ammo.cost = 10000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
+        ammo.cost = 28000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2840;
         ammo.techLevel.put(2840, ammo.techLevel.get(3067));
@@ -10847,8 +10847,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 6;
         ammo.bv = 3.6;
-        ammo.cost = 10000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
+        ammo.cost = 28000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2840;
         ammo.techLevel.put(2840, ammo.techLevel.get(3067));
@@ -10871,8 +10871,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 4;
         ammo.bv = 7.2;
-        ammo.cost = 10000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
+        ammo.cost = 28000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2840;
         ammo.techLevel.put(2840, ammo.techLevel.get(3067));

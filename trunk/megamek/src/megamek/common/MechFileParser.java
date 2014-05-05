@@ -446,8 +446,10 @@ public class MechFileParser {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if (m.getType().getInternalName()
-                        .equals(Sensor.BLOODHOUND)) {
+               } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_BAPP));
+                    ent.setNextSensor(ent.getSensors().lastElement());      
+               } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {

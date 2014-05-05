@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -49,6 +50,11 @@ public class ISFireExtinguisher extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK);
+        availRating = new int[] { EquipmentType.RATING_B,
+                EquipmentType.RATING_B, EquipmentType.RATING_B };
+        techRating = RATING_B;
+        introDate = 1950;
+        techLevel.put(1950, techLevel.get(3071));
     }
 
     /*

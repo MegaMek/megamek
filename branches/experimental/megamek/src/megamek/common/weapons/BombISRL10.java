@@ -38,7 +38,7 @@ public class BombISRL10 extends MissileWeapon {
         this.mediumRange = 11;
         this.longRange = 18;
         this.extremeRange = 22;
-        this.tonnage = 0;
+        this.tonnage = 1;
         this.criticals = 0;
         this.hittable = false;
         this.bv = 0;
@@ -48,5 +48,9 @@ public class BombISRL10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
+        introDate = 3064;
+        techLevel.put(3064, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_B };
+        techRating = RATING_B;
     }
 }

@@ -43,10 +43,12 @@ public class Sensor implements Serializable {
     public static final int TYPE_VEE_SEISMIC = 14;
     public static final int TYPE_EW_EQUIPMENT = 15;
     public static final int TYPE_NOVA = 16;
+    public static final int TYPE_BAPP = 17;
 
     public static final String WATCHDOG = "WatchdogECMSuite";
     public static final String NOVA = "NovaCEWS";
     public static final String BAP = "BeagleActiveProbe";
+    public static final String BAPP = "BeagleActiveProbePrototype";
     public static final String CLAN_AP = "CLActiveProbe";
     public static final String BLOODHOUND = "BloodhoundActiveProbe";
     public static final String LIGHT_AP = "CLLightActiveProbe";
@@ -60,7 +62,7 @@ public class Sensor implements Serializable {
             "Beagle Active Probe", "Clan BAP", "Bloodhound AP", "Watchdog",
             "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
-            "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS" };
+            "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype"};
     public static final int SIZE = sensorNames.length;
 
     /**
@@ -85,13 +87,15 @@ public class Sensor implements Serializable {
         return (type == TYPE_BAP) || (type == TYPE_BLOODHOUND)
                 || (type == TYPE_CLAN_BAP) || (type == TYPE_WATCHDOG)
                 || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT)
-                || (type == TYPE_NOVA);
+                || (type == TYPE_NOVA) || (type == TYPE_BAPP);
     }
 
     public int getRangeByBracket() {
 
         switch (type) {
             case TYPE_BAP:
+                return 12;
+            case TYPE_BAPP:
                 return 12;
             case TYPE_BLOODHOUND:
                 return 16;
@@ -193,6 +197,7 @@ public class Sensor implements Serializable {
         // null sig
         switch (type) {
             case (TYPE_BAP):
+            case (TYPE_BAPP):	
             case (TYPE_EW_EQUIPMENT):
                 if (te.isVoidSigActive()) {
                     mod += 6;
@@ -351,6 +356,7 @@ public class Sensor implements Serializable {
 
         switch (type) {
             case (TYPE_BAP):
+            case (TYPE_BAPP):
             case (TYPE_CLAN_BAP):
             case (TYPE_WATCHDOG):
                 // as above, no data, assuming watchdog quality

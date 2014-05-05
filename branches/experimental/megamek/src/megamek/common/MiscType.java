@@ -1197,6 +1197,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISArtemis());
         EquipmentType.addType(MiscType.createCLArtemis());
         EquipmentType.addType(MiscType.createGECM());
+        EquipmentType.addType(MiscType.createGECMPrototype());
         EquipmentType.addType(MiscType.createCLECM());
         EquipmentType.addType(MiscType.createISTargComp());
         EquipmentType.addType(MiscType.createCLTargComp());
@@ -1206,6 +1207,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISEndoSteel());
         EquipmentType.addType(MiscType.createCLEndoSteel());
         EquipmentType.addType(MiscType.createBeagleActiveProbe());
+        EquipmentType.addType(MiscType.createBeagleActiveProbePrototype());
         EquipmentType.addType(MiscType.createBloodhoundActiveProbe());
         EquipmentType.addType(MiscType.createTHBBloodhoundActiveProbe());
         EquipmentType.addType(MiscType.createCLActiveProbe());
@@ -1634,9 +1636,10 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_PROTOTYPE | S_IMPROVED;
         misc.bv = 0;
         misc.introDate = 3020;
-        misc.techLevel.put(2464, misc.techLevel.get(3071));
-        misc.availRating = new int[] { EquipmentType.RATING_E,
-                EquipmentType.RATING_X, EquipmentType.RATING_X };
+        misc.extinctDate = 3069;
+        misc.techLevel.put(3020, misc.techLevel.get(3071));
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.techRating = RATING_D;
         return misc;
     }
@@ -1654,9 +1657,10 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_PROTOTYPE;
         misc.bv = 0;
         misc.introDate = 2464;
+        misc.extinctDate = 2471;
         misc.techLevel.put(2464, misc.techLevel.get(3071));
         misc.availRating = new int[] { EquipmentType.RATING_E,
-                EquipmentType.RATING_X, EquipmentType.RATING_X };
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.techRating = RATING_D;
         return misc;
     }
@@ -2518,6 +2522,31 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+    
+    public static MiscType createGECMPrototype() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "Guardian ECM Suite Prototype";
+        misc.setInternalName("ISGuardianECMSuitePrototype");
+        misc.addLookupName("IS Prototype Guardian ECM");
+        misc.tonnage = 2.0f;
+        misc.criticals = 3;
+        misc.cost = 1000000;
+        misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 61;
+        misc.setModes(new String[] { "ECM" });
+        misc.setInstantModeSwitch(false);
+        misc.availRating = new int[] { EquipmentType.RATING_E,
+                EquipmentType.RATING_F, EquipmentType.RATING_D };
+        misc.techRating = RATING_E;
+        misc.introDate = 2595;
+        misc.techLevel.put(2595, misc.techLevel.get(3071));
+        misc.extinctDate = 2597;
+
+        return misc;
+    }
 
     public static MiscType createCLECM() {
         MiscType misc = new MiscType();
@@ -2587,12 +2616,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
-        misc.availRating = new int[] { EquipmentType.RATING_E,
-                EquipmentType.RATING_F, EquipmentType.RATING_D };
-        misc.introDate = 2597;
-        misc.techLevel.put(2597, misc.techLevel.get(3071));
-        misc.extinctDate = 2845;
-        misc.reintroDate = 3045;
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.techRating = RATING_F;
+        misc.introDate = 3063;
+        misc.techLevel.put(3063, misc.techLevel.get(3071));
 
         return misc;
     }
@@ -3085,10 +3113,14 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 10000;
+        //Going to assume the IS lost this with Exodus and was reintroduced in the 3050s
         misc.introDate = 2710;
-        misc.techLevel.put(2710, TechConstants.T_IS_TW_NON_BOX);
+        misc.extinctDate = 2784;
+        misc.reintroDate = 3052;
+        misc.techLevel.put(2710, TechConstants.T_IS_TW_ALL);
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.availRating = new int[] { RATING_F, RATING_F, RATING_E };
 
         return misc;
     }
@@ -3107,8 +3139,9 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 2820;
-        misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
+        misc.cost = 10000;
+        misc.introDate = 2868;
+        misc.techLevel.put(2868, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_D, RATING_C };
 
@@ -3126,10 +3159,12 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 3050;
-        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.cost = 10000;
+        misc.introDate = 3049;
+        misc.extinctDate = 3052;
+        misc.techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.availRating = new int[] { RATING_E, RATING_F, RATING_E };
 
         return misc;
     }
@@ -3145,11 +3180,12 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 10000;
         misc.introDate = 2860;
         misc.extinctDate = 2868;
         misc.techLevel.put(2860, TechConstants.T_CLAN_UNOFFICIAL);
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_E, RATING_X };
+        misc.availRating = new int[] { RATING_X, RATING_E, RATING_F };
 
         return misc;
     }
@@ -3165,6 +3201,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 12500;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_ALL_IS);
         misc.techRating = RATING_E;
@@ -3184,6 +3221,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 12500;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_CLAN_UNOFFICIAL);
         misc.techRating = RATING_E;
@@ -3204,6 +3242,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 10000;
         misc.introDate = 3058;
         misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
         misc.techRating = RATING_E;
@@ -3223,6 +3262,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 10000;
         misc.introDate = 3058;
         misc.techLevel.put(3058, TechConstants.T_IS_UNOFFICIAL);
         misc.techRating = RATING_E;
@@ -3242,10 +3282,15 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 3050;
-        misc.techLevel.put(3050, TechConstants.T_ALL_IS);
+        misc.cost = 50000;
+        //Since this is supposed to mimic the SL Era Stealth Basic, 
+        //I'm going to use it as SL Era Prototype that is rediscovered in 3050.
+        misc.introDate = 2710;
+        misc.extinctDate = 2720;
+        misc.reintroDate = 3050;
+        misc.techLevel.put(2710, TechConstants.T_IS_EXPERIMENTAL);
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.availRating = new int[] { RATING_E, RATING_F, RATING_E };
 
         return misc;
     }
@@ -3261,10 +3306,13 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 3050;
-        misc.techLevel.put(3050, TechConstants.T_CLAN_UNOFFICIAL);
+        misc.cost = 50000;
+        //Since this is supposed to mimic the SL Era Stealth Basic, 
+        //I'm going to use it as Clan Unofficial Prototype.
+        misc.introDate = 2820;
+        misc.techLevel.put(2820, TechConstants.T_CLAN_UNOFFICIAL);
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.availRating = new int[] { RATING_X, RATING_E, RATING_E };
 
         return misc;
     }
@@ -3280,12 +3328,13 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 12000;
         misc.introDate = 2710;
         misc.techLevel.put(2710, TechConstants.T_IS_TW_NON_BOX);
         misc.extinctDate = 2770;
         misc.reintroDate = 3052;
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_F, RATING_X, RATING_E };
+        misc.availRating = new int[] { RATING_F, RATING_F, RATING_E };
 
         return misc;
     }
@@ -3301,6 +3350,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 12000;
         misc.introDate = 2820;
         misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
@@ -3320,6 +3370,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 15000;
         misc.introDate = 2720;
         misc.techLevel.put(2720, TechConstants.T_IS_TW_NON_BOX);
         misc.extinctDate = 2770;
@@ -3341,6 +3392,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 15000;
         misc.introDate = 2720;
         misc.techLevel.put(2720, TechConstants.T_CLAN_TW);
         misc.extinctDate = 2770;
@@ -3361,6 +3413,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 20000;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_IS_TW_NON_BOX);
         misc.techRating = RATING_E;
@@ -3379,6 +3432,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 20000;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
@@ -3400,6 +3454,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 15000;
         misc.introDate = 3061;
         misc.techLevel.put(3061, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
@@ -3420,6 +3475,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 15000;
         misc.introDate = 2850;
         misc.techLevel.put(2850, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_E, RATING_E };
@@ -3888,7 +3944,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2630, TechConstants.T_IS_EXPERIMENTAL);
         misc.introDate = 2630;
         misc.extinctDate = 2790;
-        misc.availRating = new int[] { RATING_E, RATING_X, RATING_X };
+        misc.availRating = new int[] { RATING_E, RATING_F, RATING_F };
         misc.techRating = RATING_E;
 
         return misc;
@@ -3939,7 +3995,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2630, TechConstants.T_IS_EXPERIMENTAL);
         misc.introDate = 2630;
         misc.extinctDate = 2790;
-        misc.availRating = new int[] { RATING_E, RATING_X, RATING_X };
+        misc.availRating = new int[] { RATING_E, RATING_F, RATING_F };
         misc.techRating = RATING_E;
 
         return misc;
@@ -5135,10 +5191,33 @@ public class MiscType extends EquipmentType {
         misc.bv = 10;
         misc.availRating = new int[] { EquipmentType.RATING_E,
                 EquipmentType.RATING_F, EquipmentType.RATING_D };
-        misc.introDate = 2575;
-        misc.techLevel.put(2575, misc.techLevel.get(3071));
+        misc.introDate = 2576;
+        misc.techLevel.put(2576, misc.techLevel.get(3071));
         misc.extinctDate = 2835;
         misc.reintroDate = 3045;
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+    
+    public static MiscType createBeagleActiveProbePrototype() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "Beagle Active Probe Prototype";
+        misc.setInternalName(Sensor.BAPP);
+        misc.addLookupName("Beagle Active Probe Prototype");
+        misc.tonnage = 2.0f;
+        misc.criticals = 3;
+        misc.cost = 600000;
+        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT);
+        misc.bv = 10;
+        misc.availRating = new int[] { EquipmentType.RATING_E,
+                EquipmentType.RATING_F, EquipmentType.RATING_D };
+        misc.introDate = 2560;
+        misc.techLevel.put(2560, misc.techLevel.get(3071));
+        misc.extinctDate = 2576;
         misc.techRating = RATING_E;
 
         return misc;
@@ -5183,6 +5262,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT);
         misc.bv = 25;
+        //Since its Tactical Handbook Using TO Values
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, misc.techLevel.get(3071));
+        misc.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
 
         return misc;
     }
@@ -5376,9 +5461,9 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MEA);
         misc.bv = 0;
-        misc.introDate = 2110;
+        misc.introDate = 3058;
         misc.cost = 10000;
-        misc.techLevel.put(2110, misc.techLevel.get(3071));
+        misc.techLevel.put(3058, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
 
@@ -5899,10 +5984,10 @@ public class MiscType extends EquipmentType {
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
         misc.bv = 0;
-        misc.techRating = RATING_E;
+        misc.techRating = RATING_D;
         misc.introDate = 2000;
         misc.techLevel.put(2000, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_D, RATING_D, RATING_D };
+        misc.availRating = new int[] { RATING_F, RATING_F, RATING_D };
         misc.cost = 28500;
 
         return misc;
@@ -8205,8 +8290,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_F, EquipmentType.RATING_E };
-        misc.introDate = 2820;
-        misc.techLevel.put(2820, misc.techLevel.get(3071));
+        misc.introDate = 3055;
+        misc.techLevel.put(3055, misc.techLevel.get(3071));
         misc.techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_C;
         return misc;
@@ -8224,8 +8309,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_F,
                 EquipmentType.RATING_F, EquipmentType.RATING_F };
-        misc.introDate = 2450;
-        misc.techLevel.put(2450, misc.techLevel.get(3071));
+        misc.introDate = 3055;
+        misc.techLevel.put(3055, misc.techLevel.get(3071));
         misc.techLevel.put(3082, TechConstants.T_IS_ADVANCED);
         misc.techRating = RATING_C;
         return misc;
@@ -8376,7 +8461,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_E,
-                EquipmentType.RATING_X, EquipmentType.RATING_F };
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.introDate = 2655;
         misc.techLevel.put(2655, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
@@ -8413,7 +8498,7 @@ public class MiscType extends EquipmentType {
                 .or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_SPLITABLE);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_F,
-                EquipmentType.RATING_X, EquipmentType.RATING_F };
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.introDate = 2751;
         misc.techLevel.put(2751, misc.techLevel.get(3071));
         misc.techRating = RATING_F;
@@ -8703,7 +8788,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techLevel.put(3079, TechConstants.T_IS_TW_NON_BOX);
-        misc.availRating = new int[] { RATING_F, RATING_X, RATING_F };
+        misc.availRating = new int[] { RATING_F, RATING_F, RATING_F };
         misc.techRating = RATING_B;
         return misc;
     }
@@ -8953,8 +9038,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_JETBOOSTER;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_F, EquipmentType.RATING_E };
-        misc.introDate = 2820;
-        misc.techLevel.put(2820, misc.techLevel.get(3071));
+        misc.introDate = 2839;
+        misc.techLevel.put(2839, misc.techLevel.get(3071));
         misc.techLevel.put(3078, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_D;
         return misc;
@@ -9009,7 +9094,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_COMBAT_VEHICLE_ESCAPE_POD);
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.availRating = new int[] { RATING_X, RATING_E, RATING_E };
         misc.techRating = RATING_D;
         misc.introDate = 3038;
         misc.techLevel.put(3038, misc.techLevel.get(3071));
@@ -9760,7 +9845,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 750;
         misc.introDate = 2300;
         misc.techLevel.put(2300, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.availRating = new int[] { RATING_E, RATING_E, RATING_F };
         misc.techRating = RATING_D;
 
         return misc;

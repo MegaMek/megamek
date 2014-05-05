@@ -48,5 +48,11 @@ public class BombArrowIV extends AmmoWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
+        introDate = 2623;
+        extinctDate = 2859;
+        reintroDate = 3046;
+        techLevel.put(2623, techLevel.get(3071));
+        availRating = new int[] { RATING_E, RATING_F, RATING_E };
+        techRating = RATING_E;
     }
 }

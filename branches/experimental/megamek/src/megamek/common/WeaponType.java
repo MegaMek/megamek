@@ -551,6 +551,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSmallLaser());
         EquipmentType.addType(new ISSmallLaserPrimitive());
         EquipmentType.addType(new ISLargePulseLaser());
+        EquipmentType.addType(new ISLargePulseLaserPrototype());
         EquipmentType.addType(new ISLargeXPulseLaser());
         EquipmentType.addType(new ISERLargeLaser());
         EquipmentType.addType(new ISERLargeLaserPrototype());
@@ -560,6 +561,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMediumXPulseLaser());
         EquipmentType.addType(new ISSmallPulseLaser());
         EquipmentType.addType(new ISSmallXPulseLaser());
+        EquipmentType.addType(new ISSmallPulseLaserPrototype());
         EquipmentType.addType(new ISERSmallLaser());
         EquipmentType.addType(new ISMediumVariableSpeedPulseLaser());
         EquipmentType.addType(new ISSmallVariableSpeedPulseLaser());
@@ -1425,11 +1427,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMassDriverLight());
         
         // bomb-related weapons
-        EquipmentType.addType(new AAAMissileWeapon());
+        EquipmentType.addType(new ISAAAMissileWeapon());
+        EquipmentType.addType(new CLAAAMissileWeapon());
         EquipmentType.addType(new ASMissileWeapon());
         EquipmentType.addType(new ASEWMissileWeapon());
-        EquipmentType.addType(new LAAMissileWeapon());
+        EquipmentType.addType(new ISLAAMissileWeapon());
+        EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
+        //EquipmentType.addType(new CLBombArrowIV());
         EquipmentType.addType(new BombTAG());
         EquipmentType.addType(new BombISRL10());
         EquipmentType.addType(new AlamoMissileWeapon());

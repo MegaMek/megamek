@@ -73,6 +73,7 @@ public class Princess extends BotClient {
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private Precognition precognition;
+    private Thread precogThread;
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private final Set<Integer> priorityUnitTargets = new HashSet<>();
     private boolean flee = false;
@@ -825,8 +826,9 @@ public class Princess extends BotClient {
             precognition.setGame(getGame());
             pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
-            Thread precognitionThread = new Thread(precognition, "Princess-precognition");
-            precognitionThread.start();
+            precogThread = new Thread(precognition, "Princess-precognition ("
+                    + getName() + ")");
+            precogThread.start();
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             Enumeration<Building> buildings = getGame().getBoard().getBuildings();
@@ -853,6 +855,13 @@ public class Princess extends BotClient {
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    @Override
+    public void die() {
+        super.die();
+        precognition.signalDone();
+        precogThread.interrupt();
     }
 
     @Override

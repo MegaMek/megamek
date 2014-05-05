@@ -51,6 +51,7 @@ public class Precognition implements Runnable {
 
     private boolean wait_when_done = false; // used for pausing
     private boolean waiting = false;
+    private boolean done = false;
 
     public Precognition(Princess owner) {
         this.owner = owner;
@@ -189,7 +190,7 @@ public class Precognition implements Runnable {
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
             //noinspection InfiniteLoopStatement
-            while (true) {
+            while (!done) {
                 if (!events_to_process.isEmpty()) {
                     processGameEvents();
                 } else if (!dirty_units.isEmpty()) {
@@ -214,6 +215,10 @@ public class Precognition implements Runnable {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
     }
+    
+    public synchronized void signalDone() {
+        done = true;
+    }
 
     /**
      * Waits until the thread is not paused, and there's indication that it has
@@ -224,8 +229,10 @@ public class Precognition implements Runnable {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            while (wait_when_done
-                    || (events_to_process.isEmpty() && dirty_units.isEmpty())) {
+            while (!done 
+                    && (wait_when_done
+                            || (events_to_process.isEmpty() 
+                                    && dirty_units.isEmpty()))) {
                 StringBuilder msg = new StringBuilder("wait_when_done = " + wait_when_done);
                 msg.append(" :: events_to_process = ").append(events_to_process.size());
                 msg.append(" :: dirty_units = ").append(dirty_units.size());

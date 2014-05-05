@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.11-exp-dev (SVN)
+v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection
     handling 
 + Feature [#1243]: Client Feedback Request
@@ -20,7 +20,7 @@ v0.37.11-exp-dev (SVN)
 + Bug: Units reinforced on or before the movement phase could be selected, but
     if selected, numerous errors would be thrown (fixed for Reinforce RAT)
 
-v0.37.11-dev (SVN)
+v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It
     wasn't clear that Harjel I prevents the breach while Harjel II/III only
@@ -95,8 +95,14 @@ v0.37.11-dev (SVN)
 + Data: A lot of date and tech level Changes.
 + Added Clan versions of IS naval weapons.
 + Data: Unit fixes and images.
-+ Bug: Messed up a couple of tech constants
++ Bug: Messed up a couple of tech constants from previous commits
 + Bug [#4115]: Bot deployment is computationally expensive
++ Bug [#4117]: Princess doesn't clean up after itself
++ Bug [#4116]: Simultaneous phases, Bots, and thread safety
++ Data: More Date and tech level Changes and couple of unit fixes.
++ Bug: Aimed shots possible with enhanced LRMs.
++ Infantry inferno SRM ammo type brought in line with standard; caused NPE when
+    used by bot.
 
 v0.37.10-exp (2014-04-08 02:26)
 

@@ -56,8 +56,10 @@ public class ISPPCPrimitive extends PPCWeapon {
         explosive = true;
         //Per Blake Documents Intro Date is 10 years early, with same tech levels
         introDate = 2450;
+        extinctDate = 2470;
+        reintroDate = 3067;
         techLevel.put(2450, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        availRating = new int[] { RATING_C, RATING_F, RATING_C };
         techRating = RATING_D;
     }
 }

@@ -75,7 +75,6 @@ public abstract class BotClient extends Client {
     // a frame, to show stuff in
     public JFrame frame;
 
-
     public class CalculateBotTurn implements Runnable {
         public void run() {
             calculateMyTurn();
@@ -95,11 +94,13 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                if (isMyTurn()) {
-                    //Run bot's turn processing in a separate thread.
-                    //This way the server's thread is free to process the other client actions.
+                if (isMyTurn() 
+                        && (e.getPlayer().getId() == localPlayerNumber)) {
+                    // Run bot's turn processing in a separate thread.
+                    // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
-                            getName() + " Turn Calc Thread");
+                            getName() + " Turn " + game.getTurnIndex()
+                                    + " Calc Thread");
                     worker.start();
                 }
             }
@@ -302,7 +303,7 @@ public abstract class BotClient extends Client {
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
 
-    protected void calculateMyTurn() {
+    synchronized protected void calculateMyTurn() {
         try {
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp;
@@ -435,7 +436,7 @@ public abstract class BotClient extends Client {
         return null;
     }
 
-    protected LinkedList<Coords> getStartingCoordsArray() {        
+    protected LinkedList<Coords> getStartingCoordsArray() {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
@@ -712,7 +713,7 @@ public abstract class BotClient extends Client {
         }
         // Now sort the valid array.
         Collections.sort(validCoords, new FitnessComparator());
-        
+
         return validCoords;
     }
 

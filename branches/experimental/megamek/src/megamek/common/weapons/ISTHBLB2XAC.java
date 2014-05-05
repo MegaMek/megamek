@@ -51,5 +51,10 @@ public class ISTHBLB2XAC extends LBXACWeapon {
         this.criticals = 4;
         this.bv = 40;
         this.cost = 200000;
+        //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
+        introDate = 3058;
+        techLevel.put(3058, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

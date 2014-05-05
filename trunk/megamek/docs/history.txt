@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.37.12-dev (SVN)
+
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It

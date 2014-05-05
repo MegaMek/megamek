@@ -205,7 +205,7 @@ public class BombType extends AmmoType {
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 12;
-        bomb.cost = 0;
+        bomb.cost = 5000;
         bomb.introDate = 1950;
         bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
@@ -228,7 +228,7 @@ public class BombType extends AmmoType {
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 13;
-        bomb.cost = 0;
+        bomb.cost = 8000;
         bomb.introDate = 1950;
         bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
@@ -251,7 +251,7 @@ public class BombType extends AmmoType {
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 20;
-        bomb.cost = 0;
+        bomb.cost = 10000;
         bomb.introDate = 1950;
         bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.extinctDate = 2800;
@@ -275,7 +275,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_TAG;
         bomb.shots = 1;
         bomb.bv = 0;
-        bomb.cost = 0;
+        bomb.cost = 50000;
         bomb.introDate = 2605;
         bomb.techLevel.put(2605,bomb.techLevel.get(3071));
         bomb.extinctDate = 2835;
@@ -298,7 +298,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_RL;
         bomb.shots = 1;
         bomb.bv = 18;
-        bomb.cost = 0;
+        bomb.cost = 15000;
         bomb.introDate = 3064;
         bomb.techLevel.put(3064,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
@@ -319,7 +319,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_AAA;;
         bomb.shots = 1;
         bomb.bv = 57;
-        bomb.cost = 0;
+        bomb.cost = 9000;
         bomb.introDate = 3072;
         bomb.techLevel.put(3072,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
@@ -387,6 +387,8 @@ public class BombType extends AmmoType {
         bomb.bv = 34;
         bomb.cost = 0;
         bomb.introDate = 2623;
+        bomb.extinctDate = 2859;
+        bomb.reintroDate = 3046;
         bomb.techLevel.put(2623,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;
@@ -411,6 +413,8 @@ public class BombType extends AmmoType {
         bomb.bv = 0;
         bomb.cost = 0;
         bomb.introDate = 2600;
+        bomb.extinctDate = 2830;
+        bomb.reintroDate = 3047;
         bomb.techLevel.put(2600,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;

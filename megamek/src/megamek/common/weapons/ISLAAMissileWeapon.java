@@ -20,34 +20,39 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class AAAMissileWeapon extends CapitalMissileWeapon {
+public class ISLAAMissileWeapon extends CapitalMissileWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2043203178614130517L;
+    private static final long serialVersionUID = 6262048986109960442L;
 
-    public AAAMissileWeapon() {
+    public ISLAAMissileWeapon() {
         super();
         this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        this.name = "AAA Missile";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_AAA));
+        this.name = "LAA Missile";
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;
-        this.damage = 20;
+        this.damage = 6;
         this.rackSize = 1;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 24;
-        this.extremeRange = 40;
-        this.tonnage = 0;
+        this.minimumRange = 7;
+        this.shortRange = 14;
+        this.mediumRange = 21;
+        this.longRange = 28;
+        this.extremeRange = 42;
+        this.tonnage = 0.5f;
         this.criticals = 0;
         this.hittable = false;
         this.bv = 0;
-        this.cost = 0;
-        this.shortAV = 20;
-        this.medAV = 20;
+        this.cost = 6000;
+        this.shortAV = 6;
+        this.medAV = 6;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_AAA_MISSILE;
+        this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
+        introDate = 3072;
+        techLevel.put(3072, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        techRating = RATING_D;
     }
 }

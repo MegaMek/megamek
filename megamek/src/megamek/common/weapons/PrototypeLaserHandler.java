@@ -52,6 +52,9 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
             super.addHeat();
             ae.heatBuildup += Compute.d6();
         }
+        
     }
+    
+
 
 }

@@ -53,11 +53,11 @@ public class ISAR10BayWeapon extends AmmoBayWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AR10;
         this.capital = true;
-        introDate = 2100;
-        techLevel.put(2100, techLevel.get(3071));
+        introDate = 2550;
+        techLevel.put(2550, techLevel.get(3071));
         extinctDate = 2850;
         reintroDate = 3051;
-        availRating = new int[] { RATING_E, RATING_X, RATING_E };
+        availRating = new int[] { RATING_E, RATING_F, RATING_E };
     }
 
     /*

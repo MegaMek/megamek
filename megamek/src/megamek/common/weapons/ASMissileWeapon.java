@@ -35,15 +35,16 @@ public class ASMissileWeapon extends CapitalMissileWeapon {
         heat = 0;
         damage = 30;
         rackSize = 1;
-        shortRange = 6;
-        mediumRange = 12;
-        longRange = 24;
-        extremeRange = 40;
-        tonnage = 0;
+        minimumRange = 9;
+        shortRange = 17;
+        mediumRange = 25;
+        longRange = 32;
+        extremeRange = 50;
+        tonnage = 2;
         criticals = 0;
         hittable = false;
         bv = 0;
-        cost = 0;
+        cost = 15000;
         shortAV = 30;
         medAV = 30;
         longAV = 30;
@@ -51,5 +52,9 @@ public class ASMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
+        introDate = 3071;
+        techLevel.put(3071, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        techRating = RATING_D;
     }
 }

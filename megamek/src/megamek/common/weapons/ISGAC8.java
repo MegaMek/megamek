@@ -67,5 +67,10 @@ public class ISGAC8 extends ACWeapon {
         ammoType = AmmoType.T_AC;
         techRating = RATING_X;
         atClass = CLASS_AC;
+        //Going to Assume these are like IS RACs
+        introDate = 3062;
+        techLevel.put(3062, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

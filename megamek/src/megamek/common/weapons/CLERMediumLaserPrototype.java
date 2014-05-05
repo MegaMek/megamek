@@ -57,7 +57,7 @@ public class CLERMediumLaserPrototype extends LaserWeapon {
         introDate = 2820;
         extinctDate = 2824;
         techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_E, RATING_F };
+        availRating = new int[] { RATING_X, RATING_E, RATING_X };
         techRating = RATING_F;
     }
 }

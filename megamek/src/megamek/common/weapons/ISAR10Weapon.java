@@ -64,7 +64,7 @@ public class ISAR10Weapon extends CapitalMissileWeapon {
         extinctDate = 2850;
         reintroDate = 3051;
         techLevel.put(3051, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E, RATING_X, RATING_E };
+        availRating = new int[] { RATING_E, RATING_F, RATING_E };
     }
 
     /*

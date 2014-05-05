@@ -50,5 +50,10 @@ public class ISTHBUAC20 extends UACWeapon {
         criticals = 11;
         bv = 335;
         cost = 600000;
+        //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
+        introDate = 3060;
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_E;
     }
 }

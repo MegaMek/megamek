@@ -37,7 +37,7 @@ public class InfantrySupportHeavySRMInfernoWeapon extends InfantryWeapon {
         name = "Infantry Heavy SRM Launcher (Inferno)";
         setInternalName(name);
         addLookupName("InfantryHeavySRMInferno");
-        ammoType = AmmoType.T_SRM;
+        ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 1.74;
         flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);

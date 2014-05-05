@@ -38,7 +38,7 @@ public class InfantrySupportStandardSRMInfernoWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryStandardSRMInferno");
         addLookupName("Infantry2ShotSRMInferno");
-        ammoType = AmmoType.T_SRM;
+        ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 3.48;
         flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);

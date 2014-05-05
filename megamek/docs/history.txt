@@ -80,6 +80,9 @@ v0.37.11-dev (SVN)
 + Bug [#4117]: Princess doesn't clean up after itself
 + Bug [#4116]: Simultaneous phases, Bots, and thread safety
 + Data: More Date and tech level Changes and couple of unit fixes.
++ Bug: Aimed shots possible with enhanced LRMs.
++ Infantry inferno SRM ammo type brought in line with standard; caused NPE when
+    used by bot.
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

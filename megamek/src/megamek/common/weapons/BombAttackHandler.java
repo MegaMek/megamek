@@ -92,76 +92,76 @@ public class BombAttackHandler extends WeaponHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        // Report weapon attack and its to-hit value.
-        Report r = new Report(3120);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName());
-        } else {
-            r.add("Error: From Nowhwere");
-        }
-
-        r.add(target.getDisplayName(), true);
-        vPhaseReport.addElement(r);
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-            return false;
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-        } else {
-            // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getValue());
-            vPhaseReport.addElement(r);
-        }
-
-        // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
-
-        // do we hit?
-        bMissed = roll < toHit.getValue();
-        // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-
-        Coords coords = target.getPosition();
-        if (!bMissed) {
-            r = new Report(3190);
-            r.subject = subjectId;
-            r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);
-        } else {
-            r = new Report(3196);
-            r.subject = subjectId;
-            r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);
-        }
-
-        // now go through the payload and drop the bombs one at a time
         int[] payload = waa.getBombPayload();
-        Coords drop = coords;
+        Coords coords = target.getPosition();
+        Coords drop;
+        // now go through the payload and drop the bombs one at a time
         for (int type = 0; type < payload.length; type++) {
             for (int i = 0; i < payload[type]; i++) {
+                // Report weapon attack and its to-hit value.
+                Report r = new Report(3120);
+                r.indent();
+                r.newlines = 0;
+                r.subject = subjectId;
+                if (wtype != null) {
+                    r.add(wtype.getName());
+                } else {
+                    r.add("Error: From Nowhwere");
+                }
+
+                r.add(target.getDisplayName(), true);
+                vPhaseReport.addElement(r);
+                if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                    r = new Report(3135);
+                    r.subject = subjectId;
+                    r.add(toHit.getDesc());
+                    vPhaseReport.addElement(r);
+                    return false;
+                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                    r = new Report(3140);
+                    r.newlines = 0;
+                    r.subject = subjectId;
+                    r.add(toHit.getDesc());
+                    vPhaseReport.addElement(r);
+                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+                    r = new Report(3145);
+                    r.newlines = 0;
+                    r.subject = subjectId;
+                    r.add(toHit.getDesc());
+                    vPhaseReport.addElement(r);
+                } else {
+                    // roll to hit
+                    r = new Report(3150);
+                    r.newlines = 0;
+                    r.subject = subjectId;
+                    r.add(toHit.getValue());
+                    vPhaseReport.addElement(r);
+                }
+
+                // dice have been rolled, thanks
+                r = new Report(3155);
+                r.newlines = 0;
+                r.subject = subjectId;
+                r.add(roll);
+                vPhaseReport.addElement(r);
+
+                // do we hit?
+                bMissed = roll < toHit.getValue();
+                // Set Margin of Success/Failure.
+                toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+
+                if (!bMissed) {
+                    r = new Report(3190);
+                    r.subject = subjectId;
+                    r.add(coords.getBoardNum());
+                    vPhaseReport.addElement(r);
+                } else {
+                    r = new Report(3196);
+                    r.subject = subjectId;
+                    r.add(coords.getBoardNum());
+                    vPhaseReport.addElement(r);
+                }
+
                 drop = coords;
                 // each bomb can scatter a different direction
                 if (!bMissed) {
@@ -172,7 +172,7 @@ public class BombAttackHandler extends WeaponHandler {
                     r.newlines = 1;
                     vPhaseReport.add(r);
                 } else {
-                    drop = Compute.scatterDiveBombs(coords);
+                    drop = Compute.scatter(coords, -toHit.getMoS());
                     if (game.getBoard().contains(drop)) {
                         // misses and scatters to another hex
                         r = new Report(6698);
@@ -208,6 +208,8 @@ public class BombAttackHandler extends WeaponHandler {
                     server.deliverBombDamage(drop, type, subjectId, ae,
                             vPhaseReport);
                 }
+                // Finally, we need a new attack roll for the next bomb, if any.
+                roll = Compute.d6(2);
             }
         }
 

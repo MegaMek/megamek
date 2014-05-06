@@ -1,7 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.37.12-dev (SVN)
- + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off
++ Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off
++ Updated mine clearing report to include dice roll
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

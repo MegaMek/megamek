@@ -9666,6 +9666,7 @@ public class Server implements Runnable {
             r = new Report(2250);
             r.subject = en.getId();
             r.add(Minefield.getDisplayableName(mf.getType()));
+            r.add(roll);
             r.indent(1);
             vClearReport.add(r);
             return true;
@@ -9673,6 +9674,7 @@ public class Server implements Runnable {
             // TODO: detonate the minefield
             r = new Report(2255);
             r.subject = en.getId();
+            r.add(roll);
             r.indent(1);
             r.add(Minefield.getDisplayableName(mf.getType()));
             vClearReport.add(r);
@@ -9710,6 +9712,7 @@ public class Server implements Runnable {
             // failure
             r = new Report(2260);
             r.subject = en.getId();
+            r.add(roll);
             r.indent(1);
             r.add(Minefield.getDisplayableName(mf.getType()));
             vClearReport.add(r);

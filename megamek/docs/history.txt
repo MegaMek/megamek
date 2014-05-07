@@ -6,6 +6,7 @@ v0.37.12-dev (SVN)
 + Revised bombing attacks to roll per bomb and scatter by MoF (as per dive
     bombing errata)
 + Errata: Superheavy 'Mechs can move and fire (i)HGRs safely, no PSR needed
++ Bug [4119]: Princess won't shoot Mechwarriors.
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

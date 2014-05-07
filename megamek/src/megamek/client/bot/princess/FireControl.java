@@ -76,11 +76,12 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double COMMANDER_UTILITY = 50.0;
+    protected static double COMMANDER_UTILITY = 0.5;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double SUB_COMMANDER_UTILITY = 25.0;
+    protected static double SUB_COMMANDER_UTILITY = 0.25;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double STRATEGIC_TARGET_UTILITY = 50.0;
+    protected static double STRATEGIC_TARGET_UTILITY = 0.5;
+    protected static double PRIORITY_TARGET_UTILITY = 0.25;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1162,15 +1163,18 @@ public class FireControl {
             overheat = firingPlan.getHeat() - overheatTolerance;
         }
 
-        double utility = DAMAGE_UTILITY * firingPlan.getExpectedDamage();
+        double modifier = 1;
+        modifier += calcCommandUtility(firingPlan.getTarget());
+        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
+        
+        double utility = 0;
+        utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
+        utility *= modifier;
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-        utility += calcCommandUtility(firingPlan.getTarget());
-        utility += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
-        utility += calcPriorityUnitTargetUtility(firingPlan.getTarget());
-
         firingPlan.setUtility(utility);
     }
 
@@ -1195,7 +1199,7 @@ public class FireControl {
 
         int id = ((Entity) target).getId();
         if (owner.getBehaviorSettings().getPriorityUnitTargets().contains(id)) {
-            return STRATEGIC_TARGET_UTILITY;
+            return PRIORITY_TARGET_UTILITY;
         }
         return 0;
     }

@@ -1504,6 +1504,7 @@ public class FireControl {
                 nonZeroHeatOptions.add(weaponFireInfo);
             }
         }
+        calculateUtility(bestPlans[0], heatTolerance, isAero);
 
         // build up heat table
         for (int heatLevel = 1; heatLevel <= maxHeat; heatLevel++) {

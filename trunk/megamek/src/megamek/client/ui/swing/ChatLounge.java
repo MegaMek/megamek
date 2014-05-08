@@ -2433,6 +2433,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else {
                 BotClient c = bcd.getSelectedBot(clientgui.getClient()
                         .getHost(), clientgui.getClient().getPort());
+                c.setClientGUI(clientgui);
                 c.getGame().addGameListener(new BotGUI(c));
                 try {
                     c.connect();

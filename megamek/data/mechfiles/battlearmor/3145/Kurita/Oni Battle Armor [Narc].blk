@@ -52,7 +52,6 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-ISBACompactNarc:RA
 IS BA ECM:Body
 Clan BA Fire Resistant:LA
 Clan BA Fire Resistant:LA
@@ -62,16 +61,23 @@ Clan BA Fire Resistant:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
+ISBACompactNarc:RA
 BA-Compact Narc Ammo:RA:Shots4#
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
+ISBACompactNarc:RA
+BA-Compact Narc Ammo:RA:Shots4#
 </Trooper 4 Equipment>
 
 <source>

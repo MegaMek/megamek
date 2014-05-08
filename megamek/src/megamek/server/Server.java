@@ -763,7 +763,7 @@ public class Server implements Runnable {
         if (!returning) {
             // Check to avoid duplicate names...
             name = correctDupeName(name);
-            send(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
+            sendToPending(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
         }
 
         // right, switch the connection into the "active" bin

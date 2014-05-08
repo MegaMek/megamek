@@ -2413,6 +2413,7 @@ public class FireControlTest {
         FiringPlan[] expected = new FiringPlan[15];
         expected[0] = new FiringPlan(mockTarget);
         expected[0].add(mockMGFireInfo);
+        expected[0].setUtility(1.2);
         expected[1] = new FiringPlan(mockTarget);
         expected[1].add(mockMGFireInfo);
         expected[1].add(mockLRMFireInfo);

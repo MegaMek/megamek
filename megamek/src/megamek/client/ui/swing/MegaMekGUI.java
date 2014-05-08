@@ -281,7 +281,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         options.initialize();
         options.loadOptions();
         if (optdlg == null) {
-            optdlg = new GameOptionsDialog(frame, options);
+            optdlg = new GameOptionsDialog(frame, options, true);
         }
         optdlg.update(options);
         optdlg.setVisible(true);

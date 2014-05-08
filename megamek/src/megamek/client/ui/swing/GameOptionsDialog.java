@@ -88,10 +88,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             .getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     /**
      * When the OK button is pressed, the options can be saved to a file; this
-     * behavior happens by default but there are some situations where the 
+     * behavior happens by default but there are some situations where the
      * options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
@@ -104,7 +104,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      */
     private void init(JFrame frame, GameOptions options){
         this.options = options;
-        
+
         setupButtons();
         setupPassword();
         JPanel mainPanel = new JPanel(new GridBagLayout());
@@ -130,7 +130,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         setSize(width,height);
         setResizable(true);
         setLocationRelativeTo(frame);
-        Dimension size = new Dimension(getSize().width*40/100,getSize().height*59/100);
+        Dimension size = new Dimension((getSize().width*40)/100,(getSize().height*59)/100);
         panOptions.setPreferredSize(size);
         panOptions.setMinimumSize(size);
         panOptions.setMaximumSize(size);
@@ -148,22 +148,11 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         init(client.frame, client.getClient().getGame().getOptions());
     }
 
-    /**
-     * Creates new <code>GameOptionsDialog</code> for a given
-     * <code>Frame</code>, with given set of options.
-     *
-     * @param frame - the <code>Frame</code> parent of this dialog.
-     * @param options - the <code>GameOptions</code> to be displayed.
-     */
-    public GameOptionsDialog(JFrame frame, GameOptions options){
-        new GameOptionsDialog(frame, options, true);
-    }
-    
-    public GameOptionsDialog(JFrame frame, GameOptions options, 
+    public GameOptionsDialog(JFrame frame, GameOptions options,
             boolean shouldSave){
-        super(frame, Messages.getString("GameOptionsDialog.title"), true); 
+        super(frame, Messages.getString("GameOptionsDialog.title"), true);
         //$NON-NLS-1$
-        performSave = shouldSave;        
+        performSave = shouldSave;
         init(frame, options);
         butOkay.setEnabled(false);
     }
@@ -365,7 +354,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 optionComp.setEditable(false);
             } else {
                 optionComp.setEditable(editable);
-            }            
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -680,9 +669,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     public boolean isEditable() {
         return editable;
     }
-    
+
+    @Override
     protected void processWindowEvent(WindowEvent e){
-        super.processWindowEvent(e);         
+        super.processWindowEvent(e);
         if (e.getID() == WindowEvent.WINDOW_DEACTIVATED){
             GUIPreferences guip = GUIPreferences.getInstance();
             guip.setGameOptionsSizeHeight(getSize().height);

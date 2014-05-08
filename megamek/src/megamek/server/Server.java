@@ -2221,7 +2221,7 @@ public class Server implements Runnable {
                         }
                     }
                     //fix the armor and SI of aeros if using aero sanity rules for the MUL
-                    if(game.getOptions().booleanOption("aero_sanity") && entity instanceof Aero) {
+                    if(game.getOptions().booleanOption("aero_sanity") && (entity instanceof Aero)) {
                     	//need to rescale SI and armor
                 		int scale = 1;
                 		if(entity.isCapitalScale()) {
@@ -17645,7 +17645,7 @@ public class Server implements Runnable {
                 }
                 // if this mech has 20+ damage, add another roll to the list.
                 // Hulldown 'mechs ignore this rule, TO Errata
-                if (entity.damageThisPhase >= 20  && !entity.isHullDown()) {
+                if ((entity.damageThisPhase >= 20)  && !entity.isHullDown()) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
@@ -19520,10 +19520,29 @@ public class Server implements Runnable {
                         spotlightHittable = false;
                     }
                 } else if (te instanceof Tank) {
-                    if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT)
-                            && (loc != Tank.LOC_LEFT)) {
-                        spotlightHittable = false;
+                    if (te instanceof SuperHeavyTank) {
+                        if ((loc != Tank.LOC_FRONT)
+                                && (loc != SuperHeavyTank.LOC_FRONTRIGHT)
+                                && (loc != SuperHeavyTank.LOC_FRONTLEFT)
+                                && (loc != SuperHeavyTank.LOC_REARRIGHT)
+                                && (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                            spotlightHittable = false;
+                        }
+                    } else if (te instanceof LargeSupportTank) {
+                        if ((loc != Tank.LOC_FRONT)
+                                && (loc != LargeSupportTank.LOC_FRONTRIGHT)
+                                && (loc != LargeSupportTank.LOC_FRONTLEFT)
+                                && (loc != LargeSupportTank.LOC_REARRIGHT)
+                                && (loc != LargeSupportTank.LOC_REARLEFT)) {
+                            spotlightHittable = false;
+                        }
+                    } else {
+                        if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT)
+                                && (loc != Tank.LOC_LEFT)) {
+                            spotlightHittable = false;
+                        }
                     }
+
                 }
                 if (spotlightHittable) {
                     int spotroll = Compute.d6(2);

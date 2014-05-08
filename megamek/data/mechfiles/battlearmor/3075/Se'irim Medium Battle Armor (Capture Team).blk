@@ -45,10 +45,8 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-ISDetachableWeaponPack:Body
 ISBALightMachineGun:RA
 ISBALightMachineGun:LA
-ISBATaser:DWP
 BABattleClaw:RA
 BABattleClaw:LA
 BASearchlight:Body
@@ -62,21 +60,33 @@ IS BA Stealth (Basic):RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 4 Equipment>
 
 <Trooper 5 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 5 Equipment>
 
 <Trooper 6 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
 </Trooper 6 Equipment>
 
 <source>

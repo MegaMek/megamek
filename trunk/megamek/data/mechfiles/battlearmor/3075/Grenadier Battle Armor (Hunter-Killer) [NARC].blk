@@ -45,11 +45,9 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBAFiredrakeNeedler:RA
+ISBAFireDrakeNeedler:RA
 ISBASRM5:Body
 BABasicManipulator:RA
-ISBACompactNarc:LA
-BA-Compact Narc Ammo:LA:Shots3#
 IS BA Stealth:RA
 IS BA Stealth:Body
 IS BA Stealth:LA
@@ -58,15 +56,23 @@ BA-SRM5 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <Trooper 1 Equipment>
+ISBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots3#
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
+ISBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots3#
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
+ISBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots3#
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
+ISBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots3#
 </Trooper 4 Equipment>
 
 <source>

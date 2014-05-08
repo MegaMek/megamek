@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -34,6 +35,7 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
 import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -65,6 +67,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -72,6 +75,14 @@ public abstract class BotClient extends Client {
 
     // a frame, to show stuff in
     public JFrame frame;
+    
+    /**
+     * Store a reference to the ClientGUI for the client who created this bot.
+     * This is used to ensure keep the ClientGUI synchronized with changes to
+     * this BotClient (particularly the bot's name).
+     * 
+     */
+    ClientGUI clientgui = null;
 
     public class CalculateBotTurn implements Runnable {
         public void run() {
@@ -925,4 +936,28 @@ public abstract class BotClient extends Client {
         textArea.setText("<pre>" + message + "</pre>");
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
+    
+    @Override
+    protected void correctName(Packet inP) {
+        // If we have a clientgui, it keeps track of a Name -> Client map, and 
+        //  we need to update that map with this name change.
+        if (getClientGUI() != null) {
+            Map<String, Client> bots = getClientGUI().getBots();
+            String oldName = getName();
+            String newName = (String) (inP.getObject(0));
+            assert(equals(bots.get(oldName)));
+            bots.remove(oldName);
+            bots.put(newName, this);                    
+        }
+        setName((String) (inP.getObject(0)));
+    }
+
+    public ClientGUI getClientGUI() {
+        return clientgui;
+    }
+
+    public void setClientGUI(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+    }
+    
 }

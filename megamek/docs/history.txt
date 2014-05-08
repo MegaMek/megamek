@@ -9,6 +9,7 @@ v0.37.12-dev (SVN)
 + Bug [#4119]: Princess won't shoot Mechwarriors.
 + Bug [#4123]: Client never receives COMMAND_SERVER_CORRECT_NAME packet
 + Data: Unit images and fixes, tech level fixes.
++ Bug [#4121]: ClientGUI.bots map may not be accurate
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

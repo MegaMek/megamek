@@ -1512,7 +1512,7 @@ public class FireControl {
 
             // Include all the firing options that exist at the last heat level.
             bestPlans[heatLevel].addAll(bestPlans[heatLevel - 1]);
-
+            calculateUtility(bestPlans[heatLevel], heatTolerance, isAero);
 
             for (WeaponFireInfo weaponFireInfo : nonZeroHeatOptions) {
 
@@ -1622,6 +1622,7 @@ public class FireControl {
         FiringPlan bestPlan = new FiringPlan(target);
         boolean isAero = (shooter instanceof Aero);
         int heatTolerance = calcHeatTolerance(shooter, isAero);
+        calculateUtility(bestPlan, heatTolerance, isAero);
         for (FiringPlan firingPlan : allPlans) {
             calculateUtility(firingPlan, heatTolerance, isAero);
             if ((bestPlan.getUtility() < firingPlan.getUtility())) {

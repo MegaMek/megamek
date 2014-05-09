@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Stuka
+</Name>
+
+<Model>
+STU-K5b2
+</Model>
+
+<year>
+2751
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+30
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+87
+60
+60
+52
+</armor>
+
+<Nose Equipment>
+Autocannon/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERPPC
+ISERPPC
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERPPC
+ISERPPC
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+Op Klondyke
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

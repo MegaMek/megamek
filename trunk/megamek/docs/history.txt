@@ -12,6 +12,11 @@ v0.37.12-dev (SVN)
 + Bug [#4121]: ClientGUI.bots map may not be accurate
 + Bug: spotlight not possibly destroyed on superheavy/largesupporttank
    rearleft/rearright hits
++ Bug: HAGs getting targeting computer to-hit bonus in flak mode (not true
+    according to errata) while not getting their *own* improved flak bonus
+    (as per TW p. 136).
++ Bug: Silver Bullet Gauss rifles getting targeting computer to-hit bonus
+    (should be incompatible as per errata).
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

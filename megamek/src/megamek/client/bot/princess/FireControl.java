@@ -1778,7 +1778,7 @@ public class FireControl {
     }
 
     /**
-     * Gets all the entities that are potential targets (even if you can't technically hit them)
+     * Gets all the entities that are potential targets
      *
      * @param shooter The unit doing the shooting.
      * @param game    The game being played.
@@ -1795,7 +1795,11 @@ public class FireControl {
                 && (entity.getPosition() != null)
                 && !entity.isOffBoard()
                 && entity.isTargetable()) {
-                targetableEnemyList.add(entity);
+                LosEffects effects = 
+                        LosEffects.calculateLos(game, shooter.getId(), entity);
+                if (effects.canSee()) {
+                    targetableEnemyList.add(entity);
+                }
             }
         }
 

@@ -3,6 +3,26 @@ VERSION HISTORY:
 v0.37.12-exp-dev (SVN)
 
 v0.37.12-dev (SVN)
++ Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off
++ Updated mine clearing report to include dice roll
++ Revised bombing attacks to roll per bomb and scatter by MoF (as per dive
+    bombing errata)
++ Errata: Superheavy 'Mechs can move and fire (i)HGRs safely, no PSR needed
++ Bug [4119]: Princess won't shoot Mechwarriors.
++ Data: Unit images and fixes, tech level fixes.
++ Bug [#4123]: Client never receives COMMAND_SERVER_CORRECT_NAME packet
++ Bug [#4121]: ClientGUI.bots map may not be accurate
++ Bug: spotlight not possibly destroyed on superheavy/largesupporttank
+   rearleft/rearright hits
++ Bug: HAGs getting targeting computer to-hit bonus in flak mode (not true
+    according to errata) while not getting their *own* improved flak bonus
+    (as per TW p. 136).
++ Bug: Silver Bullet Gauss rifles getting targeting computer to-hit bonus
+    (should be incompatible as per errata).
++ Bug [#4125]: Updated XStream from 1.4.4 to 1.4.7
++ Data: New Images.
++ Bug [4119]: FireControl.getTargetableEnemyEntities(2) now only returns targets
+    that are within LoS
 
 v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection

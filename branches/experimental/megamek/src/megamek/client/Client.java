@@ -1446,7 +1446,7 @@ public class Client implements IClientCommandHandler {
         return host;
     }
 
-    private void correctName(Packet inP) {
+    protected void correctName(Packet inP) {
         setName((String) (inP.getObject(0)));
     }
 

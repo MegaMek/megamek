@@ -55,8 +55,10 @@ public class HGRHandler extends GRHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((ae.mpUsed > 0) && (ae instanceof Mech)) {
-            // the mod is weight-based
+        if ((ae.mpUsed > 0) && (ae instanceof Mech)
+            // Only check up to assault class, superheavies do not roll.
+            && ae.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
+            // Modifier is weight-based.
             int nMod;
             if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
                 nMod = 2;

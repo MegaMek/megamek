@@ -863,7 +863,7 @@ public class Server implements Runnable {
         if (!returning) {
             // Check to avoid duplicate names...
             name = correctDupeName(name);
-            send(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
+            sendToPending(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
         }
 
         // right, switch the connection into the "active" bin
@@ -9791,6 +9791,7 @@ public class Server implements Runnable {
             r = new Report(2250);
             r.subject = en.getId();
             r.add(Minefield.getDisplayableName(mf.getType()));
+            r.add(roll);
             r.indent(1);
             vClearReport.add(r);
             return true;
@@ -9798,6 +9799,7 @@ public class Server implements Runnable {
             // TODO: detonate the minefield
             r = new Report(2255);
             r.subject = en.getId();
+            r.add(roll);
             r.indent(1);
             r.add(Minefield.getDisplayableName(mf.getType()));
             vClearReport.add(r);
@@ -9835,6 +9837,7 @@ public class Server implements Runnable {
             // failure
             r = new Report(2260);
             r.subject = en.getId();
+            r.add(roll);
             r.indent(1);
             r.add(Minefield.getDisplayableName(mf.getType()));
             vClearReport.add(r);
@@ -17874,7 +17877,7 @@ public class Server implements Runnable {
                 }
                 // if this mech has 20+ damage, add another roll to the list.
                 // Hulldown 'mechs ignore this rule, TO Errata
-                if (entity.damageThisPhase >= 20  && !entity.isHullDown()) {
+                if ((entity.damageThisPhase >= 20)  && !entity.isHullDown()) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
@@ -19738,10 +19741,29 @@ public class Server implements Runnable {
                         spotlightHittable = false;
                     }
                 } else if (te instanceof Tank) {
-                    if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT)
-                            && (loc != Tank.LOC_LEFT)) {
-                        spotlightHittable = false;
+                    if (te instanceof SuperHeavyTank) {
+                        if ((loc != Tank.LOC_FRONT)
+                                && (loc != SuperHeavyTank.LOC_FRONTRIGHT)
+                                && (loc != SuperHeavyTank.LOC_FRONTLEFT)
+                                && (loc != SuperHeavyTank.LOC_REARRIGHT)
+                                && (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                            spotlightHittable = false;
+                        }
+                    } else if (te instanceof LargeSupportTank) {
+                        if ((loc != Tank.LOC_FRONT)
+                                && (loc != LargeSupportTank.LOC_FRONTRIGHT)
+                                && (loc != LargeSupportTank.LOC_FRONTLEFT)
+                                && (loc != LargeSupportTank.LOC_REARRIGHT)
+                                && (loc != LargeSupportTank.LOC_REARLEFT)) {
+                            spotlightHittable = false;
+                        }
+                    } else {
+                        if ((loc != Tank.LOC_FRONT) && (loc != Tank.LOC_RIGHT)
+                                && (loc != Tank.LOC_LEFT)) {
+                            spotlightHittable = false;
+                        }
                     }
+
                 }
                 if (spotlightHittable) {
                     int spotroll = Compute.d6(2);

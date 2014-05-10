@@ -136,7 +136,7 @@ public class FireControlTest {
     private EntityState mockTargetState;
     @SuppressWarnings("FieldCanBeLocal")
     private ToHitData mockTargetMoveMod;
-    private Coords mockTargetCoods;
+    private Coords mockTargetCoords;
 
     private Entity mockShooter;
     private Coords mockShooterCoords;
@@ -195,8 +195,8 @@ public class FireControlTest {
         Mockito.when(mockTargetState.isBuilding()).thenReturn(false);
         Mockito.when(mockTargetState.getHeat()).thenReturn(0);
         mockTargetMoveMod = new ToHitData();
-        mockTargetCoods = new Coords(10, 0);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        mockTargetCoords = new Coords(10, 0);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         mockGameOptions = Mockito.mock(GameOptions.class);
 
@@ -204,6 +204,8 @@ public class FireControlTest {
 
         mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
+        Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
+        
 
         mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
@@ -1206,8 +1208,8 @@ public class FireControlTest {
                .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
                                                      Mockito.any(Targetable.class), Mockito.any(EntityState.class),
                                                      Mockito.anyInt(), Mockito.any(IGame.class));
-        mockTargetCoods = new Coords(0, 1);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        mockTargetCoords = new Coords(0, 1);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
         Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
                                                              Mockito.any(Coords.class), Mockito.anyInt());
         IHex mockShooterHex = Mockito.mock(IHex.class);
@@ -1504,7 +1506,7 @@ public class FireControlTest {
         Mockito.doReturn(new ToHitData()).when(spyLosEffects).losModifiers(Mockito.eq(mockGame));
 
         IHex mockTargetHex = Mockito.mock(IHex.class);
-        Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetCoods))).thenReturn(mockTargetHex);
+        Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetCoords))).thenReturn(mockTargetHex);
         Mockito.when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false); // todo test water
 
         final int MOCK_WEAPON_ID = 1;
@@ -1585,7 +1587,7 @@ public class FireControlTest {
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_L))).thenReturn(false);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         // Test medium range shooter quirks.
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_IMP_TARG_M))).thenReturn(true);
@@ -1639,7 +1641,7 @@ public class FireControlTest {
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_S))).thenReturn(false);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         // Test a low-profile target.
         Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(true);
@@ -1725,7 +1727,7 @@ public class FireControlTest {
         Mockito.when(mockFighterState.isAirborneAero()).thenReturn(true);
         Mockito.when(mockFighterState.isBuilding()).thenReturn(false);
         Mockito.when(mockFighterState.getHeat()).thenReturn(0);
-        Mockito.when(mockFighterState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockFighterState.getPosition()).thenReturn(mockTargetCoords);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_LONG_RANGE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
@@ -1759,7 +1761,7 @@ public class FireControlTest {
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
         // todo Test infantry range mods.
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(false);
 
         // todo Test swarming and leg attacks.
@@ -1801,7 +1803,7 @@ public class FireControlTest {
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
         Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         // Test shooting infantry at 0 range.
         Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 0));
@@ -1810,7 +1812,7 @@ public class FireControlTest {
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
         //todo Infantry on Infantry violence.
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         // Test being out of range.
         Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(0, 100));
@@ -1818,7 +1820,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
-        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         // Test the target being out of arc.
         Mockito.doReturn(false).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
@@ -1978,7 +1980,7 @@ public class FireControlTest {
         pathSteps.add(mockStep);
         MovePath mockPath = Mockito.mock(MovePath.class);
         Mockito.when(mockPath.getSteps()).thenReturn(pathSteps.elements());
-        Mockito.when(mockStep.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockStep.getPosition()).thenReturn(mockTargetCoords);
         Assert.assertTrue(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
 
         // Test the target not being under the path.
@@ -2016,7 +2018,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + FireControl.COMMANDER_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.COMMANDER_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.isCommander()).thenReturn(false);
 
         // Make the target a sub-commander.
@@ -2027,7 +2029,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + FireControl.SUB_COMMANDER_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.SUB_COMMANDER_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Make the target a Strategic Building Target.
@@ -2044,7 +2046,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + FireControl.STRATEGIC_TARGET_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.STRATEGIC_TARGET_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBuilding.getPosition()).thenReturn(new Coords(10, 10)); // A building not on the list.
         testFiringPlan = Mockito.spy(new FiringPlan(mockBuilding));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
@@ -2064,7 +2066,7 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility + FireControl.STRATEGIC_TARGET_UTILITY, testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.PRIORITY_TARGET_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
         Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
 
         // Attack an ejected pilot.
@@ -2266,10 +2268,10 @@ public class FireControlTest {
         Mockito.when(mockShooter.isOffBoard()).thenReturn(false);
         Mockito.when(mockShooter.getHeatCapacity()).thenReturn(16);
         Mockito.when(mockShooter.getHeat()).thenReturn(0);
-        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
-        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
+        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoords))).thenReturn(true);
         Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
                                                                    Mockito.anyBoolean());
 
@@ -2299,10 +2301,10 @@ public class FireControlTest {
         FiringPlan expected;
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         Mockito.when(mockShooter.isOffBoard()).thenReturn(false);
-        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
-        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
+        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoords))).thenReturn(true);
         Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
                                                                    Mockito.anyBoolean());
 
@@ -2336,10 +2338,10 @@ public class FireControlTest {
         FiringPlan expected;
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         Mockito.when(mockShooter.isOffBoard()).thenReturn(false);
-        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoods);
+        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
-        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoods))).thenReturn(true);
+        Mockito.when(mockBoard.contains(Mockito.eq(mockTargetCoords))).thenReturn(true);
         Mockito.doNothing().when(testFireControl).calculateUtility(Mockito.any(FiringPlan.class), Mockito.anyInt(),
                                                                    Mockito.anyBoolean());
 
@@ -2413,6 +2415,7 @@ public class FireControlTest {
         FiringPlan[] expected = new FiringPlan[15];
         expected[0] = new FiringPlan(mockTarget);
         expected[0].add(mockMGFireInfo);
+        expected[0].setUtility(1.2);
         expected[1] = new FiringPlan(mockTarget);
         expected[1].add(mockMGFireInfo);
         expected[1].add(mockLRMFireInfo);
@@ -2420,7 +2423,7 @@ public class FireControlTest {
         expected[2] = new FiringPlan(mockTarget);
         expected[2].add(mockMGFireInfo);
         expected[2].add(mockLRMFireInfo);
-        expected[2].setUtility(0.0);
+        expected[2].setUtility(3.0);
         expected[3] = new FiringPlan(mockTarget);
         expected[3].add(mockMGFireInfo);
         expected[3].add(mockMLFireInfo);
@@ -2439,22 +2442,22 @@ public class FireControlTest {
         expected[6].add(mockMGFireInfo);
         expected[6].add(mockLRMFireInfo);
         expected[6].add(mockMLFireInfo);
-        expected[6].setUtility(0.0);
+        expected[6].setUtility(6.0);
         expected[7] = new FiringPlan(mockTarget);
         expected[7].add(mockMGFireInfo);
         expected[7].add(mockLRMFireInfo);
         expected[7].add(mockMLFireInfo);
-        expected[7].setUtility(0.0);
+        expected[7].setUtility(6.0);
         expected[8] = new FiringPlan(mockTarget);
         expected[8].add(mockMGFireInfo);
         expected[8].add(mockLRMFireInfo);
         expected[8].add(mockMLFireInfo);
-        expected[8].setUtility(0.0);
+        expected[8].setUtility(6.0);
         expected[9] = new FiringPlan(mockTarget);
         expected[9].add(mockMGFireInfo);
         expected[9].add(mockLRMFireInfo);
         expected[9].add(mockMLFireInfo);
-        expected[9].setUtility(0.0);
+        expected[9].setUtility(6.0);
         expected[10] = new FiringPlan(mockTarget);
         expected[10].add(mockMGFireInfo);
         expected[10].add(mockPPCFireInfo);
@@ -2512,5 +2515,32 @@ public class FireControlTest {
         if (!StringUtil.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
+    }
+    
+    /**
+     * Test to make sure that Princess will choose a FiringPlan that shots at
+     * a MechWarrior, instead of choosing to do nothing.
+     */
+    @Test
+    public void testCalcFiringPlansAtMechwarrior() {
+        mockTarget = Mockito.mock(MechWarrior.class);
+        Mockito.when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockPPCFireInfo.getHeat()).thenReturn(10);
+        Mockito.when(mockPPCFireInfo.getExpectedDamageOnHit()).thenReturn(10.0);
+        
+        Mockito.when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockMLFireInfo.getHeat()).thenReturn(3);
+        Mockito.when(mockMLFireInfo.getExpectedDamageOnHit()).thenReturn(5.0);
+        
+        Mockito.when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        Mockito.when(mockLRMFireInfo.getHeat()).thenReturn(1);
+        Mockito.when(mockLRMFireInfo.getExpectedDamageOnHit()).thenReturn(3.0);
+        
+        Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
+        Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
+        FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter,
+                mockTarget, mockGame);
+        Assert.assertNotEquals(0, plan.getUtility(), 0.00001);        
     }
 }

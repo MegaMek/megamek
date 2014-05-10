@@ -6581,6 +6581,9 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT);
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.introDate = 1950;
+        misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
+        misc.techRating = RATING_A;
 
         return misc;
     }

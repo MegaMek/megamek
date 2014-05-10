@@ -1688,21 +1688,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(wtype.getToHitModifier(),
                     "weapon to-hit modifier");
         }
-
-        // ammo to-hit modifier
-        // TODO: shouldn't this use the Entity#isFlying() method?
-        if ((te != null)
-                && !game.getBoard().inSpace()
-                && (te.isAirborne() || te.isAirborneVTOLorWIGE())
-                && (atype != null)
-                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
+        
+        // Check whether we're eligible for a flak bonus...
+        boolean isFlakAttack = !game.getBoard().inSpace()
+            && (te != null)
+            && (te.isAirborne() || te.isAirborneVTOLorWIGE())
+            && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
                         || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) || (atype
                         .getAmmoType() == AmmoType.T_SBGAUSS)) && (atype
                         .getMunitionType() == AmmoType.M_CLUSTER))
                         || (atype.getMunitionType() == AmmoType.M_FLAK) || (atype
-                        .getAmmoType() == AmmoType.T_HAG))) {
-            toHit.addModifier(-2, "flak to-hit modifier");
+                        .getAmmoType() == AmmoType.T_HAG));
+        if (isFlakAttack) {
+            // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
+            // that's not covered by anything else).
+            if (atype.getAmmoType() == AmmoType.T_HAG) {
+                toHit.addModifier(-3, "HAG flak to-hit modifier");
+            } else {
+                toHit.addModifier(-2, "flak to-hit modifier");
+            }
         }
+        // Apply ammo type modifier, if any.
         if (usesAmmo && (atype.getToHitModifier() != 0)) {
             toHit.addModifier(atype.getToHitModifier(),
                     "ammunition to-hit modifier");
@@ -1802,13 +1808,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(3, "aiming with targeting computer");
             }
         } else {
+            // LB-X ACs firing cluster nor HAGs used as flak are eligible
+            // for a TC bonus.
+            boolean usesLBXCluster = usesAmmo
+                && (atype.getAmmoType() == AmmoType.T_AC_LBX
+                    || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                && atype.getMunitionType() == AmmoType.M_CLUSTER;
+            boolean usesHAGFlak = usesAmmo
+                && atype.getAmmoType() == AmmoType.T_HAG
+                && isFlakAttack;
+            boolean isSBGauss = usesAmmo
+                && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             if (ae.hasTargComp()
-                    && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                    && !wtype.hasFlag(WeaponType.F_CWS)
-                    && !wtype.hasFlag(WeaponType.F_TASER)                    
-                    && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
-                            .getAmmoType() == AmmoType.T_AC_LBX_THB)) && (atype
-                            .getMunitionType() == AmmoType.M_CLUSTER)))) {
+                && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                && !wtype.hasFlag(WeaponType.F_CWS)
+                && !wtype.hasFlag(WeaponType.F_TASER)                    
+                && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }

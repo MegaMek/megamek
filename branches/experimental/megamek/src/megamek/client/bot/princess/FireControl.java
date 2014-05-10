@@ -76,11 +76,12 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double COMMANDER_UTILITY = 50.0;
+    protected static double COMMANDER_UTILITY = 0.5;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double SUB_COMMANDER_UTILITY = 25.0;
+    protected static double SUB_COMMANDER_UTILITY = 0.25;
     @SuppressWarnings("FieldCanBeLocal")
-    protected static double STRATEGIC_TARGET_UTILITY = 50.0;
+    protected static double STRATEGIC_TARGET_UTILITY = 0.5;
+    protected static double PRIORITY_TARGET_UTILITY = 0.25;
 
     protected static final String TH_WOODS = "woods";
     protected static final String TH_SMOKE = "smoke";
@@ -1162,15 +1163,18 @@ public class FireControl {
             overheat = firingPlan.getHeat() - overheatTolerance;
         }
 
-        double utility = DAMAGE_UTILITY * firingPlan.getExpectedDamage();
+        double modifier = 1;
+        modifier += calcCommandUtility(firingPlan.getTarget());
+        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
+        
+        double utility = 0;
+        utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
+        utility *= modifier;
         utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-        utility += calcCommandUtility(firingPlan.getTarget());
-        utility += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
-        utility += calcPriorityUnitTargetUtility(firingPlan.getTarget());
-
         firingPlan.setUtility(utility);
     }
 
@@ -1195,7 +1199,7 @@ public class FireControl {
 
         int id = ((Entity) target).getId();
         if (owner.getBehaviorSettings().getPriorityUnitTargets().contains(id)) {
-            return STRATEGIC_TARGET_UTILITY;
+            return PRIORITY_TARGET_UTILITY;
         }
         return 0;
     }
@@ -1500,6 +1504,7 @@ public class FireControl {
                 nonZeroHeatOptions.add(weaponFireInfo);
             }
         }
+        calculateUtility(bestPlans[0], heatTolerance, isAero);
 
         // build up heat table
         for (int heatLevel = 1; heatLevel <= maxHeat; heatLevel++) {
@@ -1507,7 +1512,7 @@ public class FireControl {
 
             // Include all the firing options that exist at the last heat level.
             bestPlans[heatLevel].addAll(bestPlans[heatLevel - 1]);
-
+            calculateUtility(bestPlans[heatLevel], heatTolerance, isAero);
 
             for (WeaponFireInfo weaponFireInfo : nonZeroHeatOptions) {
 
@@ -1617,6 +1622,7 @@ public class FireControl {
         FiringPlan bestPlan = new FiringPlan(target);
         boolean isAero = (shooter instanceof Aero);
         int heatTolerance = calcHeatTolerance(shooter, isAero);
+        calculateUtility(bestPlan, heatTolerance, isAero);
         for (FiringPlan firingPlan : allPlans) {
             calculateUtility(firingPlan, heatTolerance, isAero);
             if ((bestPlan.getUtility() < firingPlan.getUtility())) {
@@ -1772,7 +1778,7 @@ public class FireControl {
     }
 
     /**
-     * Gets all the entities that are potential targets (even if you can't technically hit them)
+     * Gets all the entities that are potential targets
      *
      * @param shooter The unit doing the shooting.
      * @param game    The game being played.
@@ -1789,7 +1795,11 @@ public class FireControl {
                 && (entity.getPosition() != null)
                 && !entity.isOffBoard()
                 && entity.isTargetable()) {
-                targetableEnemyList.add(entity);
+                LosEffects effects = 
+                        LosEffects.calculateLos(game, shooter.getId(), entity);
+                if (effects.canSee()) {
+                    targetableEnemyList.add(entity);
+                }
             }
         }
 

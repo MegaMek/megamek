@@ -21,6 +21,7 @@ v0.37.12-dev (SVN)
 + Data: New Images.
 + Bug [4119]: FireControl.getTargetableEnemyEntities(2) now only returns targets
     that are within LoS
++ Bug: Tripod 'Mechs unable to pick up clubs.
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

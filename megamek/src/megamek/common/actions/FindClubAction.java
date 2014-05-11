@@ -27,6 +27,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
+import megamek.common.TripodMech;
 
 /**
  * The entity tries to find a club.
@@ -56,8 +57,8 @@ public class FindClubAction extends AbstractEntityAction {
         }
         final IHex hex = game.getBoard().getHex(entity.getPosition());
 
-        // Non biped mechs can't
-        if (!(entity instanceof BipedMech)) {
+        // Only biped and tripod 'Mechs qualify at all.
+        if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {
             return false;
         }
 
@@ -88,9 +89,9 @@ public class FindClubAction extends AbstractEntityAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
                 || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER,
                         Mech.LOC_LARM)
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((BipedMech) entity)
+                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity)
                         .hasClaw(Mech.LOC_RARM))
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((BipedMech) entity)
+                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((Mech) entity)
                         .hasClaw(Mech.LOC_LARM))) {
             return false;
         }

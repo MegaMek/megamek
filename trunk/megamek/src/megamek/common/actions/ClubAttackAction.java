@@ -20,7 +20,6 @@
 
 package megamek.common.actions;
 
-import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
@@ -240,8 +239,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB) && ((MiscType) club
                 .getType()).hasSubType(MiscType.S_CLUB));
-        final boolean hasClaws = ae instanceof BipedMech ? (((BipedMech) ae).hasClaw(Mech.LOC_RARM) || ((BipedMech) ae)
-                .hasClaw(Mech.LOC_LARM)) : false;
+        // Cast is safe because non-'Mechs never even get here.
+        final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM) || ((Mech) ae).hasClaw(Mech.LOC_LARM);
         final boolean shield = ((MiscType) club.getType()).isShield();
         boolean needsHand = true;
         final boolean armMounted = (club.getLocation() == Mech.LOC_LARM || club.getLocation() == Mech.LOC_RARM);

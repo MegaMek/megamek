@@ -24,8 +24,10 @@ import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
+import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
+import megamek.common.MechWarrior;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -157,6 +159,18 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "battle armor target");
         }
 
+        // Infantry squads are also hard to hit -- including for other infantry,
+        // it seems (the rule is "all attacks"). However, this only applies to
+        // proper squads deployed as such.
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)
+                && ((Infantry) target).isSquad()) {
+            toHit.addModifier(1, "infantry squad target");
+        }
+
+        // Ejected MechWarriors are also more difficult targets.
+        if (target instanceof MechWarrior) {
+            toHit.addModifier(2, "ejected MechWarrior target");
+        }
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
 

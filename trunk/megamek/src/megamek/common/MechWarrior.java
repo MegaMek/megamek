@@ -18,11 +18,9 @@ package megamek.common;
  *         from its ride.
  */
 
-public class MechWarrior extends Infantry {
+public class MechWarrior extends EjectedCrew {
 
     private static final long serialVersionUID = 6227549671448329770L;
-    private int originalRideId;
-    private String originalRideExternalId;
     private int pickedUpById = Entity.NONE;
     private String pickedUpByExternalId = "-1";
     private boolean landed = true;
@@ -34,58 +32,13 @@ public class MechWarrior extends Infantry {
      *            ride
      */
     public MechWarrior(Entity originalRide) {
-        super();
-        setCrew(originalRide.getCrew());
+        super(originalRide);
         setChassis("MechWarrior");
-        setModel(originalRide.getCrew().getName());
-        setWeight(1);
-
-        // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        newName.append(" of ").append(originalRide.getDisplayName());
-        displayName = newName.toString();
-
-        // Finish initializing this unit.
-        setOwner(originalRide.getOwner());
-        initializeInternal(1, Infantry.LOC_INFANTRY);
-        setOriginalRideId(originalRide.getId());
-        setOriginalRideExternalId(originalRide.getExternalIdAsString());
-        IGame tmpGame = originalRide.getGame();
-        if (tmpGame != null
-                && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
-            try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
-                        Infantry.LOC_INFANTRY);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
     }
     
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {
-        super();
-        setCrew(crew);
+        super(crew, owner, game);
         setChassis("MechWarrior");
-        setModel(crew.getName());
-        setWeight(1);
-
-        // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        displayName = newName.toString();
-
-        // Finish initializing this unit.
-        setOwner(owner);
-        initializeInternal(1, Infantry.LOC_INFANTRY);
-        IGame tmpGame = game;
-        if (tmpGame != null
-                && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
-            try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
-                        Infantry.LOC_INFANTRY);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 
     /*
@@ -98,41 +51,6 @@ public class MechWarrior extends Infantry {
         return (pickedUpById == Entity.NONE) && super.isSelectableThisTurn();
     }
 
-    /**
-     * @return the <code>int</code> id of this MW's original ride
-     */
-    public int getOriginalRideId() {
-        return originalRideId;
-    }
-
-    /**
-     * set the <code>int</code> id of this MW's original ride
-     */
-    public void setOriginalRideId(int originalRideId) {
-        this.originalRideId = originalRideId;
-    }
-
-    /**
-     * @return the <code>int</code> external id of this MW's original ride
-     */
-    public int getOriginalRideExternalId() {
-        return Integer.parseInt(originalRideExternalId);
-    }
-    
-    public String getOriginalRideExternalIdAsString() {
-        return originalRideExternalId;
-    }
-
-    /**
-     * set the <code>int</code> external id of this MW's original ride
-     */
-    public void setOriginalRideExternalId(String originalRideExternalId) {
-        this.originalRideExternalId = originalRideExternalId;
-    }
-    
-    public void setOriginalRideExternalId(int originalRideExternalId) {
-        this.originalRideExternalId = Integer.toString(originalRideExternalId);
-    }
 
     /**
      * @return the <code>int</code> external id of the unit that picked up
@@ -181,11 +99,6 @@ public class MechWarrior extends Infantry {
         return 0;
     }
 
-    @Override
-    public void newRound(int number) {
-        super.newRound(number);
-        getCrew().setEjected(false);
-    }
 
     /**
      * Ejected pilots do not get killed by ammo/fusion engine explosions
@@ -204,6 +117,7 @@ public class MechWarrior extends Infantry {
     public boolean isCrippled() {
         return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
     }
+    
     
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;

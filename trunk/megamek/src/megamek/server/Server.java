@@ -244,6 +244,7 @@ import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
 import com.thoughtworks.xstream.XStream;
+import megamek.common.EjectedCrew;
 
 /**
  * @author Ben Mazur
@@ -20265,7 +20266,7 @@ public class Server implements Runnable {
                         if (isPlatoon) {
                             // Infantry have only one section, and
                             // are therefore destroyed.
-                            if (((Infantry) te).getSquadN() == 1) {
+                            if (((Infantry) te).isSquad()) {
                                 r.messageId = 6106; // Squad Killed
                             } else {
                                 r.messageId = 6105; // Platoon Killed
@@ -29969,23 +29970,20 @@ public class Server implements Runnable {
         else if (game.getBoard().contains(entity.getPosition())
                 && !game.getOptions().booleanOption("ejected_pilots_flee")
                 && (entity instanceof Tank)) {
-            int crewSize = Math.max(1, (int) (14 + entity.getWeight()) / 15);
-            MechWarrior pilot = new MechWarrior(entity);
-            pilot.setChassis("Vehicle Crew");
-            pilot.setDeployed(true);
-            pilot.setId(getFreeEntityId());
-            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
-            game.addEntity(pilot.getId(), pilot);
-            send(createAddEntityPacket(pilot.getId()));
-            // make him not get a move this turn
-            pilot.setDone(true);
-            // place on board
+            EjectedCrew crew = new EjectedCrew(entity);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            game.addEntity(crew.getId(), crew);
+            send(createAddEntityPacket(crew.getId()));
+            // Make them not get a move this turn
+            crew.setDone(true);
+            // Place on board
 
-            pilot.setPosition(entity.getPosition());
+            crew.setPosition(entity.getPosition());
             // Update the entity
-            entityUpdate(pilot.getId());
-            // check if the pilot lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
         }
@@ -30073,23 +30071,20 @@ public class Server implements Runnable {
                 && !game.getOptions().booleanOption("ejected_pilots_flee")
                 && game.getOptions().booleanOption("vehicles_can_eject")
                 && (entity instanceof Tank)) {
-            int crewSize = Math.max(1, (int) (14 + entity.getWeight()) / 15);
-            MechWarrior pilot = new MechWarrior(entity);
-            pilot.setChassis("Vehicle Crew");
-            pilot.setDeployed(true);
-            pilot.setId(getFreeEntityId());
-            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
-            game.addEntity(pilot.getId(), pilot);
-            send(createAddEntityPacket(pilot.getId()));
-            // make him not get a move this turn
-            pilot.setDone(true);
-            // place on board
+            EjectedCrew crew = new EjectedCrew(entity);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            game.addEntity(crew.getId(), crew);
+            send(createAddEntityPacket(crew.getId()));
+            // Make them not get a move this turn
+            crew.setDone(true);
+            // Place on board
 
-            pilot.setPosition(entity.getPosition());
+            crew.setPosition(entity.getPosition());
             // Update the entity
-            entityUpdate(pilot.getId());
-            // check if the pilot lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
         }

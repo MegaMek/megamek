@@ -197,7 +197,7 @@ public class MovePath implements Cloneable, Serializable {
         } else {
             final int distance = start.distance(land);
             if (isJumping() && (entity.getJumpType() != Mech.JUMP_BOOSTER)) {
-                if (step.isThisStepBackwards() || (step.getMpUsed() > distance)) {
+                if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                 }
             }

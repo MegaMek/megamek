@@ -31,6 +31,7 @@ v0.37.12-dev (SVN)
     Infantry) in order to better distinguish between them all.
 + Added a number of null checks to WeaponAttackAction (recent changes caused at
     least one NPE).
++ Bug [#4127]: Jumping during night fight and in fog impossible.
 
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

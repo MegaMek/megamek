@@ -310,18 +310,17 @@ public class Princess extends BotClient {
             }
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
-            if (fastestMove == 0) {
-                fastestMove = 1;
-                msg.append(" (hacked to " + fastestMove + " for division purposes)");
-            }
-
             // Get the distance to the nearest enemy.
             double distance = getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(), game);
             msg.append("\n\t\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));
 
-            // Get the ration of distance to speed.
+            // Get the ratio of distance to speed.
             // Faster units that are closer to the enemy should move later.
-            total = distance / fastestMove;
+            if (fastestMove == 0) {
+                total = distance * 2; // This unit should have already moved due to the isImmobilized check.
+            } else {
+                total = distance / fastestMove;
+            }
             msg.append("\n\t\tDistance to Move Ratio (dist / move): ").append(numberFormat.format(total));
 
             // Prone enemies move sooner.
@@ -397,7 +396,7 @@ public class Princess extends BotClient {
             }
 
             // Move immobile units & ejected mechwarriors immediately.
-            if (entity.isImmobile()) {
+            if (isImmobilized(entity) && !(entity instanceof Infantry)) {
                 msg.append("is immobile.");
                 movingEntity = entity;
                 break;
@@ -555,6 +554,10 @@ public class Princess extends BotClient {
         final String METHOD_NAME = "isImmobilized(Entity, MovePath)";
         if (mover.isImmobile() && !mover.isShutDown()) {
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Is truly immobile.");
+            return true;
+        }
+        if (mover.getRunMP() < 1) {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, "Has 0 movement.");
             return true;
         }
         if (!(mover instanceof Mech)) {

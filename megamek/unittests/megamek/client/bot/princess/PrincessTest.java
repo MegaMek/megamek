@@ -225,10 +225,12 @@ public class PrincessTest {
     @Test
     public void testGetEntityToMove() {
         Mockito.when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Mockito.when(mockPrincess.isImmobilized(Mockito.any(Entity.class))).thenCallRealMethod();
 
         Coords mockCoords = Mockito.mock(Coords.class);
 
         Entity mockMech = Mockito.mock(BipedMech.class);
+        Mockito.when(mockMech.getRunMP()).thenReturn(6);
         Mockito.when(mockMech.isOffBoard()).thenReturn(false);
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockMech.isSelectableThisTurn()).thenReturn(true);
@@ -236,6 +238,7 @@ public class PrincessTest {
                 .thenReturn(1.111);
 
         Entity mockBA = Mockito.mock(BattleArmor.class);
+        Mockito.when(mockBA.getRunMP()).thenReturn(3);
         Mockito.when(mockBA.isOffBoard()).thenReturn(false);
         Mockito.when(mockBA.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
@@ -243,6 +246,7 @@ public class PrincessTest {
                 .thenReturn(6.666);
 
         Entity mockTank = Mockito.mock(Tank.class);
+        Mockito.when(mockTank.getRunMP()).thenReturn(6);
         Mockito.when(mockTank.isOffBoard()).thenReturn(false);
         Mockito.when(mockTank.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
@@ -250,17 +254,20 @@ public class PrincessTest {
                 .thenReturn(2.5);
 
         Entity mockEjectedMechwarrior = Mockito.mock(MechWarrior.class);
+        Mockito.when(mockEjectedMechwarrior.getRunMP()).thenReturn(1);
         Mockito.when(mockEjectedMechwarrior.isOffBoard()).thenReturn(false);
         Mockito.when(mockEjectedMechwarrior.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockEjectedMechwarrior.isSelectableThisTurn()).thenReturn(true);
 
         Entity mockImmobileMech = Mockito.mock(BipedMech.class);
+        Mockito.when(mockImmobileMech.getRunMP()).thenReturn(0);
         Mockito.when(mockImmobileMech.isOffBoard()).thenReturn(false);
         Mockito.when(mockImmobileMech.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockImmobileMech.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockImmobileMech.isImmobile()).thenReturn(true);
 
         Entity mockOffBoardArty = Mockito.mock(Tank.class);
+        Mockito.when(mockOffBoardArty.getRunMP()).thenReturn(6);
         Mockito.when(mockOffBoardArty.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockOffBoardArty.isOffBoard()).thenReturn(true);
@@ -449,6 +456,7 @@ public class PrincessTest {
 
         // Test a fully mobile mech.
         Mech mockMech = Mockito.mock(BipedMech.class);
+        Mockito.when(mockMech.getRunMP()).thenReturn(6);
         Mockito.when(mockMech.isImmobile()).thenReturn(false);
         Mockito.when(mockMech.isShutDown()).thenReturn(false);
         Mockito.when(mockMech.isProne()).thenReturn(false);
@@ -473,8 +481,15 @@ public class PrincessTest {
         Mockito.when(mockMech.isShutDown()).thenReturn(false);
         Assert.assertTrue(mockPrincess.isImmobilized(mockMech));
 
+        // Test a mech with move 0.
+        Mockito.when(mockMech.isImmobile()).thenReturn(false);
+        Mockito.when(mockMech.getRunMP()).thenReturn(0);
+        Assert.assertTrue(mockPrincess.isImmobilized(mockMech));
+        Mockito.when(mockMech.getRunMP()).thenReturn(6);
+
         // Test a tank that is not immobile.
         Tank mockTank = Mockito.mock(Tank.class);
+        Mockito.when(mockTank.getRunMP()).thenReturn(6);
         Mockito.when(mockTank.isImmobile()).thenReturn(false);
         Mockito.when(mockTank.isShutDown()).thenReturn(false);
         Assert.assertFalse(mockPrincess.isImmobilized(mockTank));

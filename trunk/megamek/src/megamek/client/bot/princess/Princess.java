@@ -310,6 +310,11 @@ public class Princess extends BotClient {
             }
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
+            if (fastestMove == 0) {
+                fastestMove = 1;
+                msg.append(" (hacked to " + fastestMove + " for division purposes)");
+            }
+
             // Get the distance to the nearest enemy.
             double distance = getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(), game);
             msg.append("\n\t\tDistance to Nearest Enemy: ").append(numberFormat.format(distance));

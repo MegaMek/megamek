@@ -30644,9 +30644,8 @@ public class Server implements Runnable {
             modifier -= 2;
         }
         int roll = Compute.d6(2) + modifier;
-        r = new Report(6305);
+        r = new Report(6306);
         r.subject = te.getId();
-        r.add("movement system");
         r.newlines = 0;
         r.indent(3);
         vDesc.add(r);

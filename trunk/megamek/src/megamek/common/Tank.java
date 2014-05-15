@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.CLChemicalLaserWeapon;
+import megamek.common.weapons.VehicleFlamerWeapon;
 
 /**
  * You know what tanks are, silly.
@@ -2810,9 +2812,13 @@ public class Tank extends Entity {
         lockTurret(getLocTurret2());
         for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                m.setBreached(true); // not destroyed, just
-                // unpowered
+            if (wtype.hasFlag(WeaponType.F_ENERGY)
+                // Chemical lasers still work even after an engine hit.
+                && !(wtype instanceof CLChemicalLaserWeapon)
+                // And presumably vehicle flamers should, too; we can always
+                // remove this again if ruled otherwise.
+                && !(wtype instanceof VehicleFlamerWeapon)) {
+                m.setBreached(true); // not destroyed, just unpowered
             }
         }
     }

@@ -40,6 +40,7 @@ v0.37.12-dev (SVN)
     also extended to heavy/vehicle flamers on a "makes sense" basis pending further
     clarification).
 + New motive system damage message to better distinguish from "proper" criticals.
++ Data: Kite Reconnaissance Vehicle (Standard) movement fix.
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

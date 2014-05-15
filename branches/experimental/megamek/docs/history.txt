@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.37.12-exp-dev (SVN)
++ Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the "@" symbol as a reference to anther
+    RAT to roll on.  Updated the EXAMPLE RAT FILE.txt file to reflect this information and also copied it into the
+    docs folder to make it easier to find.
 
 v0.37.12-dev (SVN)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

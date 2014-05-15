@@ -36,7 +36,11 @@ v0.37.12-dev (SVN)
     suppress underlying divide-by-zero issue)
 + Bug [#4122]: New fix for this bug that allows Princess.isImmobilized to count move 0 non-infantry units as
     immobilized.  Also added additional protection against a 1/0 error in Princess.calculateMoveIndex.
-
++ Errata: Vehicle-mounted chemical lasers not disabled by engine hits (tentatively
+    also extended to heavy/vehicle flamers on a "makes sense" basis pending further
+    clarification).
++ New motive system damage message to better distinguish from "proper" criticals.
+    
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It

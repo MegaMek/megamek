@@ -1,0 +1,15 @@
+Mercenary/Militia Light Aerospace F
+Guardian Fighter (Standard),1
+Guardian Fighter B,1
+Guardian Fighter C,1
+Guardian Fighter D,1
+Light Strike Fighter Angel (Upgrade),2
+Medium Strike Fighter Defender,3
+Medium Strike Fighter Defender II,4
+Heavy Strike Fighter Meteor,5
+Heavy Strike Fighter Meteor-G,6
+Cheetah F-11,5
+Swift SWF-606,4
+Cheetah F-14-S,3
+Seydlitz SYD-Z3A,2
+Cheetah F-11-R,1

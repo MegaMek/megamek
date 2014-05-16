@@ -1,0 +1,96 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Centurion
+</Name>
+
+<Model>
+CNT-3S
+</Model>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+11
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+46
+32
+32
+33
+</armor>
+
+<Nose Equipment>
+ISTAG
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3075
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

@@ -41,6 +41,7 @@ v0.37.12-dev (SVN)
     clarification).
 + New motive system damage message to better distinguish from "proper" criticals.
 + Data: Kite Reconnaissance Vehicle (Standard) movement fix.
++ Data: Unit Fixes and Total Chaos RATs
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

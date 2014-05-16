@@ -1,0 +1,19 @@
+Mercenary/Militia Mechs Heavy Mechs B
+Yeoman YMN-6Y,1
+Rifleman RFL-5M,2
+Hercules HRC-LS-9001,3
+Orion ON1-M,4
+Tempest TMP-3M,5
+Grasshopper GHR-5J,6
+Bandersnatch BNDR-01Ar,5
+War Dog WR-DG-02FC,4
+Archer ARC-9M,3
+Excalibur EXC-B2,2
+Perseus P1,1
+Perseus P1A,1
+Perseus P1B,1
+Perseus P1C,1
+Perseus P1D,1
+Perseus P1E,1
+Perseus P1P,1
+Perseus P1W,1

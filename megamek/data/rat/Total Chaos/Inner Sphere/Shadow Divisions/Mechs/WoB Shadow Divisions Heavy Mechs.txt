@@ -1,0 +1,33 @@
+WoB Shadow Divisions Heavy Mechs
+Lancelot LNC25-06,1
+Ostroc OSR-5W,2
+Guillotine GLT-6WB,3
+Excalibur EXC-D1,4
+White Flame WHF-3C,5
+Grigori C-GRG-O Invictus,6
+Grigori C-GRG-OA Dominus,6
+Grigori C-GRG-OB Infernus,6
+Grigori C-GRG-OC Comminus,6
+Grigori C-GRG-OD Luminos,6
+Grigori C-GRG-OE Eminus,6
+Grigori C-GRG-OS Caelestis,6
+Grigori C-GRG-OU Exanimus,6
+Deva C-DVA-O Invictus,5
+Deva C-DVA-OA Dominus,5
+Deva C-DVA-OB Infernus,5
+Deva C-DVA-OC Comminus,5
+Deva C-DVA-OD Luminos,5
+Deva C-DVA-OE Eminus,5
+Deva C-DVA-OS Caelestis,5
+Deva C-DVA-OU Exanimus,5
+Toyama TYM-1C,4
+Dragon Fire DGR-6FC,3
+Marauder MAD-9W,2
+Perseus P1,1
+Perseus P1A,1
+Perseus P1B,1
+Perseus P1C,1
+Perseus P1D,1
+Perseus P1E,1
+Perseus P1P,1
+Perseus P1W,1

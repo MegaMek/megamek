@@ -1,0 +1,12 @@
+Word of Blake Dropships B
+Assault Triumph (3062),1
+Overlord (3056),2
+Leopard CV (3054),3
+Assault Triumph (3062),4
+Vengeance (3056),5
+Kuan Ti (Standard),6
+Merlin (3063),5
+Leopard "Pocket Warship",4
+Merlin (3063),3
+Union "Pocket Warship",2
+Pentagon "Pocket Warship",1

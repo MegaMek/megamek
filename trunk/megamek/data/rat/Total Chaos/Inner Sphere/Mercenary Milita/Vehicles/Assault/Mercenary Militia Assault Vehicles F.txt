@@ -1,0 +1,12 @@
+Mercenary/Militia Assault Vehicles F
+Partisan Air Defense Tank (Standard),1
+Behemoth Heavy Tank (Flamer),2
+Partisan Air Defense Tank (Standard),3
+Demolisher Heavy Tank (Standard Mk. II),4
+Ontos Heavy Tank (Standard),5
+Behemoth Heavy Tank (Standard),6
+Heavy LRM Carrier (Standard),5
+Ontos Heavy Tank (Fusion),4
+Behemoth Heavy Tank (Standard),3
+Heavy LRM Carrier (Standard),2
+Trajan Assault Infantry Fighting Vehicle (ICE),1

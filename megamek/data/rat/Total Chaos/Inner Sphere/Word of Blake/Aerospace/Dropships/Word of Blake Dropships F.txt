@@ -1,0 +1,12 @@
+Word of Blake Dropships F
+Excalibur (2786),1
+Hannibal (Standard),2
+Union (3055),3
+Hannibal (Standard),4
+Union (3055),5
+Overlord (3056),6
+Assault Triumph (3062),5
+Overlord (3056),4
+Leopard CV (3054),3
+Assault Triumph (3062),2
+Vengeance (3056),1

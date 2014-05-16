@@ -1,0 +1,21 @@
+Word of Blake Battle Armor B
+Longinus Battle Armor [David] (WoB),1
+Longinus Battle Armor (Magnetic) (WOB),3
+Longinus Battle Armor [Flamer] (WoB),2
+Longinus Battle Armor [Laser] (WoB),2
+Longinus Battle Armor [MG] (WoB),2
+Phalanx Battle Armor (WoB-C),2
+Phalanx Battle Armor (WoB-A),8
+Phalanx Battle Armor (WoB-B),5
+Purifier Adaptive Battle Armor [Laser],4
+Purifier Adaptive Battle Armor [PPC],6
+Purifier Adaptive Battle Armor [Narc],6
+Purifier Adaptive Battle Armor [TAG],6
+Purifier Adaptive Battle Armor [Laser],8
+Purifier Adaptive Battle Armor [PPC],10
+Achileus Light Battle Armor (WoB),5
+Achileus Light Battle Armor (WoB) [David],5
+Achileus Light Battle Armor (WoB) [Flamer],5
+Achileus Light Battle Armor (WoB) [Laser],5
+Achileus Light Battle Armor (WoB) [MG],5
+Achileus Light Battle Armor (WoB) [TAG],5

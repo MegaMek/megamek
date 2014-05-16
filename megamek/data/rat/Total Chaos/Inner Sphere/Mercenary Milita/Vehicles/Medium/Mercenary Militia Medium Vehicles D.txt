@@ -1,0 +1,12 @@
+Mercenary/Militia Medium Vehicles D
+Hetzer Wheeled Assault Gun (Standard),1
+Vedette Medium Tank (Standard),2
+Hetzer Wheeled Assault Gun (Sealed),3
+Condor Heavy Hover Tank (Standard),4
+Prowler Multi-Terrain Vehicle (WoB),5
+Hetzer Wheeled Assault Gun (Sealed),6
+Goblin Medium Tank (Standard),5
+Myrmidon Medium Tank (Standard),4
+Vedette Medium Tank (Cell),3
+Maxim Heavy Hover Transport (BA Field Upgrade),2
+Chaparral Missile Artillery Tank (Standard),1

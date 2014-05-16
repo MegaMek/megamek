@@ -1,0 +1,12 @@
+Mercenary/Militia Mechs Assault Mechs B
+Longbow LGB-7V,1
+Awesome AWS-9Q,2
+Albatross ALB-3U,3
+Stalker STK-5M,4
+BattleMaster BLR-3M,5
+Highlander HGN-732,6
+Cerberus MR-V3,5
+Banshee BNC-5S,4
+Gunslinger GUN-1ERD,3
+Sirocco SRC-3C,2
+Berserker BRZ-A3,1

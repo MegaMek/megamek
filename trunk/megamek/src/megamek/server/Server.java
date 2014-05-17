@@ -30781,6 +30781,7 @@ public class Server implements Runnable {
      *            the <code>Entity</code> for which to resolve it
      */
     public void doAssaultDrop(Entity entity) {
+    	//resolve according to SO p.22
 
         Report r = new Report(2380);
 
@@ -30838,9 +30839,9 @@ public class Server implements Runnable {
             }
 
             // determine where we really land
-            int distance = Compute.d6(fallHeight);
             Coords c = Compute.scatterAssaultDrop(entity.getPosition(),
                     fallHeight);
+            int distance = entity.getPosition().distance(c);
             r = new Report(2385);
             r.subject = entity.getId();
             r.add(distance);
@@ -30860,8 +30861,12 @@ public class Server implements Runnable {
             }
             entity.setPosition(c);
 
-            // do fall damage
-            entity.setElevation(fallHeight);
+            // do fall damage from accidental fall
+            //set elevation to fall height above ground or building roof 
+            IHex hex = game.getBoard().getHex(entity.getPosition());
+            int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
+                    .terrainLevel(Terrains.BLDG_ELEV) : 0;            
+            entity.setElevation(fallHeight+bldgElev);
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
@@ -30869,12 +30874,12 @@ public class Server implements Runnable {
             } else {
                 addReport(doEntityFallsInto(entity, c, psr, true));
             }
-        }
+        }else{
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());
         int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
                 .terrainLevel(Terrains.BLDG_ELEV) : 0;
-        entity.setElevation((0 - hex.floor()) + bldgElev);
+        entity.setElevation(bldgElev);
 
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if (bldg != null) {
@@ -30909,6 +30914,7 @@ public class Server implements Runnable {
                         "impossible displacement", entity instanceof Mech,
                         entity instanceof Mech));
             }
+        }
         }
     }
 

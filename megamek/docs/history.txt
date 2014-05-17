@@ -48,6 +48,7 @@ v0.37.12-dev (SVN)
     checkEntity (which happens during the exchange phase)
 + Bug [#4131]: Infantry allowed to make any number of elevation changes in a
     building
++ Bug [#4132]: Tracer/Incendiary rounds not reducing night time to-hit penalties
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

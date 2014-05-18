@@ -3051,12 +3051,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
             ai.attackAbsHeight = selectedEntity.absHeight();
-            EntityMovementMode movementMode = selectedEntity.getMovementMode();
-            // We will have double counted elevation for VTOL and WIGE movement
-            if ((movementMode == EntityMovementMode.VTOL)
-                    || (movementMode == EntityMovementMode.WIGE)) {
-                ai.attackAbsHeight -= selectedEntity.getElevation();
-            }
         } else {
             ai.attackHeight = GUIPreferences.getInstance().getMechInFirst() ? 1
                     : 0;
@@ -3070,12 +3064,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
 			int trAbsheight = ent.absHeight();
-            EntityMovementMode movementMode = ent.getMovementMode();
-            // We will have double counted elevation for VTOL and WIGE movement
-            if ((movementMode == EntityMovementMode.VTOL)
-                    || (movementMode == EntityMovementMode.WIGE)) {
-            	trAbsheight -= ent.getElevation();
-            }
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
                 ai.targetAbsHeight = trAbsheight;

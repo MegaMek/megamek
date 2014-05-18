@@ -26,6 +26,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,7 +43,9 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.LosEffects;
+import megamek.common.Mech;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 // import java.awt.Dimension; Import never used
@@ -327,18 +330,35 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     private void addPoint(Coords c) {
+        Enumeration<Entity> destEntities = client.getGame().getEntities(c);
+        int absHeight = Integer.MIN_VALUE;
+        boolean isMech = false;
+        boolean entFound = false;
+        while (destEntities.hasMoreElements()) {
+            Entity ent = destEntities.nextElement();
+            int trAbsheight = ent.absHeight();
+            if (trAbsheight > absHeight) {
+                absHeight = trAbsheight;
+                isMech = ent instanceof Mech;
+                entFound = true;
+            }
+        }
         if (start == null) {
             start = c;
-
+            if (entFound) {
+                height1.setText(absHeight+"");
+                cboIsMech1.setSelected(isMech);
+            }
         } else if (start.equals(c)) {
             clear();
-
             setVisible(false);
         } else {
             end = c;
-
             distance = start.distance(end);
-
+            if (entFound) {
+                height2.setText(absHeight+"");
+                cboIsMech2.setSelected(isMech);
+            }
             setText();
             setVisible(true);
         }

@@ -1897,7 +1897,10 @@ public class Compute {
         }
 
         int primaryTarget = Entity.NONE;
-        int countTargets = 0;
+        boolean primaryInFrontArc = false;
+        // Keeps track of the number of targets the attacker has.  Starts at 
+        //  one, because we're passed a target
+        int countTargets = 1;
         for (Enumeration<EntityAction> i = game.getActions(); i
                 .hasMoreElements();) {
             Object o = i.nextElement();
@@ -1908,7 +1911,9 @@ public class Compute {
             if (prevAttack.getEntityId() == attacker.getId()) {
                 // Count how many targets we have for proper secondary modifiers
                 // for multi-crew vehicles
-                countTargets++;
+                if (prevAttack.getTargetId() != target.getTargetId()){
+                    countTargets++;
+                }
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
@@ -1921,11 +1926,13 @@ public class Compute {
                     continue;
                 }
 
-                if (Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), pte,
-                        attacker.getForwardArc())) {
+                // Determine primary target
+                if ((primaryTarget == Entity.NONE || !primaryInFrontArc)
+                        && Compute.isInArc(attacker.getPosition(),
+                                attacker.getSecondaryFacing(), pte,
+                                attacker.getForwardArc())) {
                     primaryTarget = prevAttack.getTargetId();
-                    break;
+                    primaryInFrontArc = true;
                 } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {
                     primaryTarget = prevAttack.getTargetId();
                 }
@@ -1937,14 +1944,15 @@ public class Compute {
             
             // If we are a tank, and only have 1 crew then we have some special
             //  restrictions
-            if (countTargets > 0 && attacker.getCrew().getSize() == 1) {
+            if (countTargets > 1 && attacker.getCrew().getSize() == 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Vehicles with only 1 crewman may not attack " +
                         "secondary targets");
             }
-            // If we are a tank, and our previous targets are less than the
-            // number of crew - 2 we don't have a secondary modifier 
-            if (countTargets < attacker.getCrew().getSize()-2) {
+            // If we are a tank, we can have Crew Size - 1 targets before 
+            //  incurring a secondary target penalty (or crew size - 2 secondary 
+            //  targets without penalty) 
+            if (countTargets <= attacker.getCrew().getSize() - 1) {
                 return null; // no modifier
             }
         }

@@ -55,6 +55,7 @@ v0.37.12-dev (SVN)
 + Bug [#4133]: Field of View Bug (building elevation not considered)
 + Bug: FirePlan.getKillProbability wasn't properly combinging kill probabilities
     from multiple weapons
++ Bug [#4136]: TacOps Vehicle Crews broken
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

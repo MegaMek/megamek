@@ -137,6 +137,7 @@ v0.37.11 (2014-05-05 15:47 UTC)
 + Bug: Aimed shots possible with enhanced LRMs.
 + Infantry inferno SRM ammo type brought in line with standard; caused NPE when
     used by bot.
++ Bug [#4134]: Ruler now picks up information from units in selected hexes
 
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and

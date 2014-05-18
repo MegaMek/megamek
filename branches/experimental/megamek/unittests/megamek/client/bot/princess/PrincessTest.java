@@ -47,15 +47,19 @@ public class PrincessTest {
 
     private Princess mockPrincess;
     private BasicPathRanker mockPathRanker;
+    private MoralUtil mockMoralUtil;
 
     @Before
     public void setUp() {
         mockPathRanker = Mockito.mock(BasicPathRanker.class);
 
+        mockMoralUtil = Mockito.mock(MoralUtil.class);
+
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
     }
 
     @Test

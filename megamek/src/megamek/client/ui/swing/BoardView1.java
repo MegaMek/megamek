@@ -3050,9 +3050,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // no selected mech we use the mechInFirst GUIPref.
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
-            ai.attackAbsHeight = ai.attackHeight
-                    + selectedEntity.elevationOccupied(game.getBoard().getHex(
-                            src));
+            ai.attackAbsHeight = selectedEntity.absHeight();
             EntityMovementMode movementMode = selectedEntity.getMovementMode();
             // We will have double counted elevation for VTOL and WIGE movement
             if ((movementMode == EntityMovementMode.VTOL)
@@ -3071,9 +3069,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
-            IHex targetHex = game.getBoard().getHex(ent.getPosition());
-			int trAbsheight = ent.elevationOccupied(targetHex)
-					+ ent.getHeight();
+			int trAbsheight = ent.absHeight();
             EntityMovementMode movementMode = ent.getMovementMode();
             // We will have double counted elevation for VTOL and WIGE movement
             if ((movementMode == EntityMovementMode.VTOL)

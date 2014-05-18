@@ -52,6 +52,7 @@ v0.37.12-dev (SVN)
 + Bug [#4128]: Successful assault drop buries units deep underground
 + Bug: Vehicles can't unjam RACs and move with TacOps Vehicle Crews enabled (check
     for crew *size* was missing).
++ Bug [#4133]: Field of View Bug (building elevation not considered)
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

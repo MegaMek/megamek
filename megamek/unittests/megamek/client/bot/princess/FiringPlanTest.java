@@ -116,7 +116,21 @@ public class FiringPlanTest {
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
 
-        double expected = 0 + 0.0024 + 0;
+        double expected = 1 - ((1 - 0) * (1 - 0.0024) * (1 - 0));
+        Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
+        
+        Mockito.when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(1.0);
+        Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
+        Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
+
+        expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));;
+        Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
+        
+        Mockito.when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(0.5);
+        Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.5);
+        Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.5);
+
+        expected = 1 - ((1 - 0.5) * (1 - 0.5) * (1 - 0.5));;
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
     }
 

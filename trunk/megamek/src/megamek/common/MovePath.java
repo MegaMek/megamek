@@ -161,7 +161,16 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean canShift() {
-        return ((entity instanceof QuadMech) || entity.isUsingManAce() || ((entity instanceof TripodMech) && (((Mech) entity).countBadLegs() == 0))) && !isJumping();
+        return ((entity instanceof QuadMech) 
+                // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
+                //  speed to perform a lateral shift
+                || (entity.isUsingManAce() 
+                        && ((entity instanceof BipedMech)) 
+                            || ((entity instanceof VTOL) 
+                                && (getMpUsed() <= entity.getWalkMP()))) 
+                || ((entity instanceof TripodMech) 
+                        && (((Mech) entity).countBadLegs() == 0))) 
+                && !isJumping();
     }
 
     /**

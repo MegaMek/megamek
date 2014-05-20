@@ -222,5 +222,5 @@ public class NarcHandler extends MissileWeaponHandler {
         return (entity.getInternal(location) > 0)
             && !entity.isLocationBlownOff(location)
             && !entity.isLocationBlownOffThisPhase(location);
-}
+    }
 }

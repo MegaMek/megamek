@@ -24744,9 +24744,27 @@ public class Server implements Runnable {
 
     /**
      * Makes a mech fall.
+     * 
+     * @param Entity
+     *          The Entity that is falling.  It is expected that the Entity's
+     *          position and elevation reflect the state prior to the  fall
+     * @param fallPos
+     *          The location that the Entity is falling into.
+     * @param fallHeight
+     *          The height that Entity is falling.
+     * @param facing
+     *          The facing of the fall.  Used to determine the the hit location
+     *          and also determines facing after the fall (used as an offset of
+     *          the Entity's current facing).
+     * @param roll
+     *           The PSR required to avoid damage to the pilot/crew. 
+     * @param intoBasement
+     *          Flag that determines whether this is a fall into a basement or
+     *          not.                       
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
-            int height, int facing, PilotingRollData roll, boolean intoBasement) {
+            int fallHeight, int facing, PilotingRollData roll, 
+            boolean intoBasement) {
         entity.setFallen(true);
 
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -24810,20 +24828,21 @@ public class Server implements Runnable {
         int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV)
                 + fallHex.depth(true);
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
-        int damageHeight = height;
+        int damageHeight = fallHeight;
         int newElevation = 0;
 
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
 
-        if ((height >= buildingHeight) && (buildingHeight >= 0)) {
-            damageHeight -= buildingHeight;
+        if ((entity.getElevation() >= buildingHeight) 
+                && (buildingHeight >= 0)) {
+            // fallHeight should already reflect this
             newElevation = buildingHeight;
             checkCollapse = true;
-        } else if (fallOntoBridge && (height >= bridgeHeight)
+        } else if (fallOntoBridge && (entity.getElevation() >= bridgeHeight)
                 && (bridgeHeight >= 0)) {
-            damageHeight -= bridgeHeight;
+            // fallHeight should already reflect this 
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
             checkCollapse = true;
@@ -24840,7 +24859,7 @@ public class Server implements Runnable {
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
         else if (waterDepth > 0) {
-            damageHeight = height - waterDepth;
+            damageHeight = fallHeight - waterDepth;
             newElevation = -waterDepth;
         }
         // only do these basement checks if we didn't fall onto the building
@@ -24933,9 +24952,9 @@ public class Server implements Runnable {
 
         // If the waterDepth is larger than the fall height,
         // we fell underwater
-        if ((waterDepth >= height) && ((waterDepth != 0) || (height != 0))) {
+        if ((waterDepth >= fallHeight) && ((waterDepth != 0) || (fallHeight != 0))) {
             damage = 0;
-            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (height + 1)) / 2;
+            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (fallHeight + 1)) / 2;
         }
         // adjust damage for gravity
         damage = Math
@@ -25045,8 +25064,8 @@ public class Server implements Runnable {
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();
 
-            if (height > 1) {
-                roll.addModifier(height - newElevation - 1, "height of fall");
+            if (fallHeight > 1) {
+                roll.addModifier(fallHeight - newElevation - 1, "height of fall");
             }
 
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -28512,6 +28531,8 @@ public class Server implements Runnable {
                         || (bldg.getBasement(coords) == BasementType.TWO_DEEP_FEET)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 2 floors into " + coords.toString());
+                    // Damage is determined by the depth of the basement, so a
+                    //  fall of 0 elevation is correct in this case
                     vPhaseReport.addAll(doEntityFall(entity, coords, 0,
                             Compute.d6(), psr, true));
                     runningCFTotal -= cfDamage * 2;
@@ -28519,6 +28540,8 @@ public class Server implements Runnable {
                         && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 1 floor into " + coords.toString());
+                    // Damage is determined by the depth of the basement, so a
+                    //  fall of 0 elevation is correct in this case
                     vPhaseReport.addAll(doEntityFall(entity, coords, 0,
                             Compute.d6(), psr, true));
                     runningCFTotal -= cfDamage;

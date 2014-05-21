@@ -1,0 +1,12 @@
+Word of Blake Light Vehicles D
+Galleon Light Tank GAL-100,1
+Main Gauche Light Support Tank (Standard),2
+Nightshade ECM VTOL (Light PPC),3
+Hawk Moth Gunship (Armor),4
+Cavalry Attack Helicopter (SRM),5
+Lightning Attack Hovercraft (Standard),6
+Main Gauche Light Support Tank (XL),5
+Chevalier Light Tank (Standard),4
+Hunter Light Support Tank (Standard),3
+Pinto Attack VTOL (WoB),2
+Cyrano Gunship (ML),1

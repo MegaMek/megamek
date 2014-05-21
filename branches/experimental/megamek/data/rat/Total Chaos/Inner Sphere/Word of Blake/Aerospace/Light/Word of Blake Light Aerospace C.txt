@@ -1,0 +1,12 @@
+Word of Blake Light Aerospace C
+Seydlitz SYD-Z4,1
+Trident TRN-3V,2
+Sparrowhawk SPR-6D,3
+Seydlitz SYD-Z2A,4
+Spad SPD-502,5
+Centurion CNT-3S,6
+Rogue RGU-133F,5
+Spad SPD-503,4
+Zero ZRO-114,3
+Zero ZRO-115,2
+Tomahawk THK-63,1

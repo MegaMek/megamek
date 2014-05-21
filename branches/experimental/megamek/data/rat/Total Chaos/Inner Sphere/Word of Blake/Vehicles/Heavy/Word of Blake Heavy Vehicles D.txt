@@ -1,0 +1,12 @@
+Word of Blake Heavy Vehicles D
+Magi Infantry Support Vehicle (UCSV),1
+Zhukov Heavy Tank (Standard),2
+Manticore Heavy Tank (Standard),3
+Burke Defense Tank (HPPC),4
+SRM Carrier (WoB),5
+Manticore Heavy Tank (LB-X),6
+Burke Defense Tank (HPPC),5
+LRM Carrier (WoB),4
+Demon Medium Tank (Standard),3
+Thumper Artillery Vehicle TAV-1,2
+Brutus Assault Tank (Standard),1

@@ -28,7 +28,43 @@ v0.37.12-dev (SVN)
 + Data: New Images.
 + Bug [4119]: FireControl.getTargetableEnemyEntities(2) now only returns targets
     that are within LoS
-
++ Bug: Tripod 'Mechs unable to pick up clubs.
++ Bug: Ejected vehicle crews and MechWarriors treated as purposefully deployed
+    TacOps infantry squads despite originally deploying in their respective
+    vehicles.
++ Bug: Squad and MechWarrior to-hit modifiers not applied to all attacks 
+    (notably not physical ones).
++ Refactoring: MechWarrior has new superclass EjectedCrew (derived in turn from
+    Infantry) in order to better distinguish between them all.
++ Added a number of null checks to WeaponAttackAction (recent changes caused at
+    least one NPE).
++ Bug [#4127]: Jumping during night fight and in fog impossible.
++ Bug [#4122]: NPE in Princess.continueMovementFor() (quick hack to manually
+    suppress underlying divide-by-zero issue)
++ Bug [#4122]: New fix for this bug that allows Princess.isImmobilized to count
+    move 0 non-infantry units as immobilized.  Also added additional protection
+    against a 1/0 error in Princess.calculateMoveIndex.
++ Errata: Vehicle-mounted chemical lasers not disabled by engine hits 
+    (tentatively also extended to heavy/vehicle flamers on a "makes sense" basis
+    pending further clarification).
++ New motive system damage message to better distinguish from "proper"
+    criticals.
++ Data: Kite Reconnaissance Vehicle (Standard) movement fix.
++ Data: Unit Fixes and Total Chaos RATs
++ Bug [#4107]: Searchlight quirk adds searchlight in receiveEntityAdd instead of
+    checkEntity (which happens during the exchange phase)
++ Bug [#4131]: Infantry allowed to make any number of elevation changes in a
+    building
++ Bug [#4132]: Tracer/Incendiary rounds not reducing night time to-hit penalties
++ Bug [#4128]: Successful assault drop buries units deep underground
++ Bug: Vehicles can't unjam RACs and move with TacOps Vehicle Crews enabled (check
+    for crew *size* was missing).
++ Bug [#4133]: Field of View Bug (building elevation not considered)
++ Bug: FirePlan.getKillProbability wasn't properly combinging kill probabilities
+    from multiple weapons
++ Bug [#4136]: TacOps Vehicle Crews broken
++ Bug [#4137]: Maneuvering Ace allows fighters to crab walk.
+    
 v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection
     handling 
@@ -132,6 +168,7 @@ v0.37.11 (2014-05-05 15:47 UTC)
 + Bug: Aimed shots possible with enhanced LRMs.
 + Infantry inferno SRM ammo type brought in line with standard; caused NPE when
     used by bot.
++ Bug [#4134]: Ruler now picks up information from units in selected hexes
 
 v0.37.10-exp (2014-04-08 02:26)
 

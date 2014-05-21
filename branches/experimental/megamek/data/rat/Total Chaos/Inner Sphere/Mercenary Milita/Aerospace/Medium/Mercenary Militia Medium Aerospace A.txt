@@ -1,0 +1,12 @@
+Mercenary/Militia Medium Aerospace A
+Stingray F-94,1
+Hellcat II HCT-214,2
+Gotha GTHA-100,3
+Hellcat II HCT-214,4
+Gotha GTHA-500,5
+Ironsides IRN-SD1,6
+Ironsides IRN-SD3,5
+Stingray F-92,4
+Ironsides IRN-SD1,3
+Stingray F-92,2
+Gotha GTHA-600,1

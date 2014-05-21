@@ -67,7 +67,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
 
     /**
      * @return The total number of expected critical hits based on the chance to hit, damage to target, toughness of
-     *         target and odds of rolling a successful crit check.
+     *         target and odds of rolling a successful crit check.   This is in the units of critical hits.
      */
     synchronized double getExpectedCriticals() {
         double expectedCriticals = 0;
@@ -78,17 +78,22 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
     }
 
     /**
-     * @return The odds of getting a kill based on the odds of each individual weapon getting a kill.
+     * Models the probability of each individual weapon getting a kill shot.
+     * We treat each weapon shot as a Bernoulli trial and compute the probiblity
+     * of the target surviving each shot.  We can then take 1 - surviveChance to
+     * get the chance of getting a kill.  This model doesn't take into 
+     * consideration multiple weapons hitting the same location. 
+     *   
+     * @return The odds of getting a kill based on the odds of each individual 
+     *      weapon getting a kill.  The result will be between 0 and 1.
      */
-    // todo This seems inherently flawed.  Each individual ML fired might have no chance for a kill, but there's a
-    // todo (small) chance that 3 fired together could hit the head and score a kill (for example).
-    // todo Same logic applies to getExpectedCriticals (above).
     synchronized double getKillProbability() {
-        double killProbability = 0;
+        double surviveProbability = 1;
+        
         for (WeaponFireInfo weaponFireInfo : this) {
-            killProbability = killProbability + ((1 - killProbability) * weaponFireInfo.getKillProbability());
+            surviveProbability *= 1 - weaponFireInfo.getKillProbability();
         }
-        return killProbability;
+        return 1 - surviveProbability;
     }
 
     /**
@@ -196,6 +201,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
         if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) return false;
 
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        String desc = "Utility: " + utility + " ";
+        desc += super.toString();
+        return desc;
     }
 
     @Override

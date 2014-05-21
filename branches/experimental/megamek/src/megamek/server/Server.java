@@ -247,6 +247,7 @@ import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
 import com.thoughtworks.xstream.XStream;
+import megamek.common.EjectedCrew;
 
 /**
  * @author Ben Mazur
@@ -2572,9 +2573,6 @@ public class Server implements Runnable {
                     a.setSI(currentSI);
                 }
             }
-            // Give the unit a spotlight, if it has the spotlight quirk
-            entity.setExternalSpotlight(entity.hasExternaSpotlight()
-                    || entity.hasQuirk("searchlight"));
             entityUpdate(entity.getId());
         }
     }
@@ -20488,7 +20486,7 @@ public class Server implements Runnable {
                         if (isPlatoon) {
                             // Infantry have only one section, and
                             // are therefore destroyed.
-                            if (((Infantry) te).getSquadN() == 1) {
+                            if (((Infantry) te).isSquad()) {
                                 r.messageId = 6106; // Squad Killed
                             } else {
                                 r.messageId = 6105; // Platoon Killed
@@ -26581,6 +26579,9 @@ public class Server implements Runnable {
                     }
                 }
             }
+            // Give the unit a spotlight, if it has the spotlight quirk
+            entity.setExternalSpotlight(entity.hasExternaSpotlight()
+                    || entity.hasQuirk("searchlight"));
             entityIds.add(entity.getId());
         }
 
@@ -30173,23 +30174,20 @@ public class Server implements Runnable {
         else if (game.getBoard().contains(entity.getPosition())
                 && !game.getOptions().booleanOption("ejected_pilots_flee")
                 && (entity instanceof Tank)) {
-            int crewSize = Math.max(1, (int) (14 + entity.getWeight()) / 15);
-            MechWarrior pilot = new MechWarrior(entity);
-            pilot.setChassis("Vehicle Crew");
-            pilot.setDeployed(true);
-            pilot.setId(getFreeEntityId());
-            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
-            game.addEntity(pilot.getId(), pilot);
-            send(createAddEntityPacket(pilot.getId()));
-            // make him not get a move this turn
-            pilot.setDone(true);
-            // place on board
+            EjectedCrew crew = new EjectedCrew(entity);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            game.addEntity(crew.getId(), crew);
+            send(createAddEntityPacket(crew.getId()));
+            // Make them not get a move this turn
+            crew.setDone(true);
+            // Place on board
 
-            pilot.setPosition(entity.getPosition());
+            crew.setPosition(entity.getPosition());
             // Update the entity
-            entityUpdate(pilot.getId());
-            // check if the pilot lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
         }
@@ -30277,23 +30275,20 @@ public class Server implements Runnable {
                 && !game.getOptions().booleanOption("ejected_pilots_flee")
                 && game.getOptions().booleanOption("vehicles_can_eject")
                 && (entity instanceof Tank)) {
-            int crewSize = Math.max(1, (int) (14 + entity.getWeight()) / 15);
-            MechWarrior pilot = new MechWarrior(entity);
-            pilot.setChassis("Vehicle Crew");
-            pilot.setDeployed(true);
-            pilot.setId(getFreeEntityId());
-            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
-            game.addEntity(pilot.getId(), pilot);
-            send(createAddEntityPacket(pilot.getId()));
-            // make him not get a move this turn
-            pilot.setDone(true);
-            // place on board
+            EjectedCrew crew = new EjectedCrew(entity);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            game.addEntity(crew.getId(), crew);
+            send(createAddEntityPacket(crew.getId()));
+            // Make them not get a move this turn
+            crew.setDone(true);
+            // Place on board
 
-            pilot.setPosition(entity.getPosition());
+            crew.setPosition(entity.getPosition());
             // Update the entity
-            entityUpdate(pilot.getId());
-            // check if the pilot lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
         }
@@ -30853,9 +30848,8 @@ public class Server implements Runnable {
             modifier -= 2;
         }
         int roll = Compute.d6(2) + modifier;
-        r = new Report(6305);
+        r = new Report(6306);
         r.subject = te.getId();
-        r.add("movement system");
         r.newlines = 0;
         r.indent(3);
         vDesc.add(r);
@@ -30991,6 +30985,7 @@ public class Server implements Runnable {
      *            the <code>Entity</code> for which to resolve it
      */
     public void doAssaultDrop(Entity entity) {
+    	//resolve according to SO p.22
 
         Report r = new Report(2380);
 
@@ -31048,9 +31043,9 @@ public class Server implements Runnable {
             }
 
             // determine where we really land
-            int distance = Compute.d6(fallHeight);
             Coords c = Compute.scatterAssaultDrop(entity.getPosition(),
                     fallHeight);
+            int distance = entity.getPosition().distance(c);
             r = new Report(2385);
             r.subject = entity.getId();
             r.add(distance);
@@ -31070,8 +31065,12 @@ public class Server implements Runnable {
             }
             entity.setPosition(c);
 
-            // do fall damage
-            entity.setElevation(fallHeight);
+            // do fall damage from accidental fall
+            //set elevation to fall height above ground or building roof 
+            IHex hex = game.getBoard().getHex(entity.getPosition());
+            int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
+                    .terrainLevel(Terrains.BLDG_ELEV) : 0;            
+            entity.setElevation(fallHeight+bldgElev);
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
@@ -31079,12 +31078,12 @@ public class Server implements Runnable {
             } else {
                 addReport(doEntityFallsInto(entity, c, psr, true));
             }
-        }
+        }else{
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());
         int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
                 .terrainLevel(Terrains.BLDG_ELEV) : 0;
-        entity.setElevation((0 - hex.floor()) + bldgElev);
+        entity.setElevation(bldgElev);
 
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if (bldg != null) {
@@ -31119,6 +31118,7 @@ public class Server implements Runnable {
                         "impossible displacement", entity instanceof Mech,
                         entity instanceof Mech));
             }
+        }
         }
     }
 

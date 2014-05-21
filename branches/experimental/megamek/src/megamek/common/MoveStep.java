@@ -2047,7 +2047,12 @@ public class MoveStep implements Serializable {
                     // tank on a road can move 5/7, **not** 5/8.
                 }
             } else if ((entity instanceof Infantry)
-                    && (curPos.distance(entity.getPosition()) <= 1)) {
+                    && (curPos.distance(entity.getPosition()) == 1)) {
+                // This ensures that Infantry always get their minimum 1 hex 
+                //  movement when TO hurried movement is on.
+                // A movepath that consists of a single step from one hex to the
+                // next should always be a walk, since it's covered under the
+                // infantry's 1 free movement
                 if ((parent.getEntity().getMovementMode() == EntityMovementMode.VTOL)
                         && (getElevation() > 0)) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;

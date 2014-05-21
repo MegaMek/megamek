@@ -1606,7 +1606,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         .isOnlyPavement() && (cmd.getMpUsed() <= (ce
                         .getWalkMP() + 1))))
                 && !(clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank)));
+                        "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
+                        && (ce.getCrew().getSize() < 2)));
     }
 
     private void updateSearchlightButton() {
@@ -3491,7 +3492,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             .getLastStep().isOnlyPavement() && (cmd.getMpUsed() <= (ce
                             .getWalkMP() + 1))))
                     || (clientgui.getClient().getGame().getOptions().booleanOption(
-                            "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank))
+                            "tacops_tank_crews") && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
+                            && (ce.getCrew().getSize() < 2))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear

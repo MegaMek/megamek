@@ -15946,7 +15946,7 @@ public class Server implements Runnable {
             ae.setDisplacementAttack(null);
             if (ae.isProne()) {
                 // attacker prone during weapons phase
-                addReport(doEntityFall(ae, daa.getTargetPos(), 0, 3,
+                addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
                         ae.getBasePilotingRoll(), false));
 
             } else {
@@ -16043,7 +16043,7 @@ public class Server implements Runnable {
                 addReport(r);
                 // entity isn't DFAing any more
                 ae.setDisplacementAttack(null);
-                addReport(doEntityFall(ae, dest, 0, 3,
+                addReport(doEntityFall(ae, dest, 2, 3,
                         ae.getBasePilotingRoll(), false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(),
                         dest);

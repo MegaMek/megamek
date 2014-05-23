@@ -64,6 +64,8 @@ v0.37.12-dev (SVN)
     from multiple weapons
 + Bug [#4136]: TacOps Vehicle Crews broken
 + Bug [#4137]: Maneuvering Ace allows fighters to crab walk.
++ Bug: Narc pods can attach to destroyed 'Mech locations and ProtoMech near-misses.
++ Changed ProtoMech near-miss message to remove explicit reference to "damage".
     
 v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection

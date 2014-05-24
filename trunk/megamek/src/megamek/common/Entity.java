@@ -4220,6 +4220,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !game.getOptions().booleanOption("stratops_ecm")) {
             return Entity.NONE;
         }
+        // If we have stealth up and running, there's no bubble.
+        if (isStealthOn()) {
+            return Entity.NONE;
+        }
 
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
@@ -9459,27 +9463,39 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !(getInternal(getDependentLocation(loc)) < 0)) {
             destroyLocation(getDependentLocation(loc), true);
         }
-        // remove any narc/inarc pods in this location
-        for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext(); ) {
-            if (i.next().getLocation() == loc) {
-                i.remove();
-            }
-        }
-        for (Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext(); ) {
-            if (i.next().getLocation() == loc) {
-                i.remove();
-            }
-        }
-        for (Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext(); ) {
-            if (i.next().getLocation() == loc) {
+    }
+    
+    /**
+     * Iterates over all Narc and iNarc pods attached to this entity and removes
+     * those still 'stuck' to destroyed or missing locations.
+     */
+    public void clearDestroyedNarcPods() {
+        for (Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext();) {
+            if (!locationCanHoldNarcPod(i.next().getLocation())) {
                 i.remove();
             }
         }
         for (Iterator<NarcPod> i = narcPods.iterator(); i.hasNext(); ) {
-            if (i.next().getLocation() == loc) {
+            if (!locationCanHoldNarcPod(i.next().getLocation())) {
                 i.remove();
             }
         }
+        for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext(); ) {
+            if (!locationCanHoldNarcPod(i.next().getLocation())) {
+                i.remove();
+            }
+        }
+        for (Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext(); ) {
+            if (!locationCanHoldNarcPod(i.next().getLocation())) {
+                i.remove();
+            }
+        }
+    }
+
+    private boolean locationCanHoldNarcPod(int location) {
+        return (getInternal(location) > 0)
+            && !isLocationBlownOff(location)
+            && !isLocationBlownOffThisPhase(location);
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,

@@ -30670,7 +30670,9 @@ public class Server implements Runnable {
             default:
                 break;
         }
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
+        // Apply vehicle effectiveness...except for jumps.
+        if (game.getOptions().booleanOption("tacops_vehicle_effective")
+                && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
         }
 

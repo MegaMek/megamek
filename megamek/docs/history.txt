@@ -63,7 +63,9 @@ v0.37.12-dev (SVN)
 + Bug: Destroying a location with a Narc/iNarc pod attached negates its benefits
     in mid-damage resolution; should last until end of phase (TW pp. 138/9).
 + Errata: Units with active stealth armor have no ECM 'bubble'.
-    
++ Errata: Vehicular jump jet motive damage checks ignore TacOps vehicle
+    effectiveness.
+
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It

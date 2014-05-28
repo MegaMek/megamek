@@ -65,7 +65,8 @@ v0.37.12-dev (SVN)
 + Errata: Units with active stealth armor have no ECM 'bubble'.
 + Errata: Vehicular jump jet motive damage checks ignore TacOps vehicle
     effectiveness.
-
++ Errata: AES BV increase for linked weapons reduced from 50% to 25%.
+    
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It

@@ -6,6 +6,8 @@ v0.37.12-exp-dev (SVN)
     docs folder to make it easier to find.
 + Added a basic moral system for Princess to have her potentially retreat units off the board before Forced Withdrawal
     would take effect.
++ Updated the Xotl RAT files to incorporate the most recent version (including the 3050 IS mechs) and to make use of
+    the changes for Feature Request [#1188] (RATs referencing other RATs) committed in revision [r10887].
 
 v0.37.12-dev (SVN)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

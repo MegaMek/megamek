@@ -68,6 +68,7 @@ v0.37.12-dev (SVN)
 + Errata: AES BV increase for linked weapons reduced from 50% to 25%.
 + Bug: SB Gauss weight counted towards targeting computer (incorrect as per the
     weapon's construction rules on TacOps p. 314).
++ Data: New Images
     
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.

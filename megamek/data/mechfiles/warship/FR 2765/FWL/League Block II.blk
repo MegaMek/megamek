@@ -1,0 +1,220 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+League Destroyer
+</Name>
+<Model>
+(Block II)
+</Model>
+<Tonnage>
+550000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+54
+62
+62
+62
+62
+44
+</Armor>
+
+<Nose Equipment>
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:40
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Front Left Side Equipment>
+LightNGauss
+LightNGauss Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+LightNGauss
+LightNGauss Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+HeavyNGauss
+HeavyNGauss Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+HeavyNGauss
+HeavyNGauss Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+LightNGauss
+LightNGauss Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+LightNGauss
+LightNGauss Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+MediumNGauss
+MediumNGauss Ammo:40
+LightNGauss
+LightNGauss Ammo:30
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+
+<structural_integrity>
+48
+</structural_integrity>
+
+<heatsinks>
+490
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2768
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:12:3
+SmallCraftBay:6:1
+CargoBay:102864:1
+</transporters>
+
+<docking_collar>
+2
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+12
+</escape_pod>
+
+<life_boat>
+12
+</life_boat>
+
+<crew>
+286
+</crew>
+
+<marines>
+56
+</marines>
+
+<passengers>
+0
+</passengers>

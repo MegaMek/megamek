@@ -75,15 +75,15 @@ ISArrowIV
 
 ISArrowIV Ammo:30
 
-ISERPPC
+ISPPC
 
-ISERPPC
+ISPPC
 
 </Nose Equipment>
 
 <Left Side Equipment>
 
-ISERPPC
+ISPPC
 
 ISLRM20
 
@@ -105,7 +105,7 @@ ISMediumLaser
 
 ISMediumLaser
 
-(R) ISERPPC
+(R) ISPPC
 
 (R) ISLRM20
 
@@ -131,7 +131,7 @@ ISMediumLaser
 
 <Right Side Equipment> 
 
-ISERPPC
+ISPPC
 
 ISLRM20
 
@@ -153,7 +153,7 @@ ISMediumLaser
 
 ISMediumLaser
 
-(R) ISERPPC
+(R) ISPPC
 
 (R) ISLRM20
 

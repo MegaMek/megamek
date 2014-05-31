@@ -1,52 +1,50 @@
-Version:1.1
-Quasit MilitiaMech
-QUA-51P
+Version:1.0
+Raider Mk II
+JL-2
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3074
-Source:Civil War
-Rules Level:2
+Era:3145
+Source:ED: Dark Age
+Rules Level:4
 
-Mass:45
-Engine:225 Fusion Engine
-Structure:Industrial
-Myomer:Standard
-Gyro:Standard Gyro
+Mass:50
+Engine:150 I.C.E. Engine
+Structure:IS Standard
+Myomer:Triple-Strength
 
-Heat Sinks:10 Single
-Walk MP:5
+Heat Sinks:2 Single
+Walk MP:3
 Jump MP:0
 
-Armor:Heavy Industrial
-LA Armor:10
-RA Armor:10
-LT Armor:13
-RT Armor:13
-CT Armor:20
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:24
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
 
-Weapons:2
-Machine Gun, Right Torso
-Plasma Rifle, Right Arm
+Weapons:1
+Rotary AC/2, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-Environmental Sealing
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+TSM
 -Empty-
 
 Right Arm:
@@ -54,18 +52,18 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPlasmaRifle
-ISPlasmaRifle
-Environmental Sealing
--Empty-
--Empty-
--Empty-
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+TSM
 -Empty-
 -Empty-
 
 Left Torso:
-ISPlasmaRifleAmmo
-Environmental Sealing
+TSM
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -78,9 +76,9 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-Machine Gun
-IS Machine Gun Ammo - Half
-Environmental Sealing
+TSM
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +100,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Environmental Sealing
+-Empty-
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Environmental Sealing
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -124,7 +122,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+TSM
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Environmental Sealing
+TSM
+-Empty-
 -Empty-
 -Empty-
 -Empty-

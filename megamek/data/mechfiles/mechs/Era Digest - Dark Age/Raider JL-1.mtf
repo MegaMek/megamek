@@ -1,52 +1,51 @@
-Version:1.1
-Quasit MilitiaMech
-QUA-51P
+Version:1.0
+Raider
+JL-1
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3074
-Source:Civil War
-Rules Level:2
+Era:3145
+Source:ED: Dark Age
+Rules Level:4
 
-Mass:45
-Engine:225 Fusion Engine
-Structure:Industrial
-Myomer:Standard
-Gyro:Standard Gyro
+Mass:50
+Engine:200 I.C.E. Engine
+Structure:IS Standard
+Myomer:Triple-Strength
 
-Heat Sinks:10 Single
-Walk MP:5
+Heat Sinks:2 Single
+Walk MP:4
 Jump MP:0
 
-Armor:Heavy Industrial
+Armor:Standard(Inner Sphere)
 LA Armor:10
 RA Armor:10
-LT Armor:13
-RT Armor:13
-CT Armor:20
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+LT Armor:14
+RT Armor:14
+CT Armor:16
+HD Armor:9
+LL Armor:13
+RL Armor:13
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
 
 Weapons:2
-Machine Gun, Right Torso
-Plasma Rifle, Right Arm
+MRM 10, Right Torso
+MRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-Environmental Sealing
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+Dual Saw
+TSM
 -Empty-
 
 Right Arm:
@@ -54,9 +53,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPlasmaRifle
-ISPlasmaRifle
-Environmental Sealing
+TSM
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -64,8 +63,8 @@ Environmental Sealing
 -Empty-
 
 Left Torso:
-ISPlasmaRifleAmmo
-Environmental Sealing
+TSM
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -78,12 +77,12 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-Machine Gun
-IS Machine Gun Ammo - Half
-Environmental Sealing
--Empty-
--Empty-
--Empty-
+MRM 10
+MRM 10
+MRM 10
+MRM 10
+IS MRM 10 Ammo
+TSM
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +101,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Environmental Sealing
+-Empty-
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Environmental Sealing
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -124,7 +123,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+TSM
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +137,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Environmental Sealing
+TSM
+-Empty-
 -Empty-
 -Empty-
 -Empty-

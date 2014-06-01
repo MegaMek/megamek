@@ -4213,10 +4213,18 @@ public abstract class Mech extends Entity {
 
                 double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= mechHeatEfficiency) {
-                    dBV /= 2;
+                    if (useReducedOverheatModifierBV()) {
+                        dBV /= 10;
+                    } else {
+                        dBV /= 2;
+                    }
                 }
                 if (heatAdded >= mechHeatEfficiency) {
+                    if (useReducedOverheatModifierBV()) {
+                        bvText.append("Heat efficiency reached, BV * 0.1");
+                    } else {
                     bvText.append("Heat efficiency reached, half BV");
+                    }
                 }
                 heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;

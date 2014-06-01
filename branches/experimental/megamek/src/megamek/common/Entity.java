@@ -666,7 +666,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Flag that can be used to indicate whether this Entity should use a 
      * geometric mean when computing BV.
      */
-    protected boolean useGeometricBV = false;;
+    protected boolean useGeometricBV = false;
+
+    protected boolean useReducedOverheatModifierBV = false;
     
     /**
      * Generates a new, blank, entity.
@@ -5547,6 +5549,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
                 && game.getOptions().booleanOption("geometric_mean_bv"));
+    }
+
+    public boolean useReducedOverheatModifierBV() {
+        return (useReducedOverheatModifierBV || (game != null)
+                && game.getOptions().booleanOption("reduced_overheat_modifier_bv"));
     }
 
     /**
@@ -12884,5 +12891,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setUseGeometricBV(boolean useGeometricBV) {
         this.useGeometricBV = useGeometricBV;
+    }
+
+    public boolean isUseReducedOverheatModifierBV() {
+        return useReducedOverheatModifierBV;
+    }
+
+    public void setUseReducedOverheatModifierBV(boolean useReducedOverheatModifierBV) {
+        this.useReducedOverheatModifierBV = useReducedOverheatModifierBV;
     }
 }

@@ -71,6 +71,18 @@ v0.37.12-dev (SVN)
 + Bug [#4137]: Maneuvering Ace allows fighters to crab walk.
 + Bug: Narc pods can attach to destroyed 'Mech locations and ProtoMech near-misses.
 + Changed ProtoMech near-miss message to remove explicit reference to "damage".
++ Data: Shadow Hawk 7CS image link fix.
++ Bug: Destroying a location with a Narc/iNarc pod attached negates its benefits
+    in mid-damage resolution; should last until end of phase (TW pp. 138/9).
++ Errata: Units with active stealth armor have no ECM 'bubble'.
++ Errata: Vehicular jump jet motive damage checks ignore TacOps vehicle
+    effectiveness.
++ Errata: AES BV increase for linked weapons reduced from 50% to 25%.
++ Bug: SB Gauss weight counted towards targeting computer (incorrect as per the
+    weapon's construction rules on TacOps p. 314).
++ Data: New Images
++ Bug [#4133]: Field of View Bug (move steps not updating elevation)
++ Data: New Units (Gunslingers,ED:DA,2765:FWLM,ER 2750)
     
 v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection

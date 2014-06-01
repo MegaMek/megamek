@@ -60,7 +60,10 @@ public class ISSilverBulletGauss extends GaussWeapon {
         longAV = 9;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_SBGAUSS;
-        flags = flags.or(F_NO_AIM);
+        // SB Gauss rifles can neither benefit from a targeting computer nor
+        // do they add to its mass and size (TacOps pp. 314/5); thus, the
+        // "direct fire" flag inherited from the superclass needs to go again.
+        flags = flags.or(F_NO_AIM).andNot(F_DIRECT_FIRE);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
         techRating = RATING_E;

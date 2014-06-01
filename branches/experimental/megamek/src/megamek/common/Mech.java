@@ -3694,7 +3694,7 @@ public abstract class Mech extends Entity {
             }
 
             if (hasFunctionalArmAES(weapon.getLocation())) {
-                dBV *= 1.5;
+                dBV *= 1.25;
                 name = name.concat(" augmented by AES");
             }
 
@@ -3984,9 +3984,9 @@ public abstract class Mech extends Entity {
                     weaponName = weaponName.concat(" with Apollo");
                 }
             }
-            // if linked to AES, multiply by 1.5
+            // if linked to AES, multiply by 1.25
             if (hasFunctionalArmAES(mounted.getLocation())) {
-                dBV *= 1.5;
+                dBV *= 1.25;
             }
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -4058,7 +4058,7 @@ public abstract class Mech extends Entity {
                             double dBV = ((MiscType) mount.getType())
                                     .getBV(this);
                             if (hasFunctionalArmAES(mount.getLocation())) {
-                                dBV *= 1.5;
+                                dBV *= 1.25;
                             }
                             weaponValues.add(dBV);
                             weaponValues.add((double) getActiveVibrobladeHeat(
@@ -4314,11 +4314,11 @@ public abstract class Mech extends Entity {
                 continue;
             }
             double bv = mtype.getBV(this);
-            // if physical weapon linked to AES, multiply by 1.5
+            // if physical weapon linked to AES, multiply by 1.25
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype
                     .hasFlag(MiscType.F_HAND_WEAPON))
                     && hasFunctionalArmAES(mounted.getLocation())) {
-                bv *= 1.5;
+                bv *= 1.25;
             }
 
             if (bv > 0) {

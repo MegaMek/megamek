@@ -2656,16 +2656,11 @@ public class Server implements Runnable {
             // movement phase
             checkForFlamingDamage();
             checkForTeleMissileAttacks();
+            cleanupDestroyedNarcPods();
             checkForFlawedCooling();
             // check phase report
             if (vPhaseReport.size() > 1) {
                 game.addReports(vPhaseReport);
-                changePhase(IGame.Phase.PHASE_MOVEMENT_REPORT);
-            } else {
-                // just the header, so we'll add the <nothing> label
-                addReport(new Report(1205, Report.PUBLIC));
-                game.addReports(vPhaseReport);
-                sendReport();
                 changePhase(IGame.Phase.PHASE_OFFBOARD);
             }
             break;
@@ -2687,6 +2682,7 @@ public class Server implements Runnable {
             resolveScheduledNukes();
             applyBuildingDamage();
             checkForPSRFromDamage();
+            cleanupDestroyedNarcPods();
             addReport(resolvePilotingRolls());
             checkForFlawedCooling();
             // check phase report
@@ -2711,6 +2707,7 @@ public class Server implements Runnable {
             checkForPSRFromDamage();
             addReport(resolvePilotingRolls());
             resolveSinkVees();
+            cleanupDestroyedNarcPods();
             checkForFlawedCooling();
             // check phase report
             if (vPhaseReport.size() > 1) {
@@ -2770,6 +2767,7 @@ public class Server implements Runnable {
             checkForPSRFromDamage();
             addReport(resolvePilotingRolls());
 
+            cleanupDestroyedNarcPods();
             checkForFlawedCooling();
 
             sendSpecialHexDisplayPackets();
@@ -18208,6 +18206,16 @@ public class Server implements Runnable {
     }
 
     /**
+     * Iterates over all entities and gets rid of Narc pods attached to destroyed
+     * or lost locations.
+     */
+    private void cleanupDestroyedNarcPods() {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            i.nextElement().clearDestroyedNarcPods();
+        }
+    }
+    
+    /**
      * Resolves all built up piloting skill rolls. Used at end of weapons,
      * physical phases.
      */
@@ -30859,7 +30867,9 @@ public class Server implements Runnable {
         default:
             break;
         }
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
+        // Apply vehicle effectiveness...except for jumps.
+        if (game.getOptions().booleanOption("tacops_vehicle_effective")
+                && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
         }
 

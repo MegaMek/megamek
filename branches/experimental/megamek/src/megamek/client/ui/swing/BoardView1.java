@@ -3133,6 +3133,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * present, the GUIPreference 'mechInSecond' is used.
      */
     protected LosEffects getLosEffects(Coords src, Coords dest) {
+        IBoard board = game.getBoard(); 
+        IHex srcHex = board.getHex(src);
+        IHex dstHex = board.getHex(dest);
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = src;
         ai.targetPos = dest;
@@ -3140,11 +3143,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // no selected mech we use the mechInFirst GUIPref.
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
-            ai.attackAbsHeight = selectedEntity.absHeight();
+            int elevation;
+            if (pathSprites.size() > 0) {
+                // If we've got a step, get the elevation from it
+                elevation = pathSprites.get(pathSprites.size() - 1).getStep()
+                        .getElevation();
+            } else {
+                elevation = selectedEntity.getElevation();
+            }
+            ai.attackAbsHeight = selectedEntity.getHeight() + elevation;
         } else {
             ai.attackHeight = GUIPreferences.getInstance().getMechInFirst() ? 1
                     : 0;
-            ai.attackAbsHeight = game.getBoard().getHex(src).surface()
+            ai.attackAbsHeight = srcHex.surface()
                     + ai.attackHeight;
         }
         // First, we take the tallest unit in the destination hex, if no units
@@ -3163,7 +3174,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
             ai.targetHeight = GUIPreferences.getInstance().getMechInSecond() ? 1
                     : 0;
-            ai.targetAbsHeight = game.getBoard().getHex(dest).surface()
+            ai.targetAbsHeight = dstHex.surface()
                     + ai.targetHeight;
         }
         return LosEffects.calculateLos(game, ai);

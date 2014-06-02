@@ -2661,6 +2661,12 @@ public class Server implements Runnable {
             // check phase report
             if (vPhaseReport.size() > 1) {
                 game.addReports(vPhaseReport);
+                changePhase(IGame.Phase.PHASE_MOVEMENT_REPORT);
+            } else {
+                // just the header, so we'll add the <nothing> label
+                addReport(new Report(1205, Report.PUBLIC));
+                game.addReports(vPhaseReport);
+                sendReport();
                 changePhase(IGame.Phase.PHASE_OFFBOARD);
             }
             break;

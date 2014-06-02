@@ -12,6 +12,8 @@ v0.37.12-exp-dev (SVN)
     [#1188] (RATs referencing other RATs) committed in revision [r10887].
 + Patch [#457]: (Unofficial Option) Reduce Overheat modifier in BV calculation
 + Features: Fires in the dark now work properly for illumination (TO pg 57)
++ Bug: Fixed a mistake in the merge in [r10927] and some code was lost that
+    shouldn't have been
 
 v0.37.12-dev (SVN)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

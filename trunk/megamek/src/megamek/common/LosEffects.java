@@ -48,9 +48,25 @@ public class LosEffects {
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
+        /**
+         * The absolute elevation of the attacker, i.e. the number of levels
+         * attacker is placed above a level 0 hex.
+         */
         public int attackAbsHeight;
+        /**
+         * The absolute elevation of the target, i.e. the number of levels
+         * target is placed above a level 0 hex.
+         */
         public int targetAbsHeight;
+        /**
+         * The height of the attacker, that is, how many levels above it's
+         * elevation is it for LOS purposes.
+         */
         public int attackHeight;
+        /**
+         * The height of the target, that is, how many levels above it's
+         * elevation is it for LOS purposes.
+         */
         public int targetHeight;
         public int attackerId;
         public int targetId;

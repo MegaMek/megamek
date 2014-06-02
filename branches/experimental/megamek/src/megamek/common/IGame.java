@@ -42,6 +42,11 @@ import megamek.server.victory.Victory;
  */
 public interface IGame {
 
+    public static int ILLUMINATED_NONE = 0;
+    public static int ILLUMINATED_FIRE = 1;
+    public static int ILLUMINATED_FLARE = 2;
+    public static int ILLUMINATED_LIGHT = 3;
+    
     public enum Phase {
         PHASE_UNKNOWN,
         PHASE_LOUNGE,
@@ -1324,7 +1329,7 @@ public interface IGame {
     /**
      * returns true if the hex is illuminated by a flare
      */
-    public abstract boolean isPositionIlluminated(Coords c);
+    public abstract int isPositionIlluminated(Coords c);
 
     /**
      * Age the flare list and remove any which have burnt out Artillery flares

@@ -11,6 +11,7 @@ v0.37.12-exp-dev (SVN)
     the 3050 IS mechs) and to make use of the changes for Feature Request
     [#1188] (RATs referencing other RATs) committed in revision [r10887].
 + Patch [#457]: (Unofficial Option) Reduce Overheat modifier in BV calculation
++ Features: Fires in the dark now work properly for illumination (TO pg 57)
 
 v0.37.12-dev (SVN)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

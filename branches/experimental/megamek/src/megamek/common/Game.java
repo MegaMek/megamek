@@ -3007,13 +3007,26 @@ public class Game implements Serializable, IGame {
     /**
      * returns true if the hex is illuminated by a flare
      */
-    public boolean isPositionIlluminated(Coords c) {
+    public int isPositionIlluminated(Coords c) {
+        IHex hex = getBoard().getHex(c);
+        // Hexes that are on fire, are illuminted
+        if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
+            return ILLUMINATED_FIRE;
+        }
+        // If we are adjacent to a burning hex, we are also illuminated
+        for (int dir = 0; dir < 6; dir++) {
+            Coords adj = c.translated(dir);
+            hex = getBoard().getHex(adj);
+            if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
+                return ILLUMINATED_FIRE;
+            } 
+        }
         for (Flare flare : flares) {
             if (flare.illuminates(c)) {
-                return true;
+                return ILLUMINATED_FLARE;
             }
         }
-        return false;
+        return ILLUMINATED_NONE;
     }
 
     /**

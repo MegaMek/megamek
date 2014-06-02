@@ -1553,6 +1553,8 @@ public class Server implements Runnable {
                 ((MechWarrior) entity).setLanded(true);
             }
         }
+        game.clearIlluminatedPositions();
+        send(new Packet(Packet.COMMAND_CLEAR_ILLUM_HEXES));
     }
 
     /**
@@ -11903,6 +11905,17 @@ public class Server implements Runnable {
                 TriggerBPodAction tba = (TriggerBPodAction) ea;
                 Mounted pod = entity.getEquipment(tba.getPodId());
                 pod.setUsedThisRound(true);
+            }
+            
+            // Mark illuminated hexes, so they can be displayed
+            if (ea instanceof SearchlightAttackAction) {
+                boolean hexesAdded = 
+                        ((SearchlightAttackAction)ea).setHexesIlluminated(game);
+                // If we added new hexes, send them to all players.  
+                // These are spotlights at night, you know they're there. 
+                if (hexesAdded) {
+                    send(createIlluminatedHexesPacket());
+                }
             }
         }
 
@@ -27643,6 +27656,11 @@ public class Server implements Runnable {
             }
         }
         return new Packet(Packet.COMMAND_SENDING_ARTILLERYATTACKS, v);
+    }
+    
+    private Packet createIlluminatedHexesPacket() {
+        HashSet<Coords> illumHexes = game.getIlluminatedPositions();
+        return new Packet(Packet.COMMAND_SENDING_ILLUM_HEXES, illumHexes);
     }
 
     /**

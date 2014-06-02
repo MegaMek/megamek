@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -1384,5 +1385,28 @@ public interface IGame {
     public abstract PlanetaryConditions getPlanetaryConditions();
 
     public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
+    
+    /**
+     * Get a set of illuminated hexes.
+     */
+    public abstract HashSet<Coords> getIlluminatedPositions();
+    
+    /**
+     * Clear the map of illuminated hexes.
+     */
+    public abstract void clearIlluminatedPositions();
+
+    /**
+     * Set the set of illuminated hexes.
+     */
+    public abstract void setIlluminatedPositions(HashSet<Coords> ip);
+
+    /**
+     * Add a new hex to the collection of illuminated hexes.
+     * 
+     * @return True if a new hex was added, else false if the set already
+     *      contained the input hex.
+     */
+    public abstract boolean addIlluminatedPosition(Coords c);
 
 }

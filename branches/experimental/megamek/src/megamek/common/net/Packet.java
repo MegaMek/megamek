@@ -58,6 +58,8 @@ public class Packet {
     public static final int COMMAND_ROUND_UPDATE = 260;
 
     public static final int COMMAND_SENDING_BOARD = 270;
+    public static final int COMMAND_SENDING_ILLUM_HEXES = 275;
+    public static final int COMMAND_CLEAR_ILLUM_HEXES = 276;
     public static final int COMMAND_SENDING_ENTITIES = 280;
     public static final int COMMAND_SENDING_PLAYERS = 290;
     public static final int COMMAND_SENDING_TURNS = 300;

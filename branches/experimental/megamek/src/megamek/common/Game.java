@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -127,6 +128,8 @@ public class Game implements Serializable, IGame {
 
     private Vector<TagInfo> tagInfoForTurn = new Vector<TagInfo>();
     private Vector<Flare> flares = new Vector<Flare>();
+    private HashSet<Coords> illuminatedPositions = 
+            new HashSet<Coords>();
 
     private HashMap<String, Object> victoryContext = null;
 
@@ -1336,6 +1339,7 @@ public class Game implements Serializable, IGame {
         clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
+        illuminatedPositions.clear();
         clearAllReports();
         smokeCloudList.clear();
 
@@ -3003,13 +3007,59 @@ public class Game implements Serializable, IGame {
         flares.addElement(flare);
         processGameEvent(new GameBoardChangeEvent(this));
     }
+    
+    /**
+     * Get a set of illuminated hexes.
+     */
+    public HashSet<Coords> getIlluminatedPositions() {
+        return illuminatedPositions;
+    }
+    
+    /**
+     * Clear the map of illuminated hexes.
+     */
+    public void clearIlluminatedPositions() {
+        illuminatedPositions.clear();
+    }
+
+    /**
+     * Set the set of illuminated hexes.
+     */
+    public void setIlluminatedPositions(HashSet<Coords> ip) {
+        illuminatedPositions = ip;
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    /**
+     * Add a new hex to the collection of illuminated hexes.
+     * 
+     * @return True if a new hex was added, else false if the set already
+     *      contained the input hex.
+     */
+    public boolean addIlluminatedPosition(Coords c) {
+        boolean rv = illuminatedPositions.add(c);
+        processGameEvent(new GameBoardChangeEvent(this));
+        return rv;
+    }
 
     /**
      * returns true if the hex is illuminated by a flare
      */
     public int isPositionIlluminated(Coords c) {
+        // Flares happen first, because they totally negate nighttime penalties
+        for (Flare flare : flares) {
+            if (flare.illuminates(c)) {
+                return ILLUMINATED_FLARE;
+            }
+        }
         IHex hex = getBoard().getHex(c);
-        // Hexes that are on fire, are illuminted
+        
+        // Searchlights reduce nighttime penalties by up to 3 points.
+        if (illuminatedPositions.contains(c)) {
+            return ILLUMINATED_LIGHT;
+        }
+        
+        // Fires can reduce nighttime penalties by up to 2 points.
         if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
             return ILLUMINATED_FIRE;
         }
@@ -3020,11 +3070,6 @@ public class Game implements Serializable, IGame {
             if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
                 return ILLUMINATED_FIRE;
             } 
-        }
-        for (Flare flare : flares) {
-            if (flare.illuminates(c)) {
-                return ILLUMINATED_FLARE;
-            }
         }
         return ILLUMINATED_NONE;
     }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -957,6 +958,11 @@ public class Client implements IClientCommandHandler {
     protected void receiveSendingMinefields(Packet packet) {
         game.setMinefields((Vector<Minefield>) packet.getObject(0));
     }
+    
+    @SuppressWarnings("unchecked")
+    protected void receiveIlluminatedHexes(Packet p) {
+        game.setIlluminatedPositions((HashSet<Coords>)p.getObject(0));
+    }
 
     protected void receiveRevealMinefield(Packet packet) {
         game.addMinefield((Minefield) packet.getObject(0));
@@ -1187,6 +1193,12 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_SENDING_MINEFIELDS:
                 receiveSendingMinefields(c);
+                break;
+            case Packet.COMMAND_SENDING_ILLUM_HEXES:
+                receiveIlluminatedHexes(c);
+                break;
+            case Packet.COMMAND_CLEAR_ILLUM_HEXES:
+                game.clearIlluminatedPositions();
                 break;
             case Packet.COMMAND_UPDATE_MINEFIELDS:
                 receiveUpdateMinefields(c);

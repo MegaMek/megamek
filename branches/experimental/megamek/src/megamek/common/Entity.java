@@ -8609,26 +8609,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * illuminate a hex and all units that are between us and the hex
-     *
-     * @param target the <code>HexTarget</code> to illuminate
-     */
-    public void illuminateTarget(HexTarget target) {
-        if (hasSpotlight() && spotlightIsActive && (target != null)) {
-            illuminated = true;
-            ArrayList<Coords> in = Coords.intervening(getPosition(),
-                                                      target.getPosition());
-            for (Coords c : in) {
-                for (Enumeration<Entity> e = game.getEntities(c); e
-                        .hasMoreElements(); ) {
-                    Entity en = e.nextElement();
-                    en.setIlluminated(true);
-                }
-            }
-        }
-    }
-
-    /**
      * Is the Entity stuck in a swamp?
      */
     public boolean isStuck() {

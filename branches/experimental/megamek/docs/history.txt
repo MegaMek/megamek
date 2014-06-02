@@ -14,6 +14,7 @@ v0.37.12-exp-dev (SVN)
 + Features: Fires in the dark now work properly for illumination (TO pg 57)
 + Bug: Fixed a mistake in the merge in [r10927] and some code was lost that
     shouldn't have been
++ Bug [#1259]: MM has no mechanism for tracking illuminated hexes
 
 v0.37.12-dev (SVN)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

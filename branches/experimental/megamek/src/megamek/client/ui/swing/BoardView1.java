@@ -1710,7 +1710,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
-                && game.isPositionIlluminated(c) != Game.ILLUMINATED_NONE) {
+                && game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE) {
             scaledImage = getScaledImage(tileManager.getNightFog(),true);
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
         }

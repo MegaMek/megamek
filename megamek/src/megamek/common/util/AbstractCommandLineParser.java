@@ -167,6 +167,9 @@ public abstract class AbstractCommandLineParser {
      */
     protected abstract void start() throws ParseException;
 
+    protected boolean hasNext() {
+        return position < argsLen;
+    }
     /**
      * Reads the next available token.
      */

@@ -1,6 +1,10 @@
 VERSION HISTORY:
 ----------------
-v0.37.12-exp-dev (SVN)
+v0.37.13-exp-dev (SVN)
+
+v0.37.13-dev (SVN)
+
+v0.37.12-exp (2014-06-03 19:06 UTC)
 + Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the
     "@" symbol as a reference to anther RAT to roll on.  Updated the EXAMPLE RAT
     FILE.txt file to reflect this information and also copied it into the docs

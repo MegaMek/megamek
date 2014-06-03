@@ -24,7 +24,7 @@ public class DedicatedServer {
 
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
 
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t [-port <port>] [<saved game>]";
+    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t [-password <pass>] [-port <port>] [<saved game>]";
 
     public static void start(String[] args) {
         CommandLineParser cp = new CommandLineParser(args);
@@ -39,14 +39,19 @@ public class DedicatedServer {
                         .getLastServerPort();
             }
             String announceUrl = cp.getAnnounceUrl();
+            String password = cp.getPassword();
 
             // kick off a RNG check
             megamek.common.Compute.d6();
             // start server
             Server dedicated;
             try {
-                dedicated = new Server(PreferenceManager.getClientPreferences()
-                        .getLastServerPass(), usePort, !announceUrl.equals(""), announceUrl);
+                if (password == null || password.length() == 0) {
+                    password = PreferenceManager.getClientPreferences()
+                            .getLastServerPass();
+                }
+                dedicated = new Server(password, usePort,
+                        !announceUrl.equals(""), announceUrl);
             } catch (IOException ex) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not start server at localhost")
@@ -80,10 +85,12 @@ public class DedicatedServer {
 
         private String gameFilename;
         private int port;
+        private String password;
         private String announceUrl = "";
 
         // Options
         private static final String OPTION_PORT = "port"; //$NON-NLS-1$
+        private static final String OPTION_PASSWORD = "password"; //$NON-NLS-1$
         private static final String OPTION_ANNOUNCE = "announce"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
@@ -97,6 +104,15 @@ public class DedicatedServer {
          */
         public int getPort() {
             return port;
+        }
+        
+        /**
+         * Returns the password option value, will be null if not set.
+         * 
+         * @return
+         */
+        public String getPassword() {
+            return password;
         }
 
         public String getAnnounceUrl() {
@@ -116,20 +132,32 @@ public class DedicatedServer {
 
         @Override
         protected void start() throws ParseException {
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_PORT)) {
-                nextToken();
-                parsePort();
-            }
-            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_ANNOUNCE)) {
-                nextToken();
-                parseAnnounce();
-            }
-            if (getToken() == TOK_LITERAL) {
-                gameFilename = getTokenValue();
-                nextToken();
-            }
-            if (getToken() != TOK_EOF) {
-                error("unexpected input"); //$NON-NLS-1$
+            while (hasNext()) {
+                int tokType = getToken();
+                switch (tokType) {
+                case TOK_OPTION:
+                    if (getTokenValue().equals(OPTION_PORT)) {
+                        nextToken();
+                        parsePort();
+                    } else if (getTokenValue().equals(OPTION_ANNOUNCE)) {
+                        nextToken();
+                        parseAnnounce();
+                    } else if (getTokenValue().equals(OPTION_PASSWORD)) {
+                        nextToken();
+                        parsePassword();
+                    }
+                    break;
+                case TOK_LITERAL:
+                    gameFilename = getTokenValue();
+                    nextToken();
+                    break;
+                case TOK_EOF:
+                    // Do nothing, although this shouldn't happen
+                    break;
+                default:
+                    error("unexpected input"); //$NON-NLS-1$                        
+                }
+                nextToken();                
             }
         }
 
@@ -141,7 +169,6 @@ public class DedicatedServer {
                 } catch (NumberFormatException e) {
                     //ignore, leave at -1
                 }
-                nextToken();
                 if ((newPort < 0) || (newPort > 65535)) {
                     error("invalid port number"); //$NON-NLS-1$
                 }
@@ -154,9 +181,16 @@ public class DedicatedServer {
         private void parseAnnounce() throws ParseException {
             if (getToken() == TOK_LITERAL) {
                 announceUrl = getTokenValue();
-                nextToken();
             } else {
                 error("meta server announce URL expected"); //$NON-NLS-1$
+            }
+        }
+        
+        private void parsePassword() throws ParseException {
+            if (getToken() == TOK_LITERAL) {
+                password = getTokenValue();
+            } else {
+                error("password expected"); //$NON-NLS-1$
             }
         }
 

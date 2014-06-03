@@ -20,7 +20,7 @@ package megamek.common;
 public interface IHex extends Cloneable {
 
     /**
-     * @return hex elevation
+     * @return hex elevation (hex level in TW nomenclature)
      */
     public abstract int getElevation();
 
@@ -130,8 +130,13 @@ public interface IHex extends Cloneable {
     public abstract int surface();
 
     /**
-     * @return the lowest level that features in this hex extend to. Below this
-     *         level is assumed to be bedrock.
+     * Returns the lowest reachable point of this hex, used for 
+     * terrain types that can extend below the surface of the hex, such as water
+     * and basements.  Unrevealed basements will not effect this value.
+     * 
+     * @return the lowest level that revealed features in this hex extend to. 
+     *         Below this level is assumed to be bedrock and/or basement.
+     *         Unrevealed basements will not effect this value.
      */
     public abstract int floor();
 

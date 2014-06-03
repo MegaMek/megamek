@@ -87,6 +87,9 @@ v0.37.12-dev (SVN)
 + Data: New Images
 + Bug [#4133]: Field of View Bug (move steps not updating elevation)
 + Data: New Units (Gunslingers,ED:DA,2765:FWLM,ER 2750)
++ Bug [#4133]: Field of View Bug (proper elevation fix)
++ Bug: No -password argument for dedicated server, dedicated server arguments
+    had to be listed in order
     
 v0.37.11-exp (2014-05-05 15:47 UTC)
 + Feature [#1241]: Server should use a multi-threaded approach to connection

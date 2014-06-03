@@ -3129,11 +3129,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Calculate the LosEffects between the given Coords. Unit height for the
      * source hex is determined by the selectedEntity if present otherwise the
-     * GUIPreference 'mechInFirst' is used. Unit height for the destination hex
-     * is determined by the tallest unit present in that hex. If no units are
-     * present, the GUIPreference 'mechInSecond' is used.
+     * GUIPreference 'mechInFirst' is used. If pathSprites are not empty then
+     * elevation from last step is used for attacker elevation, also it is
+     * assumed that last step's position is equal to src.
+     * Unit height for the destination hex is determined by the tallest unit
+     * present in that hex. If no units are present, the GUIPreference
+     * 'mechInSecond' is used.
      */
     protected LosEffects getLosEffects(Coords src, Coords dest) {
+        GUIPreferences guip = GUIPreferences.getInstance();
         IBoard board = game.getBoard(); 
         IHex srcHex = board.getHex(src);
         IHex dstHex = board.getHex(dest);
@@ -3141,23 +3145,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         ai.attackPos = src;
         ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If there's
-        // no selected mech we use the mechInFirst GUIPref.
+        // no selected unit we use the mechInFirst GUIPref.
         if (selectedEntity != null) {
             ai.attackHeight = selectedEntity.getHeight();
+            // Elevation of entity above the hex surface
             int elevation;
             if (pathSprites.size() > 0) {
                 // If we've got a step, get the elevation from it
-                elevation = pathSprites.get(pathSprites.size() - 1).getStep()
-                        .getElevation();
+                int lastStepIdx = pathSprites.size() - 1;
+                MoveStep lastMS = pathSprites.get(lastStepIdx).getStep();
+                elevation = lastMS.getElevation();
             } else {
+                //otherwise we use entity's elevation
                 elevation = selectedEntity.getElevation();
             }
-            ai.attackAbsHeight = selectedEntity.getHeight() + elevation;
+            ai.attackAbsHeight = srcHex.surface() + elevation
+                    + selectedEntity.getHeight();
         } else {
-            ai.attackHeight = GUIPreferences.getInstance().getMechInFirst() ? 1
-                    : 0;
-            ai.attackAbsHeight = srcHex.surface()
-                    + ai.attackHeight;
+            ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
+            ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
         }
         // First, we take the tallest unit in the destination hex, if no units
         // are present we use the mechInSecond GUIPref.
@@ -3165,7 +3171,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
-			int trAbsheight = ent.absHeight();
+			int trAbsheight = dstHex.surface() + ent.absHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
                 ai.targetAbsHeight = trAbsheight;
@@ -3173,10 +3179,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if ((ai.targetHeight == Integer.MIN_VALUE)
                 && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
-            ai.targetHeight = GUIPreferences.getInstance().getMechInSecond() ? 1
-                    : 0;
-            ai.targetAbsHeight = dstHex.surface()
-                    + ai.targetHeight;
+            ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
+            ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
         }
         return LosEffects.calculateLos(game, ai);
     }

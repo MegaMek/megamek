@@ -1718,7 +1718,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns the absolute height of the entity
+     * Returns the elevation of the entity's highest point relative to
+     * the surface of the hex the entity is in , i.e.
+     * absHeight() == getElevation() + getHeight()
+     *
      */
     public int absHeight() {
         return getElevation() + height();

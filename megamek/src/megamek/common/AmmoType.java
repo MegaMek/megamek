@@ -11428,7 +11428,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISVGLAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         ammo.name = "Vehicular Grenade Launcher Ammo";
         ammo.shortName = "VGL";
         ammo.setInternalName("IS Ammo VGL");
@@ -11441,10 +11441,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
+        ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2820;
-        ammo.techLevel.put(2820, ammo.techLevel.get(3067));
+        ammo.introDate = 1950;
+        ammo.techLevel.put(1950, ammo.techLevel.get(3067));
         ammo.techRating = RATING_B;
         return ammo;
     }

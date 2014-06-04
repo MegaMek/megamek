@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.37.13-dev (SVN)
++ Data: Unit and Image Fixes
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

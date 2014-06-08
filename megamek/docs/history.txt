@@ -5,6 +5,8 @@ v0.37.13-dev (SVN)
 + Data: Broken Cadaver image link
 + Bug [#4156]: Searchlights not properly added if searchlight quirk is added in
     lobby
++ Bug: MegaMekGUI was looking for readme's in the wrong location (they're in
+    docs now)
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

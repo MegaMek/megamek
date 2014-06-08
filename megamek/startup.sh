@@ -137,9 +137,20 @@ if ! test -d $MEGAMEK_CONFPATH/data -o \
         echo "Could not link to $MEGAMEK_CONFPATH/data.  Exiting."
         exit 4
     fi
+fi
 
-    # Copy all the readme files to the configuation directory.
-    cp $MEGAMEK_DATAPATH/readme*.txt $MEGAMEK_CONFPATH/
+# Try to link the docs directory into the
+# configuration directory, if it does not exist.
+if ! test -d $MEGAMEK_CONFPATH/docs -o \
+    -L $MEGAMEK_CONFPATH/docs; then
+    echo "Linking the MegaMek docs directory to $MEGAMEK_CONFPATH/docs."
+    ln -s $MEGAMEK_DATAPATH/docs $MEGAMEK_CONFPATH/docs
+
+    # Exit if we could not link in the data directory.
+    if ! test -L $MEGAMEK_CONFPATH/docs; then
+        echo "Could not link to $MEGAMEK_CONFPATH/data.  Exiting."
+        exit 4
+    fi
 fi
 
 # Try to create the configuration subdirectories if necessary.

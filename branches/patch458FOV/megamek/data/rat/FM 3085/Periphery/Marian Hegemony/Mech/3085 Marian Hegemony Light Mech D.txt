@@ -1,0 +1,12 @@
+3085 Marian Hegemony Light Mech D
+Firestarter FS9-H,1
+Wasp WSP-1A,2
+Locust LCT-1V,3
+UrbanMech UM-R60,4
+Flea FLE-19,5
+Locust LCT-1V2,6
+Stinger STG-3P,5
+Commando COM-2D,4
+Javelin JVN-10N,3
+Commando COM-4H,2
+Jackal JA-KL-1532,1

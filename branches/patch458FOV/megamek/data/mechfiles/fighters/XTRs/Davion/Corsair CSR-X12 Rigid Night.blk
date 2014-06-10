@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Corsair
+</Name>
+
+<Model>
+CSR-X12 Rigid Night
+</Model>
+
+<year>
+3074
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+3
+</engine_type>
+
+<armor>
+96
+72
+72
+48
+</armor>
+
+<Nose Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLSmallPulseLaser
+CLSmallPulseLaser
+</Aft Equipment>
+
+<source>
+XTR Davion
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

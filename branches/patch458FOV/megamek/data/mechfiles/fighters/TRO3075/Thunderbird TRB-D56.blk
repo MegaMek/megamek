@@ -1,0 +1,115 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Thunderbird
+
+</Name>
+
+<Model>
+
+TRB-D56
+
+</Model>
+
+<Tonnage>
+
+100
+
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+106
+78
+78
+51
+</Armor>
+
+<Nose Equipment>
+ISUltraAC10
+ISHeavyPPC
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+</Nose Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISLRM20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+</Right Wing Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISLRM20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+</Left Wing Equipment>
+
+<Aft Equipment>
+ISERSmallLaser
+ISERSmallLaser
+</Aft Equipment>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3074
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

@@ -1,0 +1,148 @@
+Version:1.1
+ScavengerMech "Vampyr"
+SC-V-1
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3066
+Rules Level:2
+
+Mass:80
+Engine:320 Fuel Cell Engine(IS)
+Structure:IS Industrial
+Myomer:Industrial Triple-Strength
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:2 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+FLL Armor:13
+FRL Armor:13
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:8
+RLL Armor:13
+RRL Armor:13
+RTL Armor:6
+RTR Armor:6
+RTC Armor:5
+
+Weapons:0
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Industrial TSM
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Industrial TSM
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+MechSprayer
+Extended Fuel Tank (1 ton)
+Extended Fuel Tank (1 ton)
+Extended Fuel Tank (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Environmental Sealing
+Industrial TSM
+
+Right Torso:
+Searchlight
+Liquid Storage (1 ton)
+Liquid Storage (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Environmental Sealing
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Environmental Sealing
+Industrial TSM
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Industrial TSM
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Industrial TSM
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

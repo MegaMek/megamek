@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Light Mechs (Fire Mandrill),
+Uller (Kit Fox) B,1
+Koshi (Mist Lynx) C,2
+Puma (Adder) Prime,3
+Uller (Kit Fox) A,4
+Koshi (Mist Lynx) Prime,5
+Koshi (Mist Lynx) A,6
+Uller (Kit Fox) Prime,5
+Koshi (Mist Lynx) B,4
+Puma (Adder) A,3
+Koshi (Mist Lynx) D,2
+Fire Falcon B,1

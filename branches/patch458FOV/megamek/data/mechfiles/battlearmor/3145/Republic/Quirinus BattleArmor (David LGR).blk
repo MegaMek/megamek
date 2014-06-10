@@ -1,0 +1,83 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Quirinus Battle Armor
+</Name>
+
+<Model>
+(David LGR)
+</Model>
+
+<year>
+3093
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Squad Equipment>
+BABasicManipulator:RA
+BABattleClawVibro:LA
+ISBADavidLightGaussRifle:LA
+ISBALightTAG:Body
+IS BA Reactive:Body
+IS BA Reactive:RA
+IS BA Reactive:RA
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:Body
+IS BA Reactive:LA
+</Squad Equipment>
+
+<source>
+TRO 3145 Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+8
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<armor_type>
+38
+</armor_type>
+<armor_tech>
+7
+</armor_tech>
+

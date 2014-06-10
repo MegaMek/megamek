@@ -1,0 +1,15 @@
+3039 House Steiner Mech - Medium B
+Sentinel STN-3K, 1
+Vulcan VL-5T, 2
+Trebuchet TBT-5S, 3
+Shadow Hawk SHD-2H, 4
+Griffin GRF-1S, 5
+Phoenix Hawk PXH-1, 6
+Hatchetman HCT-3F, 5
+Wolverine WVR-6R, 4
+Dervish DV-6M, 3
+Wolverine WVR-6R, 2
+Hunchback HBK-4SP, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

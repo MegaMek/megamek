@@ -1,0 +1,12 @@
+Clan Hell's Horses Medium Vehicles (FMU)
+Zephyr Hovertank (Standard),1
+Enyo Strike Tank (Standard),2
+Hachiman Fire Support Tank (Standard),3
+Ku Wheeled Assault Tank (Standard),4
+Epona Pursuit Tank Prime,5
+Ares Medium Tank (Standard),6
+Hachiman Fire Support Tank (Standard),5
+Epona Pursuit Tank Prime,4
+Maxim Heavy Hover Transport (Clan),3
+Chaparral Missile Artillery Tank (Standard),2
+Tyr Infantry Support Tank (Standard),1

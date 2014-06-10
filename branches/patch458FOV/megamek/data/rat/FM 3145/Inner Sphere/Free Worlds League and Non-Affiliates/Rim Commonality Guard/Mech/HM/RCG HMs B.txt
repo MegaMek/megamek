@@ -1,0 +1,12 @@
+Rim Commonality Guard Heavy Mechs B
+Rifleman RFL-7M,1
+Thunderbolt TDR-10M,2
+Marauder MAD-9M2,3
+Archer ARC-9M,4
+Koschei KSC-5MC,5
+Hercules HRC-LS-9000,6
+Orion ON3-M,5
+Warhammer WHD-10CT,4
+Scourge SCG-WF1,3
+Pandarus LFA-1A,2
+Guillotine IIC 2,1

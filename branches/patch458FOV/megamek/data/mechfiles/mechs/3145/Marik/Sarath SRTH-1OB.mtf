@@ -1,0 +1,156 @@
+Version:1.0
+Sarath
+SRTH-1OB
+
+Config:Quad Omnimech
+TechBase:Mixed (IS Chassis)
+Era:3122
+Source:TRO 3145 FWL
+Rules Level:4
+
+Mass:50
+Engine:250 XL Engine(IS)
+Structure:IS Standard
+Myomer:Triple-Strength
+
+Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+FLL Armor:24
+FRL Armor:24
+LT Armor:20
+RT Armor:20
+CT Armor:25
+HD Armor:8
+RLL Armor:24
+RRL Armor:24
+RTL Armor:4
+RTR Armor:4
+RTC Armor:7
+
+Weapons:8
+ER Small Laser, Head
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Plasma Rifle, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+TSM
+TSM
+TSM
+TSM
+TSM
+TSM
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPlasmaRifle (T)
+ISPlasmaRifle (T)
+Medium Laser (T)
+Medium Laser (T)
+ER Flamer (T)
+ER Flamer (T)
+ER Flamer (T)
+ER Flamer (T)
+ISQuadTurret
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons
+Talons
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

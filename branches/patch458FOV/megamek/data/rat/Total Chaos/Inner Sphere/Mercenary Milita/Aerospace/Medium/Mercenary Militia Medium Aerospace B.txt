@@ -1,0 +1,12 @@
+Mercenary/Militia Medium Aerospace B
+Lancer LX-2,1
+Lancer LX-2A,2
+Stingray F-94,3
+Hellcat II HCT-214,4
+Gotha GTHA-100,5
+Hellcat II HCT-214,6
+Gotha GTHA-500,5
+Ironsides IRN-SD1,4
+Ironsides IRN-SD3,3
+Stingray F-92,2
+Ironsides IRN-SD1,1

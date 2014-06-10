@@ -1,0 +1,12 @@
+Clan Ice Hellion Dropships (FMU)
+Sassanid (Standard),1
+Carrier (Standard),2
+Broadsword (Standard),3
+Titan (Clan),4
+Noruff (Standard),5
+Union C,6
+Miraborg (Standard),5
+Overlord C,4
+Union C,3
+Lion (Clan),2
+Leopard CV (3054),1

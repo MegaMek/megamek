@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Barouche Military Transport
+</Name>
+
+<Model>
+(Standard)
+</Model>
+<year>
+3078
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+15
+10
+10
+10
+10
+12
+16
+</armor>
+
+<barrating>
+8
+</barrating>
+
+<Body Equipment>
+IS Light Machine Gun Ammo - Half
+IS Ammo LRM-5
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 5
+Light Machine Gun
+Light Machine Gun
+</Turret Equipment>
+
+<transporters>
+cargobay:24.5:1
+</transporters>
+
+<tonnage>
+80.0
+</tonnage>
+

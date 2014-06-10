@@ -1,0 +1,12 @@
+Goliath Scorpion 2nd-Line Heavy Aerospace (FMU)
+Riever F-100,1
+Hydaspes 2,2
+Jengiz A,3
+Ahab AHB-443,4
+Xerxes 1,5
+Hammerhead HMR-HD,6
+Hydaspes (Standard),5
+Rapier RPR-100,4
+Xerxes 1,3
+Sabutai Prime,2
+Scytha Prime,1

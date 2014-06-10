@@ -1,0 +1,12 @@
+Clan Hell's Horses Second-Line Medium Aerospace (FMU)
+Turk Prime,1
+Jagatai Prime,2
+Ammon (Standard),3
+Tyre (Standard),4
+Hellcat II HCT-213B,5
+Ammon (Standard),6
+Visigoth Prime,5
+Ironsides IRN-SD1,4
+Gotha GTHA-500,3
+Turk Prime,2
+Tyre 2,1

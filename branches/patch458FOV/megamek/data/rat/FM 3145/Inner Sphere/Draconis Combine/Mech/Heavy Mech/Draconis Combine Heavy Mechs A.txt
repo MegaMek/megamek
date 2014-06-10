@@ -1,0 +1,12 @@
+Draconis Combine Heavy Mechs A
+Grasshopper GHR-7K,1
+Shiro SH-1V,2
+Daikyu DAI-03,3
+Grand Dragon DRG-7K,4
+Dragon II DRG-11K,5
+Avatar AV1-O,6
+Sphinx (Standard),5
+Rifleman IIC 7,4
+Vulture Mk IV (Mad Dog Mk IV) Prime,3
+Mad Cat Mk IV (Savage Wolf) (Prime),2
+Nova Cat Prime,1

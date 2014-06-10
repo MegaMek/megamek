@@ -1,0 +1,12 @@
+Nova Cat Front-Line Medium ASF (FMU)
+Jagatai Prime,1
+Ammon (Standard),2
+Visigoth Prime,3
+Visigoth Prime,4
+Visigoth Prime,5
+Turk Prime,6
+Visigoth Prime,5
+Turk Prime,4
+Visigoth Prime,3
+Jagatai Prime,2
+Tyre (Standard),1

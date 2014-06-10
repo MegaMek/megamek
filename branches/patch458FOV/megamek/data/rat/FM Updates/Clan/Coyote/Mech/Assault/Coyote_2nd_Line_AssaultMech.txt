@@ -1,0 +1,12 @@
+Coyote 2nd-Line Assault Mechs (FMU)
+Man O' War (Gargoyle) A,1
+Imp C,2
+Supernova (Standard),3
+Canis (Standard),4
+Warhammer IIC (Standard),5
+Canis (Standard),6
+Highlander IIC (Standard),5
+Phoenix Hawk IIC (Standard),4
+Warhammer IIC (Standard),3
+Kodiak (Standard),2
+Shogun C,1

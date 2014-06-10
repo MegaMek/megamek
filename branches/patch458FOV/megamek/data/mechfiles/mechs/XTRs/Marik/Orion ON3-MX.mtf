@@ -1,0 +1,131 @@
+Version:1.1
+Orion
+ON3-MX
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3075
+Source:Jihad
+Rules Level:4
+
+Mass:75
+Engine:300 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:22
+RT Armor:22
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:4
+1 ISERMediumLaser, Right Arm
+1 ISERMediumLaser, Left Arm
+1 ISExtendedLRM10, Left Arm, Ammo:27
+1 ISImprovedHeavyGaussRifle, Center Torso, Ammo:16
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISExtendedLRM10
+ISExtendedLRM10
+ISExtendedLRM10
+ISExtendedLRM10
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISExtended LRM10 Ammo
+ISExtended LRM10 Ammo
+ISExtended LRM10 Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+ISCASE
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

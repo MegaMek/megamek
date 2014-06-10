@@ -1,0 +1,12 @@
+Pirate Medium Mechs Late 3075
+Hatchetman HCT-3F,1
+Hermes II HER-5S,2
+Blackjack BJ-2,3
+Hunchback HBK-5H,4
+Griffin GRF-1N,5
+Phoenix Hawk PXH-1,6
+Wolverine WVR-6R,5
+Whitworth WTH-1,4
+Cronus CNS-5M,3
+Marshal MHL-X1,2
+Vindicator VND-3L,1

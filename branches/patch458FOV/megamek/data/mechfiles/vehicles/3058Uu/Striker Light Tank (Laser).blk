@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Striker Light Tank
+</Name>
+<Model>
+(Laser)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+26
+23
+23
+20
+24
+</Armor>
+<Turret Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISLRM15
+ISArtemisIV
+</Turret Equipment>
+<Body Equipment>
+ISGuardianECM
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Civil War
+</source>

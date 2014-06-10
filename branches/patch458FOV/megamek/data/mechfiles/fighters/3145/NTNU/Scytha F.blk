@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Scytha
+</Name>
+
+<Model>
+F
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+27
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+89
+66
+66
+47
+</armor>
+
+<Nose Equipment>
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLUltraAC20
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLTargeting Computer
+WatchdogECMSuite
+</Aft Equipment>
+
+<source>
+TRO 3145 NT NU
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

@@ -1,0 +1,12 @@
+Clan Ice Hellion Heavy Vehicles (FMU)
+Magi Infantry Support Vehicle (Standard),1
+Demon Tank (Standard),2
+Magi Infantry Support Vehicle (Standard),3
+Ishtar Heavy Fire Support Tank (Standard),4
+Oro Heavy Tank (Standard),5
+Oro Heavy Tank (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+Ishtar Heavy Fire Support Tank (Standard),4
+Magi Infantry Support Vehicle (Standard),3
+Pike Support Vehicle (Clan),2
+Ishtar Heavy Fire Support Tank (Standard),1

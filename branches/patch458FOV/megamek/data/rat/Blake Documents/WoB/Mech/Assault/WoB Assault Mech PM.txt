@@ -1,0 +1,12 @@
+WoB Assault Mech Protectorate Militia
+Thug THG-12E,1
+Vanquisher VQR-2A,2
+Grand Crusader II GRN-D-04,3
+Highlander HGN-732,4
+King Crab KGC-001,5
+Crockett CRK-5003-1,6
+Legacy LGC-01,5
+Cerberus MR-5M,4
+Grand Titan T-IT-N10M,3
+Titan II TI-2P,2
+Titan II TI-2PA,1

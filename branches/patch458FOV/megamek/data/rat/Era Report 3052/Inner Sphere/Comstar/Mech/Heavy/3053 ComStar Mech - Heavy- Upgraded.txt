@@ -1,0 +1,12 @@
+3053 ComStar Mech - Heavy- Upgraded
+Bombardier BMB-12D,1
+Flashman FLS-8K,2
+Champion CHP-3N,3
+Lancelot LNC25-01,4
+Guillotine GLT-3N,5
+Black Knight BL-9-KNT,6
+Flashman FLS-8K,5
+Bombardier BMB-12D,4
+Lancelot LNC25-01,3
+Guillotine GLT-3N,2
+Exterminator EXT-4D,1

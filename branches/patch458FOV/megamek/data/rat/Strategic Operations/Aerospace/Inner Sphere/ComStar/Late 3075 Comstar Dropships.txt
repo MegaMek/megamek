@@ -1,0 +1,12 @@
+Comstar Dropships Late 3075
+Vengeance (3056),1
+Condor (3054),2
+Union (3055),3
+Overlord (3056),4
+Leopard CV (3054),5
+Union (3055),6
+Leopard (3056),5
+Model 96 'Elephant' (Standard),4
+Triumph (3057),3
+Gazelle (3055),2
+Fortress (3058),1

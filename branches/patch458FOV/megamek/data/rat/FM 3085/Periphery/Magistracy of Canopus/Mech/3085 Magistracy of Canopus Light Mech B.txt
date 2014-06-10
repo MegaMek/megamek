@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Light Mech B
+Wasp WSP-1A,1
+Wasp WSP-1A,2
+Wasp WSP-3L,3
+Firestarter FS9-H,4
+Javelin JVN-10N,5
+Stinger STG-6L,6
+Wasp WSP-8T,5
+Wasp WSP-7MAF,4
+Anubis ABS-3L,3
+Stinger STG-5T,2
+Ostscout OTT-7J,1

@@ -1,0 +1,11 @@
+3062 Clan Ghost Bear - Light
+Koshi (Mist Lynx) D,1
+Dasher (Fire Moth) C,2
+Puma (Adder) B,3
+Dasher (Fire Moth) A,4
+Dasher (Fire Moth) Prime,11
+Puma (Adder) Prime,5
+Dasher (Fire Moth) A,4
+Puma (Adder) B,3
+Uller (Kit Fox) C,2
+Dasher (Fire Moth) D,1

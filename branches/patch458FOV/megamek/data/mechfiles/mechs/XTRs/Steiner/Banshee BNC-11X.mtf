@@ -1,0 +1,150 @@
+Version:1.0
+Banshee
+BNC-11X
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3076
+Rules Level:4
+
+Mass:95
+Engine:380 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:32
+RA Armor:32
+LT Armor:30
+RT Armor:30
+CT Armor:40
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:19
+
+Weapons:4
+Silver Bullet Gauss Rifle, Left Torso
+Bombast Laser, Right Torso
+Bombast Laser, Right Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder (armored)
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Modular Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder (armored)
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Modular Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+ISSBGR
+Silver Bullet Gauss Ammo
+IS Modular Armor
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Bombast Laser
+Bombast Laser
+Bombast Laser
+Bombast Laser
+Bombast Laser
+Bombast Laser
+IS Modular Armor
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Modular Armor
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit (armored)
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip (armored)
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Modular Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip (armored)
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Modular Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

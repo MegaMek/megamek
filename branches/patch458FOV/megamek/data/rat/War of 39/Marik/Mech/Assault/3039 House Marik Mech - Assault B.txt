@@ -1,0 +1,15 @@
+3039 House Marik Mech - Assault B
+Banshee BNC-3Q, 1
+Awesome AWS-8R, 2
+Cyclops CP-10-Z, 3
+Banshee BNC-3M, 4
+Victor VTR-9B, 5
+Stalker STK-3F, 6
+Awesome AWS-8Q, 5
+Stalker STK-4N, 4
+Atlas AS7-D, 3
+Awesome AWS-8T, 2
+Stalker STK-3H, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

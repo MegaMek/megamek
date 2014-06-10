@@ -1,0 +1,67 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Badger (C) Tracked Transport
+</Name>
+<Model>
+F
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+20
+18
+18
+14
+18
+</Armor>
+<Turret Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+</Turret Equipment>
+<Body Equipment>
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+CLCASE
+</Body Equipment>
+<transporters>
+TroopSpace:5
+</transporters>
+<type>
+Clan Level 2
+</type>
+<year>
+3072
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<omni>
+</omni>
+<source>
+Jihad
+</source>

@@ -106,6 +106,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JSlider fovHighlightAlpha;
     private JCheckBox fovOutsideEnabled;
     private JSlider fovDarkenAlpha;
+    private JTextField fovHighlightRingsRadii;
+    private JTextField fovHighlightRingsColors;
 
     private JList<String> keys;
     private int keysIndex = 0;
@@ -113,7 +115,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JComboBox<String> tileSetChoice;
     private File[] tileSets;
-    
+
     /**
      * A Map that maps command strings to a JTextField for updating the modifier
      * for the command.
@@ -125,9 +127,9 @@ public class CommonSettingsDialog extends ClientDialog implements
      * for the command.
      */
     private Map<String, Integer> cmdKeyMap;
-    
+
     /**
-     * A Map that maps command strings to a JCheckBox for updating the 
+     * A Map that maps command strings to a JCheckBox for updating the
      * isRepeatable flag.
      */
     private Map<String, JCheckBox> cmdRepeatableMap;
@@ -155,7 +157,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
         JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
         panTabs.add("Tactical Overlay", tacticalOverlaySettingsPane);
-        
+
         JPanel keyBindPanel = getKeyBindPanel();
         JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
         panTabs.add("Key Binds", keyBindScrollPane);
@@ -387,7 +389,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showMapsheets);
         comps.add(row);
-        
+
         chkAntiAliasing = new JCheckBox(Messages.getString(
         		"CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
         chkAntiAliasing.setToolTipText(Messages.getString(
@@ -395,7 +397,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(chkAntiAliasing);
         comps.add(row);
-        
+
         // showMapsheets setting
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
@@ -466,7 +468,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         displayLocale.setSelectedIndex(index);
 
         showMapsheets.setSelected(gs.getShowMapsheets());
-        
+
         chkAntiAliasing.setSelected(gs.getAntiAliasing());
 
         showDamageLevel.setSelected(gs.getShowDamageLevel());
@@ -493,8 +495,11 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
+        fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
+        fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
+
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -551,7 +556,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .getSelectedIndex()]);
 
         gs.setShowMapsheets(showMapsheets.isSelected());
-        
+
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
@@ -565,6 +570,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         // Tactical Overlay Settings
         gs.setFovHighlight(fovInsideEnabled.isSelected());
         gs.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
+        gs.setFovHighlightRingsRadii( fovHighlightRingsRadii.getText() );
+        gs.setFovHighlightRingsColorsHsb( fovHighlightRingsColors.getText() );
         gs.setFovDarken(fovOutsideEnabled.isSelected());
         gs.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
 
@@ -575,7 +582,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
-        
+
         // Lets iterate through all of the KeyCommandBinds and see if they've
         //  changed
         boolean bindsChanged = false;
@@ -600,23 +607,23 @@ public class CommonSettingsDialog extends ClientDialog implements
         			KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
         		modifiers |= KeyEvent.CTRL_MASK;
         	}
-        	
+
         	if (kcb.modifiers != modifiers){
         		bindsChanged = true;
         		kcb.modifiers = modifiers;
         	}
-        	
+
         	if (kcb.key != keyCode){
         		bindsChanged = true;
         		kcb.key = keyCode;
-        	}   
-        	
+        	}
+
         	if (kcb.isRepeatable != repeatable.isSelected()){
         		bindsChanged = true;
         		kcb.isRepeatable = repeatable.isSelected();
         	}
         }
-        
+
         if (bindsChanged){
         	KeyBindParser.writeKeyBindings();
         }
@@ -686,6 +693,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(highlightAlphaLabel);
         comps.add(row);
 
+        row= new ArrayList<>();
+        JLabel fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii"));
+        row.add(fovHighlightRingsRadiiLabel);
+        comps.add(row);
+        row=new ArrayList<>();
+        fovHighlightRingsRadii= new JTextField((2+1)*7);
+        row.add(fovHighlightRingsRadii);
+        comps.add(row);
+
+        row= new ArrayList<>();
+        JLabel fovHighlightRingsColorsLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsColors"));
+        row.add(fovHighlightRingsColorsLabel);
+        comps.add(row);
+        row= new ArrayList<>();
+        fovHighlightRingsColors= new JTextField(((3+1)*3+1)*7);
+        row.add(fovHighlightRingsColors);
+        comps.add(row);
+
+
         fovOutsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(fovOutsideEnabled);
@@ -705,21 +731,21 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         return createSettingsPanel(comps);
     }
-    
+
     /**
      * Creates a panel with a box for all of the commands that can be bound to
      * keys.
-     * 
+     *
      * @return
      */
     private JPanel getKeyBindPanel(){
     	// Create the panel to hold all the components
-    	// We will have an N x 43 grid, the first column is for labels, the 
+    	// We will have an N x 43 grid, the first column is for labels, the
     	//  second column will hold text fields for modifiers, the third
     	//  column holds text fields for keys, and the fourth has a checkbox for
     	//  isRepeatable.
     	JPanel keyBinds = new JPanel(new GridLayout(0,4,5,5));
-    	
+
     	// Create header: labels for describing what each column does
     	JLabel headers = new JLabel("Name");
     	headers.setToolTipText("The name of the action");
@@ -734,15 +760,15 @@ public class CommonSettingsDialog extends ClientDialog implements
     	headers.setToolTipText("Should this action repeat rapidly " +
     			"when the key is held down?");
     	keyBinds.add(headers);
-    	
+
     	// Create maps to retrieve the text fields for saving
     	int numBinds = KeyCommandBind.values().length;
     	cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
     	cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
     	cmdRepeatableMap = new HashMap<String,JCheckBox>((int)(numBinds*1.26));
-    	
+
     	// For each keyCommandBind, create a label and two text fields
-    	for (KeyCommandBind kcb : KeyCommandBind.values()){    		
+    	for (KeyCommandBind kcb : KeyCommandBind.values()){
     		JLabel name = new JLabel(
     				Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
     		name.setToolTipText(
@@ -771,13 +797,13 @@ public class CommonSettingsDialog extends ClientDialog implements
 				@Override
 				public void keyTyped(KeyEvent evt) {
 					// This might be a bit hackish, but we want to deal with
-					//  the key code, so the code to update the text is in 
+					//  the key code, so the code to update the text is in
 					//  keyPressed.  We've already done what we want with the
 					//  typed key, and we don't want anything else acting upon
 					//  the key typed event, so we consume it here.
 					evt.consume();
 				}
-    			
+
     		});
     		keyBinds.add(modifiers);
     		cmdModifierMap.put(kcb.cmd, modifiers);
@@ -803,22 +829,22 @@ public class CommonSettingsDialog extends ClientDialog implements
 				@Override
 				public void keyTyped(KeyEvent evt) {
 					// This might be a bit hackish, but we want to deal with
-					//  the key code, so the code to update the text is in 
+					//  the key code, so the code to update the text is in
 					//  keyPressed.  We've already done what we want with the
 					//  typed key, and we don't want anything else acting upon
 					//  the key typed event, so we consume it here.
 					evt.consume();
 				}
-    			
+
     		});
     		keyBinds.add(key);
-    		
+
     		JCheckBox repeatable = new JCheckBox("Repeatable?");
     		repeatable.setSelected(kcb.isRepeatable);
-    		cmdRepeatableMap.put(kcb.cmd,repeatable);   	
+    		cmdRepeatableMap.put(kcb.cmd,repeatable);
     		keyBinds.add(repeatable);
     	}
-    	
+
     	return keyBinds;
     }
 

@@ -32,10 +32,6 @@ IS Level 1
 Hover
 </motion_type>
 
-<transporters>
-troopspace:0.5
-</transporters>
-
 <cruiseMP>
 8
 </cruiseMP>
@@ -54,7 +50,7 @@ troopspace:0.5
 
 <Body Equipment>
 IS Vehicle Flamer Ammo
-IS Machine Gun Ammo - Half
+IS Ammo MG - Full
 </Body Equipment>
 
 <Front Equipment>
@@ -80,7 +76,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-Succession Wars
+RS 3039 Unabriged
 </source>
 
 <tonnage>

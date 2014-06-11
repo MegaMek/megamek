@@ -25,7 +25,7 @@ Armored Personnel Carrier
 </year>
 
 <source>
-Star League
+RS 3039 Unabriged
 </source>
 
 <type>
@@ -61,9 +61,6 @@ IS Ammo MG - Full
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun
-Machine Gun
-Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -76,6 +73,9 @@ Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
+Machine Gun
+Machine Gun
+Machine Gun
 </Turret Equipment>
 
 <transporters>

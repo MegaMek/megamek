@@ -162,6 +162,11 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
+        } 
+        else if (hexIllumLvl == Game.ILLUMINATED_LIGHT) {
+            toHit.addModifier(-searchlightMod,
+                    "target illuminated by searchlight");
+            night_modifier -= searchlightMod;
         }
         // Certain ammunitions reduce the penalty
         else if (atype != null) {

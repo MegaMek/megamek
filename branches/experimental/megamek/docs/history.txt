@@ -2,6 +2,8 @@ VERSION HISTORY:
 ----------------
 v0.37.13-exp-dev (SVN)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight
++ Bug: Team initiative not properly calculated when negative values are present 
+    (such as for team constant init bonus, or player init bonus, etc) 
 
 
 v0.37.13-dev (SVN)

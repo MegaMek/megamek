@@ -1100,6 +1100,10 @@ public class MoveStep implements Serializable {
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
         thisStepBackwards = entity.inReverse;
+        // Moving in reverse prohibits running
+        if (thisStepBackwards) {
+            isRunProhibited = true;
+        }
 
         elevation = entity.getElevation();
         altitude = entity.getAltitude();

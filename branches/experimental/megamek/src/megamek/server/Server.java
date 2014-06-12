@@ -7294,7 +7294,9 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into rubble
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
+            boolean isLastStep = md.getLastStep().equals(step);
+            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
+                    isLastStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
                         rollTarget, true);

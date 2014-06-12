@@ -168,7 +168,9 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // check if we've moved into rubble
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
+            boolean isLastStep = md.getLastStep().equals(step);
+            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
+                    isLastStep);
             checkNag(rollTarget, nagReport, psrList);
 
             int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();

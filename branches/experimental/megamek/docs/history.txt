@@ -8,6 +8,7 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4144]: 'Mechs landing in rubble without PSR
 + Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
 + Bug [#4165]: Issue with reinforcing after done has been selected
++ Bug [#4158]: Issues launching docked Dropships from Warships
 
 
 v0.37.13-dev (SVN)

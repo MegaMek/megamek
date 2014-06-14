@@ -805,6 +805,10 @@ public class MULParser {
         String destroyed = locationTag.getAttribute(IS_DESTROYED);
 
         int loc;
+        // Some units, like tanks and protos, keep track as Ammo slots as N/A
+        // Since they don't have slot indices, they are accessed in order so
+        // we keep track of the number of ammo slots processed for a loc
+        int locAmmoCount = 0;
         // Did we find required attributes?
         if ((index == null) || (index.length() == 0)) {
             warning.append("Could not find index for location.\n");
@@ -859,7 +863,7 @@ public class MULParser {
                 } else if (nodeName.equalsIgnoreCase(BLOWN_OFF)){
                     blowOffLocation(entity, loc);
                 } else if (nodeName.equalsIgnoreCase(SLOT)){
-                    parseSlot(currEle, entity, loc);
+                    locAmmoCount = parseSlot(currEle, entity, loc, locAmmoCount);
                 } else if (nodeName.equalsIgnoreCase(STABILIZER)){
                     String hit = currEle.getAttribute(IS_HIT);
                     if (!hit.equals("")) {
@@ -958,7 +962,8 @@ public class MULParser {
      * @param entity
      * @param loc
      */
-    private void parseSlot(Element slotTag, Entity entity, int loc){
+    private int parseSlot(Element slotTag, Entity entity, int loc,
+            int locAmmoCount) {
         // Look for the element's attributes.
         String index = slotTag.getAttribute(INDEX);
         String type = slotTag.getAttribute(TYPE);
@@ -971,14 +976,13 @@ public class MULParser {
         String quirks = slotTag.getAttribute(QUIRKS);
         String rfmg = slotTag.getAttribute(RFMG);
 
-        int locAmmoCount = 0;
         // Did we find required attributes?
         if ((index == null) || (index.length() == 0)) {
             warning.append("Could not find index for slot.\n");
-            return;
+            return locAmmoCount;
         } else if ((type == null) || (type.length() == 0)) {
             warning.append("Could not find type for slot.\n");
-            return;
+            return locAmmoCount;
         } else {
             // Try to get a good index value.
             // Remember, slot index starts at 1.
@@ -1079,11 +1083,11 @@ public class MULParser {
                 } // End is-tank
 
                 // TODO: handle slotless equipment.
-                return;
+                return locAmmoCount;
             } else if ((indexVal < 0)) {
                 warning.append("Found invalid index value for slot: ")
                         .append(index).append(".\n");
-                return;
+                return locAmmoCount;
             }
 
             // Is this index valid for this entity?
@@ -1093,7 +1097,7 @@ public class MULParser {
                         .append(" does not have ").append(index)
                         .append(" slots in location ").append(loc)
                         .append(".\n");
-                return;
+                return locAmmoCount;
             }
 
             // Try to get a good isHit value.
@@ -1117,7 +1121,7 @@ public class MULParser {
                             .append(indexVal).append(" of location ")
                             .append(loc).append(".\n");
                 }
-                return;
+                return locAmmoCount;
             }
 
             // Is the slot for a critical system?
@@ -1258,7 +1262,8 @@ public class MULParser {
             slot.setDestroyed(destFlag);
             slot.setRepairable(repairFlag);
 
-        } // End have-required-fields   
+        } // End have-required-fields
+        return locAmmoCount;
     }
     
     /**

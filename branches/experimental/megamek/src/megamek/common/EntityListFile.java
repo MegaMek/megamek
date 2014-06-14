@@ -310,27 +310,25 @@ public class EntityListFile {
 
             } // Check the next slot in this location
 
-            // Tanks don't have slots, and Protomechs only have
-            // system slots, so we have to handle the ammo specially.
-            if ((entity instanceof Tank) || (entity instanceof Protomech)) {
-                if ((entity instanceof Tank)
-                        && ((Tank) entity).isStabiliserHit(loc)) {
-                    thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
-                }
+            // Stabilizer hit
+            if ((entity instanceof Tank)
+                    && ((Tank) entity).isStabiliserHit(loc)) {
+                thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
+            }
+            
+            // Protomechs only have system slots, 
+            //  so we have to handle the ammo specially.
+            if (entity instanceof Protomech) {
                 for (Mounted mount : entity.getAmmo()) {
-
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
                         thisLoc.append(EntityListFile.formatSlot("N/A", mount,
                                 false, false, false, false));
                         haveSlot = true;
                     }
-
                 } // Check the next ammo.
-
                 // TODO: handle slotless equipment.
-
-            } // End is-tank-or-proto
+            } // End is-proto
 
             // Did we record information for this location?
             if (thisLoc.length() > 0) {

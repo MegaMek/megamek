@@ -1167,7 +1167,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, verifier.mechOption,
                     null);
-        } else if (entity instanceof Tank){
+        } else if ((entity instanceof Tank) && 
+                !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, verifier.tankOption,
                     null);
         }else if (entity.getEntityType() == Entity.ETYPE_AERO

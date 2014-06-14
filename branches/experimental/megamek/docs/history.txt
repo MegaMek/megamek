@@ -26,6 +26,7 @@ v0.37.13-dev (SVN)
 + Data: New Images and Unit Fixes.
 + Bug [#4163]: Typo in C3 Network choices
 + Bug [#4162]: MULParser incorrectly handles ammo with NA slots
++ Bug [#4166]: Exception in CustomMechDialog when Modifying Gun Emplacements
 
 v0.37.12-exp (2014-06-03 19:06 UTC)
 + Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the

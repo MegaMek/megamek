@@ -7,6 +7,7 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4161]: Run MP allowed after moving backwards and failing a fall PSR
 + Bug [#4144]: 'Mechs landing in rubble without PSR
 + Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
++ Bug [#4165]: Issue with reinforcing after done has been selected
 
 
 v0.37.13-dev (SVN)

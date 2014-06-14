@@ -9,6 +9,7 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
 + Bug [#4165]: Issue with reinforcing after done has been selected
 + Bug [#4158]: Issues launching docked Dropships from Warships
++ Bug [#4154]: WarShip docking bug (minor)
 
 
 v0.37.13-dev (SVN)

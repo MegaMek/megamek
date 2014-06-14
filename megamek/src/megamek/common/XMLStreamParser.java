@@ -32,7 +32,14 @@ import megamek.common.loaders.EntityLoadingException;
  * described by the file, "xml-spec.txt", then this class can return entities.
  * If unexpected entities are encountered while parsing a well-formed stream, a
  * warning message will be available.
- *
+ * 
+ * This class uses the TinyXML library, and the version that Megamek has is far 
+ * out of date.  It does not support writing UTF-8 files, which causes issues
+ * with special characters.  Newer versions of TinyXML change the API
+ * drastically.  The functionality of this class has been rewritten into <code>
+ * MULParser</code> and that class should be used instead.
+ * 
+ * @deprecated
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
  */

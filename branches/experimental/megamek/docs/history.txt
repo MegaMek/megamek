@@ -10,6 +10,11 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4165]: Issue with reinforcing after done has been selected
 + Bug [#4158]: Issues launching docked Dropships from Warships
 + Bug [#4154]: WarShip docking bug (minor)
++ Bug [#4146]: Aeros can no longer select munition types for LB-X (errata)
++ TestAero will now mark Aeros with special munitions are illega (errata), 
+    except for cluster munitions on LB-X's (can only use cluster), and artemis
+    capable munitions for Artemis-linked launchers.  NARC, MMLs and ATMs are 
+    exempt
 
 
 v0.37.13-dev (SVN)

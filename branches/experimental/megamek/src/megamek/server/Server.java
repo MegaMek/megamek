@@ -16145,7 +16145,7 @@ public class Server implements Runnable {
             te = (Entity) target;
             IHex hex = game.getBoard().getHex(te.getPosition());
             if (hex.containsTerrain(Terrains.WATER)) {
-                if (te.absHeight() < hex.getElevation()) {
+                if (te.absHeight() < 0) {
                     damage = (int) Math.ceil(damage * 0.5f);
                 }
             }

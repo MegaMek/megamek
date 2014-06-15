@@ -16,6 +16,7 @@ v0.37.13-exp-dev (SVN)
     capable munitions for Artemis-linked launchers.  NARC, MMLs and ATMs are 
     exempt
 + Bug [#4148]: bug in dfa hitting water
++ Bug [#4168]: Careful movement penalties should not apply to jump/VTOL MP
 
 
 v0.37.13-dev (SVN)

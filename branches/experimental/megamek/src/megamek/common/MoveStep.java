@@ -2490,39 +2490,38 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        // check for fog
-        if ((game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_LIGHT)
-                && !game.getBoard().inSpace()
-                && parent.isCareful()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
-            mp += 1;
-        } else if ((game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)
-                && !game.getBoard().inSpace()
-                && parent.isCareful()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
-            mp += 2;
+
+        boolean applyNightPen = 
+                !game.getOptions().booleanOption("no_night_move_pen");  
+        boolean carefulExempt = 
+                (moveMode == EntityMovementMode.VTOL) || parent.isJumping();
+         
+        // Apply careful movement MP penalties for fog and light (TO pg 63)
+        if (!game.getBoard().inSpace() && parent.isCareful() && applyNightPen
+                && !carefulExempt) {
+            // Fog
+            switch (game.getPlanetaryConditions().getFog()) {
+                case PlanetaryConditions.FOG_LIGHT:
+                    mp += 1;
+                    break;
+                case PlanetaryConditions.FOG_HEAVY:
+                    mp += 2;
+                    break;
+            }
+            // Light
+            switch (game.getPlanetaryConditions().getLight()){
+                case PlanetaryConditions.L_FULL_MOON:
+                    mp += 1;
+                    break;
+                case  PlanetaryConditions.L_MOONLESS:
+                    mp += 2;
+                    break;
+                case PlanetaryConditions.L_PITCH_BLACK:
+                    mp += 3;
+                    break;
+            }
         }
 
-        // According to emails with TPTB, poor light should also increase mp
-        // costs as per
-        // the table on p. 36 of TacOps
-        // TODO: waiting to hear whether searchlights affect this
-        if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_FULL_MOON)
-                && !game.getBoard().inSpace()
-                && parent.isCareful()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
-            mp += 1;
-        } else if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
-                && !game.getBoard().inSpace()
-                && parent.isCareful()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
-            mp += 2;
-        } else if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)
-                && !game.getBoard().inSpace()
-                && parent.isCareful()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
-            mp += 3;
-        }
 
         // VTOLs pay 1 for everything
         if (moveMode == EntityMovementMode.VTOL) {

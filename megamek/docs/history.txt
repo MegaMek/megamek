@@ -15,6 +15,7 @@ v0.37.13-dev (SVN)
 + Bug [#4163]: Typo in C3 Network choices
 + Bug [#4162]: MULParser incorrectly handles ammo with NA slots
 + Bug [#4166]: Exception in CustomMechDialog when Modifying Gun Emplacements
++ Patch [patches:#456]: Fixes for Princess Immediate Withdrawal/Autoflee
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

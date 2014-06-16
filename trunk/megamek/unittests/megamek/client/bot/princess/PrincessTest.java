@@ -93,9 +93,8 @@ public class PrincessTest {
         Assert.assertEquals(expected, actual);
 
         // Test a null ticks argument.
-        ticks = null;
         expected = 0;
-        actual = mockPrincess.calculateAdjustment(ticks);
+        actual = mockPrincess.calculateAdjustment(null);
         Assert.assertEquals(expected, actual);
     }
 
@@ -104,7 +103,7 @@ public class PrincessTest {
         final double TOLERANCE = 0.001;
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.any(Entity.class), Mockito.any(StringBuilder.class)))
                 .thenCallRealMethod();
-        Mockito.when(mockPrincess.isFleeing(Mockito.any(Entity.class))).thenReturn(false);
+        Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(false);
 
         Mockito.when(mockPathRanker
                 .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class),
@@ -135,13 +134,13 @@ public class PrincessTest {
 
         // Make the mech flee.
         Mockito.when(mockMech.isProne()).thenReturn(false);
-        Mockito.when(mockPrincess.isFleeing(Mockito.eq(mockMech))).thenReturn(true);
+        Mockito.when(mockPrincess.isFallingBack(Mockito.eq(mockMech))).thenReturn(true);
         expected = 2.222;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Make the mech a commander.
-        Mockito.when(mockPrincess.isFleeing(Mockito.eq(mockMech))).thenReturn(false);
+        Mockito.when(mockPrincess.isFallingBack(Mockito.eq(mockMech))).thenReturn(false);
         Mockito.when(mockMech.isCommander()).thenReturn(true);
         expected = 0.555;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
@@ -281,7 +280,7 @@ public class PrincessTest {
         Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenReturn(true);
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
         
-        List<Entity> testEntityList = new ArrayList<Entity>();
+        List<Entity> testEntityList = new ArrayList<>();
         testEntityList.add(mockMech);
         testEntityList.add(mockBA);
         testEntityList.add(mockTank);
@@ -340,61 +339,70 @@ public class PrincessTest {
     }
 
     @Test
-    public void testWantsToFlee() {
-
-        BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
-        Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(true);
+    public void testWantsToFallBack() {
 
         Entity mockMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockMech.isCrippled()).thenReturn(false);
 
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.any(Entity.class))).thenCallRealMethod();
-        Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
-        Mockito.when(mockPrincess.shouldFlee()).thenReturn(false);
-        Mockito.when(mockPrincess.isMustFlee()).thenReturn(false);
-        Assert.assertFalse(mockPrincess.wantsToFlee(mockMech));
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.any(Entity.class))).thenCallRealMethod();
+        //Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+        Mockito.when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
+        Mockito.when(mockPrincess.getFallBack()).thenReturn(false);
+        Mockito.when(mockPrincess.getFleeBoard()).thenReturn(false);
+        //Forced Withdrawal Enabled, Mech Undamaged, Fall Back disabled, Flee Board disabled
+        //Should Not Fall Back
+        Assert.assertFalse(mockPrincess.wantsToFallBack(mockMech));
 
-        Mockito.when(mockPrincess.shouldFlee()).thenReturn(true);
-        Assert.assertTrue(mockPrincess.wantsToFlee(mockMech));
+        Mockito.when(mockPrincess.getFallBack()).thenReturn(true);
+        //Fall Back Enabled
+        //Should Fall Back
+        Assert.assertTrue(mockPrincess.wantsToFallBack(mockMech));
 
-        Mockito.when(mockPrincess.shouldFlee()).thenReturn(false);
-        Mockito.when(mockPrincess.isMustFlee()).thenReturn(true);
-        Assert.assertTrue(mockPrincess.wantsToFlee(mockMech));
+        Mockito.when(mockPrincess.getFallBack()).thenReturn(false);
+        Mockito.when(mockPrincess.getFleeBoard()).thenReturn(true);
+        //Fall Back Disabled, Flee Board Enabled (Should Never Happen)
+        //Should Not Fall Back
+        Assert.assertFalse(mockPrincess.wantsToFallBack(mockMech));
 
-        Mockito.when(mockPrincess.isMustFlee()).thenReturn(false);
+        Mockito.when(mockPrincess.getFleeBoard()).thenReturn(false);
         Mockito.when(mockMech.isCrippled()).thenReturn(true);
-        Assert.assertTrue(mockPrincess.wantsToFlee(mockMech));
+        //Fall Back and Flee Board Disabled, Mech Crippled, Forced Withdrawal Enabled
+        //Should Fall Back
+        Assert.assertTrue(mockPrincess.wantsToFallBack(mockMech));
 
-        Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(false);
-        Assert.assertFalse(mockPrincess.wantsToFlee(mockMech));
+        //Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(false);
+        Mockito.when(mockPrincess.getForcedWithdrawal()).thenReturn(false);
+        //Fall Back and Flee Board Disabled, Mech Crippled, Forced Withdrawal Disabled
+        //Should Not Fall Back
+        Assert.assertFalse(mockPrincess.wantsToFallBack(mockMech));
     }
 
     @Test
-    public void testIsFleeing() {
+    public void testIsFallingBack() {
         Entity mockMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockMech.isImmobile()).thenReturn(false);
 
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.any(Entity.class))).thenReturn(false);
-        Mockito.when(mockPrincess.isFleeing(Mockito.any(Entity.class))).thenCallRealMethod();
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.any(Entity.class))).thenReturn(false);
+        Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenCallRealMethod();
 
         // A normal undamaged mech.
-        Assert.assertFalse(mockPrincess.isFleeing(mockMech));
+        Assert.assertFalse(mockPrincess.isFallingBack(mockMech));
 
-        // A mobile mech that wants to flee (for any reason).
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.any(Entity.class))).thenReturn(true);
-        Assert.assertTrue(mockPrincess.isFleeing(mockMech));
+        // A mobile mech that wants to fall back (for any reason).
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.any(Entity.class))).thenReturn(true);
+        Assert.assertTrue(mockPrincess.isFallingBack(mockMech));
 
-        // An immobile mech that wants to flee (for any reason).
+        // An immobile mech that wants to fall back (for any reason).
         Mockito.when(mockMech.isImmobile()).thenReturn(true);
-        Assert.assertFalse(mockPrincess.isFleeing(mockMech));
+        Assert.assertFalse(mockPrincess.isFallingBack(mockMech));
     }
 
     @Test
     public void testMustFleeBoard() {
         Mockito.when(mockPrincess.mustFleeBoard(Mockito.any(Entity.class))).thenCallRealMethod();
 
-        // Unit is not yet fleeing.
-        Mockito.when(mockPrincess.isFleeing(Mockito.any(Entity.class))).thenReturn(false);
+        // Unit is not yet falling back
+        Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(false);
 
         // Unit is capable of fleeing.
         Entity mockMech = Mockito.mock(BipedMech.class);
@@ -415,11 +423,28 @@ public class PrincessTest {
 
         // In its current state, the entity does not need to flee the board.
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
-
-        // Now the unit is in flight, which means it should flee the board.
-        Mockito.when(mockPrincess.isFleeing(Mockito.any(Entity.class))).thenReturn(true);
+        
+        // Now the unit is falling back, but it should not flee the board unless fleeBoard is enabled
+        // or the unit is crippled and forcedWithdrawal is enabled
+        Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(true);
+        Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        
+        // Even a crippled mech should not fall back unless fleeBoard or forcedWithdrawal is enabled
+        Mockito.when(mockMech.isCrippled()).thenReturn(true);
+        Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        
+        // Enabling forcedWithdrawal should cause fleeing, because mech is crippled
+        Mockito.when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
         Assert.assertTrue(mockPrincess.mustFleeBoard(mockMech));
-
+        
+        // But forcedWithdrawal without a crippled mech should not flee
+        Mockito.when(mockMech.isCrippled()).thenReturn(false);
+        Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
+        
+        // If fleeBoard is true, all units falling back should flee
+        Mockito.when(mockPrincess.getFleeBoard()).thenReturn(true);
+        Assert.assertTrue(mockPrincess.mustFleeBoard(mockMech));
+                
         // Make the unit incapable of fleeing.
         Mockito.when(mockMech.canFlee()).thenReturn(false);
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));

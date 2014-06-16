@@ -76,9 +76,10 @@ public class Princess extends BotClient {
     private Thread precogThread;
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private final Set<Integer> priorityUnitTargets = new HashSet<>();
-    private boolean flee = false;
+    private boolean fallBack = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
-    private boolean mustFlee = false;
+    private boolean fleeBoard = false;
+    private boolean forcedWithdrawal = false;
 
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
@@ -98,26 +99,40 @@ public class Princess extends BotClient {
         return pathRanker;
     }
 
-    public boolean shouldFlee() {
-        return flee;
+    public boolean getFallBack() {
+        return fallBack;
     }
 
-    public boolean isMustFlee() {
-        return mustFlee;
+    public boolean getFleeBoard() {
+        return fleeBoard;
+    }
+    
+    public boolean getForcedWithdrawal() {
+    	return forcedWithdrawal;
     }
 
-    public void setMustFlee(boolean mustFlee) {
-        this.mustFlee = mustFlee;
+    public void setFleeBoard(boolean fleeBoard, String reason) {
+        log(getClass(), "setFleeBoard(boolean, String)", LogLevel.INFO, "Setting Flee Board " + fleeBoard +
+                														" because: " + reason);
+    	
+        this.fleeBoard = fleeBoard;
     }
 
     protected Precognition getPrecognition() {
         return precognition;
     }
 
-    public void setShouldFlee(boolean shouldFlee, String reason) {
-        log(getClass(), "setShouldFlee(boolean, String)", LogLevel.INFO, "Setting Should Flee " + shouldFlee +
+    public void setFallBack(boolean fallBack, String reason) {
+        log(getClass(), "setFallBack(boolean, String)", LogLevel.INFO, "Setting Fall Back " + fallBack +
                                                                          " because: " + reason);
-        flee = shouldFlee;
+        this.fallBack = fallBack;
+    }
+    
+    public void setForcedWithdrawal(boolean forcedWithdrawal, String reason) {
+    	log(getClass(), "setForcedWithdrawal(boolean, String)", LogLevel.INFO, "Setting Forced Withdrawal " +
+    																		   forcedWithdrawal + " because: " +
+    																		   reason);
+    	this.forcedWithdrawal = forcedWithdrawal;															  
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
@@ -131,8 +146,10 @@ public class Princess extends BotClient {
             return;
         }
         getStrategicBuildingTargets().clear();
-        setShouldFlee(behaviorSettings.shouldAutoFlee(), "Configured to auto flee.");
-        if (shouldFlee()) {
+        setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
+        setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
+        setForcedWithdrawal(behaviorSettings.isForcedWithdrawal(), "Forced Withdrawal Configuration.");
+        if (getFallBack()) {
             return;
         }
 
@@ -178,7 +195,7 @@ public class Princess extends BotClient {
         try {
             // currently returns no artillery hit spots
             // make an empty list
-            PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
+            PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
             // attach my player id to it
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;
@@ -216,6 +233,7 @@ public class Princess extends BotClient {
                     LogLevel.ERROR,
                     "getCoordsAround gave no location for "
                     + getEntity(entityNum).getChassis());
+                return;
             }
 
             // first coordinate that it is legal to put this unit on now find some sort of reasonable facing. If there
@@ -283,7 +301,7 @@ public class Princess extends BotClient {
         try {
             // currently returns no minefields
             // make an empty vector
-            return new Vector<Minefield>();
+            return new Vector<>();
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -342,7 +360,7 @@ public class Princess extends BotClient {
             }
 
             // Fleeing entities should move before those not fleeing.
-            if (isFleeing(entity)) {
+            if (isFallingBack(entity)) {
                 total *= 2;
                 modifiers.append("\tx2.0 (is Fleeing)");
             }
@@ -416,7 +434,7 @@ public class Princess extends BotClient {
 
             // We will move the entity with the highest index.
             double moveIndex = calculateMoveIndex(entity, msg);
-            msg.append("\n\thas index " + moveIndex + " vs " + highestIndex);
+            msg.append("\n\thas index ").append(moveIndex).append(" vs ").append(highestIndex);
             if (moveIndex >= highestIndex) {
                 highestIndex = moveIndex;
                 movingEntity = entity;
@@ -527,18 +545,17 @@ public class Princess extends BotClient {
         }
     }
 
-    protected boolean wantsToFlee(Entity entity) {
-        return shouldFlee()
-               || isMustFlee()
-               || (entity.isCrippled() && getBehaviorSettings().isForcedWithdrawal());
+    protected boolean wantsToFallBack(Entity entity) {
+        return getFallBack() || (entity.isCrippled() && getForcedWithdrawal());
     }
 
-    protected boolean isFleeing(Entity entity) {
-        return !entity.isImmobile() && wantsToFlee(entity);
+    protected boolean isFallingBack(Entity entity) {
+        return !entity.isImmobile() && wantsToFallBack(entity);
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     protected boolean mustFleeBoard(Entity entity) {
-        if (!isFleeing(entity)) {
+        if (!isFallingBack(entity)) {
             return false;
         }
         if (!entity.canFlee()) {
@@ -546,6 +563,9 @@ public class Princess extends BotClient {
         }
         if (getPathRanker().distanceToHomeEdge(entity.getPosition(), getHomeEdge(), getGame()) > 0) {
             return false;
+        }
+        if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
+        	return false;
         }
         return true;
     }
@@ -636,15 +656,11 @@ public class Princess extends BotClient {
         return getBoard().getHex(coords);
     }
 
-    protected ArrayList<MovePath> getMovePaths(Entity entity) {
-        return getPrecognition().getPathEnumerator().unit_paths.get(entity.getId());
-    }
-
     protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths, int maxRange, double fallTollerance,
-                                              int startingHomeDistance, int startingDistToNearestEnemy,
+                                              int startingHomeDistance,
                                               List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
-                                         startingDistToNearestEnemy, enemies, friends);
+                                         enemies, friends);
     }
 
     @Override
@@ -654,6 +670,7 @@ public class Princess extends BotClient {
 
         if (entity == null) {
             log(getClass(), METHOD_NAME, LogLevel.WARNING, "Entity is NULL.");
+            return new MovePath(getGame(), null);
         }
 
         try {
@@ -663,19 +680,17 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().insureUpToDate();
 
-            if (wantsToFlee(entity)) {
+            if (wantsToFallBack(entity)) {
                 String msg = entity.getDisplayName();
-                if (entity.isCrippled()) {
+                if (getFallBack()) {
+                    msg += " is falling back.";
+                } else if (entity.isCrippled()) {
                     msg += " is crippled and withdrawing.";
-                } else if (shouldFlee()) {
-                    msg += " is retreating.";
-                } else if (isMustFlee()) {
-                    msg += " is forced to withdraw.";
                 }
                 log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
 
-                // If this entity must withdraw, is on its home edge and is able to flee the board, do so.
+                // If this entity is falling back, able to flee the board, on its home edge, and must flee, do so.
                 if (mustFleeBoard(entity)) {
                     MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.FLEE);
@@ -721,10 +736,8 @@ public class Princess extends BotClient {
             int startingHomeDistance = getPathRanker().distanceToHomeEdge(entity.getPosition(),
                                                                           getBehaviorSettings().getHomeEdge(),
                                                                           getGame());
-            int distanceToNerestEnemy = (int) getPathRanker().distanceToClosestEnemy(entity, entity.getPosition(),
-                                                                                     getGame());
             List<RankedPath> rankedpaths = rankPaths(paths, entity.getMaxWeaponRange(), fallTolerance,
-                                                     startingHomeDistance, distanceToNerestEnemy, getEnemyEntities(),
+                                                     startingHomeDistance, getEnemyEntities(),
                                                      getFriendEntities());
             long stop_time = System.currentTimeMillis();
 
@@ -905,15 +918,6 @@ public class Princess extends BotClient {
 
     public HomeEdge getHomeEdge() {
         return getBehaviorSettings().getHomeEdge();
-    }
-
-    public void setHomeEdge(HomeEdge homeEdge) {
-        if (homeEdge == null) {
-            log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
-                new IllegalArgumentException("Home Edge is required!"));
-            return;
-        }
-        getBehaviorSettings().setHomeEdge(homeEdge);
     }
 
     public int calculateAdjustment(String ticks) {

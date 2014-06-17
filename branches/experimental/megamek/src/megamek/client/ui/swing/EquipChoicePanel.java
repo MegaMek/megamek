@@ -383,9 +383,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     .size();
             int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen)
                     .size();
-            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
+            
+            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
+                    && entity.getC3MasterId() != chosen.getId()) {
                 entity.setC3Master(chosen, true);
-            } else {
+            } else if (entity.getC3MasterId() != chosen.getId()){
                 String message = Messages
                         .getString(
                                 "CustomMechDialog.NetworkTooBig.message", new Object[] {//$NON-NLS-1$

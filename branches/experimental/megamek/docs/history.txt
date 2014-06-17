@@ -17,6 +17,7 @@ v0.37.13-exp-dev (SVN)
     exempt
 + Bug [#4148]: bug in dfa hitting water
 + Bug [#4168]: Careful movement penalties should not apply to jump/VTOL MP
++ Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Mechs networked
 
 
 v0.37.13-dev (SVN)

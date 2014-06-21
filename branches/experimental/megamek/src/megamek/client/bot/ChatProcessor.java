@@ -15,7 +15,6 @@
 package megamek.client.bot;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import megamek.client.bot.princess.BehaviorSettings;
@@ -138,20 +137,16 @@ public class ChatProcessor {
                             understood = true;
                         }
                         if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
-                            Iterator<Entity> i = tb.getEntitiesOwned()
-                                                   .iterator();
-                            while (i.hasNext()) {
-                                CEntity cen = tb.centities.get(i.next());
+                            for (Entity entity : tb.getEntitiesOwned()) {
+                                CEntity cen = tb.centities.get(entity);
                                 if (cen.strategy.attack > 1) {
                                     cen.strategy.attack = 1;
                                 }
                             }
                             understood = true;
                         } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
-                            Iterator<Entity> i = tb.getEntitiesOwned()
-                                                   .iterator();
-                            while (i.hasNext()) {
-                                CEntity cen = tb.centities.get(i.next());
+                            for (Entity entity : tb.getEntitiesOwned()) {
+                                CEntity cen = tb.centities.get(entity);
                                 cen.strategy.attack = Math.min(
                                         cen.strategy.attack * 1.2, 1.5);
                             }
@@ -253,7 +248,7 @@ public class ChatProcessor {
             msg = "Received flee order!";
             princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
             princess.sendChat("Run Away!");
-            princess.setShouldFlee(true, msg);
+            princess.setFallBack(true, msg);
             return;
         }
 

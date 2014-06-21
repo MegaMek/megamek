@@ -16125,6 +16125,14 @@ public class Server implements Runnable {
     private void resolveDfaAttack(PhysicalResult pr, int lastEntityId) {
         final DfaAttackAction daa = (DfaAttackAction) pr.aaa;
         final Entity ae = game.getEntity(daa.getEntityId());
+        
+        // is the attacker dead? because that sure messes up the calculations
+        if (ae == null) {
+            return;
+        }
+        
+        final IHex aeHex = game.getBoard().getHex(ae.getPosition());
+        final IHex teHex = game.getBoard().getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(),
                 daa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
@@ -16169,10 +16177,7 @@ public class Server implements Runnable {
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(daa.getTargetPos());
 
-        // is the attacker dead? because that sure messes up the calculations
-        if (ae == null) {
-            return;
-        }
+        
 
         final int direction = ae.getFacing();
 
@@ -16202,9 +16207,7 @@ public class Server implements Runnable {
 
             } else {
                 // same effect as successful DFA
-                ae.setElevation(ae.calcElevation(
-                        game.getBoard().getHex(ae.getPosition()), game
-                                .getBoard().getHex(daa.getTargetPos())));
+                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
                         daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
                                 "executed death from above")));
@@ -16504,15 +16507,10 @@ public class Server implements Runnable {
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
-        ae.setElevation(ae.calcElevation(
-                game.getBoard().getHex(ae.getPosition()), game.getBoard()
-                        .getHex(daa.getTargetPos())));
+        ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
         // HACK: to avoid automatic falls, displace from dest to dest
-        addReport(doEntityDisplacement(
-                ae,
-                dest,
-                dest,
-                new PilotingRollData(ae.getId(), 4, "executed death from above")));
+        addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(
+                ae.getId(), 4, "executed death from above")));
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -25411,40 +25409,29 @@ public class Server implements Runnable {
         boolean fallToSurface = false;
         // on ice
         int toSubtract = 0;
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.ICE)
-                && (entity.getElevation() != -game.getBoard()
-                        .getHex(entity.getPosition()).depth())) {
+        IHex currHex = game.getBoard().getHex(entity.getPosition());
+        if (currHex.containsTerrain(Terrains.ICE)
+                && (entity.getElevation() != -currHex.depth())) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition()).surface();
+            toSubtract = currHex.surface();
         }
         // on a bridge
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.BRIDGE_ELEV)
-                && (entity.getElevation() >= game.getBoard()
-                        .getHex(entity.getPosition())
+        if (currHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                && (entity.getElevation() >= currHex
                         .terrainLevel(Terrains.BRIDGE_ELEV))) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.BRIDGE_ELEV);
+            toSubtract = currHex.terrainLevel(Terrains.BRIDGE_ELEV);
         }
         // on a building
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.BLDG_ELEV)
-                && (entity.getElevation() >= game.getBoard()
-                        .getHex(entity.getPosition())
+        if (currHex.containsTerrain(Terrains.BLDG_ELEV)
+                && (entity.getElevation() >= currHex
                         .terrainLevel(Terrains.BLDG_ELEV))) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.BLDG_ELEV);
+            toSubtract = currHex.terrainLevel(Terrains.BLDG_ELEV);
         }
-        return doEntityFall(
-                entity,
-                entity.getPosition(),
-                entity.getElevation()
-                        + (!fallToSurface ? game.getBoard()
-                                .getHex(entity.getPosition()).depth(true)
-                                : entity.getElevation() - toSubtract), roll);
+        return doEntityFall(entity, entity.getPosition(), entity.getElevation()
+                + (!fallToSurface ? currHex.depth(true) : entity.getElevation()
+                        - toSubtract), roll);
     }
 
     /**

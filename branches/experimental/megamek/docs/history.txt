@@ -20,6 +20,7 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Mechs networked
 + Bug [#4172]: Incorrect punch to-hit modifier for 'Mechs built without hands
     and lower arms
++ Bug [#4173]: Incorrect attacker falling damage from successful DFA
 
 
 v0.37.13-dev (SVN)

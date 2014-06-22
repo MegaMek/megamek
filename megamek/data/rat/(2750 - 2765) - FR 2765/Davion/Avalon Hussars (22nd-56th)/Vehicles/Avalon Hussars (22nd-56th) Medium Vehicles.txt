@@ -1,4 +1,4 @@
-Avalon Hussars (22nd – 56th) Medium Vehicles
+Avalon Hussars (22nd-56th) Medium Vehicles
 Maxim Heavy Hover Transport (Standard),1
 Goblin Medium Tank (Standard),2
 Tiger Medium Tank T-12,3

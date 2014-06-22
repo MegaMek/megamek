@@ -1,4 +1,4 @@
-Avalon Hussars (22nd – 56th) Dropship
+Avalon Hussars (22nd-56th) Dropship
 Vampire (Standard),1
 Leopard (2537),2
 Lion (2595),3

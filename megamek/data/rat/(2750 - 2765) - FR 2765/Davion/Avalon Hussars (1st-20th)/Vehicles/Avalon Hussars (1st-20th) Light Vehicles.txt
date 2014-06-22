@@ -1,4 +1,4 @@
-Avalon Hussars (1st – 20th) Light Vehicles
+Avalon Hussars (1st-20th) Light Vehicles
 Heavy Wheeled APC (Standard),1
 Galleon Light Tank GAL-100,2
 J. Edgar Light Hover Tank (Standard),3

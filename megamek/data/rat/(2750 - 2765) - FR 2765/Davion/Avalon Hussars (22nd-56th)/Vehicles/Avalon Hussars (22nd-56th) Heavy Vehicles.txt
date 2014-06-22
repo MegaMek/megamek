@@ -1,4 +1,4 @@
-Avalon Hussars (22nd – 56th) Heavy Vehicles
+Avalon Hussars (22nd-56th) Heavy Vehicles
 Burke Defense Tank (Standard),1
 Magi Infantry Support Vehicle (Standard),2
 Bulldog Medium Tank (Standard),3

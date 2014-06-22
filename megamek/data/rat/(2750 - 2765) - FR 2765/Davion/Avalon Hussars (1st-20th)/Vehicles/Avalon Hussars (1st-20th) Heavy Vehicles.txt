@@ -1,4 +1,4 @@
-Avalon Hussars (1st – 20th) Heavy Vehicles
+Avalon Hussars (1st-20th) Heavy Vehicles
 Magi Infantry Support Vehicle (Standard),1
 Bulldog Medium Tank (Standard),2
 LRM Carrier (Standard),3

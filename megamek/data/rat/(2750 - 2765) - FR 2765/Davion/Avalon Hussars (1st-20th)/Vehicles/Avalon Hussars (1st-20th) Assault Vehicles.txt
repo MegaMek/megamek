@@ -1,4 +1,4 @@
-Avalon Hussars (1st – 20th) Assault Vehicles
+Avalon Hussars (1st-20th) Assault Vehicles
 Rhino Fire Support Tank (MG),1
 Puma Assault Tank PAT-005,2
 Rhino Fire Support Tank (Standard),3

@@ -1,4 +1,4 @@
-Avalon Hussars (1st – 20th) Medium Vehicles
+Avalon Hussars (1st-20th) Medium Vehicles
 Goblin Medium Tank (Standard),1
 Tiger Medium Tank T-12,2
 LTV-4 Hover Tank (Standard),3

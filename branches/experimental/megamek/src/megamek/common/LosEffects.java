@@ -80,9 +80,8 @@ public class LosEffects {
     public static final int COVER_LEFT = 0x4; // vertical cover (blocked)
     public static final int COVER_RIGHT = 0x8; // vertical cover (blocked)
     public static final int COVER_HORIZONTAL = 0x3; // 50% cover (partial)
-    public static final int COVER_UPPER = 0xC; // blocked (blocked) - in case
-                                                // of future rule where only
-                                                // legs are exposed
+    // Upper: for underwater attacks against 'mechs standing in depth 1, TW 109
+    public static final int COVER_UPPER = 0xC; // 50% cover (partial)
     public static final int COVER_FULL = 0xF; // blocked (blocked)
     public static final int COVER_75LEFT = 0x7; // 75% cover (blocked)
     public static final int COVER_75RIGHT = 0xB; // 75% cover (blocked)

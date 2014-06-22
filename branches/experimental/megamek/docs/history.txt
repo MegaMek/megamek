@@ -21,6 +21,8 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4172]: Incorrect punch to-hit modifier for 'Mechs built without hands
     and lower arms
 + Bug [#4173]: Incorrect attacker falling damage from successful DFA
++ Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
+    when the attacker is underwater
 
 
 v0.37.13-dev (SVN)

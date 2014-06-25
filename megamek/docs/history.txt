@@ -20,6 +20,7 @@ v0.37.13-dev (SVN)
 + Data: Revised RATs  RATs now have a date/Date range at the start of the folder
 	to keep them in a chronological order.  Also New RATS for the FR 2765 series.
 + Data:Fixes to previous commit.
++ Made instructions for saving custom Princess configs under new names explicit in the Princess help file.
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

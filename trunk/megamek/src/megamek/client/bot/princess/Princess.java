@@ -553,7 +553,6 @@ public class Princess extends BotClient {
         return !entity.isImmobile() && wantsToFallBack(entity);
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     protected boolean mustFleeBoard(Entity entity) {
         if (!isFallingBack(entity)) {
             return false;

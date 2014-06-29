@@ -22,6 +22,7 @@ v0.37.13-dev (SVN)
 + Data:Fixes to previous commit.
 + Made instructions for saving custom Princess configs under new names explicit in the Princess help file.
 + Data: New Images and a couple of date fixes.
++ Bug: Physical weapon "aimed shot" dialog not always disposing properly.
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off

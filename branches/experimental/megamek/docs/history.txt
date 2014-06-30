@@ -23,6 +23,7 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4173]: Incorrect attacker falling damage from successful DFA
 + Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
     when the attacker is underwater
++ Bug [#4184]: Move multi options don't keep lances of the same unit type
 
 
 v0.37.13-dev (SVN)

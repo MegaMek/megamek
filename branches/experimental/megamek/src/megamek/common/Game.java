@@ -2052,7 +2052,7 @@ public class Game implements Serializable, IGame {
                 && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
                     .intOption("vehicle_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove that
+                // exception, if the _next_ turn is a tank turn, remove that
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
                 if (hasMoreTurns()) {
@@ -2075,7 +2075,7 @@ public class Game implements Serializable, IGame {
                 && (entity instanceof Mech) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getMechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("mek_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove that
+                // exception, if the _next_ turn is a mech turn, remove that
                 // contrived, but may come up e.g. one mech accidently kills
                 // another
                 if (hasMoreTurns()) {

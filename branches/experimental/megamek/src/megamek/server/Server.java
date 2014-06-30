@@ -1935,25 +1935,14 @@ public class Server implements Runnable {
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
         int multiMask = 0;
-        if (infMoveMulti) {
-            multiMask += GameTurn.CLASS_INFANTRY;
-        }
-        if (protosMoveMulti) {
-            multiMask += GameTurn.CLASS_PROTOMECH;
-        }
-
-        // If a proto declared fire and protos don't move
-        // multi, ignore whether infantry move or not.
-        else if (protosMoved && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
-            multiMask = 0;
-        }
-
-        if (tanksMoveMulti) {
-            multiMask += GameTurn.CLASS_TANK;
-        }
-
-        if (meksMoveMulti) {
-            multiMask += GameTurn.CLASS_MECH;
+        if (infMoveMulti && infMoved) {
+            multiMask = GameTurn.CLASS_INFANTRY;
+        } else if (protosMoveMulti && protosMoved) {
+            multiMask = GameTurn.CLASS_PROTOMECH;
+        } else if (tanksMoveMulti && tanksMoved) {
+            multiMask = GameTurn.CLASS_TANK;
+        } else if (meksMoveMulti && meksMoved) {
+            multiMask = GameTurn.CLASS_MECH;
         }
 
         // In certain cases, a new SpecificEntityTurn could have been added for

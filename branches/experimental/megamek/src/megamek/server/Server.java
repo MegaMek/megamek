@@ -1963,16 +1963,13 @@ public class Server implements Runnable {
             }
         }
 
-        // Is this a general move turn?
-        boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
-                && !(turn instanceof GameTurn.UnitNumberTurn)
-                && !(turn instanceof GameTurn.UnloadStrandedTurn)
-                && (!(turn instanceof GameTurn.EntityClassTurn) || ((turn instanceof GameTurn.EntityClassTurn) && ((GameTurn.EntityClassTurn) turn)
-                        .isValidClass(~multiMask)));
+        // Was the turn we just took added as part of a multi-turn?
+        //  This determines if we should add more multiturns
+        boolean isMultiTurn = turn.isMultiTurn();
 
         // Unless overridden by the "protos_move_multi" option, all Protomechs
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && isGeneralMoveTurn
+        if (protosMoved && !protosMoveMulti && !isMultiTurn
                 && (entityUsed != null)) {
 
             // What's the unit number and ID of the entity used?
@@ -2003,21 +2000,21 @@ public class Server implements Runnable {
             for (int i = 0; i < protoTurns; i++) {
                 GameTurn newTurn = new GameTurn.UnitNumberTurn(playerId,
                         movingUnit);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
-
         // Otherwise, we may need to add turns for the "*_move_multi" options.
         else if (((infMoved && infMoveMulti) || (protosMoved && protosMoveMulti))
-                && isGeneralMoveTurn) {
+                && !isMultiTurn) {
             int remaining = 0;
 
             // Calculate the number of EntityClassTurns need to be added.
-            if (infMoveMulti) {
+            if (infMoveMulti && infMoved) {
                 remaining += game.getInfantryLeft(playerId);
             }
-            if (protosMoveMulti) {
+            if (protosMoveMulti && protosMoved) {
                 remaining += game.getProtomechsLeft(playerId);
             }
             if (usedEntityNotDone) {
@@ -2031,12 +2028,13 @@ public class Server implements Runnable {
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
 
-        if (tanksMoved && tanksMoveMulti && isGeneralMoveTurn) {
+        if (tanksMoved && tanksMoveMulti && !isMultiTurn) {
             int remaining = game.getVehiclesLeft(playerId);
             if (usedEntityNotDone) {
                 remaining--;
@@ -2050,12 +2048,13 @@ public class Server implements Runnable {
             for (int i = 0; i < moreVeeTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
 
-        if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
+        if (meksMoved && meksMoveMulti && !isMultiTurn) {
             int remaining = game.getMechsLeft(playerId);
             if (usedEntityNotDone) {
                 remaining--;
@@ -2068,6 +2067,7 @@ public class Server implements Runnable {
             for (int i = 0; i < moreMekTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
@@ -3432,7 +3432,7 @@ public class Server implements Runnable {
                     if (infMoveEven) {
                         player.incrementEvenTurns();
                     } else if (infMoveMulti) {
-                        player.incrementMultiTurns();
+                        player.incrementMultiTurns(GameTurn.CLASS_INFANTRY);
                     } else {
                         player.incrementOtherTurns();
                     }
@@ -3441,15 +3441,15 @@ public class Server implements Runnable {
                         if (protosMoveEven) {
                             player.incrementEvenTurns();
                         } else if (protosMoveMulti) {
-                            player.incrementMultiTurns();
+                            player.incrementMultiTurns(GameTurn.CLASS_PROTOMECH);
                         } else {
                             player.incrementOtherTurns();
                         }
                     }
                 } else if ((entity instanceof Tank) && tankMoveByLance) {
-                    player.incrementMultiTurns();
+                    player.incrementMultiTurns(GameTurn.CLASS_TANK);
                 } else if ((entity instanceof Mech) && mekMoveByLance) {
-                    player.incrementMultiTurns();
+                    player.incrementMultiTurns(GameTurn.CLASS_MECH);
                 } else {
                     player.incrementOtherTurns();
                 }

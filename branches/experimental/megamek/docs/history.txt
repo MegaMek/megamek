@@ -24,6 +24,9 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
     when the attacker is underwater
 + Bug [#4184]: Move multi options don't keep lances of the same unit type
++ Bug [#4184]: Various "move multi" options do not work together
++ Bug [#4175] Mek/Vee Lance movement incompatible with Infantry Move even
++ Bug: Inf and Protos move multi option could cause extra turns to be added
 
 
 v0.37.13-dev (SVN)

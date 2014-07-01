@@ -27,6 +27,8 @@ v0.37.13-exp-dev (SVN)
 + Bug [#4184]: Various "move multi" options do not work together
 + Bug [#4175] Mek/Vee Lance movement incompatible with Infantry Move even
 + Bug: Inf and Protos move multi option could cause extra turns to be added
++ Bug [#4178]: Must click in the wrong place to use the Unit Overview on maps
+    that are thinner than the MegaMek window
 
 
 v0.37.13-dev (SVN)

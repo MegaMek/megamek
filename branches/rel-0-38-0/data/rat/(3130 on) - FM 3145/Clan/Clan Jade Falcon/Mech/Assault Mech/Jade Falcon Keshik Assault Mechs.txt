@@ -1,0 +1,12 @@
+Jade Falcon Keshik Assault Mechs
+Jupiter (Standard),1
+Mad Cat Mk II Enhanced,2
+Shrike (Standard),3
+Shrike 2,4
+Jupiter 4,5
+Cygnus (Standard),6
+Turkina Prime,5
+Gladiator (Executioner) Prime,4
+Shrike 2,3
+Hellstar (Standard),2
+Shrike (Standard),1

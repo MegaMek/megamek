@@ -1,0 +1,14 @@
+House Kurita Heavy 'Mech
+Ninja-To NJT-2,1
+Dragon Fire DGR-3F,2
+Avatar AV1-OA,3
+Black Hawk-KU BHKU-O,4
+Daikyu DAI-01,5,
+Grand Dragon DRG-5K,6
+Grand Dragon DRG-5K,5
+Maelstrom MTR-5K,4
+Shugenja SJA-7D,3
+Crusader CRD-5K,2
+No-Dachi NDA-1K,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

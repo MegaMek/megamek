@@ -1,0 +1,157 @@
+Version:1.1
+Osteon
+U
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3073
+Source:WoR
+Rules Level:4
+
+Mass:85
+Engine:255 XL (Clan) Engine(IS)
+Structure:Clan Standard
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:8
+LL Armor:36
+RL Armor:36
+RTL Armor:12
+RTR Armor:12
+RTC Armor:12
+
+Weapons:4
+LRT 15, Right Torso
+LRT 15, Left Torso
+LRT 15, Right Arm
+LRT 15, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRT15
+CLLRT15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRT15
+CLLRT15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLUMU
+CLLRT15
+CLLRT15
+CLArtemisV
+CLArtemisV
+Clan HarJel
+-Empty-
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLUMU
+CLLRT15
+CLLRT15
+CLArtemisV
+CLArtemisV
+Clan HarJel
+-Empty-
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+NovaCEWS
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,12 @@
+Rim Commonality Guard Assault Mechs F
+Sirocco SRC-3C,1
+BattleMaster BLR-M3,2
+BattleMaster BLR-1Gc,3
+Awesome AWS-9Q,4
+Emperor EMP-6A,5
+Stalker STK-6M,6
+Longbow LGB-12C,5
+BattleMaster BLR-1Gb,4
+Albatross ALB-3Ur,3
+Awesome AWS-10KM,2
+Gunslinger GUN-1ERD,1

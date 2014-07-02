@@ -1,0 +1,12 @@
+Coyote Dropships (FMU)
+Outpost (3063),1
+Overlord C,2
+Union C,3
+Sassanid (Standard),4
+Broadsword (Standard),5
+Union C,6
+Lion (Clan),5
+Overlord C,4
+Confederate (Clan),3
+Carrier (Standard),2
+Fortress (3058),1

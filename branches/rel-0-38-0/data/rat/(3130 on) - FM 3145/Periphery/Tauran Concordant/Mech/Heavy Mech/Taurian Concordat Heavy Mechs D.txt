@@ -1,0 +1,12 @@
+Taurian Concordat Heavy Mechs D
+Brahma BRM-5A,1
+Thunderbolt TDR-9T,2
+Ostroc OSR-5C,3
+Archer ARC-6W,4
+Warhammer WHM-11T,5
+Brahma BRM-5B,6
+Thunderbolt TDR-5Sb,5
+Marauder MAD-2R,4
+Brahma BRM-5B,3
+Warhammer WHM-10T,2
+Warhammer WHM-6Rb,1

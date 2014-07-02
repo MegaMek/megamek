@@ -1,0 +1,12 @@
+Clan Star Adder Second-Line Heavy Aerospace (FMU)
+Scytha B,1
+Sabutai C,2
+Hydaspes 2,3
+Scytha C,4
+Hydaspes 2,5
+Hydaspes (Standard),6
+Hydaspes 2,5
+Xerxes 1,4
+Xerxes 2,3
+Sabutai A,2
+Kirghiz B,1

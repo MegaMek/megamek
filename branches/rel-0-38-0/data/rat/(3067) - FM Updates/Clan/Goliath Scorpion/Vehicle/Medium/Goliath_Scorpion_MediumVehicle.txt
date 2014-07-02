@@ -1,0 +1,12 @@
+Goliath Scorpion Medium Vehicle (FMU)
+Epona Pursuit Tank Prime,1
+Zephyr Hovertank (Standard),2
+Hachiman Fire Support Tank (Standard),3
+Ku Wheeled Assault Tank (IFV) "Turhan II",4
+Ares Medium Tank (Standard),5
+Hachiman Fire Support Tank (Standard),6
+Ku Wheeled Assault Tank (Standard),5
+Ares Medium Tank (Standard),4
+Hachiman Fire Support Tank (Standard),3
+Chaparral Missile Artillery Tank (Standard),2
+Maxim Heavy Hover Transport (Clan),1

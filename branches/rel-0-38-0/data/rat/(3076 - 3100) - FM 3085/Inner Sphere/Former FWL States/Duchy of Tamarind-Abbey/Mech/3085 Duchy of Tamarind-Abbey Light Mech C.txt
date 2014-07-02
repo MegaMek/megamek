@@ -1,0 +1,12 @@
+3085 Duchy of Tamarind-Abbey Light Mech C
+Locust LCT-5M,1
+Eagle EGL-2M,2
+Jackal JA-KL-1532,3
+Tarantula ZPH-2A,4
+Hammer HMR-3M,5
+Spider SDR-8M,6
+Wolfhound WLF-3M,5
+Locust LCT-6M,4
+Hammer HMR-3C "Claw-Hammer",3
+Spider SDR-8R,2
+Falcon Hawk FNHK-9K,1

@@ -1,0 +1,12 @@
+3085 Raven Alliance Light Mech Front Line
+Stinger IIC 2,1
+Mongoose MON-66b,2
+Stinger IIC (Standard),3
+Baboon (Howler) 3 'Devil',4
+Dasher (Fire Moth) Prime,5
+Uller (Kit Fox) Prime,6
+Uller (Kit Fox) Prime,5
+Uller (Kit Fox) Prime,4
+Dasher (Fire Moth) Prime,3
+Koshi (Standard),2
+Puma (Adder) Prime,1

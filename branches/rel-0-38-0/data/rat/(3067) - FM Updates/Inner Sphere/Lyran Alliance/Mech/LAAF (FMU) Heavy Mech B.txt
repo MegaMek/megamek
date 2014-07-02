@@ -1,0 +1,12 @@
+LAAF Heavy Mechs B 3067 (FMU)
+Marauder MAD-5S,1
+Black Hawk-KU BHKU-O,2
+Rakshasa MDG-1A,3
+Gallowglas GAL-1GLS,4
+Penetrator PTR-6S,5
+Caesar CES-3R,6
+War Dog WR-DG-02FC,5
+Axman AXM-1N,4
+Crusader CRD-8S,3
+Maelstrom MTR-5K,2
+Dragon Fire DGR-4F,1

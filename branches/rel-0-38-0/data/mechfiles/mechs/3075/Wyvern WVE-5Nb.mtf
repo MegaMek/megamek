@@ -1,0 +1,152 @@
+Version:1.0
+Wyvern
+WVE-5Nb
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2660
+Source:Star League
+Rules Level:2
+
+Mass:45
+Engine:180 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Single
+Walk MP:4
+Jump MP:4
+
+Armor:Standard
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:5
+Large Pulse Laser, Right Arm
+Medium Laser, Right Arm
+Small Laser, Right Arm
+SRM 6, Right Torso
+LRM 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+ISLargePulseLaser
+ISLargePulseLaser
+Medium Laser
+Small Laser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Jump Jet
+IS Ammo LRM-10
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Jump Jet
+SRM 6
+SRM 6
+IS Ammo SRM-6
+ISCASE
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 10
+LRM 10
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

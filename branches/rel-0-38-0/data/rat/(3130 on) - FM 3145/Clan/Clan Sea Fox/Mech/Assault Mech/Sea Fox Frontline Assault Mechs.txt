@@ -1,0 +1,12 @@
+Sea Fox Frontline Assault Mechs
+Phoenix Hawk IIC 8,1
+Sunder SD1-O,2
+Man O' War (Gargoyle) Prime,3
+Jupiter (Standard),4
+Mad Cat Mk II Enhanced,5
+Gladiator (Executioner) Prime,6
+Mad Cat Mk II 3,5
+Hellstar (Standard),4
+Deimos Prime,3
+Kingfisher Prime,2
+Daishi (Dire Wolf) Prime,1

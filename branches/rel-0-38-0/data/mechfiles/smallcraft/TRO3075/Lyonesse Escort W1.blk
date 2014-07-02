@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Lyonesse Escort
+</Name>
+
+<Model>
+W1
+</model>
+
+<Tonnage>
+175
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+165
+132
+132
+101
+</Armor>
+
+<Nose Equipment>
+ISArrowIVSystem
+ISArrowIVSystem
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISSRM6
+ISSRM6 Ammo
+ISSRM6 Ammo
+</Nose Equipment>
+
+<Left Side Equipment>
+ISERMediumLaser
+(R) ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISERMediumLaser
+(R) ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3073
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+17
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<crew>
+6
+</crew>
+
+<passengers>
+0
+</passengers>

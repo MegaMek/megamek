@@ -1,0 +1,85 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Dominator
+</Name>
+<Model>
+A-UK
+</Model>
+<Tonnage>
+100
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+83
+56
+56
+37
+46
+</Armor>
+<Turret Equipment>
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+</Turret Equipment>
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+<Rear Equipment>
+CLLightMG
+CLLightMG
+</Rear Equipment>
+<Body Equipment>
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+CLLightMG Ammo (200)
+CLLightMG Ammo (200)
+CLActiveProbe
+CLECMSuite
+</Body Equipment>
+<type>
+Mixed (IS Chassis)
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

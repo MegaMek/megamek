@@ -1,0 +1,12 @@
+Diamond_Shark Dropships (FMU)
+Broadsword (Standard),1
+Titan (Clan),2
+Broadsword (Standard),3
+Overlord C,4
+Union C,5
+Union C,6
+Broadsword (Standard),5
+Overlord C,4
+Titan (Clan),3
+Overlord C,2
+Noruff (Standard),1

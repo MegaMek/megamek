@@ -1,0 +1,12 @@
+Word of Blake Light Aerospace D
+Cheetah F-11-RR,1
+Sholagar SL-21,2
+Seydlitz SYD-Z4,3
+Trident TRN-3V,4
+Sparrowhawk SPR-6D,5
+Seydlitz SYD-Z2A,6
+Spad SPD-502,5
+Centurion CNT-3S,4
+Rogue RGU-133F,3
+Spad SPD-503,2
+Zero ZRO-114,1

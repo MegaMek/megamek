@@ -1,0 +1,143 @@
+
+<BlockVersion>
+
+2
+
+</BlockVersion>
+
+<Version>
+
+1
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Sagittarii
+
+</Name>
+
+<Model>
+
+SGT-2R
+
+</Model>
+
+<Tonnage>
+
+45
+
+</Tonnage>
+
+<SafeThrust>
+
+8
+
+</SafeThrust>
+
+<Armor>
+
+67
+
+55
+
+55
+
+51
+
+</Armor>
+
+<Nose Equipment>
+
+ISSNPPC
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISMML7
+
+ISMML7 SRM Ammo 
+
+ISMML7 LRM Ammo 
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISMML7
+
+ISMML7 SRM Ammo 
+
+ISMML7 LRM Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<heatsinks>
+
+10
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+320
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3084
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+20
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<Source>
+
+Dark Age
+
+</Source>

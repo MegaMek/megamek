@@ -1,0 +1,50 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SupportTank
+</UnitType>
+<Name>
+Air Car
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+40
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+8
+8
+8
+8
+</Armor>
+<barrating>
+5
+</barrating>
+<type>
+IS Level 1
+</type>
+<year>
+2200
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

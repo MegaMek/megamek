@@ -1,0 +1,131 @@
+Version:1.1
+Daikyu
+DAI-01 (Tabitha)
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3064
+Rules Level:4
+
+Mass:70
+Engine:350 XL Engine (Inner Sphere)
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:11 Double (Inner Sphere)
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor (Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:21
+RT Armor:21
+CT Armor:32
+HD Armor:9
+LL Armor:29
+RL Armor:29
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:5
+1 ISLBXAC5, Left Arm, Ammo:80
+1 ISLBXAC5, Right Arm
+1 CLERPPC, Left Arm
+1 ISMediumLaser, Left Torso
+1 ISLRM5, Left Torso, Ammo:24
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+CLERPPC
+CLERPPC
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+-Empty-
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ISLRM5
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISLRM5 Ammo
+ISLBXAC5 CL Ammo
+ISLBXAC5 CL Ammo
+ISLBXAC5 Ammo
+ISLBXAC5 Ammo
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

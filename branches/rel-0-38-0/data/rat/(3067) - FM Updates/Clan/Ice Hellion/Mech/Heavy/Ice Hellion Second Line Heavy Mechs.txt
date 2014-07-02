@@ -1,0 +1,12 @@
+Clan Ice Hellion Second-Line Heavy Mechs (FMU)
+Grizzly 2,1
+Galahad (Glass Spider) 2,2
+Guillotine IIC (Standard),3
+Thresher (Standard),4
+Viper (Black Python) 2,5
+Viper (Black Python) (Standard),6
+Thresher (Standard),5
+Grizzly (Standard),4
+Thresher 2,3
+Galahad (Glass Spider) (Standard),2
+Predator (Standard),1

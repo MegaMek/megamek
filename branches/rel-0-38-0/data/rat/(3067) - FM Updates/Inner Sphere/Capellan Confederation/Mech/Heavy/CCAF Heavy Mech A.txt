@@ -1,0 +1,12 @@
+CCAF Heavy Mechs A 3067
+Helios HEL-3D,1
+Warhammer WHM-4L,2
+Lao Hu LHU-3B,3
+Jinggau JN-G8A,4
+Catapult CPLT-C5,5
+Cataphract CTF-3L,6
+Thunder THR-1L,5
+Ti Ts'ang TSG-9H,4
+Archer ARC-7L,3
+Ti Ts'ang TSG-9J,2
+Marauder MAD-5L,1

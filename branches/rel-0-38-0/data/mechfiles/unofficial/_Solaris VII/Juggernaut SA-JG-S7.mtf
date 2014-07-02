@@ -1,0 +1,154 @@
+Version:1.0
+Juggernaut
+SA-JG-S7
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:90
+Engine:270 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:24
+RT Armor:24
+CT Armor:35
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:14
+RTR Armor:14
+RTC Armor:20
+
+Weapons:9
+1 ISLargePulseLaser, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISLargePulseLaser, Left Arm
+2 ISMediumPulseLaser, Left Arm
+8 ISMachine Gun, Right Torso, Ammo:400
+2 ISSmallPulseLaser, Right Torso
+8 ISMachine Gun, Left Torso
+2 ISSmallPulseLaser, Left Torso
+1 ISLargePulseLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+
+Left Torso:
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
+ISCASE
+ISSmallPulseLaser
+ISSmallPulseLaser
+
+Right Torso:
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
+ISCASE
+ISSmallPulseLaser
+ISSmallPulseLaser
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLargePulseLaser
+ISLargePulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,12 @@
+Hastati Sentinels Assault Mechs
+Malice MAL-XT,1
+Gunslinger GUN-1ERD,2
+Marauder II MAD-6D,3
+Titan II TI-2PA,4
+Awesome AWS-10KM,5
+Peacekeeper PKP-1B,6
+Doloire DLR-O,5
+Highlander IIC 3,4
+Atlas II AS7-D-H,3
+Warhammer IIC 4,2
+Black Watch BKW-7R,1

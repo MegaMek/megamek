@@ -1,0 +1,12 @@
+Federated Suns Heavy Mechs C
+Caesar CES-3S,1
+Thanatos TNS-6S,2
+Argus AGS-5D,3
+Hammerhands HMH-6E,4
+BattleAxe BKX-8D,5
+Avatar AV1-O,6
+Falconer FLC-8R,5
+Black Knight BLK-NT-4D,4
+Marauder MAD-5R,3
+Warhammer WHM-9D,2
+Vulpes VLP-1D,1

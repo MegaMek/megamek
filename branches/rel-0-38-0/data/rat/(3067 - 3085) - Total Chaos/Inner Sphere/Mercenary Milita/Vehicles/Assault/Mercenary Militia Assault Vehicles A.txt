@@ -1,0 +1,12 @@
+Mercenary/Militia Assault Vehicles A
+Ontos Heavy Tank (Fusion),1
+Behemoth Heavy Tank (Standard),2
+Heavy LRM Carrier (Standard),3
+Trajan Assault Infantry Fighting Vehicle (ICE),4
+Puma Assault Tank PAT-007,5
+Ontos Heavy Tank (3053 Upgrade),6
+Ontos Heavy Tank (Light Gauss),5
+Puma Assault Tank PAT-005,4
+Rhino Fire Support Tank (Standard),3
+Demolisher Heavy Tank (Gauss),2
+Rhino Fire Support Tank (Flamer),1	

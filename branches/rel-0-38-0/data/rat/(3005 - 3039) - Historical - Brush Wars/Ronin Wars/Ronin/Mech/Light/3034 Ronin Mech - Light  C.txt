@@ -1,0 +1,12 @@
+3034 Ronin Mech - Light  C
+Ostscout OTT-7J,1
+Firestarter FS9-H,2
+Spider SDR-5V,3
+Stinger STG-3R,4
+Jenner JR7-D,5
+Wasp WSP-1A,6
+Panther PNT-9R,5
+Locust LCT-1V,4
+Panther PNT-9R,3
+Javelin JVN-10N,2
+Mongoose MON-67,1

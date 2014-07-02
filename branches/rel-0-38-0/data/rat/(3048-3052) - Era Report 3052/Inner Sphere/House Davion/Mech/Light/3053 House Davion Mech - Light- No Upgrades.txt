@@ -1,0 +1,12 @@
+3053 House Davion Mech - Light- No Upgraded
+Firestarter FS9-H,1
+Javelin JVN-10N,2
+Wasp WSP-1S,3
+Stinger STG-3R,4
+Wolfhound WLF-1,5
+Commando COM-2D,6
+Valkyrie VLK-QA,5
+Valkyrie VLK-QF,4
+Commando COM-2D,3
+Wolfhound WLF-1,2
+Locust LCT-1V,1

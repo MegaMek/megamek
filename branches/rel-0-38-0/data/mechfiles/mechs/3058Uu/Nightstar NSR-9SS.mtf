@@ -1,0 +1,153 @@
+Version:1.0
+Nightstar
+NSR-9SS
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3065
+Source:Civil War
+Rules Level:2
+
+Mass:95
+Engine:285 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:32
+RA Armor:32
+LT Armor:32
+RT Armor:32
+CT Armor:50
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:6
+Medium Pulse Laser, Left Leg
+Medium Pulse Laser, Right Leg
+Ultra AC/20, Left Arm
+LB 20-X AC, Right Torso
+Medium Pulse Laser, Center Torso
+Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+ISUltraAC20
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLBXAC20
+IS Ultra AC/20 Ammo
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+IS LB 20-X Cluster Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+ISMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+ISMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

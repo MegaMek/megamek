@@ -1,0 +1,154 @@
+Version:1.0
+Savage Coyote
+Z
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3072
+Source:WoR
+Rules Level:4
+
+Mass:85
+Engine:255 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:25
+RA Armor:25
+LT Armor:26
+RT Armor:26
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:6
+ER Large Pulse Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+iATM 12, Left Torso
+iATM 12, Right Torso
+HAG/30, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+HAG/30 Ammo
+HAG/30 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLiATM12
+CLiATM12
+CLiATM12
+CLiATM12
+CLiATM12
+Clan Ammo iATM-12
+Clan Ammo iATM-12
+CLCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLiATM12
+CLiATM12
+CLiATM12
+CLiATM12
+CLiATM12
+Clan Ammo iATM-12
+Clan Ammo iATM-12
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+NovaCEWS
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

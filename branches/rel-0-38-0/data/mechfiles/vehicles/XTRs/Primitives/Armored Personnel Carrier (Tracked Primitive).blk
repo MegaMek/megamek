@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Armored Personnel Carrier
+</Name>
+
+<Model>
+(Tracked Primitive)
+</Model>
+
+<year>
+2390
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+5
+5
+5
+4
+5
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<Body Equipment>
+Basic Fire Control
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+</Turret Equipment>
+
+<source>
+XTR Primitives
+</source>
+
+<tonnage>
+10.0
+</tonnage>
+

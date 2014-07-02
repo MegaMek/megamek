@@ -1,0 +1,12 @@
+Clan Blood Spirit Front-Line Heavy Aerospace (FMU)
+Kirghiz C,1
+Sabutai Prime,2
+Kirghiz C,3
+Hydaspes (Standard),4
+Sabutai C,5
+Hydaspes (Standard),6
+Hydaspes (Standard),5
+Sabutai C,4
+Hydaspes 2,3
+Sabutai Prime,2
+Kirghiz Prime,1

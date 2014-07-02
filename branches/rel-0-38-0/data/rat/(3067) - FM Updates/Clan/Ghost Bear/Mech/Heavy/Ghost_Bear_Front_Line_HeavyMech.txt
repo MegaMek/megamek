@@ -1,0 +1,12 @@
+Ghost Bear Front-Line Heavy Mechs (FMU)
+Nova Cat C,1
+Thor (Summoner) Prime,2
+Loki (Hellbringer) Prime,3
+Vulture (Mad Dog) A,4
+Vulture (Mad Dog) C,5
+Vulture (Mad Dog) Prime,6
+Vulture (Mad Dog) B,5
+Thor (Summoner) C,4
+Mad Cat (Timber Wolf) Prime,3
+Cauldron-Born (Ebon Jaguar) Prime,2
+Vulture (Mad Dog) H,1

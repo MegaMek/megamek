@@ -1,0 +1,12 @@
+Free Rasalhague Republic Light Mechs Late 3075
+Spider SDR-7M,1
+Talon TLN-5W,2
+Hitman HM-1,3
+Hermes HER-3S,4
+Commando COM-5S,5
+Panther PNT-10K,6
+Jenner JR7-K,5
+Mongoose MON-66,4
+Firestarter FS9-S,3
+Panther PNT-10K,2
+Jenner JR7-K,1

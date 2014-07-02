@@ -1,0 +1,153 @@
+Version:1.0
+Scourge
+SCG-WD1
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3131
+Source:TRO 3145 LC
+Rules Level:2
+
+Mass:65
+Engine:325 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:5
+Jump MP:4
+
+Armor:Standard(IS/Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:6
+Gauss Rifle, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Medium Pulse Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISMediumPulseLaser
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo
+IS Gauss Ammo
+Jump Jet
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,221 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+League Destroyer
+</Name>
+<Model>
+(Block I)
+</Model>
+<Tonnage>
+550000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+35
+43
+43
+43
+43
+34
+</Armor>
+<Nose Equipment>
+NAC20
+NAC20
+NAC20 Ammo:40
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC10
+NAC10 Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NAC10
+NAC10 Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NAC40
+NAC40 Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NAC40
+NAC40 Ammo:20
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NAC10
+NAC10 Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+NAC10
+NAC10 Ammo:30
+NL45
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+NAC20
+NAC20 Ammo:20
+NAC10
+NAC10 Ammo:30
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+
+<structural_integrity>
+48
+</structural_integrity>
+
+<heatsinks>
+1300
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2368
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:12:3
+SmallCraftBay:6:1
+CargoBay:126805:1
+CargoBay:20000:1
+CargoBay:20000:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+12
+</escape_pod>
+
+<life_boat>
+12
+</life_boat>
+
+<crew>
+286
+</crew>
+
+<passengers>
+0
+</passengers>
+
+<history>
+DropShuttleBay not coded into MM.  20000t CargoBays represent these
+</history>

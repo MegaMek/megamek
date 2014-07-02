@@ -1,0 +1,12 @@
+Marian Hegemony Medium Mechs Late 3075
+Vulcan VL-2T,1
+Dervish DV-6M,2
+Cicada CDA-3M,3
+Hunchback HBK-5H,4
+Phoenix Hawk PXH-1,5
+Whitworth WTH-1H,6
+Hunchback HBK-5M,5
+Enforcer ENF-4R,4
+Wolverine WVR-6M,3
+Blackjack BJ-2,2
+Vindicator VND-3L,1

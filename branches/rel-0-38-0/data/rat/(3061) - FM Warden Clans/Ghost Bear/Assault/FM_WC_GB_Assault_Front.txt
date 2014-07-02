@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Ghost Bears),
+Masakari (Warhawk) A,1
+Kingfisher A,2
+Gladiator (Executioner) C,3
+Masakari (Warhawk) C,4
+Kingfisher Prime,5
+Gladiator (Executioner) Prime,6
+Gladiator (Executioner) B,5
+Kingfisher B,4
+Gladiator (Executioner) A,3
+Gladiator (Executioner) D,2
+Gladiator (Executioner) H,1

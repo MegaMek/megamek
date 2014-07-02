@@ -1,0 +1,41 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Motorized Platoon
+</Name>
+<Model>
+(Flechette)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryZeusHeavyRifle
+</Primary>
+<Secondary>
+InfantrySupportNeedler
+</Secondary>
+<secondn>
+2
+</secondn>
+<type>
+IS Level 2
+</type>
+<year>
+3064
+</year>
+<motion_type>
+Motorized
+</motion_type>

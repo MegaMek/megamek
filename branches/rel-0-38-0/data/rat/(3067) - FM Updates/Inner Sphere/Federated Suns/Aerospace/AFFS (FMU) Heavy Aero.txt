@@ -1,0 +1,12 @@
+AFFS Heavy Aerospace 3067 (FMU)
+Slayer SL-15R,1
+Chippewa CHP-W7,2
+Chippewa CHP-W10,3
+Thunderbird TRB-D36,4
+Eagle EGL-R6,5
+Stuka STU-K5,6
+Stuka STU-D6,5
+Transgressor TR-13,4
+Eagle EGL-R6,3
+Transgressor TR-13A,2
+Riever F-700a,1

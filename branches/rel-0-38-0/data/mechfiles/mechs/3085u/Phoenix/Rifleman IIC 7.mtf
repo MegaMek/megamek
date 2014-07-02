@@ -1,0 +1,152 @@
+Version:1.0
+Rifleman IIC
+7
+
+Config:Biped
+TechBase:Clan
+Era:3078
+Source:Jihad
+Rules Level:2
+
+Mass:65
+Engine:195 Fusion (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:5
+
+Armor:Standard(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:29
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:5
+Heavy Large Laser, Right Arm
+Heavy Large Laser, Left Arm
+Plasma Cannon, Right Arm
+Plasma Cannon, Left Arm
+Micro Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLMicroPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

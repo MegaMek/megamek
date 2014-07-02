@@ -1,0 +1,152 @@
+Version:1.0
+Arctic Wolf II
+C
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3085
+Source:Dark Age
+Rules Level:2
+
+Mass:40
+Engine:280 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:10
+Walk MP:7
+Jump MP:7
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:16
+RT Armor:16
+CT Armor:18
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+ER Large Laser, Right Arm
+ER Large Laser, Left Arm
+SRM 4, Right Torso
+SRM 4, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLSRM4
+Clan Ammo SRM-4
+Clan Ammo SRM-4
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLSRM4
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,149 @@
+Version:1.0
+Marauder IIC
+4
+
+Config:Biped
+TechBase:Clan
+Era:3070
+Source:Jihad
+Rules Level:2
+
+Mass:85
+Engine:340 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Standard(Clan)
+LA Armor:25
+RA Armor:25
+LT Armor:28
+RT Armor:28
+CT Armor:33
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:2
+HAG/40, Left Torso
+HAG/40, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+CLHAG40
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+HAG/40 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+HAG/40 Ammo
+HAG/40 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+HAG/40 Ammo
+HAG/40 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3085 Marauder IIC .jpg

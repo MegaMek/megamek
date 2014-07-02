@@ -1,0 +1,12 @@
+Wolf (in-Exile) 2nd-Line Light Mechs (FMU)
+Jenner IIC (Standard),1
+Mongoose MON-66,2
+Pack Hunter (Standard),3
+Vixen (Incubus) 2,4
+Wolfhound WLF-2,5
+Pack Hunter (Standard),6
+Vixen (Incubus) (Standard),5
+Pack Hunter (Standard),4
+Jenner IIC (Standard),3
+Wolfhound WLF-3S,2
+Pack Hunter (Standard),1

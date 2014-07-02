@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Light Mechs (Blood Spirit),
+Vixen (Incubus) 2,1
+Koshi (Mist Lynx) Prime,2
+Vixen (Incubus) (Standard),3
+Uller (Kit Fox) Prime,4
+Puma (Adder) B,5
+Uller (Kit Fox) A,6
+Koshi (Mist Lynx) B,5
+Puma (Adder) A,4
+Hankyu (Arctic Cheetah) A,3
+Peregrine (Horned Owl) (Standard),2
+Locust IIC (Standard),1

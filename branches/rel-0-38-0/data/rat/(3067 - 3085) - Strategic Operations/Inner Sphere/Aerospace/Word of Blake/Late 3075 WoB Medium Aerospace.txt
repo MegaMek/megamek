@@ -1,0 +1,12 @@
+Word of Blake Medium Aerospace Late 3075
+Stingray F-92,1
+Ironsides IRN-SD3,2
+Rusalka S-RSL-O Invictus,3
+Defiance DFC-O,4
+Hellcat II HCT-213B,5
+Hellcat II HCT-214,6
+Gotha GTHA-500,5
+Stingray F-94,4
+Rusalka S-RSL-OA Dominus,3
+Lightning LTN-G15,2
+Lancer LX-2,1

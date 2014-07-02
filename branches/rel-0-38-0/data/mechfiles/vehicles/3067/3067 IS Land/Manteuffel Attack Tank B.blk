@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Manteuffel Attack Tank
+</Name>
+<Model>
+B
+</Model>
+<Tonnage>
+70
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+56
+40
+40
+25
+45
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+ISERSmallLaser
+</Turret Equipment>
+<Front Equipment>
+ISHeavyGaussRifle
+</Front Equipment>
+<Body Equipment>
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISCASE
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<omni>
+</omni>

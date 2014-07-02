@@ -31,7 +31,7 @@ v0.37.13-exp-dev (SVN)
     that are thinner than the MegaMek window
 
 
-v0.37.13-dev (SVN)
+v0.38.0-dev (2014-06-02 20:27 UTC)
 + Data: Unit and Image Fixes
 + Data: Broken Cadaver image link
 + Bug [#4156]: Searchlights not properly added if searchlight quirk is added in
@@ -51,6 +51,11 @@ v0.37.13-dev (SVN)
 + Data: Revised RATs  RATs now have a date/Date range at the start of the folder
 	to keep them in a chronological order.  Also New RATS for the FR 2765 series.
 + Data:Fixes to previous commit.
++ Made instructions for saving custom Princess configs under new names explicit in the Princess help file.
++ Data: New Images and a couple of date fixes.
++ Bug: Physical weapon "aimed shot" dialog not always disposing properly.
++ Data: New Images and a couple of date fixes.
++ Data: New Images and Unit Fixes.
 
 v0.37.12-exp (2014-06-03 19:06 UTC)
 + Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the

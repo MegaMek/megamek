@@ -1,4 +1,4 @@
-Avalon Hussars (22nd – 56th) Light Vehicles
+Avalon Hussars (22nd-56th) Light Vehicles
 Armored Personnel Carrier (Hover SRM),1
 Heavy Wheeled APC (Standard),2
 Galleon Light Tank GAL-100,3

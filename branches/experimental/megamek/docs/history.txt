@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.37.13-exp-dev (SVN)
+v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight
 + Bug: Team initiative not properly calculated when negative values are present 
     (such as for team constant init bonus, or player init bonus, etc) 
@@ -31,7 +31,7 @@ v0.37.13-exp-dev (SVN)
     that are thinner than the MegaMek window
 
 
-v0.38.0-dev (2014-06-02 20:27 UTC)
+v0.38.0-dev (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes
 + Data: Broken Cadaver image link
 + Bug [#4156]: Searchlights not properly added if searchlight quirk is added in

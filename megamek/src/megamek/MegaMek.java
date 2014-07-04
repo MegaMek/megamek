@@ -145,7 +145,13 @@ public class MegaMek {
             }
             PrintStream ps = new PrintStream(
                     new BufferedOutputStream(new FileOutputStream(sLogDir
-                            + File.separator + logFileName), 64));
+                            + File.separator + logFileName) {
+                        public void flush() throws IOException {
+                            super.flush();
+                            getFD().sync();
+                        };
+                    }
+                            , 64));
             System.setOut(ps);
             System.setErr(ps);
         } catch (Exception e) {

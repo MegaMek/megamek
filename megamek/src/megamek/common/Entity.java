@@ -666,7 +666,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Flag that can be used to indicate whether this Entity should use a 
      * geometric mean when computing BV.
      */
-    protected boolean useGeometricBV = false;;
+    protected boolean useGeometricBV = false;
+
+    protected boolean useReducedOverheatModifierBV = false;
     
     /**
      * Generates a new, blank, entity.
@@ -3055,33 +3057,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // Start reached, now we can attempt to pick a weapon.
-            if ((mounted != null)
-                    && (mounted.isReady())
-                    && (!mounted.getType().hasFlag(WeaponType.F_AMS))
-                    && ((mounted.getLinked() == null) || (mounted.getLinked()
-                                                                 .getUsableShotsLeft() > 0))) {
-
-                // TAG only in the correct phase...
-                if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                        .getPhase() != IGame.Phase.PHASE_OFFBOARD))
-                        || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                        .getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
-                    continue;
-                }
-
-                // Artillery only in the correct phase...
-                if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                        && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
-                    continue;
-                }
-
-                // No linked MGs...
-                if (mounted.getType().hasFlag(WeaponType.F_MG)) {
-                    if (hasLinkedMGA(mounted)) {
-                        continue;
-                    }
-                }
-
+            if (isWeaponValidForPhase(mounted)) {
                 return getEquipmentNum(mounted);
             }
 
@@ -3092,6 +3068,58 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         return getFirstWeapon();
+    }
+    
+    /**
+     * Returns true if the weapon, specified as a weapon id, is valid for the
+     * current phase.
+     * 
+     * @param weapNum
+     * @return True if valid, else false
+     */
+    public boolean isWeaponValidForPhase(int weapNum){
+    	return isWeaponValidForPhase(equipmentList.get(weapNum));
+    }
+    
+    /**
+     * Returns true if the weapon, specified as a <code>Mounted</code>, is 
+     * valid for the current phase.
+     * 
+     * @param mounted 
+     * @return True if valid, else false
+     */
+    public boolean isWeaponValidForPhase(Mounted mounted){
+    	// Start reached, now we can attempt to pick a weapon.
+        if ((mounted != null)
+                && (mounted.isReady())
+                && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+                && ((mounted.getLinked() == null) || (mounted.getLinked()
+                        .getUsableShotsLeft() > 0))) {
+
+            // TAG only in the correct phase...
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
+                    .getPhase() != IGame.Phase.PHASE_OFFBOARD))
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
+                            .getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
+            	return false;
+            }
+
+            // Artillery only in the correct phase...
+            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+            	return false;
+            }
+
+            // No linked MGs...
+            if (mounted.getType().hasFlag(WeaponType.F_MG)) {
+                if (hasLinkedMGA(mounted)) {
+                	return false;
+                }
+            }
+            return true;
+        } else {
+        	return false;
+        }
     }
 
     /**
@@ -5530,6 +5558,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && game.getOptions().booleanOption("geometric_mean_bv"));
     }
 
+    public boolean useReducedOverheatModifierBV() {
+        return (useReducedOverheatModifierBV || (game != null)
+                && game.getOptions().booleanOption("reduced_overheat_modifier_bv"));
+    }
+
     /**
      * Calculates the battle value of this mech. If the parameter is true, then
      * the battle value for c3 will be added whether the mech is currently part
@@ -6188,13 +6221,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * roll for the piloting skill check.
      */
     public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
-                                            Coords lastPos, Coords curPos) {
+            Coords lastPos, Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
                                                         .getLastStepMovementType());
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
-                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (step.getMovementType() != EntityMovementType.MOVE_JUMP 
+                    || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
                 && (this instanceof Mech)) {
             int mod = 0;
@@ -8576,26 +8610,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean usedSearchlight() {
         return usedSearchlight;
-    }
-
-    /**
-     * illuminate a hex and all units that are between us and the hex
-     *
-     * @param target the <code>HexTarget</code> to illuminate
-     */
-    public void illuminateTarget(HexTarget target) {
-        if (hasSpotlight() && spotlightIsActive && (target != null)) {
-            illuminated = true;
-            ArrayList<Coords> in = Coords.intervening(getPosition(),
-                                                      target.getPosition());
-            for (Coords c : in) {
-                for (Enumeration<Entity> e = game.getEntities(c); e
-                        .hasMoreElements(); ) {
-                    Entity en = e.nextElement();
-                    en.setIlluminated(true);
-                }
-            }
-        }
     }
 
     /**
@@ -12877,5 +12891,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setUseGeometricBV(boolean useGeometricBV) {
         this.useGeometricBV = useGeometricBV;
+    }
+
+    public boolean isUseReducedOverheatModifierBV() {
+        return useReducedOverheatModifierBV;
+    }
+
+    public void setUseReducedOverheatModifierBV(boolean useReducedOverheatModifierBV) {
+        this.useReducedOverheatModifierBV = useReducedOverheatModifierBV;
     }
 }

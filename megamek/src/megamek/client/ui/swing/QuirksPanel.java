@@ -37,25 +37,27 @@ import megamek.common.options.WeaponQuirks;
 /**
  * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.
  *
- * @author Deric Page (dericpage@users.sourceforge.net)
- * @version %I% %G%
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @version %Id%
  * @since 2012-03-05
  */
 public class QuirksPanel extends JPanel {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -8360885055638738148L;
-	private Entity entity;
+     *
+     */
+    private static final long serialVersionUID = -8360885055638738148L;
+    private Entity entity;
     private List<DialogOptionComponent> quirkComps;
-    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer, ArrayList<DialogOptionComponent>>();
+    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer,
+            ArrayList<DialogOptionComponent>>();
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks;
     private Quirks quirks;
     private boolean editable;
     private DialogOptionListener parent;
 
-    public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent, HashMap<Integer, WeaponQuirks> h_wpnQuirks) {
+    public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent, HashMap<Integer,
+            WeaponQuirks> h_wpnQuirks) {
         this.entity = entity;
         this.quirks = quirks;
         this.editable = editable;
@@ -70,15 +72,15 @@ public class QuirksPanel extends JPanel {
         quirkComps = new ArrayList<DialogOptionComponent>();
         for (Mounted m : entity.getWeaponList()) {
             h_wpnQuirkComps.put(entity.getEquipmentNum(m),
-                    new ArrayList<DialogOptionComponent>());
+                                new ArrayList<DialogOptionComponent>());
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             add(new JLabel(group.getDisplayableName()), GBC.eol());
 
             for (Enumeration<IOption> j = group.getSortedOptions(); j
-                    .hasMoreElements();) {
+                    .hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (!Quirks.isQuirkLegalFor(option, entity)) {
@@ -97,16 +99,16 @@ public class QuirksPanel extends JPanel {
             Mounted m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
             JLabel labWpn = new JLabel(m.getName() + " ("
-                    + entity.getLocationName(m.getLocation()) + ")");
+                                       + entity.getLocationName(m.getLocation()) + ")");
             add(labWpn, GBC.eol());
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i
-                    .hasMoreElements();) {
+                    .hasMoreElements(); ) {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getSortedOptions(); j
-                        .hasMoreElements();) {
+                        .hasMoreElements(); ) {
                     IOption option = j.nextElement();
                     if (!WeaponQuirks.isQuirkLegalFor(option, entity,
-                            (WeaponType) m.getType())) {
+                                                      (WeaponType) m.getType())) {
                         continue;
                     }
                     addWeaponQuirk(key, option, editable);
@@ -119,7 +121,7 @@ public class QuirksPanel extends JPanel {
 
     private void addQuirk(IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(parent,
-                option, editable);
+                                                                     option, editable);
         add(optionComp, GBC.eol());
 
         quirkComps.add(optionComp);
@@ -127,7 +129,7 @@ public class QuirksPanel extends JPanel {
 
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(parent,
-                option, editable);
+                                                                     option, editable);
 
         add(optionComp, GBC.eol());
         h_wpnQuirkComps.get(key).add(optionComp);
@@ -142,7 +144,7 @@ public class QuirksPanel extends JPanel {
                 entity.getQuirks().getOption(option.getName()).setValue("None"); // NON-NLS-$1
             } else {
                 entity.getQuirks().getOption(option.getName())
-                        .setValue(comp.getValue());
+                      .setValue(comp.getValue());
             }
         }
         // now for weapon quirks
@@ -159,7 +161,7 @@ public class QuirksPanel extends JPanel {
                     m.getQuirks().getOption(option.getName()).setValue("None"); // NON-NLS-$1
                 } else {
                     m.getQuirks().getOption(option.getName())
-                            .setValue(comp.getValue());
+                     .setValue(comp.getValue());
                 }
             }
         }

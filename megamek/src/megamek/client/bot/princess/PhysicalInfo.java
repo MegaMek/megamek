@@ -33,7 +33,7 @@ import java.text.NumberFormat;
 
 /**
  * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at gmail dot com)
+ * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:29 PM
  */
 public class PhysicalInfo {
@@ -165,8 +165,8 @@ public class PhysicalInfo {
             PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());
             setAction(action);
             setHitData(physicalAttackType.isPunch() ?
-                               ((PunchAttackAction) action).toHit(game) :
-                               ((KickAttackAction) action).toHit(game));
+                       ((PunchAttackAction) action).toHit(game) :
+                       ((KickAttackAction) action).toHit(game));
         }
 
         // Get the attack direction.
@@ -253,9 +253,9 @@ public class PhysicalInfo {
                 // If the armor can be breached, but the location not destroyed...
             } else if (getExpectedDamageOnHit() > (targetArmor)) {
                 setExpectedCriticals(getExpectedCriticals() +
-                                             hitLocationProbability *
-                                                     ProbabilityCalculator.getExpectedCriticalHitCount() *
-                                                     getProbabilityToHit());
+                                     hitLocationProbability *
+                                     ProbabilityCalculator.getExpectedCriticalHitCount() *
+                                     getProbabilityToHit());
             }
         }
     }
@@ -383,10 +383,10 @@ public class PhysicalInfo {
 
     String getDebugDescription() {
         return getAttackType().toString() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
-                + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
-                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
-                + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
-                + ", Kill Prob: " + LOG_PER.format(getKillProbability());
+               + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
+               + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
+               + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
+               + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
     }
 }

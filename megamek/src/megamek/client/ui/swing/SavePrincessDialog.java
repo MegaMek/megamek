@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Deric
+ * User: Deric "Netzilla" Page (deric dot page at usa dot net)
  * Date: 10/20/12
  * Time: 1:03 PM
  */

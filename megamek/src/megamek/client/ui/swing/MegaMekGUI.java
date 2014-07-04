@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -44,27 +47,28 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.RandomNameGenerator;
-import megamek.client.RandomUnitGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.KeyBindParser;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.logging.LogLevel;
+import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -85,7 +89,9 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonHelpDialog help;
     private GameOptionsDialog optdlg;
     private CommonSettingsDialog setdlg;
-
+    
+    private MegaMekController controller;
+    
     public void start(String[] args) {
         createGUI();
     }
@@ -94,6 +100,8 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
+    	createController();
+    	
         // Set a couple of things to make the Swing GUI look more "Mac-like" on
         // Macs
         // Taken from:
@@ -105,17 +113,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         // this should also help to make MegaMek look more system-specific
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e){
+        	System.err.println("Error setting look and feel!");
             e.printStackTrace();
         }
 
@@ -178,6 +177,15 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
     }
+    
+    public void createController(){
+    	controller = new MegaMekController();
+    	KeyboardFocusManager kbfm = 
+    			KeyboardFocusManager.getCurrentKeyboardFocusManager();
+    	kbfm.addKeyEventDispatcher(controller);
+    	
+    	KeyBindParser.parseKeyBindings(controller);
+    }    
 
     /**
      * Display the main menu.
@@ -291,7 +299,8 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor.
      */
     void showEditor() {
-        BoardEditor editor = new BoardEditor();
+        BoardEditor editor = new BoardEditor(controller);
+        controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.boardNew();
     }
@@ -300,7 +309,8 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the board editor and open an "open" dialog.
      */
     void showEditorOpen() {
-        BoardEditor editor = new BoardEditor();
+        BoardEditor editor = new BoardEditor(controller);
+        controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.boardLoad();
     }
@@ -356,7 +366,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         // initialize client
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
+        controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -452,7 +463,8 @@ public class MegaMekGUI implements IMegaMekGUI {
             return;
         }
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
+        controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -474,7 +486,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         //  This normally happens in the deployment phase in Client, but
         //  if we are loading a game, this phase may not be reached
         MechFileParser.dispose();
-        RandomUnitGenerator.getInstance().dispose();
         RandomNameGenerator.getInstance().dispose();
         //We must do this last, as the name and unit generators can create
         // a new instance if they are running
@@ -523,7 +534,6 @@ public class MegaMekGUI implements IMegaMekGUI {
 
             @Override
             public String getDescription() {
-                // TODO Auto-generated method stub
                 return "MegaMek Scenario Files";
             }
 
@@ -638,7 +648,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!"".equals(sd.localName)) { //$NON-NLS-1$
             // initialize game
             client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
-            gui = new ClientGUI(client);
+            gui = new ClientGUI(client,controller);
+            controller.clientgui = gui;
             gui.initialize();
             if (!client.connect()) {
                 StringBuffer error = new StringBuffer();
@@ -667,7 +678,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
-                c.retrieveServerInfo();
             }
         }
 
@@ -678,7 +688,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 if (!c.connect()) {
                     // bots should never fail on connect
                 }
-                c.retrieveServerInfo();
             }
         }
 
@@ -730,7 +739,8 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // initialize game
         client = new Client(cd.playerName, cd.serverAddr, cd.port);
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
+        controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -784,7 +794,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         client = bcd.getSelectedBot(cd.serverAddr, cd.port);
         client.getGame().addGameListener(new BotGUI((BotClient) client));
-        ClientGUI gui = new ClientGUI(client);
+        ClientGUI gui = new ClientGUI(client,controller);
+        controller.clientgui = gui;
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
@@ -799,7 +810,6 @@ public class MegaMekGUI implements IMegaMekGUI {
             client.die();
         }
         launch(gui.getFrame());
-        client.retrieveServerInfo();
     }
 
     private void addBag(JComponent comp, GridBagLayout gridbag,
@@ -826,10 +836,32 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     void showHelp() {
         if (help == null) {
-            help = showHelp(frame, "readme"); //$NON-NLS-1$
+            help = showHelp(frame, 
+            		Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
         }
         // Show the help dialog.
         help.setVisible(true);
+    }
+    
+    private void showSkinningHowTo(){
+        try {
+            // Get the correct help file.
+            StringBuilder helpPath = new StringBuilder("file:///");
+            helpPath.append(System.getProperty("user.dir"));
+            if (!helpPath.toString().endsWith(File.separator)) {
+                helpPath.append(File.separator);
+            }
+            helpPath.append(Messages.getString("ClientGUI.skinningHelpPath"));
+            URL helpUrl = new URL(helpPath.toString());
+
+            // Launch the help dialog.
+            HelpDialog helpDialog = new HelpDialog(
+            		Messages.getString("ClientGUI.skinningHelpPath.title"), 
+            		helpUrl);
+            helpDialog.setVisible(true);
+        } catch (MalformedURLException e) {
+            new Logger().log(getClass(), "showSkinningHowTo", e);
+        }
     }
 
     /**
@@ -940,6 +972,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             if ("helpContents".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showHelp();
             }
+            if ("helpSkinning".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
+            	showSkinningHowTo();
+            }            
             if ("viewClientSettings".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showSettings();
             }

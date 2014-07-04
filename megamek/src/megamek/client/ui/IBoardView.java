@@ -149,5 +149,18 @@ public interface IBoardView extends MechDisplayListener {
     public abstract void selectEntity(Entity e);
 
     public void die();
+    
+    /**
+     * Returns true if the BoardView has an active chatter box else false.
+     * @return
+     */
+    public boolean getChatterBoxActive();
+
+    /**
+     * Sets whether the BoardView has an active chatter box or not.
+     * @param cba
+     */
+    public void setChatterBoxActive(boolean cba);
+
 
 }

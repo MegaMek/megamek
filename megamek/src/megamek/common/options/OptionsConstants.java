@@ -14,7 +14,7 @@
 package megamek.common.options;
 
 /**
- * @author Deric "Netzilla" Page (deric dot page at gmail dot com)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
  * @since 2/21/14 7:57 AM
  */

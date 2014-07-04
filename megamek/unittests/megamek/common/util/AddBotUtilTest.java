@@ -70,7 +70,6 @@ public class AddBotUtilTest {
         Mockito.doCallRealMethod().when(mockPrincess).setBehaviorSettings(Mockito.any(BehaviorSettings.class));
         Mockito.doReturn(mockGame).when(mockPrincess).getGame();
         Mockito.doReturn(true).when(mockPrincess).connect();
-        Mockito.doNothing().when(mockPrincess).retrieveServerInfo();
         Mockito.doReturn(new HashSet<Coords>()).when(mockPrincess).getStrategicBuildingTargets();
         Mockito.doReturn(new HashSet<Integer>()).when(mockPrincess).getPriorityUnitTargets();
         Mockito.doCallRealMethod().when(mockPrincess).getBehaviorSettings();
@@ -78,7 +77,6 @@ public class AddBotUtilTest {
 
         TestBot mockTestBot = Mockito.mock(TestBot.class);
         Mockito.when(mockTestBot.connect()).thenReturn(true);
-        Mockito.doNothing().when(mockTestBot).retrieveServerInfo();
         Mockito.when(mockTestBot.getGame()).thenReturn(mockGame);
 
         testAddBotUtil = Mockito.spy(new AddBotUtil());

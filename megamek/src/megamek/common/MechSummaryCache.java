@@ -352,7 +352,13 @@ public class MechSummaryCache {
         ms.setBV(e.calculateBattleValue());
         e.setUseGeometricBV(true);
         ms.setGMBV(e.calculateBattleValue());
-        e.setUseGeometricBV(false);        
+        e.setUseGeometricBV(false);
+        e.setUseReducedOverheatModifierBV(true);
+        ms.setRHBV(e.calculateBattleValue());
+        e.setUseGeometricBV(true);
+        ms.setRHGMBV(e.calculateBattleValue());
+        e.setUseGeometricBV(false);
+        e.setUseReducedOverheatModifierBV(false);
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((long) e.getCost(false));
         ms.setUnloadedCost(((long) e.getCost(true)));

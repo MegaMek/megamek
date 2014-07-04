@@ -16,7 +16,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 
 /**
- * @author Deric Page (deric.page@nisc.coop) (ext 2335)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version $Id$
  * @since 12/10/13 3:19 PM
  */
@@ -104,7 +104,7 @@ public class EntityEvaluationResponse {
     public String toString() {
         DecimalFormat format = new DecimalFormat("0.000");
         return "Enemy: " + format.format(estimatedEnemyDamage)
-                + "\tMe: " + format.format(myEstimatedDamage)
-                + "\tPhysical: " + format.format(myEstimatedPhysicalDamage);
+               + "\tMe: " + format.format(myEstimatedDamage)
+               + "\tPhysical: " + format.format(myEstimatedPhysicalDamage);
     }
 }

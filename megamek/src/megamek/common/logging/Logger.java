@@ -48,8 +48,16 @@ public class Logger {
         System.out.println(out);
     }
 
+    public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder msg) {
+        log(callingClass, methodName, level, msg.toString());
+    }
+
     public void log(Class<?> callingClass, String methodName, String msg) {
         log(callingClass, methodName, LogLevel.DEBUG, msg);
+    }
+
+    public void log(Class<?> callingClass, String methodName, StringBuilder msg) {
+        log(callingClass, methodName, msg.toString());
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level, Throwable t) {

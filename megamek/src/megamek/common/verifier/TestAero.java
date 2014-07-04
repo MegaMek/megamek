@@ -599,6 +599,56 @@ public class TestAero extends TestEntity {
             if (m.getLocation() == Entity.LOC_NONE)
                 continue;
             
+            // Aeros can't use special munitions except for artemis, exceptions
+            //  LBX's must use clusters
+            WeaponType wt = (WeaponType)m.getType();
+            boolean canHaveSpecialMunitions = 
+                    ((wt.getAmmoType() == AmmoType.T_MML)
+                    || (wt.getAmmoType() == AmmoType.T_ATM)
+                    || (wt.getAmmoType() == AmmoType.T_NARC));
+            if (wt.getAmmoType() != AmmoType.T_NA
+                    && m.getLinked() != null 
+                    && !canHaveSpecialMunitions) {
+                EquipmentType linkedType = m.getLinked().getType();
+                boolean hasArtemisFCS = m.getLinkedBy() != null
+                        && (m.getLinkedBy().getType()
+                                .hasFlag(MiscType.F_ARTEMIS) || m.getLinkedBy()
+                                .getType().hasFlag(MiscType.F_ARTEMIS_V));
+                if (linkedType instanceof AmmoType) {
+                    AmmoType linkedAT = (AmmoType)linkedType;
+                    // Check LBX's
+                    if (wt.getAmmoType() == AmmoType.T_AC_LBX && 
+                            linkedAT.getMunitionType() != AmmoType.M_CLUSTER) {
+                        correct = false;
+                        buff.append("Aeros must use cluster munitions!" + 
+                                m.getType().getInternalName() + " is using "
+                                + linkedAT.getInternalName() + "\n");
+                    }
+                    // Allow Artemis munitions for artemis-linked launchers
+                    if (hasArtemisFCS
+                            && linkedAT.getMunitionType() != AmmoType.M_STANDARD
+                            && linkedAT.getMunitionType() != AmmoType.M_ARTEMIS_CAPABLE
+                            && linkedAT.getMunitionType() != AmmoType.M_ARTEMIS_V_CAPABLE) {
+                        correct = false;
+                        buff.append("Aero using illegal special missile type!"
+                                + m.getType().getInternalName() + " is using "
+                                + linkedAT.getInternalName() + "\n");
+                    }
+                    if (linkedAT.getMunitionType() != AmmoType.M_STANDARD 
+                            && !hasArtemisFCS 
+                            && wt.getAmmoType() != AmmoType.T_AC_LBX) {
+                        correct = false;
+                        buff.append("Aeros may not use special munitions! "
+                                + m.getType().getInternalName() + " is using "
+                                + linkedAT.getInternalName() + "\n");
+                    }
+                    
+                }
+                
+                
+            }
+
+            
             if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB) 
                     || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     || m.getType().hasFlag(WeaponType.F_DIVE_BOMB)

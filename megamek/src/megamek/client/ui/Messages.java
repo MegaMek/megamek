@@ -35,7 +35,8 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            return '!' + key + '!';
+        	System.out.println("Missing l10n entry: " + key);
+        	return '!' + key + '!';            
         }
     }
 

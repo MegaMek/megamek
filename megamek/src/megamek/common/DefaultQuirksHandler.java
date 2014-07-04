@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
  * This class loads the default quirks list from the mmconf/defaultQuirks.xml
  * file.
  *
- * @author Deric Page (dericpage@users.sourceforge.net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %I% %G%
  * @since 2012-03-05
  */
@@ -80,7 +80,7 @@ public class DefaultQuirksHandler {
             NodeList listOfUnits = doc.getElementsByTagName("unit");
             int totalUnits = listOfUnits.getLength();
             System.out.println("Total number of units with default quirks: "
-                    + totalUnits);
+                               + totalUnits);
             defaultQuirkMap = new HashMap<String, List<QuirkEntry>>(totalUnits);
             for (int unitCount = 0; unitCount < totalUnits; unitCount++) {
 
@@ -92,7 +92,7 @@ public class DefaultQuirksHandler {
                         .getElementsByTagName(CHASSIS).item(0);
                 if (chassisElement == null) {
                     System.err.println("Missing <chassis> element #"
-                            + unitCount);
+                                       + unitCount);
                     continue;
                 }
                 String chassis = chassisElement.getTextContent();
@@ -125,7 +125,7 @@ public class DefaultQuirksHandler {
                     Element quirkElement = (Element) quirkNodes
                             .item(quirkCount);
                     if ((quirkElement.getTextContent() == null)
-                            || quirkElement.getTextContent().isEmpty()) {
+                        || quirkElement.getTextContent().isEmpty()) {
                         continue;
                     }
                     QuirkEntry quirkEntry = new QuirkEntry(
@@ -173,8 +173,8 @@ public class DefaultQuirksHandler {
 
                     // Add the weapon quirk to the list.
                     QuirkEntry weaponQuirk = new QuirkEntry(weaponQuirkName,
-                            location, Integer.parseInt(slot), weaponName,
-                            unitId);
+                                                            location, Integer.parseInt(slot), weaponName,
+                                                            unitId);
                     quirkList.add(weaponQuirk);
                 }
 
@@ -195,11 +195,9 @@ public class DefaultQuirksHandler {
     /**
      * Retrieves the list of quirks for the identified unit.
      *
-     * @param chassis
-     *            The unit's chassis.
-     * @param model
-     *            The unit's model (may be left NULL or an empty string if there
-     *            is no model number).
+     * @param chassis The unit's chassis.
+     * @param model   The unit's model (may be left NULL or an empty string if there
+     *                is no model number).
      * @return A {@code List} of the quirks ({@code QuirkEntry}) for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
      * @throws java.io.IOException

@@ -254,10 +254,20 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // the normal +1 bth for missing hand actuator.
         // Damn if you do damned if you dont. --Torren.
         final boolean hasClaws = ((Mech) ae).hasClaw(armLoc);
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc) && !hasClaws) {
-            toHit.addModifier(1, "Hand actuator missing or destroyed");
-        }
-        if (hasClaws) {
+        final boolean hasLowerArmActuator = 
+                ae.hasSystem(Mech.ACTUATOR_LOWER_ARM, armLoc);
+        final boolean hasHandActuator = 
+                ae.hasSystem(Mech.ACTUATOR_HAND, armLoc);
+        // Missing hand actuator is not cumulative with missing actuator,
+        //  but critical damage is cumulative
+        if (!hasClaws && !hasHandActuator &&
+                hasLowerArmActuator) {
+            toHit.addModifier(1, "Hand actuator missing");
+        // Check for present but damaged hand actuator
+        } else if (hasHandActuator  && !hasClaws && 
+                !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+            toHit.addModifier(1, "Hand actuator destroyed");
+        } else if (hasClaws) {
             toHit.addModifier(1, "Using Claws");
         }
 

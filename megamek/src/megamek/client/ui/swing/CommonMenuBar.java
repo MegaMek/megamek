@@ -65,6 +65,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      */
     private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
+    private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
@@ -281,6 +282,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fileUnitsReinforce.addActionListener(this);
         fileUnitsReinforce.setActionCommand("fileUnitsReinforce"); //$NON-NLS-1$
         submenu.add(fileUnitsReinforce);
+        fileUnitsReinforceRAT = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsReinforceRAT")); //$NON-NLS-1$
+        fileUnitsReinforceRAT.addActionListener(this);
+        fileUnitsReinforceRAT.setActionCommand("fileUnitsReinforceRAT"); //$NON-NLS-1$
+        submenu.add(fileUnitsReinforceRAT);
         fileUnitsOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
         fileUnitsOpen.addActionListener(this);
@@ -424,39 +430,39 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         submenu = new JMenu(Messages.getString("CommonMenuBar.DeployMinesMenu")); //$NON-NLS-1$
         deployMinesConventional = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.deployMinesConventional"), DeployMinefieldDisplay.DEPLOY_MINE_CONV); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployMinesConventional"), DeployMinefieldDisplay.Command.DEPLOY_MINE_CONV.getCmd()); //$NON-NLS-1$
         deployMinesCommand = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.deployMinesCommand"), DeployMinefieldDisplay.DEPLOY_MINE_COM); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployMinesCommand"), DeployMinefieldDisplay.Command.DEPLOY_MINE_COM.getCmd()); //$NON-NLS-1$
         deployMinesVibrabomb = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.deployMinesVibrabomb"), DeployMinefieldDisplay.DEPLOY_MINE_VIBRA); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployMinesVibrabomb"), DeployMinefieldDisplay.Command.DEPLOY_MINE_VIBRA.getCmd()); //$NON-NLS-1$
         deployMinesActive = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.deployMinesActive"), DeployMinefieldDisplay.DEPLOY_MINE_ACTIVE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployMinesActive"), DeployMinefieldDisplay.Command.DEPLOY_MINE_ACTIVE.getCmd()); //$NON-NLS-1$
         deployMinesInferno = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.deployMinesInferno"), DeployMinefieldDisplay.DEPLOY_MINE_INFERNO); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployMinesInferno"), DeployMinefieldDisplay.Command.DEPLOY_MINE_INFERNO.getCmd()); //$NON-NLS-1$
 
         // Finish off the deploy menu.
         deployNext = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployNext"), DeploymentDisplay.DEPLOY_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployNext"), DeploymentDisplay.Command.DEPLOY_NEXT.getCmd(), KeyEvent.VK_N); //$NON-NLS-1$
         deployTurn = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployTurn"), DeploymentDisplay.DEPLOY_TURN); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployTurn"), DeploymentDisplay.Command.DEPLOY_TURN.getCmd()); //$NON-NLS-1$
         deployLoad = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployLoad"), DeploymentDisplay.DEPLOY_LOAD); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployLoad"), DeploymentDisplay.Command.DEPLOY_LOAD.getCmd()); //$NON-NLS-1$
         deployUnload = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployUnload"), DeploymentDisplay.DEPLOY_UNLOAD); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployUnload"), DeploymentDisplay.Command.DEPLOY_UNLOAD.getCmd()); //$NON-NLS-1$
         deployRemove = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployRemove"), DeploymentDisplay.DEPLOY_REMOVE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployRemove"), DeploymentDisplay.Command.DEPLOY_REMOVE.getCmd()); //$NON-NLS-1$
         deployAssaultDrop = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.deployAssaultDrop"), DeploymentDisplay.DEPLOY_ASSAULTDROP); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.deployAssaultDrop"), DeploymentDisplay.Command.DEPLOY_ASSAULTDROP.getCmd()); //$NON-NLS-1$
         menu.addSeparator();
         menu.add(submenu);
 
@@ -466,71 +472,71 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         add(menu);
         moveWalk = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveWalk"), MovementDisplay.MOVE_WALK, KeyEvent.VK_W); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveWalk"), MovementDisplay.Command.MOVE_WALK.getCmd(), KeyEvent.VK_W); //$NON-NLS-1$
         moveJump = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveJump"), MovementDisplay.MOVE_JUMP, KeyEvent.VK_J); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveJump"), MovementDisplay.Command.MOVE_JUMP.getCmd(), KeyEvent.VK_J); //$NON-NLS-1$
         moveSwim = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveSwim"), MovementDisplay.MOVE_SWIM, KeyEvent.VK_S); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveSwim"), MovementDisplay.Command.MOVE_SWIM.getCmd(), KeyEvent.VK_S); //$NON-NLS-1$
         moveBackUp = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveBackUp"), MovementDisplay.MOVE_BACK_UP); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveBackUp"), MovementDisplay.Command.MOVE_BACK_UP.getCmd()); //$NON-NLS-1$
         moveGetUp = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveGetUp"), MovementDisplay.MOVE_GET_UP); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveGetUp"), MovementDisplay.Command.MOVE_GET_UP.getCmd()); //$NON-NLS-1$
         moveGoProne = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveGoProne"), MovementDisplay.MOVE_GO_PRONE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveGoProne"), MovementDisplay.Command.MOVE_GO_PRONE.getCmd()); //$NON-NLS-1$
         moveTurn = createMenuItem(menu, Messages
-                .getString("CommonMenuBar.moveTurn"), MovementDisplay.MOVE_TURN); //$NON-NLS-1$
+                .getString("CommonMenuBar.moveTurn"), MovementDisplay.Command.MOVE_TURN.getCmd()); //$NON-NLS-1$
         moveNext = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveNext"), MovementDisplay.MOVE_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveNext"), MovementDisplay.Command.MOVE_NEXT.getCmd(), KeyEvent.VK_N); //$NON-NLS-1$
         moveForwardIni = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveForwardIni"), MovementDisplay.MOVE_FORWARD_INI); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveForwardIni"), MovementDisplay.Command.MOVE_FORWARD_INI.getCmd()); //$NON-NLS-1$
         moveRaise = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveRaise"), MovementDisplay.MOVE_RAISE_ELEVATION); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveRaise"), MovementDisplay.Command.MOVE_RAISE_ELEVATION.getCmd()); //$NON-NLS-1$
         moveLower = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveLower"), MovementDisplay.MOVE_LOWER_ELEVATION); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveLower"), MovementDisplay.Command.MOVE_LOWER_ELEVATION.getCmd()); //$NON-NLS-1$
         moveReckless = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveReckless"), MovementDisplay.MOVE_RECKLESS); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveReckless"), MovementDisplay.Command.MOVE_RECKLESS.getCmd()); //$NON-NLS-1$
         moveEvade = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.Command.MOVE_EVADE.getCmd()); //$NON-NLS-1$
         moveShutdown = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveShutdown"), MovementDisplay.MOVE_SHUTDOWN); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveShutdown"), MovementDisplay.Command.MOVE_SHUTDOWN.getCmd()); //$NON-NLS-1$
         moveStartup = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveStartup"), MovementDisplay.MOVE_STARTUP); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveStartup"), MovementDisplay.Command.MOVE_STARTUP.getCmd()); //$NON-NLS-1$
         moveSelfDestruct = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveSelfDestruct"), MovementDisplay.MOVE_SELF_DESTRUCT); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveSelfDestruct"), MovementDisplay.Command.MOVE_SELF_DESTRUCT.getCmd()); //$NON-NLS-1$
         /* TODO: moveTraitor = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR); //$NON-NLS-1$ */
 
         //create aero movement sub-menu
         aeromenu = new JMenu(Messages.getString("CommonMenuBar.AeroMenu")); //$NON-NLS-1$
-        moveAcc = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_ACC); //$NON-NLS-1$
-        moveDec = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDec"), MovementDisplay.MOVE_DEC); //$NON-NLS-1$
-        moveAccN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAccN"), MovementDisplay.MOVE_ACCN); //$NON-NLS-1$
-        moveDecN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDecN"), MovementDisplay.MOVE_DECN); //$NON-NLS-1$
-        moveEvadeAero = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEvadeAero"), MovementDisplay.MOVE_EVADE_AERO); //$NON-NLS-1$
-        moveRoll = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.MOVE_ROLL); //$NON-NLS-1$
+        moveAcc = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.Command.MOVE_ACC.getCmd()); //$NON-NLS-1$
+        moveDec = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDec"), MovementDisplay.Command.MOVE_DEC.getCmd()); //$NON-NLS-1$
+        moveAccN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveAccN"), MovementDisplay.Command.MOVE_ACCN.getCmd()); //$NON-NLS-1$
+        moveDecN = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveDecN"), MovementDisplay.Command.MOVE_DECN.getCmd()); //$NON-NLS-1$
+        moveEvadeAero = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEvadeAero"), MovementDisplay.Command.MOVE_EVADE_AERO.getCmd()); //$NON-NLS-1$
+        moveRoll = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.Command.MOVE_ROLL.getCmd()); //$NON-NLS-1$
         aeromenu.addSeparator();
-        moveHover = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.MOVE_HOVER); //$NON-NLS-1$
-        moveManeuver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveManeuver"), MovementDisplay.MOVE_MANEUVER); //$NON-NLS-1$
-        moveTurnLeft = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
-        moveTurnRight = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
-        moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
-        moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MOVE_YAW); //$NON-NLS-1$
-        moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MOVE_END_OVER); //$NON-NLS-1$
+        moveHover = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.Command.MOVE_HOVER.getCmd()); //$NON-NLS-1$
+        moveManeuver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveManeuver"), MovementDisplay.Command.MOVE_MANEUVER.getCmd()); //$NON-NLS-1$
+        moveTurnLeft = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.Command.MOVE_TURN_LEFT.getCmd()); //$NON-NLS-1$
+        moveTurnRight = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.Command.MOVE_TURN_RIGHT.getCmd()); //$NON-NLS-1$
+        moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.Command.MOVE_THRUST.getCmd()); //$NON-NLS-1$
+        moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.Command.MOVE_YAW.getCmd()); //$NON-NLS-1$
+        moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.Command.MOVE_END_OVER.getCmd()); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add(aeromenu);
@@ -538,45 +544,45 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // Create the Special sub-menu.
         submenu = new JMenu(Messages.getString("CommonMenuBar.SpecialMenu")); //$NON-NLS-1$
         moveLoad = createMenuItem(submenu, Messages
-                .getString("CommonMenuBar.MoveLoad"), MovementDisplay.MOVE_LOAD); //$NON-NLS-1$
+                .getString("CommonMenuBar.MoveLoad"), MovementDisplay.Command.MOVE_LOAD.getCmd()); //$NON-NLS-1$
         moveUnload = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.MOVE_UNLOAD); //$NON-NLS-1$
-        moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
-        moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
-        moveJoin = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveJoin"), MovementDisplay.MOVE_JOIN); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.Command.MOVE_UNLOAD.getCmd()); //$NON-NLS-1$
+        moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.Command.MOVE_LAUNCH.getCmd()); //$NON-NLS-1$
+        moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.Command.MOVE_RECOVER.getCmd()); //$NON-NLS-1$
+        moveJoin = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveJoin"), MovementDisplay.Command.MOVE_JOIN.getCmd()); //$NON-NLS-1$
         submenu.addSeparator();
         moveCharge = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.MoveCharge"), MovementDisplay.MOVE_CHARGE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.MoveCharge"), MovementDisplay.Command.MOVE_CHARGE.getCmd()); //$NON-NLS-1$
         moveDFA = createMenuItem(submenu, Messages
-                .getString("CommonMenuBar.MoveDeth"), MovementDisplay.MOVE_DFA); //$NON-NLS-1$
-        moveRam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.MOVE_RAM); //$NON-NLS-1$
+                .getString("CommonMenuBar.MoveDeth"), MovementDisplay.Command.MOVE_DFA.getCmd()); //$NON-NLS-1$
+        moveRam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.Command.MOVE_RAM.getCmd()); //$NON-NLS-1$
         submenu.addSeparator();
         moveFlee = createMenuItem(submenu, Messages
-                .getString("CommonMenuBar.MoveFlee"), MovementDisplay.MOVE_FLEE); //$NON-NLS-1$
+                .getString("CommonMenuBar.MoveFlee"), MovementDisplay.Command.MOVE_FLEE.getCmd()); //$NON-NLS-1$
         moveFlyOff = createMenuItem(submenu, Messages
-                .getString("CommonMenuBar.MoveFlyOff"), MovementDisplay.MOVE_FLY_OFF); //$NON-NLS-1$
+                .getString("CommonMenuBar.MoveFlyOff"), MovementDisplay.Command.MOVE_FLY_OFF.getCmd()); //$NON-NLS-1$
         moveEject = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.MoveEject"), MovementDisplay.MOVE_EJECT); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.MoveEject"), MovementDisplay.Command.MOVE_EJECT.getCmd()); //$NON-NLS-1$
         submenu.addSeparator();
         moveUnjam = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveUnjam"), MovementDisplay.MOVE_UNJAM); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveUnjam"), MovementDisplay.Command.MOVE_UNJAM.getCmd()); //$NON-NLS-1$
         moveSearchlight = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveSearchlight"), MovementDisplay.MOVE_SEARCHLIGHT); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveSearchlight"), MovementDisplay.Command.MOVE_SEARCHLIGHT.getCmd()); //$NON-NLS-1$
         moveClear = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.Command.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
         moveHullDown = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.Command.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
         moveLayMine = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
-        moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.Command.MOVE_LAY_MINE.getCmd()); //$NON-NLS-1$
+        moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.Command.MOVE_DUMP.getCmd()); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add(submenu);
@@ -585,7 +591,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         menu.addSeparator();
         moveNext = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.moveCancel"), MovementDisplay.MOVE_CANCEL, KeyEvent.VK_ESCAPE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveCancel"), MovementDisplay.Command.MOVE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); //$NON-NLS-1$
 
         // *** Create the fire menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.FireMenu")); //$NON-NLS-1$
@@ -593,48 +599,48 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         add(menu);
         fireFire = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireFire"), FiringDisplay.FIRE_FIRE, KeyEvent.VK_F); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireFire"), FiringDisplay.Command.FIRE_FIRE.getCmd(), KeyEvent.VK_F); //$NON-NLS-1$
         fireSkip = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireSkip"), FiringDisplay.FIRE_SKIP, KeyEvent.VK_S); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireSkip"), FiringDisplay.Command.FIRE_SKIP.getCmd(), KeyEvent.VK_S); //$NON-NLS-1$
         fireNextTarg = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireNextTarg"), FiringDisplay.FIRE_NEXT_TARG, KeyEvent.VK_T); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireNextTarg"), FiringDisplay.Command.FIRE_NEXT_TARG.getCmd(), KeyEvent.VK_T); //$NON-NLS-1$
         fireNext = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireNext"), FiringDisplay.FIRE_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireNext"), FiringDisplay.Command.FIRE_NEXT.getCmd(), KeyEvent.VK_N); //$NON-NLS-1$
         menu.addSeparator();
         fireTwist = createMenuItem(menu, Messages
-                .getString("CommonMenuBar.fireTwist"), FiringDisplay.FIRE_TWIST); //$NON-NLS-1$
+                .getString("CommonMenuBar.fireTwist"), FiringDisplay.Command.FIRE_TWIST.getCmd()); //$NON-NLS-1$
         fireFlipArms = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireFlipArms"), FiringDisplay.FIRE_FLIP_ARMS); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireFlipArms"), FiringDisplay.Command.FIRE_FLIP_ARMS.getCmd()); //$NON-NLS-1$
         menu.addSeparator();
         fireMode = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.FIRE_MODE, KeyEvent.VK_O); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.Command.FIRE_MODE.getCmd(), KeyEvent.VK_O); //$NON-NLS-1$
         fireCalled = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireCalled"), FiringDisplay.FIRE_CALLED); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireCalled"), FiringDisplay.Command.FIRE_CALLED.getCmd()); //$NON-NLS-1$
         menu.addSeparator();
         fireFindClub = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.FIRE_FIND_CLUB); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.Command.FIRE_FIND_CLUB.getCmd()); //$NON-NLS-1$
         fireSpot = createMenuItem(menu, Messages
-                .getString("CommonMenuBar.fireSpot"), FiringDisplay.FIRE_SPOT); //$NON-NLS-1$
+                .getString("CommonMenuBar.fireSpot"), FiringDisplay.Command.FIRE_SPOT.getCmd()); //$NON-NLS-1$
         fireSearchlight = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireSearchlight"), FiringDisplay.FIRE_SEARCHLIGHT); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireSearchlight"), FiringDisplay.Command.FIRE_SEARCHLIGHT.getCmd()); //$NON-NLS-1$
         fireClearTurret = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireClearTurret"), FiringDisplay.FIRE_CLEAR_TURRET); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireClearTurret"), FiringDisplay.Command.FIRE_CLEAR_TURRET.getCmd()); //$NON-NLS-1$
         fireClearWeaponJam = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireClearWeaponJam"), FiringDisplay.FIRE_CLEAR_WEAPON); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireClearWeaponJam"), FiringDisplay.Command.FIRE_CLEAR_WEAPON.getCmd()); //$NON-NLS-1$
         menu.addSeparator();
         fireCancel = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.FIRE_CANCEL, KeyEvent.VK_ESCAPE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.Command.FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); //$NON-NLS-1$
 
         // *** Create the physical menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.PhysicalMenu")); //$NON-NLS-1$
@@ -642,34 +648,34 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         add(menu);
         physicalPunch = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalPunch"), PhysicalDisplay.PHYSICAL_PUNCH); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalPunch"), PhysicalDisplay.Command.PHYSICAL_PUNCH.getCmd()); //$NON-NLS-1$
         physicalKick = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalKick"), PhysicalDisplay.PHYSICAL_KICK); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalKick"), PhysicalDisplay.Command.PHYSICAL_KICK.getCmd()); //$NON-NLS-1$
         physicalPush = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalPush"), PhysicalDisplay.PHYSICAL_PUSH); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalPush"), PhysicalDisplay.Command.PHYSICAL_PUSH.getCmd()); //$NON-NLS-1$
         physicalClub = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalClub"), PhysicalDisplay.PHYSICAL_CLUB); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalClub"), PhysicalDisplay.Command.PHYSICAL_CLUB.getCmd()); //$NON-NLS-1$
         physicalBrushOff = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalBrushOff"), PhysicalDisplay.PHYSICAL_BRUSH_OFF); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalBrushOff"), PhysicalDisplay.Command.PHYSICAL_BRUSH_OFF.getCmd()); //$NON-NLS-1$
         physicalThrash = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalThrash"), PhysicalDisplay.PHYSICAL_THRASH); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalThrash"), PhysicalDisplay.Command.PHYSICAL_THRASH.getCmd()); //$NON-NLS-1$
         physicalProto = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalProto"), PhysicalDisplay.PHYSICAL_PROTO); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalProto"), PhysicalDisplay.Command.PHYSICAL_PROTO.getCmd()); //$NON-NLS-1$
         physicalDodge = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalDodge"), PhysicalDisplay.PHYSICAL_DODGE); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalDodge"), PhysicalDisplay.Command.PHYSICAL_DODGE.getCmd()); //$NON-NLS-1$
         physicalVibro = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalVibro"), PhysicalDisplay.PHYSICAL_VIBRO); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalVibro"), PhysicalDisplay.Command.PHYSICAL_VIBRO.getCmd()); //$NON-NLS-1$
         physicalNext = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.physicalNext"), PhysicalDisplay.PHYSICAL_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.physicalNext"), PhysicalDisplay.Command.PHYSICAL_NEXT.getCmd(), KeyEvent.VK_N); //$NON-NLS-1$
 
         // *** Create the help menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu")); //$NON-NLS-1$
@@ -679,6 +685,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         item.addActionListener(this);
         item.setActionCommand("helpContents"); //$NON-NLS-1$
         menu.add(item);
+        item = new JMenuItem(Messages.getString("CommonMenuBar.helpSkinning")); //$NON-NLS-1$
+        item.addActionListener(this);
+        item.setActionCommand("helpSkinning"); //$NON-NLS-1$
+        menu.add(item);        
         menu.addSeparator();
         item = new JMenuItem(Messages.getString("CommonMenuBar.helpAbout")); //$NON-NLS-1$
         item.setActionCommand("helpAbout"); //$NON-NLS-1$
@@ -845,6 +855,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         }
         // Reinforcements cannot be added in the lounge!
         fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
+        fileUnitsReinforceRAT.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
 
         // If an entity has been selected, we can view it.
         if (entity != null) {

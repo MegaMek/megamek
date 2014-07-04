@@ -4213,10 +4213,18 @@ public abstract class Mech extends Entity {
 
                 double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= mechHeatEfficiency) {
-                    dBV /= 2;
+                    if (useReducedOverheatModifierBV()) {
+                        dBV /= 10;
+                    } else {
+                        dBV /= 2;
+                    }
                 }
                 if (heatAdded >= mechHeatEfficiency) {
+                    if (useReducedOverheatModifierBV()) {
+                        bvText.append("Heat efficiency reached, BV * 0.1");
+                    } else {
                     bvText.append("Heat efficiency reached, half BV");
+                    }
                 }
                 heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
@@ -5522,10 +5530,17 @@ public abstract class Mech extends Entity {
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER)
-                && ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
-            return true;
+        
+        // Handle upper cover specially, as treating it as a bitmask will lead
+        //  to every location being covered
+        if (cover  == LosEffects.COVER_UPPER) {
+            if ((location == Mech.LOC_LLEG) || (location == Mech.LOC_RLEG)) {
+                return false;
+            } else {
+                return true;
+            }
         }
+        
         if (side == ToHitData.SIDE_FRONT) {
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
                     && (location == Mech.LOC_LLEG)) {

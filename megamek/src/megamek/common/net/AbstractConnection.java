@@ -16,6 +16,7 @@ package megamek.common.net;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +24,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -222,6 +224,10 @@ public abstract class AbstractConnection implements IConnection {
         }
         processConnectionEvent(new DisconnectedEvent(this));
     }
+    
+    public boolean isClosed(){
+    	return (socket == null) || socket.isClosed(); 
+    }
 
     /**
      * Returns the connection ID
@@ -271,12 +277,14 @@ public abstract class AbstractConnection implements IConnection {
      */
     public void send(Packet packet) {
         sendQueue.addPacket(new SendPacket(packet));
+        // Send right now
+        flush();
     }
 
     /**
      * Send packet now; This is the blocking call.
      */
-    public synchronized void sendNow(SendPacket packet) {
+    public void sendNow(SendPacket packet) {
         try {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
             debugLastFewCommandsSent.push(packet.getCommand());
@@ -443,21 +451,23 @@ public abstract class AbstractConnection implements IConnection {
     }
         
     /**
-     * checks if there is anything to send or receive and sends or receives that
-     * stuff. Should not block and will not flush the actual socket, just the
-     * packet sendqueue should not block for too long at a time, instead should
-     * return 0 and hope to be called soon again
+     * Checks if there is anything to send or receive and sends or receives that
+     * stuff. 
      * 
      * @return the amount of milliseconds that we assume we should be called
      *         again in. must return >=0 always
      */
-    public synchronized long update() {
+    public long update() {
         flush();
         INetworkPacket np;
         try {
             while ((np = readNetworkPacket()) != null) {
                 processPacket(np);
             }
+        } catch (SocketException e) {
+        	// Do nothing, happens when the socket closes
+        } catch (EOFException e) {
+        	// Do nothing, happens when the socket closes
         } catch (IOException e) {
             System.err
                     .println("IOException during AbstractConnection#update()");
@@ -473,11 +483,11 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * this is the method that should be overridden
      */
-    public synchronized void flush() {
+    public void flush() {
         doFlush();
     }
 
-    protected synchronized void doFlush() {
+    protected void doFlush() {
         SendPacket packet = null;
         try {
             while ((packet = sendQueue.getPacket()) != null) {
@@ -541,16 +551,17 @@ public abstract class AbstractConnection implements IConnection {
 
     static class SendQueue {
 
-        private Vector<SendPacket> queue = new Vector<SendPacket>();
+        private ConcurrentLinkedQueue<SendPacket> queue = 
+        		new ConcurrentLinkedQueue<SendPacket>();
         private boolean finished = false;
 
         public synchronized void addPacket(SendPacket packet) {
-            queue.addElement(packet);
+            queue.add(packet);
             notifyAll();
         }
 
         public synchronized void finish() {
-            queue.removeAllElements();
+            queue.clear();
             finished = true;
             notifyAll();
         }
@@ -565,8 +576,7 @@ public abstract class AbstractConnection implements IConnection {
             if (!hasPending())
                 return null;
             if (!finished) {
-                packet = queue.elementAt(0);
-                queue.removeElementAt(0);
+                packet = queue.poll();
             }
             return packet;
         }

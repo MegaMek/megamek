@@ -195,8 +195,32 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
-            toHit.addModifier(1, "Hand actuator missing or destroyed");
+
+        if ( ae.hasFunctionalArmAES(armLoc) ) {
+            toHit.addModifier(-1,"AES modifer");
+        }
+
+        // Claws replace Actuators, but they are Equipment vs System as they
+        // take up multiple crits.
+        // Rules state +1 bth with claws and if claws are critted then you get
+        // the normal +1 bth for missing hand actuator.
+        // Damn if you do damned if you dont. --Torren.
+        final boolean hasClaws = ((Mech) ae).hasClaw(armLoc);
+        final boolean hasLowerArmActuator = 
+                ae.hasSystem(Mech.ACTUATOR_LOWER_ARM, armLoc);
+        final boolean hasHandActuator = 
+                ae.hasSystem(Mech.ACTUATOR_HAND, armLoc);
+        // Missing hand actuator is not cumulative with missing actuator,
+        //  but critical damage is cumulative
+        if (!hasClaws && !hasHandActuator &&
+                hasLowerArmActuator) {
+            toHit.addModifier(1, "Hand actuator missing");
+        // Check for present but damaged hand actuator
+        } else if (hasHandActuator  && !hasClaws && 
+                !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+            toHit.addModifier(1, "Hand actuator destroyed");
+        } else if (hasClaws) {
+            toHit.addModifier(1, "Using Claws");
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three

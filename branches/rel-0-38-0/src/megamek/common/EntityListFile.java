@@ -449,6 +449,8 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
+            output.write("\" neverDeployed=\"");
+            output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity instanceof Aero){
                 output.write("\" velocity=\"");
                 output.write(((Aero)entity).getCurrentVelocity() + "");

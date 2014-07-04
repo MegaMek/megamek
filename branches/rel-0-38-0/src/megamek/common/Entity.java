@@ -7847,6 +7847,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Toggles if an entity has been deployed
+     */
+    public void setNeverDeployed(boolean neverDeployed) {
+        this.neverDeployed = neverDeployed;
+    }
+
+    /**
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {

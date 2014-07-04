@@ -53,6 +53,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -148,6 +149,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -332,7 +334,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean chatterBoxActive = false;
 
 
-    private FovHighlightingAndDarkening fovHighlightingAndDarkening= new FovHighlightingAndDarkening();
+    private FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     /**
      * Construct a new board view for the specified game
@@ -712,6 +714,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
         SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
+
+        fovHighlightingAndDarkening = new FovHighlightingAndDarkening();
     }
 
     @Override
@@ -1927,10 +1931,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             };
             gs.addPreferenceChangeListener( ringsChangeListner );
+
+            cacheGameListner = new GameListenerAdapter() {
+                @Override
+                public void gameTurnChange(GameTurnChangeEvent e) {
+                    cacheGameChanged = true;
+                }
+            };
+            game.addGameListener(cacheGameListner);
         }
 
         public void close() {
             gs.removePreferenceChangeListener(ringsChangeListner);
+            game.removeGameListener(cacheGameListner);
         };
 
 
@@ -2006,7 +2019,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (dist == 0) {
                     drawHexBorder(p, boardGraph, selected_color, pad, lw);
                 } else if (dist < max_dist) {
-                    LosEffects los = getLosEffects(src, c);
+                    LosEffects los = getCachedLosEffects(src, c);
                     if (null != selectedEntity) {
                         visualRange = Compute.getVisualRange(game,
                                 selectedEntity, los, targetIlluminated);
@@ -2056,6 +2069,46 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
 
+        Entity cachedSelectedEntity = null;
+        StepSprite cachedStepSprite = null;
+        Coords cachedSrc = null;
+        boolean cacheGameChanged = true;
+        Map<Coords, LosEffects> losCache = new HashMap<>();
+
+        private void clearCache() {
+            losCache = new HashMap<>();
+        }
+
+        GameListener cacheGameListner;
+
+        /**
+         * Checks for los effects, preferably from cache, if not getLosEffects
+         * is invoked and it's return value is cached.
+         * If enviroment has changed between calls to this method the cache is
+         * cleared.
+         */
+        private LosEffects getCachedLosEffects( Coords src, Coords dest) {
+            StepSprite lastStepSprite = pathSprites.size() > 0 ? pathSprites.get(pathSprites.size() - 1) : null;
+            // lets check if cache should be cleared
+            if ((cachedSelectedEntity != selectedEntity)
+                    || (cachedStepSprite != lastStepSprite)
+                    || (!src.equals(cachedSrc))
+                    || (cacheGameChanged)) {
+                clearCache();
+                cachedSelectedEntity = selectedEntity;
+                cachedStepSprite = lastStepSprite;
+                cachedSrc = src;
+                cacheGameChanged = false;
+            }
+
+            LosEffects los = losCache.get(dest);
+            if (los == null) {
+                los = fovHighlightingAndDarkening.getLosEffects(src, dest);
+                losCache.put(dest, los);
+            }
+            return los;
+        }
+
         /**Parses the properties of rings received from GUIPreferencess.
          *
          */
@@ -2098,6 +2151,75 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     break;
                 }
             }
+        }
+
+        /**
+         * Calculate the LosEffects between the given Coords. Unit height for
+         * the source hex is determined by the selectedEntity if present
+         * otherwise the GUIPreference 'mechInFirst' is used. If pathSprites are
+         * not empty then elevation from last step is used for attacker
+         * elevation, also it is assumed that last step's position is equal to
+         * src.
+         * Unit height for the destination hex is determined by the tallest unit
+         * present in that hex. If no units are present, the GUIPreference
+         * 'mechInSecond' is used.
+         */
+        private LosEffects getLosEffects(Coords src, Coords dest) {
+            /*
+             * The getCachedLos method depends that this method uses only
+             * information from src, dest, game, selectedEntity and the last
+             * stepSprite from path Sprites. If this behavior changes, please
+             * change
+             * getCachedLos method accordingly.
+             */
+            GUIPreferences guip = GUIPreferences.getInstance();
+            IBoard board = game.getBoard();
+            IHex srcHex = board.getHex(src);
+            IHex dstHex = board.getHex(dest);
+            LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+            ai.attackPos = src;
+            ai.targetPos = dest;
+            // First, we check for a selected unit and use its height. If
+            // there's
+            // no selected unit we use the mechInFirst GUIPref.
+            if (selectedEntity != null) {
+                ai.attackHeight = selectedEntity.getHeight();
+                // Elevation of entity above the hex surface
+                int elevation;
+                if (pathSprites.size() > 0) {
+                    // If we've got a step, get the elevation from it
+                    int lastStepIdx = pathSprites.size() - 1;
+                    MoveStep lastMS = pathSprites.get(lastStepIdx).getStep();
+                    elevation = lastMS.getElevation();
+                } else {
+                    // otherwise we use entity's elevation
+                    elevation = selectedEntity.getElevation();
+                }
+                ai.attackAbsHeight = srcHex.surface() + elevation
+                        + selectedEntity.getHeight();
+            } else {
+                ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
+                ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
+            }
+            // First, we take the tallest unit in the destination hex, if no
+            // units
+            // are present we use the mechInSecond GUIPref.
+            Enumeration<Entity> destEntities = game.getEntities(dest);
+            ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
+            while (destEntities.hasMoreElements()) {
+                Entity ent = destEntities.nextElement();
+                int trAbsheight = dstHex.surface() + ent.absHeight();
+                if (trAbsheight > ai.targetAbsHeight) {
+                    ai.targetHeight = ent.getHeight();
+                    ai.targetAbsHeight = trAbsheight;
+                }
+            }
+            if ((ai.targetHeight == Integer.MIN_VALUE)
+                    && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
+                ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
+                ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
+            }
+            return LosEffects.calculateLos(game, ai);
         }
 
 
@@ -3234,65 +3356,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Messages.getString("BoardView1.LOSTitle"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    /**
-     * Calculate the LosEffects between the given Coords. Unit height for the
-     * source hex is determined by the selectedEntity if present otherwise the
-     * GUIPreference 'mechInFirst' is used. If pathSprites are not empty then
-     * elevation from last step is used for attacker elevation, also it is
-     * assumed that last step's position is equal to src.
-     * Unit height for the destination hex is determined by the tallest unit
-     * present in that hex. If no units are present, the GUIPreference
-     * 'mechInSecond' is used.
-     */
-    protected LosEffects getLosEffects(Coords src, Coords dest) {
-        GUIPreferences guip = GUIPreferences.getInstance();
-        IBoard board = game.getBoard(); 
-        IHex srcHex = board.getHex(src);
-        IHex dstHex = board.getHex(dest);
-        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-        ai.attackPos = src;
-        ai.targetPos = dest;
-        // First, we check for a selected unit and use its height. If there's
-        // no selected unit we use the mechInFirst GUIPref.
-        if (selectedEntity != null) {
-            ai.attackHeight = selectedEntity.getHeight();
-            // Elevation of entity above the hex surface
-            int elevation;
-            if (pathSprites.size() > 0) {
-                // If we've got a step, get the elevation from it
-                int lastStepIdx = pathSprites.size() - 1;
-                MoveStep lastMS = pathSprites.get(lastStepIdx).getStep();
-                elevation = lastMS.getElevation();
-            } else {
-                //otherwise we use entity's elevation
-                elevation = selectedEntity.getElevation();
-            }
-            ai.attackAbsHeight = srcHex.surface() + elevation
-                    + selectedEntity.getHeight();
-        } else {
-            ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
-            ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
-        }
-        // First, we take the tallest unit in the destination hex, if no units
-        // are present we use the mechInSecond GUIPref.
-        Enumeration<Entity> destEntities = game.getEntities(dest);
-        ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
-        while (destEntities.hasMoreElements()) {
-            Entity ent = destEntities.nextElement();
-			int trAbsheight = dstHex.surface() + ent.absHeight();
-            if (trAbsheight > ai.targetAbsHeight) {
-                ai.targetHeight = ent.getHeight();
-                ai.targetAbsHeight = trAbsheight;
-            }
-        }
-        if ((ai.targetHeight == Integer.MIN_VALUE)
-                && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
-            ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
-            ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
-        }
-        return LosEffects.calculateLos(game, ai);
     }
 
     /**

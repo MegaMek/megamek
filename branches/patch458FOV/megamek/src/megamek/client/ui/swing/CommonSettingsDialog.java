@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -689,26 +690,34 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovHighlightAlpha.setMaximumSize(new Dimension(700, 100));
         JLabel highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
-        row.add(fovHighlightAlpha);
         row.add(highlightAlphaLabel);
+        comps.add(row);
+        row = new ArrayList<>();
+        row.add(fovHighlightAlpha);
         comps.add(row);
 
         row= new ArrayList<>();
-        JLabel fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii"));
+        JLabel fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii")); //$NON-NLS-1$
         row.add(fovHighlightRingsRadiiLabel);
         comps.add(row);
         row=new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsRadii.getPreferredSize().height) );
         row.add(fovHighlightRingsRadii);
         comps.add(row);
 
         row= new ArrayList<>();
-        JLabel fovHighlightRingsColorsLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsColors"));
+        JLabel fovHighlightRingsColorsLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsColors")); //$NON-NLS-1$
         row.add(fovHighlightRingsColorsLabel);
         comps.add(row);
         row= new ArrayList<>();
         fovHighlightRingsColors= new JTextField(((3+1)*3+1)*7);
+        fovHighlightRingsColors.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsColors.getPreferredSize().height) );
         row.add(fovHighlightRingsColors);
+        comps.add(row);
+
+        row= new ArrayList<>();
+        row.add(new JLabel(" "));//$NON-NLS-1$
         comps.add(row);
 
 
@@ -725,8 +734,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovDarkenAlpha.setMaximumSize(new Dimension(700, 100));
         JLabel darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
-        row.add(fovDarkenAlpha);
         row.add(darkenAlphaLabel);
+        comps.add(row);
+        row = new ArrayList<>();
+        row.add(fovDarkenAlpha);
         comps.add(row);
 
         return createSettingsPanel(comps);

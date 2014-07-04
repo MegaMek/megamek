@@ -89,6 +89,7 @@ public class MULParser {
     private static final String DRIVER = "driver";
     private static final String COMMANDER = "commander";
     private static final String DEPLOYMENT = "deployment";
+    private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
     private static final String ALTITUDE = "altitude";
     private static final String AUTOEJECT = "autoeject";
@@ -398,6 +399,15 @@ public class MULParser {
             entity.setDeployRound(deployround);
         } catch (Exception e) {
             entity.setDeployRound(0);
+        }
+        
+        // Was never deployed
+        try {
+            boolean wasNeverDeployed =
+                    Boolean.parseBoolean(entityTag.getAttribute(NEVER_DEPLOYED));
+            entity.setNeverDeployed(wasNeverDeployed);
+        } catch (Exception e) {
+            entity.setNeverDeployed(true);
         }
         
         if (entity instanceof Aero){

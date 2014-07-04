@@ -14,22 +14,17 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -42,30 +37,39 @@ import megamek.common.event.GameTurnChangeEvent;
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -1243277953037374936L;
 
-    // Action command names
-    public static final String DEPLOY_MINE_CONV = "deployMineConv"; //$NON-NLS-1$
-    public static final String DEPLOY_MINE_COM = "deployMineCom"; //$NON-NLS-1$
-    public static final String DEPLOY_MINE_VIBRA = "deployMineVibra"; //$NON-NLS-1$
-    public static final String DEPLOY_MINE_ACTIVE = "deployMineActive"; //$NON-NLS-1$
-    public static final String DEPLOY_MINE_INFERNO = "deployMineInferno"; //$NON-NLS-1$
-    public static final String REMOVE_MINES = "removeMines"; //$NON-NLS-1$
+    /**
+     * This enumeration lists all of the possible ActionCommands that can be
+     * carried out during the deploy minefield phase.  Each command has a string 
+     * for the command plus a flag that determines what unit type it is 
+     * appropriate for.
+     * @author walczak
+     *
+     */
+    public static enum Command {
+    	DEPLOY_MINE_CONV("deployMineConv"),
+    	DEPLOY_MINE_COM("deployMineCom"),
+    	DEPLOY_MINE_VIBRA("deployMineVibra"),
+    	DEPLOY_MINE_ACTIVE("deployMineActive"),
+    	DEPLOY_MINE_INFERNO("deployMineInferno"),
+    	REMOVE_MINES("removeMines");
+    
+	    String cmd;
+	    private Command(String c){
+	    	cmd = c;
+	    }
+	    
+	    public String getCmd(){
+	    	return cmd;
+	    }
+	    
+	    public String toString(){
+	    	return cmd;
+	    }
+    }
 
     // buttons
-    private JPanel panButtons;
-
-    private JButton butC;
-    private JButton butM;
-    private JButton butSpace;
-    // private JButton butSpace1;
-    // private JButton butSpace2;
-    // private JButton butSpace3;
-    private JButton butV;
-    private JButton butA;
-    private JButton butI;
-    private JButton butRemove;
-    private JButton butUnload;
-
-    // is the shift key held?
+    protected Hashtable<Command,MegamekButton> buttons;
+    
     private boolean deployM = false;
     private boolean deployC = false;
     private boolean deployV = false;
@@ -84,116 +88,39 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
-        // Listener is added in the ClientGUI#switchPanel
-        // clientgui.getBoardView().addBoardViewListener(this);
-
         setupStatusBar(Messages
                 .getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
 
         p = clientgui.getClient().getLocalPlayer();
 
-        butM = new JButton(
-                Messages
-                        .getString(
-                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(p.getNbrMFConventional()) })); //$NON-NLS-1$
-        butM.addActionListener(this);
-        butM.setActionCommand(DEPLOY_MINE_CONV);
-        butM.setEnabled(false);
-
-        butSpace = new JButton("");
-        butSpace.setEnabled(false);
-        // butSpace1 = new JButton(".");
-        // butSpace1.setEnabled(false);
-        // butSpace2 = new JButton(".");
-        // butSpace2.setEnabled(false);
-        // butSpace3 = new JButton(".");
-        // butSpace3.setEnabled(false);
-
-        butC = new JButton(
-                Messages
-                        .getString(
-                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(p.getNbrMFCommand()) })); //$NON-NLS-1$
-        butC.addActionListener(this);
-        butC.setActionCommand(DEPLOY_MINE_COM);
-        butC.setEnabled(false);
-
-        butUnload = new JButton("."); //$NON-NLS-1$
-        butUnload.addActionListener(this);
-        butUnload.setEnabled(false);
-
-        butV = new JButton(
-                Messages
-                        .getString(
-                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(p.getNbrMFVibra()) })); //$NON-NLS-1$
-        butV.addActionListener(this);
-        butV.setActionCommand(DEPLOY_MINE_VIBRA);
-        butV.setEnabled(false);
-
-        butA = new JButton(
-                Messages
-                        .getString(
-                                "DeploymentDisplay.buttonActive", new Object[] { new Integer(p.getNbrMFActive()) })); //$NON-NLS-1$
-        butA.addActionListener(this);
-        butA.setActionCommand(DEPLOY_MINE_ACTIVE);
-        butA.setEnabled(false);
-
-        butI = new JButton(
-                Messages
-                        .getString(
-                                "DeploymentDisplay.buttonInferno", new Object[] { new Integer(p.getNbrMFInferno()) })); //$NON-NLS-1$
-        butI.addActionListener(this);
-        butI.setActionCommand(DEPLOY_MINE_INFERNO);
-        butI.setEnabled(false);
-
-        butRemove = new JButton(Messages
-                .getString("DeploymentDisplay.buttonRemove")); //$NON-NLS-1$
-        butRemove.addActionListener(this);
-        butRemove.setActionCommand(REMOVE_MINES);
-        butRemove.setEnabled(false);
-
-        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
+        buttons = new Hashtable<Command, MegamekButton>(
+				(int) (Command.values().length * 1.25 + 0.5));
+		for (Command cmd : Command.values()) {
+			String title = Messages.getString("DeployMinefieldDisplay."
+					+ cmd.getCmd());
+			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+			newButton.addActionListener(this);
+			newButton.setActionCommand(cmd.getCmd());
+			newButton.setEnabled(false);
+			buttons.put(cmd, newButton);
+		}  		
+		numButtonGroups = 
+        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+        
+		butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
-
-        // layout button grid
-        panButtons = new JPanel();
-        panButtons.setLayout(new GridLayout(0, 8));
-        panButtons.add(butM);
-        panButtons.add(butC);
-        panButtons.add(butV);
-        panButtons.add(butI);
-        panButtons.add(butA);
-        panButtons.add(butRemove);
-        panButtons.add(butSpace);
-        // panButtons.add(butSpace1);
-        // panButtons.add(butSpace2);
-        // panButtons.add(butSpace3);
-        panButtons.add(butDone);
-
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
+		
+        layoutScreen();
+        
+        setupButtonPanel();
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+    protected ArrayList<MegamekButton> getButtonList(){                
+    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        for (Command cmd : Command.values()){
+            buttonList.add(buttons.get(cmd));
+        }
+        return buttonList;
     }
 
     /**
@@ -236,7 +163,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setRemoveMineEnabled(false);
 
         butDone.setEnabled(false);
-        butUnload.setEnabled(false);
     }
 
     private void deployMinefield(Coords coords) {
@@ -485,42 +411,42 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
-        } else if (ev.getActionCommand().equals(DEPLOY_MINE_CONV)) {
+        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_CONV.getCmd())) {
             deployM = true;
             deployC = false;
             deployV = false;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(DEPLOY_MINE_COM)) {
+        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_COM.getCmd())) {
             deployM = false;
             deployC = true;
             deployV = false;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(DEPLOY_MINE_VIBRA)) {
+        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_VIBRA.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = true;
             deployA = false;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(DEPLOY_MINE_ACTIVE)) {
+        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_ACTIVE.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
             deployA = true;
             deployI = false;
             remove = false;
-        } else if (ev.getActionCommand().equals(DEPLOY_MINE_INFERNO)) {
+        } else if (ev.getActionCommand().equals(Command.DEPLOY_MINE_INFERNO.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
             deployA = false;
             deployI = true;
             remove = false;
-        } else if (ev.getActionCommand().equals(REMOVE_MINES)) {
+        } else if (ev.getActionCommand().equals(Command.REMOVE_MINES.getCmd())) {
             deployM = false;
             deployC = false;
             deployV = false;
@@ -538,52 +464,47 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setConventionalEnabled(int nbr) {
-        butM
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butM.setEnabled(nbr > 0);
+        buttons.get(Command.DEPLOY_MINE_CONV).setText(Messages.getString(
+        		"DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), 
+        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
-        butC
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butC.setEnabled(nbr > 0);
+    	buttons.get(Command.DEPLOY_MINE_COM).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
-        butV
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butV.setEnabled(nbr > 0);
+    	buttons.get(Command.DEPLOY_MINE_VIBRA).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     private void setActiveEnabled(int nbr) {
-        butA
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonActive", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butA.setEnabled(nbr > 0);
+    	buttons.get(Command.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployActiveEnabled(nbr);
     }
 
     private void setInfernoEnabled(int nbr) {
-        butI
-                .setText(Messages
-                        .getString(
-                                "DeploymentDisplay.buttonInferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butI.setEnabled(nbr > 0);
+    	buttons.get(Command.DEPLOY_MINE_INFERNO).setText(Messages.getString(
+    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), 
+    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+    	buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployInfernoEnabled(nbr);
     }
 
     private void setRemoveMineEnabled(boolean enable) {
-        butRemove.setEnabled(enable);
+    	buttons.get(Command.REMOVE_MINES).setEnabled(enable);
         // clientgui.getMenuBar().setRemoveMineEnabled(enable);
     }
 

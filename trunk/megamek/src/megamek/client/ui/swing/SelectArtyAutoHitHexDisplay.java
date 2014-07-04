@@ -14,19 +14,14 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -40,12 +35,33 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private static final long serialVersionUID = -4948184589134809323L;
 
-    public static final String SET_HIT_HEX = "setAutoHitHex"; //$NON-NLS-1$
-
+    /**
+     * This enumeration lists all of the possible ActionCommands that can be
+     * carried out during the select arty auto hit phase.  Each command has a 
+     * string for the command plus a flag that determines what unit type it is 
+     * appropriate for.
+     * @author walczak
+     *
+     */
+    public static enum Command {
+    	SET_HIT_HEX("setAutoHitHex");
+    
+	    String cmd;
+	    private Command(String c){
+	    	cmd = c;
+	    }
+	    
+	    public String getCmd(){
+	    	return cmd;
+	    }
+	    
+	    public String toString(){
+	    	return cmd;
+	    }
+    }
+    
     // buttons
-    private JPanel panButtons;
-
-    private JButton butA;
+    protected Hashtable<Command,MegamekButton> buttons;
 
     private IPlayer p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
@@ -69,47 +85,35 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         artyAutoHitHexes.setPlayerID(p.getId());
 
-        butA = new JButton(Messages
-                .getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
-        butA.addActionListener(this);
-        butA.setActionCommand(SET_HIT_HEX);
-        butA.setEnabled(false);
-
-        butDone.setText(Messages
+        buttons = new Hashtable<Command, MegamekButton>(
+				(int) (Command.values().length * 1.25 + 0.5));
+		for (Command cmd : Command.values()) {
+			String title = Messages.getString("SelectArtyAutoHitHexDisplay."
+					+ cmd.getCmd());
+			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+			newButton.addActionListener(this);
+			newButton.setActionCommand(cmd.getCmd());
+			newButton.setEnabled(false);
+			buttons.put(cmd, newButton);
+		}  		
+		numButtonGroups = 
+        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+		
+		butDone.setText(Messages
                 .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
-
-        // layout button grid
-        panButtons = new JPanel();
-        panButtons.setLayout(new GridLayout(0, 2));
-        panButtons.add(butA);
-        panButtons.add(butDone);
-
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
+		
+		layoutScreen();
+		
+        setupButtonPanel();
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
+    protected ArrayList<MegamekButton> getButtonList(){                
+    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        for (Command cmd : Command.values()){
+            buttonList.add(buttons.get(cmd));
+        }
+        return buttonList;
     }
 
     /**
@@ -294,11 +298,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setArtyEnabled(int nbr) {
-        butA
-                .setText(Messages
-                        .getString(
-                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-        butA.setEnabled(nbr > 0);
+        buttons.get(Command.SET_HIT_HEX).setText(Messages.getString(
+        		"SelectArtyAutoHitHexDisplay." +Command.SET_HIT_HEX.getCmd(), 
+        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.SET_HIT_HEX).setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }
 

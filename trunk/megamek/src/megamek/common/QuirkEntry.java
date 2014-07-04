@@ -19,7 +19,7 @@ import megamek.common.util.StringUtil;
 /**
  * Class to store pertinent quirk information.
  *
- * @author Deric Page (dericpage@users.sourceforge.net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %I% %G%
  * @since 2012-03-05
  */
@@ -31,12 +31,13 @@ class QuirkEntry {
     private int slot;          //The weapon's critical slot.
     private String weaponName; //The weapon's name.
 
-    private QuirkEntry() {}
+    private QuirkEntry() {
+    }
 
     /**
      * Use this constructor for building unit quirks.
      *
-     * @param quirk The quirk being created.
+     * @param quirk  The quirk being created.
      * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String unitId) {
@@ -53,11 +54,11 @@ class QuirkEntry {
     /**
      * Use this constructor for building weapon quirks.
      *
-     * @param quirk The quirk being created.
-     * @param location The weapon's location (RT, LL, FF, LW, etc)
-     * @param slot The critical slot number (0-based) of the weapon's first critical.
+     * @param quirk      The quirk being created.
+     * @param location   The weapon's location (RT, LL, FF, LW, etc)
+     * @param slot       The critical slot number (0-based) of the weapon's first critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
-     * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
+     * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
         if (StringUtil.isNullOrEmpty(quirk)) {
@@ -95,6 +96,7 @@ class QuirkEntry {
 
     /**
      * Returns the name of the quirk.
+     *
      * @return
      */
     public String getQuirk() {
@@ -146,7 +148,7 @@ class QuirkEntry {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof QuirkEntry) && equals((QuirkEntry)obj);
+        return (obj instanceof QuirkEntry) && equals((QuirkEntry) obj);
     }
 
     public boolean equals(QuirkEntry quirk) {

@@ -26,7 +26,7 @@ import java.util.Vector;
  * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
  *
  * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at gmail dot com)
+ * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 12/18/13 1:20 pM
  */
 public class FiringPlan extends ArrayList<WeaponFireInfo> {

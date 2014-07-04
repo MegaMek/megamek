@@ -14,21 +14,30 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.URI;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -48,23 +57,47 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
-        GameListener, Distractable {
+public abstract class AbstractPhaseDisplay extends JPanel implements 
+		BoardViewListener, GameListener, Distractable {
 
     /**
      *
      */
     private static final long serialVersionUID = 4421205210788230341L;
 
+    public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
 
-    protected JButton butDone;
+    protected MegamekButton butDone;
 
     protected ClientGUI clientgui;
+    
+    ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay() {
-        butDone = new JButton();
+    	SkinSpecification pdSkinSpec = 
+        		SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        
+        try {
+        	if (pdSkinSpec.backgrounds.size() > 0){
+            	File file = new File(Configuration.widgetsDir(), 
+            			pdSkinSpec.backgrounds.get(0));
+    			URI imgURL = file.toURI();
+    			if (!file.exists()){
+    				System.err.println("PhaseDisplay Error: icon doesn't exist: "
+    						+ file.getAbsolutePath());
+    			} else {
+    				backgroundIcon = new ImageIcon(imgURL.toURL());
+    			}
+        	}
+        } catch (Exception e){
+        	System.out.println("Error loading PhaseDisplay background image!");
+        	System.out.println(e.getMessage());
+        }
+        
+        setBorder(new MegamekBorder("PhaseDisplayBorder"));
+        butDone = new MegamekButton("","PhaseDisplayDoneButton");
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -73,13 +106,17 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().getGame().getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || 
+                		(clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
         });
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,InputEvent.CTRL_DOWN_MASK),
-        "doneButton");
+        
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+        								InputEvent.CTRL_DOWN_MASK),
+        								"doneButton");
 
         getActionMap().put("doneButton", new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -88,11 +125,29 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.getClient().isMyTurn() || (clientgui.getClient().getGame().getTurn() == null)) {
+                if (clientgui.getClient().isMyTurn() || 
+                		(clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
         });
+    }
+    
+    protected void paintComponent(Graphics g) {
+    	if (backgroundIcon == null){
+    		super.paintComponent(g);
+    		return;
+    	}
+        int w = getWidth();
+        int h = getHeight();
+        int iW = backgroundIcon.getIconWidth();
+        int iH = backgroundIcon.getIconHeight();
+        for (int x = 0; x < w; x+=iW){
+            for (int y = 0; y < h; y+=iH){
+                g.drawImage(backgroundIcon.getImage(), x, y, 
+                        backgroundIcon.getImageObserver());
+            }
+        }
     }
 
     /**
@@ -221,6 +276,11 @@ public abstract class AbstractPhaseDisplay extends JPanel implements BoardViewLi
 
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
+    }
+    
+    @Override
+	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    	//noaction default
     }
 
     public void ready() {

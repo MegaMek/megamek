@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -105,6 +106,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         }
 
         // The base night penalty
+        int hexIllumLvl = game.isPositionIlluminated(target.getPosition());
         int night_modifier = 0;
         night_modifier = game.getPlanetaryConditions().getLightHitPenalty(
                 isWeapon);
@@ -152,10 +154,19 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         }
         */
         // So do flares
-        else if (game.isPositionIlluminated(target.getPosition())) {
-            toHit.addModifier(-night_modifier,
-                    "target illuminated by flare");
+        else if (hexIllumLvl == Game.ILLUMINATED_FLARE) {
+            toHit.addModifier(-night_modifier, "target illuminated by flare");
             night_modifier = 0;
+        }
+        else if (hexIllumLvl == Game.ILLUMINATED_FIRE) {
+            int fireMod = Math.min(2, night_modifier);
+            toHit.addModifier(-fireMod, "target illuminated by fire");
+            night_modifier -= fireMod;
+        } 
+        else if (hexIllumLvl == Game.ILLUMINATED_LIGHT) {
+            toHit.addModifier(-searchlightMod,
+                    "target illuminated by searchlight");
+            night_modifier -= searchlightMod;
         }
         // Certain ammunitions reduce the penalty
         else if (atype != null) {

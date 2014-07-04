@@ -1,7 +1,7 @@
 /*
  * Mockable.java
  *
- * Copyright (c) 2012 Deric Page <deric dot page at gmail dot com>. All rights reserved.
+ * Copyright (c) 2012 Deric "Netzilla" Page <deric dot page at usa dot net>. All rights reserved.
  *
  * This file is part of MZBuilder.
  *
@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * Denotes a method created purely for the purposes of wrapping a static method call in a non-static method so that
  * a mock can be created.
  *
- * @author Deric Page <deric dot page at gmail dot com>
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 2/20/14 7:51 AM
  * @version: %Id%
  */

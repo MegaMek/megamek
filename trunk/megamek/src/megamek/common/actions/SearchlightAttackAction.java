@@ -134,6 +134,29 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         return reports;
     }
+    
+    /**
+     * Updates the supplied Game's list of hexes illuminated.
+     * 
+     * @param game      The game to update
+     * @return          True if new hexes were added, else false.
+     */
+    public boolean setHexesIlluminated(IGame game) {
+        boolean hexesAdded = false;
+        
+        final Entity attacker = getEntity(game);
+        final Coords apos = attacker.getPosition();
+        final Targetable target = getTarget(game);
+        final Coords tpos = target.getPosition();
+
+        ArrayList<Coords> intervening = Coords.intervening(apos, tpos);
+        for (Coords c : intervening) {
+            if (game.getBoard().contains(c)){
+                hexesAdded |= game.addIlluminatedPosition(c);
+            }
+        }
+        return hexesAdded;
+    }
 
     public boolean willIlluminate(IGame game, Entity who) {
         if (!isPossible(game)) {

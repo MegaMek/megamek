@@ -996,12 +996,9 @@ public class MULParser {
             if (index.equals(NA)) {
                 indexVal = IArmorState.ARMOR_NA;
 
-                // Tanks don't have slots, and Protomechs only have
-                // system slots, so we have to handle the ammo
-                // specially.
-                if ((entity instanceof Tank)
-                        || (entity instanceof Protomech)) {
-
+                // Protomechs only have system slots, 
+                // so we have to handle the ammo specially.
+                if (entity instanceof Protomech) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {

@@ -15,16 +15,11 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -35,18 +30,18 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -91,66 +86,52 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
-        KeyListener, ItemListener, ListSelectionListener {
+		ItemListener, ListSelectionListener {
     /**
      *
      */
     private static final long serialVersionUID = -5586388490027013723L;
 
-    private static final int NUM_BUTTON_LAYOUTS = 2;
-
-    public static final String FIRE_FIND_CLUB = "fireFindClub"; //$NON-NLS-1$
-    public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
-    public static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
-    public static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
-    public static final String FIRE_MORE = "fireMore"; //$NON-NLS-1$
-    public static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
-    public static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
-    public static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
-    public static final String FIRE_SPOT = "fireSpot"; //$NON-NLS-1$
-    public static final String FIRE_TWIST = "fireTwist"; //$NON-NLS-1$
-    public static final String FIRE_CANCEL = "fireCancel"; //$NON-NLS-1$
-    public static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
-    public static final String FIRE_CLEAR_TURRET = "fireClearTurret"; //$NON-NLS-1$
-    public static final String FIRE_CLEAR_WEAPON = "fireClearWeaponJam"; //$NON-NLS-1$
-    public static final String FIRE_CALLED = "fireCalled"; //$NON-NLS-1$
+    /**
+     * This enumeration lists all of the possible ActionCommands that can be
+     * carried out during the firing phase.  Each command has a string for the
+     * command plus a flag that determines what unit type it is appropriate for.
+     * @author arlith
+     *
+     */
+    public static enum Command {
+    	FIRE_NEXT("fireNext"),
+    	FIRE_TWIST("fireTwist"),
+    	FIRE_FIRE("fireFire"),
+    	FIRE_SKIP("fireSkip"),    	
+    	FIRE_NEXT_TARG("fireNextTarg"),    	
+    	FIRE_MODE("fireMode"),
+    	FIRE_SPOT("fireSpot"),
+    	FIRE_FLIP_ARMS("fireFlipArms"),    	
+    	FIRE_FIND_CLUB("fireFindClub"),    	
+    	FIRE_SEARCHLIGHT("fireSearchlight"),
+    	FIRE_CLEAR_TURRET("fireClearTurret"),
+    	FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
+    	FIRE_CALLED("fireCalled"),
+    	FIRE_CANCEL("fireCancel"),
+    	FIRE_MORE("fireMore");    	
+    
+	    String cmd;
+	    private Command(String c){
+	    	cmd = c;
+	    }
+	    
+	    public String getCmd(){
+	    	return cmd;
+	    }
+	    
+	    public String toString(){
+	    	return cmd;
+	    }
+    }
 
     // buttons
-    private JComponent panButtons;
-
-    private JButton butFire;
-
-    private JButton butTwist;
-
-    private JButton butSkip;
-
-    private JButton butFindClub;
-
-    private JButton butNextTarg;
-
-    private JButton butFlipArms;
-
-    private JButton butSpot;
-
-    private JButton butSearchlight;
-
-    private JButton butSpace;
-    private JButton butSpace2;
-    private JButton butSpace3;
-
-    private JButton butFireMode;
-
-    private JButton butFireCalled;
-
-    private JButton butFireClearTurret;
-
-    private JButton butFireClearWeaponJam;
-
-    private JButton butNext;
-
-    private JButton butMore;
-
-    private int buttonLayout;
+    protected Hashtable<Command,MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -178,7 +159,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * Creates and lays out a new firing phase display for the specified
      * clientgui.getClient().
      */
-    public FiringDisplay(ClientGUI clientgui) {
+    public FiringDisplay(final ClientGUI clientgui) {
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
@@ -192,189 +173,302 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
 
-        butFire = new JButton(Messages.getString("FiringDisplay.Fire")); //$NON-NLS-1$
-        butFire.addActionListener(this);
-        butFire.addKeyListener(this);
-        butFire.setActionCommand(FIRE_FIRE);
-        butFire.setEnabled(false);
-
-        butSkip = new JButton(Messages.getString("FiringDisplay.Skip")); //$NON-NLS-1$
-        butSkip.addActionListener(this);
-        butSkip.addKeyListener(this);
-        butSkip.setActionCommand(FIRE_SKIP);
-        butSkip.setEnabled(false);
-
-        butTwist = new JButton(Messages.getString("FiringDisplay.Twist")); //$NON-NLS-1$
-        butTwist.addActionListener(this);
-        butTwist.addKeyListener(this);
-        butTwist.setActionCommand(FIRE_TWIST);
-        butTwist.setEnabled(false);
-
-        butFindClub = new JButton(Messages.getString("FiringDisplay.FindClub")); //$NON-NLS-1$
-        butFindClub.addActionListener(this);
-        butFindClub.addKeyListener(this);
-        butFindClub.setActionCommand(FIRE_FIND_CLUB);
-        butFindClub.setEnabled(false);
-
-        butNextTarg = new JButton(
-                Messages.getString("FiringDisplay.NextTarget")); //$NON-NLS-1$
-        butNextTarg.addActionListener(this);
-        butNextTarg.addKeyListener(this);
-        butNextTarg.setActionCommand(FIRE_NEXT_TARG);
-        butNextTarg.setEnabled(false);
-
-        butFlipArms = new JButton(Messages.getString("FiringDisplay.FlipArms")); //$NON-NLS-1$
-        butFlipArms.addActionListener(this);
-        butFlipArms.addKeyListener(this);
-        butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
-        butFlipArms.setEnabled(false);
-
-        butSpot = new JButton(Messages.getString("FiringDisplay.Spot")); //$NON-NLS-1$
-        butSpot.addActionListener(this);
-        butSpot.addKeyListener(this);
-        butSpot.setActionCommand(FIRE_SPOT);
-        butSpot.setEnabled(false);
-
-        butSearchlight = new JButton(
-                Messages.getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
-        butSearchlight.addActionListener(this);
-        butSearchlight.addKeyListener(this);
-        butSearchlight.setActionCommand(FIRE_SEARCHLIGHT);
-        butSearchlight.setEnabled(false);
-
-        butSpace = new JButton(""); //$NON-NLS-1$
-        butSpace.setEnabled(false);
-        butSpace.setVisible(false);
-        butSpace2 = new JButton(""); //$NON-NLS-1$
-        butSpace2.setEnabled(false);
-        butSpace2.setVisible(false);
-        butSpace3 = new JButton(""); //$NON-NLS-1$
-        butSpace3.setEnabled(false);
-        butSpace3.setVisible(false);
-
-        butFireMode = new JButton(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$
-        butFireMode.addActionListener(this);
-        butFireMode.addKeyListener(this);
-        butFireMode.setActionCommand(FIRE_MODE);
-        butFireMode.setEnabled(false);
-
-        butFireCalled = new JButton(Messages.getString("FiringDisplay.Called")); //$NON-NLS-1$
-        butFireCalled.addActionListener(this);
-        butFireCalled.addKeyListener(this);
-        butFireCalled.setActionCommand(FIRE_CALLED);
-        butFireCalled.setEnabled(false);
-
-        butFireClearTurret = new JButton(
-                Messages.getString("FiringDisplay.ClearTurret")); //$NON-NLS-1$
-        butFireClearTurret.addActionListener(this);
-        butFireClearTurret.addKeyListener(this);
-        butFireClearTurret.setActionCommand(FIRE_CLEAR_TURRET);
-        butFireClearTurret.setEnabled(false);
-
-        butFireClearWeaponJam = new JButton(
-                Messages.getString("FiringDisplay.ClearWeaponJam")); //$NON-NLS-1$
-        butFireClearWeaponJam.addActionListener(this);
-        butFireClearWeaponJam.addKeyListener(this);
-        butFireClearWeaponJam.setActionCommand(FIRE_CLEAR_WEAPON);
-        butFireClearWeaponJam.setEnabled(false);
-
-        butDone.setText("<html><b>" + Messages.getString("FiringDisplay.Done") + "</b></html>"); //$NON-NLS-1$
+        buttons = new Hashtable<Command, MegamekButton>(
+				(int) (Command.values().length * 1.25 + 0.5));
+		for (Command cmd : Command.values()) {
+			String title = Messages.getString("FiringDisplay."
+					+ cmd.getCmd());
+			MegamekButton newButton = new MegamekButton(title,"PhaseDisplayButton");
+			newButton.addActionListener(this);
+			newButton.setActionCommand(cmd.getCmd());
+			newButton.setEnabled(false);
+			buttons.put(cmd, newButton);
+		}  		
+		numButtonGroups = 
+        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+        
+		butDone.setText("<html><b>"+Messages.getString(
+        		"FiringDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
-
-        butNext = new JButton(Messages.getString("FiringDisplay.NextUnit")); //$NON-NLS-1$
-        butNext.addActionListener(this);
-        butNext.addKeyListener(this);
-        butNext.setActionCommand(FIRE_NEXT);
-        butNext.setEnabled(false);
-
-        butMore = new JButton(Messages.getString("FiringDisplay.More")); //$NON-NLS-1$
-        butMore.addActionListener(this);
-        butMore.addKeyListener(this);
-        butMore.setActionCommand(FIRE_MORE);
-        butMore.setEnabled(false);
-
-        // layout button grid
-        panButtons = new JPanel();
-        buttonLayout = 0;
+		
+        layoutScreen();
+        
         setupButtonPanel();
 
-        // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.insets = new Insets(1, 1, 1, 1);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.BOTH;
-        addBag(panButtons, gridbag, c);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
         clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
 
         // mech display.
         clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler();
+        
+        registerKeyCommands();        
+    }
+    
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    private void registerKeyCommands(){
+        MegaMekController controller = clientgui.controller;
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for UNDO
+        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| display.isIgnoringEvents()
+								|| !display.isVisible()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						removeLastFiring();
+					}
+        }); 
+        
+        // Register the action for TWIST_LEFT
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(0);
+					}
+        });
+        
+        // Register the action for TWIST_RIGHT
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						updateFlipArms(false);
+			            torsoTwist(1);
+					}
+        });    
+        
+        // Register the action for FIRE
+        controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()
+								|| !buttons.get(Command.FIRE_FIRE).isEnabled()){
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						fire();
+					}
+        }); 
+        
+        // Register the action for NEXT_WEAPON
+        controller.registerCommandAction(KeyCommandBind.NEXT_WEAPON.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						nextWeapon();
+					}
+        });  
+        
+        // Register the action for PREV_WEAPON
+        controller.registerCommandAction(KeyCommandBind.PREV_WEAPON.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						prevWeapon();
+					}
+        });  
+        
+        // Register the action for NEXT_UNIT
+        controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getNextEntityNum(cen));
+					}
+        });  
+        
+        // Register the action for PREV_UNIT
+        controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| clientgui.bv.getChatterBoxActive()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						selectEntity(
+								clientgui.getClient().getPrevEntityNum(cen));
+					}
+        });     
+        
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						jumpToNextTarget();
+					}
+        });  
+        
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET.cmd,
+        		new CommandAction(){
+
+        			@Override
+        			public boolean shouldPerformAction(){
+						if (!clientgui.getClient().isMyTurn()
+								|| !display.isVisible()
+								|| display.isIgnoringEvents()) {
+        					return false;
+        				} else {
+        					return true;
+        				}
+        			}
+        			
+					@Override
+					public void performAction() {
+						jumpToPrevTarget();
+					}
+        });         
+        
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        comp.addKeyListener(this);
-    }
-
-    private void setupButtonPanel() {
-        panButtons.removeAll();
-        panButtons.setLayout(new GridBagLayout());
-
-        switch (buttonLayout) {
-            case 0:
-                panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
-                panButtons.add(butFire, GBC.std().gridx(1).gridy(0).fill());
-                panButtons.add(butSkip, GBC.std().gridx(2).gridy(0).fill());
-                panButtons.add(butNextTarg, GBC.std().gridx(3).gridy(0).fill());
-                panButtons.add(butTwist, GBC.std().gridx(4).gridy(0).fill());
-                panButtons.add(butFlipArms, GBC.std().gridx(0).gridy(1).fill());
-                panButtons.add(butFireMode, GBC.std().gridx(1).gridy(1).fill());
-                panButtons.add(butFireClearWeaponJam,
-                        GBC.std().gridx(2).gridy(1).fill());
-                panButtons.add(butFireClearTurret, GBC.std().gridx(3).gridy(1)
-                        .fill());
-                panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
-                panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill()
-                        .gridheight(2));
-                break;
-            case 1:
-                panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
-                panButtons.add(butFire, GBC.std().gridx(1).gridy(0).fill());
-                panButtons.add(butSkip, GBC.std().gridx(2).gridy(0).fill());
-                panButtons.add(butNextTarg, GBC.std().gridx(3).gridy(0).fill());
-                panButtons.add(butFindClub, GBC.std().gridx(4).gridy(0).fill());
-                panButtons.add(butSpot, GBC.std().gridx(0).gridy(1).fill());
-                panButtons.add(butSearchlight, GBC.std().gridx(1).gridy(1)
-                        .fill());
-                panButtons.add(butFireCalled, GBC.std().gridx(2).gridy(1)
-                        .fill());
-                panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
-                ;
-                panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill()
-                        .gridheight(2));
-                break;
+    protected ArrayList<MegamekButton> getButtonList(){                
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>(); 
+        int i = 0;
+        for (Command cmd : Command.values()){
+        	if (cmd == Command.FIRE_NEXT || cmd == Command.FIRE_MORE || 
+        			cmd == Command.FIRE_CANCEL){
+        		continue;
+        	}
+        	if (i % buttonsPerGroup == 0){
+        		buttonList.add(buttons.get(Command.FIRE_NEXT));
+        		i++;
+        	}
+        	
+            buttonList.add(buttons.get(cmd));
+            i++;
+            
+            if ((i+1) % buttonsPerGroup == 0){
+        		buttonList.add(buttons.get(Command.FIRE_MORE));
+        		i++;
+        	}
         }
-
-        panButtons.validate();
-        panButtons.repaint();
+        if (!buttonList.get(i-1).getActionCommand().
+        		equals(Command.FIRE_MORE.getCmd())){
+	        while ((i+1) % buttonsPerGroup != 0){
+	        	buttonList.add(null);
+	        	i++;	        	
+	        }
+	        buttonList.add(buttons.get(Command.FIRE_MORE));
+        }
+        return buttonList;
     }
+
 
     /**
      * Selects an entity, by number, for movement.
@@ -397,8 +491,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (ce().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
-                for (int nextId = clientgui.getClient().getNextEntityNum(en); nextId != en; nextId = clientgui
-                        .getClient().getNextEntityNum(nextId)) {
+                for (int nextId = clientgui.getClient().getNextEntityNum(en); 
+                		nextId != en; nextId = clientgui
+                				.getClient().getNextEntityNum(nextId)) {
 
                     if (clientgui.getClient().getGame().getEntity(nextId)
                             .getPosition() != null) {
@@ -410,9 +505,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                 // We were *supposed* to have found an on-board entity.
                 if (ce().getPosition() == null) {
-                    System.err
-                            .println("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                                    en);
+                    System.err.println("FiringDisplay: could " + //$NON-NLS-1$
+                    		"not find an on-board entity: " + en); //$NON-NLS-1$
+                                    
                     return;
                 }
 
@@ -455,8 +550,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateClearTurret();
             updateClearWeaponJam();
         } else {
-            System.err
-                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
+            		"select non-existant entity: " + en); //$NON-NLS-1$
         }
 
         if (GUIPreferences.getInstance().getBoolean("FiringSolutions")){
@@ -467,9 +562,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     public void setFiringSolutions() {
+    	// If no Entity is selected, exit
+    	if (cen == Entity.NONE){
+    		return;
+    	}
+    	
         IGame game = clientgui.getClient().getGame();
-        Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
-        for (Entity target : game.getEntitiesVector()) {
+        if (!GUIPreferences.getInstance().getFiringSolutions()){
+        	return;
+        }
+        Hashtable<Integer,ToHitData> fs = new Hashtable<Integer,ToHitData>(); 
+        for (Entity target : game.getEntitiesVector()){
             boolean friendlyFire = game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
@@ -526,7 +629,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else {
             setNextEnabled(true);
             butDone.setEnabled(true);
-            butMore.setEnabled(true);
+            buttons.get(Command.FIRE_MORE).setEnabled(true);
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
                     .booleanOption("tacops_called_shots"));
             clientgui.getBoardView().select(null);
@@ -566,7 +669,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setTwistEnabled(false);
         setSpotEnabled(false);
         setFindClubEnabled(false);
-        butMore.setEnabled(false);
+        buttons.get(Command.FIRE_MORE).setEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
         setNextTargetEnabled(false);
@@ -708,7 +811,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         return visibleTargets[lastTargetID];
-    }
+    }  
 
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
@@ -730,6 +833,45 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         showTargetChoice = true;
         target(targ);
     }
+    
+    
+    /**
+     * Get the next target. Return null if we don't have any targets.
+     */
+    private Entity getPrevTarget() {
+        if (visibleTargets == null) {
+            return null;
+        }
+
+        lastTargetID--;
+
+        if (lastTargetID < 0) {
+            lastTargetID = visibleTargets.length - 1;
+        }
+
+        return visibleTargets[lastTargetID];
+    }  
+    
+    /**
+     * Jump to our next target. If there isn't one, well, don't do anything.
+     */
+    private void jumpToPrevTarget() {
+        Entity targ = getPrevTarget();
+
+        if (targ == null) {
+            return;
+        }
+
+        // HACK : don't show the choice dialog.
+        showTargetChoice = false;
+
+        clientgui.bv.centerOnHex(targ.getPosition());
+        clientgui.getBoardView().select(targ.getPosition());
+
+        // HACK : show the choice dialog again.
+        showTargetChoice = true;
+        target(targ);
+    }    
 
     /**
      * Called when the current entity is done firing. Send out our attack queue
@@ -1108,15 +1250,34 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int nextWeapon = ce().getNextWeapon(
-                clientgui.mechD.wPan.getSelectedWeaponNum());
-        // if there's no next weapon, forget about it
-        if (nextWeapon == -1) {
+        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
+
+        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()){
+        	clientgui.mechD.wPan.displayMech(ce());
+        }
+
+        if (weaponId == -1) {
+            setFireModeEnabled(false);
+        } else {
+            Mounted m = ce().getEquipment(weaponId);
+            setFireModeEnabled(m.isModeSwitchable());
+        }
+        updateTarget();
+    }
+    
+    /**
+     * Skips to the previous weapon
+     */
+    void prevWeapon() {
+        if (ce() == null) {
             return;
         }
-        clientgui.mechD.wPan.displayMech(ce());
-        clientgui.mechD.wPan.selectWeapon(nextWeapon);
-        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
+        
+        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()){
+        	clientgui.mechD.wPan.displayMech(ce());
+        }
+        
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {
@@ -1541,39 +1702,39 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             clientgui.getGameOptionsDialog().update(
                     clientgui.getClient().getGame().getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
-        } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_FIRE.getCmd())) {
             fire();
-        } else if (ev.getActionCommand().equals(FIRE_SKIP)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_SKIP.getCmd())) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(FIRE_TWIST)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_TWIST.getCmd())) {
             twisting = true;
-        } else if (ev.getActionCommand().equals(FIRE_NEXT)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(FIRE_MORE)) {
-            buttonLayout++;
-            buttonLayout %= NUM_BUTTON_LAYOUTS;
+        } else if (ev.getActionCommand().equals(Command.FIRE_MORE.getCmd())) {
+        	currentButtonGroup++;
+        	currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
-        } else if (ev.getActionCommand().equals(FIRE_FIND_CLUB)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_FIND_CLUB.getCmd())) {
             findClub();
-        } else if (ev.getActionCommand().equals(FIRE_SPOT)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_SPOT.getCmd())) {
             doSpot();
-        } else if (ev.getActionCommand().equals(FIRE_NEXT_TARG)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_NEXT_TARG.getCmd())) {
             jumpToNextTarget();
-        } else if (ev.getActionCommand().equals(FIRE_FLIP_ARMS)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
             // Fire Mode - More Fire Mode button handling - Rasia
-        } else if (ev.getActionCommand().equals(FIRE_MODE)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_MODE.getCmd())) {
             changeMode();
-        } else if (ev.getActionCommand().equals(FIRE_CALLED)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
-                || (ev.getActionCommand().equals(FIRE_CANCEL))) {
+                || (ev.getActionCommand().equals(Command.FIRE_CANCEL.getCmd()))) {
             clear();
-        } else if (ev.getActionCommand().equals(FIRE_SEARCHLIGHT)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
-        } else if (ev.getActionCommand().equals(FIRE_CLEAR_TURRET)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_CLEAR_TURRET.getCmd())) {
             doClearTurret();
-        } else if (ev.getActionCommand().equals(FIRE_CLEAR_WEAPON)) {
+        } else if (ev.getActionCommand().equals(Command.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
         }
     }
@@ -1628,101 +1789,68 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void setFireEnabled(boolean enabled) {
-        butFire.setEnabled(enabled);
+    	buttons.get(Command.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setFireFireEnabled(enabled);
     }
 
     private void setTwistEnabled(boolean enabled) {
-        butTwist.setEnabled(enabled);
+    	buttons.get(Command.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setFireTwistEnabled(enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {
-        butSkip.setEnabled(enabled);
+    	buttons.get(Command.FIRE_SKIP).setEnabled(enabled);
         clientgui.getMenuBar().setFireSkipEnabled(enabled);
     }
 
     private void setFindClubEnabled(boolean enabled) {
-        butFindClub.setEnabled(enabled);
+    	buttons.get(Command.FIRE_FIND_CLUB).setEnabled(enabled);
         clientgui.getMenuBar().setFireFindClubEnabled(enabled);
     }
 
     private void setNextTargetEnabled(boolean enabled) {
-        butNextTarg.setEnabled(enabled);
+    	buttons.get(Command.FIRE_NEXT_TARG).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
     }
 
     private void setFlipArmsEnabled(boolean enabled) {
-        butFlipArms.setEnabled(enabled);
+    	buttons.get(Command.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
     }
 
     private void setSpotEnabled(boolean enabled) {
-        butSpot.setEnabled(enabled);
+    	buttons.get(Command.FIRE_SPOT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSpotEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
-        butSearchlight.setEnabled(enabled);
+    	buttons.get(Command.FIRE_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 
     private void setFireModeEnabled(boolean enabled) {
-        butFireMode.setEnabled(enabled);
+    	buttons.get(Command.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
 
     private void setFireCalledEnabled(boolean enabled) {
-        butFireCalled.setEnabled(enabled);
+    	buttons.get(Command.FIRE_CALLED).setEnabled(enabled);
         clientgui.getMenuBar().setFireCalledEnabled(enabled);
     }
 
     private void setFireClearTurretEnabled(boolean enabled) {
-        butFireClearTurret.setEnabled(enabled);
+    	buttons.get(Command.FIRE_CLEAR_TURRET).setEnabled(enabled);
         clientgui.getMenuBar().setFireClearTurretEnabled(enabled);
     }
 
     private void setFireClearWeaponJamEnabled(boolean enabled) {
-        butFireClearWeaponJam.setEnabled(enabled);
+    	buttons.get(Command.FIRE_CLEAR_WEAPON).setEnabled(enabled);
         clientgui.getMenuBar().setFireClearWeaponJamEnabled(enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
-        butNext.setEnabled(enabled);
+    	buttons.get(Command.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
-    }
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (clientgui.getClient().isMyTurn()) {
-                removeLastFiring();
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && !shiftheld) {
-            shiftheld = true;
-            if (clientgui.getClient().isMyTurn()
-                    && (clientgui.getBoardView().getLastCursor() != null)) {
-                updateFlipArms(false);
-                torsoTwist(clientgui.getBoardView().getLastCursor());
-            }
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_LEFT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(0);
-        }
-        if ((ev.getKeyCode() == KeyEvent.VK_RIGHT) && shiftheld) {
-            updateFlipArms(false);
-            torsoTwist(1);
-        }
     }
 
     @Override
@@ -1731,22 +1859,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();
-    }
-
-    public void keyReleased(KeyEvent ev) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if ((ev.getKeyCode() == KeyEvent.VK_SHIFT) && shiftheld) {
-            shiftheld = false;
-        }
-    }
-
-    public void keyTyped(KeyEvent ev) {
-        // ignore
     }
 
     //

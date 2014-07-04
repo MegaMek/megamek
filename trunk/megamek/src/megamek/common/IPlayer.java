@@ -17,7 +17,7 @@ import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Deric
+ * User: Deric "Netzilla" Page (deric dot page at usa dot net)
  * Date: 8/17/13
  * Time: 10:17 AM
  * To change this template use File | Settings | File Templates.
@@ -25,13 +25,14 @@ import java.util.Vector;
 public interface IPlayer extends ITurnOrdered {
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
+    public static final int TEAM_UNASSIGNED = -1;
     public static final String[] colorNames = { "Blue", "Red", "Green", "Cyan",
             "Pink", "Orange", "Gray", "Brown", "Purple", "Turquoise ",
             "Maroon", "Spring Green", "Gold", "Sienna", "Violet", "Navy",
             "Olive Drab", "Fuchsia", "FireBrick", "Dark Golden Rod", "Coral",
             "Chartreuse", "Deep Purple", "Yellow", "White" };
     public static final String[] teamNames = {"No Team", "Team 1", "Team 2",
-                          "Team 3", "Team 4", "Team 5"};
+                                              "Team 3", "Team 4", "Team 5"};
     public static final int MAX_TEAMS = teamNames.length;
     /**
      * The "no camo" category.
@@ -136,6 +137,10 @@ public interface IPlayer extends ITurnOrdered {
     void setAdmitsDefeat(boolean admitsDefeat);
 
     boolean admitsDefeat();
+    
+    void setAllowTeamChange(boolean allowChange);
+    
+    boolean isAllowingTeamChange();
 
     void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes);
 

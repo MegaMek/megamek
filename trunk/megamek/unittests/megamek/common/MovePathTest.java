@@ -23,7 +23,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 /**
- * @author Deric Page (deric.page@nisc.coop) (ext 2335)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version $Id$
  * @since 12/23/13 9:16 AM
  */

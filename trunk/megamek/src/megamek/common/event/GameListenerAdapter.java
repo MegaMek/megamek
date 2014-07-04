@@ -77,5 +77,9 @@ public class GameListenerAdapter implements GameListener {
 
     public void gameNewAction(GameNewActionEvent e) {
     }
+    
+    @Override
+	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    }    
 
 }

@@ -72,14 +72,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
     public static final String ADVANCED_UNITOVERVIEW_SELECTED_COLOR = "AdvancedUnitOverviewSelectedColor";
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
+    public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
+    public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     /* --End advanced settings-- */
 
-//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR0 = "AdvancedFovHighlightColor0";
-//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR1 = "AdvancedFovHighlightColor1";
-//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR2 = "AdvancedFovHighlightColor2";
-//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR3 = "AdvancedFovHighlightColor3";
-//    public static final String ADVANCED_FOV_HIGHLIGHT_COLOR4 = "AdvancedFovHighlightColor4";
 
+    public static final String ANTIALIASING = "AntiAliasing";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -93,7 +91,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
     public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
-    public static final String FOV_HIGHLIGHT_DISTANCES = "FovHighlightDistances";
+    //Rings' sizes (measured in distance to center) separated by whitespace.
+    public static final String FOV_HIGHLIGHT_RINGS_RADII = "FovHighlightRingsRadii";
+    //Rings' colors in the HSB format.
+    //Each hsb color is separated by a semicolon, particular h, s and b values are whitespace separated.
+    public static final String FOV_HIGHLIGHT_RINGS_COLORS_HSB = "FovHighlightRingsColorsInHSB";
     public static final String FOV_DARKEN = "FovDarken";
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
@@ -207,7 +209,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
         store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
+        store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 10);
+        store.setDefault(ADVANCED_KEY_REPEAT_RATE, 10);
 
+        store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
+        store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
+
+
+        store.setDefault(ANTIALIASING, true);
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -285,6 +294,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getAdvancedProperties();
     }
 
+    public boolean getAntiAliasing() {
+        return store.getBoolean(ANTIALIASING);
+    }
+
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
     }
@@ -335,6 +348,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getFovHighlightAlpha() {
         return store.getInt(FOV_HIGHLIGHT_ALPHA);
+    }
+
+    public String getFovHighlightRingsRadii() {
+        return store.getString( FOV_HIGHLIGHT_RINGS_RADII );
+    }
+
+    public String getFovHighlightRingsColorsHsb() {
+        return store.getString( FOV_HIGHLIGHT_RINGS_COLORS_HSB );
     }
 
     public boolean getFovDarken() {
@@ -595,6 +616,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
 
+    public void setAntiAliasing(boolean state){
+        store.setValue(ANTIALIASING, state);
+    }
+
     public boolean getShowDamageLevel(){
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }
@@ -647,17 +672,25 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOV_HIGHLIGHT,state);
     }
 
-	public void setFovHighlightAlpha(int i) {
-		store.setValue(FOV_HIGHLIGHT_ALPHA,i);
-	}
+    public void setFovHighlightAlpha(int i) {
+        store.setValue(FOV_HIGHLIGHT_ALPHA,i);
+    }
+
+    public void setFovHighlightRingsRadii( String s ) {
+        store.setValue(FOV_HIGHLIGHT_RINGS_RADII, s);
+    }
+
+    public void setFovHighlightRingsColorsHsb( String s ) {
+        store.setValue(FOV_HIGHLIGHT_RINGS_COLORS_HSB, s);
+    }
 
     public void setFovDarken(boolean state){
         store.setValue(FOV_DARKEN,state);
     }
 
-	public void setFovDarkenAlpha(int i) {
-		store.setValue(FOV_DARKEN_ALPHA,i);
-	}
+    public void setFovDarkenAlpha(int i) {
+        store.setValue(FOV_DARKEN_ALPHA,i);
+    }
 
     public void setMapZoomIndex(int zoomIndex) {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
@@ -848,7 +881,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setTooltipDismissDelay(int i) {
         store.setValue(TOOLTIP_DISMISS_DELAY, i);
         if (i > 0){
-        	ToolTipManager.sharedInstance().setDismissDelay(i);
+            ToolTipManager.sharedInstance().setDismissDelay(i);
         }
     }
 

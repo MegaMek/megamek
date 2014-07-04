@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -127,6 +128,8 @@ public class Game implements Serializable, IGame {
 
     private Vector<TagInfo> tagInfoForTurn = new Vector<TagInfo>();
     private Vector<Flare> flares = new Vector<Flare>();
+    private HashSet<Coords> illuminatedPositions = 
+            new HashSet<Coords>();
 
     private HashMap<String, Object> victoryContext = null;
 
@@ -365,6 +368,10 @@ public class Game implements Serializable, IGame {
         // players are on their own teams for initiative purposes.
         for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements();) {
             final IPlayer player = i.nextElement();
+            // Ignore players not on a team
+            if (player.getTeam() == IPlayer.TEAM_UNASSIGNED){
+                continue;
+            }
             if (!useTeamInit || (player.getTeam() == IPlayer.TEAM_NONE)) {
                 Team new_team = new Team(IPlayer.TEAM_NONE);
                 new_team.addPlayer(player);
@@ -429,6 +436,7 @@ public class Game implements Serializable, IGame {
         player.setGame(this);
         players.addElement(player);
         playerIds.put(new Integer(id), player);
+        setupTeams();
         updatePlayer(player);
     }
 
@@ -437,6 +445,7 @@ public class Game implements Serializable, IGame {
         player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
         playerIds.put(new Integer(id), player);
+        setupTeams();
         updatePlayer(player);
     }
 
@@ -448,6 +457,7 @@ public class Game implements Serializable, IGame {
         IPlayer playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
         playerIds.remove(new Integer(id));
+        setupTeams();
         processGameEvent(new GamePlayerChangeEvent(this, playerToRemove));
     }
 
@@ -1329,6 +1339,7 @@ public class Game implements Serializable, IGame {
         clearMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
+        illuminatedPositions.clear();
         clearAllReports();
         smokeCloudList.clear();
 
@@ -1723,6 +1734,42 @@ public class Game implements Serializable, IGame {
         // return getFirstEntityNum(turn);
         return -1;
     }
+    
+    /**
+     * Returns the entity id of the previous entity that can move during the
+     * specified
+     *
+     * @param turn
+     *            the turn to use
+     * @param start
+     *            the entity id to start at
+     */
+    public int getPrevEntityNum(GameTurn turn, int start) {
+    	boolean hasLooped = false;
+    	int i = (entities.indexOf(entityIds.get(start)) - 1) % entities.size();
+    	if (i == -2){
+    	    //This means we were given an invalid entity ID, punt
+            return -1;
+        }
+    	if (i == -1){
+    	    //This means we were given an invalid entity ID, punt
+            i = entities.size() - 1;
+        }
+    	int startingIndex = i;
+        while (!((hasLooped == true) && (i == startingIndex))) {
+            final Entity entity = entities.get(i);
+            if (turn.isValidEntity(entity, this)) {
+                return entity.getId();
+            }
+            i--;
+            if (i < 0) {
+            	i = entities.size() - 1;
+                hasLooped = true;
+            }
+        }
+        // return getFirstEntityNum(turn);
+        return -1;
+    }    
 
     /**
      * Returns the number of the first deployable entity
@@ -2005,7 +2052,7 @@ public class Game implements Serializable, IGame {
                 && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
                     .intOption("vehicle_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove that
+                // exception, if the _next_ turn is a tank turn, remove that
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
                 if (hasMoreTurns()) {
@@ -2028,7 +2075,7 @@ public class Game implements Serializable, IGame {
                 && (entity instanceof Mech) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getMechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("mek_lance_movement_number")) != 1) {
-                // exception, if the _next_ turn is an tank turn, remove that
+                // exception, if the _next_ turn is a mech turn, remove that
                 // contrived, but may come up e.g. one mech accidently kills
                 // another
                 if (hasMoreTurns()) {
@@ -2960,17 +3007,71 @@ public class Game implements Serializable, IGame {
         flares.addElement(flare);
         processGameEvent(new GameBoardChangeEvent(this));
     }
+    
+    /**
+     * Get a set of illuminated hexes.
+     */
+    public HashSet<Coords> getIlluminatedPositions() {
+        return illuminatedPositions;
+    }
+    
+    /**
+     * Clear the map of illuminated hexes.
+     */
+    public void clearIlluminatedPositions() {
+        illuminatedPositions.clear();
+    }
+
+    /**
+     * Set the set of illuminated hexes.
+     */
+    public void setIlluminatedPositions(HashSet<Coords> ip) {
+        illuminatedPositions = ip;
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    /**
+     * Add a new hex to the collection of illuminated hexes.
+     * 
+     * @return True if a new hex was added, else false if the set already
+     *      contained the input hex.
+     */
+    public boolean addIlluminatedPosition(Coords c) {
+        boolean rv = illuminatedPositions.add(c);
+        processGameEvent(new GameBoardChangeEvent(this));
+        return rv;
+    }
 
     /**
      * returns true if the hex is illuminated by a flare
      */
-    public boolean isPositionIlluminated(Coords c) {
+    public int isPositionIlluminated(Coords c) {
+        // Flares happen first, because they totally negate nighttime penalties
         for (Flare flare : flares) {
             if (flare.illuminates(c)) {
-                return true;
+                return ILLUMINATED_FLARE;
             }
         }
-        return false;
+        IHex hex = getBoard().getHex(c);
+        
+        // Searchlights reduce nighttime penalties by up to 3 points.
+        if (illuminatedPositions.contains(c)) {
+            return ILLUMINATED_LIGHT;
+        }
+        
+        // Fires can reduce nighttime penalties by up to 2 points.
+        if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
+            return ILLUMINATED_FIRE;
+        }
+        // If we are adjacent to a burning hex, we are also illuminated
+        for (int dir = 0; dir < 6; dir++) {
+            Coords adj = c.translated(dir);
+            hex = getBoard().getHex(adj);
+            if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
+                return ILLUMINATED_FIRE;
+            } 
+        }
+        return ILLUMINATED_NONE;
     }
 
     /**

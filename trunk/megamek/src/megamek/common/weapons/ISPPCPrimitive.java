@@ -17,11 +17,11 @@ package megamek.common.weapons;
 import megamek.common.TechConstants;
 
 /**
- * @author Deric Page (deric.page@usa.net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
 public class ISPPCPrimitive extends PPCWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1767670595802648539L;
 
@@ -44,7 +44,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
+        setModes(new String[]{"Field Inhibitor ON", "Field Inhibitor OFF"});
         tonnage = 7.0f;
         criticals = 3;
         bv = 176;

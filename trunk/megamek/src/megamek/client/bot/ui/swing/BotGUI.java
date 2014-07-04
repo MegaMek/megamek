@@ -26,6 +26,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.IGame;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -132,6 +133,10 @@ public class BotGUI implements GameListener {
     }
 
     public void gameEntityRemove(GameEntityRemoveEvent e) {
+    }
+    
+    @Override
+	public void gameClientFeedbackRquest(GameCFREvent evt) {
     }
 
 }

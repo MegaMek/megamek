@@ -53,6 +53,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -148,6 +149,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -158,7 +160,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable,
-        BoardListener, MouseListener, IPreferenceChangeListener {
+        BoardListener, MouseListener, IPreferenceChangeListener, AutoCloseable {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -173,7 +175,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_W = 84;
     private static final int HEX_H = 72;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
-    private static final int HEX_ELEV = 12;    
+    private static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
             0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f };
@@ -320,24 +322,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
-    
+
     BufferedImage bvBgBuffer = null;
     ImageIcon bvBgIcon = null;
     ImageIcon scrollPaneBgIcon = null;
-    
-    
+
+
     /**
      * Keeps track of whether we have an active ChatterBox2
      */
     private boolean chatterBoxActive = false;
 
+
+    private FovHighlightingAndDarkening fovHighlightingAndDarkening;
+
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(final IGame game, final MegaMekController controller) 
+    public BoardView1(final IGame game, final MegaMekController controller)
     		throws java.io.IOException {
         this.game = game;
-        
+
         tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -436,7 +441,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         					return true;
         				}
         			}
-        			
+
 					@Override
 					public void performAction() {
 						if (!getChatterBoxActive()){
@@ -449,9 +454,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 							requestFocus();
 						}
 					}
-        	
+
         });
-        
+
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD.cmd,
         		new CommandAction(){
@@ -465,7 +470,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         					return true;
         				}
         			}
-        			
+
 					@Override
 					public void performAction() {
 						if (!getChatterBoxActive()){
@@ -479,10 +484,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 							requestFocus();
 						}
 					}
-        	
-        });        
 
-        // Register the action for CENTER_ON_SELECTED        
+        });
+
+        // Register the action for CENTER_ON_SELECTED
         controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,
         		new CommandAction(){
 
@@ -495,18 +500,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         				} else {
         					return true;
         				}
-					}        	
-        	
+					}
+
 					@Override
 					public void performAction() {
 						if (selectedEntity != null) {
 		                    centerOnHex(selectedEntity.getPosition());
 		                }
 					}
-        	
+
         });
-        
-        // Register the action for SCROLL_NORTH        
+
+        // Register the action for SCROLL_NORTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
         		new CommandAction(){
 
@@ -518,18 +523,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 						} else {
 							return true;
 						}
-					}    
-					
+					}
+
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
 						vbar.setValue((int)
                    			 (vbar.getValue() - (HEX_H * scale)));
 					}
-        	
+
         });
-        
-        // Register the action for SCROLL_SOUTH        
+
+        // Register the action for SCROLL_SOUTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
         		new CommandAction(){
 
@@ -541,18 +546,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 						} else {
 							return true;
 						}
-					}           	
-        	
+					}
+
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
 						vbar.setValue((int)
                    			 (vbar.getValue() + (HEX_H * scale)));
 					}
-        	
+
         });
-        
-        // Register the action for SCROLL_EAST        
+
+        // Register the action for SCROLL_EAST
         controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
         		new CommandAction(){
 
@@ -564,18 +569,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 						} else {
 							return true;
 						}
-					} 
-        	
+					}
+
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
-						hbar.setValue((int) 
+						hbar.setValue((int)
                     			(hbar.getValue() + (HEX_W * scale)));
 					}
-        	
+
         });
-        
-        // Register the action for SCROLL_WEST        
+
+        // Register the action for SCROLL_WEST
         controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
         		new CommandAction(){
 
@@ -587,18 +592,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 						} else {
 							return true;
 						}
-					}         	
-        	
+					}
+
 					@Override
 					public void performAction() {
 						controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
-						hbar.setValue((int) 
+						hbar.setValue((int)
                     			(hbar.getValue() - (HEX_W * scale)));
 					}
-        	
-        });        
 
-        
+        });
+
+
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -709,6 +714,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
         SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
+
+        fovHighlightingAndDarkening = new FovHighlightingAndDarkening();
+    }
+
+    @Override
+    public void close(){
+        //There are a lot of listeners that should be removed, fortunately there should
+        //be no more than one instance of BoardView1 in lifetime of app so no memory leak is possible.
+       fovHighlightingAndDarkening.close();
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();
@@ -845,12 +859,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @Override
     public synchronized void paintComponent(Graphics g) {
-    	
+
     	if (GUIPreferences.getInstance().getAntiAliasing()){
     		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-        }    	
-    	
+        }
+
         if (!isTileImagesLoaded()) {
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
@@ -861,7 +875,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             repaint(1000);
             return;
         }
-        
+
         Rectangle viewRect = scrollpane.getVisibleRect();
 		if (bvBgBuffer == null || bvBgBuffer.getWidth() != viewRect.getWidth()
 				|| bvBgBuffer.getHeight() != viewRect.getHeight()) {
@@ -874,16 +888,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 	        int iH = bvBgIcon.getIconHeight();
 			for (int x = 0; x < w; x+=iW){
 	            for (int y = 0; y < h; y+=iH){
-	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y, 
+	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y,
 	                        bvBgIcon.getImageObserver());
 	            }
 	        }
         }
 		g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
-        
+
     	// Used to pad the board edge
     	g.translate(HEX_W, HEX_H);
-        
+
         drawHexes(g, g.getClipBounds());
 
         // draw wrecks
@@ -966,11 +980,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setColor(rulerStartColor);
             g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
-        
+
         // Undo the previous translation
         g.translate(-HEX_W, -HEX_H);
-        
-        
+
+
         // draw all the "displayables"
         Rectangle rect = new Rectangle();
         rect.x = -getX();
@@ -980,7 +994,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
             disp.draw(g, rect);
-        }        
+        }
     }
 
     /**
@@ -1541,7 +1555,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private void drawHexes(Graphics g, Rectangle view) {
         drawHexes(g, view, false);
     }
-    
+
     /**
      * Redraws all hexes in the specified rectangle
      */
@@ -1552,7 +1566,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
         int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-        
+
         /*
         if (!useIsometric()) {
             // clear, if we need to
@@ -1638,7 +1652,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Draws a hex onto the board buffer. This assumes that drawRect is current,
      * and does not check if the hex is visible.
      */
-    private void drawHex(Coords c, Graphics boardGraph, 
+    private void drawHex(Coords c, Graphics boardGraph,
             boolean saveBoardImage) {
         if (!game.getBoard().contains(c)) {
             return;
@@ -1839,112 +1853,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.drawLine(x1, y1, x2, y2);
         }
 
-        Coords src;
-        if (selected != null) {
-            src = selected;
-        } else if (selectedEntity != null) {
-            src = selectedEntity.getPosition();
-        } else {
-            src = null;
-        }
-        // Code for LoS darkening/highlighting
-        if ((src != null) && game.getBoard().contains(src) && !saveBoardImage) {
-            Point p = new Point(drawX, drawY);
-            GUIPreferences gs = GUIPreferences.getInstance();
-            boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
-            boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
 
-            if ((darken || highlight)
-                    && (game.getPhase() == Phase.PHASE_MOVEMENT)) {
 
-                final int pad = 0;
-                final int lw = 7;
-
-                final int highlight_alpha = gs
-                        .getInt(GUIPreferences.FOV_HIGHLIGHT_ALPHA);
-                final Color cols[] = {
-                        new Color(150, 150, 40, highlight_alpha),
-                        new Color(40, 150, 40, highlight_alpha),
-                        new Color(150, 40, 40, highlight_alpha),
-                        new Color(150, 95, 150, highlight_alpha),
-                        new Color(40, 40, 150, highlight_alpha) };
-
-                boolean targetIlluminated = false;
-                for (Entity target : game.getEntitiesVector(c)){
-                    targetIlluminated |= target.isIlluminated();
-                }
-
-                final int max_dist;
-                // We don't want to have to compute a LoSEffects yet, as that
-                //  can be expensive on large viewing areas
-                if (selectedEntity != null){
-                    max_dist = game.getPlanetaryConditions().getVisualRange(
-                            selectedEntity, targetIlluminated);
-                } else {
-                    max_dist = 60;
-                }
-
-                final int d[] = { 4, 7, 10, 13, max_dist };
-
-                final Color transparent_gray = new Color(0, 0, 0,
-                        gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA));
-                final Color transparent_light_gray = new Color(0, 0, 0,
-                        gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA) / 2);
-                final Color selected_color = new Color(50, 80, 150, 70);
-
-                int dist = src.distance(c);
-
-                int visualRange = 30;
-                int minSensorRange = 0;
-                int maxSensorRange = 0;
-
-                if (dist == 0) {
-                    drawHexBorder(p, boardGraph, selected_color, pad, lw);
-                } else if (dist < max_dist) {
-                    LosEffects los = getLosEffects(src, c);
-                    if (null != selectedEntity) {
-                        visualRange = Compute.getVisualRange(game,
-                                selectedEntity, los, targetIlluminated);
-                        int bracket = Compute.getSensorRangeBracket(
-                                selectedEntity, null);
-                        int range = Compute.getSensorRangeByBracket(game,
-                                selectedEntity, null, los);
-
-                        maxSensorRange = bracket * range;
-                        minSensorRange = Math.max((bracket - 1) * range, 0);
-                        if (game.getOptions().booleanOption(
-                                "inclusive_sensor_range")) {
-                            minSensorRange = 0;
-                        }
-                    }
-                    if (!los.canSee() || (dist > visualRange)) {
-                        if (darken) {
-                            if (game.getOptions().booleanOption(
-                                    "tacops_sensors")
-                                    && (dist > minSensorRange)
-                                    && (dist <= maxSensorRange)) {
-                                drawHexLayer(p, boardGraph,
-                                        transparent_light_gray);
-                            } else {
-                                drawHexLayer(p, boardGraph, transparent_gray);
-                            }
-                        }
-                    } else if (highlight) {
-                        for (int k = 0; k < cols.length; k++) {
-                            if (dist < d[k]) {
-                                drawHexLayer(p, boardGraph, cols[k]);
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // Max dist should be >= visual dist, this hex can't be seen
-                    if (darken) {
-                        drawHexLayer(p, boardGraph, transparent_gray);
-                    }
-                }
-            }
-        }
+        fovHighlightingAndDarkening.draw( boardGraph, c, drawX, drawY,
+                saveBoardImage);
 
         // draw mapsheet borders
         if (GUIPreferences.getInstance().getShowMapsheets()) {
@@ -1993,6 +1905,326 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             boardGraph.setColor(Color.black);
         }
+    }
+
+    /**
+     * A helper class for highlighting and darkening hexes.
+     *
+     */
+    private class FovHighlightingAndDarkening implements AutoCloseable{
+
+        private java.util.List<Color> ringsColors = new ArrayList<>();
+        private java.util.List<Integer> ringsRadii = new ArrayList<>();
+        GUIPreferences gs = GUIPreferences.getInstance();
+        private IPreferenceChangeListener ringsChangeListner;
+
+        public FovHighlightingAndDarkening() {
+            updateRingsProperties();
+            ringsChangeListner = new IPreferenceChangeListener() {
+                @Override
+                public void preferenceChange(PreferenceChangeEvent e) {
+                    String eName= e.getName();
+                    if( eName.equals( GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII)
+                            || eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB)
+                            || eName.equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA) )
+                        updateRingsProperties();
+                }
+            };
+            gs.addPreferenceChangeListener( ringsChangeListner );
+
+            cacheGameListner = new GameListenerAdapter() {
+                @Override
+                public void gameTurnChange(GameTurnChangeEvent e) {
+                    cacheGameChanged = true;
+                }
+            };
+            game.addGameListener(cacheGameListner);
+        }
+
+        public void close() {
+            gs.removePreferenceChangeListener(ringsChangeListner);
+            game.removeGameListener(cacheGameListner);
+        };
+
+
+        /** Checks if options for darkening and highlighting are turned on and the respectively:
+         *  If there is no LOS from curently selected hex/entity, then darkens hex c.
+         *  If there is a LOS from the hex c to the selected hex/entity, then hex c is colored according to distance.
+         * @param boardGraph The board on which we paint.
+         * @param c Hex that is being processed.
+         * @param drawX  The x coordinate of hex <b>c</b> on board image. should be equal to getHexLocation(c).x
+         * @param drawY  The y coordinate of hex <b>c</b> on board image. should be equal to getHexLocation(c).x
+         * @param saveBoardImage
+         */
+        void draw( Graphics boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
+
+            Coords src;
+            if (selected != null) {
+                src = selected;
+            } else if (selectedEntity != null) {
+                src = selectedEntity.getPosition();
+            } else {
+                src = null;
+            }
+
+
+            //if there is no source we have nothing to do.
+            if( (src == null) ||  !game.getBoard().contains(src) )
+                return;
+            //dont spoil the image with fov drawings
+            if(saveBoardImage)
+                return;
+
+            // Code for LoS darkening/highlighting
+            Point p = new Point(drawX, drawY);
+            boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
+            boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
+
+            if ((darken || highlight)
+                    && (game.getPhase() == Phase.PHASE_MOVEMENT)) {
+
+                final int pad = 0;
+                final int lw = 7;
+
+
+                boolean targetIlluminated = false;
+                for (Entity target : game.getEntitiesVector(c)){
+                    targetIlluminated |= target.isIlluminated();
+                }
+
+                final int max_dist;
+                // We don't want to have to compute a LoSEffects yet, as that
+                //  can be expensive on large viewing areas
+                if (selectedEntity != null){
+                    max_dist = game.getPlanetaryConditions().getVisualRange(
+                            selectedEntity, targetIlluminated);
+                } else {
+                    max_dist = 60;
+                }
+
+
+
+                final Color transparent_gray = new Color(0, 0, 0,
+                        gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA));
+                final Color transparent_light_gray = new Color(0, 0, 0,
+                        gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA) / 2);
+                final Color selected_color = new Color(50, 80, 150, 70);
+
+                int dist = src.distance(c);
+
+                int visualRange = 30;
+                int minSensorRange = 0;
+                int maxSensorRange = 0;
+
+                if (dist == 0) {
+                    drawHexBorder(p, boardGraph, selected_color, pad, lw);
+                } else if (dist < max_dist) {
+                    LosEffects los = getCachedLosEffects(src, c);
+                    if (null != selectedEntity) {
+                        visualRange = Compute.getVisualRange(game,
+                                selectedEntity, los, targetIlluminated);
+                        int bracket = Compute.getSensorRangeBracket(
+                                selectedEntity, null);
+                        int range = Compute.getSensorRangeByBracket(game,
+                                selectedEntity, null, los);
+
+                        maxSensorRange = bracket * range;
+                        minSensorRange = Math.max((bracket - 1) * range, 0);
+                        if (game.getOptions().booleanOption(
+                                "inclusive_sensor_range")) {
+                            minSensorRange = 0;
+                        }
+                    }
+                    if (!los.canSee() || (dist > visualRange)) {
+                        if (darken) {
+                            if (game.getOptions().booleanOption(
+                                    "tacops_sensors")
+                                    && (dist > minSensorRange)
+                                    && (dist <= maxSensorRange)) {
+                                drawHexLayer(p, boardGraph,
+                                        transparent_light_gray);
+                            } else {
+                                drawHexLayer(p, boardGraph, transparent_gray);
+                            }
+                        }
+                    } else if (highlight) {
+                        Iterator<Integer> itR= ringsRadii.iterator();
+                        Iterator<Color> itC= ringsColors.iterator();
+                        while( itR.hasNext() && itC.hasNext() ){
+                            int dt= itR.next();
+                            Color ct= itC.next();
+                            if (dist <= dt) {
+                                drawHexLayer(p, boardGraph, ct);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // Max dist should be >= visual dist, this hex can't be seen
+                    if (darken) {
+                        drawHexLayer(p, boardGraph, transparent_gray);
+                    }
+                }
+            }
+        }
+
+
+        Entity cachedSelectedEntity = null;
+        StepSprite cachedStepSprite = null;
+        Coords cachedSrc = null;
+        boolean cacheGameChanged = true;
+        Map<Coords, LosEffects> losCache = new HashMap<>();
+
+        private void clearCache() {
+            losCache = new HashMap<>();
+        }
+
+        GameListener cacheGameListner;
+
+        /**
+         * Checks for los effects, preferably from cache, if not getLosEffects
+         * is invoked and it's return value is cached.
+         * If enviroment has changed between calls to this method the cache is
+         * cleared.
+         */
+        private LosEffects getCachedLosEffects( Coords src, Coords dest) {
+            StepSprite lastStepSprite = pathSprites.size() > 0 ? pathSprites.get(pathSprites.size() - 1) : null;
+            // lets check if cache should be cleared
+            if ((cachedSelectedEntity != selectedEntity)
+                    || (cachedStepSprite != lastStepSprite)
+                    || (!src.equals(cachedSrc))
+                    || (cacheGameChanged)) {
+                clearCache();
+                cachedSelectedEntity = selectedEntity;
+                cachedStepSprite = lastStepSprite;
+                cachedSrc = src;
+                cacheGameChanged = false;
+            }
+
+            LosEffects los = losCache.get(dest);
+            if (los == null) {
+                los = fovHighlightingAndDarkening.getLosEffects(src, dest);
+                losCache.put(dest, los);
+            }
+            return los;
+        }
+
+        /**Parses the properties of rings received from GUIPreferencess.
+         *
+         */
+        private void updateRingsProperties() {
+            //prepare the parameters for processing bracket by bracket
+            String[] dRingsRadiiRaw= gs.getString(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII).trim().split("\\s+");
+            String[] dRingsColorsRaw= gs.getString(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB).split(";");
+            final int highlight_alpha = gs.getInt(GUIPreferences.FOV_HIGHLIGHT_ALPHA);
+            final int max_dist=60;
+
+            ringsRadii= new ArrayList<>();
+            ringsColors= new ArrayList<>();
+
+            for(String rrRaw: dRingsRadiiRaw){
+                try {
+                    int rr= Integer.parseInt(rrRaw.trim());
+                    ringsRadii.add( Math.min(rr, max_dist) );
+                } catch (NumberFormatException e) {
+                    System.err.printf("%s parameter unparsable '%s'"
+                            ,GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw );
+                    e.printStackTrace();
+                    System.err.flush();
+                    break;
+                }
+            }
+
+            for(String rcr: dRingsColorsRaw ){
+                try {
+                    String[] hsbr= rcr.trim().split("\\s+");
+                    float h=Float.parseFloat( hsbr[0] );
+                    float s=Float.parseFloat( hsbr[1] );
+                    float b=Float.parseFloat( hsbr[2] );
+                    Color tc= new Color( Color.HSBtoRGB(h, s, b) );
+                    ringsColors.add( new Color( tc.getRed(), tc.getGreen(), tc.getBlue(), highlight_alpha) );
+                } catch (NumberFormatException e) {
+                    System.err.printf("%s parameter unparsable '%s'"
+                            ,GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr );
+                    e.printStackTrace();
+                    System.err.flush();
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Calculate the LosEffects between the given Coords. Unit height for
+         * the source hex is determined by the selectedEntity if present
+         * otherwise the GUIPreference 'mechInFirst' is used. If pathSprites are
+         * not empty then elevation from last step is used for attacker
+         * elevation, also it is assumed that last step's position is equal to
+         * src.
+         * Unit height for the destination hex is determined by the tallest unit
+         * present in that hex. If no units are present, the GUIPreference
+         * 'mechInSecond' is used.
+         */
+        private LosEffects getLosEffects(Coords src, Coords dest) {
+            /*
+             * The getCachedLos method depends that this method uses only
+             * information from src, dest, game, selectedEntity and the last
+             * stepSprite from path Sprites. If this behavior changes, please
+             * change
+             * getCachedLos method accordingly.
+             */
+            GUIPreferences guip = GUIPreferences.getInstance();
+            IBoard board = game.getBoard();
+            IHex srcHex = board.getHex(src);
+            IHex dstHex = board.getHex(dest);
+            LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+            ai.attackPos = src;
+            ai.targetPos = dest;
+            // First, we check for a selected unit and use its height. If
+            // there's
+            // no selected unit we use the mechInFirst GUIPref.
+            if (selectedEntity != null) {
+                ai.attackHeight = selectedEntity.getHeight();
+                // Elevation of entity above the hex surface
+                int elevation;
+                if (pathSprites.size() > 0) {
+                    // If we've got a step, get the elevation from it
+                    int lastStepIdx = pathSprites.size() - 1;
+                    MoveStep lastMS = pathSprites.get(lastStepIdx).getStep();
+                    elevation = lastMS.getElevation();
+                } else {
+                    // otherwise we use entity's elevation
+                    elevation = selectedEntity.getElevation();
+                }
+                ai.attackAbsHeight = srcHex.surface() + elevation
+                        + selectedEntity.getHeight();
+            } else {
+                ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
+                ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
+            }
+            // First, we take the tallest unit in the destination hex, if no
+            // units
+            // are present we use the mechInSecond GUIPref.
+            Enumeration<Entity> destEntities = game.getEntities(dest);
+            ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
+            while (destEntities.hasMoreElements()) {
+                Entity ent = destEntities.nextElement();
+                int trAbsheight = dstHex.surface() + ent.absHeight();
+                if (trAbsheight > ai.targetAbsHeight) {
+                    ai.targetHeight = ent.getHeight();
+                    ai.targetAbsHeight = trAbsheight;
+                }
+            }
+            if ((ai.targetHeight == Integer.MIN_VALUE)
+                    && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
+                ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
+                ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
+            }
+            return LosEffects.calculateLos(game, ai);
+        }
+
+
+
+
     }
 
     /**
@@ -2518,9 +2750,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (entity.getPosition() == null) {
                 continue;
             }
-            if ((localPlayer != null) 
+            if ((localPlayer != null)
                     && game.getOptions().booleanOption("double_blind")
-                    && entity.getOwner().isEnemyOf(localPlayer) 
+                    && entity.getOwner().isEnemyOf(localPlayer)
                     && !entity.isVisibleToEnemy()
                     && !entity.isDetectedByEnemy()){
                 continue;
@@ -3124,65 +3356,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Messages.getString("BoardView1.LOSTitle"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    /**
-     * Calculate the LosEffects between the given Coords. Unit height for the
-     * source hex is determined by the selectedEntity if present otherwise the
-     * GUIPreference 'mechInFirst' is used. If pathSprites are not empty then
-     * elevation from last step is used for attacker elevation, also it is
-     * assumed that last step's position is equal to src.
-     * Unit height for the destination hex is determined by the tallest unit
-     * present in that hex. If no units are present, the GUIPreference
-     * 'mechInSecond' is used.
-     */
-    protected LosEffects getLosEffects(Coords src, Coords dest) {
-        GUIPreferences guip = GUIPreferences.getInstance();
-        IBoard board = game.getBoard(); 
-        IHex srcHex = board.getHex(src);
-        IHex dstHex = board.getHex(dest);
-        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-        ai.attackPos = src;
-        ai.targetPos = dest;
-        // First, we check for a selected unit and use its height. If there's
-        // no selected unit we use the mechInFirst GUIPref.
-        if (selectedEntity != null) {
-            ai.attackHeight = selectedEntity.getHeight();
-            // Elevation of entity above the hex surface
-            int elevation;
-            if (pathSprites.size() > 0) {
-                // If we've got a step, get the elevation from it
-                int lastStepIdx = pathSprites.size() - 1;
-                MoveStep lastMS = pathSprites.get(lastStepIdx).getStep();
-                elevation = lastMS.getElevation();
-            } else {
-                //otherwise we use entity's elevation
-                elevation = selectedEntity.getElevation();
-            }
-            ai.attackAbsHeight = srcHex.surface() + elevation
-                    + selectedEntity.getHeight();
-        } else {
-            ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
-            ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
-        }
-        // First, we take the tallest unit in the destination hex, if no units
-        // are present we use the mechInSecond GUIPref.
-        Enumeration<Entity> destEntities = game.getEntities(dest);
-        ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
-        while (destEntities.hasMoreElements()) {
-            Entity ent = destEntities.nextElement();
-			int trAbsheight = dstHex.surface() + ent.absHeight();
-            if (trAbsheight > ai.targetAbsHeight) {
-                ai.targetHeight = ent.getHeight();
-                ai.targetAbsHeight = trAbsheight;
-            }
-        }
-        if ((ai.targetHeight == Integer.MIN_VALUE)
-                && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
-            ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
-            ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
-        }
-        return LosEffects.calculateLos(game, ai);
     }
 
     /**
@@ -7123,21 +7296,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return (int) ((scale * HEX_W) / 2.0);
     }
 
-    @Override 
+    @Override
     public void setPreferredSize(Dimension d){
     	super.setPreferredSize(d);
     	preferredSize = new Dimension(d);
     }
-    
+
     @Override
     public Dimension getPreferredSize() {
     	// If the board is small, we want the preferred size to fill the whole
     	//  ScrollPane viewport, for purposes of drawing the tiled background
-    	//  icon. 
+    	//  icon.
     	// However, we also need the scrollable client to be as big as the
     	//  board plus the pad size.
     	return new Dimension(
-    			Math.max(boardSize.width + 2 * HEX_W,preferredSize.width), 
+    			Math.max(boardSize.width + 2 * HEX_W,preferredSize.width),
     			Math.max(boardSize.height + 2 * HEX_W,preferredSize.height));
     }
 
@@ -7451,22 +7624,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public Component getComponent() {
     	return getComponent(false);
     }
-    
+
     public Component getComponent(boolean scrollBars) {
         // If we're already configured, return the scrollpane
     	if (scrollpane != null) {
             return scrollpane;
         }
-        
-        SkinSpecification bvSkinSpec = 
+
+        SkinSpecification bvSkinSpec =
         		SkinXMLHandler.getSkin(SkinXMLHandler.BOARDVIEW);
-        
+
         // Setup background icons
         try {
             java.net.URI imgURL;
             File file;
             if (bvSkinSpec.backgrounds.size() > 0){
-            	file = new File(Configuration.widgetsDir(), 
+            	file = new File(Configuration.widgetsDir(),
             			bvSkinSpec.backgrounds.get(0));
     			imgURL = file.toURI();
     			if (!file.exists()){
@@ -7477,7 +7650,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     			}
             }
             if (bvSkinSpec.backgrounds.size() > 1){
-            	file = new File(Configuration.widgetsDir(), 
+            	file = new File(Configuration.widgetsDir(),
             			bvSkinSpec.backgrounds.get(1));
     			imgURL = file.toURI();
     			if (!file.exists()){
@@ -7491,12 +7664,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         	System.out.println("Error loading BoardView background images!");
         	System.out.println(e.getMessage());
         }
-        
+
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this){
-            
+
         	/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 5973610449428194319L;
 
@@ -7510,7 +7683,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int iH = scrollPaneBgIcon.getIconHeight();
                 for (int x = 0; x < w; x+=iW){
                     for (int y = 0; y < h; y+=iH){
-                        g.drawImage(scrollPaneBgIcon.getImage(), x, y, 
+                        g.drawImage(scrollPaneBgIcon.getImage(), x, y,
                         		scrollPaneBgIcon.getImageObserver());
                     }
                 }
@@ -7525,7 +7698,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         vbar = scrollpane.getVerticalScrollBar();
         hbar = scrollpane.getHorizontalScrollBar();
-        
+
         if (!scrollBars){
         	vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
         	hbar.setPreferredSize(new Dimension(hbar.getWidth(),0));
@@ -7736,7 +7909,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void die() {
         ourTask.cancel();
     }
-    
+
     /**
      * Returns true if the BoardView has an active chatter box else false.
      * @return

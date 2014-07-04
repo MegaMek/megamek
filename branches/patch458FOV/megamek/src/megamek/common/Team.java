@@ -41,6 +41,10 @@ public final class Team extends TurnOrdered {
     public Enumeration<IPlayer> getPlayers() {
         return players.elements();
     }
+    
+    public Vector<IPlayer> getPlayersVector() {
+        return players;
+    }
 
     public void resetTeam() {
         players.removeAllElements();
@@ -262,50 +266,35 @@ public final class Team extends TurnOrdered {
      * take negatives only if the current bonus is zero
      */
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
-        int constantb = 0;
         int turnb = 0;
-        int commandb = 0;
-        int compensationBonus = 0;
-
-        for (Enumeration<IPlayer> p = getPlayers(); p.hasMoreElements(); ) {
-            IPlayer player = p.nextElement();
-            if ((player.getConstantInitBonus() > constantb)
-                    && (player.getConstantInitBonus() != 0)) {
-                constantb = player.getConstantInitBonus();
-            }
-            // also accept it if it is negative and current bonus is zero
-            if ((player.getConstantInitBonus() < 0) && (constantb == 0)) {
-                constantb = player.getConstantInitBonus();
-            }
-        }
-
-        for (Enumeration<IPlayer> p = getPlayers(); p.hasMoreElements(); ) {
-            IPlayer player = p.nextElement();
+        int constantb = Integer.MIN_VALUE;
+        int commandb = Integer.MIN_VALUE;
+        constantb = Integer.MIN_VALUE;
+        for (IPlayer player : getPlayersVector()) {
             turnb += player.getTurnInitBonus();
-            if (player.getCompensationInitBonus() > compensationBonus) {
-                compensationBonus = player.getCompensationInitBonus();
-            }
             if (player.getCommandBonus() > commandb) {
                 commandb = player.getCommandBonus();
             }
+            if (player.getConstantInitBonus() > constantb) {
+                constantb = player.getConstantInitBonus();
+            }
         }
-
-        return constantb + turnb + commandb + getInitCompensationBonus(bInitiativeCompensationBonus);
+        return constantb + turnb + commandb
+                + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
 
     public int getInitCompensationBonus(boolean bUseInitCompensation) {
-        int nInitCompensationBonus = 0;
+        int nInitCompBonus = 0;
 
         if (bUseInitCompensation) {
-            for (Enumeration<IPlayer> p = getPlayers(); p.hasMoreElements(); ) {
-                IPlayer player = p.nextElement();
-                if (player.getCompensationInitBonus() > nInitCompensationBonus) {
-                    nInitCompensationBonus = player.getCompensationInitBonus();
+            for (IPlayer player : getPlayersVector()) {
+                if (player.getCompensationInitBonus() > nInitCompBonus) {
+                    nInitCompBonus = player.getCompensationInitBonus();
                 }
             }
         }
 
-        return nInitCompensationBonus;
+        return nInitCompBonus;
     }
 
     public void setInitCompensationBonus(int nNewValue) {

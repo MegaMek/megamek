@@ -56,7 +56,7 @@ public interface ITurnOrdered extends Serializable {
 
     void incrementEvenTurns();
 
-    void incrementMultiTurns();
+    void incrementMultiTurns(int entityClass);
 
     void incrementSpaceStationTurns();
 
@@ -94,4 +94,5 @@ public interface ITurnOrdered extends Serializable {
      * Clear the initiative of this object.
      */
     void clearInitiative(boolean bUseInitComp);
+    
 }

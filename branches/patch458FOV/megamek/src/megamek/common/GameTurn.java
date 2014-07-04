@@ -39,6 +39,13 @@ public class GameTurn implements Serializable {
     private static final long serialVersionUID = -8340385894504735190L;
 
     private int playerId;
+    
+    /**
+     * Various optionals rules force certain unit types to move multiple units
+     * for one turn, such as mek and vehicle lance rules; this flag keeps track
+     * of whether this turn was generated as one of these multi-turns.
+     */
+    private boolean isMultiTurn = false;
 
     /** Creates a new instance of GameTurn */
     public GameTurn(int playerId) {
@@ -600,6 +607,14 @@ public class GameTurn implements Serializable {
             return (super.isValidEntity(entity, game, useValidNonInfantryCheck) 
                     && (unitNumber == entity.getUnitNumber()));
         }
+    }
+
+    public boolean isMultiTurn() {
+        return isMultiTurn;
+    }
+
+    public void setMultiTurn(boolean isMultiTurn) {
+        this.isMultiTurn = isMultiTurn;
     }
 
 }

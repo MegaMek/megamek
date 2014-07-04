@@ -45,7 +45,6 @@ import org.mockito.Mockito;
 public class ChatProcessorTest {
 
     private static BotClient mockBotHal;
-    private static BotClient mockBotVGer;
     private static final IGame mockGame = Mockito.mock(IGame.class);
     private static final LogLevel logLevel = LogLevel.ERROR;
 
@@ -89,7 +88,7 @@ public class ChatProcessorTest {
         Mockito.when(MOCK_BOT_PLAYER_V_GER.isEnemyOf(MOCK_HUMAN_PLAYER_KIRK)).thenReturn(true);
         Mockito.when(MOCK_BOT_PLAYER_V_GER.getTeam()).thenReturn(1);
 
-        Vector<IPlayer> PLAYER_VECTOR = new Vector<IPlayer>(4);
+        Vector<IPlayer> PLAYER_VECTOR = new Vector<>(4);
         PLAYER_VECTOR.add(MOCK_HUMAN_PLAYER_DAVE);
         PLAYER_VECTOR.add(MOCK_BOT_PLAYER_HAL);
         PLAYER_VECTOR.add(MOCK_HUMAN_PLAYER_KIRK);
@@ -100,7 +99,7 @@ public class ChatProcessorTest {
         Mockito.when(mockBotHal.getLocalPlayer()).thenReturn(MOCK_BOT_PLAYER_HAL);
         Mockito.when(mockBotHal.getGame()).thenReturn(mockGame);
 
-        mockBotVGer = Mockito.mock(BotClient.class);
+        BotClient mockBotVGer = Mockito.mock(BotClient.class);
         Mockito.when(mockBotVGer.getLocalPlayer()).thenReturn(MOCK_BOT_PLAYER_V_GER);
         Mockito.when(mockBotVGer.getGame()).thenReturn(mockGame);
     }
@@ -125,8 +124,7 @@ public class ChatProcessorTest {
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test a null message.
-        msg = null;
-        Assert.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
+        Assert.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(null, mockBotHal));
 
         // Test an empty message.
         msg = "";
@@ -177,8 +175,7 @@ public class ChatProcessorTest {
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test null message.
-        msg = null;
-        Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
+        Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(null, mockBotHal));
 
         // Test empty message.
         msg = "";
@@ -201,7 +198,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Assert.assertTrue(mockPrincess.shouldFlee());
+        Assert.assertTrue(mockPrincess.getFallBack());
 
         // Test the 'flee' command sent by the enemy.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
@@ -215,7 +212,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Assert.assertFalse(mockPrincess.shouldFlee());
+        Assert.assertFalse(mockPrincess.getFallBack());
 
 
         // Test the 'flee' command sent to a different bot player.
@@ -230,7 +227,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Assert.assertFalse(mockPrincess.shouldFlee());
+        Assert.assertFalse(mockPrincess.getFallBack());
 
         // Test the 'verbose' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
@@ -575,7 +572,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Set<String> expected = new HashSet<String>(1);
+        Set<String> expected = new HashSet<>(1);
         expected.add("1234");
         Assert.assertEquals(expected, mockPrincess.getBehaviorSettings().getStrategicBuildingTargets());
 
@@ -592,7 +589,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        expected = new HashSet<String>(0);
+        expected = new HashSet<>(0);
         Assert.assertEquals(expected, mockPrincess.getBehaviorSettings().getStrategicBuildingTargets());
 
         // Test the 'target' command with an invalid hex number.
@@ -608,7 +605,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        expected = new HashSet<String>(0);
+        expected = new HashSet<>(0);
         Assert.assertEquals(expected, mockPrincess.getBehaviorSettings().getStrategicBuildingTargets());
 
         // Test the 'priority' command.
@@ -641,7 +638,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        expected = new HashSet<String>(0);
+        expected = new HashSet<>(0);
         Assert.assertEquals(expected, mockPrincess.getBehaviorSettings().getStrategicBuildingTargets());
     }
 }

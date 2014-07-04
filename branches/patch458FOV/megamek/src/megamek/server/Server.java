@@ -1935,25 +1935,14 @@ public class Server implements Runnable {
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
         int multiMask = 0;
-        if (infMoveMulti) {
-            multiMask += GameTurn.CLASS_INFANTRY;
-        }
-        if (protosMoveMulti) {
-            multiMask += GameTurn.CLASS_PROTOMECH;
-        }
-
-        // If a proto declared fire and protos don't move
-        // multi, ignore whether infantry move or not.
-        else if (protosMoved && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
-            multiMask = 0;
-        }
-
-        if (tanksMoveMulti) {
-            multiMask += GameTurn.CLASS_TANK;
-        }
-
-        if (meksMoveMulti) {
-            multiMask += GameTurn.CLASS_MECH;
+        if (infMoveMulti && infMoved) {
+            multiMask = GameTurn.CLASS_INFANTRY;
+        } else if (protosMoveMulti && protosMoved) {
+            multiMask = GameTurn.CLASS_PROTOMECH;
+        } else if (tanksMoveMulti && tanksMoved) {
+            multiMask = GameTurn.CLASS_TANK;
+        } else if (meksMoveMulti && meksMoved) {
+            multiMask = GameTurn.CLASS_MECH;
         }
 
         // In certain cases, a new SpecificEntityTurn could have been added for
@@ -1974,16 +1963,13 @@ public class Server implements Runnable {
             }
         }
 
-        // Is this a general move turn?
-        boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
-                && !(turn instanceof GameTurn.UnitNumberTurn)
-                && !(turn instanceof GameTurn.UnloadStrandedTurn)
-                && (!(turn instanceof GameTurn.EntityClassTurn) || ((turn instanceof GameTurn.EntityClassTurn) && ((GameTurn.EntityClassTurn) turn)
-                        .isValidClass(~multiMask)));
+        // Was the turn we just took added as part of a multi-turn?
+        //  This determines if we should add more multiturns
+        boolean isMultiTurn = turn.isMultiTurn();
 
         // Unless overridden by the "protos_move_multi" option, all Protomechs
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && isGeneralMoveTurn
+        if (protosMoved && !protosMoveMulti && !isMultiTurn
                 && (entityUsed != null)) {
 
             // What's the unit number and ID of the entity used?
@@ -2014,21 +2000,21 @@ public class Server implements Runnable {
             for (int i = 0; i < protoTurns; i++) {
                 GameTurn newTurn = new GameTurn.UnitNumberTurn(playerId,
                         movingUnit);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
-
         // Otherwise, we may need to add turns for the "*_move_multi" options.
         else if (((infMoved && infMoveMulti) || (protosMoved && protosMoveMulti))
-                && isGeneralMoveTurn) {
+                && !isMultiTurn) {
             int remaining = 0;
 
             // Calculate the number of EntityClassTurns need to be added.
-            if (infMoveMulti) {
+            if (infMoveMulti && infMoved) {
                 remaining += game.getInfantryLeft(playerId);
             }
-            if (protosMoveMulti) {
+            if (protosMoveMulti && protosMoved) {
                 remaining += game.getProtomechsLeft(playerId);
             }
             if (usedEntityNotDone) {
@@ -2042,12 +2028,13 @@ public class Server implements Runnable {
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
 
-        if (tanksMoved && tanksMoveMulti && isGeneralMoveTurn) {
+        if (tanksMoved && tanksMoveMulti && !isMultiTurn) {
             int remaining = game.getVehiclesLeft(playerId);
             if (usedEntityNotDone) {
                 remaining--;
@@ -2061,12 +2048,13 @@ public class Server implements Runnable {
             for (int i = 0; i < moreVeeTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
         }
 
-        if (meksMoved && meksMoveMulti && isGeneralMoveTurn) {
+        if (meksMoved && meksMoveMulti && !isMultiTurn) {
             int remaining = game.getMechsLeft(playerId);
             if (usedEntityNotDone) {
                 remaining--;
@@ -2079,6 +2067,7 @@ public class Server implements Runnable {
             for (int i = 0; i < moreMekTurns; i++) {
                 GameTurn newTurn = new GameTurn.EntityClassTurn(playerId,
                         multiMask);
+                newTurn.setMultiTurn(true);
                 game.insertTurnAfter(newTurn, turnIndex);
                 turnsChanged = true;
             }
@@ -3443,7 +3432,7 @@ public class Server implements Runnable {
                     if (infMoveEven) {
                         player.incrementEvenTurns();
                     } else if (infMoveMulti) {
-                        player.incrementMultiTurns();
+                        player.incrementMultiTurns(GameTurn.CLASS_INFANTRY);
                     } else {
                         player.incrementOtherTurns();
                     }
@@ -3452,15 +3441,15 @@ public class Server implements Runnable {
                         if (protosMoveEven) {
                             player.incrementEvenTurns();
                         } else if (protosMoveMulti) {
-                            player.incrementMultiTurns();
+                            player.incrementMultiTurns(GameTurn.CLASS_PROTOMECH);
                         } else {
                             player.incrementOtherTurns();
                         }
                     }
                 } else if ((entity instanceof Tank) && tankMoveByLance) {
-                    player.incrementMultiTurns();
+                    player.incrementMultiTurns(GameTurn.CLASS_TANK);
                 } else if ((entity instanceof Mech) && mekMoveByLance) {
-                    player.incrementMultiTurns();
+                    player.incrementMultiTurns(GameTurn.CLASS_MECH);
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -7294,7 +7283,9 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into rubble
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
+            boolean isLastStep = md.getLastStep().equals(step);
+            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
+                    isLastStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
                         rollTarget, true);
@@ -16123,6 +16114,14 @@ public class Server implements Runnable {
     private void resolveDfaAttack(PhysicalResult pr, int lastEntityId) {
         final DfaAttackAction daa = (DfaAttackAction) pr.aaa;
         final Entity ae = game.getEntity(daa.getEntityId());
+        
+        // is the attacker dead? because that sure messes up the calculations
+        if (ae == null) {
+            return;
+        }
+        
+        final IHex aeHex = game.getBoard().getHex(ae.getPosition());
+        final IHex teHex = game.getBoard().getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(),
                 daa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
@@ -16143,7 +16142,7 @@ public class Server implements Runnable {
             te = (Entity) target;
             IHex hex = game.getBoard().getHex(te.getPosition());
             if (hex.containsTerrain(Terrains.WATER)) {
-                if (te.absHeight() < hex.getElevation()) {
+                if (te.absHeight() < 0) {
                     damage = (int) Math.ceil(damage * 0.5f);
                 }
             }
@@ -16167,10 +16166,7 @@ public class Server implements Runnable {
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(daa.getTargetPos());
 
-        // is the attacker dead? because that sure messes up the calculations
-        if (ae == null) {
-            return;
-        }
+        
 
         final int direction = ae.getFacing();
 
@@ -16200,9 +16196,7 @@ public class Server implements Runnable {
 
             } else {
                 // same effect as successful DFA
-                ae.setElevation(ae.calcElevation(
-                        game.getBoard().getHex(ae.getPosition()), game
-                                .getBoard().getHex(daa.getTargetPos())));
+                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
                         daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
                                 "executed death from above")));
@@ -16502,15 +16496,10 @@ public class Server implements Runnable {
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
-        ae.setElevation(ae.calcElevation(
-                game.getBoard().getHex(ae.getPosition()), game.getBoard()
-                        .getHex(daa.getTargetPos())));
+        ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
         // HACK: to avoid automatic falls, displace from dest to dest
-        addReport(doEntityDisplacement(
-                ae,
-                dest,
-                dest,
-                new PilotingRollData(ae.getId(), 4, "executed death from above")));
+        addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(
+                ae.getId(), 4, "executed death from above")));
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -25409,40 +25398,29 @@ public class Server implements Runnable {
         boolean fallToSurface = false;
         // on ice
         int toSubtract = 0;
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.ICE)
-                && (entity.getElevation() != -game.getBoard()
-                        .getHex(entity.getPosition()).depth())) {
+        IHex currHex = game.getBoard().getHex(entity.getPosition());
+        if (currHex.containsTerrain(Terrains.ICE)
+                && (entity.getElevation() != -currHex.depth())) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition()).surface();
+            toSubtract = currHex.surface();
         }
         // on a bridge
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.BRIDGE_ELEV)
-                && (entity.getElevation() >= game.getBoard()
-                        .getHex(entity.getPosition())
+        if (currHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                && (entity.getElevation() >= currHex
                         .terrainLevel(Terrains.BRIDGE_ELEV))) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.BRIDGE_ELEV);
+            toSubtract = currHex.terrainLevel(Terrains.BRIDGE_ELEV);
         }
         // on a building
-        if (game.getBoard().getHex(entity.getPosition())
-                .containsTerrain(Terrains.BLDG_ELEV)
-                && (entity.getElevation() >= game.getBoard()
-                        .getHex(entity.getPosition())
+        if (currHex.containsTerrain(Terrains.BLDG_ELEV)
+                && (entity.getElevation() >= currHex
                         .terrainLevel(Terrains.BLDG_ELEV))) {
             fallToSurface = true;
-            toSubtract = game.getBoard().getHex(entity.getPosition())
-                    .terrainLevel(Terrains.BLDG_ELEV);
+            toSubtract = currHex.terrainLevel(Terrains.BLDG_ELEV);
         }
-        return doEntityFall(
-                entity,
-                entity.getPosition(),
-                entity.getElevation()
-                        + (!fallToSurface ? game.getBoard()
-                                .getHex(entity.getPosition()).depth(true)
-                                : entity.getElevation() - toSubtract), roll);
+        return doEntityFall(entity, entity.getPosition(), entity.getElevation()
+                + (!fallToSurface ? currHex.depth(true) : entity.getElevation()
+                        - toSubtract), roll);
     }
 
     /**

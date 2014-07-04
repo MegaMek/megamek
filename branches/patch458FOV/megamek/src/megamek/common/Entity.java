@@ -6221,13 +6221,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * roll for the piloting skill check.
      */
     public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
-                                            Coords lastPos, Coords curPos) {
+            Coords lastPos, Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
                                                         .getLastStepMovementType());
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
-                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (step.getMovementType() != EntityMovementType.MOVE_JUMP 
+                    || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
                 && (this instanceof Mech)) {
             int mod = 0;

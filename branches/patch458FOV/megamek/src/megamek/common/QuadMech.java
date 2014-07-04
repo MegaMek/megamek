@@ -747,10 +747,18 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) &&
-                ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
-            return true;
+        
+        // Handle upper cover specially, as treating it as a bitmask will lead
+        //  to every location being covered
+        if (cover  == LosEffects.COVER_UPPER) {
+            if ((location == LOC_LLEG) || (location == LOC_RLEG)
+                    || (location == LOC_LARM) || (location == LOC_RARM)) {
+                return false;
+            } else {
+                return true;
+            }
         }
+        
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {

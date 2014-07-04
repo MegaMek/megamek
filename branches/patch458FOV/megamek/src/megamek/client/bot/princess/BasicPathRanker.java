@@ -58,7 +58,7 @@ public class BasicPathRanker extends PathRanker {
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         final String METHOD_NAME = "BasicPathRanker(Princess)";
-        bestDamageByEnemies = new TreeMap<Integer, Double>();
+        bestDamageByEnemies = new TreeMap<>();
         owner = owningPrincess;
         owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
                 " behavior");
@@ -352,7 +352,6 @@ public class BasicPathRanker extends PathRanker {
 
     // todo account for damaged locations and face those away from enemy.
     private double calculateFacingMod(Entity movingUnit, IGame game, final MovePath path, StringBuilder formula) {
-        final String METHOD_NAME = "calculateFacingMod(Entity, IGame, MovePath, StringBuilder)";
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
@@ -381,7 +380,7 @@ public class BasicPathRanker extends PathRanker {
 
     // If I need to flee the board, I want to get closer to my home edge.
     private double calculateSelfPreservationMod(Entity movingUnit, MovePath path, IGame game, StringBuilder formula) {
-        if (getOwner().wantsToFlee(movingUnit)) {
+        if (getOwner().wantsToFallBack(movingUnit)) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(), game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod = newDistanceToHome * selfPreservation;
@@ -590,7 +589,6 @@ public class BasicPathRanker extends PathRanker {
      * @param position Coords from which the closest enemy is found
      * @param game     IGame that we're playing
      */
-    @Override
     public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
@@ -638,9 +636,10 @@ public class BasicPathRanker extends PathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game
+     * @param game The {@link IGame} currently in play.
      * @return The distance to the unit's home edge.
      */
+    @Override
     public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);

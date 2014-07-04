@@ -356,10 +356,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (!(disp instanceof ChatterBox2)) {
                         break;
                     }
-                    double width = Math.min(boardSize.getWidth(), scrollpane
-                            .getViewport().getSize().getWidth());
-                    double height = Math.min(boardSize.getHeight(), scrollpane
-                            .getViewport().getSize().getHeight());
+                    double width = scrollpane.getViewport().getSize()
+                            .getWidth();
+                    double height = scrollpane.getViewport().getSize()
+                            .getHeight();
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
                     // we need to adjust the point, because it should be against
@@ -3470,10 +3470,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            double width = Math.min(boardSize.getWidth(), scrollpane
-                    .getViewport().getSize().getWidth());
-            double height = Math.min(boardSize.getHeight(), scrollpane
-                    .getViewport().getSize().getHeight());
+            double width = scrollpane.getViewport().getSize()
+                    .getWidth();
+            double height = scrollpane.getViewport().getSize()
+                    .getHeight();
             Dimension dispDimension = new Dimension();
             dispDimension.setSize(width, height);
             // we need to adjust the point, because it should be against the

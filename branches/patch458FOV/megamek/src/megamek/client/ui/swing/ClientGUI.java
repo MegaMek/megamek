@@ -1548,6 +1548,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         	 if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
+        	 if ((curPanel instanceof ReportDisplay) 
+        	         && !client.getLocalPlayer().isDone()) {
+                 ((ReportDisplay) curPanel).resetReadyButton();
+        	 }
         }
     	
         @Override

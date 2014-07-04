@@ -69,8 +69,7 @@ public class PathRanker {
 
     public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> movePaths, IGame game, int maxRange,
                                            double fallTollerance, int startingHomeDistance,
-                                           int startingDistToNearestEnemy, List<Entity> enemies,
-                                           List<Entity> friends) {
+                                           List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -82,7 +81,7 @@ public class PathRanker {
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
 
-            ArrayList<RankedPath> returnPaths = new ArrayList<RankedPath>(validPaths.size());
+            ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
@@ -121,10 +120,10 @@ public class PathRanker {
                 Integer.MAX_VALUE :
                 closestTarget.getPosition().distance(mover.getPosition()));
 
-        List<MovePath> returnPaths = new ArrayList<MovePath>(startingPathList.size());
+        List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
         HomeEdge homeEdge = owner.getHomeEdge();
-        boolean fleeing = owner.isMustFlee() || owner.shouldFlee();
+        boolean fleeing = owner.isFallingBack(mover);
 
         for (MovePath path : startingPathList) {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
@@ -177,23 +176,6 @@ public class PathRanker {
         }
 
         return returnPaths;
-    }
-
-    public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps, double lessthan) {
-        final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
-
-        try {
-            ArrayList<RankedPath> ret = new ArrayList<RankedPath>();
-            for (RankedPath p : ps) {
-                if (p.rank > lessthan) {
-                    ret.add(p);
-                }
-            }
-            return ret;
-        } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
-        }
     }
 
     public static RankedPath getBestPath(List<RankedPath> ps) {
@@ -254,29 +236,6 @@ public class PathRanker {
     }
 
     /**
-     * Find the closest friend to a unit with a path
-     */
-    Entity findClosestFriend(MovePath p, IGame game) {
-        final String METHOD_NAME = "findClosestFriend(MovePath, IGame";
-        owner.methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            int range = 9999;
-            Entity closest = null;
-            ArrayList<Entity> friends = getFriends(p.getEntity(), game);
-            for (Entity e : friends) {
-                if (p.getFinalCoords().distance(e.getPosition()) < range) {
-                    range = p.getFinalCoords().distance(e.getPosition());
-                    closest = e;
-                }
-            }
-            return closest;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
-        }
-    }
-
-    /**
      * Get all the enemies of a unit
      */
     List<Entity> getEnemies(Entity myunit, IGame game) {
@@ -284,7 +243,7 @@ public class PathRanker {
         owner.methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
-            ArrayList<Entity> enemies = new ArrayList<Entity>();
+            ArrayList<Entity> enemies = new ArrayList<>();
             for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (entity.getOwner().isEnemyOf(myunit.getOwner())
@@ -311,7 +270,7 @@ public class PathRanker {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            ArrayList<Entity> friends = new ArrayList<Entity>();
+            ArrayList<Entity> friends = new ArrayList<>();
             for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
@@ -514,10 +473,6 @@ public class PathRanker {
         }
 
         return center;
-    }
-
-    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
-        return 0;
     }
 
     public int getHighestEnemyInitiativeId() {

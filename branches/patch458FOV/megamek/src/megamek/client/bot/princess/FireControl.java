@@ -71,15 +71,11 @@ public class FireControl {
     private static double DAMAGE_UTILITY = 1.0;
     private static double CRITICAL_UTILITY = 10.0;
     private static double KILL_UTILITY = 50.0;
-    @SuppressWarnings("FieldCanBeLocal") private static double OVERHEAT_DISUTILITY = 5.0;
-    @SuppressWarnings("FieldCanBeLocal")
+    private static double OVERHEAT_DISUTILITY = 5.0;
     private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
-    @SuppressWarnings("FieldCanBeLocal")
     protected static double COMMANDER_UTILITY = 0.5;
-    @SuppressWarnings("FieldCanBeLocal")
     protected static double SUB_COMMANDER_UTILITY = 0.25;
-    @SuppressWarnings("FieldCanBeLocal")
     protected static double STRATEGIC_TARGET_UTILITY = 0.5;
     protected static double PRIORITY_TARGET_UTILITY = 0.25;
 

@@ -93,6 +93,7 @@ import megamek.common.ClampMountMech;
 import megamek.common.ClampMountTank;
 import megamek.common.Configuration;
 import megamek.common.Crew;
+import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -3631,8 +3632,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                 menuSquadrons.add(menuItem);
                             } else if ((loader instanceof Jumpship) && allDropships) {
-                                menuItem = new JMenuItem(loader.getShortName() + " (Free Collars: " + loader.getDocks
-                                        () + ")");
+                                int freeCollars = 0;
+                                for (Transporter t : loader.getTransports()) {
+                                    if (t instanceof DockingCollar) {
+                                        freeCollars += t.getUnused();
+                                    }
+                                }
+                                menuItem = new JMenuItem(loader.getShortName()
+                                        + " (Free Collars: " + freeCollars
+                                        + ")");
                                 menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
                                 menuItem.setEnabled((isOwner || isBot) && allUnloaded);

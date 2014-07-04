@@ -57,20 +57,18 @@ public class BasicPathRankerTest {
     private final double TOLERANCE = 0.001;
 
     private Princess mockPrincess;
-    private BehaviorSettings mockBehavior;
     private FireControl mockFireControl;
-    private List<Targetable> testAdditionalTargets;
 
     @Before
     public void setUp() {
-        mockBehavior = Mockito.mock(BehaviorSettings.class);
+        BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
         Mockito.when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         Mockito.when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
         Mockito.when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
         Mockito.when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
         Mockito.when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
 
-        testAdditionalTargets = new ArrayList<Targetable>();
+        List<Targetable> testAdditionalTargets = new ArrayList<>();
 
         mockFireControl = Mockito.mock(FireControl.class);
         Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
@@ -162,7 +160,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockTargetRollTwo.getValue()).thenReturn(5);
         Mockito.when(mockTargetRollTwo.getDesc()).thenReturn("mock");
 
-        List<TargetRoll> testRollList = new ArrayList<TargetRoll>(2);
+        List<TargetRoll> testRollList = new ArrayList<>(2);
         testRollList.add(mockTargetRoll);
         testRollList.add(mockTargetRollTwo);
 
@@ -322,7 +320,7 @@ public class BasicPathRankerTest {
                .when(testRanker)
                .calculateMyKickDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech),
                                                Mockito.any(IGame.class));
-        Map<Integer, Double> testBestDamageByEnemies = new TreeMap<Integer, Double>();
+        Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMechId, 0.0);
         Mockito.doReturn(testBestDamageByEnemies)
                .when(testRanker)
@@ -368,7 +366,7 @@ public class BasicPathRankerTest {
 
         Entity mockMover = Mockito.mock(BipedMech.class);
         Mockito.when(mockMover.isClan()).thenReturn(false);
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.eq(mockMover))).thenReturn(false);
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
 
         Coords finalCoords = new Coords(0, 0);
 
@@ -397,9 +395,9 @@ public class BasicPathRankerTest {
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
 
-        List<Entity> testEnemies = new ArrayList<Entity>();
+        List<Entity> testEnemies = new ArrayList<>();
 
-        Map<Integer, Double> bestDamageByEnemies = new TreeMap<Integer, Double>();
+        Map<Integer, Double> bestDamageByEnemies = new TreeMap<>();
         Mockito.when(testRanker.getBestDamageByEnemies()).thenReturn(bestDamageByEnemies);
 
         Coords enemyMech1Position = Mockito.spy(new Coords(10, 10));
@@ -754,7 +752,6 @@ public class BasicPathRankerTest {
         if (baseRank < actual.rank) {
             Assert.fail("The further I am from my friends, the lower the path rank should be.");
         }
-        friendsCoords = null;
         expected = new RankedPath(-36.25, mockPath, "Calculation: " +
                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -770,13 +767,13 @@ public class BasicPathRankerTest {
                 .format(0) + ", " +
                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
                                                     LOG_INT.format(1) + "})]");
-        actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
+        actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, null);
         assertRankedPathEquals(expected, actual);
         friendsCoords = new Coords(10, 10);
 
         // Set myself up to run away.
         double baseFleeingRank = -351.25;
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.eq(mockMover))).thenReturn(true);
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(true);
         expected = new RankedPath(baseFleeingRank, mockPath, "Calculation: " +
                                                              "{fall mod [" + LOG_DECIMAL.format(0) + " = " +
                                                              LOG_DECIMAL.format(0) + " * " + LOG_DECIMAL.format
@@ -858,7 +855,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(20)
                .when(testRanker)
                .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
-        Mockito.when(mockPrincess.wantsToFlee(Mockito.eq(mockMover))).thenReturn(false);
+        Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
 
         // Change my facing.
         Mockito.when(mockPath.getFinalFacing()).thenReturn(1);
@@ -962,7 +959,7 @@ public class BasicPathRankerTest {
 
     @Test
     public void testFindClosestEnemy() {
-        List<Entity> enemyList = new ArrayList<Entity>(3);
+        List<Entity> enemyList = new ArrayList<>(3);
 
         Entity enemyMech = Mockito.mock(BipedMech.class);
         Mockito.when(enemyMech.getPosition()).thenReturn(new Coords(10, 10));
@@ -1026,7 +1023,7 @@ public class BasicPathRankerTest {
 
         int myId = 1;
 
-        List<Entity> friends = new ArrayList<Entity>();
+        List<Entity> friends = new ArrayList<>();
 
         IBoard mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
@@ -1093,7 +1090,7 @@ public class BasicPathRankerTest {
         Assert.assertNull(actual);
         actual = testRanker.calcAllyCenter(myId, null, mockGame);
         Assert.assertNull(actual);
-        List<Entity> solo = new ArrayList<Entity>(1);
+        List<Entity> solo = new ArrayList<>(1);
         solo.add(mockFriend1);
         actual = testRanker.calcAllyCenter(myId, solo, mockGame);
         Assert.assertNull(actual);

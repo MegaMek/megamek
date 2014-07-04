@@ -1,8 +1,39 @@
 VERSION HISTORY:
 ----------------
-v0.37.13-exp-dev (SVN)
+v0.39.1-dev (SVN)
 
-v0.37.13-dev (SVN)
+v0.39.0 (2014-07-02 21:14 UTC)
++ Night-time modifiers now effected by hexes being illuminated by a searchlight
++ Bug: Team initiative not properly calculated when negative values are present 
+    (such as for team constant init bonus, or player init bonus, etc) 
++ Bug [#4161]: Run MP allowed after moving backwards and failing a fall PSR
++ Bug [#4144]: 'Mechs landing in rubble without PSR
++ Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
++ Bug [#4165]: Issue with reinforcing after done has been selected
++ Bug [#4158]: Issues launching docked Dropships from Warships
++ Bug [#4154]: WarShip docking bug (minor)
++ Bug [#4146]: Aeros can no longer select munition types for LB-X (errata)
++ TestAero will now mark Aeros with special munitions are illega (errata), 
+    except for cluster munitions on LB-X's (can only use cluster), and artemis
+    capable munitions for Artemis-linked launchers.  NARC, MMLs and ATMs are 
+    exempt
++ Bug [#4148]: bug in dfa hitting water
++ Bug [#4168]: Careful movement penalties should not apply to jump/VTOL MP
++ Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Mechs networked
++ Bug [#4172]: Incorrect punch to-hit modifier for 'Mechs built without hands
+    and lower arms
++ Bug [#4173]: Incorrect attacker falling damage from successful DFA
++ Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
+    when the attacker is underwater
++ Bug [#4184]: Move multi options don't keep lances of the same unit type
++ Bug [#4184]: Various "move multi" options do not work together
++ Bug [#4175] Mek/Vee Lance movement incompatible with Infantry Move even
++ Bug: Inf and Protos move multi option could cause extra turns to be added
++ Bug [#4178]: Must click in the wrong place to use the Unit Overview on maps
+    that are thinner than the MegaMek window
+
+
+v0.38.0-dev (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes
 + Data: Broken Cadaver image link
 + Bug [#4156]: Searchlights not properly added if searchlight quirk is added in
@@ -13,6 +44,20 @@ v0.37.13-dev (SVN)
     directory and copy over the readme's.  The readme's moved to the docs dir,
     but this behavior would break all of the other docs.  I added code to
     symlink the docs directory in the same fashion as the data dir.
++ Data: New Images and Unit Fixes.
++ Bug [#4163]: Typo in C3 Network choices
++ Bug [#4162]: MULParser incorrectly handles ammo with NA slots
++ Bug [#4166]: Exception in CustomMechDialog when Modifying Gun Emplacements
++ Patch [patches:#456]: Fixes for Princess Immediate Withdrawal/Autoflee
++ Data: New Images.
++ Data: Revised RATs  RATs now have a date/Date range at the start of the folder
+	to keep them in a chronological order.  Also New RATS for the FR 2765 series.
++ Data:Fixes to previous commit.
++ Made instructions for saving custom Princess configs under new names explicit in the Princess help file.
++ Data: New Images and a couple of date fixes.
++ Bug: Physical weapon "aimed shot" dialog not always disposing properly.
++ Data: New Images and a couple of date fixes.
++ Data: New Images and Unit Fixes.
 
 v0.37.12-exp (2014-06-03 19:06 UTC)
 + Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the

@@ -2,70 +2,83 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Heavy Hover APC
 </Name>
+
 <Model>
 (MG)
 </Model>
-<Tonnage>
-20
-</Tonnage>
+
+<year>
+2100
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:3.0
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 20
 13
 13
 10
-</Armor>
-<Front Equipment>
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-<Right Equipment>
-ISMachine Gun
-</Right Equipment>
-<Left Equipment>
-ISMachine Gun
-</Left Equipment>
-<Rear Equipment>
-ISMachine Gun
-ISMachine Gun
-</Rear Equipment>
-<transporters>
-InfantryBay:1:1
-</transporters>
+</armor>
+
 <Body Equipment>
-ISMG Ammo (200)
-ISMG Ammo (100)
+IS Ammo MG - Full
+IS Machine Gun Ammo - Half
 </Body Equipment>
-<type>
-IS Level 1
-</type>
-<year>
-2100
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+Machine Gun
+</Rear Equipment>
+
 <source>
 Star League
 </source>
+
+<tonnage>
+20.0
+</tonnage>
+

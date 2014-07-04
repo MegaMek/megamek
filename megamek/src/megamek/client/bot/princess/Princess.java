@@ -80,6 +80,7 @@ public class Princess extends BotClient {
     protected ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
     private boolean forcedWithdrawal = false;
+    private IMoralUtil moralUtil = new MoralUtil(logger);
 
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
@@ -549,6 +550,10 @@ public class Princess extends BotClient {
         return getFallBack() || (entity.isCrippled() && getForcedWithdrawal());
     }
 
+    protected IMoralUtil getMoralUtil() {
+        return moralUtil;
+    }
+
     protected boolean isFallingBack(Entity entity) {
         return !entity.isImmobile() && wantsToFallBack(entity);
     }
@@ -788,6 +793,8 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
+            checkMoral();
+
             // reset strategic targets
             fireControl.setAdditionalTargets(new ArrayList<Targetable>());
             for (Coords strategicTarget : getStrategicBuildingTargets()) {
@@ -934,5 +941,11 @@ public class Princess extends BotClient {
             }
         }
         return adjustment;
+    }
+
+    @Override
+    protected void checkMoral() {
+        moralUtil.checkMoral(behaviorSettings.isForcedWithdrawal(), behaviorSettings.getBraveryIndex(),
+                             behaviorSettings.getSelfPreservationIndex(), getLocalPlayer(), game);
     }
 }

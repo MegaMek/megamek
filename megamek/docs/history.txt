@@ -1,6 +1,40 @@
 VERSION HISTORY:
 ----------------
-v0.38.0-dev (2014-06-02 20:27 UTC)
+v0.39.1-dev (SVN)
++ Patch [#458]: Highlighting FOV options
+
+v0.39.0 (2014-07-02 21:14 UTC)
++ Night-time modifiers now effected by hexes being illuminated by a searchlight
++ Bug: Team initiative not properly calculated when negative values are present 
+    (such as for team constant init bonus, or player init bonus, etc) 
++ Bug [#4161]: Run MP allowed after moving backwards and failing a fall PSR
++ Bug [#4144]: 'Mechs landing in rubble without PSR
++ Bug [#4164]: EntityLilstFile prints N/A ammo slots for tanks
++ Bug [#4165]: Issue with reinforcing after done has been selected
++ Bug [#4158]: Issues launching docked Dropships from Warships
++ Bug [#4154]: WarShip docking bug (minor)
++ Bug [#4146]: Aeros can no longer select munition types for LB-X (errata)
++ TestAero will now mark Aeros with special munitions are illega (errata), 
+    except for cluster munitions on LB-X's (can only use cluster), and artemis
+    capable munitions for Artemis-linked launchers.  NARC, MMLs and ATMs are 
+    exempt
++ Bug [#4148]: bug in dfa hitting water
++ Bug [#4168]: Careful movement penalties should not apply to jump/VTOL MP
++ Bug [#4171]: Erroneous "C3 Network Too Big" message with 12 'Mechs networked
++ Bug [#4172]: Incorrect punch to-hit modifier for 'Mechs built without hands
+    and lower arms
++ Bug [#4173]: Incorrect attacker falling damage from successful DFA
++ Bug [#4174]: Cannot hit the legs of a 'Mech that is standing in depth 1 water
+    when the attacker is underwater
++ Bug [#4184]: Move multi options don't keep lances of the same unit type
++ Bug [#4184]: Various "move multi" options do not work together
++ Bug [#4175] Mek/Vee Lance movement incompatible with Infantry Move even
++ Bug: Inf and Protos move multi option could cause extra turns to be added
++ Bug [#4178]: Must click in the wrong place to use the Unit Overview on maps
+    that are thinner than the MegaMek window
+
+
+v0.38.0-dev (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes
 + Data: Broken Cadaver image link
 + Bug [#4156]: Searchlights not properly added if searchlight quirk is added in
@@ -25,6 +59,22 @@ v0.38.0-dev (2014-06-02 20:27 UTC)
 + Bug: Physical weapon "aimed shot" dialog not always disposing properly.
 + Data: New Images and a couple of date fixes.
 + Data: New Images and Unit Fixes.
+
+v0.37.12-exp (2014-06-03 19:06 UTC)
++ Feature Request [#1188]: RATs calling other RATs.  Added code to recognize the
+    "@" symbol as a reference to anther RAT to roll on.  Updated the EXAMPLE RAT
+    FILE.txt file to reflect this information and also copied it into the docs
+    folder to make it easier to find.
++ Added a basic moral system for Princess to have her potentially retreat units
+    off the board before Forced Withdrawal would take effect.
++ Updated the Xotl RAT files to incorporate the most recent version (including
+    the 3050 IS mechs) and to make use of the changes for Feature Request
+    [#1188] (RATs referencing other RATs) committed in revision [r10887].
++ Patch [#457]: (Unofficial Option) Reduce Overheat modifier in BV calculation
++ Features: Fires in the dark now work properly for illumination (TO pg 57)
++ Bug: Fixed a mistake in the merge in [r10927] and some code was lost that
+    shouldn't have been
++ Bug [#1259]: MM has no mechanism for tracking illuminated hexes
 
 v0.37.12 (2014-06-03 19:06 UTC)
 + Bug [#4120]: Team.getId() is not reliable if Team Initiative is turned off
@@ -101,6 +151,26 @@ v0.37.12 (2014-06-03 19:06 UTC)
 + Bug: No -password argument for dedicated server, dedicated server arguments
     had to be listed in order
     
+v0.37.11-exp (2014-05-05 15:47 UTC)
++ Feature [#1241]: Server should use a multi-threaded approach to connection
+    handling 
++ Feature [#1243]: Client Feedback Request
++ Bug [#41]: steping out of a domino effect not possible 
++ Bug: Bot receiving CFR would hang game: both bots not reply with "no action"
+    when asked if they want to step out of a domino effect.
++ Bug [#4104]: [experimental] Context menus are out of alignment
++ Bug [#4105]: Make a clear distinction between players present in the lounge
+    and those joined aftwards
++ Feature: Added the ability for players to join a team via the /joinTeam 
+    command, this also allows players who join in the middle of a game to join
+    a team and reinforce units (or have units given to them via /traitor)
++ Bug: RandomUnitGenerator was horribly memory inefficient
++ Removed code to dispose of RandomUnitGenerator, since it no longer takes up
+    so much memory (also required to reinforce from the RandomArmyDialog)
++ Feature [#1205]: Added ability to reinforce from the RandomArmyDialog
++ Bug: Units reinforced on or before the movement phase could be selected, but
+    if selected, numerous errors would be thrown (fixed for Reinforce RAT)
+
 v0.37.11 (2014-05-05 15:47 UTC)
 + Bug [#3948]: Harjel fails to prevent breaches on Submarines.
 + Bug: Harjel II/III shared a report with Harjel when checking for breaches.  It
@@ -186,6 +256,8 @@ v0.37.11 (2014-05-05 15:47 UTC)
     used by bot.
 + Bug [#4134]: Ruler now picks up information from units in selected hexes
 
+v0.37.10-exp (2014-04-08 02:26)
+
 v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
 + Bug: MULParser missing constructor that takes an XML stream as input and
     also does not parse streams that do have unit tags as root elements
@@ -202,6 +274,7 @@ v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
     option
 + Data: Updated Camo Images.
 + Data: New Images.
++ Bug: Fixed the initial size and placement of the Random Map Dialog.
 + Added GUI version of /traitor command via right click menu on a unit when it's
     your turn and that unit is selected. Menu item is also in the code, but I 
     was having issues with it, so it is currently commented out with a TODO:
@@ -225,6 +298,18 @@ v0.37.10 0.38.0 Release Candidate 2 (2014-04-08 02:26)
     directory, potentially resulting in build failures.
 + Data: New Images.
 + Data: Lots of Unit Names Changes this is to bring us closer to matching the MUL naming.
+
+v0.37.9-exp (2014-03-29 14:25 UTC)
++ Bug [#4016]: "More" Button gets grayed out with aeros 0.37.6-exp
++ Bug: Go Up and Maneuver buttons were not being disabled for OOC Aeros
++ Bug: Fixed graphical artefacts on edges of map on non-isometric view, 
+    unfortunately this required removing the optimization code that caches the
+    board image and allows for faster updates with isometric view.
++ Removed the rest of the code related to caching the board image
++ Added code to BoardView1 to buffer the drawing of the tiled background image,
+    which reduces the amount of time it takes to draw by an order of magnitude
++ Added some missing l10n entries for MovementDisplay
++ Added padding to the top and side of the board
 
 v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Data: Unit Fixes and Some renaming
@@ -371,6 +456,10 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
 + Bug: Path planner could get stuck searching forever: there's code that fires
     every 256 loop iterations to check for timeout, however it only checks for
     timeout if the current best path is better than the previous best path.
++ Rebuilt the Random Map Generation dialog from the ground up to improve it's organization and work flow.  Added
+    tool tips explaining the various fields and eliminated the need to save and exit the dialog before switching
+    from Normal to Advanced view.  Did not update the German or Russian messages.properties files as I'm not
+    nearly qualified.
 + Data: New Images and Some unit fixes.
 + Bug: [#4076] Princess Not Using Ammo Properly.
 + Princess wasn't properly storing the new Priority Unit targets.  Also modified
@@ -383,6 +472,12 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
     using /reset
 + Feature [#1236]: Increase maximum player limit
 + Bug [#3088]: BA compact narc not correct
+
+v0.37.8-exp (2014-02-22 22:57 UTC)
++ Feature: Added the ability to specify the anti-aliasing rendering hint for the
+    drawing in BoardView1.  The usage of anti-aliasing is parameterized in the
+    client settings dialog.  This smooths out the lines a bit without a 
+    noticeable impact on performance (but again, it's parameterized).
 
 v0.37.8 (2014-02-22 22:57 UTC)
 + Added state variable Entity.neverDeployed and new method for it boolean 
@@ -468,6 +563,8 @@ v0.37.8 (2014-02-22 22:57 UTC)
 + Adjusted default player colors: yellow and white are now at the end, as they
     aren't very readable
 + Data: New Image and Units. Unit and Equipment Date Fixes.
+
+v0.37.7-exp (2014-02-11 02:57 UTC)
 
 v0.37.7 (2014-02-11 02:57 UTC)
 + Added code to Princess to not compute a full firing plan if a target is out 
@@ -582,6 +679,35 @@ v0.37.7 (2014-02-11 02:57 UTC)
     InfantryAssaultRifle and the equipment now loads
     
 
+v0.37.6-exp (2014-01-29 01:43 UTC)
++ Added new art assets for borders and updated the defaultSkin.xml to use them
++ Testing out some changes to BoardView1.  Instead of just drawing a gray 
+    background for the board, it now draws a tiled icon.  This works for 
+    isometric view but is still not working for non-iso.  Also, to deal with 
+    transparency on the borders, I added a background icon to the scrollpane 
+    that houses the board view.  
++ To facilitate having a background icon for the board view, the size of the 
+    BoardView1 component has been changed.  Now, it is set to match the window
+    size and the ClientGUI implements the ComponentListener interface to update
+    the BoardView1 component size when the window is resized.  
++ Updated the background icon code for BV1, it now loads them from the skin spec
+    (background[0] for the tiled icon, background[0] for the transparency 
+    background).  It also is robust to not having an icon loaded.
++ Bug: Note icon wasn't being initialized, so it didn't appear on the board
++ Bug: I noticed sometimes the scrolling keys (WASD) didn't seem to be 
+    responding and toggling the ChatterBox would fix this.  I'm guessing this 
+    has to due with the state of BoardView1.chatterBoxActive getting out of 
+    sync.  To fix this, added code in ClientGUI to set the chatterbox to active 
+    whenever the phase is changed.  I this should help, but I don't know if it 
+    definitely fix it or not.
++ Bug: Hotkeys were still active when various dialos in the File menu were open
++ UnitOverview now draws in the upper right corner regardless of board size
++ Bug: Fixed an issue with not being able to scroll across the whole board
++ Bug: Registered CommandActions in MegaMekController were never being 
+    unregistered, which mean that if multiple games were started from the same 
+    MegaMek instance, the keybinds wouldn't always work right.  Now, in 
+    ClientGUI.die() all of the registered actions are removed.
+
 v0.37.6 (2014-01-29 01:43 UTC)
 + Bug [#4009]: Bomb Rack/Micro Bomb allows bombing from higher terrain
 + Bug: wrong elevation when displacing onto negative elevation terrain
@@ -604,6 +730,9 @@ v0.37.6 (2014-01-29 01:43 UTC)
     is displayed as 1 ton per trooper).  The 1 on per trooper is what is 
     important for transportation reasons, so I've changed MechSummaryCache to 
     be consistent with the unit table in the ChatLounge.
+
+v0.37.5-exp (2014-01-26 16:55 UTC)
++ Bug: Infantry and BattleArmor didn't have a jump button
 
 v0.37.5 (2014-01-26 16:55 UTC)
 + Feature: BattleArmor equipment now tracks which location on the BA suit it is 
@@ -690,6 +819,11 @@ v0.37.5 (2014-01-26 16:55 UTC)
 + Fixed newlines in breach message
 + Bug: CamoChoiceDialog not working when no subfolders exist in camo folder
 
+v0.37.4-exp (2014-01-12 02:20)
++ Feature: increased the expressiveness of the skin specifications.  Previously, 
+    edges had a single tiled icon.  Now, edges can have an arbitrary combination 
+    of static and tiled icons.
+
 v0.37.4 (2014-01-12 02:20)
 + Data: Unit Fixes
 + Data: Start of FM:3145 RAT's (Mechs only)
@@ -742,6 +876,16 @@ v0.37.4 (2014-01-12 02:20)
     with TYPE_EQUIPMENT
 + Fix Stone's Brigades Filenames due to packaging errors
 
+v0.37.3-exp (2014-01-07 02:54 UTC)
++ Bug: If there is no entity selected, FiringDisplay.setFiringSolutions can NPE
++ Bug: Fire keybind could make attacks that were invalid
++ Feature: When using ESC to clear chat message it now also slides the box down
++ Bug: Up/Down arrows in ChatterBox didn't appear to work properly
++ Bug: BoardView was not properly acquiring focus when the ChatterBox was 
+    activated, which could lead to key presses not being consumed by the CB
++ Feature: Added TOGGLE_CHAT_CMD keybind, which when used activates the 
+    ChatterBox and enters the command character (/)
+
 v0.37.3 (2014-01-07 02:54 UTC)
 + Bug [#3970] Princess causes an NPE when determining a FiringPlan with no valid
     targets
@@ -770,6 +914,42 @@ v0.37.3 (2014-01-07 02:54 UTC)
 + Adjusted how TSEMP hits are processed.  Now they happen when the weapon is 
     fired instead or all being processed at the end of the firing phase.  
     This makes the reports look nicer.
+
+v0.37.2-exp (2014-01-01 17:50 UTC)
++ Feature: Allowing UI components to be customized (skins)
++ Bug: readme path was wrong in MegamekGUI
++ Bug: Exception when saving client options with a tooltip dismiss delay <0
++ Feature: Added a skinning help menu item and a corresponding help file
++ Bug [#3917]: UMU button causes issues for Battlearmor moving underwater
++ Feature: Changed the typing behavior of ChatterBox2 - now it only consumes 
+    keypresses when it's 'active' and can be activated by pressing enter, 
+    both escape and enter will deactive text entry with escape clearing the 
+    text and enter sending the text.  Clicking on the cb2 and clicking on the 
+    board view active and deactive text entry respectively.
++ Feature: Added WASD based scrolling for the board view.  This is implemented 
+    with timers and is considerably smoother than previous keyboard scrolling
++ Initiated a rewrite of the whole key handling framework in MegaMek.  
+    Previously, we were using KeyListeners scattered throughout the project and 
+    this caused issues, particularly with the MechDisplay; when the MechDisplay 
+    has focus there are issues getting KeyEvents to the BoardView and current 
+    phase display panel.  Instead of having disparate KeyListeners, I created a 
+    new KeyDispatcher, called MegaMekController.  This KeyDispatcher gets 
+    registered with the KeyFocusManager and basically gets first crack at all 
+    of the KeyEvents, regardless of where they originate from.  The Dispatcher 
+    can choose to consume the event, or pass it along.  This allows a more 
+    central handler for key events regardless of focus.
++ Moved ChatterBox activation/deactivation into the new key handling framework
++ Converted MovementDisplay to use MegaMekController
++ Converted FiringDisplay to use MegaMekController
++ Converted TargetingDisplay to use MegaMekController
++ Added key binds for weapons firing and next weapon
++ Keybinds can now be specified in an xml file, defaultKeyBinds.xml has been 
+    created which follows the schema defined in keyBindingSchem.xsl
++ Added key binds for previous weapon/next weapon (Q/E)
++ Added key binds for previous target/next target (Shift-Q/Shift-E)
++ Added key binds for previous unit/next unit (Z/C)
++ Added 'Key Binds' panel to Client Settings dialog.  Keybinds can now be 
+    edited in game and will be saved to an xml file
 
 v0.37.2 (2014-01-01 17:32 UTC)
 + Bug [#3957]: New (Unofficial) Case Rule Duplicated

@@ -104,8 +104,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private long idleTime = 0;
     private float scrollBarStep;
     private float scrollBarDragPos;
-    private String message;
-    private String visibleMessage;
+    private String message = "";
+    private String visibleMessage = "";
 
     private Point lastScrollPoint;
 
@@ -133,7 +133,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             public void gameEntityNew(GameEntityNewEvent e) {
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    addChatMessage("MegaMek: " + e.getNumberOfEntities() + " Entities added.");
+                    addChatMessage("MegaMek: " + e.getNumberOfEntities() + 
+                    		" Entities added.");
                 }
             }
 
@@ -150,15 +151,20 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();
-        upbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_UP).toString());
+        upbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
+        		FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client);
-        downbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_DOWN).toString());
+        downbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
+        		FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, client);
-        minbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_MINIMISE).toString());
+        minbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
+        		FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, client);
-        maxbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_MAXIMISE).toString());
+        maxbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
+        		FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, client);
-        resizebutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_RESIZE).toString());
+        resizebutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
+        		FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client);
     }
 
@@ -185,16 +191,17 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return slidingDown || slidingUp;
     }
 
-    private void slideUp() {
+    public void slideUp() {
         setIdleTime(0, false);
         slidingUp = true;
         slidingDown = false;
     }
 
-    private void slideDown() {
+    public void slideDown() {
         setIdleTime(0, false);
         slidingUp = false;
         slidingDown = true;
+        bv.setChatterBoxActive(false);
     }
 
     private void stopSliding() {
@@ -219,7 +226,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 idleTime = timeIdle;
             }
 
-            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && GUIPreferences.getInstance().getBoolean("AdvancedChatbox2AutoSlidedown")) {
+            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && 
+            		GUIPreferences.getInstance().getBoolean(
+            				"AdvancedChatbox2AutoSlidedown")) {
                 slideDown();
             }
         }
@@ -341,19 +350,22 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
                 || (y > (yOffset + height))) {
+        	bv.setChatterBoxActive(false);
             return false;
         }
         isHit = true;
         // Hide button
-        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18))) {
-
-            if (isDown()) {
-                slideUp();
-            } else {
-                slideDown();
-            }
-            return true;
+        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18)) 
+        		&& !isDown()) {
+        	slideDown();
+        	return true;
         }
+        
+        bv.setChatterBoxActive(true);
+        if (isDown()){
+        	slideUp();
+        }
+
         // Scroll up
         if ((x > (width - 17)) && (x < (width - 1)) && (y > (yOffset + 2 + 14))
                 && (y < (yOffset + 32))) {
@@ -449,7 +461,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         // Message box
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
-        if (message != null) {
+        if (message != null && bv.getChatterBoxActive()) {
             printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
@@ -671,6 +683,10 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
+    	if (!bv.getChatterBoxActive()){
+    		return;
+    	}
+    	
         if (ke.isControlDown() && (ke.getKeyCode() == KeyEvent.VK_V)) {
             Transferable content = Toolkit.getDefaultToolkit().
                     getSystemClipboard().getContents(null);
@@ -698,14 +714,17 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return;
         }
 
+        ke.consume();
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_UP:
                 cb.historyBookmark++;
                 cb.fetchHistory();
+                bv.repaint();
                 return;
             case KeyEvent.VK_DOWN:
                 cb.historyBookmark--;
                 cb.fetchHistory();
+                bv.repaint();
                 return;
             case KeyEvent.VK_ALT:
             case KeyEvent.VK_SHIFT:
@@ -757,12 +776,15 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                         cb.history.removeLast();
                     }
                     client.sendChat(message);
-                    visibleMessage = "";
-                    message = "";
+                    clearMessage();
                     cb.setMessage("");
                 }
+                bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
+            	clearMessage();
+            	bv.setChatterBoxActive(false);
+            	slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {
@@ -841,6 +863,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private int getMaxSlideOffset() {
         return height - 20;
+    }
+    
+    public void clearMessage(){
+    	message = "";
+    	visibleMessage ="";
     }
 
 }

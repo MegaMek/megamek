@@ -43,7 +43,7 @@ Zephyr Hovertank (Royal)|
 Jifty Transportable Field Repair Unit JI-50 (Hoist)|
 Darter Scout Car (Standard)|
 Saxon APC (Standard)|
-Condor Heavy Hover Tank (Upgrade)(Standard)|
+Condor Heavy Hover Tank (Upgrade) (Standard)|
 Saxon APC (HQ)|
 MIT23 MASH Vehicle (Standard)|
 DI Morgan Assault Tank (Standard)|
@@ -172,6 +172,7 @@ Savannah Master Hovercraft (SL)|
 Armored Personnel Carrier (Hover Sensors)|
 Mobile Headquarters (Standard)|
 Warrior Attack Helicopter H-7C|
+Pegasus Scout Hover Tank (Sensors)|
 M.A.S.H. Truck (Standard)|
 Pegasus Scout Hover Tank (Standard)|
 Hunter Light Support Tank (LRM15)|
@@ -222,7 +223,6 @@ Ferret Light Scout VTOL (Armor) "Wild Weasel"|
 Axel Heavy Tank Mk 1|
 Harasser Laser Platform (Standard)|
 Armored Personnel Carrier (Wheeled)|
-Pegasus Scout Hover Tank (Sensors)|
 Von Luckner Heavy Tank VNL-K65N|
 Swift Wind Scout Car (ICE - Speed)|
 Mobile Headquarters (LL)|
@@ -250,7 +250,7 @@ Condor Heavy Hover Tank (Flamer)|
 Partisan Heavy Tank (LRM)|
 Condor Heavy Hover Tank (Davion)|
 Hunter Light Support Tank (Standard)|
-Harasser Missile Platform "Mini-Peggy"|
+Harasser Missile Platform 'Mini-Peggy'|
 Scimitar Medium Hover Tank (Missile)|
 Axel Heavy Tank Mk 2|
 Harasser Missile Platform (Flamer)|
@@ -1631,13 +1631,13 @@ Robinson Transport Block I|
 Davion Destroyer Block I|
 Fox Corvette (Standard)|
 Kimagure Pursuit Cruiser (Surprise)|
+Concordat Frigate (2506)|
 Dreadnought Battleship (2330)|
 New Syrtis Carrier (2557)|
-Concordant Frigate (2506)|
 Bug-Eye Surveillance Ship (Standard)|
 Faslane Yardship (Standard)|
 Newgrange Yardship (Standard)|
-Fredasa Corvette/Raider (Standard)|
+Fredasa Corvette Raider (Standard)|
 Aegis Heavy Cruiser (Clan)|
 Black Lion Battlecruiser (Clan)|
 Volga Transport (Clan)|
@@ -1656,13 +1656,13 @@ Lola III Destroyer (Clan)|
 Quicksilver Mongoose Battleship (Standard)|
 Whirlwind Destroyer (Clan)|
 Leviathan Heavy Transport (Standard)|
-York Destroyer/Carrier (Standard)|
+York Destroyer Carrier (Standard)|
 McKenna Battleship (Clan)|
-Conqueror Battlecruiser/Carrier (Standard)|
+Conqueror Battlecruiser Carrier (Standard)|
 Essex Destroyer (Clan)|
 Naga Destroyer (Caspar II Control Ship)|
-M5 Capital Drone "Caspar"|
-M5C Capital Drone "Caspar"|
+M5 Capital Drone (Caspar)|
+M5C Capital Drone (Caspar)|
 Wagon Wheel Frigate (Standard)|
 Pinto Corvette (Standard)|
 Winchester Cruiser (Standard)|
@@ -1925,7 +1925,7 @@ Purifier Adaptive Battle Armor [Narc]|
 Fenrir Battle Armor [ERML]|
 Longinus Battle Armor [David]|
 Fusilier Battle Armor (Upgrade)|
-PAB-28 Sniper Suit|
+PAB-28 Sniper Suit (Standard)|
 Sea Fox Amphibious Armor (Standard)|
 Fusilier Battle Armor (Standard)|
 Simian Battle Armor (Small Laser)|
@@ -2392,7 +2392,7 @@ Interdictor Pocket Warship (Standard)|
 Union "Pocket Warship"|
 Confederate (2602)|
 Union (3055)|
-Excalibur "Pocket Warship"|
+Excalibur (Pocket Warship)|
 Confederate (2703)|
 Rose (Bara no Ryu) (Standard)|
 Fortress (2613)|
@@ -2420,7 +2420,7 @@ Sling SL-1H|
 Falcon FLC-4Nb|
 Harvester Ant KIC-3 Agromech(MG)|
 Crosscut ED-X2 ForestryMech|
-Daedalus GTX2A "Stevedore"|
+Daedalus GTX2A 'Stevedore'|
 Firefly FFL-3PP3|
 Crosscut ED-X2M2 ForestryMech(Rocket)|
 Locust LCT-1Vb|
@@ -2431,7 +2431,7 @@ Carbine CON-1 ConstructionMech (RL)|
 Annihilator C "Gausszilla"|
 Marco MR-8C|
 Warhammer WHM-7A|
-Daedalus GTX2B "Navvy"|
+Daedalus GTX2B 'Navvy'|
 Thorn THE-Nb|
 Firefly FFL-3PP|
 Buster XV HaulerMech (PPC)|
@@ -2597,7 +2597,7 @@ Koschei KSC-4I|
 Crab CRB-27b|
 Preta C-PRT-OA Dominus|
 Xanthos XNT-4O|
-Phoenix Hawk PXH-1c "Special"|
+Phoenix Hawk PXH-1c (Special)|
 Quasit MilitiaMech QUA-51T|
 Defiance DFN-3C|
 Hussar HSR-200-Db|
@@ -2653,7 +2653,7 @@ Crusader CRD-2R|
 Jackrabbit JKR-9R 'Joker'|
 Pariah (Septicemia) A|
 Cygnus 2|
-Phoenix Hawk PXH-1b "Special"|
+Phoenix Hawk PXH-1b (Special)|
 Phoenix PX-4R|
 Malak C-MK-OB Infernus|
 Crimson Hawk (Standard)|
@@ -2705,7 +2705,7 @@ Uni ATAE-70 CargoMech|
 Cattlemaster CTL-3R (Herder)|
 Powerman XVI LoaderMech|
 Chaffee Servicemech BT1|
-Copper CPK-19 SecurityMech|
+Copper SecurityMech CPK-19|
 ScavengerMech "Vampyr" SC-V-1|
 Orion ON1-K (Kerensky)|
 Banshee BNC-9S|
@@ -2889,7 +2889,7 @@ Archer ARC-2S|
 Ostsol OTL-4D|
 Mongoose MON-68|
 Thunderbolt TDR-5SS|
-Griffin GRF-1E "Sparky"|
+Griffin GRF-1E 'Sparky'|
 Vindicator VND-1X|
 Crusader CRD-3D|
 Valkyrie VLK-QF|
@@ -3570,6 +3570,7 @@ Assassin "Servitor"|
 Catapult CPLT-C4C|
 Fenris (Ice Ferret) Prime|
 Blackjack BJ-2|
+Centurion CN10-B|
 Banshee BNC-5S|
 Gladiator (Executioner) P|
 Hatamoto-Ku HTM-27W|
@@ -3704,7 +3705,7 @@ Atlas AS7-D (Danielle)|
 Ostroc OSR-2C (Michi)|
 Stalker STK-3F (Jagawen)|
 Grim Reaper GRM-R-PR62A|
-Griffin GRF-1E2 "Sparky 2.0"|
+Griffin GRF-1E2 'Sparky 2.0'|
 Annihilator ANH-1E|
 Victor (Li)|
 Black Hawk-KU BHKU-O (Albert)|
@@ -4653,16 +4654,16 @@ Agrotera AGT-1A|
 Tian-Zong TNZ-N2|
 Calliope CAL-1MAF|
 Vandal LI-OA|
-Loki Mk II (Hellbringer Mk II) (Prime)|
+Loki Mk II (Hel) (Prime)|
 Tomahawk (Prime)|
 Warwolf (Prime)|
-Thor Mk II (Grand Summoner Mk II) A|
-Thor Mk II (Grand Summoner Mk II) C|
+Thor II (Grand Summoner) A|
+Thor II (Grand Summoner) C|
 Tomahawk II A|
-Loki Mk II (Hellbringer Mk II) B|
+Loki Mk II (Hel) B|
 Vulture Mk III (Mad Dog Mk III) C|
 Tomahawk C|
-Thor Mk II (Grand Summoner Mk II) B|
+Thor II (Grand Summoner) B|
 Wulfen E|
 Warwolf A|
 Wulfen (Prime)|
@@ -4673,7 +4674,7 @@ Kodiak II (Standard)|
 Gyrfalcon (Standard)|
 Wulfen B|
 Vulture Mk III (Mad Dog Mk III) (Prime)|
-Thor Mk II (Grand Summoner Mk II) (Prime)|
+Thor II (Grand Summoner) (Prime)|
 Gravedigger GDR-1C|
 Shrike 2|
 Warwolf C|
@@ -4684,8 +4685,8 @@ Gravedigger GDR-1D|
 Wulfen C|
 Wulfen H|
 Vulture Mk III (Mad Dog Mk III) D|
-Loki Mk II (Hellbringer Mk II) A|
-Thor Mk II (Grand Summoner Mk II) D|
+Loki Mk II (Hel) A|
+Thor II (Grand Summoner) D|
 Shrike (Standard)|
 Gyrfalcon 4|
 Wulfen A|

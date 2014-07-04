@@ -29,8 +29,8 @@ import megamek.common.BombType;
 /**
  * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.
  *
- * @author Deric Page (dericpage@users.sourceforge.net)
- * @version %I% %G%
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @version %Id%
  * @since 2012-04-07
  */
 public class BombChoicePanel extends JPanel implements Serializable, ItemListener {
@@ -77,7 +77,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_choices[type] = new JComboBox<String>();
 
             for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                    / BombType.getBombCost(type)), bombChoices[type]); x++) {
+                                                     / BombType.getBombCost(type)), bombChoices[type]); x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
 
@@ -86,15 +86,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_choices[type].addItemListener(this);
 
             if ((type == BombType.B_ALAMO)
-                    && !at2Nukes) {
+                && !at2Nukes) {
                 b_choices[type].setEnabled(false);
             }
             if ((type > BombType.B_TAG)
-                    && !allowAdvancedAmmo) {
+                && !allowAdvancedAmmo) {
                 b_choices[type].setEnabled(false);
             }
             if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)
-                    || (type == BombType.B_TAG)) {
+                || (type == BombType.B_TAG)) {
                 b_choices[type].setEnabled(false);
             }
 
@@ -134,7 +134,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_choices[type].removeItemListener(this);
             b_choices[type].removeAllItems();
             for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                    / BombType.getBombCost(type)), current[type]); x++) {
+                                                     / BombType.getBombCost(type)), current[type]); x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
             b_choices[type].setSelectedIndex(current[type]);
@@ -156,14 +156,14 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     public void setEnabled(boolean enabled) {
         for (int type = 0; type < BombType.B_NUM; type++) {
             if ((type == BombType.B_ALAMO)
-                    && !at2Nukes) {
+                && !at2Nukes) {
                 b_choices[type].setEnabled(false);
             } else if ((type > BombType.B_TAG)
-                    && !allowAdvancedAmmo) {
+                       && !allowAdvancedAmmo) {
                 b_choices[type].setEnabled(false);
             } else if ((type == BombType.B_ASEW)
-                    || (type == BombType.B_ALAMO)
-                    || (type == BombType.B_TAG)) {
+                       || (type == BombType.B_ALAMO)
+                       || (type == BombType.B_TAG)) {
                 b_choices[type].setEnabled(false);
             } else {
                 b_choices[type].setEnabled(enabled);

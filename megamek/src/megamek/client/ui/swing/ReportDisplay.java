@@ -20,6 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -35,10 +36,12 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
-public class ReportDisplay extends StatusBarPhaseDisplay {
+public class ReportDisplay extends AbstractPhaseDisplay implements
+		ActionListener {
     /**
      *
      */
@@ -57,7 +60,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public ReportDisplay(ClientGUI clientgui) {
-        butDone = new JButton();
+        butDone = new MegamekButton("","PhaseDisplayDoneButton");
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -79,8 +82,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         tabs.setFont(tabPanelFont);
 
         resetTabs();
-
-        setupStatusBar(""); //$NON-NLS-1$
 
         butDone.setText(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
 
@@ -268,8 +269,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             }
         });
     }
-
-    @Override
+    
     public void clear() {
         // move along, move along, nothing to see here
     }

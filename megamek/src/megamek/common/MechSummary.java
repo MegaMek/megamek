@@ -45,6 +45,8 @@ public class MechSummary implements Serializable {
      * Stores the BV of the unit computed using the geometric mean method.
      */
     private int m_gmBV;
+    private int m_rhBV;
+    private int m_rhgmBV;
     private long m_nCost;
     private long m_nUnloadedCost;
     private long m_aCost;
@@ -471,6 +473,22 @@ public class MechSummary implements Serializable {
 
     public void setGMBV(int m_gmBV) {
         this.m_gmBV = m_gmBV;
+    }
+
+    public int getRHBV() {
+        return m_rhBV;
+    }
+
+    public void setRHBV(int m_rhBV) {
+        this.m_rhBV = m_rhBV;
+    }
+
+    public int getRHGMBV() {
+        return m_rhgmBV;
+    }
+
+    public void setRHGMBV(int m_rhgmBV) {
+        this.m_rhgmBV = m_rhgmBV;
     }
 
     @Override

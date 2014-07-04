@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -42,6 +43,11 @@ import megamek.server.victory.Victory;
  */
 public interface IGame {
 
+    public static int ILLUMINATED_NONE = 0;
+    public static int ILLUMINATED_FIRE = 1;
+    public static int ILLUMINATED_FLARE = 2;
+    public static int ILLUMINATED_LIGHT = 3;
+    
     public enum Phase {
         PHASE_UNKNOWN,
         PHASE_LOUNGE,
@@ -802,6 +808,15 @@ public interface IGame {
      * @param start the entity id to start at
      */
     public abstract int getNextEntityNum(GameTurn turn, int start);
+    
+    /**
+     * Returns the entity id of the previous entity that can move during the
+     * specified
+     *
+     * @param turn the turn to use
+     * @param start the entity id to start at
+     */
+    public abstract int getPrevEntityNum(GameTurn turn, int start);
 
     /**
      * Returns the number of the first deployable entity
@@ -1315,7 +1330,7 @@ public interface IGame {
     /**
      * returns true if the hex is illuminated by a flare
      */
-    public abstract boolean isPositionIlluminated(Coords c);
+    public abstract int isPositionIlluminated(Coords c);
 
     /**
      * Age the flare list and remove any which have burnt out Artillery flares
@@ -1370,5 +1385,28 @@ public interface IGame {
     public abstract PlanetaryConditions getPlanetaryConditions();
 
     public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
+    
+    /**
+     * Get a set of illuminated hexes.
+     */
+    public abstract HashSet<Coords> getIlluminatedPositions();
+    
+    /**
+     * Clear the map of illuminated hexes.
+     */
+    public abstract void clearIlluminatedPositions();
+
+    /**
+     * Set the set of illuminated hexes.
+     */
+    public abstract void setIlluminatedPositions(HashSet<Coords> ip);
+
+    /**
+     * Add a new hex to the collection of illuminated hexes.
+     * 
+     * @return True if a new hex was added, else false if the set already
+     *      contained the input hex.
+     */
+    public abstract boolean addIlluminatedPosition(Coords c);
 
 }

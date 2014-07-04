@@ -383,9 +383,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     .size();
             int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen)
                     .size();
-            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
+            
+            if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
+                    && entity.getC3MasterId() != chosen.getId()) {
                 entity.setC3Master(chosen, true);
-            } else {
+            } else if (entity.getC3MasterId() != chosen.getId()){
                 String message = Messages
                         .getString(
                                 "CustomMechDialog.NetworkTooBig.message", new Object[] {//$NON-NLS-1$
@@ -573,7 +575,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, NARC, and LBX switching
+            // allow only MML, ATM, and NARC
             // TODO: need a better way to customize munitions on Aeros
             // currently this doesn't allow AR10 and tele-missile launchers
             // to switch back and forth between tele and regular missiles
@@ -582,8 +584,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC) 
-                            || (at.getAmmoType() == AmmoType.T_AC_LBX))) {
+                            || (at.getAmmoType() == AmmoType.T_NARC))) {
                 continue;
             }
 

@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Deric Page (deric.page@nisc.coop) (ext 2335)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version $Id$
  * @since 11/22/13 8:33 AM
  */
@@ -47,15 +47,19 @@ public class PrincessTest {
 
     private Princess mockPrincess;
     private BasicPathRanker mockPathRanker;
+    private MoralUtil mockMoralUtil;
 
     @Before
     public void setUp() {
         mockPathRanker = Mockito.mock(BasicPathRanker.class);
 
+        mockMoralUtil = Mockito.mock(MoralUtil.class);
+
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
-                Mockito.any(LogLevel.class), Mockito.anyString());
+                                                   Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
     }
 
     @Test
@@ -102,18 +106,18 @@ public class PrincessTest {
     public void testCalculateMoveIndex() {
         final double TOLERANCE = 0.001;
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.any(Entity.class), Mockito.any(StringBuilder.class)))
-                .thenCallRealMethod();
+               .thenCallRealMethod();
         Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(false);
 
         Mockito.when(mockPathRanker
-                .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class),
-                        Mockito.any(IGame.class)))
-                .thenReturn(10.0);
+                             .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class),
+                                                     Mockito.any(IGame.class)))
+               .thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.
         Entity mockMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockMech.getRunMP(Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean()))
-                .thenReturn(9);
+               .thenReturn(9);
         Mockito.when(mockMech.getJumpMP(Mockito.anyBoolean())).thenReturn(6);
         Mockito.when(mockMech.isProne()).thenReturn(false);
         Mockito.when(mockMech.isCommander()).thenReturn(false);
@@ -175,7 +179,7 @@ public class PrincessTest {
         // Test a BA unit.
         Entity mockBA = Mockito.mock(BattleArmor.class);
         Mockito.when(mockBA.getRunMP(Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean()))
-                .thenReturn(1);
+               .thenReturn(1);
         Mockito.when(mockBA.getJumpMP(Mockito.anyBoolean())).thenReturn(3);
         Mockito.when(mockBA.isProne()).thenReturn(false);
         Mockito.when(mockBA.isCommander()).thenReturn(false);
@@ -191,7 +195,7 @@ public class PrincessTest {
         // Test an Inf unit.
         Entity mockInf = Mockito.mock(Infantry.class);
         Mockito.when(mockInf.getRunMP(Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean()))
-                .thenReturn(1);
+               .thenReturn(1);
         Mockito.when(mockInf.getJumpMP(Mockito.anyBoolean())).thenReturn(0);
         Mockito.when(mockInf.isProne()).thenReturn(false);
         Mockito.when(mockInf.isCommander()).thenReturn(false);
@@ -207,7 +211,7 @@ public class PrincessTest {
         // Test a Tank.
         Entity mockTank = Mockito.mock(Tank.class);
         Mockito.when(mockTank.getRunMP(Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean()))
-                .thenReturn(6);
+               .thenReturn(6);
         Mockito.when(mockTank.getJumpMP(Mockito.anyBoolean())).thenReturn(0);
         Mockito.when(mockTank.isProne()).thenReturn(false);
         Mockito.when(mockTank.isCommander()).thenReturn(false);
@@ -234,7 +238,7 @@ public class PrincessTest {
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockMech.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockMech), Mockito.any(StringBuilder.class)))
-                .thenReturn(1.111);
+               .thenReturn(1.111);
 
         Entity mockBA = Mockito.mock(BattleArmor.class);
         Mockito.when(mockBA.getRunMP()).thenReturn(3);
@@ -242,7 +246,7 @@ public class PrincessTest {
         Mockito.when(mockBA.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockBA.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockBA), Mockito.any(StringBuilder.class)))
-                .thenReturn(6.666);
+               .thenReturn(6.666);
 
         Entity mockTank = Mockito.mock(Tank.class);
         Mockito.when(mockTank.getRunMP()).thenReturn(6);
@@ -250,7 +254,7 @@ public class PrincessTest {
         Mockito.when(mockTank.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockTank.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockTank), Mockito.any(StringBuilder.class)))
-                .thenReturn(2.5);
+               .thenReturn(2.5);
 
         Entity mockEjectedMechwarrior = Mockito.mock(MechWarrior.class);
         Mockito.when(mockEjectedMechwarrior.getRunMP()).thenReturn(1);
@@ -271,7 +275,7 @@ public class PrincessTest {
         Mockito.when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         Mockito.when(mockOffBoardArty.isOffBoard()).thenReturn(true);
         Mockito.when(mockPrincess.calculateMoveIndex(Mockito.eq(mockOffBoardArty), Mockito.any(StringBuilder.class)))
-                .thenReturn(10.0);
+               .thenReturn(10.0);
 
         // Test a list of normal units.
         IGame mockGame = Mockito.mock(IGame.class);
@@ -279,7 +283,7 @@ public class PrincessTest {
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
         Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenReturn(true);
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
-        
+
         List<Entity> testEntityList = new ArrayList<>();
         testEntityList.add(mockMech);
         testEntityList.add(mockBA);
@@ -411,7 +415,7 @@ public class PrincessTest {
         // Unit is on home edge.
         BasicPathRanker mockRanker = Mockito.mock(BasicPathRanker.class);
         Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
-                Mockito.any(IGame.class))).thenReturn(0);
+                                                   Mockito.any(IGame.class))).thenReturn(0);
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
@@ -452,7 +456,7 @@ public class PrincessTest {
         // The unit can flee, but is no longer on the board edge.
         Mockito.when(mockMech.canFlee()).thenReturn(true);
         Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
-                Mockito.any(IGame.class))).thenReturn(1);
+                                                   Mockito.any(IGame.class))).thenReturn(1);
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
     }
 
@@ -492,8 +496,9 @@ public class PrincessTest {
         Mockito.when(mockMech.getPosition()).thenReturn(mockPosiiton);
         Mockito.when(mockMech.getPriorPosition()).thenReturn(mockPriorPosition);
         Mockito.when(mockMech.checkBogDown(Mockito.any(MoveStep.class), Mockito.eq(mockHex),
-                Mockito.eq(mockPriorPosition), Mockito.eq(mockPosiiton), Mockito.anyInt(), Mockito.anyBoolean()))
-                .thenReturn(mockPilotingRollData);
+                                           Mockito.eq(mockPriorPosition), Mockito.eq(mockPosiiton), Mockito.anyInt(),
+                                           Mockito.anyBoolean()))
+               .thenReturn(mockPilotingRollData);
         Assert.assertFalse(mockPrincess.isImmobilized(mockMech));
 
         // Test a shut down mech.

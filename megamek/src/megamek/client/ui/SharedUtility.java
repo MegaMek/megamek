@@ -16,15 +16,10 @@ package megamek.client.ui;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.common.Aero;
-import megamek.common.Bay;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -168,7 +163,9 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // check if we've moved into rubble
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
+            boolean isLastStep = md.getLastStep().equals(step);
+            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
+                    isLastStep);
             checkNag(rollTarget, nagReport, psrList);
 
             int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();
@@ -306,86 +303,6 @@ public class SharedUtility {
                 SharedUtility.checkNag(
                         entity.getBasePilotingRoll(overallMoveType), nagReport,
                         psrList);
-            }
-
-            //check unsafe fighter launching
-            if (step.getType() == MoveStepType.LAUNCH) {
-                TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
-                Set<Integer> bays = launched.keySet();
-                Iterator<Integer> bayIter = bays.iterator();
-                Bay currentBay;
-                while (bayIter.hasNext()) {
-                    int bayId = bayIter.next();
-                    currentBay = entity.getFighterBays().elementAt(bayId);
-                    Vector<Integer> launches = launched.get(bayId);
-                    int nLaunched = launches.size();
-                    // need to make some decisions about how to handle the
-                    // distribution
-                    // of fighters to doors beyond the launch rate. The most
-                    // sensible thing
-                    // is probably to distribute them evenly.
-                    int doors = currentBay.getDoors();
-                    int[] distribution = new int[doors];
-                    for (int l = 0; l < nLaunched; l++) {
-                        distribution[l % doors] = distribution[l % doors] + 1;
-                    }
-                    int currentDoor = 0;
-                    int fighterCount = 0;
-                    int bonus;
-                    boolean doorDamage = false;
-                    for (int fighterId : launches) {
-                        // check to see if we are in the same door
-                        fighterCount++;
-                        if (fighterCount > distribution[currentDoor]) {
-                            // move to a new door
-                            currentDoor++;
-                            fighterCount = 0;
-                            doorDamage = false;
-                        }
-                        bonus = Math.max(0,
-                                distribution[currentDoor] - 2);
-                    }
-                }
-            }
-
-            //check unsafe dropship launching
-            if (step.getType() == MoveStepType.UNDOCK) {
-                TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
-                Set<Integer> bays = launched.keySet();
-                Iterator<Integer> bayIter = bays.iterator();
-                Bay currentBay;
-                while (bayIter.hasNext()) {
-                    int bayId = bayIter.next();
-                    currentBay = entity.getFighterBays().elementAt(bayId);
-                    Vector<Integer> launches = launched.get(bayId);
-                    int nLaunched = launches.size();
-                    // need to make some decisions about how to handle the
-                    // distribution
-                    // of fighters to doors beyond the launch rate. The most
-                    // sensible thing
-                    // is probably to distribute them evenly.
-                    int doors = currentBay.getDoors();
-                    int[] distribution = new int[doors];
-                    for (int l = 0; l < nLaunched; l++) {
-                        distribution[l % doors] = distribution[l % doors] + 1;
-                    }
-                    int currentDoor = 0;
-                    int fighterCount = 0;
-                    int bonus;
-                    boolean doorDamage = false;
-                    for (int fighterId : launches) {
-                        // check to see if we are in the same door
-                        fighterCount++;
-                        if (fighterCount > distribution[currentDoor]) {
-                            // move to a new door
-                            currentDoor++;
-                            fighterCount = 0;
-                            doorDamage = false;
-                        }
-                        bonus = Math.max(0,
-                                distribution[currentDoor] - 2);
-                    }
-                }
             }
             
             // Check for Ejecting

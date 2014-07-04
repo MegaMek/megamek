@@ -58,6 +58,8 @@ public class Packet {
     public static final int COMMAND_ROUND_UPDATE = 260;
 
     public static final int COMMAND_SENDING_BOARD = 270;
+    public static final int COMMAND_SENDING_ILLUM_HEXES = 275;
+    public static final int COMMAND_CLEAR_ILLUM_HEXES = 276;
     public static final int COMMAND_SENDING_ENTITIES = 280;
     public static final int COMMAND_SENDING_PLAYERS = 290;
     public static final int COMMAND_SENDING_TURNS = 300;
@@ -111,6 +113,11 @@ public class Packet {
     public static final int COMMAND_SENDING_TAGINFO = 610;
     
     public static final int COMMAND_RESET_TAGINFO = 620;
+    
+    public static final int COMMAND_CLIENT_FEEDBACK_REQUEST = 700;
+    public static final int COMMAND_CFR_DOMINO_EFFECT = 705;
+    public static final int COMMAND_CFR_EDGE_PROMPT = 710;
+    
 
 
     private int command;

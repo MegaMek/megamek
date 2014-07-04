@@ -69,36 +69,31 @@ class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        NetworkPacket packet = null;
-        if (in == null) {
-            in = new DataInputStream(new BufferedInputStream(getInputStream(),
-                    getReceiveBufferSize()));
-            state = PacketReadState.Header;
-        }
-
-        switch (state) {
-            case Header:
-                if (in.available() < 9)
-                    return null;
-                zipped = in.readBoolean();
-                encoding = in.readInt();
-                len = in.readInt();
-                state = PacketReadState.Data;
-                // drop through on purpose
-            case Data:
-                // we want to let huge packets block a bit..
-                if (len < 1000 || in.available() < 500) {
-                    if (in.available() < len)
-                        return null;
-                }
-                byte[] data = new byte[len];
-                in.readFully(data);
-                packet = new NetworkPacket(zipped, encoding, data);
-                state = PacketReadState.Header;
-                return packet;
-            default:
-                assert (false);
-        }
+    	
+	        NetworkPacket packet = null;
+	        if (in == null) {
+				in = new DataInputStream(new BufferedInputStream(
+						getInputStream(), getReceiveBufferSize()));
+	            state = PacketReadState.Header;
+	        }
+	        synchronized (in){
+		        switch (state) {
+		            case Header:
+		                zipped = in.readBoolean();
+		                encoding = in.readInt();
+		                len = in.readInt();
+		                state = PacketReadState.Data;
+		                // drop through on purpose
+		            case Data:
+		                byte[] data = new byte[len];
+		                in.readFully(data);
+		                packet = new NetworkPacket(zipped, encoding, data);
+		                state = PacketReadState.Header;
+		                return packet;
+		            default:
+		                assert (false);
+		        }
+	        }
         assert (false);
         return null;
     }
@@ -106,16 +101,18 @@ class DataStreamConnection extends AbstractConnection {
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
+    	
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(),getSendBufferSize()));
             // out.flush(); thsi should be unnecessary?
         }
-
-        out.writeBoolean(iszipped);
-        out.writeInt(marshallingType);
-        out.writeInt(data.length);
-        out.write(data);
+        synchronized (out){
+	        out.writeBoolean(iszipped);
+	        out.writeInt(marshallingType);
+	        out.writeInt(data.length);
+	        out.write(data);
+    	}
         // out.flush(); avoid flushing before all packets are sent
     }
 
@@ -123,17 +120,18 @@ class DataStreamConnection extends AbstractConnection {
      * override flush to flush the datastream after flushing packetqueue
      */
     @Override
-    public synchronized void flush() {
-        super.flush();
-        try {
-            if (out != null)
-                out.flush();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            // close this connection, because it's broken
-            close();
-
-        }
+    public void flush() {
+	        super.flush();
+	        try {
+	            if (out != null)
+	            	synchronized (out){
+	            		out.flush();
+	            	}
+	        } catch (IOException ioe) {
+	            ioe.printStackTrace();
+	            // close this connection, because it's broken
+	            close();
+	        }
     }
 
     private static class NetworkPacket implements INetworkPacket {

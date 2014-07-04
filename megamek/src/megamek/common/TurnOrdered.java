@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -32,7 +33,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
     private transient int turns_other = 0;
     private transient int turns_even = 0;
-    private transient int turns_multi = 0;
+    private transient HashMap<Integer, Integer> turns_multi = 
+            new HashMap<Integer, Integer>();
 
     //these are special turns for all of the aero units (only used in the movement phase)
     private transient int turns_aero = 0;
@@ -68,22 +70,47 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
     @Override
     public int getMultiTurns(IGame game) {
-
         int turns = 0;
-        
+        // turns_multi is transient, so it could be null
+        if (turns_multi == null) {
+            return turns;
+        }
         if (game.getOptions().booleanOption("mek_lance_movement")) {
-            turns += game.getOptions().intOption("mek_lance_movement_number");
+            double lanceSize = 
+                    game.getOptions().intOption("mek_lance_movement_number"); 
+            Integer numMekMultis = turns_multi.get(GameTurn.CLASS_MECH);
+            if (numMekMultis != null) {
+                turns += (int)Math.ceil(numMekMultis / lanceSize);
+            }
         }
         
         if (game.getOptions().booleanOption("vehicle_lance_movement")) {
-            turns += game.getOptions().intOption("vehicle_lance_movement_number");
+            double lanceSize = game.getOptions().intOption(
+                    "vehicle_lance_movement_number");
+            Integer numTankMultis = turns_multi.get(GameTurn.CLASS_TANK);
+            if (numTankMultis != null) {
+                turns += (int)Math.ceil(numTankMultis / lanceSize);
+            }
         }
 
-        if (game.getOptions().booleanOption("protos_move_multi") 
-                || game.getOptions().booleanOption("inf_move_multi")) {
-            turns += game.getOptions().intOption("inf_proto_move_multi");
+        if (game.getOptions().booleanOption("protos_move_multi")) {
+            double lanceSize = 
+                    game.getOptions().intOption("inf_proto_move_multi"); 
+            Integer numProtoMultis = turns_multi.get(GameTurn.CLASS_PROTOMECH);
+            if (numProtoMultis != null) {
+                turns += (int)Math.ceil(numProtoMultis / lanceSize);
+            }
         }
-        return (int) Math.ceil(((double) turns_multi) / (double) turns);
+        
+        if (game.getOptions().booleanOption("inf_move_multi")) {
+            double lanceSize = 
+                    game.getOptions().intOption("inf_proto_move_multi"); 
+            Integer numInfMultis = turns_multi.get(GameTurn.CLASS_INFANTRY);
+            if (numInfMultis != null) {
+                turns += (int)Math.ceil(numInfMultis / lanceSize);
+            }
+        }
+        return turns;
     }
 
     @Override
@@ -127,8 +154,17 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     @Override
-    public void incrementMultiTurns() {
-        turns_multi++;
+    public void incrementMultiTurns(int entityClass) {
+        // turns_multi is transient, so it could be null
+        if (turns_multi == null) {
+            return;
+        }
+        Integer classCount = turns_multi.get(entityClass);
+        if (classCount == null) {
+            turns_multi.put(entityClass, 1);
+        } else {
+            turns_multi.put(entityClass, classCount + 1);
+        }
     }
 
     @Override
@@ -173,7 +209,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
     @Override
     public void resetMultiTurns() {
-        turns_multi = 0;
+        // turns_multi is transient, so it could be null
+        if (turns_multi != null) {
+            turns_multi.clear();
+        }
     }
 
     @Override

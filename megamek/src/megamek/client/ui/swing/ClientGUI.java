@@ -30,6 +30,8 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -38,6 +40,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -63,12 +67,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Configuration;
@@ -78,6 +84,9 @@ import megamek.common.EntityListFile;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
+import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -89,11 +98,13 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.logging.Logger;
+import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener {
+public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
@@ -122,12 +133,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private String helpFileName = "docs/readme.txt"; //$NON-NLS-1$
+    private String helpFileName = 
+    		Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
 
+    public MegaMekController controller = null;
     // keep me
     ChatterBox cb;
-    ChatterBox2 cb2;
-    public IBoardView bv;
+    public ChatterBox2 cb2;
+    public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
     public MechDisplay mechD;
@@ -202,6 +215,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Current Selected entity
      */
     private int selectedEntityNum = Entity.NONE;
+    
+    /**
+     * Flag that indicates whether hotkeys should be ignored or not.  This is 
+     * used for disabling hot keys when various dialogs are displayed.
+     */
+    private boolean ignoreHotKeys = false;
 
     /**
      * Construct a client which will display itself in a new frame. It will not
@@ -209,9 +228,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client) {
+    public ClientGUI(Client client, MegaMekController c) {
         super(new BorderLayout());
+        this.addComponentListener(this);
         this.client = client;
+        controller = c;
         loadSoundClip();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -292,6 +313,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else {
             frame.setSize(800, 600);
         }
+        frame.setMinimumSize(new Dimension(640,480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();
@@ -336,8 +358,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
-            Class<?> c = getClass().getClassLoader().loadClass(System.getProperty("megamek.client.ui.AWT.boardView", "megamek.client.ui.swing.BoardView1"));
-            bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.getGame());
+            bv = new BoardView1(client.getGame(), controller);
+            bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
@@ -518,6 +540,29 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // Show the help dialog.
         help.setVisible(true);
     }
+    
+    private void showSkinningHowTo(){
+        try {
+            // Get the correct help file.
+            StringBuilder helpPath = new StringBuilder("file:///");
+            helpPath.append(System.getProperty("user.dir"));
+            if (!helpPath.toString().endsWith(File.separator)) {
+                helpPath.append(File.separator);
+            }
+            helpPath.append(Messages.getString("ClientGUI.skinningHelpPath"));
+            URL helpUrl = new URL(helpPath.toString());
+
+            // Launch the help dialog.
+            HelpDialog helpDialog = new HelpDialog(
+            		Messages.getString("ClientGUI.skinningHelpPath.title"), 
+            		helpUrl);
+            helpDialog.setVisible(true);
+        } catch (MalformedURLException e) {
+        	JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
+        			JOptionPane.ERROR_MESSAGE);
+            new Logger().log(getClass(), "showSkinningHowTo", e);
+        }
+    }
 
     /**
      * Called when the user selects the "View->Client Settings" menu item.
@@ -568,6 +613,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             JFileChooser fc = new JFileChooser("./savegames");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
@@ -585,28 +631,45 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 path = path.replace(" ", "|");
                 client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
             }
+            ignoreHotKeys = false;
         }
         if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+        	ignoreHotKeys = true;
+        	String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
             client.sendChat("/save " + filename);
+            ignoreHotKeys = false;
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showAbout();
+        }
+        if ("helpSkinning".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            showSkinningHowTo();
         }
         if ("helpContents".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showHelp();
         }
         if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             doSaveUnit();
+            ignoreHotKeys = false;
         }
         if ("fileUnitsOpen".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             loadListFile();
+            ignoreHotKeys = false;
         }
         if ("fileUnitsClear".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             deleteAllUnits(client);
         }
         if ("fileUnitsReinforce".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        	ignoreHotKeys = true;
             loadListFile(client.getLocalPlayer(), true);
+            ignoreHotKeys = false;
+        }
+        if ("fileUnitsReinforceRAT".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
+            getRandomArmyDialog().setVisible(true);
+            ignoreHotKeys = false;
         }
         if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
@@ -621,11 +684,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             showRoundReport();
         }
         if ("fileBoardSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSave();
+        	ignoreHotKeys = true;
+        	boardSave();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAs".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSaveAs();
+        	ignoreHotKeys = true;
+        	boardSaveAs();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            boardSaveAsImage();
+        	ignoreHotKeys = true;
+        	boardSaveAsImage();
+            ignoreHotKeys = false;
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
@@ -789,6 +858,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
+        
+        controller.removeAllActions();
+        controller.clientgui = null;
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -953,7 +1025,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(this);
+                component = new DeploymentDisplay(this);                
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -1237,6 +1309,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     protected void loadListFile(IPlayer player, boolean reinforce) {
         boolean addedUnits = false;
 
+        if (reinforce && player.getTeam() == IPlayer.TEAM_UNASSIGNED){
+            String title = Messages.getString(
+                    "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
+            String msg = Messages.getString(
+                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+            JOptionPane.showMessageDialog(frame, msg, title,
+                    JOptionPane.OK_OPTION, null);
+            return;
+        }
         // Build the "load unit" dialog, if necessary.
         if (dlgLoadList == null) {
             dlgLoadList = new JFileChooser(".");
@@ -1286,7 +1367,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     	}
                     }
                 }
-                client.sendAddEntity(loadedUnits);
+                if (loadedUnits.size() > 0){
+                	client.sendAddEntity(loadedUnits);
+                	addedUnits = true;
+                }                
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1464,6 +1548,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         	 if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
+        	 if ((curPanel instanceof ReportDisplay) 
+        	         && !client.getLocalPlayer().isDone()) {
+                 ((ReportDisplay) curPanel).resetReadyButton();
+        	 }
         }
     	
         @Override
@@ -1492,6 +1580,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 //  and the equals function of Player isn't powerful enough.
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
+            // Make sure the ChatterBox starts out deactived.
+            bv.setChatterBoxActive(false);            
 
             // Swap to this phase's panel.
             switchPanel(getClient().getGame().getPhase());
@@ -1618,6 +1708,74 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
         public void gameMapQuery(GameMapQueryEvent e) {
 
+        }
+        
+        @Override
+		public void gameClientFeedbackRquest(GameCFREvent evt) {
+        	switch (evt.getCFRType()){
+	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
+		        	Entity e = client.getGame().getEntity(evt.getEntityId());
+		        	// If the client connects to a game as a bot, it's possible
+		        	//  to have the bot respond AND have the client ask the
+		        	//  player.  This is bad, ignore this if the client is a bot
+		        	if (client instanceof BotClient){
+		        		return;
+		        	}
+		        	MovePath stepForward = new MovePath(client.getGame(), e);
+					MovePath stepBackward = new MovePath(client.getGame(), e);
+					stepForward.addStep(MoveStepType.FORWARDS);
+					stepBackward.addStep(MoveStepType.BACKWARDS);
+					stepForward.compile(client.getGame(), e);
+					stepBackward.compile(client.getGame(), e);
+					
+					String title = Messages.getString("CFRDomino.Title");
+					String msg = Messages.getString("CFRDomino.Message",
+							new Object[] { e.getDisplayName() });
+					Object options[];
+					MovePath paths[];
+					int optionType;
+					if (stepForward.isMoveLegal() 
+							&& stepBackward.isMoveLegal()){
+						options = new Object[3];
+						paths = new MovePath[3];
+						options[0] = Messages.getString("CFRDomino.Forward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.Backward",
+								new Object[] { stepForward.getMpUsed() });
+						options[2] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepForward;
+						paths[1] = stepBackward;
+						paths[2] = null;
+						optionType = JOptionPane.YES_NO_CANCEL_OPTION;
+					} else if (stepForward.isMoveLegal()){
+						options = new Object[2];
+						paths = new MovePath[2];
+						options[0] = Messages.getString("CFRDomino.Forward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepForward;
+						paths[1] = null;
+						optionType = JOptionPane.YES_NO_OPTION;
+					} else { // No request is sent if both moves are illegal
+						options = new Object[2];
+						paths = new MovePath[2];
+						options[0] = Messages.getString("CFRDomino.Backward",
+								new Object[] { stepForward.getMpUsed() });
+						options[1] = Messages.getString("CFRDomino.NoAction");
+						paths[0] = stepBackward;
+						paths[1] = null;
+						optionType = JOptionPane.YES_NO_OPTION;
+					}			
+					int choice = JOptionPane.showOptionDialog(frame, msg, title, 
+							optionType, JOptionPane.QUESTION_MESSAGE, null, 
+							options, options[0]);
+					// If they closed it, assume no action
+					if (choice == JOptionPane.CLOSED_OPTION){
+						choice = options.length - 1;
+					}
+					client.sendDominoCFRResponse(paths[choice]);
+	        		break;
+        	}
         }
     };
 
@@ -1826,5 +1984,36 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }
+    
+    /**
+     * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
+     * For example, the <code>MegaMekController</code> should ignore hotkeys
+     * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
+     * @return
+     */
+    public boolean shouldIgnoreHotKeys(){
+    	return ignoreHotKeys 
+    			|| (gameOptionsDialog != null && gameOptionsDialog.isVisible())
+    			|| (about != null && about.isVisible()) 
+    			|| (help != null && help.isVisible()) 
+    			|| (setdlg != null && setdlg.isVisible());
+    }
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		bv.setPreferredSize(getSize());		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+	}
 
 }

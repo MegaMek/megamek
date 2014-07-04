@@ -41,6 +41,9 @@ public class TraitorCommand extends ServerCommand {
             else if(null == player) {
             	server.sendServerChat(connId, "No such player");
             }
+            else if(player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
+                server.sendServerChat(connId, "Player must be assigned a team!");
+            }
             else if(pid == connId) {
             	server.sendServerChat(connId, "You can't switch to the same side!");
             }

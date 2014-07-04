@@ -760,9 +760,17 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                 if(col == COL_BV) {
                     if (client.getGame().getOptions()
                         .booleanOption("geometric_mean_bv")) {
+                    if (client.getGame().getOptions().booleanOption("reduced_overheat_modifier_bv")) {
+                        return ms.getRHGMBV();
+                    } else {
                         return ms.getGMBV();
+                    }
+                    } else {
+                    if (client.getGame().getOptions().booleanOption("reduced_overheat_modifier_bv")) {
+                        return ms.getRHBV();
                     } else {
                         return ms.getBV();
+                    }
                     }
                 }
                 if(col == COL_YEAR) {

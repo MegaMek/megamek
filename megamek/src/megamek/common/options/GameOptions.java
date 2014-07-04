@@ -141,7 +141,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
-        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$
+        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$\
+        addOption(advancedRules, "reduced_overheat_modifier_bv", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$

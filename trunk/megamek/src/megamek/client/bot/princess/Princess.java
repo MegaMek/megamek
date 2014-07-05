@@ -771,6 +771,7 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
+            initialize();
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
@@ -793,6 +794,7 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
+            initialize();
             checkMoral();
 
             // reset strategic targets

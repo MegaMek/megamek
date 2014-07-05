@@ -825,6 +825,8 @@ public abstract class BotClient extends Client {
 
     private void toggleStealth() {
 
+        initialize();
+
         int total_bv, known_bv, known_range, known_count, trigger_range;
         int new_stealth = 1;
         Entity test_ent;

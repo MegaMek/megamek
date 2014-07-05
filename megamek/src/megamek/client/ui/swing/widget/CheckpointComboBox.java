@@ -26,6 +26,10 @@ import javax.swing.*;
  */
 public class CheckpointComboBox<E> extends JComboBox {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5047466175280294296L;
     int checkpointIndex = -1;
 
     /**

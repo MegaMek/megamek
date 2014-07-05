@@ -163,7 +163,7 @@ public class RandomUnitGenerator implements Serializable {
         listeners.add(l);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    
     // todo Not being used.  Is this really needed?
     public synchronized void removeListener(ActionListener l){
         listeners.remove(l);

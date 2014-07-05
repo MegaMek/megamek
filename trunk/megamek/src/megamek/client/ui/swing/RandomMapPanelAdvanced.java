@@ -31,6 +31,10 @@ import java.awt.*;
  */
 public class RandomMapPanelAdvanced extends JPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7904626306929132645L;
     // City Type constants.
     private static final String CT_NONE = "None";
     private static final String CT_HUB = "HUB";
@@ -1846,7 +1850,6 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     // Has the given field validate itself.
-    @SuppressWarnings("ThrowableInstanceNeverThrown")
     private boolean isFieldVerified(VerifiableTextField field) {
         String result = field.verifyText();
         if (result != null) {
@@ -1882,7 +1885,6 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     // Verifies all the fields on this panel.
-    @SuppressWarnings("RedundantIfStatement")
     private boolean areMapSettingsVerified() {
         if (!isFieldVerified(elevationAlgorithmField)) {
             return false;

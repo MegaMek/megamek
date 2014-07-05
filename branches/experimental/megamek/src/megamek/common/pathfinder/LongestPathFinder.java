@@ -2,19 +2,16 @@ package megamek.common.pathfinder;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.MovePathLegalityFilter;
 
 public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 

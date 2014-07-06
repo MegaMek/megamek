@@ -16,8 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -229,8 +227,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         panTabs.add("Key Binds", keyBindScrollPane);
 
         JPanel buttonOrderPanel = getButtonOrderPanel();
-        JScrollPane buttonOrderScrollPane = new JScrollPane(buttonOrderPanel);
-        panTabs.add("Button Order", buttonOrderScrollPane);
+        panTabs.add("Button Order", buttonOrderPanel);
         
         JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
         JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
@@ -1017,13 +1014,10 @@ public class CommonSettingsDialog extends ClientDialog implements
      * @return
      */
     private JPanel getButtonOrderPanel(){
-        JPanel buttonOrderPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel buttonOrderPanel = new JPanel();
+        buttonOrderPanel.setLayout(new BoxLayout(buttonOrderPanel, BoxLayout.Y_AXIS));
         JTabbedPane phasePane = new JTabbedPane();
-        buttonOrderPanel.add(phasePane, gbc);
+        buttonOrderPanel.add(phasePane);
         
         StatusBarPhaseDisplay.PhaseCommand commands[];
         StatusBarPhaseDisplay.CommandComparator cmdComp = 

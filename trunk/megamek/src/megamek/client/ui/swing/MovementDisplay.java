@@ -295,8 +295,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public MovementDisplay(final ClientGUI clientgui) {
-    	super();
-    	
+    super();
+    
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
         gear = MovementDisplay.GEAR_LAND;
@@ -339,154 +339,154 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final StatusBarPhaseDisplay display = this;
         // Register the action for TURN_LEFT
         controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| display.isIgnoringEvents()
-								|| !display.isVisible()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						int curDir = cmd.getFinalFacing();
-			            int dir = curDir;
-			            dir = (dir + 5) % 6;
-			            Coords curPos = cmd.getFinalCoords();
-			            Coords target = curPos.translated(dir);
-			            // We need to set this to get the rotate behavior
-			            shiftheld = true;
-			            currentMove(target);
-			            shiftheld = false;
-			            clientgui.bv.drawMovementData(ce(), cmd);
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| display.isIgnoringEvents()
+|| !display.isVisible()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+int curDir = cmd.getFinalFacing();
+            int dir = curDir;
+            dir = (dir + 5) % 6;
+            Coords curPos = cmd.getFinalCoords();
+            Coords target = curPos.translated(dir);
+            // We need to set this to get the rotate behavior
+            shiftheld = true;
+            currentMove(target);
+            shiftheld = false;
+            clientgui.bv.drawMovementData(ce(), cmd);
+}
         });   
         
         // Register the action for TURN_RIGHT
         controller.registerCommandAction(KeyCommandBind.TURN_RIGHT.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| display.isIgnoringEvents()
-								|| !display.isVisible()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						int curDir = cmd.getFinalFacing();
-			            int dir = curDir;
-			            dir = (dir + 7) % 6;
-			            Coords curPos = cmd.getFinalCoords();
-			            Coords target = curPos.translated(dir);
-			            // We need to set this to get the rotate behavior
-			            shiftheld = true;
-			            currentMove(target);
-			            shiftheld = false;
-			            clientgui.bv.drawMovementData(ce(), cmd);
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| display.isIgnoringEvents()
+|| !display.isVisible()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+int curDir = cmd.getFinalFacing();
+            int dir = curDir;
+            dir = (dir + 7) % 6;
+            Coords curPos = cmd.getFinalCoords();
+            Coords target = curPos.translated(dir);
+            // We need to set this to get the rotate behavior
+            shiftheld = true;
+            currentMove(target);
+            shiftheld = false;
+            clientgui.bv.drawMovementData(ce(), cmd);
+}
         });   
         
         // Register the action for UNDO
         controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| display.isIgnoringEvents()
-								|| !display.isVisible()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						removeLastStep();
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| display.isIgnoringEvents()
+|| !display.isVisible()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+removeLastStep();
+}
         });  
         
         // Register the action for NEXT_UNIT
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| !display.isVisible()
-								|| display.isIgnoringEvents()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						selectEntity(
-								clientgui.getClient().getNextEntityNum(cen));
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| !display.isVisible()
+|| display.isIgnoringEvents()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+selectEntity(
+clientgui.getClient().getNextEntityNum(cen));
+}
         });  
         
         // Register the action for PREV_UNIT
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| !display.isVisible()
-								|| display.isIgnoringEvents()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						selectEntity(
-								clientgui.getClient().getPrevEntityNum(cen));
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| !display.isVisible()
+|| display.isIgnoringEvents()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+selectEntity(
+clientgui.getClient().getPrevEntityNum(cen));
+}
         });  
         
         // Register the action for MOVE_ENVELOPE
         controller.registerCommandAction(KeyCommandBind.MOVE_ENVELOPE.cmd,
-        		new CommandAction(){
+        new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-						if (!clientgui.getClient().isMyTurn()
-								|| clientgui.bv.getChatterBoxActive()
-								|| !display.isVisible()
-								|| display.isIgnoringEvents()) {
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
-        			
-					@Override
-					public void performAction() {
-						computeMovementEnvelope();
-					}
+        @Override
+        public boolean shouldPerformAction(){
+if (!clientgui.getClient().isMyTurn()
+|| clientgui.bv.getChatterBoxActive()
+|| !display.isVisible()
+|| display.isIgnoringEvents()) {
+        return false;
+        } else {
+        return true;
+        }
+        }
+        
+@Override
+public void performAction() {
+computeMovementEnvelope();
+}
         });         
 
     }
@@ -497,26 +497,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * and then get a button list appropriate for that unit.
      */
     protected ArrayList<MegamekButton> getButtonList(){
-    	int flag;
-    	
-    	final Entity ce = ce();
-    	flag = CMD_MECH;
+    int flag;
+    
+    final Entity ce = ce();
+    flag = CMD_MECH;
         if (ce != null) {
             if (ce instanceof Infantry) {
-            	flag = CMD_INF;
+            flag = CMD_INF;
             } else if (ce instanceof VTOL) {
-            	flag = CMD_VTOL;
+            flag = CMD_VTOL;
             } else if (ce instanceof Tank) {
-            	flag = CMD_TANK;
+            flag = CMD_TANK;
             } else if (ce instanceof Aero) {
                 if (ce.isAirborne() && 
                         clientgui.getClient().getGame().useVectorMove()) {
-                	flag = CMD_AERO_VECTORED;
+                flag = CMD_AERO_VECTORED;
                 } else if (ce.isAirborne() && 
                         !clientgui.getClient().getGame().useVectorMove()) {
-                	flag = CMD_AERO;
+                flag = CMD_AERO;
                 } else {
-                	flag = CMD_TANK;
+                flag = CMD_TANK;
                 }
             }
         }
@@ -526,7 +526,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     
     private ArrayList<MegamekButton> getButtonList(int flag){
         IGame game = clientgui.getClient().getGame(); 
-	IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         boolean forwardIni = 
                 (game.getTeamForPlayer(localPlayer) != null)
                 && (game.getTeamForPlayer(localPlayer).getSize() > 1);
@@ -539,29 +539,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
         for (MoveCommand cmd : commands){
-        	if (i % buttonsPerGroup == 0){
-        		buttonList.add(getBtn(MoveCommand.MOVE_NEXT));
-        		i++;
-        	}
-        	
+        if (i % buttonsPerGroup == 0){
+        buttonList.add(getBtn(MoveCommand.MOVE_NEXT));
+        i++;
+        }
+        
             buttonList.add(buttons.get(cmd));
             i++;
             
             if ((i+1) % buttonsPerGroup == 0){
-        		buttonList.add(getBtn(MoveCommand.MOVE_MORE));
-        		i++;
-        	}
+        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
+        i++;
+        }
         }
         if (!buttonList.get(i-1).getActionCommand().
-        		equals(MoveCommand.MOVE_MORE.getCmd())){
-	        while ((i+1) % buttonsPerGroup != 0){
-	        	buttonList.add(null);
-	        	i++;	        	
-	        }
-	        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
+        equals(MoveCommand.MOVE_MORE.getCmd())){
+        while ((i+1) % buttonsPerGroup != 0){
+        buttonList.add(null);
+        i++;        
+        }
+        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
         }              
         numButtonGroups = 
-        		(int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
+        (int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
         return buttonList;
     }
 
@@ -2276,32 +2276,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!(ce instanceof Infantry)) {
-	        Vector<Integer> bayChoices = new Vector<Integer>();
-	        for (Transporter t : choice.getTransports()) {
-	        	if (t.canLoad(ce) && (t instanceof Bay)) {
-	        		bayChoices.add(((Bay) t).getBayNumber());
-	        	}
-	        }
-	        String[] retVal = new String[bayChoices.size()];
-	        int i = 0;
-	        for (Integer bn : bayChoices) {
-	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
-	        }
-	        if (bayChoices.size() > 1) {
-	        	String bayString = (String) JOptionPane.showInputDialog(
-	        				clientgui,
-	        				Messages
-	        						.getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
-	        						Messages
-	                                .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
-	                        JOptionPane.QUESTION_MESSAGE, null,
-	                        retVal, null);
-	        	ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(ce);
-	        } else {
-	        	ce.setTargetBay(-1); // Safety set!
-	        }
+        Vector<Integer> bayChoices = new Vector<Integer>();
+        for (Transporter t : choice.getTransports()) {
+        if (t.canLoad(ce) && (t instanceof Bay)) {
+        bayChoices.add(((Bay) t).getBayNumber());
+        }
+        }
+        String[] retVal = new String[bayChoices.size()];
+        int i = 0;
+        for (Integer bn : bayChoices) {
+        retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
+        }
+        if (bayChoices.size() > 1) {
+        String bayString = (String) JOptionPane.showInputDialog(
+        clientgui,
+        Messages
+        .getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
+        Messages
+                                .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        retVal, null);
+        ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            // We need to update the entity here so that the server knows about our target bay
+            clientgui.getClient().sendUpdateEntity(ce);
+        } else {
+        ce.setTargetBay(-1); // Safety set!
+        }
         } else {
             ce.setTargetBay(-1); // Safety set!
         }
@@ -2358,26 +2358,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     bayChoices.add(((Bay) t).getBayNumber());
                 }
             }
-	        String[] retVal = new String[bayChoices.size()];
-	        int i = 0;
-	        for (Integer bn : bayChoices) {
-	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
-	        }
-	        if (bayChoices.size() > 1) {
-	        	String bayString = (String) JOptionPane.showInputDialog(
-	        				clientgui,
-	        				Messages
-	        						.getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-	        						Messages
-	                                .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
-	                        JOptionPane.QUESTION_MESSAGE, null,
-	                        retVal, null);
-	        	choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            	// We need to update the entity here so that the server knows about our target bay
-            	clientgui.getClient().sendUpdateEntity(choice);
-	        } else {
-	        	choice.setTargetBay(-1); // Safety set!
-	        }
+        String[] retVal = new String[bayChoices.size()];
+        int i = 0;
+        for (Integer bn : bayChoices) {
+        retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
+        }
+        if (bayChoices.size() > 1) {
+        String bayString = (String) JOptionPane.showInputDialog(
+        clientgui,
+        Messages
+        .getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+        Messages
+                                .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        retVal, null);
+        choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            // We need to update the entity here so that the server knows about our target bay
+            clientgui.getClient().sendUpdateEntity(choice);
+        } else {
+        choice.setTargetBay(-1); // Safety set!
+        }
         } else {
             choice.setTargetBay(-1); // Safety set!
         }
@@ -3399,9 +3399,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     public void computeMovementEnvelope(){
-    	if (ce() == null){
-    		return;
-    	}
+    if (ce() == null){
+    return;
+    }
         Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
         mvEnvData.put(ce().getPosition(), mp);
@@ -3500,8 +3500,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CANCEL.getCmd())) {
             clear();
         } else if (ev.getSource().equals(getBtn(MoveCommand.MOVE_MORE))) {
-        	currentButtonGroup++;
-        	currentButtonGroup %= numButtonGroups;
+            currentButtonGroup++;
+            currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MoveCommand.MOVE_UNJAM.getCmd())) {
             if ((gear == MovementDisplay.GEAR_JUMP)

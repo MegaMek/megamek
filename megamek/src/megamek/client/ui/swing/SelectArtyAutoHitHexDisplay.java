@@ -45,23 +45,23 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      *
      */
     public static enum ArtyAutoHitCommand implements PhaseCommand {
-    	SET_HIT_HEX("setAutoHitHex");
+    SET_HIT_HEX("setAutoHitHex");
     
-	    String cmd;
-	    
+    String cmd;
+    
         /**
          * Priority that determines this buttons order
          */
        public int priority;
-	    
-	    private ArtyAutoHitCommand(String c){
-	    	cmd = c;
-	    }
-	    
-	    public String getCmd(){
-	    	return cmd;
-	    }
-	    
+    
+    private ArtyAutoHitCommand(String c){
+    cmd = c;
+    }
+    
+    public String getCmd(){
+    return cmd;
+    }
+    
         public int getPriority() {
             return priority;
         }
@@ -69,11 +69,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         public void setPriority(int p) {
             priority = p;
         }
-	    
-	    public String toString(){
+    
+    public String toString(){
             return Messages
                     .getString("SelectArtyAutoHitHexDisplay." + getCmd());
-	    }
+    }
     }
     
     // buttons
@@ -102,34 +102,34 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         artyAutoHitHexes.setPlayerID(p.getId());
 
         buttons = new Hashtable<ArtyAutoHitCommand, MegamekButton>(
-				(int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
-		for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
-			String title = Messages.getString("SelectArtyAutoHitHexDisplay."
-					+ cmd.getCmd());
-			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-			newButton.addActionListener(this);
-			newButton.setActionCommand(cmd.getCmd());
-			newButton.setEnabled(false);
-			buttons.put(cmd, newButton);
-		}  		
-		numButtonGroups = 
-        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
-		
-		butDone.setText(Messages
-                .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
+                (int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
+        for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
+            String title = Messages.getString("SelectArtyAutoHitHexDisplay."
+                    + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title,
+                    "PhaseDisplayButton");
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0)
+                / buttonsPerGroup);
+
+        butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
-		
-		layoutScreen();
-		
+
+        layoutScreen();
+
         setupButtonPanel();
     }
 
-    protected ArrayList<MegamekButton> getButtonList(){                
-    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
-    	ArtyAutoHitCommand commands[] = ArtyAutoHitCommand.values();
+    protected ArrayList<MegamekButton> getButtonList() {
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
+        ArtyAutoHitCommand commands[] = ArtyAutoHitCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
-        for (ArtyAutoHitCommand cmd : commands){
+        for (ArtyAutoHitCommand cmd : commands) {
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -318,8 +318,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void setArtyEnabled(int nbr) {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setText(Messages.getString(
-        		"SelectArtyAutoHitHexDisplay." +ArtyAutoHitCommand.SET_HIT_HEX.getCmd(), 
-        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        "SelectArtyAutoHitHexDisplay." +ArtyAutoHitCommand.SET_HIT_HEX.getCmd(), 
+        new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

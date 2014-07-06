@@ -99,7 +99,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay() {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-        		KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
 
         getActionMap().put("clearButton", new AbstractAction() {
             private static final long serialVersionUID = -7781405756822535409L;
@@ -109,8 +109,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                     return;
                 }
                 if (clientgui.bv.getChatterBoxActive()){
-                	clientgui.bv.setChatterBoxActive(false);
-                	clientgui.cb2.clearMessage();
+                    clientgui.bv.setChatterBoxActive(false);
+                    clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn()) {
                     clear();
                 }
@@ -133,7 +133,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * Adds the buttons and status bar to the panel.    
      */
     protected void layoutScreen(){
-    	GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
@@ -144,7 +144,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         c.gridy = 0;
         addBag(panButtons, gridbag, c);
         c.gridy = 1;
-        addBag(panStatus, gridbag, c);    	
+        addBag(panStatus, gridbag, c);    
     }
     
     /**
@@ -169,8 +169,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         boolean ok = false;
         while (!ok && (currentButtonGroup != 0)) {
             for (int i = currentButtonGroup * buttonsPerGroup; 
-            		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                    	&& (i < buttonList.size()); i++) {
+            (i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                    && (i < buttonList.size()); i++) {
                 if (buttonList.get(i) != null && buttonList.get(i).isEnabled()){
                     ok = true;
                     break;
@@ -178,26 +178,26 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
             if (!ok) {
                 // skip as nothing was enabled
-            	currentButtonGroup++;
+            currentButtonGroup++;
                 if ((currentButtonGroup * buttonsPerGroup) >= 
-                		buttonList.size()) {
-                	currentButtonGroup = 0;
+                buttonList.size()) {
+                currentButtonGroup = 0;
                 }
             }
         }
         int i = 0;
         for (i = currentButtonGroup * buttonsPerGroup; 
-        		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                	&& (i < buttonList.size()); i++) {        
+        (i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                && (i < buttonList.size()); i++) {        
             if (buttonList.get(i) != null){
-            	subPanel.add(buttonList.get(i));              
+            subPanel.add(buttonList.get(i));              
             } else {
-            	subPanel.add(Box.createHorizontalGlue());
+            subPanel.add(Box.createHorizontalGlue());
             }
         }           
         while ( i < ((currentButtonGroup + 1) * buttonsPerGroup)){
-        	subPanel.add(Box.createHorizontalGlue());
-        	i++;
+        subPanel.add(Box.createHorizontalGlue());
+        i++;
         }
            
         GridBagConstraints c = new GridBagConstraints();
@@ -214,9 +214,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         c.gridx = 1;
         panButtons.add(butDone,c);        
         butDone.setSize(DONE_BUTTON_WIDTH,butDone.getHeight());
-    	butDone.setPreferredSize(butDone.getSize());
-    	butDone.setMinimumSize(butDone.getSize());
-    	
+    butDone.setPreferredSize(butDone.getSize());
+    butDone.setMinimumSize(butDone.getSize());
+    
         panButtons.validate();
         panButtons.repaint();   
     }
@@ -268,15 +268,15 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         return false;
     }
     
-	@Override
-	public void keyPressed(KeyEvent evt) {	
-	}
+@Override
+public void keyPressed(KeyEvent evt) {
+}
 
-	@Override
-	public void keyReleased(KeyEvent evt) {
-	}
+@Override
+public void keyReleased(KeyEvent evt) {
+}
 
-	@Override
-	public void keyTyped(KeyEvent evt) {			
-	}
+@Override
+public void keyTyped(KeyEvent evt) {
+}
 }

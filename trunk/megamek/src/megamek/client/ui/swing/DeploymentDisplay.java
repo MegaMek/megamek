@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -58,7 +59,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * @author walczak
      *
      */
-    public static enum Command {
+    public static enum DeployCommand implements PhaseCommand {
 	    DEPLOY_NEXT("deployNext"),
 	    DEPLOY_TURN("deployTurn"),    
 	    DEPLOY_LOAD("deployLoad"),
@@ -67,8 +68,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 	    DEPLOY_ASSAULTDROP("assaultDrop"),
 	    DEPLOY_DOCK("deployDock");  
     
-	    String cmd;
-	    private Command(String c){
+	    public String cmd;
+	    
+	    /**
+         * Priority that determines this buttons order
+         */
+        public int priority;
+	    
+	    private DeployCommand(String c){
 	    	cmd = c;
 	    }
 	    
@@ -76,12 +83,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 	    	return cmd;
 	    }
 	    
+        public int getPriority() {
+            return priority;
+        }
+        
+        public void setPriority(int p) {
+            priority = p;
+        }
+	    
 	    public String toString(){
-	    	return cmd;
+            return Messages.getString("DeploymentDisplay." + getCmd());
 	    }
     }
 
-    protected Hashtable<Command,MegamekButton> buttons;
+    protected Hashtable<DeployCommand,MegamekButton> buttons;
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
@@ -99,9 +114,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages
                 .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         
-		buttons = new Hashtable<Command, MegamekButton>(
-				(int) (Command.values().length * 1.25 + 0.5));
-		for (Command cmd : Command.values()) {
+		buttons = new Hashtable<DeployCommand, MegamekButton>(
+				(int) (DeployCommand.values().length * 1.25 + 0.5));
+		for (DeployCommand cmd : DeployCommand.values()) {
 			String title = Messages.getString("DeploymentDisplay."
 					+ cmd.getCmd());
 			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
@@ -123,8 +138,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
     
     protected ArrayList<MegamekButton> getButtonList(){                
-        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
-        for (Command cmd : Command.values()){
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
+        DeployCommand commands[] = DeployCommand.values();
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (DeployCommand cmd : commands){
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -204,7 +222,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (!ce().canAssaultDrop()
                     && ce().getGame().getOptions()
                             .booleanOption("assault_drop")) {
-            buttons.get(Command.DEPLOY_ASSAULTDROP).setText(Messages
+            buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
                         .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
                 assaultDropPreference = false;
             }
@@ -255,7 +273,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        for (Command cmd : Command.values()){
+        for (DeployCommand cmd : DeployCommand.values()){
         setButtonEnabled(cmd, false);
         }
         butDone.setEnabled(false);
@@ -264,7 +282,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setAssaultDropEnabled(false);
     }
     
-    private void setButtonEnabled(Command cmd, boolean enabled){
+    private void setButtonEnabled(DeployCommand cmd, boolean enabled){
     MegamekButton button = buttons.get(cmd);
     if (button != null){
     button.setEnabled(enabled);
@@ -554,7 +572,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!clientgui.getClient().isMyTurn()) {
             // odd...
             return;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_NEXT.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             if (ce() != null) {
                 ce().setPosition(null);
                 clientgui.bv.redrawEntity(ce());
@@ -576,9 +594,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
             }
             selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_TURN.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_LOAD.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What undeployed units can we load?
             Vector<Entity> choices = new Vector<Entity>();
             Enumeration<Entity> entities = clientgui.getClient().getGame()
@@ -653,7 +671,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 , JOptionPane.ERROR_MESSAGE);
             }
         } // End load-unit
-        else if (ev.getActionCommand().equals(Command.DEPLOY_UNLOAD.getCmd())) {
+        else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
             // Do we have anyone to unload?
             List<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
@@ -689,7 +707,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                         "DeploymentDisplay.alertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.alertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
-        else if (ev.getActionCommand().equals(Command.DEPLOY_REMOVE.getCmd())) {
+        else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
             if (JOptionPane.showConfirmDialog(clientgui.frame, Messages
                     .getString("DeploymentDisplay.removeTitle"), Messages
                     .getString("DeploymentDisplay.removeMessage",
@@ -697,13 +715,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 remove();
             }
-        } else if (ev.getActionCommand().equals(Command.DEPLOY_ASSAULTDROP.getCmd())) {
+        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_ASSAULTDROP.getCmd())) {
             assaultDropPreference = !assaultDropPreference;
             if (assaultDropPreference) {
-            buttons.get(Command.DEPLOY_ASSAULTDROP).setText(Messages
+            buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
                         .getString("DeploymentDisplay.assaultDropOff"));
             } else {
-            buttons.get(Command.DEPLOY_ASSAULTDROP).setText(Messages
+            buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
                         .getString("DeploymentDisplay.assaultDrop"));
             }
         }
@@ -765,32 +783,32 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setNextEnabled(boolean enabled) {
-        buttons.get(Command.DEPLOY_NEXT).setEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setDeployNextEnabled(enabled);
     }
 
     private void setTurnEnabled(boolean enabled) {
-    buttons.get(Command.DEPLOY_TURN).setEnabled(enabled);
+    buttons.get(DeployCommand.DEPLOY_TURN).setEnabled(enabled);
         clientgui.getMenuBar().setDeployTurnEnabled(enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
-    buttons.get(Command.DEPLOY_LOAD).setEnabled(enabled);
+    buttons.get(DeployCommand.DEPLOY_LOAD).setEnabled(enabled);
         clientgui.getMenuBar().setDeployLoadEnabled(enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
-    buttons.get(Command.DEPLOY_UNLOAD).setEnabled(enabled);
+    buttons.get(DeployCommand.DEPLOY_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
     }
 
     private void setRemoveEnabled(boolean enabled) {
-    buttons.get(Command.DEPLOY_REMOVE).setEnabled(enabled);
+    buttons.get(DeployCommand.DEPLOY_REMOVE).setEnabled(enabled);
         clientgui.getMenuBar().setDeployNextEnabled(enabled);
     }
 
     private void setAssaultDropEnabled(boolean enabled) {
-    buttons.get(Command.DEPLOY_ASSAULTDROP).setEnabled(enabled);
+    buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
         clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
     }
 

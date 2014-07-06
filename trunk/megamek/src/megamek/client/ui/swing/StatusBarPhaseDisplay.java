@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -38,8 +39,10 @@ import megamek.client.ui.swing.widget.MegamekButton;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
- * has a panel of control buttons along with a done button.  This class formats
- * the button panel, the done button, and a status display area. 
+ * has a panel of control buttons along with a done button.  Each button
+ * correspondes to a command that can be carried out in the current phase.  
+ * This class formats the button panel, the done button, and a status display 
+ * area. 
  * 
  * Control buttons are grouped and the groups can be cycled through.
  *
@@ -50,6 +53,33 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final long serialVersionUID = 639696875125581395L;
     
     protected static final int TRANSPARENT = 0xFFFF00FF;
+    
+    /**
+     * Interface that defines what a command for a phase is.
+     * 
+     * @author arlith
+     *
+     */
+    public interface PhaseCommand {
+        public String getCmd();
+        public int getPriority();
+        public void setPriority(int p);
+    }
+    
+    /**
+     * Comparator for comparing the priority of two commands, used to determine
+     * button order.
+     * 
+     * @author arlith
+     *
+     */
+    public  static class CommandComparator implements Comparator<PhaseCommand>
+    {
+        public int compare(PhaseCommand c1, PhaseCommand c2)
+        {
+            return c1.getPriority() - c2.getPriority();            
+        }
+    }
     
     // displays
     private JLabel labStatus;

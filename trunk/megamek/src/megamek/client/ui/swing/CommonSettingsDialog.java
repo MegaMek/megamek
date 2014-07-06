@@ -700,16 +700,18 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Button Order
         // Movement
+        ButtonOrderPreferences bop = ButtonOrderPreferences.getInstance();
         boolean buttonOrderChanged = false;
         for (int i = 0; i < movePhaseCommands.getSize(); i++) {
             StatusBarPhaseDisplay.PhaseCommand cmd = movePhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_MOVEMENT);
         }
@@ -720,11 +722,12 @@ public class CommonSettingsDialog extends ClientDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = deployPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_DEPLOYMENT);
         }        
@@ -735,11 +738,12 @@ public class CommonSettingsDialog extends ClientDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = firingPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_FIRING);
         }
@@ -750,11 +754,12 @@ public class CommonSettingsDialog extends ClientDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = physicalPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_PHYSICAL);
         }
@@ -765,6 +770,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = targetingPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }

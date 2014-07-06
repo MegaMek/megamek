@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
+import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
@@ -98,6 +99,9 @@ public class MegaMek {
             if (cp.dedicatedServer()) {
                 MegaMek.startDedicatedServer(restArgs);
             } else {
+                // Load button ordering
+                ButtonOrderPreferences.getInstance().setButtonPriorities();
+                
                 String interfaceName = cp.getGuiName();
                 if (interfaceName == null) {
                     interfaceName = PreferenceManager.getClientPreferences()

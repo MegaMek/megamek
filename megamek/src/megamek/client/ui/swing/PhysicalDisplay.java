@@ -87,49 +87,49 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      *
      */
     public static enum PhysicalCommand implements PhaseCommand {
-    	PHYSICAL_NEXT("next"),
-    	PHYSICAL_PUNCH("punch"),
-    	PHYSICAL_KICK("kick"),    
-    	PHYSICAL_CLUB("club"),
-    	PHYSICAL_BRUSH_OFF("brushOff"),
-    	PHYSICAL_THRASH("thrash"),
-    	PHYSICAL_DODGE("dodge"),
-    	PHYSICAL_PUSH("push"),
-    	PHYSICAL_TRIP("trip"),
-    	PHYSICAL_GRAPPLE("grapple"),
-    	PHYSICAL_JUMPJET("jumpjet"),    	
-    	PHYSICAL_PROTO("protoPhysical"),
-    	PHYSICAL_SEARCHLIGHT("fireSearchlight"),
-    	PHYSICAL_EXPLOSIVES("explosives"),
-    	PHYSICAL_VIBRO("vibro"),
-    	PHYSICAL_MORE("more");	    	
+        PHYSICAL_NEXT("next"),
+        PHYSICAL_PUNCH("punch"),
+        PHYSICAL_KICK("kick"),    
+        PHYSICAL_CLUB("club"),
+        PHYSICAL_BRUSH_OFF("brushOff"),
+        PHYSICAL_THRASH("thrash"),
+        PHYSICAL_DODGE("dodge"),
+        PHYSICAL_PUSH("push"),
+        PHYSICAL_TRIP("trip"),
+        PHYSICAL_GRAPPLE("grapple"),
+        PHYSICAL_JUMPJET("jumpjet"),        
+        PHYSICAL_PROTO("protoPhysical"),
+        PHYSICAL_SEARCHLIGHT("fireSearchlight"),
+        PHYSICAL_EXPLOSIVES("explosives"),
+        PHYSICAL_VIBRO("vibro"),
+        PHYSICAL_MORE("more");            
     
-	    String cmd;
-	    
+        String cmd;
+        
         /**
          * Priority that determines this buttons order
          */
        public int priority;
-	    
-	    private PhysicalCommand(String c){
-	    	cmd = c;
-	    }
-	    
-	    public String getCmd(){
-	    	return cmd;
-	    }
-	    
+        
+        private PhysicalCommand(String c){
+            cmd = c;
+        }
+        
+        public String getCmd(){
+            return cmd;
+        }
+        
         public int getPriority() {
             return priority;
         }
         
         public void setPriority(int p) {
             priority = p;
-        }	    
-	    
-	    public String toString(){
-	        return Messages.getString("PhysicalDisplay." + getCmd());
-	    }
+        }        
+        
+        public String toString(){
+            return Messages.getString("PhysicalDisplay." + getCmd());
+        }
     }
 
     // buttons
@@ -149,8 +149,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public PhysicalDisplay(ClientGUI clientgui) {
-    	super();
-    	
+        super();
+        
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
@@ -161,21 +161,21 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         attacks = new Vector<EntityAction>();
 
         buttons = new Hashtable<PhysicalCommand, MegamekButton>(
-				(int) (PhysicalCommand.values().length * 1.25 + 0.5));
-		for (PhysicalCommand cmd : PhysicalCommand.values()) {
-			String title = Messages.getString("PhysicalDisplay."
-					+ cmd.getCmd());
-			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-			newButton.addActionListener(this);
-			newButton.setActionCommand(cmd.getCmd());
-			newButton.setEnabled(false);
-			buttons.put(cmd, newButton);
-		}  		
-		numButtonGroups = 
-        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+                (int) (PhysicalCommand.values().length * 1.25 + 0.5));
+        for (PhysicalCommand cmd : PhysicalCommand.values()) {
+            String title = Messages.getString("PhysicalDisplay."
+                    + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }          
+        numButtonGroups = 
+                (int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
 
         butDone.setText("<html><b>"+Messages.getString(
-        		"PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
+                "PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
         
         layoutScreen();
@@ -191,30 +191,30 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
         for (PhysicalCommand cmd : commands){
-        	if (cmd == PhysicalCommand.PHYSICAL_NEXT 
-        	        || cmd == PhysicalCommand.PHYSICAL_MORE){
-        		continue;
-        	}
-        	if (i % buttonsPerGroup == 0){
-        		buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_NEXT));
-        		i++;
-        	}
-        	
+            if (cmd == PhysicalCommand.PHYSICAL_NEXT 
+                    || cmd == PhysicalCommand.PHYSICAL_MORE){
+                continue;
+            }
+            if (i % buttonsPerGroup == 0){
+                buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_NEXT));
+                i++;
+            }
+            
             buttonList.add(buttons.get(cmd));
             i++;
             
             if ((i+1) % buttonsPerGroup == 0){
-        		buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
-        		i++;
-        	}
+                buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
+                i++;
+            }
         }
         if (!buttonList.get(i-1).getActionCommand().
-        		equals(PhysicalCommand.PHYSICAL_MORE.getCmd())){
-	        while ((i+1) % buttonsPerGroup != 0){
-	        	buttonList.add(null);
-	        	i++;	        	
-	        }
-	        buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
+                equals(PhysicalCommand.PHYSICAL_MORE.getCmd())){
+            while ((i+1) % buttonsPerGroup != 0){
+                buttonList.add(null);
+                i++;                
+            }
+            buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
         }
         return buttonList;
     }
@@ -390,7 +390,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             attacks.removeAllElements();
         }
         if (ce() != null){
-        	clientgui.mechD.wPan.displayMech(ce());
+            clientgui.mechD.wPan.displayMech(ce());
         }
         updateTarget();
 
@@ -1565,8 +1565,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd())) {
             doSearchlight();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_MORE.getCmd())) {
-        	currentButtonGroup++;
-        	currentButtonGroup %= numButtonGroups;
+            currentButtonGroup++;
+            currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
         }
     }
@@ -1608,69 +1608,69 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     }
 
     public void setPunchEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_PUNCH).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_PUNCH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPunchEnabled(enabled);
     }
 
     public void setKickEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_KICK).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_KICK).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalKickEnabled(enabled);
     }
 
     public void setPushEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_PUSH).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_PUSH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPushEnabled(enabled);
     }
 
     public void setTripEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_TRIP).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_TRIP).setEnabled(enabled);
     }
 
     public void setGrappleEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_GRAPPLE).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_GRAPPLE).setEnabled(enabled);
     }
 
     public void setJumpJetEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_JUMPJET).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_JUMPJET).setEnabled(enabled);
     }
 
     public void setClubEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_CLUB).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_CLUB).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalClubEnabled(enabled);
     }
 
     public void setBrushOffEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_BRUSH_OFF).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_BRUSH_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalBrushOffEnabled(enabled);
     }
 
     public void setDodgeEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_DODGE).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_DODGE).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
     }
 
     public void setProtoEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_PROTO).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_PROTO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
     }
 
     public void setVibroEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_VIBRO).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_VIBRO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalVibroEnabled(enabled);
     }
 
     public void setExplosivesEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
         // clientgui.getMenuBar().setExplosivesEnabled(enabled);
     }
 
     public void setNextEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_NEXT).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalNextEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
-    	buttons.get(PhysicalCommand.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 

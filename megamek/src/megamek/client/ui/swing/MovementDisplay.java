@@ -107,6 +107,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | 
             CMD_AERO | CMD_AERO_VECTORED;  
     
+
+    
     /**
      * This enumeration lists all of the possible ActionCommands that can be
      * carried out during the movement phase.  Each command has a string for the
@@ -114,7 +116,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @author walczak
      *
      */
-    public static enum Command {
+    public static enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$   
@@ -188,24 +190,38 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         /**
          * The command text.
          */
-        String cmd;
+        public final String cmd;
         
         /** 
          * Flag that determines what unit types can use a command.
          */
-        public final int flag; 
+        public final int flag;
         
-        private Command(String c, int f){
+        /**
+         * Priority that determines this buttons order
+         */
+        public int priority;
+        
+        private MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
+            priority = ordinal();
         }
         
-        public String getCmd(){
+        public String getCmd() {
             return cmd;
         }
+        
+        public int getPriority() {
+            return priority;
+        }
+        
+        public void setPriority(int p) {
+            priority = p;
+        }
                 
-        public String toString(){
-            return cmd;
+        public String toString() {
+            return Messages.getString("MovementDisplay." + getCmd());
         }
         
         /**
@@ -219,10 +235,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          * @return              An array of valid commands for the given 
          *                         parameters
          */
-        public static Command[] values(int f, GameOptions opts, 
+        public static MoveCommand[] values(int f, GameOptions opts, 
                 boolean forwardIni){
-            ArrayList<Command> flaggedCmds = new ArrayList<Command>();
-            for (Command cmd : Command.values()){
+            ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
+            for (MoveCommand cmd : MoveCommand.values()){
                 // Check for movements that with disabled game options
                 if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
                         && !opts.booleanOption("manual_shutdown")) {
@@ -242,14 +258,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     flaggedCmds.add(cmd);
                 }
             }
-            return flaggedCmds.toArray(new Command[0]);
+            return flaggedCmds.toArray(new MoveCommand[0]);
         }
         
         
     }
 
     // buttons
-    private Hashtable<Command,MegamekButton> buttons;
+    private Hashtable<MoveCommand,MegamekButton> buttons;
 
     // let's keep track of what we're moving, too
     private int cen = Entity.NONE; // current entity number
@@ -291,9 +307,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         
         // Create all of the buttons
-        buttons = new Hashtable<Command,MegamekButton>(
-                (int)(Command.values().length * 1.25 + 0.5));
-        for (Command cmd : Command.values()){
+        buttons = new Hashtable<MoveCommand,MegamekButton>(
+                (int)(MoveCommand.values().length * 1.25 + 0.5));
+        for (MoveCommand cmd : MoveCommand.values()){
             String title = 
                     Messages.getString("MovementDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
@@ -519,9 +535,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
         
         int i = 0;
-        for (Command cmd : Command.values(flag,opts,forwardIni)){
+        MoveCommand commands[] = MoveCommand.values(flag,opts,forwardIni);
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (MoveCommand cmd : commands){
         	if (i % buttonsPerGroup == 0){
-        		buttonList.add(getBtn(Command.MOVE_NEXT));
+        		buttonList.add(getBtn(MoveCommand.MOVE_NEXT));
         		i++;
         	}
         	
@@ -529,17 +548,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             i++;
             
             if ((i+1) % buttonsPerGroup == 0){
-        		buttonList.add(getBtn(Command.MOVE_MORE));
+        		buttonList.add(getBtn(MoveCommand.MOVE_MORE));
         		i++;
         	}
         }
         if (!buttonList.get(i-1).getActionCommand().
-        		equals(Command.MOVE_MORE.getCmd())){
+        		equals(MoveCommand.MOVE_MORE.getCmd())){
 	        while ((i+1) % buttonsPerGroup != 0){
 	        	buttonList.add(null);
 	        	i++;	        	
 	        }
-	        buttonList.add(getBtn(Command.MOVE_MORE));
+	        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
         }              
         numButtonGroups = 
         		(int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
@@ -584,10 +603,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    private MegamekButton getBtn(Command c){
+    private MegamekButton getBtn(MoveCommand c){
         return buttons.get(c);
     }
-    private boolean isEnabled(Command c){
+    private boolean isEnabled(MoveCommand c){
         return buttons.get(c).isEnabled();
     }
     
@@ -601,7 +620,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // boolean isProtomech = (ce instanceof Protomech);
         boolean isAero = (ce instanceof Aero);
 
-        getBtn(Command.MOVE_MORE).setEnabled(true);
+        getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         setWalkEnabled(!ce.isImmobile()
                 && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
@@ -609,7 +628,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU()
                 && ce.isUnderwater());
-        setBackUpEnabled(!isAero && isEnabled(Command.MOVE_WALK));
+        setBackUpEnabled(!isAero && isEnabled(MoveCommand.MOVE_WALK));
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
@@ -630,16 +649,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 || (ce.getMovementMode() == EntityMovementMode.VTOL)
                 || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-            getBtn(Command.MOVE_CLIMB_MODE).setEnabled(false);
+            getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         } else {
-            getBtn(Command.MOVE_CLIMB_MODE).setEnabled(true);
+            getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(true);
         }
         if (ce instanceof Infantry) {
-            getBtn(Command.MOVE_DIG_IN).setEnabled(true);
-            getBtn(Command.MOVE_FORTIFY).setEnabled(true);
+            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(true);
+            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
         } else {
-            getBtn(Command.MOVE_DIG_IN).setEnabled(false);
-            getBtn(Command.MOVE_FORTIFY).setEnabled(false);
+            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         updateTurnButton();
 
@@ -659,11 +678,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateShutdownButton();
 
         if (ce instanceof Aero) {
-            getBtn(Command.MOVE_THRUST).setEnabled(true);
-            getBtn(Command.MOVE_YAW).setEnabled(true);
-            getBtn(Command.MOVE_END_OVER).setEnabled(true);
-            getBtn(Command.MOVE_TURN_LEFT).setEnabled(true);
-            getBtn(Command.MOVE_TURN_RIGHT).setEnabled(true);
+            getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
+            getBtn(MoveCommand.MOVE_YAW).setEnabled(true);
+            getBtn(MoveCommand.MOVE_END_OVER).setEnabled(true);
+            getBtn(MoveCommand.MOVE_TURN_LEFT).setEnabled(true);
+            getBtn(MoveCommand.MOVE_TURN_RIGHT).setEnabled(true);
             setEvadeAeroEnabled(true);
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
@@ -689,18 +708,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (isInfantry
                 && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
-            getBtn(Command.MOVE_FORTIFY).setEnabled(true);
+            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
         } else {
-            getBtn(Command.MOVE_FORTIFY).setEnabled(false);
+            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         if (isInfantry
                 && clientgui.getClient().getGame().getOptions().booleanOption(
                         "tacops_dig_in")) {
-            getBtn(Command.MOVE_DIG_IN).setEnabled(true);
+            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(true);
         } else {
-            getBtn(Command.MOVE_DIG_IN).setEnabled(false);
+            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
         }
-        getBtn(Command.MOVE_SHAKE_OFF).setEnabled((ce instanceof Tank)
+        getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled((ce instanceof Tank)
                 && (ce.getSwarmAttackerId() != Entity.NONE));
 
         setLayMineEnabled(ce.canLayMine());
@@ -740,7 +759,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(true);
         setNextEnabled(true);
         setForwardIniEnabled(true);
-        getBtn(Command.MOVE_MORE).setEnabled(true);
+        getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
@@ -791,7 +810,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setDFAEnabled(false);
         setNextEnabled(false);
         setForwardIniEnabled(false);
-        getBtn(Command.MOVE_MORE).setEnabled(false);
+        getBtn(MoveCommand.MOVE_MORE).setEnabled(false);
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
@@ -832,8 +851,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setGoProneEnabled(false);
         setManeuverEnabled(false);
         
-        getBtn(Command.MOVE_CLIMB_MODE).setEnabled(false);
-        getBtn(Command.MOVE_DIG_IN).setEnabled(false);
+        getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
+        getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
     }
 
     /**
@@ -1564,7 +1583,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } else {
                 setGetUpEnabled(false);
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
-                        && !(getBtn(Command.MOVE_GET_UP).isEnabled()));
+                        && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
                 if (!(ce instanceof Tank)) {
                     setHullDownEnabled(ce.canGoHullDown());
                 } else {
@@ -3052,9 +3071,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (a.isOutControlTotal() && a.isAirborne()) {
             disableButtons();
             butDone.setEnabled(true);
-            getBtn(Command.MOVE_NEXT).setEnabled(true);
+            getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
-            getBtn(Command.MOVE_LAUNCH).setEnabled(true);
+            getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);
         }
         return;
     }
@@ -3076,9 +3095,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (a.getFuel() < 1) {
             disableButtons();
             butDone.setEnabled(true);
-            getBtn(Command.MOVE_NEXT).setEnabled(true);
+            getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
-            getBtn(Command.MOVE_LAUNCH).setEnabled(true);
+            getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);
             updateRACButton();
             updateJoinButton();
             updateRecoveryButton();
@@ -3105,10 +3124,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (a.isSpheroid()
                     || clientgui.getClient().getGame().getPlanetaryConditions()
                             .isVacuum()) {
-                getBtn(Command.MOVE_ACC).setEnabled(false);
-                getBtn(Command.MOVE_DEC).setEnabled(false);
-                getBtn(Command.MOVE_ACCN).setEnabled(false);
-                getBtn(Command.MOVE_DECN).setEnabled(false);
+                getBtn(MoveCommand.MOVE_ACC).setEnabled(false);
+                getBtn(MoveCommand.MOVE_DEC).setEnabled(false);
+                getBtn(MoveCommand.MOVE_ACCN).setEnabled(false);
+                getBtn(MoveCommand.MOVE_DECN).setEnabled(false);
             }
         }
         return;
@@ -3474,17 +3493,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // odd...
             return;
         }
-        if (ev.getActionCommand().equals(Command.MOVE_NEXT.getCmd())) {
+        if (ev.getActionCommand().equals(MoveCommand.MOVE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(Command.MOVE_FORWARD_INI.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_FORWARD_INI.getCmd())) {
             selectNextPlayer();
-        } else if (ev.getActionCommand().equals(Command.MOVE_CANCEL.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CANCEL.getCmd())) {
             clear();
-        } else if (ev.getSource().equals(getBtn(Command.MOVE_MORE))) {
+        } else if (ev.getSource().equals(getBtn(MoveCommand.MOVE_MORE))) {
         	currentButtonGroup++;
         	currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
-        } else if (ev.getActionCommand().equals(Command.MOVE_UNJAM.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_UNJAM.getCmd())) {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
@@ -3504,15 +3523,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_SEARCHLIGHT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SEARCHLIGHT.getCmd())) {
             cmd.addStep(MoveStepType.SEARCHLIGHT);
-        } else if (ev.getActionCommand().equals(Command.MOVE_WALK.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_WALK.getCmd())) {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_SWIM)) {
                 clear();
             }
             gear = MovementDisplay.GEAR_LAND;
-        } else if (ev.getActionCommand().equals(Command.MOVE_JUMP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_JUMP.getCmd())) {
             if ((gear != MovementDisplay.GEAR_JUMP)
                     && !((cmd.getLastStep() != null)
                             && cmd.getLastStep().isFirstStep() && (cmd
@@ -3523,7 +3542,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
-        } else if (ev.getActionCommand().equals(Command.MOVE_SWIM.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SWIM.getCmd())) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clear();
             }
@@ -3531,14 +3550,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             gear = MovementDisplay.GEAR_SWIM;
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
-        } else if (ev.getActionCommand().equals(Command.MOVE_TURN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TURN.getCmd())) {
             gear = MovementDisplay.GEAR_TURN;
-        } else if (ev.getActionCommand().equals(Command.MOVE_BACK_UP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_BACK_UP.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP;
-        } else if (ev.getActionCommand().equals(Command.MOVE_CLEAR.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CLEAR.getCmd())) {
             clear();
             if (!clientgui.getClient().getGame().containsMinefield(ce.getPosition())) {
                 clientgui.doAlertDialog(Messages
@@ -3594,12 +3613,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_CHARGE.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CHARGE.getCmd())) {
             if (gear != MovementDisplay.GEAR_LAND) {
                 clear();
             }
             gear = MovementDisplay.GEAR_CHARGE;
-        } else if (ev.getActionCommand().equals(Command.MOVE_DFA.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DFA.getCmd())) {
             if (gear != MovementDisplay.GEAR_JUMP) {
                 clear();
             }
@@ -3607,12 +3626,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (!cmd.isJumping()) {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_RAM.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RAM.getCmd())) {
             if (gear != MovementDisplay.GEAR_LAND) {
                 clear();
             }
             gear = MovementDisplay.GEAR_RAM;
-        } else if (ev.getActionCommand().equals(Command.MOVE_GET_UP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_GET_UP.getCmd())) {
             // if the unit has a hull down step
             // then don't clear the moves
             if (!cmd.contains(MoveStepType.HULL_DOWN)) {
@@ -3644,28 +3663,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
 
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_GO_PRONE.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_GO_PRONE.getCmd())) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalProne()) {
                 cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
-        } else if (ev.getActionCommand().equals(Command.MOVE_HULL_DOWN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_HULL_DOWN.getCmd())) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
                 cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
-        } else if (ev.getActionCommand().equals(Command.MOVE_FLEE.getCmd())
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_FLEE.getCmd())
                 && clientgui
                         .doYesNoDialog(
                                 Messages.getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             clear();
             cmd.addStep(MoveStepType.FLEE);
             ready();
-        } else if (ev.getActionCommand().equals(Command.MOVE_FLY_OFF.getCmd())
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_FLY_OFF.getCmd())
                 && clientgui
                         .doYesNoDialog(
                                 Messages.getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -3681,7 +3700,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.OFF);
             }
             ready();
-        } else if (ev.getActionCommand().equals(Command.MOVE_EJECT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_EJECT.getCmd())) {
             if (ce instanceof Tank) {
                 if (clientgui
                         .doYesNoDialog(
@@ -3697,7 +3716,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.EJECT);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_LOAD.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LOAD.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
             Entity other = getLoadedUnit();
@@ -3706,13 +3725,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
-        } else if (ev.getActionCommand().equals(Command.MOVE_MOUNT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_MOUNT.getCmd())) {
             Entity other = getMountedUnit();
             if (other != null) {
                 cmd.addStep(MoveStepType.MOUNT, other);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_UNLOAD.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_UNLOAD.getCmd())) {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
@@ -3733,10 +3752,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     clientgui.bv.drawMovementData(ce(), cmd);
                 }
             } // else - Player canceled the unload.
-        } else if (ev.getActionCommand().equals(Command.MOVE_RAISE_ELEVATION.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RAISE_ELEVATION.getCmd())) {
             cmd.addStep(MoveStepType.UP);
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_LOWER_ELEVATION.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LOWER_ELEVATION.getCmd())) {
             if ((ce instanceof Aero)
                     && (null != cmd.getLastStep())
                     && (cmd.getLastStep().getNDown() == 1)
@@ -3747,7 +3766,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             cmd.addStep(MoveStepType.DOWN);
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_CLIMB_MODE.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
             MoveStep ms = cmd.getLastStep();
             if ((ms != null)
                     && ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms
@@ -3759,7 +3778,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_LAY_MINE.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();
             if (i != -1) {
                 Mounted m = ce().getEquipment(i);
@@ -3772,33 +3791,33 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_DIG_IN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
             cmd.addStep(MoveStepType.DIG_IN);
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_FORTIFY.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
             cmd.addStep(MoveStepType.FORTIFY);
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_SHAKE_OFF.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SHAKE_OFF.getCmd())) {
             cmd.addStep(MoveStepType.SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce(), cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_RECKLESS.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RECKLESS.getCmd())) {
             cmd.setCareful(false);
-        } else if (ev.getActionCommand().equals(Command.MOVE_ACCN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ACCN.getCmd())) {
             cmd.addStep(MoveStepType.ACCN);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_DECN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DECN.getCmd())) {
             cmd.addStep(MoveStepType.DECN);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_ACC.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ACC.getCmd())) {
             cmd.addStep(MoveStepType.ACC);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_DEC.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DEC.getCmd())) {
             cmd.addStep(MoveStepType.DEC);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_EVADE.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_EVADE.getCmd())) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_SHUTDOWN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SHUTDOWN.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
                             Messages.getString("MovementDisplay.ShutdownDialog.title"),
@@ -3806,7 +3825,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.SHUTDOWN);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_STARTUP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_STARTUP.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
                             Messages.getString("MovementDisplay.StartupDialog.title"),
@@ -3815,7 +3834,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.STARTUP);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_SELF_DESTRUCT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SELF_DESTRUCT.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
                             Messages.getString("MovementDisplay.SelfDestructDialog.title"),
@@ -3823,16 +3842,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.SELF_DESTRUCT);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_EVADE_AERO.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_EVADE_AERO.getCmd())) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_ROLL.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ROLL.getCmd())) {
             cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_HOVER.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_HOVER.getCmd())) {
             cmd.addStep(MoveStepType.HOVER);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_MANEUVER.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_MANEUVER.getCmd())) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(
                     clientgui.frame,
                     Messages.getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
@@ -3858,7 +3877,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_LAUNCH.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LAUNCH.getCmd())) {
             TreeMap<Integer, Vector<Integer>> undocked = getUndockedUnits();
             if (!undocked.isEmpty()) {
                 cmd.addStep(MoveStepType.UNDOCK, undocked);
@@ -3870,8 +3889,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (!launched.isEmpty() || !undocked.isEmpty()) {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_RECOVER.getCmd()) || 
-                ev.getActionCommand().equals(Command.MOVE_DOCK.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RECOVER.getCmd()) || 
+                ev.getActionCommand().equals(MoveCommand.MOVE_DOCK.getCmd())) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
@@ -3879,16 +3898,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.RECOVER, recoverer, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-            if (ev.getActionCommand().equals(Command.MOVE_DOCK.getCmd())) {
+            if (ev.getActionCommand().equals(MoveCommand.MOVE_DOCK.getCmd())) {
                 cmd.getLastStep().setDocking(true);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_DROP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DROP.getCmd())) {
             TreeMap<Integer, Vector<Integer>> dropped = getDroppedUnits();
             if (!dropped.isEmpty()) {
                 cmd.addStep(MoveStepType.DROP, dropped);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_JOIN.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_JOIN.getCmd())) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
             int joined = getUnitJoined();
@@ -3896,25 +3915,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.JOIN, joined, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_TURN_LEFT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TURN_LEFT.getCmd())) {
             cmd.addStep(MoveStepType.TURN_LEFT);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_TURN_RIGHT.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TURN_RIGHT.getCmd())) {
             cmd.addStep(MoveStepType.TURN_RIGHT);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_THRUST.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_THRUST.getCmd())) {
             cmd.addStep(MoveStepType.THRUST);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_YAW.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_YAW.getCmd())) {
             cmd.addStep(MoveStepType.YAW);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_END_OVER.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_END_OVER.getCmd())) {
             cmd.addStep(MoveStepType.YAW);
             cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(Command.MOVE_DUMP.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_DUMP.getCmd())) {
             dumpBombs();
-        } else if (ev.getActionCommand().equals(Command.MOVE_TAKE_OFF.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TAKE_OFF.getCmd())) {
             if ((ce() instanceof Aero)
                     && (null != ((Aero) ce()).hasRoomForHorizontalTakeOff())) {
                 String title = Messages
@@ -3932,7 +3951,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     ready();
                 }
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_VERT_TAKE_OFF.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_VERT_TAKE_OFF.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
                             Messages.getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -3940,7 +3959,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.VTAKEOFF);
                 ready();
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_LAND.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LAND.getCmd())) {
             if ((ce() instanceof Aero)
                     && (null != ((Aero) ce()).hasRoomForHorizontalLanding())) {
                 String title = Messages
@@ -3958,7 +3977,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     ready();
                 }
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_VERT_LAND.getCmd())) {
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_VERT_LAND.getCmd())) {
             if ((ce() instanceof Aero)
                     && (null != ((Aero) ce()).hasRoomForVerticalLanding())) {
                 String title = Messages
@@ -3976,9 +3995,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     ready();
                 }
             }
-        } else if (ev.getActionCommand().equals(Command.MOVE_ENVELOPE.getCmd())){
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ENVELOPE.getCmd())){
             computeMovementEnvelope();
-        } else if (ev.getActionCommand().equals(Command.MOVE_TRAITOR.getCmd())){
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TRAITOR.getCmd())){
             // Set up variables we need
             // We use a vector instead of enumeration here so we can grab the size
             Vector<IPlayer> players = clientgui.getClient().getGame().getPlayersVector();
@@ -4186,17 +4205,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setWalkEnabled(boolean enabled) {
-        buttons.get(Command.MOVE_WALK).setEnabled(enabled);
+        buttons.get(MoveCommand.MOVE_WALK).setEnabled(enabled);
         clientgui.getMenuBar().setMoveWalkEnabled(enabled);
     }
 
     private void setTurnEnabled(boolean enabled) {
-        buttons.get(Command.MOVE_TURN).setEnabled(enabled);
+        buttons.get(MoveCommand.MOVE_TURN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnEnabled(enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
-        getBtn(Command.MOVE_NEXT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveNextEnabled(enabled);
     }
 
@@ -4204,163 +4223,163 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // forward initiative can only be done if Teams have an initiative!
         if (clientgui.getClient().getGame().getOptions().booleanOption(
                 "team_initiative")) {
-            getBtn(Command.MOVE_FORWARD_INI).setEnabled(enabled);
+            getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
         } else { // turn them off regardless what is said!
-            getBtn(Command.MOVE_FORWARD_INI).setEnabled(false);
+            getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(false);
             clientgui.getMenuBar().setMoveForwardIniEnabled(false);
         }
     }
 
     private void setLayMineEnabled(boolean enabled) {
-        getBtn(Command.MOVE_LAY_MINE).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_LAY_MINE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLayMineEnabled(enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
-        getBtn(Command.MOVE_LOAD).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_LOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLoadEnabled(enabled);
     }
 
     private void setMountEnabled(boolean enabled) {
-        getBtn(Command.MOVE_MOUNT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_MOUNT).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
-        getBtn(Command.MOVE_UNLOAD).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnloadEnabled(enabled);
     }
 
     private void setJumpEnabled(boolean enabled) {
-        buttons.get(Command.MOVE_JUMP).setEnabled(enabled);
+        buttons.get(MoveCommand.MOVE_JUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {
-        buttons.get(Command.MOVE_SWIM).setEnabled(enabled);
+        buttons.get(MoveCommand.MOVE_SWIM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveSwimEnabled(enabled);
     }
 
     private void setBackUpEnabled(boolean enabled) {
-        buttons.get(Command.MOVE_BACK_UP).setEnabled(enabled);
+        buttons.get(MoveCommand.MOVE_BACK_UP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveBackUpEnabled(enabled);
     }
 
     private void setChargeEnabled(boolean enabled) {
-        getBtn(Command.MOVE_CHARGE).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_CHARGE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveChargeEnabled(enabled);
     }
 
     private void setDFAEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DFA).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DFA).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDFAEnabled(enabled);
     }
 
     private void setGoProneEnabled(boolean enabled) {
-        getBtn(Command.MOVE_GO_PRONE).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_GO_PRONE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveGoProneEnabled(enabled);
     }
 
     private void setFleeEnabled(boolean enabled) {
-        getBtn(Command.MOVE_FLEE).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_FLEE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveFleeEnabled(enabled);
     }
 
     private void setFlyOffEnabled(boolean enabled) {
-        getBtn(Command.MOVE_FLY_OFF).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_FLY_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);
     }
 
     private void setEjectEnabled(boolean enabled) {
-        getBtn(Command.MOVE_EJECT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_EJECT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEjectEnabled(enabled);
     }
 
     private void setUnjamEnabled(boolean enabled) {
-        getBtn(Command.MOVE_UNJAM).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_UNJAM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnjamEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled, boolean state) {
         if (state) {
-            getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
+            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(Messages
                     .getString("MovementDisplay.butSearchlightOff")); //$NON-NLS-1$
         } else {
-            getBtn(Command.MOVE_SEARCHLIGHT).setText(Messages
+            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(Messages
                     .getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
         }
-        getBtn(Command.MOVE_SEARCHLIGHT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
     }
 
     private void setHullDownEnabled(boolean enabled) {
-        getBtn(Command.MOVE_HULL_DOWN).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_HULL_DOWN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveHullDownEnabled(enabled);
     }
 
     private void setClearEnabled(boolean enabled) {
-        getBtn(Command.MOVE_CLEAR).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_CLEAR).setEnabled(enabled);
         clientgui.getMenuBar().setMoveClearEnabled(enabled);
     }
 
     private void setGetUpEnabled(boolean enabled) {
-        getBtn(Command.MOVE_GET_UP).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_GET_UP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveGetUpEnabled(enabled);
     }
 
     private void setRaiseEnabled(boolean enabled) {
-        getBtn(Command.MOVE_RAISE_ELEVATION).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_RAISE_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRaiseEnabled(enabled);
     }
 
     private void setLowerEnabled(boolean enabled) {
-        getBtn(Command.MOVE_LOWER_ELEVATION).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_LOWER_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLowerEnabled(enabled);
     }
 
     private void setRecklessEnabled(boolean enabled) {
-        getBtn(Command.MOVE_RECKLESS).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_RECKLESS).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecklessEnabled(enabled);
     }
 
     private void setAccEnabled(boolean enabled) {
-        getBtn(Command.MOVE_ACC).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_ACC).setEnabled(enabled);
         clientgui.getMenuBar().setMoveAccEnabled(enabled);
     }
 
     private void setDecEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DEC).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DEC).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDecEnabled(enabled);
     }
 
     private void setAccNEnabled(boolean enabled) {
-        getBtn(Command.MOVE_ACCN).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_ACCN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveAccNEnabled(enabled);
     }
 
     private void setDecNEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DECN).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DECN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDecNEnabled(enabled);
     }
 
     private void setEvadeEnabled(boolean enabled) {
-        getBtn(Command.MOVE_EVADE).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_EVADE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
     }
 
     private void setShutdownEnabled(boolean enabled) {
-        getBtn(Command.MOVE_SHUTDOWN).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_SHUTDOWN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveShutdownEnabled(enabled);
     }
 
     private void setStartupEnabled(boolean enabled) {
-        getBtn(Command.MOVE_STARTUP).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_STARTUP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveStartupEnabled(enabled);
     }
 
     private void setSelfDestructEnabled(boolean enabled) {
-        getBtn(Command.MOVE_SELF_DESTRUCT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_SELF_DESTRUCT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveSelfDestructEnabled(enabled);
     }
 
@@ -4369,102 +4388,102 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {
-        getBtn(Command.MOVE_EVADE_AERO).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_EVADE_AERO).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeAeroEnabled(enabled);
     }
 
     private void setRollEnabled(boolean enabled) {
-        getBtn(Command.MOVE_ROLL).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_ROLL).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRollEnabled(enabled);
     }
 
     private void setLaunchEnabled(boolean enabled) {
-        getBtn(Command.MOVE_LAUNCH).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
     }
 
     private void setDockEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DOCK).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DOCK).setEnabled(enabled);
         clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
     }
 
     private void setRecoverEnabled(boolean enabled) {
-        getBtn(Command.MOVE_RECOVER).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_RECOVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
     }
 
     private void setDropEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DROP).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DROP).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveDropEnabled(enabled);
     }
 
     private void setJoinEnabled(boolean enabled) {
-        getBtn(Command.MOVE_JOIN).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_JOIN).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJoinEnabled(enabled);
     }
 
     private void setDumpEnabled(boolean enabled) {
-        getBtn(Command.MOVE_DUMP).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_DUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveDumpEnabled(enabled);
     }
 
     private void setRamEnabled(boolean enabled) {
-        getBtn(Command.MOVE_RAM).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_RAM).setEnabled(enabled);
         clientgui.getMenuBar().setMoveRamEnabled(enabled);
     }
 
     private void setHoverEnabled(boolean enabled) {
-        getBtn(Command.MOVE_HOVER).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_HOVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveHoverEnabled(enabled);
     }
 
     private void setTakeOffEnabled(boolean enabled) {
-        getBtn(Command.MOVE_TAKE_OFF).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_TAKE_OFF).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveTakeOffEnabled(enabled);
     }
 
     private void setVTakeOffEnabled(boolean enabled) {
-        getBtn(Command.MOVE_VERT_TAKE_OFF).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_VERT_TAKE_OFF).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
     }
 
     private void setLandEnabled(boolean enabled) {
-        getBtn(Command.MOVE_LAND).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_LAND).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveLandEnabled(enabled);
     }
 
     private void setVLandEnabled(boolean enabled) {
-        getBtn(Command.MOVE_VERT_LAND).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_VERT_LAND).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveVLandEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {
-        getBtn(Command.MOVE_MANEUVER).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_MANEUVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveManeuverEnabled(enabled);
     }
 
     private void setTurnLeftEnabled(boolean enabled) {
-        getBtn(Command.MOVE_TURN_LEFT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_TURN_LEFT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnLeftEnabled(enabled);
     }
 
     private void setTurnRightEnabled(boolean enabled) {
-        getBtn(Command.MOVE_TURN_RIGHT).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_TURN_RIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnRightEnabled(enabled);
     }
 
     private void setThrustEnabled(boolean enabled) {
-        getBtn(Command.MOVE_THRUST).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_THRUST).setEnabled(enabled);
         clientgui.getMenuBar().setMoveThrustEnabled(enabled);
     }
 
     private void setYawEnabled(boolean enabled) {
-        getBtn(Command.MOVE_YAW).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_YAW).setEnabled(enabled);
         clientgui.getMenuBar().setMoveYawEnabled(enabled);
     }
 
     private void setEndOverEnabled(boolean enabled) {
-        getBtn(Command.MOVE_END_OVER).setEnabled(enabled);
+        getBtn(MoveCommand.MOVE_END_OVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
     }
 

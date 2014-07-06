@@ -200,7 +200,7 @@ public class MapMenu extends JPopupMenu {
             // Traitor Command
             JMenuItem item = new JMenuItem(Messages
                     .getString("MovementDisplay.Traitor")); //$NON-NLS-1$
-            item.setActionCommand(MovementDisplay.Command.MOVE_TRAITOR.getCmd());   
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TRAITOR.getCmd());   
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -261,7 +261,7 @@ public class MapMenu extends JPopupMenu {
         if (!client.getGame().getEntities(coords).hasMoreElements()) {
             return null;
         }
-        item.setActionCommand(MovementDisplay.Command.MOVE_CHARGE.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CHARGE.getCmd());
         item.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -278,7 +278,7 @@ public class MapMenu extends JPopupMenu {
         if (!client.getGame().getEntities(coords).hasMoreElements()) {
             return null;
         }
-        item.setActionCommand(MovementDisplay.Command.MOVE_DFA.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_DFA.getCmd());
         item.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -427,7 +427,7 @@ public class MapMenu extends JPopupMenu {
         if (entityInHex) {
             JMenuItem item = new JMenuItem(Messages
                     .getString("MovementDisplay.MoveEnvelope")); //$NON-NLS-1$
-            item.setActionCommand(MovementDisplay.Command.MOVE_ENVELOPE.getCmd());   
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_ENVELOPE.getCmd());   
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -442,7 +442,7 @@ public class MapMenu extends JPopupMenu {
             
             item = new JMenuItem(Messages.getString("MovementDisplay.butWalk"));
 
-            item.setActionCommand(MovementDisplay.Command.MOVE_WALK.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK.getCmd());
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -456,7 +456,7 @@ public class MapMenu extends JPopupMenu {
 
             item = new JMenuItem(Messages.getString("MovementDisplay.butBackup"));
 
-            item.setActionCommand(MovementDisplay.Command.MOVE_BACK_UP.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd());
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -472,7 +472,7 @@ public class MapMenu extends JPopupMenu {
             if (myEntity.getJumpMP() > 0) {
                 item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_JUMP.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -488,7 +488,7 @@ public class MapMenu extends JPopupMenu {
             if (game.getOptions().booleanOption("tacops_evade")) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_EVADE.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -506,7 +506,7 @@ public class MapMenu extends JPopupMenu {
                     && !game.getOptions().booleanOption("no_night_move_pen")) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_RECKLESS.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -523,7 +523,7 @@ public class MapMenu extends JPopupMenu {
 
             JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butWalk"));
 
-            item.setActionCommand(MovementDisplay.Command.MOVE_WALK.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK.getCmd());
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -538,7 +538,7 @@ public class MapMenu extends JPopupMenu {
 
             item = new JMenuItem(Messages.getString("MovementDisplay.butBackup"));
 
-            item.setActionCommand(MovementDisplay.Command.MOVE_BACK_UP.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd());
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -554,7 +554,7 @@ public class MapMenu extends JPopupMenu {
             if (myEntity.getJumpMP() > 0) {
                 item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_JUMP.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -570,7 +570,7 @@ public class MapMenu extends JPopupMenu {
             if (game.getOptions().booleanOption("tacops_evade")) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_EVADE.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -588,7 +588,7 @@ public class MapMenu extends JPopupMenu {
                     && !game.getOptions().booleanOption("no_night_move_pen")) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
 
-                item.setActionCommand(MovementDisplay.Command.MOVE_RECKLESS.getCmd());
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         try {
@@ -610,7 +610,7 @@ public class MapMenu extends JPopupMenu {
 
         JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butTurnRight"));
 
-        item.setActionCommand(MovementDisplay.Command.MOVE_TURN_RIGHT.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT.getCmd());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -624,7 +624,7 @@ public class MapMenu extends JPopupMenu {
 
         item = new JMenuItem(Messages.getString("MovementDisplay.butTurnLeft"));
 
-        item.setActionCommand(MovementDisplay.Command.MOVE_TURN_LEFT.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_LEFT.getCmd());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -638,7 +638,7 @@ public class MapMenu extends JPopupMenu {
 
         item = new JMenuItem("About Face");
 
-        item.setActionCommand(MovementDisplay.Command.MOVE_TURN_RIGHT.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT.getCmd());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -929,9 +929,9 @@ public class MapMenu extends JPopupMenu {
 
         if (carefulStand) {
             item.setText("Careful Stand");
-            item.setActionCommand(MovementDisplay.Command.MOVE_CAREFUL_STAND.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CAREFUL_STAND.getCmd());
         } else {
-            item.setActionCommand(MovementDisplay.Command.MOVE_GET_UP.getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GET_UP.getCmd());
         }
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -949,7 +949,7 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createHullDownJMenuItem() {
         JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butHullDown"));
 
-        item.setActionCommand(MovementDisplay.Command.MOVE_HULL_DOWN.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_HULL_DOWN.getCmd());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -966,7 +966,7 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createProneJMenuItem() {
         JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butDown"));
 
-        item.setActionCommand(MovementDisplay.Command.MOVE_GO_PRONE.getCmd());
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GO_PRONE.getCmd());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {

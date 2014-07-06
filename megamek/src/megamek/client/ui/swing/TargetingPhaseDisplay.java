@@ -20,6 +20,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -86,7 +87,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * @author walczak
      *
      */
-    public static enum Command {
+    public static enum TargetingCommand implements PhaseCommand {
     	FIRE_NEXT("fireNext"),
     	FIRE_TWIST("fireTwist"),
     	FIRE_FIRE("fireFire"),
@@ -98,7 +99,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     	FIRE_CANCEL("fireCancel");
     
 	    String cmd;
-	    private Command(String c){
+	       
+        /**
+         * Priority that determines this buttons order
+         */
+       public int priority;
+       
+	    private TargetingCommand(String c){
 	    	cmd = c;
 	    }
 	    
@@ -106,13 +113,21 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 	    	return cmd;
 	    }
 	    
+        public int getPriority() {
+            return priority;
+        }
+        
+        public void setPriority(int p) {
+            priority = p;
+        }
+	    
 	    public String toString(){
-	    	return cmd;
+	        return Messages.getString("TargetingPhaseDisplay." + getCmd());
 	    }
     }
 
     // buttons
-    protected Hashtable<Command,MegamekButton> buttons;
+    protected Hashtable<TargetingCommand,MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -149,9 +164,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("TargetingPhaseDisplay.waitingForTargetingPhase")); //$NON-NLS-1$
 
-        buttons = new Hashtable<Command, MegamekButton>(
-				(int) (Command.values().length * 1.25 + 0.5));
-		for (Command cmd : Command.values()) {
+        buttons = new Hashtable<TargetingCommand, MegamekButton>(
+				(int) (TargetingCommand.values().length * 1.25 + 0.5));
+		for (TargetingCommand cmd : TargetingCommand.values()) {
 			String title = Messages.getString("TargetingPhaseDisplay."
 					+ cmd.getCmd());
 			MegamekButton newButton = new MegamekButton(title,"PhaseDisplayButton");
@@ -242,9 +257,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
-    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
-        for (Command cmd : Command.values()){
-        	if (cmd == Command.FIRE_CANCEL){
+    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
+    	TargetingCommand commands[] = TargetingCommand.values();
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (TargetingCommand cmd : commands){
+        	if (cmd == TargetingCommand.FIRE_CANCEL){
         		continue;
         	}
             buttonList.add(buttons.get(cmd));
@@ -1048,23 +1066,23 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             // Display the game options dialog.
             clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
-        } else if (ev.getActionCommand().equals(Command.FIRE_FIRE.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FIRE.getCmd())) {
             fire();
-        } else if (ev.getActionCommand().equals(Command.FIRE_SKIP.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(Command.FIRE_TWIST.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_TWIST.getCmd())) {
             twisting = true;
-        } else if (ev.getActionCommand().equals(Command.FIRE_NEXT.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(Command.FIRE_NEXT_TARG.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT_TARG.getCmd())) {
             jumpToNextTarget();
-        } else if (ev.getActionCommand().equals(Command.FIRE_FLIP_ARMS.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
-        } else if (ev.getActionCommand().equals(Command.FIRE_MODE.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_MODE.getCmd())) {
             changeMode();
-        } else if (ev.getActionCommand().equals(Command.FIRE_CANCEL.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CANCEL.getCmd())) {
             clear();
-        } else if (ev.getActionCommand().equals(Command.FIRE_SEARCHLIGHT.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
         }
     }
@@ -1095,42 +1113,42 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void setFireEnabled(boolean enabled) {
-        buttons.get(Command.FIRE_FIRE).setEnabled(enabled);
+        buttons.get(TargetingCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setFireFireEnabled(enabled);
     }
 
     private void setTwistEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_TWIST).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setFireTwistEnabled(enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_SKIP).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_SKIP).setEnabled(enabled);
         clientgui.getMenuBar().setFireSkipEnabled(enabled);
     }
 
     private void setFlipArmsEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_FLIP_ARMS).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_NEXT).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_SEARCHLIGHT).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 
     private void setFireModeEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_MODE).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
 
     private void setNextTargetEnabled(boolean enabled) {
-    	buttons.get(Command.FIRE_NEXT_TARG).setEnabled(enabled);
+    	buttons.get(TargetingCommand.FIRE_NEXT_TARG).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
     }
 

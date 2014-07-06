@@ -21,6 +21,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -454,7 +455,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected ArrayList<MegamekButton> getButtonList(){                
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>(); 
         int i = 0;
-        for (FiringCommand cmd : FiringCommand.values()){
+        FiringCommand commands[] = FiringCommand.values();
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (FiringCommand cmd : commands){
         	if (cmd == FiringCommand.FIRE_NEXT || cmd == FiringCommand.FIRE_MORE || 
         			cmd == FiringCommand.FIRE_CANCEL){
         		continue;

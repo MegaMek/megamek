@@ -61,6 +61,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.common.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -186,12 +187,24 @@ public class CommonSettingsDialog extends ClientDialog implements
      * isRepeatable flag.
      */
     private Map<String, JCheckBox> cmdRepeatableMap;
+    
+    private ClientGUI clientgui = null;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru" }; //$NON-NLS-1$
 
+    /**
+     * Standard constructor. There is no default constructor for this class.
+     *
+     * @param owner - the <code>Frame</code> that owns this dialog.
+     */
+    public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
+        this(owner);
+        clientgui = cg;
+    }
+    
     /**
      * Standard constructor. There is no default constructor for this class.
      *
@@ -686,6 +699,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
         
         // Button Order
+        // Movement
         boolean buttonOrderChanged = false;
         for (int i = 0; i < movePhaseCommands.getSize(); i++) {
             StatusBarPhaseDisplay.PhaseCommand cmd = movePhaseCommands.get(i);
@@ -696,8 +710,68 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
         
         // Need to do stuff if the corder changes.
-        if (buttonOrderChanged) {
-            
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_MOVEMENT);
+        }
+        
+        // Deploy
+        buttonOrderChanged = false;
+        for (int i = 0; i < deployPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = deployPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the corder changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_DEPLOYMENT);
+        }        
+        
+        // Firing
+        buttonOrderChanged = false;
+        for (int i = 0; i < firingPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = firingPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the corder changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_FIRING);
+        }
+        
+        // Physical
+        buttonOrderChanged = false;
+        for (int i = 0; i < physicalPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = physicalPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the corder changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_PHYSICAL);
+        }
+        
+        // Targeting
+        buttonOrderChanged = false;
+        for (int i = 0; i < targetingPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = targetingPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the corder changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
         }
         
 

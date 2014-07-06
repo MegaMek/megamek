@@ -200,6 +200,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
+    
+    private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
      * The <code>CardLayout</code> of the secondary display area.
@@ -570,7 +572,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void showSettings() {
         // Do we need to create the "settings" dialog?
         if (setdlg == null) {
-            setdlg = new CommonSettingsDialog(frame);
+            setdlg = new CommonSettingsDialog(frame, this);
         }
 
         // Show the settings dialog.
@@ -978,6 +980,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
+    public void updateButtonPanel(IGame.Phase phase) {
+        if ((currPhaseDisplay != null) 
+                && client.getGame().getPhase().equals(phase)) {
+            currPhaseDisplay.setupButtonPanel();
+        }        
+    }
+    
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -1012,6 +1021,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
@@ -1022,6 +1032,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
@@ -1032,6 +1043,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_TARGETING:
@@ -1043,6 +1055,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_MOVEMENT:
@@ -1053,6 +1066,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_OFFBOARD:
@@ -1064,6 +1078,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_FIRING:
@@ -1074,6 +1089,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_PHYSICAL:
@@ -1084,6 +1100,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_INITIATIVE_REPORT:

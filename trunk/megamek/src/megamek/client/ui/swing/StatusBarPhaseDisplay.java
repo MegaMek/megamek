@@ -153,7 +153,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * display is defined in <code>buttonsPerGroup</code> and which group of
      * buttons will be displayed is set by <code>currentButtonGroup</code>.
      */
-    protected void setupButtonPanel() {
+    public void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridBagLayout());
         

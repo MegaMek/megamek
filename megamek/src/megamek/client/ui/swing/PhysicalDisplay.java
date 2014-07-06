@@ -20,6 +20,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * @author walczak
      *
      */
-    public static enum Command {
+    public static enum PhysicalCommand implements PhaseCommand {
     	PHYSICAL_NEXT("next"),
     	PHYSICAL_PUNCH("punch"),
     	PHYSICAL_KICK("kick"),    
@@ -104,7 +105,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     	PHYSICAL_MORE("more");	    	
     
 	    String cmd;
-	    private Command(String c){
+	    
+        /**
+         * Priority that determines this buttons order
+         */
+       public int priority;
+	    
+	    private PhysicalCommand(String c){
 	    	cmd = c;
 	    }
 	    
@@ -112,13 +119,21 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 	    	return cmd;
 	    }
 	    
+        public int getPriority() {
+            return priority;
+        }
+        
+        public void setPriority(int p) {
+            priority = p;
+        }	    
+	    
 	    public String toString(){
-	    	return cmd;
+	        return Messages.getString("PhysicalDisplay." + getCmd());
 	    }
     }
 
     // buttons
-    protected Hashtable<Command,MegamekButton> buttons;
+    protected Hashtable<PhysicalCommand,MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -145,9 +160,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                
         attacks = new Vector<EntityAction>();
 
-        buttons = new Hashtable<Command, MegamekButton>(
-				(int) (Command.values().length * 1.25 + 0.5));
-		for (Command cmd : Command.values()) {
+        buttons = new Hashtable<PhysicalCommand, MegamekButton>(
+				(int) (PhysicalCommand.values().length * 1.25 + 0.5));
+		for (PhysicalCommand cmd : PhysicalCommand.values()) {
 			String title = Messages.getString("PhysicalDisplay."
 					+ cmd.getCmd());
 			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
@@ -172,12 +187,16 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     protected ArrayList<MegamekButton> getButtonList(){                
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>(); 
         int i = 0;
-        for (Command cmd : Command.values()){
-        	if (cmd == Command.PHYSICAL_NEXT || cmd == Command.PHYSICAL_MORE){
+        PhysicalCommand commands[] = PhysicalCommand.values();
+        CommandComparator comparator = new CommandComparator();
+        Arrays.sort(commands, comparator);
+        for (PhysicalCommand cmd : commands){
+        	if (cmd == PhysicalCommand.PHYSICAL_NEXT 
+        	        || cmd == PhysicalCommand.PHYSICAL_MORE){
         		continue;
         	}
         	if (i % buttonsPerGroup == 0){
-        		buttonList.add(buttons.get(Command.PHYSICAL_NEXT));
+        		buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_NEXT));
         		i++;
         	}
         	
@@ -185,17 +204,17 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             i++;
             
             if ((i+1) % buttonsPerGroup == 0){
-        		buttonList.add(buttons.get(Command.PHYSICAL_MORE));
+        		buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
         		i++;
         	}
         }
         if (!buttonList.get(i-1).getActionCommand().
-        		equals(Command.PHYSICAL_MORE.getCmd())){
+        		equals(PhysicalCommand.PHYSICAL_MORE.getCmd())){
 	        while ((i+1) % buttonsPerGroup != 0){
 	        	buttonList.add(null);
 	        	i++;	        	
 	        }
-	        buttonList.add(buttons.get(Command.PHYSICAL_MORE));
+	        buttonList.add(buttons.get(PhysicalCommand.PHYSICAL_MORE));
         }
         return buttonList;
     }
@@ -256,7 +275,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clubLabel == null) {
             clubLabel = Messages.getString("PhysicalDisplay.Club"); //$NON-NLS-1$
         }
-        buttons.get(Command.PHYSICAL_CLUB).setText(clubLabel);
+        buttons.get(PhysicalCommand.PHYSICAL_CLUB).setText(clubLabel);
 
         if ((entity instanceof Mech)
                 && !entity.isProne()
@@ -283,7 +302,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             setNextEnabled(true);
             butDone.setEnabled(true);
-            buttons.get(Command.PHYSICAL_MORE).setEnabled(true);
+            buttons.get(PhysicalCommand.PHYSICAL_MORE).setEnabled(true);
         }
         clientgui.getBoardView().select(null);
     }
@@ -1515,37 +1534,37 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             // odd...
             return;
         }
-        if (ev.getActionCommand().equals(Command.PHYSICAL_PUNCH.getCmd())) {
+        if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PUNCH.getCmd())) {
             punch();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_KICK.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_KICK.getCmd())) {
             kick();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_PUSH.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PUSH.getCmd())) {
             push();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_TRIP.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_TRIP.getCmd())) {
             trip();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_GRAPPLE.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_GRAPPLE.getCmd())) {
             doGrapple();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_JUMPJET.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_JUMPJET.getCmd())) {
             jumpjetatt();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_CLUB.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_CLUB.getCmd())) {
             club();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_BRUSH_OFF.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_BRUSH_OFF.getCmd())) {
             brush();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_THRASH.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_THRASH.getCmd())) {
             thrash();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_DODGE.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_DODGE.getCmd())) {
             dodge();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_PROTO.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PROTO.getCmd())) {
             proto();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_EXPLOSIVES.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_EXPLOSIVES.getCmd())) {
             explosives();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_VIBRO.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawatt();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_NEXT.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_SEARCHLIGHT.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd())) {
             doSearchlight();
-        } else if (ev.getActionCommand().equals(Command.PHYSICAL_MORE.getCmd())) {
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_MORE.getCmd())) {
         	currentButtonGroup++;
         	currentButtonGroup %= numButtonGroups;
             setupButtonPanel();
@@ -1584,74 +1603,74 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     }
 
     public void setThrashEnabled(boolean enabled) {
-        buttons.get(Command.PHYSICAL_THRASH).setEnabled(enabled);
+        buttons.get(PhysicalCommand.PHYSICAL_THRASH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalThrashEnabled(enabled);
     }
 
     public void setPunchEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_PUNCH).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_PUNCH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPunchEnabled(enabled);
     }
 
     public void setKickEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_KICK).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_KICK).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalKickEnabled(enabled);
     }
 
     public void setPushEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_PUSH).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_PUSH).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPushEnabled(enabled);
     }
 
     public void setTripEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_TRIP).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_TRIP).setEnabled(enabled);
     }
 
     public void setGrappleEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_GRAPPLE).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_GRAPPLE).setEnabled(enabled);
     }
 
     public void setJumpJetEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_JUMPJET).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_JUMPJET).setEnabled(enabled);
     }
 
     public void setClubEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_CLUB).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_CLUB).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalClubEnabled(enabled);
     }
 
     public void setBrushOffEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_BRUSH_OFF).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_BRUSH_OFF).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalBrushOffEnabled(enabled);
     }
 
     public void setDodgeEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_DODGE).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_DODGE).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
     }
 
     public void setProtoEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_PROTO).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_PROTO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
     }
 
     public void setVibroEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_VIBRO).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_VIBRO).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalVibroEnabled(enabled);
     }
 
     public void setExplosivesEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setEnabled(enabled);
         // clientgui.getMenuBar().setExplosivesEnabled(enabled);
     }
 
     public void setNextEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_NEXT).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalNextEnabled(enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
-    	buttons.get(Command.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
+    	buttons.get(PhysicalCommand.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 

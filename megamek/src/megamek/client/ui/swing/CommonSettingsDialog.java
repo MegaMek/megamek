@@ -16,6 +16,8 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -36,6 +39,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,9 +53,11 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -61,6 +67,45 @@ import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
         ActionListener, ItemListener, FocusListener, ListSelectionListener {
+    
+    private class PhaseCommandListMouseAdapter extends MouseInputAdapter {
+        private boolean mouseDragging = false;
+        private int dragSourceIndex;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                Object src = e.getSource();
+                if (src instanceof JList) {
+                    dragSourceIndex = ((JList)src).getSelectedIndex();
+                    mouseDragging = true;
+                }                
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            mouseDragging = false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Object src = e.getSource();
+            if (mouseDragging && (src instanceof JList)) {
+                JList srcList = (JList)src;
+                DefaultListModel srcModel = (DefaultListModel)srcList.getModel();
+                int currentIndex = srcList.locationToIndex(e.getPoint());
+                if (currentIndex != dragSourceIndex) {
+                    int dragTargetIndex = srcList.getSelectedIndex();
+                    Object dragElement = srcModel.get(dragSourceIndex);
+                    srcModel.remove(dragSourceIndex);
+                    srcModel.add(dragTargetIndex, dragElement);
+                    dragSourceIndex = currentIndex;
+                }
+            }
+        }
+    }
+    
     /**
      *
      */
@@ -109,10 +154,18 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
 
+    // Key Binds
     private JList<String> keys;
     private int keysIndex = 0;
     private JTextField value;
 
+    // Button order
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> movePhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> deployPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> firingPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> physicalPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
+    
     private JComboBox<String> tileSetChoice;
     private File[] tileSets;
 
@@ -162,6 +215,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
         panTabs.add("Key Binds", keyBindScrollPane);
 
+        JPanel buttonOrderPanel = getButtonOrderPanel();
+        JScrollPane buttonOrderScrollPane = new JScrollPane(buttonOrderPanel);
+        panTabs.add("Button Order", buttonOrderScrollPane);
+        
         JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
         JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
         panTabs.add("Advanced", advancedSettingsPane);
@@ -627,6 +684,22 @@ public class CommonSettingsDialog extends ClientDialog implements
         if (bindsChanged){
         	KeyBindParser.writeKeyBindings();
         }
+        
+        // Button Order
+        boolean buttonOrderChanged = false;
+        for (int i = 0; i < movePhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = movePhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the corder changes.
+        if (buttonOrderChanged) {
+            
+        }
+        
 
         setVisible(false);
     }
@@ -854,8 +927,116 @@ public class CommonSettingsDialog extends ClientDialog implements
     		cmdRepeatableMap.put(kcb.cmd,repeatable);
     		keyBinds.add(repeatable);
     	}
-
     	return keyBinds;
+    }
+    
+    /**
+     * Creates a panel with a list boxes that allow the button order to be 
+     * changed.
+     *
+     * @return
+     */
+    private JPanel getButtonOrderPanel(){
+        JPanel buttonOrderPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.weightx = gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JTabbedPane phasePane = new JTabbedPane();
+        buttonOrderPanel.add(phasePane, gbc);
+        
+        StatusBarPhaseDisplay.PhaseCommand commands[];
+        StatusBarPhaseDisplay.CommandComparator cmdComp = 
+                new StatusBarPhaseDisplay.CommandComparator(); 
+        PhaseCommandListMouseAdapter cmdMouseAdaptor = 
+                new PhaseCommandListMouseAdapter();
+
+        // MovementPhaseDisplay        
+        JPanel movementPanel = new JPanel();
+        movePhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = MovementDisplay.MoveCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            movePhaseCommands.addElement(cmd);
+        }
+        JList moveList = new JList(movePhaseCommands);
+        moveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        moveList.addMouseListener(cmdMouseAdaptor);
+        moveList.addMouseMotionListener(cmdMouseAdaptor);
+        movementPanel.add(moveList);
+        JScrollPane movementScrollPane = new JScrollPane(movementPanel);
+        phasePane.add("Movement", movementScrollPane);
+        
+        // DeploymentPhaseDisplay
+        JPanel deployPanel = new JPanel();
+        deployPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = DeploymentDisplay.DeployCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            deployPhaseCommands.addElement(cmd);
+        }
+        JList deployList = new JList(deployPhaseCommands);
+        deployList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        deployList.addMouseListener(cmdMouseAdaptor);
+        deployList.addMouseMotionListener(cmdMouseAdaptor);
+        deployPanel.add(deployList);
+        JScrollPane deployScrollPane = new JScrollPane(deployPanel);
+        phasePane.add("Deployment", deployScrollPane);
+        
+        // FiringPhaseDisplay
+        JPanel firingPanel = new JPanel();
+        firingPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = FiringDisplay.FiringCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            firingPhaseCommands.addElement(cmd);
+        }
+        JList firingList = new JList(firingPhaseCommands);
+        firingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        firingList.addMouseListener(cmdMouseAdaptor);
+        firingList.addMouseMotionListener(cmdMouseAdaptor);
+        firingPanel.add(firingList);
+        JScrollPane firingScrollPane = new JScrollPane(firingPanel);
+        phasePane.add("Firing", firingScrollPane);
+        
+        // PhysicalPhaseDisplay
+        JPanel physicalPanel = new JPanel();
+        physicalPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = PhysicalDisplay.PhysicalCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            physicalPhaseCommands.addElement(cmd);
+        }
+        JList physicalList = new JList(physicalPhaseCommands);
+        physicalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        physicalList.addMouseListener(cmdMouseAdaptor);
+        physicalList.addMouseMotionListener(cmdMouseAdaptor);
+        physicalPanel.add(physicalList);
+        JScrollPane physicalScrollPane = new JScrollPane(physicalPanel);
+        phasePane.add("Physical", physicalScrollPane);          
+        
+        // TargetingPhaseDisplay
+        JPanel targetingPanel = new JPanel();
+        targetingPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = TargetingPhaseDisplay.TargetingCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            targetingPhaseCommands.addElement(cmd);
+        }
+        JList targetingList = new JList(targetingPhaseCommands);
+        targetingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        targetingList.addMouseListener(cmdMouseAdaptor);
+        targetingList.addMouseMotionListener(cmdMouseAdaptor);
+        targetingPanel.add(targetingList);
+        JScrollPane targetingScrollPane = new JScrollPane(targetingPanel);
+        phasePane.add("Targeting", targetingScrollPane);            
+        
+        return buttonOrderPanel;
     }
 
     private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {

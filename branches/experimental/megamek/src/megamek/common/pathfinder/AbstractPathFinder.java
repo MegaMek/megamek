@@ -162,29 +162,29 @@ public class AbstractPathFinder<N, C, E> {
         private long start;
         private long stop;
         final int timeout;
-    
+
         public boolean timeoutEngaged;
-    
+
         public StopConditionTimeout(int timeoutMillis) {
             this.timeout = timeoutMillis;
             restart();
         }
-    
+
         public E getLastEdge() {
             return lastEdge;
         }
-    
+
         public int getTimeout() {
             return timeout;
         }
-    
+
         public void restart() {
             start = System.currentTimeMillis();
             stop = start + timeout;
             lastEdge = null;
             timeoutEngaged = false;
         }
-    
+
         @Override
         public boolean shouldStop(E e) {
             if (System.currentTimeMillis() > stop) {
@@ -194,11 +194,11 @@ public class AbstractPathFinder<N, C, E> {
             }
             return false;
         }
-    
+
         public boolean wasTimeoutEngaged() {
             return timeoutEngaged;
         }
-    
+
     }
 
     private AdjacencyMap<E> adjacencyMap;
@@ -215,16 +215,15 @@ public class AbstractPathFinder<N, C, E> {
 
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
-
     /**
-     * @param edgeDestinationMap functional interface for retrieving destination node
-     *            of an edge.
+     * @param edgeDestinationMap functional interface for retrieving destination
+     *            node of an edge.
      * @param edgeRelaxer functional interface for calculating relaxed cost.
-     * @param edgeAdjacencyMap functional interface for retrieving
-     *            neighbouring edges.
-     * @param edgeComparator implementation of path comparator. Each path is defined
-     *            by its last edge. <i>(path:= edge concatenated with best path
-     *            to the source of the edge)</i>
+     * @param edgeAdjacencyMap functional interface for retrieving neighbouring
+     *            edges.
+     * @param edgeComparator implementation of path comparator. Each path is
+     *            defined by its last edge. <i>(path:= edge concatenated with
+     *            best path to the source of the edge)</i>
      */
     public AbstractPathFinder(DestinationMap<N, E> edgeDestinationMap, EdgeRelaxer<C, E> edgeRelaxer,
             AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
@@ -274,31 +273,46 @@ public class AbstractPathFinder<N, C, E> {
      * @param startingEdges a collection of possible starting edges.
      */
     public void run(Collection<E> startingEdges) {
-        if (candidates.size() > 0) {
-            candidates.clear();
-            pathsCosts.clear();
-        }
-        candidates.addAll(startingEdges);
-        while (!candidates.isEmpty()) {
-            // remove the best candidate from the queue
-            E e = candidates.remove();
-            // get the destination node
-            N node = destinationMap.getDestination(e);
-            C cost = pathsCosts.get(node);
-            // check if the candidate edge gives better cost
-            C newCost = edgeRelaxer.doRelax(cost, e, comparator);
-            if (newCost != null) {
-                // we have a better path to this node, so we can update it
-                pathsCosts.put(node, newCost);
-                Collection<E> neighbours = adjacencyMap.getAdjacent(e);
-                Collection<E> filteredNeighbours = neighbours;
-                for (Filter<E> f : filters) {
-                    filteredNeighbours = f.doFilter(filteredNeighbours);
-                }
-                candidates.addAll(filteredNeighbours);
+        try {
+            if (candidates.size() > 0) {
+                candidates.clear();
+                pathsCosts.clear();
             }
-            if (stopCondition.shouldStop(e))
-                break;
+            candidates.addAll(startingEdges);
+            while (!candidates.isEmpty()) {
+                // remove the best candidate from the queue
+                E e = candidates.remove();
+                // get the destination node
+                N node = destinationMap.getDestination(e);
+                C cost = pathsCosts.get(node);
+                // check if the candidate edge gives better cost
+                C newCost = edgeRelaxer.doRelax(cost, e, comparator);
+                if (newCost != null) {
+                    // we have a better path to this node, so we can update it
+                    pathsCosts.put(node, newCost);
+                    Collection<E> neighbours = adjacencyMap.getAdjacent(e);
+                    Collection<E> filteredNeighbours = neighbours;
+                    for (Filter<E> f : filters) {
+                        filteredNeighbours = f.doFilter(filteredNeighbours);
+                    }
+                    candidates.addAll(filteredNeighbours);
+                }
+                if (stopCondition.shouldStop(e))
+                    break;
+            }
+        } catch (OutOfMemoryError e) {
+            /*
+             * Some implementations can run out of memory if they consider and
+             * save in memory too many paths. Usually we can recover from this
+             * by ending prematurely while preserving already computed results.
+             */
+
+            candidates = null;
+            candidates = new PriorityQueue<E>(100, comparator);
+            e.printStackTrace();
+            System.err.println("Not enough memory to analyse all options."//$NON-NLS-1$
+                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+                    + "increase java memory limit.");//$NON-NLS-1$
         }
     }
 
@@ -368,7 +382,6 @@ public class AbstractPathFinder<N, C, E> {
             throw new NullPointerException();
         this.destinationMap = nodeFactory;
     }
-
 
     /**
      * @see EdgeRelaxer

@@ -3,6 +3,7 @@ package megamek.common.pathfinder;
 import java.util.Comparator;
 import java.util.Map;
 
+import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.MovePath;
@@ -150,11 +151,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
         @Override
         public int compare(MovePath first, MovePath second) {
-            int firstDist = first.getMpUsed()
-                    + first.getFinalCoords().distance(destination);
-            int secondDist = second.getMpUsed()
-                    + second.getFinalCoords().distance(destination);
-            int dd = firstDist - secondDist;
+
+            int h1 = 0, h2 = 0;
+            if (!(first.getEntity() instanceof Aero)) {
+                h1 = first.getFinalCoords().distance(destination);
+                h2 = second.getFinalCoords().distance(destination);
+            } else {
+                //we cannot estimate the needed cost for aeros - maybe a facing change cost would be apropiate
+            }
+            int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
             if (dd != 0)
                 return dd;
             else
@@ -213,7 +218,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * destination. Ignores legality of the move. Stops after reaching
      * destination.
      */
-    public static ShortestPathFinder newInstanceOfGreedy(final Coords destination, final MoveStepType stepType, final IGame game) {
+    public static ShortestPathFinder newInstanceOfGreedy(final Coords destination, final MoveStepType stepType,
+            final IGame game) {
 
         final ShortestPathFinder spf =
                 new ShortestPathFinder(new ShortestPathFinder.MovePathRelaxer(),

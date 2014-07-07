@@ -81,8 +81,10 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.preference.PreferenceManager;
 
 
 public class MovementDisplay extends StatusBarPhaseDisplay {
@@ -1271,7 +1273,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 stepType= MoveStepType.FORWARDS;
                 gear = GEAR_LAND;
             }
-            LongestPathFinder lpf = new LongestPathFinder(maxMp, stepType, ce().getGame());
+
+            LongestPathFinder lpf;
+            if (ce() instanceof Aero) {
+                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce().getGame());
+            } else {
+                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
+            }
+            final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<MovePath>(timeLimit * 4));
+
             lpf.run(cmd);
             MovePath lPath = lpf.getComputedPath(dest);
             if (lPath != null)

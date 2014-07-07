@@ -11,10 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-
-
-
-
 import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -177,15 +173,15 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      */
     public static class MovePathLengthFilter extends Filter<MovePath> {
         private final int maxMP;
-    
+
         public MovePathLengthFilter(int maxMP) {
             this.maxMP = maxMP;
         }
-    
+
         @Override
         public boolean shouldStay(MovePath mp) {
             return (mp.getMpUsed() <= maxMP);
-    
+
         }
     }
 
@@ -206,14 +202,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      */
     public static class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         private final MoveStepType stepType;
-    
+
         /**
          * @param stepType
          */
         public NextStepsAdjacencyMap(MoveStepType stepType) {
             this.stepType = stepType;
         }
-    
+
         /**
          * Produces set of MovePaths by extending MovePath mp with MoveSteps.
          * The set of extending steps include {F, L, R, UP, ShL, ShR}. If
@@ -228,8 +224,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
-            List<MovePath> moves= mp.getNextMoves(stepType == MoveStepType.BACKWARDS, true);
-            if( stepType == MoveStepType.CHARGE || stepType == MoveStepType.DFA ){
+            List<MovePath> moves = mp.getNextMoves(stepType == MoveStepType.BACKWARDS, true);
+            if (stepType == MoveStepType.CHARGE || stepType == MoveStepType.DFA) {
                 moves.add(mp.clone().addStep(stepType));
             }
             return moves;
@@ -243,7 +239,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * Rest of the methods needed by AbstractPathFinder have to be passed as a
      * parameter.
      */
-    public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer, AdjacencyMap<MovePath> edgeAdjacencyMap, Comparator<MovePath> comparator,
+    public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
+            AdjacencyMap<MovePath> edgeAdjacencyMap,
+            Comparator<MovePath> comparator,
             IGame game) {
         super(new MovePathDestinationMap(),
                 edgeRelaxer,

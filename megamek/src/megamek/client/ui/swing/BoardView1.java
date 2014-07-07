@@ -326,6 +326,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     BufferedImage bvBgBuffer = null;
     ImageIcon bvBgIcon = null;
     ImageIcon scrollPaneBgIcon = null;
+    
+    private static final int FRAMES = 24;
+    private long totalTime;
+    private long averageTime;
+    private int frameCount;
+    private Font fpsFont = new Font("SansSerif", 0, 20); //$NON-NLS-1$
 
 
     /**
@@ -861,8 +867,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @Override
     public synchronized void paintComponent(Graphics g) {
-
-    	if (GUIPreferences.getInstance().getAntiAliasing()){
+        GUIPreferences guip = GUIPreferences.getInstance();
+        
+        long startTime = 0;
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
+            startTime = System.nanoTime();
+        }        
+        
+    	if (guip.getAntiAliasing()){
     		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
@@ -903,7 +915,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawHexes(g, g.getClipBounds());
 
         // draw wrecks
-        if (GUIPreferences.getInstance().getShowWrecks() && !useIsometric()) {
+        if (guip.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
         }
 
@@ -996,6 +1008,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
             disp.draw(g, rect);
+        }
+        
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
+            if (frameCount == FRAMES) {
+                averageTime = totalTime / FRAMES;
+                totalTime = 0; frameCount = 0;
+            } else {
+                totalTime += System.nanoTime() - startTime;
+                frameCount++;
+            }
+            String s = String.format("%1$5.3f", averageTime / 1000000d);
+            g.setFont(fpsFont);
+            g.setColor(Color.YELLOW);
+            g.drawString(s, g.getClipBounds().x + 5, g.getClipBounds().y + 20);
         }
     }
 

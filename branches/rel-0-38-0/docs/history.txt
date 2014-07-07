@@ -4,6 +4,7 @@ v0.38.1-dev (SVN)
 + Patch [#462]: Forcing redirected system.out and sys.err to respect flush
 + Data: New Images and some date fixes
 + Added entity attribute neverDeployed to the MUL files
++ Data: Unit Fixes and New Images.
 
 v0.38.0 (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes

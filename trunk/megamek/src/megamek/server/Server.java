@@ -7625,6 +7625,12 @@ public class Server implements Runnable {
 
                     // Is the other unit friendly and not the current entity?
                     loaded = entities.nextElement();
+                    
+                    // This should never ever happen, but just in case...
+                    if (loaded.equals(null)) {
+                        continue;
+                    }
+                    
                     if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
 
                         // The moving unit should be able to load the other

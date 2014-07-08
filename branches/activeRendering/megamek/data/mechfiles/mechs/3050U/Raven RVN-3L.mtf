@@ -1,0 +1,151 @@
+Version:1.0
+Raven
+RVN-3L
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3048
+Rules Level:2
+
+Mass:35
+Engine:210 XL Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:11 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:11
+RT Armor:11
+CT Armor:11
+HD Armor:6
+LL Armor:8
+RL Armor:8
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:5
+Narc, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+SRM 6, Right Torso
+TAG, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISNarcBeacon
+ISNarcBeacon
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Medium Laser
+Medium Laser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Ammo SRM-6 Narc-capable
+ISNarc Pods
+ISNarc Pods
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+ISTAG
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+BeagleActiveProbe
+BeagleActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

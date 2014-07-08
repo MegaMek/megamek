@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Troika
+</Name>
+
+<Model>
+CMT-7T
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+74
+52
+52
+46
+</armor>
+
+<Nose Equipment>
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+BeagleActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+Large Re-engineered Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Large Re-engineered Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Re-engineered Laser
+</Aft Equipment>
+
+<source>
+RS 3145 NT NU
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

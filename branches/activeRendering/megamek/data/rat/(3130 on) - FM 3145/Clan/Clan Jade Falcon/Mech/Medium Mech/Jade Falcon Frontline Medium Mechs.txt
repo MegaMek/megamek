@@ -1,0 +1,12 @@
+Jade Falcon Frontline Medium Mechs
+Hunchback IIC (Standard),1
+Shadow Cat Prime,2
+Sun Cobra (Standard),3
+Black Hawk (Standard),4
+Gyrfalcon 2,5
+Black Hawk (Nova) Prime,6
+Gyrfalcon (Standard),5
+Black Hawk (Nova) A,4
+Arctic Wolf Prime,3
+Black Lanner Prime,2
+Fenris (Ice Ferret) Prime,1

@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Ranger
+</Name>
+<Model>
+TF
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+10
+</cruiseMP>
+<Armor>
+31
+30
+30
+30
+31
+</Armor>
+<Turret Equipment>
+ISLargeLaser
+ISStreakSRM2
+ISStreakSRM2
+</Turret Equipment>
+<Front Equipment>
+ISSmallLaser
+</Front Equipment>
+<Right Equipment>
+ISMachine Gun
+</Right Equipment>
+<Left Equipment>
+ISMachine Gun
+</Left Equipment>
+<Rear Equipment>
+ISSmallLaser
+</Rear Equipment>
+<Body Equipment>
+ISStreakSRM2 Ammo
+ISMG Ammo (200)
+ISCASE
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3065
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

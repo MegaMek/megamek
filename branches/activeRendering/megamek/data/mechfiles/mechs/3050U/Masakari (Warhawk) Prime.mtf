@@ -1,0 +1,148 @@
+Version:1.0
+Masakari (Warhawk)
+Prime
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:2999
+Rules Level:2
+
+Mass:85
+Engine:340 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:20 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:28
+RA Armor:28
+LT Armor:26
+RT Armor:26
+CT Armor:42
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:3
+2 CLERPPC, Left Arm
+1 CLLRM10, Left Arm, Ammo:12
+2 CLERPPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+CLLRM10
+CLLRM10 Ammo
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

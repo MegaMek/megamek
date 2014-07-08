@@ -1,0 +1,12 @@
+Word of Blake Heavy Aerospace F
+Riever F-100,1
+Riever F-100a,2
+Eagle EGL-R6,3
+Chippewa CHP-W5,4
+Rapier RPR-100,5
+Hammerhead HMR-HD,6
+Hammerhead HMR-HF,5
+Ahab AHB-643,4
+Rapier RPR-100,3
+Riever F-700,2
+Ahab AHB-443,1

@@ -1,0 +1,12 @@
+FRR Medium Mechs C 3067
+Sentinel STN-3M,1
+Hunchback HBK-5M,2
+Whitworth WTH-2,3
+Vulcan VL-2T,4
+Hunchback HBK-4G,5
+Griffin GRF-1S,6
+Phoenix Hawk PXH-1K,5
+Wolverine WVR-6K,4
+Assassin ASN-23,3
+Crab CRB-27,2
+Kintaro KTO-20,1

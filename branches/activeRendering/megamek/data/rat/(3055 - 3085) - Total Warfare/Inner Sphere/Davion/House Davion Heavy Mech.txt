@@ -1,0 +1,14 @@
+House Davion Heavy 'Mech
+Thanatos TNS-4S,1
+Ostsol OTL-6D,2
+Axman AXM-1N,3
+Caesar CES-3R,4
+Penetrator PTR-4D,5
+JagerMech JM6-DD,6
+Falconer FLC-8R,5
+JagerMech III JM6-D3,4
+Warhammer WHM-8D,3
+Cataphract CTF-3D,2
+Rifleman RFL-8D,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

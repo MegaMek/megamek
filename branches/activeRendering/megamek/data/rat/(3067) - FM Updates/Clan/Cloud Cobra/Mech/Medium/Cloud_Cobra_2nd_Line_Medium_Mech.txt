@@ -1,0 +1,12 @@
+Cloud Cobra SL Medium Mechs (FMU)
+Clint IIC (Standard),1
+Rabid Coyote (Standard),2
+Shadow Hawk IIC (Standard),3
+Goshawk (Vapor Eagle) (Standard),34
+Stalking Spider (Standard),5
+Great Wyrm (Standard),6
+Griffin IIC (Standard),5
+Hunchback IIC (Standard),4
+Stalking Spider 2,3
+Goshawk (Vapor Eagle) 2,2
+Wyvern IIC (Standard),1

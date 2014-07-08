@@ -1,0 +1,12 @@
+Clan Ice Hellion Second-Line Assault Mechs (FMU)
+Mad Cat Mk II (Standard),1
+Shogun C,2
+Phoenix Hawk IIC 3,3
+Highlander IIC (Standard),4
+Warhammer IIC (Standard),5
+Phoenix Hawk IIC (Standard),6
+Marauder IIC (Standard),5
+Kodiak (Standard),4
+Warhammer IIC 2,3
+Marauder IIC 3,2
+Behemoth (Stone Rhino) (Standard),1

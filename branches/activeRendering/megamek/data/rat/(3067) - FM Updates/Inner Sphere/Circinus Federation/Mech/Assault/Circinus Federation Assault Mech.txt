@@ -1,0 +1,12 @@
+Circinus Federation Assault Mechs 3067 FM-U
+Devastator DVS-2,1
+Stalker STK-5M,2
+Victor VTR-9S,3
+Longbow LGB-7Q,4
+Awesome AWS-8T,5
+Stalker STK-3H,6
+Awesome AWS-8Q,5
+Banshee BNC-3S,4
+Zeus ZEU-9S,3
+Charger CGR-1A5,2
+Highlander HGN-732,1

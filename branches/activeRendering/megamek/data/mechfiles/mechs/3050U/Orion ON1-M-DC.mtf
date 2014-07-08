@@ -1,0 +1,155 @@
+Version:1.1
+Orion
+ON1-M-DC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3053
+Source:RS3050Uu-I
+Rules Level:3
+
+Mass:75
+Engine:300 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:21
+RA Armor:21
+LT Armor:22
+RT Armor:22
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:10
+RTR Armor:10
+RTC Armor:9
+
+Weapons:6
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+SRM 4, Left Torso
+LRM 20, Left Arm
+LB 10-X AC, Right Torso
+Narc, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 4
+IS Ammo SRM-4 Narc-capable
+IS Ammo LRM-20 Narc-capable
+IS Ammo LRM-20 Narc-capable
+ISNarc Pods
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISNarcBeacon
+ISNarcBeacon
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

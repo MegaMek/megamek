@@ -1,0 +1,12 @@
+Sea Fox Second Line Light Mechs
+Locust LCT-1Vb,1
+Cadaver CVR-A1,2
+Havoc HVC-P6,3
+Locust IIC 4,4
+Crimson Hawk 2,5
+Koshi (Standard),6
+Crimson Hawk (Standard),5
+Koshi (Standard) 2,4
+Wight WGT-2SC,3
+Razorback RZK-10S,2
+Arctic Fox AF1,1

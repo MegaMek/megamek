@@ -1,0 +1,150 @@
+Version:1.0
+Kuma
+4
+
+Config:Biped
+TechBase:Clan
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:60
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:3
+ER Medium Laser, Right Leg
+ER Medium Laser, Left Leg
+ER Large Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+HarJel II Self-Repair System
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+HarJel II Self-Repair System
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+HarJel II Self-Repair System
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+HarJel II Self-Repair System
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+HarJel II Self-Repair System
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERLargeLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

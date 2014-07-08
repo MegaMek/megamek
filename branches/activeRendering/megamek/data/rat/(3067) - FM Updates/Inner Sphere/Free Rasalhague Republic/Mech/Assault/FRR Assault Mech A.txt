@@ -1,0 +1,12 @@
+FRR Assault Mechs A 3067
+BattleMaster BLR-4S,1
+Banshee BNC-5S,2
+Viking VKG-2F,3
+Atlas AS7-K,4
+Charger CGR-3K,5
+Zeus ZEU-9S,6
+Hatamoto-Chi HTM-27T,5
+Highlander HGN-732,4
+Gunslinger GUN-1ERD,3
+Viking VKG-2G,2
+Berserker BRZ-A3,1

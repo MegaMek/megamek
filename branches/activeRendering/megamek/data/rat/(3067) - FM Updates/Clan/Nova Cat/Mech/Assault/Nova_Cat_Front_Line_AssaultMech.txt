@@ -1,0 +1,12 @@
+Nova Cat Front-Line Assault Mechs (FMU)
+Turkina B,1
+Daishi (Dire Wolf) B,2
+Gladiator (Executioner) A,3
+Man O' War (Gargoyle) A,4
+Masakari (Warhawk) Prime,5
+Masakari (Warhawk) B,6
+Kingfisher C,5
+Gladiator (Executioner) D,4
+Kingfisher Prime,3
+Masakari (Warhawk) C,2
+Daishi (Dire Wolf) A,1

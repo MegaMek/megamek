@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Morrigu Fire Support Vehicle
+</Name>
+
+<Model>
+(HAG)
+</Model>
+
+<year>
+3083
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+63
+41
+41
+28
+35
+</armor>
+
+<Body Equipment>
+CLECMSuite
+Clan Ammo SRM-2
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+CLSRM2
+</Right Equipment>
+
+<Left Equipment>
+CLSRM2
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHAG40
+CLLRM15
+CLLRM15
+</Turret Equipment>
+
+<source>
+RS 3067U
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

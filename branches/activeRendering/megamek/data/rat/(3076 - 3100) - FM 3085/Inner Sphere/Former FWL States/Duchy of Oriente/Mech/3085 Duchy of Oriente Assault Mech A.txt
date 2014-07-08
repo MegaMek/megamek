@@ -1,0 +1,12 @@
+3085 Duchy of Oriente Assault Mech A
+Longbow LGB-12C,1
+Albatross ALB-3Ur,2
+Stalker STK-3Fb,3
+Stalker STK-6M,4
+Sirocco SRC-3C,5
+Longbow LGB-8V,6
+Grand Titan T-IT-N10M,5
+Albatross ALB-4U,4
+Trebaruna TR-XJ,3
+Grand Titan T-IT-N11M,2
+Marauder II MAD-6M,1

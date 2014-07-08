@@ -1,0 +1,12 @@
+Jade Falcon Light Aerospace Late 3075
+Batu D,1
+Vandal D,2
+Avar B,3
+Bashkir Prime,4
+Chaeronea (Standard),5
+Sulla B,6
+Vandal Prime,5
+Batu Prime,4
+Avar Prime,3
+Bashkir C,2
+Issus (Standard),1

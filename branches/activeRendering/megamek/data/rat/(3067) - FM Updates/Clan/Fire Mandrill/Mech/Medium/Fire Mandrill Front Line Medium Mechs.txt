@@ -1,0 +1,12 @@
+Clan Fire Mandrill Front-Line Medium Mechs (FMU)
+Ryoken (Stormcrow) A,1
+Crimson Langur A,2
+Shadow Cat Prime,3
+Crimson Langur B,4
+Nobori-nin (Huntsman) Prime,5
+Black Hawk (Nova) Prime,6
+Crimson Langur C,5
+Nobori-nin (Huntsman) A,4
+Ryoken (Stormcrow) Prime,3
+Nobori-nin (Huntsman) B,2
+Crimson Langur Prime,1

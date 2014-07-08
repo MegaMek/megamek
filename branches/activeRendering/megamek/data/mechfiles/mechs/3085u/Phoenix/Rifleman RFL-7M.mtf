@@ -1,0 +1,156 @@
+Version:1.0
+Rifleman
+RFL-7M
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3066
+Source:Civil War
+Rules Level:2
+
+Mass:60
+Engine:240 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:27
+HD Armor:9
+LL Armor:13
+RL Armor:13
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:9
+Light Gauss Rifle, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Light Gauss Rifle, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISERMediumLaser
+ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISERMediumLaser
+ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+IS Light Gauss Ammo
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+IS Light Gauss Ammo
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

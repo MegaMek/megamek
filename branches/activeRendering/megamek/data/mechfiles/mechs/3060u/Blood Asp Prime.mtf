@@ -1,0 +1,157 @@
+Version:1.0
+Blood Asp
+Prime
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3060
+Source:Clan Invasion
+Rules Level:2
+
+Mass:90
+Engine:360 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:18 Double
+Base Chassis Heat Sinks:14
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:28
+RA Armor:28
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:11
+RTR Armor:11
+RTC Armor:13
+
+Weapons:9
+Heavy Medium Laser, Left Arm
+Heavy Medium Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Heavy Medium Laser, Right Arm
+Heavy Medium Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Gauss Rifle, Left Torso
+Gauss Rifle, Right Torso
+Streak SRM 6, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLMediumPulseLaser
+Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Streak SRM 6 Ammo
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,12 @@
+Cloud Cobra FL Light Aerospace (FMU)
+Batu C,1
+Avar B,2
+Vandal Prime,3
+Sulla A,4
+Sulla Prime,5
+Batu Prime,6
+Batu B,5
+Bashkir C,4
+Vandal C,3
+Avar B,2
+Sulla C,1

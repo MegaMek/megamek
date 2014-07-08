@@ -1,0 +1,12 @@
+Lyran Commonwealth Medium Mechs D
+Hunchback HBK-5S,1
+Clint CLNT-6S,2
+Hatchetman HCT-7S,3
+Griffin GRF-6S,4
+Starslayer STY-3Dr,5
+Phoenix Hawk PXH-7S,6
+Uziel UZL-8S,5
+Nightsky NGS-6T,4
+Gauntlet GTL-1O,3
+Blitzkrieg BTZ-4F,2
+Thunder Fox TFT-L8,1

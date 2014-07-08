@@ -1,0 +1,12 @@
+3053 House Kurita Mech - Assault- No Upgraded
+BattleMaster BLR-1G,1
+Mauler MAL-1R,2
+Hatamoto-Chi HTM-27T,3
+Victor VTR-9B,4
+Atlas AS7-D,5
+Hatamoto-Chi HTM-27T,6
+Daboku DCMS-MX90-D,5
+Katana (Crockett) CRK-5003-2,4
+Charger CGR-1A9,3
+BattleMaster BLR-1G,2
+Cyclops CP-11-A,1

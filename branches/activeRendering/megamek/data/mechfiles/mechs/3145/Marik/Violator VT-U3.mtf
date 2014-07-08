@@ -1,0 +1,150 @@
+Version:1.0
+Violator
+VT-U3
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3098
+Source:TRO 3145 FWL
+Rules Level:4
+
+Mass:45
+Engine:225 Fusion Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:17
+RT Armor:17
+CT Armor:21
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:3
+LRM 5, Center Torso
+SRM 6, Right Torso
+SRM 6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISClaw
+ISClaw
+ISClaw
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+MiningDrill
+MiningDrill
+MiningDrill
+MiningDrill
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo LRM-5
+ISCASE
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+SRM 6
+SRM 6
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 5
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit (armored)
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

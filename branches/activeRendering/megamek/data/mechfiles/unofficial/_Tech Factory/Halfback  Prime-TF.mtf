@@ -1,0 +1,149 @@
+Version:1.0
+Halfback
+Prime-TF
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3055
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:16
+RA Armor:16
+LT Armor:17
+RT Armor:17
+CT Armor:25
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:4
+2 CLStreakSRM6, Right Arm, Ammo:60
+3 CLStreakSRM6, Left Arm
+1 CLERMediumLaser, Right Torso
+1 CLERMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Ferro-Fibrous
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

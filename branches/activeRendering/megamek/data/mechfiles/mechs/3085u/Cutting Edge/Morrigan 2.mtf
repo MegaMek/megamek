@@ -1,0 +1,156 @@
+Version:1.0
+Morrigan
+2
+
+Config:Biped
+TechBase:Clan
+Era:3084
+Source:Dark Age
+Rules Level:2
+
+Mass:35
+Engine:280 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:8
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:9
+Heavy Large Laser, Right Arm
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Left Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERSmallLaser
+CLERSmallLaser
+CLSmallPulseLaser
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERSmallLaser
+CLERSmallLaser
+CLSmallPulseLaser
+CLTargeting Computer
+CLTargeting Computer
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

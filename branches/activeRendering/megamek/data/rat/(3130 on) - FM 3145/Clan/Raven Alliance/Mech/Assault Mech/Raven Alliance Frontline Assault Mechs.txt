@@ -1,0 +1,12 @@
+Raven Alliance Frontline Assault Mechs
+Phoenix Hawk IIC 7,1
+Mad Cat Mk II Enhanced,2
+Warhammer IIC 7,3
+Mad Cat Mk II Enhanced,4
+Deimos Prime,5
+Omen (Standard),6
+Gladiator (Executioner) Prime,5
+Deimos Prime,4
+Kingfisher Prime,3
+Kodiak 3,2
+Deimos 2,1

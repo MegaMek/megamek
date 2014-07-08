@@ -1,0 +1,152 @@
+Version:1.0
+Enfield
+END-6S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Source:Jihad
+Rules Level:2
+
+Mass:50
+Engine:250 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:20
+RT Armor:20
+CT Armor:26
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:4
+RTR Armor:4
+RTC Armor:6
+
+Weapons:5
+Large Laser, Left Arm
+Medium Laser, Left Arm
+LB 10-X AC, Right Arm
+Medium Laser, Center Torso
+Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Laser
+Large Laser
+Medium Laser
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Small Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

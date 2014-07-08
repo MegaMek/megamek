@@ -1,0 +1,12 @@
+Hell's Horses Keshik Medium Mechs
+Ursus II (Standard),1
+Sun Cobra (Standard),2
+Lobo (Standard),3
+Black Hawk 2,4
+Arctic Wolf Prime,5
+Black Hawk (Standard),6
+Ryoken (Stormcrow) Prime,5
+Fenris (Ice Ferret) Prime,4
+Grendel (Mongrel) Prime,3
+Dragonfly (Viper) Prime,2
+Grendel (Mongrel) A,1

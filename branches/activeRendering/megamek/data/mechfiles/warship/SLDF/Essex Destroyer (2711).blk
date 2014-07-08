@@ -1,0 +1,139 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Essex Destroyer
+</Name>
+<Model>
+(2711)
+</Model>
+<Tonnage>
+620000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+37
+37
+37
+37
+37
+35
+</Armor>
+<Nose Equipment>
+NAC20
+NAC20
+NAC20 Ammo:32
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:51
+Barracuda
+Barracuda Ammo:10
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:51
+Barracuda
+Barracuda Ammo:10
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NL35
+NL35
+MediumNPPC
+MediumNPPC
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NL35
+NL35
+MediumNPPC
+MediumNPPC
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL35
+NL35
+MediumNPPC
+MediumNPPC
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NL35
+NL35
+MediumNPPC
+MediumNPPC
+</Aft Right Side Equipment>
+<Aft Equipment>
+NAC20
+NAC20
+NAC20 Ammo:32
+NAC20
+NAC20
+NAC20 Ammo:34
+Barracuda
+Barracuda Ammo:10
+</Aft Equipment>
+<structural_integrity>
+60
+</structural_integrity>
+<heatsinks>
+746
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+3000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2711
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+13
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:6:2
+SmallCraftBay:4:2
+CargoBay:132634:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+6
+</escape_pod>
+<life_boat>
+6
+</life_boat>
+<crew>
+240
+</crew>
+<passengers>
+0
+</passengers>

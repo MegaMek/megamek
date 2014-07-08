@@ -1,0 +1,12 @@
+Ghost Bear Assault Vehicle (FMU)
+Morrigu Fire Support Vehicle (Standard),1
+Puma Assault Tank PAT-001,2
+Mars Assault Vehicle (Standard),3
+Huitzilopochtli Assault Tank 'Huey' (Standard),4
+Mars Assault Vehicle (Standard),5
+Mars Assault Vehicle (Standard),6
+Demolisher Heavy Tank (Clan),5
+Huitzilopochtli Assault Tank 'Huey' (Standard),4
+Demolisher Heavy Tank (Clan),3
+Huitzilopochtli Assault Tank 'Huey' (Standard),2
+Mars Assault Vehicle (XL),1

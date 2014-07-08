@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Fenrir Battle Armor
+</Name>
+<Model>
+[SPL]
+</Model>
+<chassis>
+quad
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+5
+</Armor>
+<Squad Equipment>
+ISBASmall Pulse Laser:Body
+ISBASmall Pulse Laser:Body
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3060
+</year>
+<motion_type>
+Leg
+</motion_type>
+<armor_type>
+28
+</armor_type>
+<source>
+TRO 3058 Upgrade
+</source>
+<armor_tech>
+3
+</armor_tech>

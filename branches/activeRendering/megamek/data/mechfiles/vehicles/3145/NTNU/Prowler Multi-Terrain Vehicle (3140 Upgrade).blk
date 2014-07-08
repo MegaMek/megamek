@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Prowler Multi-Terrain Vehicle
+</Name>
+
+<Model>
+(3140 Upgrade)
+</Model>
+
+<year>
+3140
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor>
+37
+30
+30
+25
+30
+</armor>
+
+<Body Equipment>
+BeagleActiveProbe
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+ISFullyAmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+TSEMP Cannon
+ISMML7
+</Turret Equipment>
+
+<source>
+RS 3145 NY NU
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+

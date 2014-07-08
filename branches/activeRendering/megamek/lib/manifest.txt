@@ -1,0 +1,4 @@
+Manifest-Version: 1.1
+Main-Class: megamek.MegaMek
+Class-Path: . lib/TinyXML.jar lib/Ostermiller.jar lib/PngEncoder.jar lib/TabPanel.jar lib/j3dcore.jar lib/j3dutils.jar lib/vecmath.jar
+

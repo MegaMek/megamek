@@ -1,0 +1,10 @@
+Clan Blood Spirit Dropships (FMU)
+Fortress (3058),1
+Confederate (Clan),2
+Broadsword (Standard),4
+Union C,11
+Overlord C,5
+Arcadia (3066),7
+Broadsword (Standard),3
+Carrier (Standard),2
+Arcadia (3080),1

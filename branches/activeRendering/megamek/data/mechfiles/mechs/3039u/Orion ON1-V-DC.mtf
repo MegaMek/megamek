@@ -1,0 +1,155 @@
+Version:1.1
+Orion
+ON1-V-DC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2913
+Source:Succession Wars
+Rules Level:3
+
+Mass:75
+Engine:300 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:19
+RA Armor:19
+LT Armor:20
+RT Armor:20
+CT Armor:32
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:6
+Autocannon/10, Right Torso
+LRM 15, Left Torso
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+SRM 4, Left Arm
+SRM 4, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+SRM 4
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+SRM 4
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo SRM-4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

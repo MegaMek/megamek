@@ -1,0 +1,12 @@
+Mercenary/Militia Mechs Assault Mechs F
+Stalker STK-3F,1
+Banshee BNC-3Mr,2
+Charger CGR-SB 'Challenger',3
+Longbow LGB-13C,4
+Zeus ZEU-9S,5
+Longbow LGB-7V,6
+Awesome AWS-9Q,5
+Albatross ALB-3U,4
+Stalker STK-5M,3
+BattleMaster BLR-3M,2
+Highlander HGN-732,1

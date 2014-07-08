@@ -1,0 +1,12 @@
+Nova Cat 2nd-Line Heavy Mechs (FMU)
+Exterminator EXT-4D,1
+Flashman FLS-8K,2
+Ha Otoko (Standard),3
+Penetrator PTR-6M,4
+Shootist ST-8A,5
+Dragon Fire DGR-3F,6
+Guillotine IIC (Standard),5
+Black Knight BL-6-KNT,4
+Guillotine IIC 2,3
+Lancelot LNC25-01,2
+Cestus CTS-6Z,1

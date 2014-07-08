@@ -1,0 +1,12 @@
+Duchy of Andurien Heavy Mechs A
+Marauder MAD-9M2,1
+Archer ARC-9M,2
+Koschei KSC-5MC,3
+Hercules HRC-LS-9000,4
+Orion ON3-M,5
+Penthesilea PEN-2H,6
+Scourge SCG-WF1,5
+Pandarus LFA-1A,4
+Guillotine IIC 2,3
+Rifleman IIC 8,2
+Wendigo (Prime),1

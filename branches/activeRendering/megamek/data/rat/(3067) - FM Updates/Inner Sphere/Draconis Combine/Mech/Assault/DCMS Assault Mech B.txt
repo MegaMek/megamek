@@ -1,0 +1,12 @@
+DCMS Assault Mechs B 3067 FM-U
+Gunslinger GUN-1ERD,1
+Akuma AKU-1X,2
+Atlas AS7-K,3
+Hatamoto-Mizo HTM-27Y,4
+Hatamoto-Chi HTM-27T,5
+Sunder SD1-O,6
+Mauler MAL-1R,5
+Cyclops CP-11-C,4
+Hatamoto-Kaze HTM-27V,3
+Cerberus MR-V2,2
+O-Bakemono OBK-M10,1

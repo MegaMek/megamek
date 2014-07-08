@@ -1,0 +1,12 @@
+AFFS Medium Aerospace 3067 (FMU)
+Lucifer LCF-R16,1
+Transit TR-10,2
+Corsair CSR-V20,3
+Stingray F-90,4
+Lightning LTN-G15,5
+Corsair CSR-V12,6
+Stingray F-92,5
+Hellcat HCT-213,4
+Lucifer LCF-R15,3
+Lucifer LCF-R20,2
+Hellcat HCT-213,1

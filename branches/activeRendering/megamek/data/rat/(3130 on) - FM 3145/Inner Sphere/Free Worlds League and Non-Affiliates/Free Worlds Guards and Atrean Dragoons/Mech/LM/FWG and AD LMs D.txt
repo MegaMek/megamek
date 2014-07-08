@@ -1,0 +1,12 @@
+Free Worlds Guards and Atrean Dragoons Light Mechs D
+Flea FLE-17,1
+Locust LCT-1Vb,2
+Eagle EGL-2M,3
+Locust LCT-6M,4
+Wight WGT-2SC,5
+Stinger STG-3Gb,6
+Falcon Hawk FNHK-9K,5
+Locust LCT-5W2,4
+Nyx NX-80,3
+Hermes HER-4K,2
+Havoc HVC-P6,1

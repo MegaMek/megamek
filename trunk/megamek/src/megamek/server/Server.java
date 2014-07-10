@@ -7283,7 +7283,7 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into rubble
-            boolean isLastStep = md.getLastStep().equals(step);
+            boolean isLastStep = step.equals(md.getLastStep());
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
                     isLastStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

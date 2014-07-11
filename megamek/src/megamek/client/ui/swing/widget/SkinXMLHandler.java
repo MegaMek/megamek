@@ -55,6 +55,8 @@ public class SkinXMLHandler {
     public static String FONT_COLOR = "font_color";
     public static String BORDER = "border";
     public static String PLAIN = "plain";
+    public static String NO_BORDER = "no_border";
+    public static String TILE_BACKGROUND = "tile_background";
     public static String TR_CORNER = "corner_top_right";
     public static String TL_CORNER = "corner_top_left";
     public static String BR_CORNER = "corner_bottom_right";
@@ -136,13 +138,23 @@ public class SkinXMLHandler {
             skinSpecs = new Hashtable<String, SkinSpecification>(
                     (int)(totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
-                // Get the first element of this node.
-                Element borderList = (Element) listOfComponents.item(comp);
                 SkinSpecification skinSpec;
+                Element borderList = (Element) listOfComponents.item(comp);
+                
+                // Parse no border
+                Element noBorderEle = (Element) borderList
+                        .getElementsByTagName(NO_BORDER).item(0);
+                boolean noBorder = false;
+                if (noBorderEle != null) {
+                    noBorder = Boolean
+                            .parseBoolean(noBorderEle.getTextContent());
+                }
+                
+                // Get the first element of this node.
                 Element plainTag = (Element) 
                         borderList.getElementsByTagName(PLAIN).item(0);
                 // If there is no plain tag, load the icons
-                if (plainTag == null) {
+                if (plainTag == null && !noBorder) {
                     // Get the border specs
                     Element border = (Element) 
                             borderList.getElementsByTagName(BORDER).item(0);
@@ -153,8 +165,13 @@ public class SkinXMLHandler {
                     }
                     
                     skinSpec = parseBorderTag(border);
-    
-                   // Get the border specs
+                } else { // Plain skin, no icons
+                    skinSpec = new SkinSpecification();
+                    skinSpec.noBorder = noBorder;
+                }
+                
+                // Get the background specs
+                if (plainTag == null) {
                     NodeList backgrounds = 
                             borderList.getElementsByTagName(BACKGROUND_IMAGE);
                     if (backgrounds != null){
@@ -163,14 +180,22 @@ public class SkinXMLHandler {
                                     backgrounds.item(bg).getTextContent());
                         }
                     }
-                    Element fontColorEle = (Element) 
-                            borderList.getElementsByTagName(FONT_COLOR).item(0);
-                    if (fontColorEle != null) {
-                        String fontColorContent = fontColorEle.getTextContent();
-                        skinSpec.fontColor = Color.decode(fontColorContent);
-                    }                    
-                } else { // Plain skin, no icons
-                    skinSpec = new SkinSpecification();
+                }
+                
+                // Parse font color
+                Element fontColorEle = (Element) 
+                        borderList.getElementsByTagName(FONT_COLOR).item(0);
+                if (fontColorEle != null) {
+                    String fontColorContent = fontColorEle.getTextContent();
+                    skinSpec.fontColor = Color.decode(fontColorContent);
+                }                  
+                
+                // Parse tile background
+                Element tileBGEle = (Element) borderList
+                        .getElementsByTagName(TILE_BACKGROUND).item(0);
+                if (tileBGEle != null) {
+                    skinSpec.tileBackground = Boolean
+                            .parseBoolean(tileBGEle.getTextContent());
                 }
                 
                 String name = borderList.getElementsByTagName(NAME).

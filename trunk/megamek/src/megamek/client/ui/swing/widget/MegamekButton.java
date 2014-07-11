@@ -29,44 +29,44 @@ import javax.swing.SwingConstants;
 import megamek.common.Configuration;
 
 public class MegamekButton extends JButton {
-	
-	/**
-	 * @author arlith
-	 */
-	private static final long serialVersionUID = -3271105050872007863L;
-	protected ImageIcon backgroundIcon;
-	protected ImageIcon backgroundPressedIcon;
-	
-	boolean iconsLoaded = false;
-	boolean isPressed = false;
-	boolean isMousedOver = false;
-	
-	public MegamekButton(String text, String component){
-		super(text);
-		setBorder(new MegamekBorder(SkinXMLHandler.getSkin(component,true)));
-		loadIcon(SkinXMLHandler.getSkin(component,true));
-	}
-	
-	public MegamekButton(String text){
-		super(text);
-		setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
-		loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
-	}
-	
-	public MegamekButton(){
-		super();
-		setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
-		loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
-	}
-	
-	 public void loadIcon(SkinSpecification spec){
-	     iconsLoaded = true;
-	     // If there were no background paths loaded, there's nothing to do
-	     if (!spec.hasBackgrounds()) {
-	         iconsLoaded = false;
-	         return;
-	     }
-	     // Otherwise, try to load in all of the images.
+    
+    /**
+     * @author arlith
+     */
+    private static final long serialVersionUID = -3271105050872007863L;
+    protected ImageIcon backgroundIcon;
+    protected ImageIcon backgroundPressedIcon;
+    
+    boolean iconsLoaded = false;
+    boolean isPressed = false;
+    boolean isMousedOver = false;
+    
+    public MegamekButton(String text, String component){
+        super(text);
+        setBorder(new MegamekBorder(SkinXMLHandler.getSkin(component,true)));
+        loadIcon(SkinXMLHandler.getSkin(component,true));
+    }
+    
+    public MegamekButton(String text){
+        super(text);
+        setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
+        loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
+    }
+    
+    public MegamekButton(){
+        super();
+        setBorder(new MegamekBorder(SkinXMLHandler.defaultButton));
+        loadIcon(SkinXMLHandler.getSkin(SkinXMLHandler.defaultButton));
+    }
+    
+     public void loadIcon(SkinSpecification spec){
+         iconsLoaded = true;
+         // If there were no background paths loaded, there's nothing to do
+         if (!spec.hasBackgrounds()) {
+             iconsLoaded = false;
+             return;
+         }
+         // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
                 System.out.println("Error: skin specification for a "
@@ -87,70 +87,70 @@ public class MegamekButton extends JButton {
             iconsLoaded = false;
         }
     }
-	 
-	 protected void processMouseEvent(MouseEvent e){
-		if (e.getID() == MouseEvent.MOUSE_EXITED){
-			isMousedOver = false;
-			repaint();
-		} else if (e.getID() == MouseEvent.MOUSE_ENTERED) {
-			isMousedOver = true;
-		} else if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-			isPressed = true;
-		} else if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-			isPressed = false;
-		}
-		super.processMouseEvent(e);
-	 }
-	 
-	 protected void paintComponent(Graphics g){
-	     // If none of the icons are loaded, treat this is a regular JButton
-	     if (!iconsLoaded) {
-	         super.paintComponent(g);
-	         return;
-	     }
-		int w = getWidth();
-		int h = getHeight();
-		int iW = isPressed ? backgroundPressedIcon.getIconWidth() : 
-			backgroundIcon.getIconWidth();
-		int iH = isPressed ? backgroundPressedIcon.getIconHeight() : 
-			backgroundIcon.getIconHeight();
-		for (int x = 0; x < w; x += iW) {
-			for (int y = 0; y < h; y += iH) {
-				if (isPressed){
-					g.drawImage(backgroundPressedIcon.getImage(), x, y,
-							backgroundPressedIcon.getImageObserver());
-				} else {
-					g.drawImage(backgroundIcon.getImage(), x, y,
-							backgroundIcon.getImageObserver());
-				}
-			}
-		}
-		
-		JLabel textLabel = new JLabel(getText(),SwingConstants.CENTER);
-		textLabel.setSize(getSize());
-		if (this.isEnabled()){
-			if (isMousedOver){
-				Font font = textLabel.getFont();
-				// same font but bold
-				Font boldFont = new Font(font.getFontName(), Font.BOLD, 
-						font.getSize()+2);
-				textLabel.setFont(boldFont);
-				textLabel.setForeground(new Color(255,255,0));
-			} else {
-				textLabel.setForeground(new Color(250,250,250));
-			}
-		} else {
-			textLabel.setForeground(new Color(128,128,128));
-		}
-		textLabel.paint(g);
-	 }
-	 
-	 public String toString(){
-		 return getActionCommand();
-	 }
+     
+     protected void processMouseEvent(MouseEvent e){
+        if (e.getID() == MouseEvent.MOUSE_EXITED){
+            isMousedOver = false;
+            repaint();
+        } else if (e.getID() == MouseEvent.MOUSE_ENTERED) {
+            isMousedOver = true;
+        } else if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+            isPressed = true;
+        } else if (e.getID() == MouseEvent.MOUSE_RELEASED) {
+            isPressed = false;
+        }
+        super.processMouseEvent(e);
+     }
+     
+     protected void paintComponent(Graphics g){
+         // If none of the icons are loaded, treat this is a regular JButton
+         if (!iconsLoaded) {
+             super.paintComponent(g);
+             return;
+         }
+        int w = getWidth();
+        int h = getHeight();
+        int iW = isPressed ? backgroundPressedIcon.getIconWidth() : 
+            backgroundIcon.getIconWidth();
+        int iH = isPressed ? backgroundPressedIcon.getIconHeight() : 
+            backgroundIcon.getIconHeight();
+        for (int x = 0; x < w; x += iW) {
+            for (int y = 0; y < h; y += iH) {
+                if (isPressed){
+                    g.drawImage(backgroundPressedIcon.getImage(), x, y,
+                            backgroundPressedIcon.getImageObserver());
+                } else {
+                    g.drawImage(backgroundIcon.getImage(), x, y,
+                            backgroundIcon.getImageObserver());
+                }
+            }
+        }
+        
+        JLabel textLabel = new JLabel(getText(),SwingConstants.CENTER);
+        textLabel.setSize(getSize());
+        if (this.isEnabled()){
+            if (isMousedOver){
+                Font font = textLabel.getFont();
+                // same font but bold
+                Font boldFont = new Font(font.getFontName(), Font.BOLD, 
+                        font.getSize()+2);
+                textLabel.setFont(boldFont);
+                textLabel.setForeground(new Color(255,255,0));
+            } else {
+                textLabel.setForeground(new Color(250,250,250));
+            }
+        } else {
+            textLabel.setForeground(new Color(128,128,128));
+        }
+        textLabel.paint(g);
+     }
+     
+     public String toString(){
+         return getActionCommand();
+     }
 
     public boolean isIconsLoaded() {
         return iconsLoaded;
     }
-	 
+     
 }

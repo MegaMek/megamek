@@ -346,7 +346,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Construct a new board view for the specified game
      */
     public BoardView1(final IGame game, final MegaMekController controller)
-    		throws java.io.IOException {
+            throws java.io.IOException {
         this.game = game;
 
         tileManager = new TilesetManager(this);
@@ -436,176 +436,176 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final BoardView1 bv = this;
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						if (!getChatterBoxActive()){
-							setChatterBoxActive(true);
-							for (IDisplayable disp : displayables){
-			            		if (disp instanceof ChatterBox2){
-			            			((ChatterBox2)disp).slideUp();
-	            				}
-		            		}
-							requestFocus();
-						}
-					}
+                    @Override
+                    public void performAction() {
+                        if (!getChatterBoxActive()){
+                            setChatterBoxActive(true);
+                            for (IDisplayable disp : displayables){
+                                if (disp instanceof ChatterBox2){
+                                    ((ChatterBox2)disp).slideUp();
+                                }
+                            }
+                            requestFocus();
+                        }
+                    }
 
         });
 
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-        			@Override
-        			public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-        					return false;
-        				} else {
-        					return true;
-        				}
-        			}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						if (!getChatterBoxActive()){
-							setChatterBoxActive(true);
-							for (IDisplayable disp : displayables){
-			            		if (disp instanceof ChatterBox2){
-			            			((ChatterBox2)disp).slideUp();
-			            			((ChatterBox2)disp).setMessage("/");
-	            				}
-		            		}
-							requestFocus();
-						}
-					}
+                    @Override
+                    public void performAction() {
+                        if (!getChatterBoxActive()){
+                            setChatterBoxActive(true);
+                            for (IDisplayable disp : displayables){
+                                if (disp instanceof ChatterBox2){
+                                    ((ChatterBox2)disp).slideUp();
+                                    ((ChatterBox2)disp).setMessage("/");
+                                }
+                            }
+                            requestFocus();
+                        }
+                    }
 
         });
 
         // Register the action for CENTER_ON_SELECTED
         controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-					@Override
-					public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE
-        						|| selectedEntity == null){
-        					return false;
-        				} else {
-        					return true;
-        				}
-					}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE
+                                || selectedEntity == null){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						if (selectedEntity != null) {
-		                    centerOnHex(selectedEntity.getPosition());
-		                }
-					}
+                    @Override
+                    public void performAction() {
+                        if (selectedEntity != null) {
+                            centerOnHex(selectedEntity.getPosition());
+                        }
+                    }
 
         });
 
         // Register the action for SCROLL_NORTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-					@Override
-					public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-							return false;
-						} else {
-							return true;
-						}
-					}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
-						vbar.setValue((int)
-                   			 (vbar.getValue() - (HEX_H * scale)));
-					}
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
+                        vbar.setValue((int)
+                                (vbar.getValue() - (HEX_H * scale)));
+                    }
 
         });
 
         // Register the action for SCROLL_SOUTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-					@Override
-					public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-							return false;
-						} else {
-							return true;
-						}
-					}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
-						vbar.setValue((int)
-                   			 (vbar.getValue() + (HEX_H * scale)));
-					}
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
+                        vbar.setValue((int)
+                                (vbar.getValue() + (HEX_H * scale)));
+                    }
 
         });
 
         // Register the action for SCROLL_EAST
         controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-		        	@Override
-					public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-							return false;
-						} else {
-							return true;
-						}
-					}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
-						hbar.setValue((int)
-                    			(hbar.getValue() + (HEX_W * scale)));
-					}
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
+                        hbar.setValue((int)
+                                (hbar.getValue() + (HEX_W * scale)));
+                    }
 
         });
 
         // Register the action for SCROLL_WEST
         controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
-        		new CommandAction(){
+                new CommandAction(){
 
-		        	@Override
-					public boolean shouldPerformAction(){
-        				if (getChatterBoxActive() || !bv.isVisible()
-        						|| game.getPhase() == Phase.PHASE_LOUNGE){
-							return false;
-						} else {
-							return true;
-						}
-					}
+                    @Override
+                    public boolean shouldPerformAction(){
+                        if (getChatterBoxActive() || !bv.isVisible()
+                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-					@Override
-					public void performAction() {
-						controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
-						hbar.setValue((int)
-                    			(hbar.getValue() - (HEX_W * scale)));
-					}
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
+                        hbar.setValue((int)
+                                (hbar.getValue() - (HEX_W * scale)));
+                    }
 
         });
 
@@ -874,8 +874,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             startTime = System.nanoTime();
         }        
         
-    	if (guip.getAntiAliasing()){
-    		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        if (guip.getAntiAliasing()){
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
@@ -891,29 +891,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-		if (bvBgBuffer == null || bvBgBuffer.getWidth() != viewRect.getWidth()
-				|| bvBgBuffer.getHeight() != viewRect.getHeight()) {
-			bvBgBuffer = new BufferedImage((int)viewRect.getWidth(),
-					(int)viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
-			Graphics bgGraph = bvBgBuffer.getGraphics();
-			if (bvBgIcon != null) {
-    			int w = (int)viewRect.getWidth();
-    	        int h = (int)viewRect.getHeight();
-    	        int iW = bvBgIcon.getIconWidth();
-    	        int iH = bvBgIcon.getIconHeight();
-    	        
-    			for (int x = 0; x < w; x+=iW){
-    	            for (int y = 0; y < h; y+=iH){
-    	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y,
-    	                        bvBgIcon.getImageObserver());
-    	            }
-    	        }
-	        }
+        if (bvBgBuffer == null || bvBgBuffer.getWidth() != viewRect.getWidth()
+                || bvBgBuffer.getHeight() != viewRect.getHeight()) {
+            bvBgBuffer = new BufferedImage((int)viewRect.getWidth(),
+                    (int)viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics bgGraph = bvBgBuffer.getGraphics();
+            if (bvBgIcon != null) {
+                int w = (int)viewRect.getWidth();
+                int h = (int)viewRect.getHeight();
+                int iW = bvBgIcon.getIconWidth();
+                int iH = bvBgIcon.getIconHeight();
+                
+                for (int x = 0; x < w; x+=iW){
+                    for (int y = 0; y < h; y+=iH){
+                        bgGraph.drawImage(bvBgIcon.getImage(), x, y,
+                                bvBgIcon.getImageObserver());
+                    }
+                }
+            }
         }
-		g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
+        g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
 
-    	// Used to pad the board edge
-    	g.translate(HEX_W, HEX_H);
+        // Used to pad the board edge
+        g.translate(HEX_W, HEX_H);
 
         drawHexes(g, g.getClipBounds());
 
@@ -1601,7 +1601,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         /*
         if (!useIsometric()) {
             // clear, if we need to
-        	// The first column has no hexes in it, so drawHex won't update it
+            // The first column has no hexes in it, so drawHex won't update it
             if (view.x < (HEX_W_4TH * scale)) {
                 boardGraph.fillRect(view.x - drawRect.x, view.y - drawRect.y,
                         (int) (HEX_W_4TH * scale) - view.x, view.height);
@@ -1615,12 +1615,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         - (int) (HEX_W_4TH * scale), view.y - drawRect.y,
                         (int) (HEX_W_4TH * scale), view.height);
             }
-			if (view.y > (boardSize.height - view.height - (HEX_H_HALF * scale))) {
-				boardGraph.fillRect(view.x - drawRect.x,
-						Math.min(drawRect.height, boardSize.height)
-								- (int) (HEX_H_HALF * scale), view.width,
-						(int) (HEX_H_HALF * scale));
-			}
+            if (view.y > (boardSize.height - view.height - (HEX_H_HALF * scale))) {
+                boardGraph.fillRect(view.x - drawRect.x,
+                        Math.min(drawRect.height, boardSize.height)
+                                - (int) (HEX_H_HALF * scale), view.width,
+                        (int) (HEX_H_HALF * scale));
+            }
         }
         */
         // draw some hexes.
@@ -1780,7 +1780,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         } catch (IllegalArgumentException e) {
             System.err.println("Illegal argument exception, probably " +
-            		"can't load file.");
+                    "can't load file.");
             e.printStackTrace();
             drawCenteredString("Loading Error", drawX, drawY
                     + (int) (50 * scale), font_note, boardGraph);
@@ -2477,9 +2477,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Returns the coords at the specified point
      */
     Coords getCoordsAt(Point p) {
-    	// We must account for the board translation to add padding
-    	p.x -= HEX_W;
-    	p.y -= HEX_H;
+        // We must account for the board translation to add padding
+        p.x -= HEX_W;
+        p.y -= HEX_H;
         final int x = (p.x) / (int) (HEX_WC * scale);
         final int y = ((p.y) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0))
                 / (int) (HEX_H * scale);
@@ -7329,20 +7329,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     @Override
     public void setPreferredSize(Dimension d){
-    	super.setPreferredSize(d);
-    	preferredSize = new Dimension(d);
+        super.setPreferredSize(d);
+        preferredSize = new Dimension(d);
     }
 
     @Override
     public Dimension getPreferredSize() {
-    	// If the board is small, we want the preferred size to fill the whole
-    	//  ScrollPane viewport, for purposes of drawing the tiled background
-    	//  icon.
-    	// However, we also need the scrollable client to be as big as the
-    	//  board plus the pad size.
-    	return new Dimension(
-    			Math.max(boardSize.width + 2 * HEX_W,preferredSize.width),
-    			Math.max(boardSize.height + 2 * HEX_W,preferredSize.height));
+        // If the board is small, we want the preferred size to fill the whole
+        //  ScrollPane viewport, for purposes of drawing the tiled background
+        //  icon.
+        // However, we also need the scrollable client to be as big as the
+        //  board plus the pad size.
+        return new Dimension(
+                Math.max(boardSize.width + 2 * HEX_W,preferredSize.width),
+                Math.max(boardSize.height + 2 * HEX_W,preferredSize.height));
     }
 
     /**
@@ -7653,62 +7653,62 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public Component getComponent() {
-    	return getComponent(false);
+        return getComponent(false);
     }
 
     public Component getComponent(boolean scrollBars) {
         // If we're already configured, return the scrollpane
-    	if (scrollpane != null) {
+        if (scrollpane != null) {
             return scrollpane;
         }
 
         SkinSpecification bvSkinSpec =
-        		SkinXMLHandler.getSkin(SkinXMLHandler.BOARDVIEW);
+                SkinXMLHandler.getSkin(SkinXMLHandler.BOARDVIEW);
 
         // Setup background icons
         try {
             java.net.URI imgURL;
             File file;
             if (bvSkinSpec.backgrounds.size() > 0){
-            	file = new File(Configuration.widgetsDir(),
-            			bvSkinSpec.backgrounds.get(0));
-    			imgURL = file.toURI();
-    			if (!file.exists()){
-    				System.err.println("BoardView1 Error: icon doesn't exist: "
-    						+ file.getAbsolutePath());
-    			} else {
-    				bvBgIcon = new ImageIcon(imgURL.toURL());
-    			}
+                file = new File(Configuration.widgetsDir(),
+                        bvSkinSpec.backgrounds.get(0));
+                imgURL = file.toURI();
+                if (!file.exists()){
+                    System.err.println("BoardView1 Error: icon doesn't exist: "
+                            + file.getAbsolutePath());
+                } else {
+                    bvBgIcon = new ImageIcon(imgURL.toURL());
+                }
             }
             if (bvSkinSpec.backgrounds.size() > 1){
-            	file = new File(Configuration.widgetsDir(),
-            			bvSkinSpec.backgrounds.get(1));
-    			imgURL = file.toURI();
-    			if (!file.exists()){
-    				System.err.println("BoardView1 Error: icon doesn't exist: "
-    						+ file.getAbsolutePath());
-    			} else {
-    				scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
-    			}
+                file = new File(Configuration.widgetsDir(),
+                        bvSkinSpec.backgrounds.get(1));
+                imgURL = file.toURI();
+                if (!file.exists()){
+                    System.err.println("BoardView1 Error: icon doesn't exist: "
+                            + file.getAbsolutePath());
+                } else {
+                    scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
+                }
             }
         } catch (Exception e){
-        	System.out.println("Error loading BoardView background images!");
-        	System.out.println(e.getMessage());
+            System.out.println("Error loading BoardView background images!");
+            System.out.println(e.getMessage());
         }
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this){
 
-        	/**
-			 *
-			 */
-			private static final long serialVersionUID = 5973610449428194319L;
+            /**
+             *
+             */
+            private static final long serialVersionUID = 5973610449428194319L;
 
-			protected void paintComponent(Graphics g) {
-        		if (scrollPaneBgIcon == null){
-        			super.paintComponent(g);
-        			return;
-        		}
+            protected void paintComponent(Graphics g) {
+                if (scrollPaneBgIcon == null){
+                    super.paintComponent(g);
+                    return;
+                }
                 int w = getWidth();
                 int h = getHeight();
                 int iW = scrollPaneBgIcon.getIconWidth();
@@ -7716,7 +7716,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 for (int x = 0; x < w; x+=iW){
                     for (int y = 0; y < h; y+=iH){
                         g.drawImage(scrollPaneBgIcon.getImage(), x, y,
-                        		scrollPaneBgIcon.getImageObserver());
+                                scrollPaneBgIcon.getImageObserver());
                     }
                 }
             }
@@ -7732,8 +7732,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         hbar = scrollpane.getHorizontalScrollBar();
 
         if (!scrollBars){
-        	vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
-        	hbar.setPreferredSize(new Dimension(hbar.getWidth(),0));
+            vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
+            hbar.setPreferredSize(new Dimension(hbar.getWidth(),0));
         }
 
         return scrollpane;
@@ -7947,7 +7947,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @return
      */
     public boolean getChatterBoxActive(){
-    	return chatterBoxActive;
+        return chatterBoxActive;
     }
 
     /**
@@ -7955,6 +7955,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param cba
      */
     public void setChatterBoxActive(boolean cba){
-    	chatterBoxActive = cba;
+        chatterBoxActive = cba;
     }
 }

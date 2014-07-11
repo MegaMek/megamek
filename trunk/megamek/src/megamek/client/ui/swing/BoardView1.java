@@ -325,6 +325,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     BufferedImage bvBgBuffer = null;
     ImageIcon bvBgIcon = null;
+    BufferedImage scrollPaneBgBuffer = null;
     ImageIcon scrollPaneBgIcon = null;
     
     private static final int FRAMES = 24;
@@ -7713,12 +7714,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int h = getHeight();
                 int iW = scrollPaneBgIcon.getIconWidth();
                 int iH = scrollPaneBgIcon.getIconHeight();
-                for (int x = 0; x < w; x+=iW){
-                    for (int y = 0; y < h; y+=iH){
-                        g.drawImage(scrollPaneBgIcon.getImage(), x, y,
-                                scrollPaneBgIcon.getImageObserver());
+                if (scrollPaneBgBuffer == null 
+                        || scrollPaneBgBuffer.getWidth() != w
+                        || scrollPaneBgBuffer.getHeight() != h) {
+                    scrollPaneBgBuffer = new BufferedImage(w, h,
+                            BufferedImage.TYPE_INT_RGB);
+                    Graphics bgGraph = scrollPaneBgBuffer.getGraphics();                       
+                    for (int x = 0; x < w; x+=iW){
+                        for (int y = 0; y < h; y+=iH){
+                            bgGraph.drawImage(scrollPaneBgIcon.getImage(), x, y,
+                                    scrollPaneBgIcon.getImageObserver());
+                        }
                     }
                 }
+                g.drawImage(scrollPaneBgBuffer, 0, 0, null);                
             }
         };
         scrollpane.setBorder(new MegamekBorder(bvSkinSpec));

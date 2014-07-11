@@ -20,10 +20,11 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.MediaTracker;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
 import megamek.common.Configuration;
 
@@ -37,7 +38,7 @@ import megamek.common.Configuration;
  * @author arlith
  *
  */
-public class MegamekBorder extends EmptyBorder {
+public class MegamekBorder extends EtchedBorder {
 
 	// Abbreviations: tl = top left, tr = top right, 
 	//  bl = bottom left, br = bottom right
@@ -54,36 +55,50 @@ public class MegamekBorder extends EmptyBorder {
     protected int leftNumTiledIcons, topNumTiledIcons;
     protected int rightNumTiledIcons, bottomNumTiledIcons;
     
+    boolean iconsLoaded =  false;    
+    
     protected Insets insets;
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    public MegamekBorder(Insets i){
-        super(i);
-        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
-    }
-    
     public MegamekBorder(int top, int left, int bottom, int right){
-        super(top,left,bottom,right);
+        super();
         loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));        
     }
     
     public MegamekBorder(){
-    	super(0,0,0,0);
-    	loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
+        super();
+        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
     }
     
     public MegamekBorder(SkinSpecification spec){
-    	super(0,0,0,0);
-    	loadIcons(spec);
+        super();
+        loadIcons(spec);
     }
     
     public MegamekBorder(String component){
-    	super(0,0,0,0);
-    	loadIcons(SkinXMLHandler.getSkin(component));
+        super();
+        loadIcons(SkinXMLHandler.getSkin(component));
     }
+    
+    private ImageIcon loadIcon(String path) throws MalformedURLException {
+        ImageIcon icon;
+        java.net.URI imgURL;
+        File file;
+
+        file = new File(Configuration.widgetsDir(), path);
+        imgURL = file.toURI();
+        icon = new ImageIcon(imgURL.toURL());
+        if (!file.exists()){
+            System.err.println("MegaMekBorder Error: icon doesn't exist: "
+                    + file.getAbsolutePath());
+            iconsLoaded = false;
+        }
+        return icon;
+    }
+    
     
     /**
      * Use the given skin specificaton to create ImageIcons for each of the 
@@ -93,6 +108,14 @@ public class MegamekBorder extends EmptyBorder {
      * 				used where
      */
     public void loadIcons(SkinSpecification skin){
+        // Assume they're loaded until something fails
+        iconsLoaded = true;
+        // If none of the icons are loaded, treat this is a regular JButton
+        if (!skin.hasBorder()) {
+            iconsLoaded = false;
+            insets = new Insets(5, 5, 5, 5);
+            return;
+        }
         try {
 			leftStaticSpace = rightStaticSpace = 0;
 			topStaticSpace = bottomStaticSpace = 0;
@@ -102,42 +125,12 @@ public class MegamekBorder extends EmptyBorder {
 			java.net.URI imgURL;
 			File file;
 			
-			// Create Top Left Corner Icon
-			file = new File(Configuration.widgetsDir(), skin.tl_corner);
-			imgURL = file.toURI();
-			tlCorner = new ImageIcon(imgURL.toURL());
-			if (!file.exists()){
-				System.err.println("MegaMekBorder Error: icon doesn't exist: "
-						+ file.getAbsolutePath());
-			}
-			
-			// Create Top  Right Corner Icon
-			file = new File(Configuration.widgetsDir(), skin.tr_corner);
-			imgURL = file.toURI();
-			trCorner = new ImageIcon(imgURL.toURL());
-			if (!file.exists()){
-				System.err.println("MegaMekBorder Error: icon doesn't exist: "
-						+ file.getAbsolutePath());
-			}
-			
-			// Create Bottom Left Corner Icon
-			file = new File(Configuration.widgetsDir(), skin.bl_corner);
-			imgURL = file.toURI();
-			blCorner = new ImageIcon(imgURL.toURL());
-			if (!file.exists()){
-				System.err.println("MegaMekBorder Error: icon doesn't exist: "
-						+ file.getAbsolutePath());
-			}
-			
-			// Create Bottom Right Corner Icon
-			file = new File(Configuration.widgetsDir(), skin.br_corner);
-			imgURL = file.toURI();;
-			brCorner = new ImageIcon(imgURL.toURL());
-			if (!file.exists()){
-				System.err.println("MegaMekBorder Error: icon doesn't exist: "
-						+ file.getAbsolutePath());
-			}
-            
+			// Create Corner Icons
+			tlCorner = loadIcon(skin.tl_corner);
+			trCorner = loadIcon(skin.tr_corner);
+			blCorner = loadIcon(skin.bl_corner);
+			brCorner = loadIcon(skin.br_corner);
+
 			// Create icons for the left edge
 			leftLine = new ArrayList<ImageIcon>();
 			leftShouldTile = new ArrayList<Boolean>();
@@ -149,6 +142,7 @@ public class MegamekBorder extends EmptyBorder {
     				System.err.println(
     						"MegaMekBorder Error: icon doesn't exist: "
     						+ file.getAbsolutePath());
+    				iconsLoaded = false;
     			}
             	leftLine.add(new ImageIcon(imgURL.toURL()));
             	leftShouldTile.add(skin.leftShouldTile.get(i));
@@ -170,6 +164,7 @@ public class MegamekBorder extends EmptyBorder {
     				System.err.println(
     						"MegaMekBorder Error: icon doesn't exist: "
     						+ file.getAbsolutePath());
+    	            iconsLoaded = false;
     			}
             	rightLine.add(new ImageIcon(imgURL.toURL()));
             	rightShouldTile.add(skin.rightShouldTile.get(i));
@@ -191,6 +186,7 @@ public class MegamekBorder extends EmptyBorder {
     				System.err.println(
     						"MegaMekBorder Error: icon doesn't exist: "
     						+ file.getAbsolutePath());
+    	            iconsLoaded = false;
     			}
             	topLine.add(new ImageIcon(imgURL.toURL()));
             	topShouldTile.add(skin.topShouldTile.get(i));
@@ -212,6 +208,7 @@ public class MegamekBorder extends EmptyBorder {
     				System.err.println(
     						"MegaMekBorder Error: icon doesn't exist: "
     						+ file.getAbsolutePath());
+    	            iconsLoaded = false;
     			}
             	bottomLine.add(new ImageIcon(imgURL.toURL()));
             	bottomShouldTile.add(skin.bottomShouldTile.get(i));
@@ -221,39 +218,41 @@ public class MegamekBorder extends EmptyBorder {
             		bottomNumTiledIcons++;
             	}
             }
-            
-			insets = new Insets(0, 0, 0, 0);
-			insets.top = Math.min(tlCorner.getIconHeight(),
-					trCorner.getIconHeight());
-			for (ImageIcon icon : topLine) {
-				insets.top = Math.min(insets.top,
-						icon.getIconHeight());
-			}
-			insets.bottom = Math.min(blCorner.getIconHeight(),
-					brCorner.getIconHeight());
-			for (ImageIcon icon : bottomLine) {
-				insets.bottom = Math.min(insets.bottom,
-						icon.getIconHeight());
-			}
-
-			insets.left = Math.min(tlCorner.getIconWidth(),
-					blCorner.getIconWidth());
-			for (ImageIcon icon : leftLine) {
-				insets.left = Math.min(insets.left,
-						icon.getIconWidth());
-			}
-			insets.right = Math.min(trCorner.getIconWidth(),
-					brCorner.getIconWidth());
-			for (ImageIcon icon : rightLine) {
-				insets.right = Math.min(insets.right,
-						icon.getIconWidth());
-			}
-            
-
+            if (iconsLoaded) {
+    			insets = new Insets(0, 0, 0, 0);
+    			insets.top = Math.min(tlCorner.getIconHeight(),
+    					trCorner.getIconHeight());
+    			for (ImageIcon icon : topLine) {
+    				insets.top = Math.min(insets.top,
+    						icon.getIconHeight());
+    			}
+    			insets.bottom = Math.min(blCorner.getIconHeight(),
+    					brCorner.getIconHeight());
+    			for (ImageIcon icon : bottomLine) {
+    				insets.bottom = Math.min(insets.bottom,
+    						icon.getIconHeight());
+    			}
+    
+    			insets.left = Math.min(tlCorner.getIconWidth(),
+    					blCorner.getIconWidth());
+    			for (ImageIcon icon : leftLine) {
+    				insets.left = Math.min(insets.left,
+    						icon.getIconWidth());
+    			}
+    			insets.right = Math.min(trCorner.getIconWidth(),
+    					brCorner.getIconWidth());
+    			for (ImageIcon icon : rightLine) {
+    				insets.right = Math.min(insets.right,
+    						icon.getIconWidth());
+    			}
+            } else {
+                insets = new Insets(5, 5, 5, 5);
+            }
         } catch (Exception e){
         	System.out.println("Error: loading icons for " +
         			"a MegamekBorder!");
         	e.printStackTrace();
+            iconsLoaded = false;
         }      
     }
     
@@ -262,6 +261,12 @@ public class MegamekBorder extends EmptyBorder {
      */
     public void paintBorder(Component c, Graphics g, int x, int y, int width, 
     		int height) {
+        // If the icons didn't loaded, treat this as a regualar border
+        if (!iconsLoaded) {
+            super.paintBorder(c, g, x, y, width, height);
+            return;
+        }
+        
         g.translate(x, y);
         
         // Draw Top Left Corner Icon
@@ -335,7 +340,7 @@ public class MegamekBorder extends EmptyBorder {
      */
     private void paintEdge(Component c, Graphics g, ArrayList<ImageIcon> icons, 
     		int x, int y, int width, int height, boolean isLeftRight,
-    		ArrayList<Boolean> shouldTile, int numTiledIcons, int staticSpace){
+    		ArrayList<Boolean> shouldTile, int numTiledIcons, int staticSpace){       
     	g = g.create(x, y, width, height);
     	
     	// Determine how much width/height a tiled icons will get to consume

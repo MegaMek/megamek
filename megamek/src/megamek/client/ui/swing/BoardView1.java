@@ -896,15 +896,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 			bvBgBuffer = new BufferedImage((int)viewRect.getWidth(),
 					(int)viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
 			Graphics bgGraph = bvBgBuffer.getGraphics();
-			int w = (int)viewRect.getWidth();
-	        int h = (int)viewRect.getHeight();
-	        int iW = bvBgIcon.getIconWidth();
-	        int iH = bvBgIcon.getIconHeight();
-			for (int x = 0; x < w; x+=iW){
-	            for (int y = 0; y < h; y+=iH){
-	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y,
-	                        bvBgIcon.getImageObserver());
-	            }
+			if (bvBgIcon != null) {
+    			int w = (int)viewRect.getWidth();
+    	        int h = (int)viewRect.getHeight();
+    	        int iW = bvBgIcon.getIconWidth();
+    	        int iH = bvBgIcon.getIconHeight();
+    	        
+    			for (int x = 0; x < w; x+=iW){
+    	            for (int y = 0; y < h; y+=iH){
+    	            	bgGraph.drawImage(bvBgIcon.getImage(), x, y,
+    	                        bvBgIcon.getImageObserver());
+    	            }
+    	        }
 	        }
         }
 		g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
@@ -7704,6 +7707,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 			protected void paintComponent(Graphics g) {
         		if (scrollPaneBgIcon == null){
         			super.paintComponent(g);
+        			return;
         		}
                 int w = getWidth();
                 int h = getHeight();

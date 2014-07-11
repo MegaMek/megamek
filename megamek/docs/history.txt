@@ -11,7 +11,14 @@ v0.39.1-dev (SVN)
 + Data: Unit Fixes and New Images.
 + Data: New Images.
 + Data: Starting to change Source Names to match TRO for easier reference.
-+ Bug [#4193]: Princess NPE: Exception in thread "Packet Pump" java.lang.NullPointerException
++ Bug [#4193]: Princess NPE: Exception in thread "Packet Pump" 
+    java.lang.NullPointerException
++ Feature: Added the font_color attribute to the UI_Element tag in skin specs
++ Feature: Plain skin; now if an icon for a border or button fails to load, the
+    element falls back to the paintComponent method of its parent, which enables
+    a plain skin to be specified by leaving out all icons.
+
+        
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

@@ -30,6 +30,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,6 +60,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
@@ -152,6 +155,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JSlider fovDarkenAlpha;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
+    
+    private JComboBox<String> skinFiles;
 
     // Key Binds
     private JList<String> keys;
@@ -470,6 +475,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showDamageLevel);
         comps.add(row);
+        
+        skinFiles = new JComboBox<String>();
+        JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(skinFileLabel);
+        row.add(skinFiles);
+        comps.add(row);        
 
         return createSettingsPanel(comps);
     }
@@ -545,10 +557,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 + "hexes" + File.separator);
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
-                if (name.endsWith(".tileset")) {
-                    return true;
-                }
-                return false;
+                return name.endsWith(".tileset");
             }
         });
         tileSetChoice.removeAllItems();
@@ -560,13 +569,26 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
 
+        skinFiles.removeAllItems();
+        String[] xmlFiles = 
+            Configuration.configDir().list(new FilenameFilter() {
+                public boolean accept(File directory, String fileName) {
+                    return fileName.endsWith(".xml");
+                } 
+            });
+        for (String file : xmlFiles) {
+            if (SkinXMLHandler.validSkinSpecFile(file)) {
+                skinFiles.addItem(file);
+            }
+        }
+        skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+        
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
         fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
         fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
-
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -627,7 +649,19 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
-
+        
+        String skinFile = (String)skinFiles.getSelectedItem();
+        if (!gs.getSkinFile().equals(skinFile)) {
+            try {
+                SkinXMLHandler.initSkinXMLHandler(skinFile);
+                gs.setSkinFile(skinFile);
+            } catch (IOException e) {
+                System.out.println("Error reading in default skin file!");
+                System.out.println("Error: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+        }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
@@ -772,11 +806,10 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
         }
-        
 
         setVisible(false);
     }

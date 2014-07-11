@@ -9,6 +9,9 @@ import java.util.Hashtable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.Configuration;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -70,25 +73,51 @@ public class SkinXMLHandler {
     private static Hashtable<String, SkinSpecification> skinSpecs;
     
     /**
+     * Checks whether the given path points to a file that is a valid skin
+     * specification.
+     * 
+     * @param path
+     * @return
+     */
+    public static boolean validSkinSpecFile(String fileName) {
+        File file = new File(Configuration.configDir(), fileName);
+        if (!file.exists() || !file.isFile()) {
+            return false;
+        }
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            Document doc = builder.parse(file);
+            // TODO: Just validate against the XSD
+            // Until that's done, just assume anything with UI_ELEMENT tags is
+            //  valid
+            NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
+            if (listOfComponents.getLength() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
      * Initializes using the default skin file.
      * @throws IOException
      */
     public static void initSkinXMLHandler() throws IOException {
-        initSkinXMLHandler(defaultSkinXML);
+        String skinFilePath = GUIPreferences.getInstance().getSkinFile();
+        initSkinXMLHandler(skinFilePath);
     }
     
     /**
      * Initializes using the supplied skin file.
      * @throws IOException
      */
-    public static void initSkinXMLHandler(String path) throws IOException {
-            
-        String filePath = System.getProperty("user.dir");
-        if (!filePath.endsWith(File.separator)) {
-            filePath += File.separator;
-        }
-        filePath += "mmconf" + File.separator + path;
-        File file = new File(filePath);
+    public static void initSkinXMLHandler(String fileName) throws IOException {
+        
+        File file = new File(Configuration.configDir(), fileName);
         if (!file.exists() || !file.isFile()) {
             return;
         }
@@ -97,7 +126,7 @@ public class SkinXMLHandler {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = dbf.newDocumentBuilder();
-            System.out.println("Parsing " + filePath);
+            System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
             System.out.println("Parsing finished.");
 
@@ -135,7 +164,7 @@ public class SkinXMLHandler {
                         }
                     }
                     Element fontColorEle = (Element) 
-                            borderList.getElementsByTagName(FONT_COLOR);
+                            borderList.getElementsByTagName(FONT_COLOR).item(0);
                     if (fontColorEle != null) {
                         String fontColorContent = fontColorEle.getTextContent();
                         skinSpec.fontColor = Color.decode(fontColorContent);
@@ -149,8 +178,6 @@ public class SkinXMLHandler {
 
                 skinSpecs.put(name, skinSpec);
             }
-
-
         } catch (Exception e) {
             throw new IOException(e);
         }    

@@ -19,7 +19,9 @@ v0.39.1-dev (SVN)
     a plain skin to be specified by leaving out all icons.
 + Feature: Added ability to select a skin specification file in  the client 
     settings dialog.  Note: this only takes effect before a game is started
-
++ Feature: SkinSpecification/MegamekBorder now supports a no border mode
++ Feature: SkinSpec/MegamekButton now supports scaled background images in
+    addition to tiled ones
         
 
 v0.39.0 (2014-07-02 21:14 UTC)

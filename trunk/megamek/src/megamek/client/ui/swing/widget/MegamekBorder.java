@@ -57,30 +57,38 @@ public class MegamekBorder extends EtchedBorder {
     
     boolean iconsLoaded =  false;    
     
+    /**
+     * Flag that determines whether a border should be drawn or not.
+     */
+    boolean noBorder = false;
+    
     protected Insets insets;
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    public MegamekBorder(int top, int left, int bottom, int right){
-        super();
-        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));        
-    }
-    
     public MegamekBorder(){
         super();
-        loadIcons(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
+        initialize(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
     }
     
     public MegamekBorder(SkinSpecification spec){
         super();
-        loadIcons(spec);
+        initialize(spec);
     }
     
     public MegamekBorder(String component){
         super();
-        loadIcons(SkinXMLHandler.getSkin(component));
+        initialize(SkinXMLHandler.getSkin(component));
+    }
+    
+    private void initialize(SkinSpecification skinSpec) {
+        noBorder = skinSpec.noBorder;
+        // Only load icons if we are displaying a border
+        if (!noBorder) {
+            loadIcons(skinSpec);
+        }        
     }
     
     private ImageIcon loadIcon(String path) throws MalformedURLException {
@@ -261,6 +269,11 @@ public class MegamekBorder extends EtchedBorder {
      */
     public void paintBorder(Component c, Graphics g, int x, int y, int width, 
             int height) {
+        // Do nothing if we don't want to draw a border
+        if (noBorder) {
+            return;
+        }
+        
         // If the icons didn't loaded, treat this as a regualar border
         if (!iconsLoaded) {
             super.paintBorder(c, g, x, y, width, height);
@@ -406,11 +419,11 @@ public class MegamekBorder extends EtchedBorder {
     }
     
     public Insets getBorderInsets(Component c, Insets insets) {
-        return computeInsets(insets);
-    }
-    
-    public Insets getBorderInsets() {
-        return computeInsets(new Insets(0,0,0,0));
+        if (noBorder) {
+            return new Insets(0,0,0,0);
+        } else {
+            return computeInsets(insets);
+        }
     }
     
     private Insets computeInsets(Insets i) {

@@ -31,6 +31,10 @@ public class SkinSpecification {
     
     public ArrayList<String> backgrounds;
     
+    boolean noBorder = false;
+    
+    boolean tileBackground = true;
+    
     public SkinSpecification(){
         tl_corner = tr_corner = bl_corner = br_corner = "";
         topEdge = new ArrayList<String>();

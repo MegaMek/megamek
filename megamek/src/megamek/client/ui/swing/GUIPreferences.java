@@ -162,6 +162,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
+    public static final String SKIN_FILE = "SkinFile";
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -286,6 +287,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
+        store.setDefault(SKIN_FILE, "defaultSkin.xml");
     }
 
     public void setDefault(String name, Color color) {
@@ -617,6 +619,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShowUnitOverview(){
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
+    
+    public String getSkinFile() {
+        return store.getString(SKIN_FILE);
+    }
 
     public void setAntiAliasing(boolean state){
         store.setValue(ANTIALIASING, state);
@@ -926,6 +932,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShowDamageLevel(boolean b){
         store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
+    
+    public void setSkinFile(String s) {
+        store.setValue(SKIN_FILE, s);
+    }    
 
     protected ColorParser p = new ColorParser();
 

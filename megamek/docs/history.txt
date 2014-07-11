@@ -17,6 +17,8 @@ v0.39.1-dev (SVN)
 + Feature: Plain skin; now if an icon for a border or button fails to load, the
     element falls back to the paintComponent method of its parent, which enables
     a plain skin to be specified by leaving out all icons.
++ Feature: Added ability to select a skin specification file in  the client 
+    settings dialog.  Note: this only takes effect before a game is started
 
         
 

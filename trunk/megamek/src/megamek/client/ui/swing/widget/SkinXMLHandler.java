@@ -1,5 +1,6 @@
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +49,9 @@ public class SkinXMLHandler {
 	
 	public static String UI_ELEMENT = "UI_Element";
 	public static String NAME = "name";
+	public static String FONT_COLOR = "font_color";
 	public static String BORDER = "border";
+	public static String PLAIN = "plain";
 	public static String TR_CORNER = "corner_top_right";
 	public static String TL_CORNER = "corner_top_left";
 	public static String BR_CORNER = "corner_bottom_right";
@@ -106,26 +109,39 @@ public class SkinXMLHandler {
             for (int comp = 0; comp < totalComponents; comp++) {
                 // Get the first element of this node.
                 Element borderList = (Element) listOfComponents.item(comp);
-
-                // Get the border specs
-                Element border = (Element) 
-                		borderList.getElementsByTagName(BORDER).item(0);
-                if (border == null) {
-                    System.err.println("Missing <" + BORDER +  
-                    		"> tag in element #" + comp);
-                    continue;
-                }
-                
-                SkinSpecification skinSpec = parseBorderTag(border);
-
-               // Get the border specs
-                NodeList backgrounds = 
-                		borderList.getElementsByTagName(BACKGROUND_IMAGE);
-                if (backgrounds != null){
-                	for (int bg = 0; bg < backgrounds.getLength(); bg++){
-                		skinSpec.backgrounds.add(
-                				backgrounds.item(bg).getTextContent());
-                	}
+                SkinSpecification skinSpec;
+                Element plainTag = (Element) 
+                        borderList.getElementsByTagName(PLAIN).item(0);
+                // If there is no plain tag, load the icons
+                if (plainTag == null) {
+                    // Get the border specs
+                    Element border = (Element) 
+                    		borderList.getElementsByTagName(BORDER).item(0);
+                    if (border == null) {
+                        System.err.println("Missing <" + BORDER +  
+                        		"> tag in element #" + comp);
+                        continue;
+                    }
+                    
+                    skinSpec = parseBorderTag(border);
+    
+                   // Get the border specs
+                    NodeList backgrounds = 
+                    		borderList.getElementsByTagName(BACKGROUND_IMAGE);
+                    if (backgrounds != null){
+                    	for (int bg = 0; bg < backgrounds.getLength(); bg++){
+                    		skinSpec.backgrounds.add(
+                    				backgrounds.item(bg).getTextContent());
+                    	}
+                    }
+                    Element fontColorEle = (Element) 
+                            borderList.getElementsByTagName(FONT_COLOR);
+                    if (fontColorEle != null) {
+                        String fontColorContent = fontColorEle.getTextContent();
+                        skinSpec.fontColor = Color.decode(fontColorContent);
+                    }                    
+                } else { // Plain skin, no icons
+                    skinSpec = new SkinSpecification();
                 }
                 
                 String name = borderList.getElementsByTagName(NAME).

@@ -37,6 +37,7 @@ public class MegamekButton extends JButton {
 	protected ImageIcon backgroundIcon;
 	protected ImageIcon backgroundPressedIcon;
 	
+	boolean iconsLoaded = false;
 	boolean isPressed = false;
 	boolean isMousedOver = false;
 	
@@ -59,26 +60,33 @@ public class MegamekButton extends JButton {
 	}
 	
 	 public void loadIcon(SkinSpecification spec){
-	        try {
-	        	if (spec.backgrounds.size() <2){
-	        		System.out.println("Error: skin specification for a " +
-	        				"Megamek Button does not contain at least " +
-	        				"2 background images!");
-	        	}
-	            java.net.URI imgURL = 
-	                    new File(Configuration.widgetsDir(),
-	                    		spec.backgrounds.get(0)).toURI();
-	            backgroundIcon = new ImageIcon(imgURL.toURL());
-	            imgURL = 
-	                    new File(Configuration.widgetsDir(),
-	                    		spec.backgrounds.get(1)).toURI();
-	            backgroundPressedIcon = new ImageIcon(imgURL.toURL());
-	        } catch (Exception e) {
-	        	System.out.println("Error: loading background icons for " +
-	        			"a Megamekbutton!");
-	        	System.out.println("Error: " + e.getMessage());
-	        }
-	 }
+	     iconsLoaded = true;
+	     // If there were no background paths loaded, there's nothing to do
+	     if (!spec.hasBackgrounds()) {
+	         iconsLoaded = false;
+	         return;
+	     }
+	     // Otherwise, try to load in all of the images.
+        try {
+            if (spec.backgrounds.size() < 2) {
+                System.out.println("Error: skin specification for a "
+                        + "Megamek Button does not contain at least "
+                        + "2 background images!");
+                iconsLoaded = false;
+            }
+            java.net.URI imgURL = new File(Configuration.widgetsDir(),
+                    spec.backgrounds.get(0)).toURI();
+            backgroundIcon = new ImageIcon(imgURL.toURL());
+            imgURL = new File(Configuration.widgetsDir(),
+                    spec.backgrounds.get(1)).toURI();
+            backgroundPressedIcon = new ImageIcon(imgURL.toURL());
+        } catch (Exception e) {
+            System.out.println("Error: loading background icons for "
+                    + "a Megamekbutton!");
+            System.out.println("Error: " + e.getMessage());
+            iconsLoaded = false;
+        }
+    }
 	 
 	 protected void processMouseEvent(MouseEvent e){
 		if (e.getID() == MouseEvent.MOUSE_EXITED){
@@ -95,6 +103,11 @@ public class MegamekButton extends JButton {
 	 }
 	 
 	 protected void paintComponent(Graphics g){
+	     // If none of the icons are loaded, treat this is a regular JButton
+	     if (!iconsLoaded) {
+	         super.paintComponent(g);
+	         return;
+	     }
 		int w = getWidth();
 		int h = getHeight();
 		int iW = isPressed ? backgroundPressedIcon.getIconWidth() : 
@@ -135,5 +148,9 @@ public class MegamekButton extends JButton {
 	 public String toString(){
 		 return getActionCommand();
 	 }
+
+    public boolean isIconsLoaded() {
+        return iconsLoaded;
+    }
 	 
 }

@@ -366,7 +366,7 @@ public class MoveStep implements Serializable {
                 break;
             }
         }
-        toReturn.replaceSteps(steps);
+        toReturn.addSteps(steps, false);
         return toReturn;
     }
 

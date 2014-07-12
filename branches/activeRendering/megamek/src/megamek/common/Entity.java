@@ -4269,7 +4269,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (this instanceof BattleArmor)) {
                         toReturn = 2;
                     }
-                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
+                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT) 
+                            || type.hasFlag(MiscType.F_NOVA) 
+                            || type.hasFlag(MiscType.F_WATCHDOG)) {
                         toReturn = 3;
                     }
                     if (game.getPlanetaryConditions().hasEMI()) {

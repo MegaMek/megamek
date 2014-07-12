@@ -14,7 +14,7 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -36,6 +36,8 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
@@ -53,6 +55,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final long serialVersionUID = 639696875125581395L;
     
     protected static final int TRANSPARENT = 0xFFFF00FF;
+    
+    protected static final Dimension minButtonSize = new Dimension(32,32);
     
     /**
      * Interface that defines what a command for a phase is.
@@ -178,23 +182,25 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
             if (!ok) {
                 // skip as nothing was enabled
-            currentButtonGroup++;
-                if ((currentButtonGroup * buttonsPerGroup) >= 
-                buttonList.size()) {
-                currentButtonGroup = 0;
+                currentButtonGroup++;
+                if ((currentButtonGroup * buttonsPerGroup) >= buttonList.size()) {
+                    currentButtonGroup = 0;
                 }
             }
         }
         int i = 0;
         for (i = currentButtonGroup * buttonsPerGroup; 
-        (i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                && (i < buttonList.size()); i++) {        
-            if (buttonList.get(i) != null){
-            subPanel.add(buttonList.get(i));              
+                (i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                    && (i < buttonList.size()); i++) {
+            if (buttonList.get(i) != null) {
+                MegamekButton button = buttonList.get(i);
+                button.setMinimumSize(minButtonSize);
+                button.setPreferredSize(minButtonSize);
+                subPanel.add(button);
             } else {
-            subPanel.add(Box.createHorizontalGlue());
+                subPanel.add(Box.createHorizontalGlue());
             }
-        }           
+        }         
         while ( i < ((currentButtonGroup + 1) * buttonsPerGroup)){
         subPanel.add(Box.createHorizontalGlue());
         i++;
@@ -214,8 +220,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         c.gridx = 1;
         panButtons.add(butDone,c);        
         butDone.setSize(DONE_BUTTON_WIDTH,butDone.getHeight());
-    butDone.setPreferredSize(butDone.getSize());
-    butDone.setMinimumSize(butDone.getSize());
+        butDone.setPreferredSize(butDone.getSize());
+        butDone.setMinimumSize(butDone.getSize());
     
         panButtons.validate();
         panButtons.repaint();   
@@ -239,10 +245,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * Sets up the status bar with toggle buttons for the mek display and map.
      */
     protected void setupStatusBar(String defStatus) {
+        SkinSpecification pdSkinSpec = 
+                SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        
         panStatus = new JPanel();
         panStatus.setOpaque(false);
         labStatus = new JLabel(defStatus, SwingConstants.CENTER);
-        labStatus.setForeground(Color.yellow);
+        labStatus.setForeground(pdSkinSpec.fontColor);
         labStatus.setOpaque(false);
 
         // layout

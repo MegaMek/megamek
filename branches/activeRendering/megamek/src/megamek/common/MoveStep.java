@@ -358,7 +358,7 @@ public class MoveStep implements Serializable {
      */
     public MovePath getParentUpToThisStep() {
         Vector<MoveStep> steps = new Vector<MoveStep>();
-        MovePath toReturn = new MovePath(parent.game, parent.getEntity());
+        MovePath toReturn = new MovePath(parent.getGame(), parent.getEntity());
         for (Enumeration<MoveStep> e = parent.getSteps(); ; e.hasMoreElements()) {
             MoveStep step = e.nextElement();
             steps.add(step);
@@ -366,7 +366,7 @@ public class MoveStep implements Serializable {
                 break;
             }
         }
-        toReturn.steps = steps;
+        toReturn.addSteps(steps, false);
         return toReturn;
     }
 
@@ -1199,7 +1199,7 @@ public class MoveStep implements Serializable {
      */
     public void moveInDir(int dir) {
         position = position.translated(dir);
-        if (!parent.game.getBoard().contains(position)) {
+        if (!parent.getGame().getBoard().contains(position)) {
             throw new RuntimeException("Coordinate off the board.");
         }
     }
@@ -1411,10 +1411,10 @@ public class MoveStep implements Serializable {
 
         // If this step isn't the end step anymore, we might not be in danger
         // after all
-        if (parent.game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+        if (parent.getGame().getOptions().booleanOption("psr_jump_heavy_woods")) {
             if (!isEnd
                     && parent.isJumping()
-                    && parent.game.getBoard().getHex(position)
+                    && parent.getGame().getBoard().getHex(position)
                     .containsTerrain(Terrains.WOODS, 2)) {
                 danger = false;
                 pastDanger = false;

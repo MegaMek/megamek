@@ -45,6 +45,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -59,6 +60,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.Configuration;
 import megamek.common.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
@@ -152,6 +155,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JSlider fovDarkenAlpha;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
+    
+    private JComboBox<String> skinFiles;
 
     // Key Binds
     private JList<String> keys;
@@ -470,6 +475,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showDamageLevel);
         comps.add(row);
+        
+        skinFiles = new JComboBox<String>();
+        JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(skinFileLabel);
+        row.add(skinFiles);
+        comps.add(row);        
 
         return createSettingsPanel(comps);
     }
@@ -545,10 +557,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 + "hexes" + File.separator);
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
-                if (name.endsWith(".tileset")) {
-                    return true;
-                }
-                return false;
+                return name.endsWith(".tileset");
             }
         });
         tileSetChoice.removeAllItems();
@@ -560,13 +569,29 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
 
+        skinFiles.removeAllItems();
+        String[] xmlFiles = 
+            Configuration.configDir().list(new FilenameFilter() {
+                public boolean accept(File directory, String fileName) {
+                    return fileName.endsWith(".xml");
+                } 
+            });
+        for (String file : xmlFiles) {
+            if (SkinXMLHandler.validSkinSpecFile(file)) {
+                skinFiles.addItem(file);
+            }
+        }
+        // Select the default file first
+        skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
+        // If this select fials, the default skin will be selected
+        skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+        
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
         fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
         fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
-
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -627,7 +652,23 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
-
+        
+        String newSkinFile = (String)skinFiles.getSelectedItem();
+        String oldSkinFile = gs.getSkinFile();
+        if (!oldSkinFile.equals(newSkinFile)) {
+            boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
+            if (!success) {
+                SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
+                String title = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.title");
+                String msg = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.msg");
+                JOptionPane.showMessageDialog(owner, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                gs.setSkinFile(newSkinFile);
+            }            
+        }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
@@ -772,11 +813,10 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
         
-        // Need to do stuff if the corder changes.
+        // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
         }
-        
 
         setVisible(false);
     }

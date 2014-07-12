@@ -169,6 +169,7 @@
 
 	<target name="svndev-clean" description="remove the SVN build directory">
 		<delete dir="${svnbuilddir}" />
+        <delete dir="${svndir}" />
 	</target>
 
 	<target name="mac-bundle" description="Bundle the project built from SVN into an Mac OSX distribution">

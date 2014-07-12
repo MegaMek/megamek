@@ -7,6 +7,7 @@ v0.38.1-dev (SVN)
 + Data: Unit Fixes and New Images.
 + Data: New Images.
 + Data: Starting to change Source Names to match TRO for easier reference.
++ Data: New Images,Unit Fixes, and RAT fixes
 
 v0.38.0 (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes

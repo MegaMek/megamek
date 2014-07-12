@@ -157,6 +157,7 @@
 	
 	<target name="localdev-clean" description="remove the local build directory">
 		<delete dir="${localbuilddir}" />
+        <delete dir="${localdir}" />
 	</target>
 	
 	<target name="mac-bundle" description="Bundle the project built from local source into an Mac OSX distribution">

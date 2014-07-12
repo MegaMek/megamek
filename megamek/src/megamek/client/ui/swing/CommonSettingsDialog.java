@@ -30,7 +30,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +45,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -581,6 +581,9 @@ public class CommonSettingsDialog extends ClientDialog implements
                 skinFiles.addItem(file);
             }
         }
+        // Select the default file first
+        skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
+        // If this select fials, the default skin will be selected
         skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
         
         fovInsideEnabled.setSelected(gs.getFovHighlight());
@@ -650,17 +653,21 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
         
-        String skinFile = (String)skinFiles.getSelectedItem();
-        if (!gs.getSkinFile().equals(skinFile)) {
-            try {
-                SkinXMLHandler.initSkinXMLHandler(skinFile);
-                gs.setSkinFile(skinFile);
-            } catch (IOException e) {
-                System.out.println("Error reading in default skin file!");
-                System.out.println("Error: " + e.getMessage());
-                e.printStackTrace();
-            }
-            
+        String newSkinFile = (String)skinFiles.getSelectedItem();
+        String oldSkinFile = gs.getSkinFile();
+        if (!oldSkinFile.equals(newSkinFile)) {
+            boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
+            if (!success) {
+                SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
+                String title = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.title");
+                String msg = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.msg");
+                JOptionPane.showMessageDialog(owner, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                gs.setSkinFile(newSkinFile);
+            }            
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {

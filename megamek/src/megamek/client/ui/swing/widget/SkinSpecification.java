@@ -11,8 +11,6 @@ import java.util.ArrayList;
  */
 public class SkinSpecification {
     
-    public boolean allIconsSpecified = true;
-    
     public String tl_corner;
     public String tr_corner;
     public String bl_corner;

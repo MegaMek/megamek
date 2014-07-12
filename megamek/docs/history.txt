@@ -30,6 +30,8 @@ v0.39.1-dev (SVN)
     the old skin.  Error logging for failed parsing is also better.  Finally,
     if a SkinSpecification is requested when no SkinSpec is initialized, a
     default value is returned that will effectively force a "plain" skin.
++ Refactored BoardView1 to move it to its own package and refactored a lot of 
+    inner classes to their own classes/files.
 
 
 v0.39.0 (2014-07-02 21:14 UTC)

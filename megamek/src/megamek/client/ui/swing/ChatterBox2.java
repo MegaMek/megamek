@@ -37,6 +37,7 @@ import java.util.Vector;
 import megamek.client.Client;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;

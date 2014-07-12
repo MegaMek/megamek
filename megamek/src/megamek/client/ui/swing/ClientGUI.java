@@ -74,6 +74,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;

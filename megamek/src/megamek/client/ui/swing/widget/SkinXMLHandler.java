@@ -108,20 +108,22 @@ public class SkinXMLHandler {
      * Initializes using the default skin file.
      * @throws IOException
      */
-    public static void initSkinXMLHandler() throws IOException {
+    public static boolean initSkinXMLHandler() {
         String skinFilePath = GUIPreferences.getInstance().getSkinFile();
-        initSkinXMLHandler(skinFilePath);
+        return initSkinXMLHandler(skinFilePath);
     }
     
     /**
      * Initializes using the supplied skin file.
      * @throws IOException
      */
-    public static void initSkinXMLHandler(String fileName) throws IOException {
+    public synchronized static boolean initSkinXMLHandler(String fileName) {
         
         File file = new File(Configuration.configDir(), fileName);
         if (!file.exists() || !file.isFile()) {
-            return;
+            System.out.println("ERROR: Bad skin specification file: " +
+                    "file doesn't exist!  File name: " + fileName);
+            return false;
         }
 
         // Build the XML document.
@@ -203,9 +205,20 @@ public class SkinXMLHandler {
 
                 skinSpecs.put(name, skinSpec);
             }
+            
+            if (!skinSpecs.containsKey(defaultUIElement) 
+                    || !skinSpecs.containsKey(defaultButton)) {
+                System.out.println("ERROR: Bad skin specification file: " +
+                		"file doesn't specify " + defaultUIElement + 
+                		" or " + defaultButton + "!");
+                return false;
+            }
         } catch (Exception e) {
-            throw new IOException(e);
-        }    
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
     
     /**
@@ -291,14 +304,14 @@ public class SkinXMLHandler {
      * @param component  The name of the component to get skin info for.
      * @return           
      */
-    public static SkinSpecification getSkin(String component, boolean isBtn){
+    public synchronized static SkinSpecification getSkin(String component, 
+            boolean isBtn){
         if (skinSpecs == null ){
-            try {
-                initSkinXMLHandler();
-            } catch (IOException e){
-                System.out.println("Error reading in default skin file!");
-                System.out.println("Error: " + e.getMessage());
-                return null;
+            boolean rv = initSkinXMLHandler();
+            if (!rv) {
+                // This will return a blank skin spec file, which will act like
+                // a plain skin.
+                return new SkinSpecification();
             }
         }
         

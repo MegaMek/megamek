@@ -1,5 +1,5 @@
 Militia/Mercenary Battle Armor D
-Infiltrator Mk. I Battle Armor Mk. I 'Waddle',1
+Infiltrator Mk. I Battle Armor 'Waddle',1
 Nighthawk PA(L) Mk. XXI,2
 Gray Death Scout Suit (Standard),3
 Gray Death Standard Suit [Flamer],4

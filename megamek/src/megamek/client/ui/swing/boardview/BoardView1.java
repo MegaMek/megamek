@@ -1471,76 +1471,79 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+        
+        int maxX = drawX + drawWidth;
+        int maxY = drawY + drawHeight;
 
         IBoard board = game.getBoard();
-        // loop through the hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                Coords c = new Coords(j + drawX, i + drawY);
-                Point p = getHexLocation(c);
+        for (Enumeration<Coords> minedCoords = game.getMinedCoords();
+                minedCoords.hasMoreElements();) {
+            Coords c = minedCoords.nextElement();
+            // If the coords aren't visible, skip
+            if (c.x < drawX || c.x > maxX || c.y < drawY || c.y > maxY
+                    || !board.contains(c)) {
+                continue;
+            }
+                
+            Point p = getHexLocation(c);
+            Image mineImg = getScaledImage(tileManager.getMinefieldSign(),true);
+            g.drawImage(mineImg, p.x + (int) (13 * scale), p.y
+                    + (int) (13 * scale), this);
 
-                if (!board.contains(c)) {
-                    continue;
-                }
-                if (!game.containsMinefield(c)) {
-                    continue;
-                }
-
+            g.setColor(Color.black);
+            int nbrMfs = game.getNbrMinefields(c);
+            if (nbrMfs > 1) {
+                drawCenteredString(
+                        Messages.getString("BoardView1.Multiple"), //$NON-NLS-1$
+                        p.x, p.y + (int) (51 * scale), font_minefield, g);
+            } else if (nbrMfs == 1) {
                 Minefield mf = game.getMinefields(c).get(0);
-
-                Image tmpImage = getScaledImage(tileManager.getMinefieldSign(),true);
-                g.drawImage(tmpImage, p.x + (int) (13 * scale), p.y
-                        + (int) (13 * scale), this);
-
-                g.setColor(Color.black);
-                int nbrMfs = game.getNbrMinefields(c);
-                if (nbrMfs > 1) {
-                    drawCenteredString(
-                            Messages.getString("BoardView1.Multiple"), //$NON-NLS-1$
-                            p.x, p.y + (int) (51 * scale), font_minefield, g);
-                } else if (nbrMfs == 1) {
-                    switch (mf.getType()) {
-                        case (Minefield.TYPE_CONVENTIONAL):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Conventional") + mf.getDensity() + ")", //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_INFERNO):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_ACTIVE):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_COMMAND_DETONATED):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.detonated" + mf.getDensity() + ")"), //$NON-NLS-1$
+                
+                switch (mf.getType()) {
+                    case (Minefield.TYPE_CONVENTIONAL):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Conventional") //$NON-NLS-1$
+                                + mf.getDensity() + ")", //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale),
+                                font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_INFERNO):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Inferno") //$NON-NLS-1$
+                                + mf.getDensity() + ")", //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale),
+                                font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_ACTIVE):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Active") //$NON-NLS-1$
+                                + mf.getDensity() + ")",  //$NON-NLS-2$
+                                p.x, p.y + (int) (51 * scale),
+                                font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_COMMAND_DETONATED):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale),
+                                font_minefield, g);
+                        drawCenteredString(
+                                Messages.getString("BoardView1.detonated" //$NON-NLS-1$
+                                + mf.getDensity() + ")"), //$NON-NLS-1$
+                                p.x, p.y + (int) (60 * scale),
+                                font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_VIBRABOMB):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale),
+                                font_minefield, g);
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            drawCenteredString("(" //$NON-NLS-1$
+                                    + mf.getSetting() + ")", //$NON-NLS-1$
                                     p.x, p.y + (int) (60 * scale),
                                     font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_VIBRABOMB):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            if (mf.getPlayerId() == localPlayer.getId()) {
-                                drawCenteredString(
-                                        "(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                        p.x, p.y + (int) (60 * scale),
-                                        font_minefield, g);
-                            }
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         }

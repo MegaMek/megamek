@@ -32,6 +32,9 @@ v0.39.1-dev (SVN)
     default value is returned that will effectively force a "plain" skin.
 + Refactored BoardView1 to move it to its own package and refactored a lot of 
     inner classes to their own classes/files.
++ Rewrote BoardView1.drawMinefields(): now instead of iterating through all
+    visible coords, it iterates through all mined coords and checks to see if
+    they are visible.
 
 
 v0.39.0 (2014-07-02 21:14 UTC)

@@ -185,13 +185,17 @@ public class MovePath implements Cloneable, Serializable {
                 && !isJumping();
     }
 
+    protected MovePath addStep(final MoveStep step) {
+        return addStep(step, true);
+    }
+
     /**
      * Initializes a step as part of this movement path. Then adds it to the
      * list.
      *
      * @param step
      */
-    protected MovePath addStep(final MoveStep step) {
+    protected MovePath addStep(final MoveStep step, boolean compile) {
         if (step == null) {
             System.err.println(new RuntimeException("Received NULL MoveStep"));
             return this;
@@ -205,13 +209,16 @@ public class MovePath implements Cloneable, Serializable {
         }
         final MoveStep prev = getStep(steps.size() - 2);
 
-        try {
-            step.compile(getGame(), getEntity(), prev);
-        } catch (final RuntimeException re) {
-            // // N.B. the pathfinding will try steps off the map.
-            // re.printStackTrace();
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        if (compile) {
+            try {
+                step.compile(getGame(), getEntity(), prev);
+            } catch (final RuntimeException re) {
+                // // N.B. the pathfinding will try steps off the map.
+                // re.printStackTrace();
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
         }
+
 
         // check for illegal jumps
         final Coords start = getEntity().getPosition();
@@ -1214,14 +1221,14 @@ public class MovePath implements Cloneable, Serializable {
         return mp;
     }
 
-    public void addSteps(Vector<MoveStep> path) {
+    public void addSteps(Vector<MoveStep> path, boolean compile) {
         for (MoveStep step : path) {
-            addStep(step);
+            addStep(step, compile);
         }
     }
 
     public void replaceSteps(Vector<MoveStep> path) {
         steps.clear();
-        addSteps(path);
+        addSteps(path, true);
     }
 }

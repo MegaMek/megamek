@@ -1877,8 +1877,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.drawLine(x1, y1, x2, y2);
         }
 
-
-
         fovHighlightingAndDarkening.draw( boardGraph, c, drawX, drawY,
                 saveBoardImage);
 

@@ -1790,8 +1790,10 @@ public class FireControl {
             if (entity.getOwner().isEnemyOf(shooter.getOwner())
                 && (entity.getPosition() != null)
                 && !entity.isOffBoard()
-                && entity.isTargetable()) {
-                LosEffects effects = 
+                && entity.isTargetable()
+                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+
+                LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
                 if (effects.canSee()) {
                     targetableEnemyList.add(entity);

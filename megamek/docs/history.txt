@@ -37,6 +37,7 @@ v0.39.1-dev (SVN)
     they are visible.
 + Adjusted default values for ADVANCED_KEY_REPEAT_DELAY and 
     ADVANCED_KEY_REPEAT_RATE
++ Bug [#4196]: Princess Fires on Crew Killed Vehicles
 
 
 v0.39.0 (2014-07-02 21:14 UTC)

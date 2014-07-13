@@ -818,9 +818,7 @@ public class Princess extends BotClient {
                     for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
-                        if ((entity instanceof GunEmplacement)
-                            && entity.getOwner().isEnemyOf(getLocalPlayer())
-                            && (fireControl.getAdditionalTargets().indexOf(bt) == -1)) {
+                        if (isEnemyGunEmplacement(entity, coords)) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " + coords.toFriendlyString()
                                      + " designated target due to Gun Emplacement.");
@@ -868,9 +866,7 @@ public class Princess extends BotClient {
                     Coords coords = bldgCoords.nextElement();
                     for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
                         Entity entity = i.nextElement();
-                        if (entity instanceof GunEmplacement
-                            && entity.getOwner().isEnemyOf(getLocalPlayer())
-                            && !getStrategicBuildingTargets().contains(coords)) {
+                        if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +
                                      " designated target due to Gun Emplacement.");
@@ -884,6 +880,13 @@ public class Princess extends BotClient {
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
+    }
+
+    private boolean isEnemyGunEmplacement(Entity entity, Coords coords) {
+        return entity instanceof GunEmplacement
+               && entity.getOwner().isEnemyOf(getLocalPlayer())
+               && !getStrategicBuildingTargets().contains(coords)
+               && (entity.getCrew() != null) && !entity.getCrew().isDead();
     }
     
     @Override

@@ -184,7 +184,9 @@ public abstract class BotClient extends Client {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
             Entity entity = i.nextElement();
             if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                && (entity.getPosition() != null) && !entity.isOffBoard()) {
+                && (entity.getPosition() != null) && !entity.isOffBoard()
+                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+
                 result.add(entity);
             }
         }

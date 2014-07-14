@@ -390,7 +390,16 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if (en instanceof Aero) {
             Aero a = (Aero) en;
             curMoveR.setString(Integer.toString(a.getCurrentVelocity()));
+            int currentFuel = a.getFuel();
+            int safeThrust = a.getWalkMP();
             fuelR.setString(Integer.toString(a.getFuel()));
+            if (currentFuel < (5 * safeThrust)) {
+                fuelR.setColor(Color.red);
+            } else if (currentFuel < (10 * safeThrust)) {
+                fuelR.setColor(Color.yellow);
+            } else {
+                fuelR.setColor(Color.white);
+            }
         } else {
             curMoveR.setString(en.getMovementString(en.moved)
                     + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$

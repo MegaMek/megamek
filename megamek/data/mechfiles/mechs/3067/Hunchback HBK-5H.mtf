@@ -6,6 +6,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3064
 Rules Level:2
+source:TRO 3067
 
 Mass:50
 Engine:200 Fusion Engine

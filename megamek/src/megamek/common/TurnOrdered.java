@@ -73,7 +73,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            return turns;
+            turns_multi = new HashMap<Integer, Integer>();
         }
         if (game.getOptions().booleanOption("mek_lance_movement")) {
             double lanceSize = 
@@ -157,7 +157,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void incrementMultiTurns(int entityClass) {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            return;
+            turns_multi = new HashMap<Integer, Integer>();
         }
         Integer classCount = turns_multi.get(entityClass);
         if (classCount == null) {
@@ -210,7 +210,9 @@ public abstract class TurnOrdered implements ITurnOrdered {
     @Override
     public void resetMultiTurns() {
         // turns_multi is transient, so it could be null
-        if (turns_multi != null) {
+        if (turns_multi == null) {
+            turns_multi = new HashMap<Integer, Integer>();
+        } else {
             turns_multi.clear();
         }
     }

@@ -301,6 +301,15 @@ class EntitySprite extends Sprite {
                     graph.drawString(
                             Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
                 }
+                if (a.getFuel() <= 0) {
+                    // draw "FUEL"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(
+                            Messages.getString("BoardView1.FUEL"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(
+                            Messages.getString("BoardView1.FUEL"), 17, 38); //$NON-NLS-1$
+                }
 
                 if (a.isEvading()) {
                     // draw "EVADE" - can't overlap with out of control

@@ -1329,6 +1329,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2620, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2620, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2620, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1341,6 +1342,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2850, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1369,6 +1371,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 1950, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1404,6 +1407,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Flare", 1, M_FLARE, 2820, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

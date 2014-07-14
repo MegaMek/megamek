@@ -211,6 +211,7 @@
         data/images/hexes/note.png (modified for formatting, from http://www.iconspedia.com/icon/note-icon-21517.html)
       Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
         data/images/widgets/hyades.jpg
+      UI Materials licensed from EVILSYSTEM (http://www.evilsystem.eu/terms/).
 
 
   And Of Course...

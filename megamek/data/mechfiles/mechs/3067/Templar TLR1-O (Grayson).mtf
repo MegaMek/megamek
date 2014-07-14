@@ -6,6 +6,7 @@ Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3065
 Rules Level:2
+source:TRO 3067
 
 Mass:85
 Engine:340 XL Engine

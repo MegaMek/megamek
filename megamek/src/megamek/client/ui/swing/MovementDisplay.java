@@ -18,10 +18,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -82,6 +85,11 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.LongestPathFinder;
+import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.preference.PreferenceManager;
+
 
 public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
@@ -183,6 +191,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED), //$NON-NLS-1$
         // Move envelope
         MOVE_ENVELOPE("MoveEnvelope", CMD_NONE),  //$NON-NLS-1$
+        MOVE_LONGEST_RUN("MoveLongestRun", CMD_NONE), //$NON-NLS-1$
+        MOVE_LONGEST_WALK("MoveLongestWalk", CMD_NONE), //$NON-NLS-1$
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
         MOVE_MORE("MoveMore", CMD_NONE); //$NON-NLS-1$
@@ -289,6 +299,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int GEAR_RAM = 7;
     public static final int GEAR_IMMEL = 8;
     public static final int GEAR_SPLIT_S = 9;
+    public static final int GEAR_LONGEST_RUN = 10;
+    public static final int GEAR_LONGEST_WALK = 11;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -1272,6 +1284,32 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             cmd.addStep(MoveStepType.ACC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
+        } if (gear == GEAR_LONGEST_WALK || gear == GEAR_LONGEST_RUN ){
+            int maxMp;
+            MoveStepType stepType;
+            if(gear == GEAR_LONGEST_WALK){
+                maxMp = ce().getWalkMP();
+                stepType = MoveStepType.BACKWARDS;
+                gear = GEAR_BACKUP;
+            }else{
+                maxMp= ce().getRunMPwithoutMASC();
+                stepType= MoveStepType.FORWARDS;
+                gear = GEAR_LAND;
+            }
+
+            LongestPathFinder lpf;
+            if (ce() instanceof Aero) {
+                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce().getGame());
+            } else {
+                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
+            }
+            final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<MovePath>(timeLimit * 4));
+
+            lpf.run(cmd);
+            MovePath lPath = lpf.getComputedPath(dest);
+            if (lPath != null)
+                cmd = lPath;
         }
     }
 
@@ -3402,21 +3440,9 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     if (ce() == null){
     return;
     }
-        Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
+        Map<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
-        mvEnvData.put(ce().getPosition(), mp);
-        computeMovementEnvelope(mvEnvData,ce().getPosition());
-        Hashtable<Coords,Integer> mvEnvMP = new Hashtable<Coords,Integer>((int)((mvEnvData.size() * 1.25) + 1));
-        for (Coords c : mvEnvData.keySet()){
-            mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
-        }
-        clientgui.bv.setMovementEnvelope(mvEnvMP,
-                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);
-    }
 
-    public void computeMovementEnvelope(Hashtable<Coords,MovePath> mvEnvData,
-            Coords loc){
-        // Determine the maximum MP we can spend
         int maxMP;
         if (gear == GEAR_JUMP){
             maxMP = ce().getJumpMP();
@@ -3430,46 +3456,20 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 maxMP = ce().getRunMP();
             }
         }
-
-        MovePath mp = mvEnvData.get(loc);
-        if (mp == null){
-            System.out.println("Error computing movement envelope: " +
-                    "no move path for given location!");
-            return;
-        }
-
-        boolean jumping = gear == GEAR_JUMP;
-        if (mp.countMp(jumping) >= maxMP){
-            return;
-        }
-
         MoveStepType stepType = (gear == GEAR_BACKUP) ?
                 MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
-        HashSet<Coords> nextSteps = new HashSet<Coords>();
-        IBoard board = clientgui.getClient().getGame().getBoard();
-        for (int i =0 ; i < 6; i++){
-            Coords c = loc.translated(i);
-            if (!board.contains(c)){
-                continue;
-            }
-            MovePath newPath = mp.clone();
-            newPath.findPathTo(c, stepType);
-            MovePath storedPath = mvEnvData.get(c);
-            if (storedPath == null){
-                if (newPath.countMp(jumping) <= maxMP){
-                    mvEnvData.put(c, newPath);
-                    nextSteps.add(c);
-                }
-            } else if (storedPath.countMp(jumping) > newPath.countMp(jumping)){
-                mvEnvData.put(c, newPath);
-                computeMovementEnvelope(mvEnvData,c);
-            }
-        }
+        if (gear == GEAR_JUMP)
+            mp.addStep(MoveStepType.START_JUMP);
 
-        for (Coords c : nextSteps){
-            computeMovementEnvelope(mvEnvData,c);
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, ce().getGame());
+        pf.run(mp);
+        mvEnvData = pf.getAllComputedPaths();
+        Hashtable<Coords, Integer> mvEnvMP = new Hashtable<Coords, Integer>((int) ((mvEnvData.size() * 1.25) + 1));
+        for (Coords c : mvEnvData.keySet()) {
+            mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
         }
-
+        clientgui.bv.setMovementEnvelope(mvEnvMP,
+                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);
     }
 
     //
@@ -3557,6 +3557,16 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP;
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
+            if (gear == MovementDisplay.GEAR_JUMP) {
+                clear();
+            }
+            gear = MovementDisplay.GEAR_LONGEST_RUN;
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_LONGEST_WALK.getCmd())) {
+            if (gear == MovementDisplay.GEAR_JUMP) {
+                clear();
+            }
+            gear = MovementDisplay.GEAR_LONGEST_WALK;
         } else if (ev.getActionCommand().equals(MoveCommand.MOVE_CLEAR.getCmd())) {
             clear();
             if (!clientgui.getClient().getGame().containsMinefield(ce.getPosition())) {

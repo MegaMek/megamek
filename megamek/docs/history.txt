@@ -41,9 +41,10 @@ v0.39.1-dev (SVN)
 + Bug [#4203]: Poor indication when aeros are low or out of fuel
 + Bug [#4201]: Initiative Issues with mek/vee lance and inf/proto move multi
     options
-+Data: New Images
-+Data: Part 2 of Source Name change to match TRO for easier reference.
-+Bug: Flare rounds missing from Mutators.
++ Data: New Images
++ Data: Part 2 of Source Name change to match TRO for easier reference.
++ Bug: Flare rounds missing from Mutators.
++ Feature: Added flare sprites, to indicate the locations of flares
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

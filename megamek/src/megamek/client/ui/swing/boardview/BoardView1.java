@@ -93,6 +93,7 @@ import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -219,6 +220,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
     private ArrayList<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
 
+    private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
     private HashMap<ArrayList<Integer>, EntitySprite> entitySpriteIds = new HashMap<ArrayList<Integer>, EntitySprite>();
     private HashMap<ArrayList<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<ArrayList<Integer>, IsometricSprite>();
 
@@ -330,6 +332,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
+    
+    private String FILENAME_FLARE_IMAGE = "flare.png";
+    
+    private Image flareImage;
 
     /**
      * Construct a new board view for the specified game
@@ -536,6 +542,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
+        
+        flareImage = getToolkit().getImage(
+                new File(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
+                        .toString());
     }
     
     private void registerKeyboardCommands(final BoardView1 bv, 
@@ -937,6 +947,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawDeployment(g);
         }
 
+        // draw Flare Sprites
+        drawSprites(g, flareSprites);
+        
         // draw C3 links
         drawSprites(g, c3Sprites);
 
@@ -2511,6 +2524,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         scheduleRedraw();
     }
+    
+    private void redrawAllFlares() {
+        flareSprites.clear();
+        for (Flare f : game.getFlares()) {
+            flareSprites.add(new FlareSprite(this, f));
+        }
+    }
+    
+    public Image getFlareImage() {
+        return flareImage;
+    }
 
     /**
      * Moves the cursor to the new position, or hides it, if newPos is null
@@ -3674,6 +3698,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     synchronized void boardChanged() {
         redrawAllEntities();
+        redrawAllFlares();
     }
 
     void clearSprites() {
@@ -4055,6 +4080,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
         }
+        
+        // check if it's on any flares
+        for (FlareSprite fSprite : flareSprites) {
+            if (fSprite.isInside(point)) {
+                final String[] flareStrings = fSprite.getTooltip();
+                for (String entString : flareStrings) {
+                    txt.append(entString);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
+        }
+        
         // check if it's on any entities
         for (EntitySprite eSprite : entitySprites) {
             if (eSprite.isInside(point)) {

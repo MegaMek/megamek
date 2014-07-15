@@ -17,6 +17,8 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,7 +28,14 @@ import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.LongestPathFinder;
+import megamek.common.pathfinder.MovePathFinder;
+import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
+import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.MPodHandler;
 
 /**
  * Holds movement path for an entity.
@@ -205,7 +214,7 @@ public class MovePath implements Cloneable, Serializable {
 
         // transform lateral shifts for quads or maneuverability aces
         if (canShift()) {
-            transformLateralShift();
+//            transformLateralShift();
         }
         final MoveStep prev = getStep(steps.size() - 2);
 
@@ -767,12 +776,26 @@ public class MovePath implements Cloneable, Serializable {
     public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
-        if (timeLimit >= 5000) {
-            System.out.print("WARNING!!!  Settings allow up to ");
-            System.out.print(timeLimit);
-            System.out.println(" milliseconds to find the optimum path!");
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game);
+
+        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
+        pf.addStopCondition(timeoutCondition);
+
+        pf.run(this.clone());
+        MovePath finPath = pf.getComputedPath(dest);
+
+        if (timeoutCondition.timeoutEngaged || finPath == null) {
+            /*
+             * Either we have forced searcher to end prematurely or no path was
+             * found. Lets try to fix it by taking the path that ended closest
+             * to the target and greedily extend it.
+             */
+            MovePath bestMp = Collections.min(pf.getAllComputedPaths().values(), new ShortestPathFinder.MovePathGreedyComparator(dest));
+            pf = ShortestPathFinder.newInstanceOfGreedy(dest, type, game);
+            pf.run(bestMp);
+            finPath = pf.getComputedPath(dest);
         }
-        notSoLazyPathfinder(dest, type, timeLimit);
+        this.steps = finPath.steps;
     }
 
     public boolean isMoveLegal() {
@@ -969,24 +992,24 @@ public class MovePath implements Cloneable, Serializable {
     public List<MovePath> getNextMoves(boolean backward, boolean forward) {
         final ArrayList<MovePath> result = new ArrayList<MovePath>();
         final MoveStep last = getLastStep();
-        if (isJumping()) {
-            final MovePath left = clone();
-            final MovePath right = clone();
-
-            // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
-            for (int turn = 0; turn < 2; turn++) {
-                left.addStep(MovePath.MoveStepType.TURN_LEFT);
-                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
-                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
-            }
-            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
-
-            // We've got all our next steps.
-            return result;
-        }
+//        if (isJumping()) {
+//            final MovePath left = clone();
+//            final MovePath right = clone();
+//
+//            // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
+//            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
+//            for (int turn = 0; turn < 2; turn++) {
+//                left.addStep(MovePath.MoveStepType.TURN_LEFT);
+//                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+//                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
+//                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
+//            }
+//            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
+//            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
+//
+//            // We've got all our next steps.
+//            return result;
+//        }
 
         // need to do a separate section here for Aeros.
         // just like jumping for now, but I could add some other stuff

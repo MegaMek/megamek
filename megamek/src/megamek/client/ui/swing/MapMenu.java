@@ -568,6 +568,36 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
+            item = new JMenuItem(Messages.getString("MovementDisplay.moveLongestRun"));  //$NON-NLS-1$
+
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_RUN.getCmd());
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        plotCourse(e);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            menu.add(item);
+
+            item = new JMenuItem(Messages.getString("MovementDisplay.moveLongestWalk"));  //$NON-NLS-1$
+
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_WALK.getCmd());
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        plotCourse(e);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            menu.add(item);
+
             if (game.getOptions().booleanOption("tacops_evade")) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 

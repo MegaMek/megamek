@@ -88,6 +88,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JCheckBoxMenuItem toggleFovDarken;
     private JCheckBoxMenuItem toggleFiringSolutions;
     private JMenuItem viewMovementEnvelope;
+    private JMenuItem viewMovModEnvelope;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -386,6 +387,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewMovementEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMovementEnvelope);
+        viewMovModEnvelope = new JMenuItem(Messages
+                .getString("CommonMenuBar.movementModEnvelope")); //$NON-NLS-1$
+        viewMovModEnvelope.addActionListener(this);
+        viewMovModEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_MOD_ENV);
+        viewMovModEnvelope.setMnemonic(KeyEvent.VK_W);
+        viewMovModEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
+                getToolkit().getMenuShortcutKeyMask()));
+        menu.add(viewMovModEnvelope);
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$

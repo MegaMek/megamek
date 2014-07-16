@@ -15,15 +15,12 @@ import megamek.common.Coords;
 /**
  * Sprite for displaying information about where a unit can move to.
  */
-class MovementEnvelopeSprite extends Sprite {
+class MovementEnvelopeSprite extends HexSprite {
 
     Color drawColor;
-    Coords loc;
-
     public MovementEnvelopeSprite(BoardView1 boardView1, Color c, Coords l) {
-        super(boardView1);
+        super(boardView1, l);
         drawColor = c;
-        loc = l;
     }
 
     @Override
@@ -58,10 +55,6 @@ class MovementEnvelopeSprite extends Sprite {
     public Rectangle getBounds() {
         bounds = new Rectangle(this.boardView1.getHexLocation(loc), this.boardView1.hex_size);
         return bounds;
-    }
-
-    public Coords getPosition() {
-        return loc;
     }
 
 }

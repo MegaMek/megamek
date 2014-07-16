@@ -236,7 +236,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<FiringSolutionSprite>();
 
-    private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<MovementEnvelopeSprite>();
+    private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
+    private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
@@ -924,6 +925,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
             drawSprites(g, moveEnvSprites);
+            drawSprites(g, moveModEnvSprites);
         }
 
         // Minefield signs all over the place!
@@ -1053,10 +1055,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
-    private synchronized void drawMovementEnvelopeSpritesForHex(Coords c,
-            Graphics g, ArrayList<MovementEnvelopeSprite> spriteArrayList) {
+    private synchronized void drawHexSpritesForHex(Coords c,
+            Graphics g, ArrayList<? extends HexSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
-        for (MovementEnvelopeSprite sprite : spriteArrayList) {
+        for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                     && !sprite.hidden) {
@@ -1643,8 +1645,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = game.getBoard().getHex(c);
                         if ((hex != null) && (hex.getElevation() == x)) {
                             drawHex(c, g, saveBoardImage);
-                            drawMovementEnvelopeSpritesForHex(c, g,
+                            drawHexSpritesForHex(c, g,
                                     moveEnvSprites);
+                            drawHexSpritesForHex(c, g,
+                                    moveModEnvSprites);
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c,
                                             en_Deployer.getStartingPos())) {
@@ -2719,8 +2723,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     }
 
+    public void setMovementModifierEnvelope(Collection<MovePath> movePaths){
+        moveModEnvSprites.clear();
+        for (MovePath mp : movePaths)
+            moveModEnvSprites.add(new MovementModifierEnvelopeSprite(this, mp));
+    }
+
     public void clearMovementEnvelope() {
         moveEnvSprites.clear();
+        moveModEnvSprites.clear();
         repaint();
     }
 

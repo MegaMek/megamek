@@ -124,49 +124,66 @@ public class PathRanker {
         boolean inRange = (maxRange >= startingTargetDistance);
         HomeEdge homeEdge = owner.getHomeEdge();
         boolean fleeing = owner.isFallingBack(mover);
+        boolean testAgain = true;
+        boolean countHexes = true;
 
-        for (MovePath path : startingPathList) {
-            StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
+        while (testAgain) {
+            testAgain = false;
+            for (MovePath path : startingPathList) {
+                StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
-            try {
-                Coords finalCoords = path.getFinalCoords();
+                try {
+                    if (countHexes && !maximisesTargetMoveMod(path, mover)) {
+                        logLevel = LogLevel.WARNING;
+                        msg.append("\n\tINVALID: Path does not maximise Target Move Mod.");
+                        continue;
+                    }
 
-                // If fleeing, skip any paths that don't get me closer to home.
-                if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    logLevel = LogLevel.WARNING;
-                    msg.append("\n\tINVALID: Running away in wrong direction.");
-                    continue;
+                    Coords finalCoords = path.getFinalCoords();
+
+                    // If fleeing, skip any paths that don't get me closer to home.
+                    if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
+                        logLevel = LogLevel.WARNING;
+                        msg.append("\n\tINVALID: Running away in wrong direction.");
+                        continue;
+                    }
+
+                    // Make sure I'm trying to get/stay in range of a target.
+                    Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
+                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+                                                   inRange);
+
+                    if (!StringUtil.isNullOrEmpty(validation)) {
+                        msg.append("\n\t").append(validation);
+                        continue;
+                    }
+
+                    // Don't move on/through buildings that will not support our weight.
+                    if (willBuildingCollapse(path, game)) {
+                        logLevel = LogLevel.WARNING;
+                        msg.append("\n\tINVALID: Building in path will collapse.");
+                        continue;
+                    }
+
+                    // Skip any path where I am too likely to fail my piloting roll.
+                    double chance = getMovePathSuccessProbability(path, msg);
+                    if (chance < fallTolerance) {
+                        logLevel = LogLevel.WARNING;
+                        msg.append("\n\tINVALID: Too likely to fall on my face.");
+                        continue;
+                    }
+
+                    // If all the above checks have passed, this is a valid path.
+                    msg.append("\n\tVALID.");
+                    returnPaths.add(path);
+
+                } finally {
+                    owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
                 }
-
-                // Make sure I'm trying to get/stay in range of a target.
-                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                if (!StringUtil.isNullOrEmpty(validation)) {
-                    msg.append("\n\t").append(validation);
-                    continue;
-                }
-
-                // Don't move on/through buildings that will not support our weight.
-                if (willBuildingCollapse(path, game)) {
-                    logLevel = LogLevel.WARNING;
-                    msg.append("\n\tINVALID: Building in path will collapse.");
-                    continue;
-                }
-
-                // Skip any path where I am too likely to fail my piloting roll.
-                double chance = getMovePathSuccessProbability(path, msg);
-                if (chance < fallTolerance) {
-                    logLevel = LogLevel.WARNING;
-                    msg.append("\n\tINVALID: Too likely to fall on my face.");
-                    continue;
-                }
-
-                // If all the above checks have passed, this is a valid path.
-                msg.append("\n\tVALID.");
-                returnPaths.add(path);
-
-            } finally {
-                owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
+            }
+            if (returnPaths.isEmpty()) {
+                testAgain = true;
+                countHexes = false;
             }
         }
 
@@ -176,6 +193,31 @@ public class PathRanker {
         }
 
         return returnPaths;
+    }
+
+    @SuppressWarnings("RedundantIfStatement")
+    private boolean maximisesTargetMoveMod(MovePath path, Entity mover) {
+        int distanceMoved = path.getHexesMoved();
+        int fastestMove = mover.getRunMP(true, false, false);
+
+        // Why move 1 or 2 when I could move 3?
+        if (fastestMove >= 3 && (distanceMoved == 1 || distanceMoved == 2)) {
+            return false;
+        }
+        // Why move 4 when I could move 5?
+        if (fastestMove >= 5 && distanceMoved == 4) {
+            return false;
+        }
+        // Why move 6 when I could move 7?
+        if (fastestMove >= 7 && distanceMoved == 6) {
+            return false;
+        }
+        // If I can move 10+, why move 8 or 9?
+        if (fastestMove >= 10 && (distanceMoved == 8 || distanceMoved == 9)) {
+            return false;
+        }
+
+        return true;
     }
 
     public static RankedPath getBestPath(List<RankedPath> ps) {

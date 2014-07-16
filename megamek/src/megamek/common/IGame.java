@@ -604,7 +604,7 @@ public interface IGame {
      * @param ids  A collection of ids for each Entity to be added.
      * @param entities  The Entity objects to be added.
      */
-    public abstract void addEntities(List<Integer> ids, List<Entity> entities);
+    public abstract void addEntities(List<Entity> entities);
 
     /**
      * Adds a new Entity to this Game object.
@@ -614,7 +614,7 @@ public interface IGame {
      * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is
      *                  generated.
      */
-    public abstract void addEntity(int id, Entity entity, boolean genEvent);
+    public abstract void addEntity(Entity entity, boolean genEvent);
 
     /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
@@ -622,6 +622,17 @@ public interface IGame {
      * @param id  The id of the Entity to be added.
      * @param entity The Entity to add.
      **/
+    public void addEntity(Entity entity);
+    
+    /**
+     * Adds a new Entity.  The id parameter is ignored and addEntity(Entity)
+     * is called instead.  This is just to maintain compatibility with the old
+     * API.
+     *  
+     * @param id    Value that is ignored: the id is pulled from the passed 
+     *               Entity
+     * @param entity The Entity to add to the game.
+     */
     public void addEntity(int id, Entity entity);
 
     public abstract void setEntity(int id, Entity entity);

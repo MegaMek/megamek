@@ -314,7 +314,7 @@ public class ScenarioLoader {
             for (int y = 0; y < entities.length; y++) {
                 entities[y].setOwner(players[x]);
                 entities[y].setId(nIndex++);
-                g.addEntity(entities[y].getId(), entities[y]);
+                g.addEntity(entities[y]);
             }
         }
         // game's ready

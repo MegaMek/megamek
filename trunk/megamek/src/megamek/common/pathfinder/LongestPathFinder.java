@@ -292,4 +292,19 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
         }
         return l;
     }
+
+    /**
+     * Returns a map of all computed longest paths. This also includes paths
+     * that are shorter but use strictly less movement points.
+     * 
+     * @return a map of all computed shortest paths.
+     */
+    public List<MovePath> getLongestComputedPaths() {
+        Collection<Deque<MovePath>> queues = getPathCostMap().values();
+        List<MovePath> l = new ArrayList<>();
+        for (Deque<MovePath> q : queues) {
+            l.add(q.getLast());
+        }
+        return l;
+    }
 }

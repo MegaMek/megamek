@@ -1,16 +1,16 @@
 /*
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * (bmazur@sev.org)
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 package megamek.client.ui.swing;
 
@@ -86,7 +86,6 @@ import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 
-
 public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      *
@@ -98,34 +97,33 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_MECH = 1;
     public static final int CMD_TANK = 1 << 1;
     public static final int CMD_VTOL = 1 << 2;
-    public static final int CMD_INF =  1 << 3;
+    public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
-    public static final int CMD_GROUND = CMD_MECH | CMD_TANK| CMD_VTOL | CMD_INF;
-    public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | 
-            CMD_INF | CMD_AERO ;
-    public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | 
-            CMD_AERO | CMD_AERO_VECTORED;    
-    public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | 
-            CMD_AERO | CMD_AERO_VECTORED;  
-    
+    public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF;
+    public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL |
+            CMD_INF | CMD_AERO;
+    public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF |
+            CMD_AERO | CMD_AERO_VECTORED;
+    public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL |
+            CMD_AERO | CMD_AERO_VECTORED;
 
-    
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the movement phase.  Each command has a string for the
+     * carried out during the movement phase. Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
+     * 
      * @author walczak
-     *
+     * 
      */
     public static enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$   
         MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$                
-        MOVE_BACK_UP("moveBackUp",CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$        
+        MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$        
         MOVE_GET_UP("moveGetUp", CMD_MECH), //$NON-NLS-1$
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
         MOVE_CHARGE("moveCharge", CMD_MECH | CMD_TANK), //$NON-NLS-1$
@@ -155,8 +153,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_SHUTDOWN("moveShutDown",CMD_NON_INF), //$NON-NLS-1$
-        MOVE_STARTUP("moveStartup",CMD_NON_INF), //$NON-NLS-1$
+        MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF), //$NON-NLS-1$
+        MOVE_STARTUP("moveStartup", CMD_NON_INF), //$NON-NLS-1$
         MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF), //$NON-NLS-1$
         // Aero Movement
         MOVE_ACC("MoveAccelerate", CMD_AERO), //$NON-NLS-1$
@@ -192,59 +190,57 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
         MOVE_MORE("MoveMore", CMD_NONE); //$NON-NLS-1$
-        
+
         /**
          * The command text.
          */
         public final String cmd;
-        
-        /** 
+
+        /**
          * Flag that determines what unit types can use a command.
          */
         public final int flag;
-        
+
         /**
          * Priority that determines this buttons order
          */
         public int priority;
-        
+
         private MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
             priority = ordinal();
         }
-        
+
         public String getCmd() {
             return cmd;
         }
-        
+
         public int getPriority() {
             return priority;
         }
-        
+
         public void setPriority(int p) {
             priority = p;
         }
-                
+
         public String toString() {
             return Messages.getString("MovementDisplay." + getCmd());
         }
-        
+
         /**
          * Return a list of valid commands for the given parameters.
-         * @param f             The unit flag to specify what unit type the 
-         *                          commands are for.
-         * @param opts          A GameOptions reference for checking game 
-         *                          options
-         * @param forwardIni    A flag to see if we can pass the turn to a 
-         *                          teammate
-         * @return              An array of valid commands for the given 
-         *                         parameters
+         * 
+         * @param f The unit flag to specify what unit type the commands are
+         *            for.
+         * @param opts A GameOptions reference for checking game options
+         * @param forwardIni A flag to see if we can pass the turn to a teammate
+         * @return An array of valid commands for the given parameters
          */
-        public static MoveCommand[] values(int f, GameOptions opts, 
-                boolean forwardIni){
+        public static MoveCommand[] values(int f, GameOptions opts,
+                boolean forwardIni) {
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
-            for (MoveCommand cmd : MoveCommand.values()){
+            for (MoveCommand cmd : MoveCommand.values()) {
                 // Check for movements that with disabled game options
                 if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
                         && !opts.booleanOption("manual_shutdown")) {
@@ -254,24 +250,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         && !opts.booleanOption("tacops_self_destruct")) {
                     continue;
                 }
-                
-                if (cmd == MOVE_FORWARD_INI && !forwardIni){
+
+                if (cmd == MOVE_FORWARD_INI && !forwardIni) {
                     continue;
                 }
-                
+
                 // Check unit type flag
-                if ((cmd.flag & f) == f){
+                if ((cmd.flag & f) == f) {
                     flaggedCmds.add(cmd);
                 }
             }
             return flaggedCmds.toArray(new MoveCommand[0]);
         }
-        
-        
+
     }
 
     // buttons
-    private Hashtable<MoveCommand,MegamekButton> buttons;
+    private Hashtable<MoveCommand, MegamekButton> buttons;
 
     // let's keep track of what we're moving, too
     private int cen = Entity.NONE; // current entity number
@@ -284,7 +279,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * A local copy of the current entity's loaded units.
      */
     private List<Entity> loadedUnits = null;
-    
+
     public static final int GEAR_LAND = 0;
     public static final int GEAR_BACKUP = 1;
     public static final int GEAR_JUMP = 2;
@@ -303,8 +298,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public MovementDisplay(final ClientGUI clientgui) {
-    super();
-    
+        super();
+
         this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
         gear = MovementDisplay.GEAR_LAND;
@@ -313,263 +308,261 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().getGame().setupTeams();
         setupStatusBar(Messages
                 .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
-        
+
         // Create all of the buttons
-        buttons = new Hashtable<MoveCommand,MegamekButton>(
-                (int)(MoveCommand.values().length * 1.25 + 0.5));
-        for (MoveCommand cmd : MoveCommand.values()){
-            String title = 
+        buttons = new Hashtable<MoveCommand, MegamekButton>(
+                (int) (MoveCommand.values().length * 1.25 + 0.5));
+        for (MoveCommand cmd : MoveCommand.values()) {
+            String title =
                     Messages.getString("MovementDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
-            buttons.put(cmd,newButton);
-        }        
-                
+            buttons.put(cmd, newButton);
+        }
+
         butDone.setText("<html><b>" + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         layoutScreen();
         setupButtonPanel();
-        
+
         clientgui.bv.addKeyListener(this);
-        
-        registerKeyCommands();    
+
+        registerKeyCommands();
     }
-        
+
     /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
-    private void registerKeyCommands(){
+    private void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
-        
+
         final StatusBarPhaseDisplay display = this;
         // Register the action for TURN_LEFT
         controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| display.isIgnoringEvents()
-|| !display.isVisible()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-int curDir = cmd.getFinalFacing();
-            int dir = curDir;
-            dir = (dir + 5) % 6;
-            Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(dir);
-            // We need to set this to get the rotate behavior
-            shiftheld = true;
-            currentMove(target);
-            shiftheld = false;
-            clientgui.bv.drawMovementData(ce(), cmd);
-}
-        });   
-        
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        int curDir = cmd.getFinalFacing();
+                        int dir = curDir;
+                        dir = (dir + 5) % 6;
+                        Coords curPos = cmd.getFinalCoords();
+                        Coords target = curPos.translated(dir);
+                        // We need to set this to get the rotate behavior
+                        shiftheld = true;
+                        currentMove(target);
+                        shiftheld = false;
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                    }
+                });
+
         // Register the action for TURN_RIGHT
         controller.registerCommandAction(KeyCommandBind.TURN_RIGHT.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| display.isIgnoringEvents()
-|| !display.isVisible()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-int curDir = cmd.getFinalFacing();
-            int dir = curDir;
-            dir = (dir + 7) % 6;
-            Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(dir);
-            // We need to set this to get the rotate behavior
-            shiftheld = true;
-            currentMove(target);
-            shiftheld = false;
-            clientgui.bv.drawMovementData(ce(), cmd);
-}
-        });   
-        
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        int curDir = cmd.getFinalFacing();
+                        int dir = curDir;
+                        dir = (dir + 7) % 6;
+                        Coords curPos = cmd.getFinalCoords();
+                        Coords target = curPos.translated(dir);
+                        // We need to set this to get the rotate behavior
+                        shiftheld = true;
+                        currentMove(target);
+                        shiftheld = false;
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                    }
+                });
+
         // Register the action for UNDO
         controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| display.isIgnoringEvents()
-|| !display.isVisible()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-removeLastStep();
-}
-        });  
-        
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        removeLastStep();
+                    }
+                });
+
         // Register the action for NEXT_UNIT
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| !display.isVisible()
-|| display.isIgnoringEvents()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-selectEntity(
-clientgui.getClient().getNextEntityNum(cen));
-}
-        });  
-        
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        selectEntity(
+                        clientgui.getClient().getNextEntityNum(cen));
+                    }
+                });
+
         // Register the action for PREV_UNIT
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| !display.isVisible()
-|| display.isIgnoringEvents()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-selectEntity(
-clientgui.getClient().getPrevEntityNum(cen));
-}
-        });  
-        
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        selectEntity(
+                        clientgui.getClient().getPrevEntityNum(cen));
+                    }
+                });
+
         // Register the action for MOVE_ENVELOPE
         controller.registerCommandAction(KeyCommandBind.MOVE_ENVELOPE.cmd,
-        new CommandAction(){
+                new CommandAction() {
 
-        @Override
-        public boolean shouldPerformAction(){
-if (!clientgui.getClient().isMyTurn()
-|| clientgui.bv.getChatterBoxActive()
-|| !display.isVisible()
-|| display.isIgnoringEvents()) {
-        return false;
-        } else {
-        return true;
-        }
-        }
-        
-@Override
-public void performAction() {
-computeMovementEnvelope();
-}
-        });         
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        computeMovementEnvelope();
+                    }
+                });
 
     }
-
 
     /**
      * Return the button list: we need to determine what unit type is selected
      * and then get a button list appropriate for that unit.
      */
-    protected ArrayList<MegamekButton> getButtonList(){
-    int flag;
-    
-    final Entity ce = ce();
-    flag = CMD_MECH;
+    protected ArrayList<MegamekButton> getButtonList() {
+        int flag;
+
+        final Entity ce = ce();
+        flag = CMD_MECH;
         if (ce != null) {
             if (ce instanceof Infantry) {
-            flag = CMD_INF;
+                flag = CMD_INF;
             } else if (ce instanceof VTOL) {
-            flag = CMD_VTOL;
+                flag = CMD_VTOL;
             } else if (ce instanceof Tank) {
-            flag = CMD_TANK;
-            } else if (ce instanceof Aero) {
-                if (ce.isAirborne() && 
-                        clientgui.getClient().getGame().useVectorMove()) {
-                flag = CMD_AERO_VECTORED;
-                } else if (ce.isAirborne() && 
-                        !clientgui.getClient().getGame().useVectorMove()) {
-                flag = CMD_AERO;
-                } else {
                 flag = CMD_TANK;
+            } else if (ce instanceof Aero) {
+                if (ce.isAirborne() &&
+                        clientgui.getClient().getGame().useVectorMove()) {
+                    flag = CMD_AERO_VECTORED;
+                } else if (ce.isAirborne() &&
+                        !clientgui.getClient().getGame().useVectorMove()) {
+                    flag = CMD_AERO;
+                } else {
+                    flag = CMD_TANK;
                 }
             }
         }
         return getButtonList(flag);
     }
-    
-    
-    private ArrayList<MegamekButton> getButtonList(int flag){
-        IGame game = clientgui.getClient().getGame(); 
-IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
-        boolean forwardIni = 
+
+    private ArrayList<MegamekButton> getButtonList(int flag) {
+        IGame game = clientgui.getClient().getGame();
+        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean forwardIni =
                 (game.getTeamForPlayer(localPlayer) != null)
-                && (game.getTeamForPlayer(localPlayer).getSize() > 1);
+                        && (game.getTeamForPlayer(localPlayer).getSize() > 1);
         GameOptions opts = game.getOptions();
-        
+
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
-        
+
         int i = 0;
-        MoveCommand commands[] = MoveCommand.values(flag,opts,forwardIni);
+        MoveCommand commands[] = MoveCommand.values(flag, opts, forwardIni);
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
-        for (MoveCommand cmd : commands){
-        if (i % buttonsPerGroup == 0){
-        buttonList.add(getBtn(MoveCommand.MOVE_NEXT));
-        i++;
-        }
-        
+        for (MoveCommand cmd : commands) {
+            if (i % buttonsPerGroup == 0) {
+                buttonList.add(getBtn(MoveCommand.MOVE_NEXT));
+                i++;
+            }
+
             buttonList.add(buttons.get(cmd));
             i++;
-            
-            if ((i+1) % buttonsPerGroup == 0){
-        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
-        i++;
+
+            if ((i + 1) % buttonsPerGroup == 0) {
+                buttonList.add(getBtn(MoveCommand.MOVE_MORE));
+                i++;
+            }
         }
+        if (!buttonList.get(i - 1).getActionCommand().
+                equals(MoveCommand.MOVE_MORE.getCmd())) {
+            while ((i + 1) % buttonsPerGroup != 0) {
+                buttonList.add(null);
+                i++;
+            }
+            buttonList.add(getBtn(MoveCommand.MOVE_MORE));
         }
-        if (!buttonList.get(i-1).getActionCommand().
-        equals(MoveCommand.MOVE_MORE.getCmd())){
-        while ((i+1) % buttonsPerGroup != 0){
-        buttonList.add(null);
-        i++;        
-        }
-        buttonList.add(getBtn(MoveCommand.MOVE_MORE));
-        }              
-        numButtonGroups = 
-        (int)Math.ceil((buttonList.size()+0.0) / buttonsPerGroup);
+        numButtonGroups =
+                (int) Math.ceil((buttonList.size() + 0.0) / buttonsPerGroup);
         return buttonList;
     }
 
@@ -611,13 +604,14 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         }
     }
 
-    private MegamekButton getBtn(MoveCommand c){
+    private MegamekButton getBtn(MoveCommand c) {
         return buttons.get(c);
     }
-    private boolean isEnabled(MoveCommand c){
+
+    private boolean isEnabled(MoveCommand c) {
         return buttons.get(c).isEnabled();
     }
-    
+
     /**
      * Sets the buttons to their proper states
      */
@@ -732,8 +726,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (clientgui.getClient().getGame().getOptions().booleanOption(
-                "vehicles_can_eject")) { //$NON-NLS-1$
+        if (clientgui.getClient().getGame().getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
             setEjectEnabled((!isInfantry)
                     && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED))
                     && ce.isActive());
@@ -858,7 +851,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         setRecklessEnabled(false);
         setGoProneEnabled(false);
         setManeuverEnabled(false);
-        
+
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
     }
@@ -993,8 +986,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     MiscType.F_JET_BOOSTER))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                        Messages.getString(
-                                "MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
+                        Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
@@ -1204,12 +1196,12 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
         } else if (((gear == GEAR_LAND) || (gear == GEAR_JUMP)) &&
-                (ce().getJumpType() == Mech.JUMP_BOOSTER)){
+                (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
             //Jumps with mechanical jump boosters are special
             Coords src;
-            if (cmd.getLastStep() != null){
+            if (cmd.getLastStep() != null) {
                 src = cmd.getLastStep().getPosition();
-            }else{
+            } else {
                 src = ce().getPosition();
             }
             int dir = src.direction(dest);
@@ -1219,28 +1211,28 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             dir = (((dir - facing) % 6) + 6) % 6;
             switch (dir)
             {
-                case 0:
-                    cmd.findSimplePathTo(dest, MoveStepType.FORWARDS,src.direction(dest),ce().getFacing());
-                    break;
-                case 1:
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,src.direction(dest),ce().getFacing());
-                    break;
-                case 2:
-                    // TODO: backwards lateral shifts are switched:
-                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS,src.direction(dest),ce().getFacing());
-                    break;
-                case 3:
-                    cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS,src.direction(dest),ce().getFacing());
-                    break;
-                case 4:
-                    // TODO: backwards lateral shifts are switched:
-                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS,src.direction(dest),ce().getFacing());
-                    break;
-                case 5:
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,src.direction(dest),ce().getFacing());
-                    break;
+            case 0:
+                cmd.findSimplePathTo(dest, MoveStepType.FORWARDS, src.direction(dest), ce().getFacing());
+                break;
+            case 1:
+                cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT, src.direction(dest), ce().getFacing());
+                break;
+            case 2:
+                // TODO: backwards lateral shifts are switched:
+                //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS, src.direction(dest), ce().getFacing());
+                break;
+            case 3:
+                cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS, src.direction(dest), ce().getFacing());
+                break;
+            case 4:
+                // TODO: backwards lateral shifts are switched:
+                //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS, src.direction(dest), ce().getFacing());
+                break;
+            case 5:
+                cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT, src.direction(dest), ce().getFacing());
+                break;
             }
 
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
@@ -1251,7 +1243,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             cmd.findPathTo(dest, MoveStepType.CHARGE);
             // The path planner shouldn't actually add the charge step
             if (cmd.getFinalCoords().equals(dest) &&
-                    (cmd.getLastStep().getType() != MoveStepType.CHARGE)){
+                    (cmd.getLastStep().getType() != MoveStepType.CHARGE)) {
                 cmd.removeLastStep();
                 cmd.addStep(MoveStepType.CHARGE);
             }
@@ -1259,7 +1251,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             cmd.findPathTo(dest, MoveStepType.DFA);
             // The path planner shouldn't actually add the DFA step
             if (cmd.getFinalCoords().equals(dest) &&
-                    (cmd.getLastStep().getType() != MoveStepType.DFA)){
+                    (cmd.getLastStep().getType() != MoveStepType.DFA)) {
                 cmd.removeLastStep();
                 cmd.addStep(MoveStepType.DFA);
             }
@@ -1280,16 +1272,17 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             cmd.addStep(MoveStepType.ACC, true, true);
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
             gear = GEAR_LAND;
-        } if (gear == GEAR_LONGEST_WALK || gear == GEAR_LONGEST_RUN ){
+        }
+        if (gear == GEAR_LONGEST_WALK || gear == GEAR_LONGEST_RUN) {
             int maxMp;
             MoveStepType stepType;
-            if(gear == GEAR_LONGEST_WALK){
+            if (gear == GEAR_LONGEST_WALK) {
                 maxMp = ce().getWalkMP();
                 stepType = MoveStepType.BACKWARDS;
                 gear = GEAR_BACKUP;
-            }else{
-                maxMp= ce().getRunMPwithoutMASC();
-                stepType= MoveStepType.FORWARDS;
+            } else {
+                maxMp = ce().getRunMPwithoutMASC();
+                stepType = MoveStepType.FORWARDS;
                 gear = GEAR_LAND;
             }
 
@@ -1356,7 +1349,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce(), cmd);
-            if (!shiftheld){
+            if (!shiftheld) {
                 clientgui.getBoardView().select(b.getCoords());
             }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
@@ -1412,11 +1405,9 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     // Ask the player if they want to charge.
                     if (clientgui
                             .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.RamDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
-                                                    toHit.getValueAsString(),
+                                    Messages.getString("MovementDisplay.RamDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
+                                            toHit.getValueAsString(),
                                                     new Double(
                                                             Compute.oddsAbove(toHit
                                                                     .getValue())),
@@ -1465,8 +1456,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                                         ce,
                                         te,
                                         clientgui.getClient().getGame().getOptions()
-                                                .booleanOption(
-                                                        "tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
+                                                .booleanOption("tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                             || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
                         Building bldg = clientgui.getClient().getGame().getBoard()
@@ -1478,11 +1468,9 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     // Ask the player if they want to charge.
                     if (clientgui
                             .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.ChargeDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.ChargeDialog.message", new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
+                                    Messages.getString("MovementDisplay.ChargeDialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.ChargeDialog.message", new Object[] {//$NON-NLS-1$
+                                            toHit.getValueAsString(),
                                                     new Double(
                                                             Compute.oddsAbove(toHit
                                                                     .getValue())),
@@ -1532,11 +1520,9 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     // if yes, ask them if they want to DFA
                     if (clientgui
                             .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
+                                    Messages.getString("MovementDisplay.DFADialog.title", new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
+                                            toHit.getValueAsString(),
                                                     new Double(
                                                             Compute.oddsAbove(toHit
                                                                     .getValue())),
@@ -2294,8 +2280,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
-                            Messages.getString(
-                                    "MovementDisplay.MountUnitDialog.message", new Object[] {//$NON-NLS-1$
+                            Messages.getString("MovementDisplay.MountUnitDialog.message", new Object[] {//$NON-NLS-1$
                                     ce.getShortName() }),
                             Messages.getString("MovementDisplay.MountUnitDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
@@ -2310,32 +2295,32 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         }
 
         if (!(ce instanceof Infantry)) {
-        Vector<Integer> bayChoices = new Vector<Integer>();
-        for (Transporter t : choice.getTransports()) {
-        if (t.canLoad(ce) && (t instanceof Bay)) {
-        bayChoices.add(((Bay) t).getBayNumber());
-        }
-        }
-        String[] retVal = new String[bayChoices.size()];
-        int i = 0;
-        for (Integer bn : bayChoices) {
-        retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
-        }
-        if (bayChoices.size() > 1) {
-        String bayString = (String) JOptionPane.showInputDialog(
-        clientgui,
-        Messages
-        .getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
-        Messages
+            Vector<Integer> bayChoices = new Vector<Integer>();
+            for (Transporter t : choice.getTransports()) {
+                if (t.canLoad(ce) && (t instanceof Bay)) {
+                    bayChoices.add(((Bay) t).getBayNumber());
+                }
+            }
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString() + " (Free Slots: " + (int) choice.getBayById(bn).getUnused() + ")";
+            }
+            if (bayChoices.size() > 1) {
+                String bayString = (String) JOptionPane.showInputDialog(
+                        clientgui,
+                        Messages
+                                .getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
+                        Messages
                                 .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
                         JOptionPane.QUESTION_MESSAGE, null,
                         retVal, null);
-        ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            // We need to update the entity here so that the server knows about our target bay
-            clientgui.getClient().sendUpdateEntity(ce);
-        } else {
-        ce.setTargetBay(-1); // Safety set!
-        }
+                ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                // We need to update the entity here so that the server knows about our target bay
+                clientgui.getClient().sendUpdateEntity(ce);
+            } else {
+                ce.setTargetBay(-1); // Safety set!
+            }
         } else {
             ce.setTargetBay(-1); // Safety set!
         }
@@ -2371,8 +2356,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     .showInputDialog(
                             clientgui,
                             Messages
-                                    .getString(
-                                            "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                    .getString("DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
                             Messages
                                     .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null,
@@ -2392,26 +2376,26 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     bayChoices.add(((Bay) t).getBayNumber());
                 }
             }
-        String[] retVal = new String[bayChoices.size()];
-        int i = 0;
-        for (Integer bn : bayChoices) {
-        retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
-        }
-        if (bayChoices.size() > 1) {
-        String bayString = (String) JOptionPane.showInputDialog(
-        clientgui,
-        Messages
-        .getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-        Messages
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString() + " (Free Slots: " + (int) ce().getBayById(bn).getUnused() + ")";
+            }
+            if (bayChoices.size() > 1) {
+                String bayString = (String) JOptionPane.showInputDialog(
+                        clientgui,
+                        Messages
+                                .getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+                        Messages
                                 .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
                         JOptionPane.QUESTION_MESSAGE, null,
                         retVal, null);
-        choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
-            // We need to update the entity here so that the server knows about our target bay
-            clientgui.getClient().sendUpdateEntity(choice);
-        } else {
-        choice.setTargetBay(-1); // Safety set!
-        }
+                choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+                // We need to update the entity here so that the server knows about our target bay
+                clientgui.getClient().sendUpdateEntity(choice);
+            } else {
+                choice.setTargetBay(-1); // Safety set!
+            }
         } else {
             choice.setTargetBay(-1); // Safety set!
         }
@@ -2423,7 +2407,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     *
+     * 
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2441,8 +2425,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
-                            Messages.getString(
-                                    "MovementDisplay.UnloadUnitDialog.message", new Object[] {//$NON-NLS-1$
+                            Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[] {//$NON-NLS-1$
                                     ce.getShortName(), ce.getUnusedString() }),
                             Messages.getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
@@ -2492,8 +2475,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             choices[i++] = c.toString();
         }
         String selected = (String) JOptionPane.showInputDialog(clientgui,
-                Messages.getString(
-                        "MovementDisplay.ChooseHex.message", new Object[] {//$NON-NLS-1$
+                Messages.getString("MovementDisplay.ChooseHex.message", new Object[] {//$NON-NLS-1$
                         ce.getShortName(), ce.getUnusedString() }), Messages
                         .getString("MovementDisplay.ChooseHex.title"), //$NON-NLS-1$
                 JOptionPane.QUESTION_MESSAGE, null, choices, null);
@@ -2659,7 +2641,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     *
+     * 
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2693,9 +2675,9 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             Vector<Integer> bayChoices = new Vector<Integer>();
             currentFighters = currentBay.getLaunchableUnits();
             /*
-             * We will assume that if more fighters are launched than is
-             * safe, that these excess fighters will be distributed equally
-             * among available doors
+             * We will assume that if more fighters are launched than is safe,
+             * that these excess fighters will be distributed equally among
+             * available doors
              */
             doors = currentBay.getDoors();
             if (currentFighters.size() == 0) {
@@ -2704,8 +2686,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             }
             String[] names = new String[currentFighters.size()];
             String question = Messages
-                    .getString(
-                            "MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
+                    .getString("MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
                             ce.getShortName(), doors * 2, bayNum });
             for (int loop = 0; loop < names.length; loop++) {
                 names[loop] = currentFighters.elementAt(loop)
@@ -2717,31 +2698,29 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             while (!doIt) {
                 choiceDialog = new ChoiceDialog(
                         clientgui.frame,
-                        Messages.getString(
-                                "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                        Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
                                 currentBay.getType(), bayNum }), question,
                         names);
                 choiceDialog.setVisible(true);
-                if (choiceDialog.getChoices() == null){
+                if (choiceDialog.getChoices() == null) {
                     doIt = true;
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
                 if ((numChoices > (doors * 2)) &&
-                        GUIPreferences.getInstance().getNagForLaunchDoors()){
-                    int aerosPerDoor = numChoices/ doors;
+                        GUIPreferences.getInstance().getNagForLaunchDoors()) {
+                    int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
                     //Determine PSRs
                     StringBuilder psrs = new StringBuilder();
-                    for (int choice = 0; choice < numChoices; choice++){
+                    for (int choice = 0; choice < numChoices; choice++) {
                         int modifier = aerosPerDoor - 2;
-                        if ((choice/aerosPerDoor) >= (doors-1)){
+                        if ((choice / aerosPerDoor) >= (doors - 1)) {
                             modifier += remainder;
                         }
                         modifier += currentFighters.get(choice).getCrew().getPiloting();
-                        String damageMsg = Messages.getString(
-                                "MovementDisplay.LaunchFighterDialog.controlroll", //$NON-NLS-1$
-                                new Object[] { names[choice], modifier});
+                        String damageMsg = Messages.getString("MovementDisplay.LaunchFighterDialog.controlroll", //$NON-NLS-1$
+                                new Object[] { names[choice], modifier });
                         psrs.append("\t" + damageMsg + "\n");
                     }
                     ConfirmDialog nag = new ConfirmDialog(
@@ -2780,7 +2759,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
-     *
+     * 
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2810,8 +2789,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 if (currentDropships.size() > 0) {
                     String[] names = new String[currentDropships.size()];
                     String question = Messages
-                            .getString(
-                                    "MovementDisplay.LaunchDropshipDialog.message", new Object[] { //$NON-NLS-1$
+                            .getString("MovementDisplay.LaunchDropshipDialog.message", new Object[] { //$NON-NLS-1$
                                     ce.getShortName(), 1, collarNum });
                     for (int loop = 0; loop < names.length; loop++) {
                         names[loop] = currentDropships.elementAt(loop)
@@ -2821,16 +2799,14 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     boolean doIt = false;
                     ChoiceDialog choiceDialog = new ChoiceDialog(
                             clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
-                                            collar.getType(), collarNum }), question,
+                            Messages.getString("MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
+                                    collar.getType(), collarNum }), question,
                             names);
                     while (!doIt) {
                         choiceDialog = new ChoiceDialog(
                                 clientgui.frame,
-                                Messages.getString(
-                                        "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
-                                                collar.getType(), collarNum }),
+                                Messages.getString("MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
+                                        collar.getType(), collarNum }),
                                 question, names);
                         choiceDialog.setVisible(true);
                         if ((choiceDialog.getChoices() != null) &&
@@ -2871,7 +2847,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     /**
      * Get the unit that the player wants to drop. This method will remove the
      * unit from our local copy of loaded units.
-     *
+     * 
      * @return The <code>Entity</code> that the player wants to unload. This
      *         value will not be <code>null</code>.
      */
@@ -2901,8 +2877,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 if ((currentUnits.size() > 0) && (doors > 0)) {
                     String[] names = new String[currentUnits.size()];
                     String question = Messages
-                            .getString(
-                                    "MovementDisplay.DropUnitDialog.message", new Object[] { //$NON-NLS-1$
+                            .getString("MovementDisplay.DropUnitDialog.message", new Object[] { //$NON-NLS-1$
                                     doors, bayNum });
                     for (int loop = 0; loop < names.length; loop++) {
                         names[loop] = currentUnits.elementAt(loop)
@@ -2910,8 +2885,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     }
                     ChoiceDialog choiceDialog = new ChoiceDialog(
                             clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.DropUnitDialog.title", new Object[] { //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.DropUnitDialog.title", new Object[] { //$NON-NLS-1$
                                     currentBay.getType(), bayNum }), question,
                             names, false, doors);
                     choiceDialog.setVisible(true);
@@ -3169,9 +3143,8 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
 
     /**
      * Have the player select a target from the entities at the given coords.
-     *
-     * @param pos
-     *            - the <code>Coords</code> containing targets.
+     * 
+     * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
         final Entity ce = ce();
@@ -3211,8 +3184,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
-                            Messages.getString(
-                                    "MovementDisplay.ChooseTargetDialog.message", new Object[] {//$NON-NLS-1$
+                            Messages.getString("MovementDisplay.ChooseTargetDialog.message", new Object[] {//$NON-NLS-1$
                                     pos.getBoardNum() }),
                             Messages.getString("MovementDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
@@ -3248,13 +3220,13 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         // success or failure
         // should update mp available
         int numFighters = 0;
-        if (ce() instanceof FighterSquadron){
-            numFighters = ((FighterSquadron)ce()).getNFighters();
+        if (ce() instanceof FighterSquadron) {
+            numFighters = ((FighterSquadron) ce()).getNFighters();
         }
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-                a.getBombLoadout(), false, true, -1,numFighters);
+                a.getBombLoadout(), false, true, -1, numFighters);
         dumpBombsDialog.setVisible(true);
         if (dumpBombsDialog.getAnswer()) {
             //int[] bombsDumped = 
@@ -3312,72 +3284,72 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
     private boolean addManeuver(int type) {
         cmd.addManeuver(type);
         switch (type) {
-            case (ManeuverType.MAN_HAMMERHEAD):
-                cmd.addStep(MoveStepType.YAW, true, true);
-                return true;
-            case (ManeuverType.MAN_HALF_ROLL):
-                cmd.addStep(MoveStepType.ROLL, true, true);
-                return true;
-            case (ManeuverType.MAN_BARREL_ROLL):
+        case (ManeuverType.MAN_HAMMERHEAD):
+            cmd.addStep(MoveStepType.YAW, true, true);
+            return true;
+        case (ManeuverType.MAN_HALF_ROLL):
+            cmd.addStep(MoveStepType.ROLL, true, true);
+            return true;
+        case (ManeuverType.MAN_BARREL_ROLL):
+            cmd.addStep(MoveStepType.DEC, true, true);
+            return true;
+        case (ManeuverType.MAN_IMMELMAN):
+            gear = MovementDisplay.GEAR_IMMEL;
+            return false;
+        case (ManeuverType.MAN_SPLIT_S):
+            gear = MovementDisplay.GEAR_SPLIT_S;
+            return false;
+        case (ManeuverType.MAN_VIFF):
+            if (!(ce() instanceof Aero)) {
+                return false;
+            }
+            Aero a = (Aero) ce();
+            MoveStep last = cmd.getLastStep();
+            int vel = a.getCurrentVelocity();
+            if (null != last) {
+                vel = last.getVelocityLeft();
+            }
+            while (vel > 0) {
                 cmd.addStep(MoveStepType.DEC, true, true);
-                return true;
-            case (ManeuverType.MAN_IMMELMAN):
-                gear = MovementDisplay.GEAR_IMMEL;
-                return false;
-            case (ManeuverType.MAN_SPLIT_S):
-                gear = MovementDisplay.GEAR_SPLIT_S;
-                return false;
-            case (ManeuverType.MAN_VIFF):
-                if (!(ce() instanceof Aero)) {
-                    return false;
-                }
-                Aero a = (Aero) ce();
-                MoveStep last = cmd.getLastStep();
-                int vel = a.getCurrentVelocity();
-                if (null != last) {
-                    vel = last.getVelocityLeft();
-                }
-                while (vel > 0) {
-                    cmd.addStep(MoveStepType.DEC, true, true);
-                    vel--;
-                }
-                cmd.addStep(MoveStepType.UP);
-                return true;
-            case (ManeuverType.MAN_SIDE_SLIP_LEFT):
-                // If we are on a ground map, slide slip works slightly
-                // differently
-                // See Total Warfare pg 85
-                if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
-                    for (int i = 0; i < 8; i++) {
-                        cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
-                    }
-                    for (int i = 0; i < 8; i++) {
-                        cmd.addStep(MoveStepType.FORWARDS, true, true);
-                    }
-                } else {
+                vel--;
+            }
+            cmd.addStep(MoveStepType.UP);
+            return true;
+        case (ManeuverType.MAN_SIDE_SLIP_LEFT):
+            // If we are on a ground map, slide slip works slightly
+            // differently
+            // See Total Warfare pg 85
+            if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
+                for (int i = 0; i < 8; i++) {
                     cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
                 }
-                return true;
-            case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
-                // If we are on a ground map, slide slip works slightly
-                // differently
-                // See Total Warfare pg 85
-                if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
-                    for (int i = 0; i < 8; i++) {
-                        cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
-                    }
-                    for (int i = 0; i < 8; i++) {
-                        cmd.addStep(MoveStepType.FORWARDS, true, true);
-                    }
-                } else {
+                for (int i = 0; i < 8; i++) {
+                    cmd.addStep(MoveStepType.FORWARDS, true, true);
+                }
+            } else {
+                cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
+            }
+            return true;
+        case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
+            // If we are on a ground map, slide slip works slightly
+            // differently
+            // See Total Warfare pg 85
+            if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
+                for (int i = 0; i < 8; i++) {
                     cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
                 }
-                return true;
-            case (ManeuverType.MAN_LOOP):
-                cmd.addStep(MoveStepType.LOOP, true, true);
-                return true;
-            default:
-                return false;
+                for (int i = 0; i < 8; i++) {
+                    cmd.addStep(MoveStepType.FORWARDS, true, true);
+                }
+            } else {
+                cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
+            }
+            return true;
+        case (ManeuverType.MAN_LOOP):
+            cmd.addStep(MoveStepType.LOOP, true, true);
+            return true;
+        default:
+            return false;
         }
     }
 
@@ -3410,8 +3382,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                         .getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
                 setStatusBarText(Messages
-                        .getString(
-                                "MovementDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+                        .getString("MovementDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
             }
         }
     }
@@ -3432,21 +3403,21 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         }
     }
 
-    public void computeMovementEnvelope(){
-    if (ce() == null){
-    return;
-    }
-        Map<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
-        MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
+    public void computeMovementEnvelope() {
+        if (ce() == null) {
+            return;
+        }
+        Map<Coords, MovePath> mvEnvData = new Hashtable<Coords, MovePath>();
+        MovePath mp = new MovePath(clientgui.getClient().getGame(), ce());
 
         int maxMP;
-        if (gear == GEAR_JUMP){
+        if (gear == GEAR_JUMP) {
             maxMP = ce().getJumpMP();
-        } else if (gear == GEAR_BACKUP){
+        } else if (gear == GEAR_BACKUP) {
             maxMP = ce().getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions().
-                    booleanOption("tacops_sprint")){
+                    booleanOption("tacops_sprint")) {
                 maxMP = ce().getSprintMP();
             } else {
                 maxMP = ce().getRunMP();
@@ -3465,7 +3436,32 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
         }
         clientgui.bv.setMovementEnvelope(mvEnvMP,
-                ce().getWalkMP(),ce().getRunMP(),ce().getJumpMP(),gear);
+                ce().getWalkMP(), ce().getRunMP(), ce().getJumpMP(), gear);
+    }
+
+    public void computeModifierEnvelope() {
+        if (ce() == null) {
+            return;
+        }
+        int maxMP;
+        if (gear == GEAR_JUMP){
+            maxMP = ce().getJumpMP();
+        } else if (gear == GEAR_BACKUP){
+            maxMP = ce().getWalkMP();
+        } else {
+                maxMP = ce().getRunMP();
+        }
+        MoveStepType stepType = (gear == GEAR_BACKUP) ?
+                MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
+        MovePath mp = new MovePath(clientgui.getClient().getGame(), ce());
+        if (gear == GEAR_JUMP)
+            mp.addStep(MoveStepType.START_JUMP);
+        LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMP, stepType, ce().getGame());
+        final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 10);
+        lpf.addStopCondition(timeoutCondition);
+        lpf.run(mp);
+        clientgui.bv.setMovementModifierEnvelope(lpf.getLongestComputedPaths());
     }
 
     //
@@ -3612,8 +3608,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     && clientgui
                             .doYesNoDialog(
                                     Messages.getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.ClearMinefieldDialog.message", new Object[] {//$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.ClearMinefieldDialog.message", new Object[] {//$NON-NLS-1$
                                             new Integer(clear),
                                                     new Integer(boom) }))) {
                 cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
@@ -3895,7 +3890,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             if (!launched.isEmpty() || !undocked.isEmpty()) {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RECOVER.getCmd()) || 
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_RECOVER.getCmd()) ||
                 ev.getActionCommand().equals(MoveCommand.MOVE_DOCK.getCmd())) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
@@ -3945,8 +3940,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 String title = Messages
                         .getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
                 String body = Messages
-                        .getString(
-                                "MovementDisplay.NoTakeOffDialog.message", new Object[] { ((Aero) ce()).hasRoomForHorizontalTakeOff() }); //$NON-NLS-1$
+                        .getString("MovementDisplay.NoTakeOffDialog.message", new Object[] { ((Aero) ce()).hasRoomForHorizontalTakeOff() }); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui
@@ -3971,8 +3965,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 String title = Messages
                         .getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
                 String body = Messages
-                        .getString(
-                                "MovementDisplay.NoLandingDialog.message", new Object[] { ((Aero) ce()).hasRoomForHorizontalLanding() }); //$NON-NLS-1$
+                        .getString("MovementDisplay.NoLandingDialog.message", new Object[] { ((Aero) ce()).hasRoomForHorizontalLanding() }); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui
@@ -3989,8 +3982,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 String title = Messages
                         .getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
                 String body = Messages
-                        .getString(
-                                "MovementDisplay.NoLandingDialog.message", new Object[] { ((Aero) ce()).hasRoomForVerticalLanding() }); //$NON-NLS-1$
+                        .getString("MovementDisplay.NoLandingDialog.message", new Object[] { ((Aero) ce()).hasRoomForVerticalLanding() }); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
                 if (clientgui
@@ -4001,17 +3993,17 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     ready();
                 }
             }
-        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ENVELOPE.getCmd())){
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
             computeMovementEnvelope();
-        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TRAITOR.getCmd())){
+        } else if (ev.getActionCommand().equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
             // Set up variables we need
             // We use a vector instead of enumeration here so we can grab the size
             Vector<IPlayer> players = clientgui.getClient().getGame().getPlayersVector();
-            Integer[] playerIds = new Integer[players.size()-1];
-            String[] playerNames = new String[players.size()-1];
-            String[] options = new String[players.size()-1];
+            Integer[] playerIds = new Integer[players.size() - 1];
+            String[] playerNames = new String[players.size() - 1];
+            String[] options = new String[players.size() - 1];
             Entity e = ce();
-            
+
             // Loop through the players vector and fill in the arrays
             int idx = 0;
             for (int i = 0; i < players.size(); i++) {
@@ -4025,7 +4017,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 options[idx] = p.getName() + " (ID: " + p.getId() + ")";
                 idx++;
             }
-            
+
             // Dialog for choosing which player to transfer to
             String option = (String) JOptionPane.showInputDialog(
                     clientgui.getFrame(),
@@ -4035,30 +4027,31 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                     null,
                     options,
                     options[0]);
-            
+
             // Verify that we have a valid option...
             if (option != null) {
                 // Now that we've selected a player, correctly associate the ID and name
                 int id = playerIds[Arrays.asList(options).indexOf(option)];
                 String name = playerNames[Arrays.asList(options).indexOf(option)];
-                
+
                 // And now we perform the actual transfer
                 int confirm = JOptionPane.showConfirmDialog(
                         clientgui.getFrame(),
                         e.getDisplayName() + " will switch to " + name + "'s side at the end of this turn. Are you sure?",
                         "Confirm",
                         JOptionPane.YES_NO_OPTION);
-                /*JOptionPane.showMessageDialog(
-                        clientgui.getFrame(),
-                        e.getDisplayName() + " will switch to " + name + "'s side at the end of this turn.",
-                        "ERROR: Can't Switch",
-                        JOptionPane.INFORMATION_MESSAGE);*/
+                /*
+                 * JOptionPane.showMessageDialog( clientgui.getFrame(),
+                 * e.getDisplayName() + " will switch to " + name +
+                 * "'s side at the end of this turn.", "ERROR: Can't Switch",
+                 * JOptionPane.INFORMATION_MESSAGE);
+                 */
                 if (confirm == JOptionPane.YES_OPTION) {
                     e.setTraitorId(id);
                     clientgui.getClient().sendUpdateEntity(e);
                 }
             }
-        } 
+        }
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -4145,8 +4138,7 @@ IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 buffer = entity.getDisplayName();
             } else {
                 buffer = Messages
-                        .getString(
-                                "MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$
+                        .getString("MovementDisplay.EntityAt", new Object[] { entity.getDisplayName(), transport.getPosition().getBoardNum() }); //$NON-NLS-1$
             }
             names[index] = buffer.toString();
         }

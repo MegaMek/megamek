@@ -1187,19 +1187,24 @@ public class Game implements Serializable, IGame {
         return entityIds.get(new Integer(id));
     }
 
-    public void addEntities(List<Integer> ids, List<Entity> entities) {
-        assert (ids.size() == entities.size());
-        for (int i = 0; i < ids.size(); i++) {
-            addEntity(ids.get(i), entities.get(i), false);
+    public void addEntities(List<Entity> entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            addEntity(entities.get(i), false);
         }
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
 
     public void addEntity(int id, Entity entity) {
-        addEntity(id, entity, true);
+        // Disregard the passed id, addEntity(Entity) pulls the id from the
+        //  Entity instance.
+        addEntity(entity);
+    }
+    
+    public void addEntity(Entity entity) {
+        addEntity(entity, true);
     }
 
-    public void addEntity(int id, Entity entity, boolean genEvent) {
+    public void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1222,8 +1227,16 @@ public class Game implements Serializable, IGame {
             // exists already!
             entity.setC3UUID();
         }
+        // Add this Entity, ensuring that it's id is unique
+        int id = entity.getId();
+        if (!entityIds.containsKey(id)) {
+            entityIds.put(new Integer(id), entity);
+        } else {
+            id = getNextEntityId();
+            entity.setId(id);
+            entityIds.put(id, entity);
+        }
         entities.addElement(entity);
-        entityIds.put(new Integer(id), entity);
 
         if (id > lastEntityId) {
             lastEntityId = id;
@@ -1252,17 +1265,16 @@ public class Game implements Serializable, IGame {
 
     public void setEntity(int id, Entity entity) {
         setEntity(id, entity, null);
-        assert (entities.size() == entityIds.size()) : "setEntity failed";
     }
 
     public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
         final Entity oldEntity = getEntity(id);
         if (oldEntity == null) {
-            addEntity(id, entity);
+            addEntity(entity);
         } else {
             entity.setGame(this);
             entities.setElementAt(entity, entities.indexOf(oldEntity));
-            entityIds.put(new Integer(id), entity);
+            entityIds.put(id, entity);
 
             // Not sure if this really required
             if (id > lastEntityId) {

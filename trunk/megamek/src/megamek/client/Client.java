@@ -926,7 +926,10 @@ public class Client implements IClientCommandHandler {
         List<Entity> entities = (List<Entity>) packet.getObject(1);
 
         assert (entityIds.size() == entities.size());
-        game.addEntities(entityIds, entities);
+        for (int i = 0; i < entityIds.size(); i++) {
+            assert(entityIds.get(i) == entities.get(i).getId());
+        }
+        game.addEntities(entities);
     }
 
     protected void receiveEntityRemove(Packet packet) {

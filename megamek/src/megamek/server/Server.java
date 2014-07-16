@@ -8623,7 +8623,7 @@ public class Server implements Runnable {
                     fs.setFacing(loader.getFacing());
                     fs.setOwner(entity.getOwner());
                     // set velocity and heading the same as parent entity
-                    game.addEntity(fs.getId(), fs);
+                    game.addEntity(fs);
                     send(createAddEntityPacket(fs.getId()));
                     // make him not get a move this turn
                     fs.setDone(true);
@@ -9185,7 +9185,7 @@ public class Server implements Runnable {
             tele.setFacing(a.getFacing());
         }
         // set velocity and heading the same as parent entity
-        game.addEntity(tele.getId(), tele);
+        game.addEntity(tele);
         send(createAddEntityPacket(tele.getId()));
         // make him not get a move this turn
         tele.setDone(true);
@@ -26550,7 +26550,7 @@ public class Server implements Runnable {
                 entity.setId(getFreeEntityId());
             }
 
-            game.addEntity(entity.getId(), entity);
+            game.addEntity(entity);
 
             // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we
             // do
@@ -26633,7 +26633,7 @@ public class Server implements Runnable {
         if (Entity.NONE == fs.getId()) {
             fs.setId(getFreeEntityId());
         }
-        game.addEntity(fs.getId(), fs);
+        game.addEntity(fs);
         for (int id : fighters) {
             Aero fighter = (Aero) game.getEntity(id);
             if (null != fighter) {
@@ -30110,7 +30110,7 @@ public class Server implements Runnable {
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             pilot.setLanded(false);
-            game.addEntity(pilot.getId(), pilot);
+            game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
             pilot.setDone(true);
@@ -30215,7 +30215,7 @@ public class Server implements Runnable {
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());
-            game.addEntity(crew.getId(), crew);
+            game.addEntity(crew);
             send(createAddEntityPacket(crew.getId()));
             // Make them not get a move this turn
             crew.setDone(true);
@@ -30288,7 +30288,7 @@ public class Server implements Runnable {
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
-            game.addEntity(pilot.getId(), pilot);
+            game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
             pilot.setDone(true);
@@ -30316,7 +30316,7 @@ public class Server implements Runnable {
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());
-            game.addEntity(crew.getId(), crew);
+            game.addEntity(crew);
             send(createAddEntityPacket(crew.getId()));
             // Make them not get a move this turn
             crew.setDone(true);

@@ -17,7 +17,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -28,14 +27,9 @@ import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.pathfinder.AbstractPathFinder;
-import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.MovePathFinder;
-import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.MPodHandler;
 
 /**
  * Holds movement path for an entity.

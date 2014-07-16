@@ -8,7 +8,6 @@ import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.MovePathLegalityFilter;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
 

@@ -19,6 +19,10 @@ import megamek.common.MovePath;
 import megamek.common.VTOL;
 
 /**
+ * Sprite for displaying information about movement modifier that can be
+ * achieved by provided MovePath. Multiple MovementModifierEnvelopeSprite can be
+ * drawn on a single hex, one for each final facing.
+ * 
  * @author Saginatio
  * 
  */
@@ -61,7 +65,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
             poly.addPoint(p4.x, p4.y);
             borders.put(f, poly);
 
-            //calculation of middle of the polygon
+            //calculation of middle point of the polygon
             int pmpX = 0;
             for (int i = 0; i < poly.npoints; i++)
                 pmpX += poly.xpoints[i];
@@ -100,6 +104,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
      */
     @Override
     public void prepare() {
+        updateBounds();
         // create image for buffer
         Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
@@ -135,5 +140,4 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         tempImage.flush();
 
     }
-
 }

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.FilteredImageSource;
 
@@ -25,6 +24,7 @@ class MovementEnvelopeSprite extends HexSprite {
 
     @Override
     public void prepare() {
+        updateBounds();
         // create image for buffer
         Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
@@ -50,11 +50,4 @@ class MovementEnvelopeSprite extends HexSprite {
         graph.dispose();
         tempImage.flush();
     }
-
-    @Override
-    public Rectangle getBounds() {
-        bounds = new Rectangle(this.boardView1.getHexLocation(loc), this.boardView1.hex_size);
-        return bounds;
-    }
-
 }

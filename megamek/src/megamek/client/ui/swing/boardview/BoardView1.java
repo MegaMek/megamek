@@ -4378,6 +4378,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         selectedSprite.prepare();
         firstLOSSprite.prepare();
         secondLOSSprite.prepare();
+        for (Sprite spr : moveEnvSprites)
+            spr.prepare();
+        for (Sprite spr : moveModEnvSprites)
+            spr.prepare();
 
         updateFontSizes();
         updateBoard();

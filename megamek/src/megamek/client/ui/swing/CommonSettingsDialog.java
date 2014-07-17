@@ -95,17 +95,22 @@ public class CommonSettingsDialog extends ClientDialog implements
             Object src = e.getSource();
             if (mouseDragging && (src instanceof JList)) {
                 JList<?> srcList = (JList<?>) src;
-                DefaultListModel srcModel = (DefaultListModel)srcList.getModel();
+                DefaultListModel<?> srcModel = (DefaultListModel<?>) srcList.getModel();
                 int currentIndex = srcList.locationToIndex(e.getPoint());
                 if (currentIndex != dragSourceIndex) {
                     int dragTargetIndex = srcList.getSelectedIndex();
-                    Object dragElement = srcModel.get(dragSourceIndex);
-                    srcModel.remove(dragSourceIndex);
-                    srcModel.add(dragTargetIndex, dragElement);
+                    moveElement(srcModel, dragSourceIndex, dragTargetIndex);
                     dragSourceIndex = currentIndex;
                 }
             }
         }
+
+        private <T> void moveElement(DefaultListModel<T> srcModel, int srcIndex, int trgIndex) {
+            T dragElement = srcModel.get(srcIndex);
+            srcModel.remove(srcIndex);
+            srcModel.add(trgIndex, dragElement);
+        }
+
     }
     
     /**

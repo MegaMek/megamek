@@ -4370,6 +4370,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_INDUSTRIAL, true));
         misc.tonnage = TONNAGE_VARIABLE;
+        misc.setInternalName("Clan Industrial Armor");
         misc.criticals = 0;
         misc.hittable = false;
         misc.bv = 0;
@@ -5033,7 +5034,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getStructureTypeName(
                 T_STRUCTURE_INDUSTRIAL, false));
-        misc.addLookupName("IS Industrial");
+        misc.addLookupName("IS Industrial Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.bv = 0;
@@ -5054,15 +5055,15 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getStructureTypeName(
                 T_STRUCTURE_INDUSTRIAL, true));
-        misc.addLookupName("Clan Industrial");
+        misc.addLookupName("Clan Industrial Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.industrial = true;
-        misc.introDate = 2350;
-        misc.techLevel.put(2350, misc.techLevel.get(3071));
-        misc.availRating = new int[] { EquipmentType.RATING_C,
+        misc.introDate = 2820;
+        misc.techLevel.put(2820, misc.techLevel.get(3071));
+        misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_C, EquipmentType.RATING_C };
         misc.techRating = RATING_C;
         return misc;

@@ -32,7 +32,7 @@ public class CLLRM1OS extends LRMWeapon {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 1";
-        setInternalName("CLLRM1");
+        setInternalName("CLLRM1OS");
         heat = 0;
         rackSize = 1;
         minimumRange = WEAPON_NA;

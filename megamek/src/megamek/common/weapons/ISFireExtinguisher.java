@@ -40,6 +40,7 @@ public class ISFireExtinguisher extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Fire Extinguisher";
+        addLookupName("IS Fire Extinguisher");
         setInternalName(name);
         heat = 0;
         damage = 0;

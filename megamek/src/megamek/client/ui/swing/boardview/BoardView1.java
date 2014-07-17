@@ -2721,12 +2721,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
+        repaint();
+
     }
 
     public void setMovementModifierEnvelope(Collection<MovePath> movePaths){
         moveModEnvSprites.clear();
         for (MovePath mp : movePaths)
             moveModEnvSprites.add(new MovementModifierEnvelopeSprite(this, mp));
+        repaint();
     }
 
     public void clearMovementEnvelope() {

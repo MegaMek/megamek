@@ -79,7 +79,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             if (SwingUtilities.isLeftMouseButton(e)) {
                 Object src = e.getSource();
                 if (src instanceof JList) {
-                    dragSourceIndex = ((JList)src).getSelectedIndex();
+                    dragSourceIndex = ((JList<?>) src).getSelectedIndex();
                     mouseDragging = true;
                 }                
             }
@@ -94,7 +94,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         public void mouseDragged(MouseEvent e) {
             Object src = e.getSource();
             if (mouseDragging && (src instanceof JList)) {
-                JList srcList = (JList)src;
+                JList<?> srcList = (JList<?>) src;
                 DefaultListModel srcModel = (DefaultListModel)srcList.getModel();
                 int currentIndex = srcList.locationToIndex(e.getPoint());
                 if (currentIndex != dragSourceIndex) {
@@ -1074,7 +1074,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             movePhaseCommands.addElement(cmd);
         }
-        JList moveList = new JList(movePhaseCommands);
+        JList<StatusBarPhaseDisplay.PhaseCommand> moveList = new JList<>(movePhaseCommands);
         moveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         moveList.addMouseListener(cmdMouseAdaptor);
         moveList.addMouseMotionListener(cmdMouseAdaptor);
@@ -1091,7 +1091,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             deployPhaseCommands.addElement(cmd);
         }
-        JList deployList = new JList(deployPhaseCommands);
+        JList<StatusBarPhaseDisplay.PhaseCommand> deployList = new JList<>(deployPhaseCommands);
         deployList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         deployList.addMouseListener(cmdMouseAdaptor);
         deployList.addMouseMotionListener(cmdMouseAdaptor);
@@ -1108,7 +1108,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             firingPhaseCommands.addElement(cmd);
         }
-        JList firingList = new JList(firingPhaseCommands);
+        JList<StatusBarPhaseDisplay.PhaseCommand> firingList = new JList<>(firingPhaseCommands);
         firingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         firingList.addMouseListener(cmdMouseAdaptor);
         firingList.addMouseMotionListener(cmdMouseAdaptor);
@@ -1125,7 +1125,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             physicalPhaseCommands.addElement(cmd);
         }
-        JList physicalList = new JList(physicalPhaseCommands);
+        JList<StatusBarPhaseDisplay.PhaseCommand> physicalList = new JList<>(physicalPhaseCommands);
         physicalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         physicalList.addMouseListener(cmdMouseAdaptor);
         physicalList.addMouseMotionListener(cmdMouseAdaptor);
@@ -1142,7 +1142,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             targetingPhaseCommands.addElement(cmd);
         }
-        JList targetingList = new JList(targetingPhaseCommands);
+        JList<StatusBarPhaseDisplay.PhaseCommand> targetingList = new JList<>(targetingPhaseCommands);
         targetingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         targetingList.addMouseListener(cmdMouseAdaptor);
         targetingList.addMouseMotionListener(cmdMouseAdaptor);

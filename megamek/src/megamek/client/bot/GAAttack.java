@@ -89,6 +89,7 @@ public class GAAttack extends GA {
         double[] result = new double[target_array.size()];
         Chromosome chromArrayList = chromosomes[iChromIndex];
         // TODO should account for high heat?
+        @SuppressWarnings("unused")
         int heat_total = 0;
         if (chromArrayList.genes[chromosomeDim - 1] >= target_array.size()) {
             chromArrayList.genes[chromosomeDim - 1] = valid_target_indexes.get(

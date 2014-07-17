@@ -134,7 +134,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveShutdown;
     private JMenuItem moveStartup;
     private JMenuItem moveSelfDestruct;
-    private JMenuItem moveTraitor;
+    //private JMenuItem moveTraitor;
     private JMenuItem moveAcc = null;
     private JMenuItem moveDec = null;
     private JMenuItem moveAccN = null;

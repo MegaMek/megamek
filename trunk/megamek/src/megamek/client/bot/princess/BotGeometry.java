@@ -103,6 +103,7 @@ public class BotGeometry {
          * Create a hexline from a point and direction
          */
         public HexLine(Coords c,int dir) {
+            @SuppressWarnings("unused")
             final String METHOD_NAME = "HexLine(Coords, int)";
 
             direction=dir;

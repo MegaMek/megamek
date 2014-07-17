@@ -584,6 +584,7 @@ public class MovePath implements Cloneable, Serializable {
      * Finds the sequence of three steps that can be transformed, then removes
      * all three and replaces them with the lateral shift step.
      */
+    @SuppressWarnings("unused")
     private void transformLateralShift() {
         if (steps.size() < 3) {
             return;
@@ -835,6 +836,7 @@ public class MovePath implements Cloneable, Serializable {
      * @param timeLimit the maximum <code>int</code> number of milliseconds to take
      *                  hunting for an ideal path.
      */
+    @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type,
                                      final int timeLimit) {
         final long endTime = System.currentTimeMillis() + timeLimit;

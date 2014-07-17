@@ -195,7 +195,6 @@ public class PathRanker {
         return returnPaths;
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     private boolean maximisesTargetMoveMod(MovePath path, Entity mover) {
         int distanceMoved = path.getHexesMoved();
         int fastestMove = mover.getRunMP(true, false, false);

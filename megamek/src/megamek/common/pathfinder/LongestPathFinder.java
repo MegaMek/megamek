@@ -120,7 +120,12 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * method should be modified
                      */
                 }
-                if (topMP.getHexesMoved() >= mpCandidate.getHexesMoved()) {
+                if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
+                    return null; //topMP path is longer and uses less mp.
+                }
+                if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
+                    if (topMP.getLastStep().isThisStepBackwards() != mpCandidate.getLastStep().isThisStepBackwards())
+                        break;
                     return null; //topMP path is longer and uses less mp.
                 }
 

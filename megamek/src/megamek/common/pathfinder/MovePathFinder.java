@@ -16,6 +16,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.IGame;
+import megamek.common.Tank;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.MovePath;
@@ -51,6 +52,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
             return allFacings;
         }
+
         final private Coords coords;
 
         final private int facing;
@@ -86,7 +88,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public int hashCode() {
             return facing + 7 * coords.hashCode();
         }
-
 
         @Override
         public String toString() {
@@ -202,20 +203,25 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      */
     public static class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         private final MoveStepType stepType;
+        private boolean walking;
+        private boolean charge;
 
         /**
          * @param stepType
          */
         public NextStepsAdjacencyMap(MoveStepType stepType) {
             this.stepType = stepType;
+            walking = stepType == MoveStepType.BACKWARDS;
+            charge = (stepType == MoveStepType.CHARGE) || (stepType == MoveStepType.DFA);
         }
 
         /**
          * Produces set of MovePaths by extending MovePath mp with MoveSteps.
-         * The set of extending steps include {F, L, R, UP, ShL, ShR}. If
-         * stepType is equal to MoveStepType.BACKWARDS then extending steps
-         * include also {B, ShBL, ShBR}. If stepType is equal to MoveStep.DFA or
-         * MoveStep.CHARGE then it is added to the resulting set.
+         * The set of extending steps include {F, L, R, UP, ShL, ShR} if
+         * applicable. If stepType is equal to MoveStepType.BACKWARDS then
+         * extending steps include also {B, ShBL, ShBR}. If stepType is equal to
+         * MoveStep.DFA or MoveStep.CHARGE then it is added to the resulting
+         * set.
          * 
          * @param mp the MovePath to be extended
          * 
@@ -224,14 +230,60 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
-            List<MovePath> moves = mp.getNextMoves(stepType == MoveStepType.BACKWARDS, true);
-            if (stepType == MoveStepType.CHARGE || stepType == MoveStepType.DFA) {
-                moves.add(mp.clone().addStep(stepType));
+            final MoveStep last = mp.getLastStep();
+            final MoveStepType lType = (last == null) ? null : last.getType();
+            final Entity entity = mp.getEntity();
+
+            final ArrayList<MovePath> result = new ArrayList<MovePath>();
+
+            /*
+             * In case we process Aero lets check if it have flown of the map,
+             * if thats the case no more movements are possible and return empty
+             * list.
+             */
+            if (entity instanceof Aero &&
+                    (lType == MoveStepType.OFF || lType == MoveStepType.RETURN))
+                return result;
+
+            if (lType != MoveStepType.TURN_LEFT)
+                result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
+            if (lType != MoveStepType.TURN_RIGHT)
+                result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
+
+            /*
+             * If the unit is prone or hull-down it limits movement options,
+             * such units can only turn or get up. (unless it's a tank; tanks
+             * can just drive out of hull-down and they cannot be prone)
+             */
+            if (mp.getFinalProne() || (mp.getFinalHullDown() && !(entity instanceof Tank))) {
+                if (entity.isCarefulStand()) {
+                    result.add(mp.clone().addStep(MoveStepType.CAREFUL_STAND));
+                } else {
+                    result.add(mp.clone().addStep(MoveStepType.GET_UP));
+                }
+                return result;
             }
-            return moves;
+
+            if (mp.canShift()) {
+                result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
+                result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
+                if (walking) {
+                    result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
+                    result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
+                }
+            }
+
+            result.add(mp.clone().addStep(MoveStepType.FORWARDS));
+            if (walking)
+                result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
+
+            if (charge){
+                result.add(mp.clone().addStep(stepType));
+            }
+
+            return result;
         }
     }
-
 
     /**
      * Creates a new instance of MovePathFinder. Sets DestinationMap to

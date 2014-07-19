@@ -40,6 +40,7 @@ public class CLFireExtinguisher extends Weapon {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Fire Extinguisher";
+        addLookupName("Clan Fire Extinguisher");
         setInternalName(name);
         heat = 0;
         damage = 0;

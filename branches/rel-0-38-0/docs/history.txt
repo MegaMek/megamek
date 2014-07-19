@@ -8,6 +8,11 @@ v0.38.1-dev (SVN)
 + Data: New Images.
 + Data: Starting to change Source Names to match TRO for easier reference.
 + Data: New Images,Unit Fixes, and RAT fixes
++ Data: New Images
++ Data: Part 2 of Source Name change to match TRO for easier reference.
++ Bug: Flare rounds missing from Mutators.
++ Data: New Images and some equipment date/name fixes.
++ Data: New Images
 
 v0.38.0 (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes

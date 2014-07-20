@@ -565,13 +565,11 @@ public class Princess extends BotClient {
         if (!entity.canFlee()) {
             return false;
         }
+        //noinspection SimplifiableIfStatement
         if (getPathRanker().distanceToHomeEdge(entity.getPosition(), getHomeEdge(), getGame()) > 0) {
             return false;
         }
-        if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
-        	return false;
-        }
-        return true;
+        return !(!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal()));
     }
 
     protected boolean isImmobilized(Entity mover) {
@@ -901,6 +899,10 @@ public class Princess extends BotClient {
     public void log(Class<?> callingClass, String methodName, LogLevel level,
                     String msg) {
         logger.log(callingClass, methodName, level, msg);
+    }
+
+    public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder msg) {
+        log(callingClass, methodName, level, msg.toString());
     }
 
     public void log(Class<?> callingClass, String methodName, String msg) {

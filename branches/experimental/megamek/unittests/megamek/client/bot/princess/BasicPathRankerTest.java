@@ -16,17 +16,25 @@ package megamek.client.bot.princess;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.Building;
 import megamek.common.ConvFighter;
 import megamek.common.Coords;
+import megamek.common.Crew;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.LosEffects;
+import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.Terrains;
 import megamek.common.options.GameOptions;
 import megamek.common.util.StringUtil;
 import org.junit.Assert;
@@ -42,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -363,6 +372,9 @@ public class BasicPathRankerTest {
         Mockito.doReturn(12.0)
                .when(testRanker)
                .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
+        Mockito.doReturn(0.0)
+               .when(testRanker)
+               .checkPathForHazards(Mockito.any(MovePath.class), Mockito.any(Entity.class), Mockito.any(IGame.class));
 
         Entity mockMover = Mockito.mock(BipedMech.class);
         Mockito.when(mockMover.isClan()).thenReturn(false);
@@ -1195,5 +1207,210 @@ public class BasicPathRankerTest {
         expected = 0;
         actual = testRanker.calculateMyDamagePotential(mockPath, mockEnemy, testDistance, mockGame);
         Assert.assertEquals(expected, actual, TOLERANCE);
+    }
+
+    @Test
+    public void testCheckPathForHazards() {
+        BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
+
+        Coords testCoordsOne = new Coords(10, 7);
+        Coords testCoordsTwo = new Coords(10, 8);
+        Coords testCoordsThree = new Coords(10, 9);
+        Coords testFinalCoords = new Coords(10, 10);
+
+        IHex mockHexOne = Mockito.mock(IHex.class);
+        IHex mockHexTwo = Mockito.mock(IHex.class);
+        IHex mockHexThree = Mockito.mock(IHex.class);
+        IHex mockFinalHex = Mockito.mock(IHex.class);
+        Mockito.when(mockHexOne.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexOne.getCoords()).thenReturn(testCoordsOne);
+        Mockito.when(mockHexTwo.getCoords()).thenReturn(testCoordsTwo);
+        Mockito.when(mockHexThree.getCoords()).thenReturn(testCoordsThree);
+        Mockito.when(mockFinalHex.getCoords()).thenReturn(testFinalCoords);
+
+        MoveStep mockStepOne = Mockito.mock(MoveStep.class);
+        MoveStep mockStepTwo = Mockito.mock(MoveStep.class);
+        MoveStep mockStepThree = Mockito.mock(MoveStep.class);
+        MoveStep mockFinalStep = Mockito.mock(MoveStep.class);
+        Mockito.when(mockStepOne.getPosition()).thenReturn(testCoordsOne);
+        Mockito.when(mockStepTwo.getPosition()).thenReturn(testCoordsTwo);
+        Mockito.when(mockStepThree.getPosition()).thenReturn(testCoordsThree);
+        Mockito.when(mockFinalStep.getPosition()).thenReturn(testFinalCoords);
+        Vector<MoveStep> stepVector = new Vector<>();
+        stepVector.add(mockStepOne);
+        stepVector.add(mockStepTwo);
+        stepVector.add(mockStepThree);
+        stepVector.add(mockFinalStep);
+
+        MovePath mockPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockPath.getLastStep()).thenReturn(mockFinalStep);
+        Mockito.when(mockPath.getFinalCoords()).thenReturn(testFinalCoords);
+        Mockito.when(mockPath.getStepVector()).thenReturn(stepVector);
+
+        Entity mockUnit = Mockito.mock(BipedMech.class);
+        Mockito.when(mockUnit.locations()).thenReturn(8);
+        Mockito.when(mockUnit.getArmor(Mockito.anyInt())).thenReturn(10);
+
+        IGame mockGame = Mockito.mock(IGame.class);
+
+        IBoard mockBoard = Mockito.mock(IBoard.class);
+        Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
+        Mockito.when(mockBoard.getHex(Mockito.eq(testFinalCoords))).thenReturn(mockFinalHex);
+        Mockito.when(mockBoard.getHex(Mockito.eq(testCoordsOne))).thenReturn(mockHexOne);
+        Mockito.when(mockBoard.getHex(Mockito.eq(testCoordsTwo))).thenReturn(mockHexTwo);
+        Mockito.when(mockBoard.getHex(Mockito.eq(testCoordsThree))).thenReturn(mockHexThree);
+
+        Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockUnit.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockCrew.getPiloting()).thenReturn(5);
+
+        Building mockBuilding = Mockito.mock(Building.class);
+        Mockito.when(mockBoard.getBuildingAt(Mockito.eq(testCoordsThree))).thenReturn(mockBuilding);
+        Mockito.when(mockBuilding.getCurrentCF(Mockito.eq(testCoordsThree))).thenReturn(77);
+
+        // Test waking fire-resistant BA through a burning building.
+        BattleArmor mockBA = Mockito.mock(BattleArmor.class);
+        Mockito.when(mockBA.locations()).thenReturn(5);
+        Mockito.when(mockBA.getArmor(Mockito.anyInt())).thenReturn(5);
+        Mockito.when(mockBA.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockBA.getHeatCapacity()).thenReturn(999);
+        Mockito.when(mockBA.isFireResistant()).thenReturn(true);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.BUILDING, Terrains.FIRE});
+        Assert.assertEquals(0, testRanker.checkPathForHazards(mockPath, mockBA, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // Test walking a protomech over magma crust
+        Entity mockProto = Mockito.mock(Protomech.class);
+        Mockito.when(mockProto.locations()).thenReturn(6);
+        Mockito.when(mockProto.getArmor(Mockito.anyInt())).thenReturn(5);
+        Mockito.when(mockProto.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockProto.getHeatCapacity()).thenReturn(999);
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        Assert.assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+
+        // Test waking a protomech through a fire.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.FIRE, Terrains.WOODS});
+        Assert.assertEquals(50.0, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // Test walking infantry over ice.
+        Entity mockInfantry = Mockito.mock(Infantry.class);
+        Mockito.when(mockInfantry.locations()).thenReturn(2);
+        Mockito.when(mockInfantry.getArmor(Mockito.anyInt())).thenReturn(0);
+        Mockito.when(mockInfantry.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
+        Mockito.when(mockHexThree.depth()).thenReturn(1);
+        Assert.assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockInfantry, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.depth()).thenReturn(0);
+
+        // Test driving a tank through a burning building.
+        Entity mockTank = Mockito.mock(Tank.class);
+        Mockito.when(mockTank.locations()).thenReturn(5);
+        Mockito.when(mockTank.getArmor(Mockito.anyInt())).thenReturn(10);
+        Mockito.when(mockTank.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.BUILDING, Terrains.FIRE});
+        Assert.assertEquals(26.169, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // Test walking through a building.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.BUILDING});
+        Assert.assertEquals(1.169, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // Test walking over 3 hexes of ice.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
+        Mockito.when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
+        Mockito.when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(1);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        Mockito.when(mockHexTwo.depth()).thenReturn(0);
+        Mockito.when(mockHexThree.depth()).thenReturn(1);
+        Mockito.when(mockFinalHex.depth()).thenReturn(2);
+        Mockito.when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(0);
+        Assert.assertEquals(166.7, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(10);
+        Mockito.when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(0);
+        Assert.assertEquals(8.334, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(10);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
+        Mockito.when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(0);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
+        Mockito.when(mockHexTwo.depth()).thenReturn(0);
+        Mockito.when(mockHexThree.depth()).thenReturn(0);
+        Mockito.when(mockFinalHex.depth()).thenReturn(0);
+
+        // Test walking over 3 hexes of magma crust.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockHexTwo.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        Mockito.when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        Assert.assertEquals(17.8351, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexTwo.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+        Mockito.when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+
+        // Test the stupidity of going prone in lava.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockFinalStep.isProne()).thenReturn(true);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
+        Assert.assertEquals(66.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockFinalStep.isProne()).thenReturn(false);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+
+        // Test walking through 2 hexes of fire.
+        Mockito.when(mockPath.isJumping()).thenReturn(false);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[]{Terrains.WOODS, Terrains.FIRE});
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.WOODS, Terrains.FIRE});
+        Assert.assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
+        Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // Test jumping.
+        Mockito.when(mockPath.isJumping()).thenReturn(true);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.ICE, Terrains.WATER});
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        Mockito.when(mockFinalHex.depth()).thenReturn(2);
+        Mockito.when(mockUnit.getArmor(Mockito.eq(Mech.LOC_LLEG))).thenReturn(0);
+        Assert.assertEquals(25.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockUnit.getArmor(Mockito.eq(Mech.LOC_LLEG))).thenReturn(10);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
+        Mockito.when(mockFinalHex.depth()).thenReturn(0);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.MAGMA});
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
+        Assert.assertEquals(14.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.WOODS, Terrains.FIRE});
+        Assert.assertEquals(5.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        Mockito.when(mockFinalHex.getTerrainTypes()).thenReturn(new int[]{Terrains.WOODS});
+        Assert.assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+        // Test a movement type that doesn't worry about ground terrain.
+        Mockito.when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_FLYING);
+        Assert.assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 }

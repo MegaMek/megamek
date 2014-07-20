@@ -103,6 +103,19 @@ public class PathRanker {
         }
     }
 
+    private List<MovePath> getBestTmmPaths(List<MovePath> startingPathList) {
+        List<MovePath> efficientPaths = new ArrayList<>();
+        for (MovePath path : startingPathList) {
+            if (!maximisesTargetMoveMod(path, path.getEntity())) {
+                owner.log(getClass(), "getBestTmmPaths(List<MovePath>)", LogLevel.WARNING,
+                          "Path (" + path.toString() + ") does not maximize TMM.");
+                continue;
+            }
+            efficientPaths.add(path);
+        }
+        return efficientPaths;
+    }
+
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
@@ -121,28 +134,25 @@ public class PathRanker {
                 closestTarget.getPosition().distance(mover.getPosition()));
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
+        List<MovePath> efficientPaths = getBestTmmPaths(startingPathList);
         boolean inRange = (maxRange >= startingTargetDistance);
         HomeEdge homeEdge = owner.getHomeEdge();
         boolean fleeing = owner.isFallingBack(mover);
-        boolean testAgain = true;
-        boolean countHexes = true;
+        boolean tryAgain = true;
 
-        while (testAgain) {
-            testAgain = false;
-            for (MovePath path : startingPathList) {
+        List<MovePath> checkPaths = (efficientPaths.isEmpty() ? startingPathList : efficientPaths);
+
+        while (tryAgain) {
+            tryAgain = false;
+
+            for (MovePath path : checkPaths) {
                 StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
                 try {
-                    if (countHexes && !maximisesTargetMoveMod(path, mover)) {
-                        logLevel = LogLevel.WARNING;
-                        msg.append("\n\tINVALID: Path does not maximise Target Move Mod.");
-                        continue;
-                    }
-
                     Coords finalCoords = path.getFinalCoords();
 
                     // If fleeing, skip any paths that don't get me closer to home.
-                    if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
+                    if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) > startingHomeDistance)) {
                         logLevel = LogLevel.WARNING;
                         msg.append("\n\tINVALID: Running away in wrong direction.");
                         continue;
@@ -180,10 +190,15 @@ public class PathRanker {
                 } finally {
                     owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
                 }
-            }
-            if (returnPaths.isEmpty()) {
-                testAgain = true;
-                countHexes = false;
+
+                // If no good paths were found and we were using our highest TMM paths, try again with all paths.
+                if (returnPaths.isEmpty() && !efficientPaths.isEmpty()) {
+                    owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
+                              "None of the efficient paths satisfy my needs, trying again with all paths.");
+                    checkPaths = startingPathList;
+                    efficientPaths = new ArrayList<>(0);
+                    tryAgain = true;
+                }
             }
         }
 
@@ -212,11 +227,8 @@ public class PathRanker {
             return false;
         }
         // If I can move 10+, why move 8 or 9?
-        if (fastestMove >= 10 && (distanceMoved == 8 || distanceMoved == 9)) {
-            return false;
-        }
+        return !(fastestMove >= 10 && (distanceMoved == 8 || distanceMoved == 9));
 
-        return true;
     }
 
     public static RankedPath getBestPath(List<RankedPath> ps) {

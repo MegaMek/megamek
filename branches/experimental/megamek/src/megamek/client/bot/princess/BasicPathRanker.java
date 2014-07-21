@@ -572,14 +572,10 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // Amphibious unit are safe (kind of the point).
-        if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
-            logMsg.append("Amphibious unit (0).");
-            return 0;
-        }
-
         // Other units are automatically destroyed.
-        if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech || movingUnit instanceof BattleArmor)) {
+        if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech || movingUnit instanceof BattleArmor ||
+              movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
+              movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))) {
             logMsg.append("I'll drown (1000).");
             return 1000;
         }
@@ -597,7 +593,7 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            if ((hex.depth() >= 2) || (step.isProne())) {
+            if ((hex.depth() >= 2) || !(movingUnit instanceof Mech) || (step.isProne())) {
                 submergedLocations.add(i);
                 continue;
             }

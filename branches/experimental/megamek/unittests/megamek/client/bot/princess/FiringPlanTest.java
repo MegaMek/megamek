@@ -13,8 +13,10 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
+import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import org.junit.Assert;
@@ -24,6 +26,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -162,5 +166,100 @@ public class FiringPlanTest {
         FiringPlan emptyPlan = new FiringPlan(mockTarget);
         expected = new Vector<EntityAction>(0);
         Assert.assertEquals(expected, emptyPlan.getEntityActionVector());
+    }
+
+    @Test
+    public void testSortPlan() {
+        WeaponFireInfo mockInfoLL = Mockito.mock(WeaponFireInfo.class);
+        Mounted mockLL = Mockito.mock(Mounted.class);
+        Mockito.when(mockLL.getName()).thenReturn("LL");
+        Mockito.when(mockLL.toString()).thenReturn("LL");
+        Mockito.when(mockInfoLL.getWeapon()).thenReturn(mockLL);
+        WeaponType mockTypeLL = Mockito.mock(WeaponType.class);
+        Mockito.when(mockLL.getType()).thenReturn(mockTypeLL);
+        Mockito.when(mockTypeLL.getDamage()).thenReturn(8);
+        Mockito.when(mockLL.getLinked()).thenReturn(null);
+
+        WeaponFireInfo mockInfoLRM = Mockito.mock(WeaponFireInfo.class);
+        Mounted mockLRM = Mockito.mock(Mounted.class);
+        Mockito.when(mockLRM.getName()).thenReturn("LRM");
+        Mockito.when(mockLRM.toString()).thenReturn("LRM");
+        Mockito.when(mockInfoLRM.getWeapon()).thenReturn(mockLRM);
+        WeaponType mockTypeLRM = Mockito.mock(WeaponType.class);
+        Mockito.when(mockLRM.getType()).thenReturn(mockTypeLRM);
+        Mockito.when(mockTypeLRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
+        Mounted mockAmmoLRM = Mockito.mock(Mounted.class);
+        Mockito.when(mockLRM.getLinked()).thenReturn(mockAmmoLRM);
+        AmmoType mockAmmoTypeLRM = Mockito.mock(AmmoType.class);
+        Mockito.when(mockAmmoLRM.getType()).thenReturn(mockAmmoTypeLRM);
+        Mockito.when(mockAmmoTypeLRM.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        Mockito.when(mockAmmoTypeLRM.getDamagePerShot()).thenReturn(1);
+
+        WeaponFireInfo mockInfoLBX = Mockito.mock(WeaponFireInfo.class);
+        Mounted mockLBX = Mockito.mock(Mounted.class);
+        Mockito.when(mockLBX.getName()).thenReturn("LBX");
+        Mockito.when(mockLBX.toString()).thenReturn("LBX");
+        Mockito.when(mockInfoLBX.getWeapon()).thenReturn(mockLBX);
+        WeaponType mockTypeLBX = Mockito.mock(WeaponType.class);
+        Mockito.when(mockLBX.getType()).thenReturn(mockTypeLBX);
+        Mockito.when(mockTypeLBX.getDamage()).thenReturn(10);
+        Mounted mockAmmoLBX = Mockito.mock(Mounted.class);
+        Mockito.when(mockLBX.getLinked()).thenReturn(mockAmmoLBX);
+        AmmoType mockAmmoTypeLBXCluster = Mockito.mock(AmmoType.class);
+        Mockito.when(mockAmmoTypeLBXCluster.getMunitionType()).thenReturn(AmmoType.M_CLUSTER);
+        Mockito.when(mockAmmoTypeLBXCluster.getDamagePerShot()).thenReturn(1);
+        AmmoType mockAmmoTypeLBXSlug = Mockito.mock(AmmoType.class);
+        Mockito.when(mockAmmoTypeLBXSlug.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        Mockito.when(mockAmmoTypeLBXSlug.getDamagePerShot()).thenReturn(1);
+
+        WeaponFireInfo mockInfoSRM = Mockito.mock(WeaponFireInfo.class);
+        Mounted mockSRM = Mockito.mock(Mounted.class);
+        Mockito.when(mockSRM.getName()).thenReturn("SRM");
+        Mockito.when(mockSRM.toString()).thenReturn("SRM");
+        Mockito.when(mockInfoSRM.getWeapon()).thenReturn(mockSRM);
+        WeaponType mockTypeSRM = Mockito.mock(WeaponType.class);
+        Mockito.when(mockSRM.getType()).thenReturn(mockTypeSRM);
+        Mockito.when(mockTypeSRM.getDamage()).thenReturn(WeaponType.DAMAGE_BY_CLUSTERTABLE);
+        Mounted mockAmmoSRM = Mockito.mock(Mounted.class);
+        Mockito.when(mockSRM.getLinked()).thenReturn(mockAmmoSRM);
+        AmmoType mockAmmoTypeSRM = Mockito.mock(AmmoType.class);
+        Mockito.when(mockAmmoSRM.getType()).thenReturn(mockAmmoTypeSRM);
+        Mockito.when(mockAmmoTypeSRM.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        Mockito.when(mockAmmoTypeSRM.getDamagePerShot()).thenReturn(2);
+
+        FiringPlan testPlan = Mockito.spy(new FiringPlan(mockTarget));
+
+        // Test the plan with the LBX firing cluster ammo.
+        Mockito.when(mockAmmoLBX.getType()).thenReturn(mockAmmoTypeLBXCluster);
+        testPlan.add(mockInfoLBX);
+        testPlan.add(mockInfoLRM);
+        testPlan.add(mockInfoLL);
+        testPlan.add(mockInfoSRM);
+        FiringPlan expectedOrder = new FiringPlan(mockTarget);
+        expectedOrder.add(mockInfoLL);
+        expectedOrder.add(mockInfoSRM);
+        expectedOrder.add(mockInfoLBX);
+        expectedOrder.add(mockInfoLRM);
+        testPlan.sortPlan();
+        Assert.assertEquals("\nExpected: " + expectedOrder.getWeaponNames() + "\nActual  : " + testPlan
+                                    .getWeaponNames(),
+                            expectedOrder, testPlan);
+
+        // Test the plan with LBX firing slugs.
+        Mockito.when(mockAmmoLBX.getType()).thenReturn(mockAmmoTypeLBXSlug);
+        testPlan.clear();
+        testPlan.add(mockInfoLBX);
+        testPlan.add(mockInfoLRM);
+        testPlan.add(mockInfoLL);
+        testPlan.add(mockInfoSRM);
+        expectedOrder = new FiringPlan(mockTarget);
+        expectedOrder.add(mockInfoLBX);
+        expectedOrder.add(mockInfoLL);
+        expectedOrder.add(mockInfoSRM);
+        expectedOrder.add(mockInfoLRM);
+        testPlan.sortPlan();
+        Assert.assertEquals("\nExpected: " + expectedOrder.getWeaponNames() + "\nActual  : " + testPlan
+                                    .getWeaponNames(),
+                            expectedOrder, testPlan);
     }
 }

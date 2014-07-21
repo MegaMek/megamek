@@ -1,5 +1,6 @@
 package megamek.common.pathfinder;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -254,5 +255,9 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public Map<Coords, MovePath> getAllComputedPaths() {
         return super.getAllComputedCosts(getComparator());
+    }
+
+    public Collection<MovePath> getAllComputedPathsUncategorized() {
+        return getPathCostMap().values();
     }
 }

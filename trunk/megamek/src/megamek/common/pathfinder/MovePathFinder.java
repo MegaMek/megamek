@@ -15,7 +15,9 @@ import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.Facing;
 import megamek.common.IGame;
+import megamek.common.ManeuverType;
 import megamek.common.Tank;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -121,7 +123,19 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             implements AbstractPathFinder.DestinationMap<CoordsWithFacing, MovePath> {
         @Override
         public CoordsWithFacing getDestination(MovePath e) {
-            return new CoordsWithFacing(e);
+            MoveStep lastStep = e.getLastStep();
+
+            /*
+             * entity moving backwards is like entity with an opposite facing
+             * moving forwards :) NOOOT
+             */
+            CoordsWithFacing cfw;
+            if (lastStep != null && lastStep.isThisStepBackwards()) {
+                Facing f = Facing.valueOfInt(e.getFinalFacing());
+                cfw = new CoordsWithFacing(e.getFinalCoords(), f.getOpposite().getIntValue());
+            } else
+                cfw = new CoordsWithFacing(e);
+            return cfw;
         };
     }
 
@@ -148,8 +162,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                  */
                 if (edge.length() == 0)
                     return true;
-                else
-                    return edge.getLastStep().getMovementType() != EntityMovementType.MOVE_ILLEGAL;
+                else {
+                    MoveStep lastStep = edge.getLastStep();
+                    return (lastStep == null) || lastStep.getMovementType() != EntityMovementType.MOVE_ILLEGAL;
+                }
             }
             Coords previousPosition;
             int previousElevation;
@@ -202,9 +218,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * Functional Interface for {@link #getAdjacent(MovePath)}
      */
     public static class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
-        private final MoveStepType stepType;
-        private boolean walking;
-        private boolean charge;
+        protected final MoveStepType stepType;
+        protected final boolean walking;
+        protected final boolean charge;
 
         /**
          * @param stepType
@@ -245,10 +261,12 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                     (lType == MoveStepType.OFF || lType == MoveStepType.RETURN))
                 return result;
 
+
             if (lType != MoveStepType.TURN_LEFT)
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
             if (lType != MoveStepType.TURN_RIGHT)
                 result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
+
 
             /*
              * If the unit is prone or hull-down it limits movement options,
@@ -277,10 +295,69 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             if (walking)
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
 
-            if (charge){
+            if (charge) {
                 result.add(mp.clone().addStep(stepType));
             }
 
+            return result;
+        }
+    }
+
+    /**
+     * Functional Interface for {@link #getAdjacent(MovePath)}
+     */
+    public static class NextStepsExtendedAdjacencyMap extends NextStepsAdjacencyMap {
+        //this class is not tested, yet.
+
+        public NextStepsExtendedAdjacencyMap(MoveStepType stepType) {
+            super(stepType);
+        }
+
+        /**
+         * Extends the result produced by
+         * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
+         * with manoeuvres for Aero
+         * 
+         * @see NextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)
+         */
+        @Override
+        public Collection<MovePath> getAdjacent(MovePath mp) {
+            Collection<MovePath> result = super.getAdjacent(mp);
+            // fly off of edge of board
+            Coords c = mp.getFinalCoords();
+            IGame game = mp.getEntity().getGame();
+            if (((c.x == 0) || (c.y == 0)
+                    || (c.x == (game.getBoard().getWidth() - 1)) || (c.y == (game
+                    .getBoard().getHeight() - 1)))
+                    && (mp.getFinalVelocity() > 0)) {
+                result.add(mp.clone().addStep(MoveStepType.RETURN));
+            }
+            if (!mp.contains(MoveStepType.MANEUVER)) {
+                // side slips
+                result.add(mp.clone()
+                        .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
+                        .addStep(MoveStepType.LATERAL_LEFT, true, true));
+                result.add(mp.clone()
+                        .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
+                        .addStep(MoveStepType.LATERAL_RIGHT, true, true));
+                boolean has_moved = mp.getHexesMoved() == 0;
+                if (!has_moved) {
+                     //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
+                     //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
+                    // immelmen
+                    if (mp.getFinalVelocity() > 2)
+                        result.add(mp.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
+                    // split s
+                    if (mp.getFinalAltitude() > 2) {
+                        result.add(mp.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
+                    }
+                    // loop
+                    if (mp.getFinalVelocity() > 4) {
+                        result.add(mp.clone().addManeuver(ManeuverType.MAN_LOOP)
+                                .addStep(MoveStepType.LOOP, true, true));
+                    }
+                }
+            }
             return result;
         }
     }

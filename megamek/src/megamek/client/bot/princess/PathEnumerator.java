@@ -34,6 +34,10 @@ import megamek.common.ManeuverType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import megamek.common.pathfinder.LongestPathFinder;
+import megamek.common.pathfinder.MovePathFinder;
+import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.MoveStep;
 import megamek.common.WeaponType;
 
@@ -284,67 +288,55 @@ public class PathEnumerator {
         try {
             last_known_location.put(e.getId(), new CoordFacingCombo(e.getPosition(), e.getFacing()));
             unit_paths.remove(e.getId());
-            MovePathCalculation paths = new MovePathCalculation();
-            ArrayList<MovePath> starting_moves = getValidStartingMoves(g, e);
-            // add any starting moves that are valid moves
-            for (MovePath p : starting_moves) {
-                // paths.open_byhash.put(hashPath(p),p);
-                paths.open_bymp.add(p);
-                if (p.isMoveLegal()) {
-                    paths.potential_moves.add(p);
+            ArrayList<MovePath> paths = new ArrayList<>();
+            if (!(e instanceof Aero)) {
+                //add running moves
+                LongestPathFinder pf = LongestPathFinder.newInstanceOfLongestPath(e.getRunMPwithoutMASC(), MoveStepType.FORWARDS, g);
+                pf.run(new MovePath(g, e));
+                paths.addAll(pf.getLongestComputedPaths());
+                //add walking moves
+                pf = LongestPathFinder.newInstanceOfLongestPath(e.getWalkMP(), MoveStepType.BACKWARDS, g);
+                pf.run(new MovePath(g, e));
+                paths.addAll(pf.getLongestComputedPaths());
+                //add jumping moves
+                if (e.getJumpMP() > 0) {
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(e.getJumpMP(), MoveStepType.FORWARDS, g);
+                    spf.run((new MovePath(g, e)).addStep(MoveStepType.START_JUMP));
+                    paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
-            }
 
-            boolean aero_has_flyoff_option = false;
-            // int toolong_counter=0;
-            while (!paths.open_bymp.isEmpty()) {
-                /*
-                 * toolong_counter++; if(toolong_counter%1000==0) {
-                 * System.err.println("PathEnumerator Update:");
-                 * System.err.println("open size "
-                 * +Integer.toString(paths.open_bymp.size()));
-                 * System.err.println("potential moves size "
-                 * +Integer.toString(paths.potential_moves.size())); }
-                 */
-                MovePath onpath = paths.open_bymp.pop();
-                //
-                ArrayList<MovePath> nextpaths = getNextMoves(g, onpath);
-                for (MovePath nextpath : nextpaths) {
-                    // add to open as potential path
-                    if ((e instanceof Aero)
-                            || (!paths.hasAlreadyConsidered(nextpath))) {
-                        // paths.open_bymp.add(nextpath); breadth-first
-                        paths.open_bymp.push(nextpath); // depth first, saves memory
-                        if (!(e instanceof Aero)) {
-                            paths.closed.put(PathEnumerator.hashPath(nextpath),
-                                    nextpath.getMpUsed());
-                        }
-                        // if legal to finish, add as potential location
-                        if ((e instanceof Aero) && isLegalAeroMove(nextpath)) {
-                            if ((nextpath.getLastStep() != null)
-                                    && ((nextpath.getLastStep().getType() == MoveStepType.OFF) || (nextpath
-                                            .getLastStep().getType() == MoveStepType.RETURN))) {
-                                if (aero_has_flyoff_option) {
-                                    continue; // no need to compute more than one
-                                              // flyoff option
-                                } else {
-                                    aero_has_flyoff_option = true;
-                                }
-                            }
-                            if (paths.hasAlreadyAeroConsidered(nextpath, g)) {
-                                continue;
-                            }
-                            paths.potential_moves.add(nextpath);
-                        } else if (nextpath.isMoveLegal()) {
-                            paths.potential_moves.add(nextpath);
-                        }
+                //filter those paths that end in illegal state
+                Filter<MovePath> f = new Filter<MovePath>() {
+                    @Override
+                    public boolean shouldStay(MovePath mp) {
+                        MoveStep lastStep = mp.getLastStep();
+                        return (lastStep == null) || lastStep.getMovementType() != EntityMovementType.MOVE_ILLEGAL;
                     }
-                }
+                };
+                paths = new ArrayList<MovePath>(f.doFilter(paths));
+            } else {
+                ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(e.getWalkMP(), MoveStepType.FORWARDS, g);
+                spf.setAdjacencyMap(new MovePathFinder.NextStepsExtendedAdjacencyMap(MoveStepType.FORWARDS));
+                MovePath startP = new MovePath(g, e);
+                for (int v = startP.getFinalVelocity(); v < 4; v++)
+                    startP.addStep(MoveStepType.ACC);
+                spf.run(startP);
+                paths.addAll(spf.getAllComputedPathsUncategorized());
+                Filter<MovePath> f = new Filter<MovePath>() {
+                    @Override
+                    public boolean shouldStay(MovePath mp) {
+                        MoveStep lastStep = mp.getLastStep();
+                        if (lastStep == null)
+                            return false;
+                        boolean flyoff = lastStep.getType() == MoveStepType.RETURN;
+                        boolean velSpent = lastStep.getVelocityLeft() == 0;
+                        return flyoff || velSpent;
+                    }
+                };
+                paths = new ArrayList<MovePath>(f.doFilter(paths));
             }
-            updateUnitLocations(e, paths.potential_moves);
-            // System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e.getChassis());
-            // System.err.println("#of partial moves: "+paths.closed.size());
-            unit_paths.put(e.getId(), paths.potential_moves);
+            updateUnitLocations(e, paths);
+            unit_paths.put(e.getId(), paths);
             // calculate bounding area for move
             ConvexBoardArea myarea = new ConvexBoardArea();
             myarea.addCoordFacingCombos(unit_potential_locations.get(e.getId())

@@ -54,6 +54,7 @@ v0.39.1-dev (SVN)
 + Data: New Images and some equipment date/name fixes.
 + Fix: Faster path finding for aeros on ground.(Longest path still takes >20sec)
 + Data: New Images
++ Feature: Smarter path finding for Princess
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

@@ -11,6 +11,7 @@ import java.util.List;
 import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -124,7 +125,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                     return null; //topMP path is longer and uses less mp.
                 }
                 if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                    if (topMP.getLastStep().isThisStepBackwards() != mpCandidate.getLastStep().isThisStepBackwards())
+                    MoveStep topStep = topMP.getLastStep();
+                    boolean topBackwards = topStep == null ? false : topStep.isThisStepBackwards();
+                    MoveStep mpCandStep = mpCandidate.getLastStep();
+                    boolean mpCandBackwars = mpCandStep == null ? false : mpCandStep.isThisStepBackwards();
+                    if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars)
                         break;
                     return null; //topMP path is longer and uses less mp.
                 }
@@ -299,8 +304,8 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     }
 
     /**
-     * Returns a map of all computed longest paths. This also includes paths
-     * that are shorter but use strictly less movement points.
+     * Returns a map of all computed longest paths. This only includes one
+     * longest path to one Coords,Facing pair.
      * 
      * @return a map of all computed shortest paths.
      */
@@ -312,4 +317,5 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
         }
         return l;
     }
+
 }

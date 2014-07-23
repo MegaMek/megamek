@@ -309,8 +309,7 @@ public class PathEnumerator {
                 Filter<MovePath> f = new Filter<MovePath>() {
                     @Override
                     public boolean shouldStay(MovePath mp) {
-                        MoveStep lastStep = mp.getLastStep();
-                        return (lastStep == null) || lastStep.getMovementType() != EntityMovementType.MOVE_ILLEGAL;
+                        return mp.isMoveLegal();
                     }
                 };
                 paths = new ArrayList<MovePath>(f.doFilter(paths));
@@ -325,12 +324,7 @@ public class PathEnumerator {
                 Filter<MovePath> f = new Filter<MovePath>() {
                     @Override
                     public boolean shouldStay(MovePath mp) {
-                        MoveStep lastStep = mp.getLastStep();
-                        if (lastStep == null)
-                            return false;
-                        boolean flyoff = lastStep.getType() == MoveStepType.RETURN;
-                        boolean velSpent = lastStep.getVelocityLeft() == 0;
-                        return flyoff || velSpent;
+                        return isLegalAeroMove(mp);
                     }
                 };
                 paths = new ArrayList<MovePath>(f.doFilter(paths));

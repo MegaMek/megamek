@@ -56,7 +56,13 @@ v0.39.1-dev (SVN)
 + Data: New Images
 + Feature: Smarter path finding for Princess
 + Data: New Images
-+ Bug: Princess violates stacking restrictions.
++ Bug: Princess violates stacking restrictions
++ Bug: Windows does not allow double quotes in filenames, so fluff images for
+    any unit that has a model using them will not work. Fixed by stripping the
+    double quotes from the models of such units, allowing the filenames to be
+    exact without them. Example:
+    Unit: Grasshopper GHR-7K "Gravedigger"
+    Fluff Filename: Grasshopper GHR-7K Gravedigger.gif
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

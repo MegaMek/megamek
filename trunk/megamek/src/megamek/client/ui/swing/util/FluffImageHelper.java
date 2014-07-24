@@ -118,12 +118,14 @@ public class FluffImageHelper {
         // Chassis + model
         // Model only
         // Chassis only
+        // Model needs .replace("\"", "") because Windows disallows double quote
+        // in the filename.
         File fluff_file = null;
 
         String[] basenames = {
-                new File(directory, unit.getChassis() + " " + unit.getModel())
+                new File(directory, unit.getChassis() + " " + unit.getModel().replace("\"", ""))
                         .toString(),
-                new File(directory, unit.getModel()).toString(),
+                new File(directory, unit.getModel()).toString().replace("\"", ""),
                 new File(directory, unit.getChassis()).toString(), };
 
         for (String basename : basenames) {

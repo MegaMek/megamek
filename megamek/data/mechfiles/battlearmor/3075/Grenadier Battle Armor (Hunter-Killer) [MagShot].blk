@@ -2,60 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Grenadier Battle Armor
 </Name>
+
 <Model>
 (Hunter-Killer) [MagShot]
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-4
-</weightclass>
-<Trooper Count>
-4
-</Trooper Count>
+
+<year>
+3075
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
 <cruiseMP>
 2
 </cruiseMP>
-<Armor>
-9
-</Armor>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
 ISBAMagshotGR:LA
-ISBAFiredrakeIncendiaryNeedler:RA
+ISBAFireDrakeNeedler:RA
 ISBASRM5:Body
-BA-SRM4 Ammo:Body:Shots4#
 BABasicManipulator:RA
 IS BA Stealth:RA
 IS BA Stealth:Body
 IS BA Stealth:LA
 IS BA Stealth:Body
+BA-SRM5 Ammo:Body:Shots4#
 </Squad Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3075
-</year>
-<motion_type>
-Leg
-</motion_type>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
 <source>
 TRO 3075
 </source>
-<armor_type>
-32
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

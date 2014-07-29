@@ -25,6 +25,7 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
@@ -282,7 +283,7 @@ public class PathEnumerator {
      * calculates all moves for a given unit, keeping the shortest path to each
      * hex/facing pair
      */
-    public void recalculateMovesFor(IGame g, Entity e) {
+    public void recalculateMovesFor(final IGame g, final Entity e) {
         final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
         owner.methodBegin(getClass(), METHOD_NAME);
         try {
@@ -309,7 +310,8 @@ public class PathEnumerator {
                 Filter<MovePath> f = new Filter<MovePath>() {
                     @Override
                     public boolean shouldStay(MovePath mp) {
-                        return mp.isMoveLegal();
+                        boolean l = mp.isMoveLegal();
+                        return l && (Compute.stackingViolation(g, e.getId(), mp.getFinalCoords()) == null);
                     }
                 };
                 paths = new ArrayList<MovePath>(f.doFilter(paths));

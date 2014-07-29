@@ -13,6 +13,7 @@ import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
+import megamek.common.Tank;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
@@ -111,6 +112,23 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             }
             while (!v.isEmpty()) { //we could get rid of this loop, since we require a proper comparator
                 MovePath topMP = v.getLast();
+
+                //standing up is always reasonable for mechs
+                boolean vprone = topMP.getFinalProne(), eprone = mpCandidate.getFinalProne();
+                if (vprone != eprone)
+                    if (vprone)
+                        break;
+                    else
+                        return null;
+                if (!(topMP.getEntity() instanceof Tank)) {
+                    boolean vhdown = topMP.getFinalHullDown(), ehdown = mpCandidate.getFinalHullDown();
+                    if (vhdown != ehdown)
+                        if (vhdown)
+                            break;
+                        else
+                            return null;
+                }
+
                 if (topMP.getMpUsed() > mpCandidate.getMpUsed()) {
                     throw new IllegalStateException();
                     /*

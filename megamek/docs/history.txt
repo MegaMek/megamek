@@ -79,6 +79,7 @@ v0.39.1-dev (SVN)
     conditional initiative bonuses, like in Total Chaos
 + Feature [#1264]: Display proper probabilities with Natural Aptitude: Gunnery
 + Feature [#1270]: RFE: Please add simple Pilot data to MechDialog
++ Bug [#4207]: Aero fighters lose ability to take off once landed
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

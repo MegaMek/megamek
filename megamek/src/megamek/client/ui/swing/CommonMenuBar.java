@@ -94,6 +94,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewRoundReport;
     private JMenuItem viewGameOptions;
     private JMenuItem viewClientSettings;
+    private JMenuItem viewPlayerSettings;
     private JMenuItem viewPlayerList;
     private JMenuItem deployMinesConventional;
     private JMenuItem deployMinesCommand;
@@ -423,6 +424,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewLOSSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewLOSSetting);
+        viewPlayerSettings = new JMenuItem(Messages
+                .getString("CommonMenuBar.viewPlayerSettings")); //$NON-NLS-1$
+        viewPlayerSettings.setActionCommand("viewPlayerSettings"); //$NON-NLS-1$
+        viewPlayerSettings.addActionListener(this);
+        menu.add(viewPlayerSettings);
         menu.addSeparator();
         viewPlayerList = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewPlayerList")); //$NON-NLS-1$
@@ -805,8 +811,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // can view Game Opts if we have a game
         if (game != null) {
             viewGameOptions.setEnabled(true);
+            viewPlayerSettings.setEnabled(true);
         } else {
             viewGameOptions.setEnabled(false);
+            viewPlayerSettings.setEnabled(false);
         }
 
         // As of 2003-09-04, we can't ever print.

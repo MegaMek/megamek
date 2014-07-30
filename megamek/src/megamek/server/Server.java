@@ -762,6 +762,13 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
+            if (gamePlayer.getConstantInitBonus() 
+                    != player.getConstantInitBonus()) {
+                sendServerChat("Player " + gamePlayer.getName() 
+                        + " changed their initiative bonus from " 
+                        + gamePlayer.getConstantInitBonus() 
+                        + " to " + player.getConstantInitBonus() + ".");
+            }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
         }
     }

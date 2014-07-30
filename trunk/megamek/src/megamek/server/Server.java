@@ -188,6 +188,7 @@ import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -2828,6 +2829,7 @@ public class Server implements Runnable {
             }
             break;
         case PHASE_VICTORY:
+            game.processGameEvent(new GameVictoryEvent(this));
             resetGame();
             break;
         default:

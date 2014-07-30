@@ -170,14 +170,34 @@ public class Compute {
      * Returns the odds that a certain number or above will be rolled on 2d6.
      */
     public static double oddsAbove(int n) {
+        return oddsAbove(n, false);
+    }
+    
+    /**
+     * Returns the odds that a certain number or above will be rolled on 2d6, 
+     * or on 3d6 drop the lowest if the flag is set.
+     * 
+     * @param n
+     * @param dropLowest  Flag that determines whether 2d6 or 3d6 drop the 
+     *                      lowest is used
+     * @return
+     */
+    public static double oddsAbove(int n, boolean dropLowest) {
         if (n <= 2) {
             return 100.0;
         } else if (n > 12) {
             return 0;
         }
-        final double[] odds = { 100.0, 100.0, 100.0, 97.2, 91.6, 83.3, 72.2,
-                58.3, 41.6, 27.7, 16.6, 8.3, 2.78, 0 };
-        return odds[n];
+                
+        if (dropLowest) {
+            final double[] odds = { 100.0, 100.0, 100.0, 99.54, 98.15, 94.91, 
+                    89.35, 80.56, 68.06, 52.32, 35.65, 19.91, 7.41, 0 };
+            return odds[n];
+        } else {
+            final double[] odds = { 100.0, 100.0, 100.0, 97.2, 91.6, 83.3, 72.2,
+                    58.3, 41.6, 27.7, 16.6, 8.3, 2.78, 0 };
+            return odds[n];
+        }
     }
 
     /**

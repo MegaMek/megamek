@@ -29,6 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
 import megamek.common.Configuration;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
@@ -39,6 +40,7 @@ import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.PilotOptions;
 
 /**
  * Set of elements to reperesent general unit information in MechDisplay
@@ -49,13 +51,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-            weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
+    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, pilotL, playerL,
+            teamL, weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
             movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
             visualRangeL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0, mpR1,
-            mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR, elevationR,
-            fuelR, curSensorsR, visualRangeR;
+    private PMSimpleLabel statusR, pilotR, playerR, teamR, weightR, bvR, mpR0,
+            mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
+            elevationR, fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
     private PMSimpleLabel[] partRepsR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
@@ -99,6 +101,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         fm = comp.getFontMetrics(FONT_VALUE);
 
+        pilotL = createLabel(
+                Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(pilotL);
+        
+        pilotR = createLabel(
+                Messages.getString("GeneralInfoMapSet.playerR"), fm, pilotL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        content.addArea(pilotR);
+        
         playerL = createLabel(
                 Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(playerL);
@@ -292,6 +302,20 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
                 teamR.setVisible(true);
             }
+        }
+        
+        if (en.getCrew() != null) {
+            Crew c = en.getCrew();
+            String pilotString = c.getDesc() + " (";
+            pilotString += c.getGunnery() + "/" + c.getPiloting();
+            int crewAdvCount = c.countOptions(PilotOptions.LVL3_ADVANTAGES);
+            if (crewAdvCount > 0) {
+                pilotString += ", +" + crewAdvCount;
+            }
+            pilotString += ")";
+            pilotR.setString(pilotString);
+        } else {
+            pilotR.setString("");
         }
 
         if (en instanceof Infantry) {

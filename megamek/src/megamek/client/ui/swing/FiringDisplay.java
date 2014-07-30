@@ -1504,8 +1504,10 @@ jumpToPrevTarget();
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
+                boolean natAptGunnery = ce().getCrew().getOptions()
+                        .booleanOption("aptitude_gunnery");
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString()
-                        + " (" + Compute.oddsAbove(toHit.getValue()) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
+                        + " (" + Compute.oddsAbove(toHit.getValue(), natAptGunnery) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }
             clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());

@@ -316,7 +316,7 @@ public class Precognition implements Runnable {
                         }
                         for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
                             Entity e = ents.nextElement();
-                            if (e.isActive() && e.isDeployed()) {
+                            if (e.isActive() && e.isDeployed() && e.getPosition() != null) {
                                 synchronized (dirty_units) {
                                     dirty_units.add(e.getId());
                                 }

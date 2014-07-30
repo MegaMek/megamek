@@ -69,6 +69,7 @@ v0.39.1-dev (SVN)
     GameListener.gameVictory method.  This event is called when the 
     PHASE_VICTORY is ending, but before Game.reset is called.  This fixes a bug
     with MekHQ (and likely MekWars as well)
++ Bug: NPE in princess precognition when after a mechwarrior is picked by a mech
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

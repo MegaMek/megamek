@@ -173,8 +173,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_MANEUVER("MoveManeuver", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_JOIN("MoveJoin", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_FLY_OFF("MoveOff", CMD_AERO_BOTH), //$NON-NLS-1$
-        MOVE_TAKE_OFF("MoveTakeOff", CMD_AERO_BOTH), //$NON-NLS-1$
-        MOVE_VERT_TAKE_OFF("MoveVertTakeOff", CMD_AERO_BOTH), //$NON-NLS-1$
+        MOVE_TAKE_OFF("MoveTakeOff", CMD_TANK), //$NON-NLS-1$
+        MOVE_VERT_TAKE_OFF("MoveVertTakeOff", CMD_TANK), //$NON-NLS-1$
         MOVE_LAND("MoveLand", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_VERT_LAND("MoveVLand", CMD_AERO_BOTH), //$NON-NLS-1$
         // Aero Vector Movement

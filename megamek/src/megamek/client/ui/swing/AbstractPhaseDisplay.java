@@ -54,6 +54,7 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
@@ -280,6 +281,11 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     
     @Override
     public void gameClientFeedbackRquest(GameCFREvent evt) {
+        //noaction default
+    }
+    
+    @Override
+    public void gameVictory(GameVictoryEvent e) {
         //noaction default
     }
 

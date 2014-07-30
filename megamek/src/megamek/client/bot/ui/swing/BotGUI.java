@@ -43,6 +43,7 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 
 public class BotGUI implements GameListener {
 
@@ -137,6 +138,10 @@ public class BotGUI implements GameListener {
     
     @Override
 	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    }
+
+    @Override
+    public void gameVictory(GameVictoryEvent e) {       
     }
 
 }

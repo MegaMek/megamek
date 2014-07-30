@@ -594,6 +594,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
     }
+    
+    public void customizePlayer() {
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
+        psd.setVisible(true);
+    }
 
     /**
      * Called when the user selects the "View->Player List" menu item.
@@ -680,6 +685,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         if ("viewGameOptions".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showOptions();
+        }
+        if ("viewPlayerSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            customizePlayer();
         }
         if ("viewPlayerList".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showPlayerList();

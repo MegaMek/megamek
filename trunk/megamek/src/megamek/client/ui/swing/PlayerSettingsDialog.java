@@ -37,6 +37,7 @@ import javax.swing.SwingConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.IPlayer;
+import megamek.common.IGame.Phase;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -57,6 +58,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     private JPanel panMain = new JPanel();
     private JPanel panButtons = new JPanel();
 
+    private JLabel labPlayer = new JLabel();
     private JLabel labInit = new JLabel(Messages.getString("PlayerSettingsDialog.ConstantBonus"));
     private JTextField texInit = new JTextField(3);
     private JLabel labMines = new JLabel(Messages.getString("PlayerSettingsDialog.Minefields"));
@@ -131,11 +133,24 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         panMain.setLayout(gridbag);
 
         refreshValues();
-
+        
+        labPlayer.setText(client.getLocalPlayer().getName());
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
         c.gridy = 0;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(labPlayer, c);
+        panMain.add(labPlayer);
+        
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.gridx = 0;
+        c.gridy++;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -147,7 +162,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
-        c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -159,7 +173,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy++;
         c.gridwidth = 2;
         c.gridheight = 1;
         c.weightx = 1.0;
@@ -171,7 +185,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy++;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -183,7 +197,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
-        c.gridy = 2;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -195,7 +208,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy++;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -207,7 +220,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
-        c.gridy = 3;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -219,7 +231,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy++;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -231,7 +243,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
-        c.gridy = 4;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -243,7 +254,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy++;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -255,7 +266,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
-        c.gridy = 5;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.weightx = 0.0;
@@ -263,6 +273,14 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(fldInferno, c);
         panMain.add(fldInferno);
+        
+        // Disable changing minefields mid-game
+        if (client.getGame().getPhase() != Phase.PHASE_LOUNGE) {
+            fldConventional.setEnabled(false);
+            fldVibrabomb.setEnabled(false);
+            fldActive.setEnabled(false);
+            fldInferno.setEnabled(false);
+        }
 
     }
 
@@ -285,7 +303,10 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
                     initB = Integer.parseInt(init);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("PlayerSettingsDialog.ConstantInitAlert.message"), Messages.getString("PlayerSettingsDialog.ConstantInitAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                JOptionPane.showMessageDialog(clientgui.frame, 
+                        Messages.getString("PlayerSettingsDialog.ConstantInitAlert.message"), //$NON-NLS-1$
+                        Messages.getString("PlayerSettingsDialog.ConstantInitAlert.title"), //$NON-NLS-1$
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             client.getLocalPlayer().setConstantInitBonus(initB);
@@ -314,12 +335,18 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
                     nbrInferno = Integer.parseInt(inferno);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                JOptionPane.showMessageDialog(clientgui.frame, 
+                        Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), //$NON-NLS-1$
+                        Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), //$NON-NLS-1$
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if ((nbrConv < 0) || (nbrVibra < 0) || (nbrActive < 0) || (nbrInferno < 0)) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                JOptionPane.showMessageDialog(clientgui.frame, 
+                        Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), //$NON-NLS-1$
+                        Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), //$NON-NLS-1$
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             client.getLocalPlayer().setNbrMFConventional(nbrConv);

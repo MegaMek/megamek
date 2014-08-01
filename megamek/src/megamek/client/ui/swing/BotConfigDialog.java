@@ -110,6 +110,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         botSpecificCardsPanel.add(new JPanel(), TESTBOT_PANEL);
         JScrollPane princessScroll = new JScrollPane(princessPanel());
         botSpecificCardsPanel.add(princessScroll, PRINCESS_PANEL);
+        CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
+        cardlayout.show(botSpecificCardsPanel, PRINCESS_PANEL);
         add(botSpecificCardsPanel, BorderLayout.CENTER);
         butOK.addActionListener(this);
 
@@ -129,7 +131,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         princessRadiobutton.addActionListener(this);
         selectBotGroup.add(testBotRadiobutton);
         selectBotGroup.add(princessRadiobutton);
-        testBotRadiobutton.setSelected(true);
+        princessRadiobutton.setSelected(true);
         panel.add(testBotRadiobutton);
         panel.add(princessRadiobutton);
         return panel;
@@ -197,7 +199,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         JPanel namepanel = new JPanel(new FlowLayout());
         namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
         nameField = new JTextField();
-        nameField.setText(Messages.getString("BotConfigDialog.namefield.default"));
+        nameField.setText("Princess");
         nameField.setColumns(12);
         nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
         nameField.addKeyListener(this);

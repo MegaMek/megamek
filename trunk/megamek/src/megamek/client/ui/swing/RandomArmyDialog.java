@@ -647,7 +647,7 @@ WindowListener, TreeSelectionListener {
 
             // Traverse children
             if (node.getChildCount() >= 0) {
-                for (Enumeration e = node.children(); e.hasMoreElements(); ) {
+                for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
                     TreeNode n = (TreeNode)e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = findNextNode(path, nodes, depth + 1);

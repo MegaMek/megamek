@@ -1796,4 +1796,13 @@ public class Protomech extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_PROTOMECH;
     }
+    
+    public PilotingRollData checkLandingInHeavyWoods(
+            EntityMovementType overallMoveType, IHex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                         "Protomechs cannot fall");
+        return roll;
+    }   
+    
 }

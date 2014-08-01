@@ -164,15 +164,18 @@ WindowListener, TreeSelectionListener {
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption("year"));
+        
+        GUIPreferences guip = GUIPreferences.getInstance();
         // set defaults
-        m_tMechs.setText("4");
-        m_tBVmin.setText("5800");
-        m_tBVmax.setText("6000");
-        m_tVees.setText("0");
-        m_tBA.setText("0");
-        m_tMinYear.setText("2500");
-        m_tMaxYear.setText("3100");
-        m_tInfantry.setText("0");
+        m_tMechs.setText(guip.getRATNumMechs());
+        m_tBVmin.setText(guip.getRATBVMin());
+        m_tBVmax.setText(guip.getRATBVMax());
+        m_tVees.setText(guip.getRATNumVees());
+        m_tBA.setText(guip.getRATNumBA());
+        m_tMinYear.setText(guip.getRATYearMin());
+        m_tMaxYear.setText(guip.getRATYearMax());
+        m_tInfantry.setText(guip.getRATNumInf());
+        m_chkPad.setSelected(guip.getRATPadBV());
         m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
         "canon_only"));
         updateTechChoice(true);
@@ -454,6 +457,20 @@ WindowListener, TreeSelectionListener {
             c.sendAddEntity(entities);
             armyModel.clearData();
             unitsModel.clearData();
+            
+            // Save preferences
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setRATBVMin(m_tBVmin.getText());
+            guip.setRATBVMax(m_tBVmax.getText());
+            guip.setRATNumMechs(m_tMechs.getText());
+            guip.setRATNumVees(m_tVees.getText());
+            guip.setRATNumBA(m_tBA.getText());
+            guip.setRATNumInf(m_tInfantry.getText());
+            guip.setRATYearMin(m_tMinYear.getText());
+            guip.setRATYearMax(m_tMaxYear.getText());
+            guip.setRATPadBV(m_chkPad.isSelected());
+            guip.setRATTechLevel(m_chType.getSelectedIndex());
+            
             setVisible(false);
         } else if (ev.getSource().equals(m_bClear)) {
         	armyModel.clearData();
@@ -573,11 +590,8 @@ WindowListener, TreeSelectionListener {
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        if (maxTechOption) {
-            m_chType.setSelectedItem(TechConstants.T_IS_ADVANCED);
-        } else {
-            m_chType.setSelectedItem(TechConstants.T_IS_TW_NON_BOX);
-        }
+        m_chType.setSelectedIndex(GUIPreferences.getInstance()
+                .getRATTechLevel());
     }
 
     private void updateRATs() {

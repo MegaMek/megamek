@@ -163,6 +163,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SKIN_FILE = "SkinFile";
+    
+    // RAT dialog preferences
+    public static String RAT_TECH_LEVEL = "RATTechLevel";
+    public static String RAT_BV_MIN = "RATBVMin";
+    public static String RAT_BV_MAX = "RATBVMax";
+    public static String RAT_NUM_MECHS = "RATNumMechs";
+    public static String RAT_NUM_VEES = "RATNumVees";
+    public static String RAT_NUM_BA = "RATNumBA";
+    public static String RAT_NUM_INF = "RATNumInf";
+    public static String RAT_YEAR_MIN = "RATYearMin";
+    public static String RAT_YEAR_MAX = "RATYearMax";
+    public static String RAT_PAD_BV = "RATPadBV";
+    
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -288,6 +301,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SKIN_FILE, "defaultSkin.xml");
+        
+        store.setDefault(RAT_TECH_LEVEL, 0);
+        store.setDefault(RAT_BV_MIN, "5800");
+        store.setDefault(RAT_BV_MAX, "6000");
+        store.setDefault(RAT_NUM_MECHS, "4");
+        store.setDefault(RAT_NUM_VEES, "0");
+        store.setDefault(RAT_NUM_BA, "0");
+        store.setDefault(RAT_NUM_INF, "0");
+        store.setDefault(RAT_YEAR_MIN, "2500");
+        store.setDefault(RAT_YEAR_MAX, "3100");
+        store.setDefault(RAT_PAD_BV, false);
+        
     }
 
     public void setDefault(String name, Color color) {
@@ -935,7 +960,87 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setSkinFile(String s) {
         store.setValue(SKIN_FILE, s);
-    }    
+    }
+
+    public int getRATTechLevel() {
+        return store.getInt(RAT_TECH_LEVEL);
+    }
+
+    public void setRATTechLevel(int v) {
+        store.setValue(RAT_TECH_LEVEL, v);
+    }
+
+    public String getRATBVMin() {
+        return store.getString(RAT_BV_MIN);
+    }
+
+    public void setRATBVMin(String v) {
+        store.setValue(RAT_BV_MIN, v);
+    }
+
+    public String getRATBVMax() {
+        return store.getString(RAT_BV_MAX);
+    }
+
+    public void setRATBVMax(String v) {
+        store.setValue(RAT_BV_MAX, v);
+    }
+
+    public String getRATNumMechs() {
+        return store.getString(RAT_NUM_MECHS);
+    }
+
+    public void setRATNumMechs(String v) {
+        store.setValue(RAT_NUM_MECHS, v);
+    }
+
+    public String getRATNumVees() {
+        return store.getString(RAT_NUM_VEES);
+    }
+
+    public void setRATNumVees(String v) {
+        store.setValue(RAT_NUM_VEES, v);
+    }
+
+    public String getRATNumBA() {
+        return store.getString(RAT_NUM_BA);
+    }
+
+    public void setRATNumBA(String v) {
+        store.setValue(RAT_NUM_BA, v);
+    }
+
+    public String getRATNumInf() {
+        return store.getString(RAT_NUM_INF);
+    }
+
+    public void setRATNumInf(String v) {
+        store.setValue(RAT_NUM_INF, v);
+    }
+    
+    public String getRATYearMin() {
+        return store.getString(RAT_YEAR_MIN);
+    }
+
+    public void setRATYearMin(String v) {
+        store.setValue(RAT_YEAR_MIN, v);
+    }
+
+    public String getRATYearMax() {
+        return store.getString(RAT_YEAR_MAX);
+    }
+
+    public void setRATYearMax(String v) {
+        store.setValue(RAT_YEAR_MAX, v);
+    }
+
+    public boolean getRATPadBV() {
+        return store.getBoolean(RAT_PAD_BV);
+    }
+
+    public void setRATPadBV(boolean v) {
+        store.setValue(RAT_PAD_BV, v);
+    }
 
     protected ColorParser p = new ColorParser();
 

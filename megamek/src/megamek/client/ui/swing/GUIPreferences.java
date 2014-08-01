@@ -175,6 +175,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_YEAR_MIN = "RATYearMin";
     public static String RAT_YEAR_MAX = "RATYearMax";
     public static String RAT_PAD_BV = "RATPadBV";
+    public static String RAT_SELECTED_RAT = "RATSelectedRAT";
     
 
     protected static GUIPreferences instance = new GUIPreferences();
@@ -312,6 +313,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MIN, "2500");
         store.setDefault(RAT_YEAR_MAX, "3100");
         store.setDefault(RAT_PAD_BV, false);
+        store.setDefault(RAT_SELECTED_RAT, "");        
         
     }
 
@@ -1040,6 +1042,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setRATPadBV(boolean v) {
         store.setValue(RAT_PAD_BV, v);
+    }
+    
+    public String getRATSelectedRAT() {
+        return store.getString(RAT_SELECTED_RAT);
+    }
+
+    public void setRATSelectedRAT(String v) {
+        store.setValue(RAT_SELECTED_RAT, v);
     }
 
     protected ColorParser p = new ColorParser();

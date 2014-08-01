@@ -82,6 +82,7 @@ v0.39.1-dev (SVN)
 + Bug [#4207]: Aero fighters lose ability to take off once landed
 + Feature [#1198]: View last round's report option (View -> Round Report now
     displays previous rounds as well as the current round)
++ Feature [#1199]: Make addbot default to princess bot
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

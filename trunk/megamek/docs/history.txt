@@ -83,6 +83,7 @@ v0.39.1-dev (SVN)
 + Feature [#1198]: View last round's report option (View -> Round Report now
     displays previous rounds as well as the current round)
 + Feature [#1199]: Make addbot default to princess bot
++ Feature [#1271]: Unofficial Heavy Wood PSR should not apply to Inf/BA/Protos
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

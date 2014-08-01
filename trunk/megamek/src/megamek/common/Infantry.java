@@ -1468,4 +1468,13 @@ public class Infantry extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY;
     }
+    
+    public PilotingRollData checkLandingInHeavyWoods(
+            EntityMovementType overallMoveType, IHex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                         "Infantry cannot fall");
+        return roll;
+    }    
+    
 } // End class Infantry

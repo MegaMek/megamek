@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -24,12 +25,16 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import javax.swing.text.html.HTMLEditorKit;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 
 /**
- * Shows a Report, with an Okay JButton
+ * Shows reports, with an Okay JButton
  */
 public class MiniReportDisplay extends JDialog implements ActionListener {
     /**
@@ -37,35 +42,31 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
      */
     private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
-    private JTextPane taData;
 
-    public MiniReportDisplay(JFrame parent, String sReport) {
+    public MiniReportDisplay(JFrame parent, Client client) {
         super(parent, Messages.getString("MiniReportDisplay.title"), true); //$NON-NLS-1$
 
         butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
-        taData = new JTextPane();
-        ReportDisplay.setupStylesheet(taData);
-        taData.setText("<pre>"+sReport+"</pre>");
-        taData.setEditable(false);
-        taData.setOpaque(false);
-        
         
         getContentPane().setLayout(new BorderLayout());
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setViewportView(taData);
-        getContentPane().add(BorderLayout.CENTER, scrollPane);
-        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
+        
+        setupReportTabs(client);
+                
+        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
+                GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
-        setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());
+        setLocation(GUIPreferences.getInstance().getMiniReportPosX(),
+                GUIPreferences.getInstance().getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                actionPerformed(new ActionEvent(butOkay, ActionEvent.ACTION_PERFORMED, butOkay.getText()));
+                actionPerformed(new ActionEvent(butOkay,
+                        ActionEvent.ACTION_PERFORMED, butOkay.getText()));
             }
         });
 
@@ -82,4 +83,40 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
+    
+    private void setupReportTabs(Client c) {
+        JTabbedPane tabs = new JTabbedPane();
+        
+        int numRounds = c.getGame().getRoundCount();
+        for (int round = 1; round < numRounds; round++) {
+            String text =  c.receiveReport(c.getGame().getReports(round));
+            JTextPane ta = new JTextPane();
+            setupStylesheet(ta);
+            ta.setText("<pre>" + text + "</pre>");
+            ta.setEditable(false);
+            ta.setOpaque(false);
+            tabs.add("Round " + round, new JScrollPane(ta));
+        }
+
+        // add the new current phase tab
+        JTextPane ta = new JTextPane();
+        setupStylesheet(ta);
+        ta.setText("<pre>" + c.phaseReport + "</pre>");
+        ta.setEditable(false);
+        ta.setOpaque(false);
+
+        JScrollPane sp = new JScrollPane(ta);
+        tabs.add("Phase", sp);
+        tabs.setSelectedComponent(sp);
+        
+        getContentPane().add(BorderLayout.CENTER, tabs);
+    }
+    
+    public static void setupStylesheet(JTextPane pane) {
+        pane.setContentType("text/html");
+        Font font = UIManager.getFont("Label.font");
+        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
+                "pre { font-family: " + font.getFamily()
+                        + "; font-size: 12pt; font-style:normal;}");
+    }    
 }

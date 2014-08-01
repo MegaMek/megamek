@@ -614,7 +614,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Called when the user selects the "View->Round Report" menu item.
      */
     private void showRoundReport() {
-        new MiniReportDisplay(frame, client.roundReport).setVisible(true);
+        new MiniReportDisplay(frame, client).setVisible(true);
     }
 
     /**

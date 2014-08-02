@@ -1958,9 +1958,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final IHex oHex = game.getBoard().getHex(c);
         final Point oHexLoc = getHexLocation(c);
 
+        // We need to adjust the height based on several cases
+        int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
+        // Negative elevation drops the hex down, so we need to compensate
+        int level = oHex.getElevation();
+        if (level < 0) {
+            elevOffset += -1 * level;
+        }
+        
         int orthX = oHexLoc.x;
-        int orthY = (oHexLoc.y - (int) (HEX_ELEV * scale * oHex
-                .terrainLevel(Terrains.BRIDGE_ELEV)));
+        int orthY = oHexLoc.y - (int) (HEX_ELEV * scale * elevOffset);
         if (!useIsometric()) {
             orthY = oHexLoc.y;
         }

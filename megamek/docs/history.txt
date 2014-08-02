@@ -87,6 +87,7 @@ v0.39.1-dev (SVN)
 + Feature [#1197]: Random Army Dialog remembers settings (except selected RAT)
 + Feature [#1197]: Random Army Dialog remembers selected RAT
 + Data: New Images - So ends DBs NBP Project Pt#1
++ Bug: Ortho graphic icons (bridges) drawn too low when on negative elevation
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

@@ -892,8 +892,10 @@ public class Princess extends BotClient {
     @Override
     public void die() {
         super.die();
-        precognition.signalDone();
-        precogThread.interrupt();
+        if (precognition != null) {
+            precognition.signalDone();
+            precogThread.interrupt();
+        }
     }
 
     @Override

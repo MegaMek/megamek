@@ -1232,7 +1232,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             nextOne = game.getPreviousEntityFromList(entity);
         }
         while ((nextOne != null) && !nextOne.equals(entity)) {
-            if (nextOne.getOwner().equals(p) || !(bd || rbd)) {
+            if (nextOne.getOwner().equals(p) || (!(bd || rbd) && nextOne.getOwner().equals(entity.getOwner()))) {
                 return nextOne;
             }
             if (forward) {

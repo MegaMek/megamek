@@ -41,7 +41,7 @@ import javax.swing.filechooser.FileFilter;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
+import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
 import megamek.common.util.StringUtil;
@@ -51,7 +51,7 @@ import megamek.common.util.StringUtil;
  * @version %Id%
  * @since 3/13/14 2:41 PM
  */
-public class RandomMapDialog extends JDialog implements ActionListener {
+public class ResizeMapDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
 	// Views.
@@ -75,11 +75,15 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JPanel mainDisplay = new JPanel();
 
     // General map settings.
-    private final JLabel mapSizeLabel = new JLabel(Messages.getString("RandomMapDialog.BoardSize"));
-    private final JLabel mapSizeSeperatorLabel = new JLabel("x");
+    private final JLabel mapNorthLabel = new JLabel(Messages.getString("ExpandMapDialog.labelNorth"));
+    private final JLabel mapEastLabel = new JLabel(Messages.getString("ExpandMapDialog.labelEast"));
+    private final JLabel mapSouthLabel = new JLabel(Messages.getString("ExpandMapDialog.labelWest"));
+    private final JLabel mapWestLabel = new JLabel(Messages.getString("ExpandMapDialog.labelSouth"));
     private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
-    private final VerifiableTextField mapWidthField = new VerifiableTextField(4);
-    private final VerifiableTextField mapHeightField = new VerifiableTextField(4);
+    private final VerifiableTextField mapNorthField = new VerifiableTextField(4);
+    private final VerifiableTextField mapEastField = new VerifiableTextField(4);
+    private final VerifiableTextField mapSouthField = new VerifiableTextField(4);
+    private final VerifiableTextField mapWestField = new VerifiableTextField(4);
     private final VerifiableTextField mapThemeField = new VerifiableTextField(10);
 
     // Control buttons
@@ -97,24 +101,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      *                            server-based game.
      * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
+    public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
                            MapSettings mapSettings) {
-    	this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
-    }
-    
-    /**
-     * Constructor for this dialog.
-     *
-     * @param parent              The parent {@link JFrame} invoking this dialog.
-     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
-     *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
-     *                            server-based game.
-     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
-     */
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
-                           MapSettings mapSettings, String title) {
-        super(parent, title, true);
+    	super(parent, Messages.getString("ExpandMapDialog.title"), true);
         this.mapSettings = mapSettings;
         PARENT = parent;
         MAP_SETTINGS_OBSERVER = mapSettingsObserver;
@@ -215,29 +204,61 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         constraints.gridx = 0;
         constraints.gridy++;
         constraints.gridwidth = 1;
-        panel.add(mapSizeLabel, constraints);
+        panel.add(mapNorthLabel, constraints);
 
         // Row 2, Column 2.
         constraints.gridx++;
-        mapWidthField.setSelectAllTextOnGotFocus(true);
-        mapWidthField.setRequired(true);
-        mapWidthField.setText(String.valueOf(mapSettings.getBoardWidth()));
-        mapWidthField.addVerifier(new VerifyIsPositiveInteger());
-        mapWidthField.setToolTipText(Messages.getString("RandomMapDialog.mapWidthField.toolTip"));
-        panel.add(mapWidthField, constraints);
+        mapNorthField.setSelectAllTextOnGotFocus(true);
+        mapNorthField.setRequired(true);
+        mapNorthField.setText("0");
+        mapNorthField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+        mapNorthField.setToolTipText(Messages.getString("ExpandMapDialog.mapNorthField.toolTip"));
+        panel.add(mapNorthField, constraints);
 
         // Row 2, Column 3.
-        constraints.gridx++;
-        panel.add(mapSizeSeperatorLabel, constraints);
+        constraints.gridx = 0;
+        constraints.gridy++;
+        constraints.gridwidth = 1;
+        panel.add(mapEastLabel, constraints);
 
         // Row 2, Column 4.
         constraints.gridx++;
-        mapHeightField.setSelectAllTextOnGotFocus(true);
-        mapHeightField.setRequired(true);
-        mapHeightField.setText(String.valueOf(mapSettings.getBoardHeight()));
-        mapHeightField.addVerifier(new VerifyIsPositiveInteger());
-        mapHeightField.setToolTipText(Messages.getString("RandomMapDialog.mapHeightField.toolTip"));
-        panel.add(mapHeightField, constraints);
+        mapEastField.setSelectAllTextOnGotFocus(true);
+        mapEastField.setRequired(true);
+        mapEastField.setText("0");
+        mapEastField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+        mapEastField.setToolTipText(Messages.getString("ExpandMapDialog.mapEastField.toolTip"));
+        panel.add(mapEastField, constraints);
+
+        // Row 2, Column 5.
+        constraints.gridx = 0;
+        constraints.gridy++;
+        constraints.gridwidth = 1;
+        panel.add(mapSouthLabel, constraints);
+
+        // Row 2, Column 6.
+        constraints.gridx++;
+        mapSouthField.setSelectAllTextOnGotFocus(true);
+        mapSouthField.setRequired(true);
+        mapSouthField.setText("0");
+        mapSouthField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+        mapSouthField.setToolTipText(Messages.getString("ExpandMapDialog.mapSouthField.toolTip"));
+        panel.add(mapSouthField, constraints);
+
+        // Row 2, Column 7.
+        constraints.gridx = 0;
+        constraints.gridy++;
+        constraints.gridwidth = 1;
+        panel.add(mapWestLabel, constraints);
+
+        // Row 2, Column 8.
+        constraints.gridx++;
+        mapWestField.setSelectAllTextOnGotFocus(true);
+        mapWestField.setRequired(true);
+        mapWestField.setText("0");
+        mapWestField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+        mapWestField.setToolTipText(Messages.getString("ExpandMapDialog.mapWestField.toolTip"));
+        panel.add(mapWestField, constraints);
 
         // Row 3, Column 1.
         constraints.gridx = 0;
@@ -389,7 +410,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Get the general settings from this panel.
-        newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
+        newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
+        		mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
         newMapSettings.setTheme(mapThemeField.getText());
         this.mapSettings = newMapSettings;
 
@@ -420,4 +442,20 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             }
         }
     }
+
+	public int getExpandNorth() {
+		return mapNorthField.getAsInt();
+	}
+
+	public int getExpandEast() {
+		return mapEastField.getAsInt();
+	}
+
+	public int getExpandSouth() {
+		return mapSouthField.getAsInt();
+	}
+
+	public int getExpandWest() {
+		return mapWestField.getAsInt();
+	}
 }

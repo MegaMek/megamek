@@ -260,4 +260,6 @@ public interface IHex extends Cloneable {
     public abstract boolean isClearForLanding();
 
     public abstract Coords getCoords();
+
+    public abstract void setCoords(Coords c);
 }

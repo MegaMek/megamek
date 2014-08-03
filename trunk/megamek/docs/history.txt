@@ -100,6 +100,10 @@ v0.39.1-dev (SVN)
 + Feature [#1158]: Map Editor: Re-size maps
 + Refactored Compute.get*ECMFieldSize() methods to be cleaner and a bit more
     efficient
++ Updated Game to cache which Coords have Entitys in them, and what those
+    Entitys are.  Now Game.getEntities(Coords) uses the cache to return much
+    quicker.  This is important for games with a large number of Entitys, as 
+    Game.getEntities(Coords) can be called frequently (like when computing LoS)
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

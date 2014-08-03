@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -1451,8 +1452,10 @@ public class Dropship extends SmallCraft {
      * @see megamek.common.Entity#setPosition(megamek.common.Coords)
      */
     @Override
+    
     public void setPosition(Coords position) {
-        super.setPosition(position);
+        HashSet<Coords> oldPositions = getOccupiedCoords();
+        super.setPosition(position, false);
         if ((getAltitude() == 0) && !game.getBoard().inSpace()
                 && (position != null)) {
             secondaryPositions.put(0, position);
@@ -1468,6 +1471,9 @@ public class Dropship extends SmallCraft {
             secondaryPositions.put(6,
                     position.translated((getFacing() + 5) % 6));
         }
+        if (game != null) {
+            game.updateEntityPositionLookup(this, oldPositions);
+        }       
     }
 
     @Override

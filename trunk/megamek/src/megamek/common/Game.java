@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.actions.ArtilleryAttackAction;
@@ -81,6 +82,9 @@ public class Game implements Serializable, IGame {
     private Vector<Team> teams = new Vector<Team>(); // DES
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
+    
+    private Map<Coords, HashSet<Entity>> entityPosLookup = 
+            new HashMap<Coords, HashSet<Entity>>();
 
     /**
      * have the entities been deployed?
@@ -898,6 +902,7 @@ public class Game implements Serializable, IGame {
     public void setEntitiesVector(Vector<Entity> entities) {
         this.entities = entities;
         reindexEntities();
+        resetEntityPositionLookup();
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
 
@@ -1237,6 +1242,7 @@ public class Game implements Serializable, IGame {
             entityIds.put(id, entity);
         }
         entities.addElement(entity);
+        updateEntityPositionLookup(entity, null);
 
         if (id > lastEntityId) {
             lastEntityId = id;
@@ -1275,6 +1281,10 @@ public class Game implements Serializable, IGame {
             entity.setGame(this);
             entities.setElementAt(entity, entities.indexOf(oldEntity));
             entityIds.put(id, entity);
+            // Get the collection of positions
+            HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
+            // Update position lookup table
+            updateEntityPositionLookup(entity, oldPositions);
 
             // Not sure if this really required
             if (id > lastEntityId) {
@@ -1319,6 +1329,7 @@ public class Game implements Serializable, IGame {
 
         entities.removeElement(toRemove);
         entityIds.remove(new Integer(id));
+        removeEntityPositionLookup(toRemove);
 
         toRemove.setRemovalCondition(condition);
 
@@ -1362,6 +1373,7 @@ public class Game implements Serializable, IGame {
 
         entities.removeAllElements();
         entityIds.clear();
+        entityPosLookup.clear();
 
         vOutOfGame.removeAllElements();
 
@@ -1477,27 +1489,25 @@ public class Game implements Serializable, IGame {
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Enumeration<Entity> getEntities(Coords c, boolean ignore) {
+        // Make sure the look-up is initialized
+        if (entityPosLookup == null 
+                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+            resetEntityPositionLookup();
+        }
+        HashSet<Entity> posEntities = entityPosLookup.get(c);
         Vector<Entity> vector = new Vector<Entity>();
-
-        // Only build the list if the coords are on the board.
-        if (board.contains(c)) {
-            for (Entity entity : entities) {
-                if (!entity.isTargetable() && !ignore) {
-                    continue;
+        if (posEntities != null) {
+            for (Entity e : posEntities) {
+                if (e.isTargetable() || ignore) {
+                    vector.add(e);
+                    
+                    // Sanity check
+                    HashSet<Coords> positions = e.getOccupiedCoords();
+                    if (!positions.contains(c)) {
+                        System.out.println("Game.getEntities(2)Error! "
+                                + e.getDisplayName() + " is not in " + c + "!");
+                    }                    
                 }
-                if (c.equals(entity.getPosition())) {
-                    vector.addElement(entity);
-                }
-                // also check for secondary positions
-                else if (null != entity.getSecondaryPositions()) {
-                    for (int key : entity.getSecondaryPositions().keySet()) {
-                        if (c.equals(entity.getSecondaryPositions().get(key))) {
-                            vector.addElement(entity);
-                            break;
-                        }
-                    }
-                }
-
             }
         }
         return vector.elements();
@@ -1510,18 +1520,29 @@ public class Game implements Serializable, IGame {
      * @return <code>Vector<Entity></code>
      */
     public Vector<Entity> getEntitiesVector(Coords c) {
+        // Make sure the look-up is initialized
+        if (entityPosLookup == null 
+                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+            resetEntityPositionLookup();
+        }
+        HashSet<Entity> posEntities = entityPosLookup.get(c);
         Vector<Entity> vector = new Vector<Entity>();
-
-        // Only build the list if the coords are on the board.
-        if (board.contains(c)) {
-            for (Entity entity : entities) {
-                if (c.equals(entity.getPosition()) && entity.isTargetable()) {
-                    vector.addElement(entity);
+        if (posEntities != null) {
+            for (Entity e : posEntities) {
+                if (e.isTargetable()) {
+                    vector.add(e);
+                    
+                    // Sanity check
+                    HashSet<Coords> positions = e.getOccupiedCoords();
+                    if (!positions.contains(c)) {
+                        System.out.println("Game.getEntitiesVector(1) Error! "
+                                + e.getDisplayName() + " is not in " + c + "!");
+                    }                    
                 }
             }
         }
-
         return vector;
+
     }
 
     /**
@@ -3337,6 +3358,59 @@ public class Game implements Serializable, IGame {
 
     public List<SmokeCloud> getSmokeCloudList() {
         return smokeCloudList;
+    }
+    
+    /**
+     * Updates the map that maps a position to the list of Entity's in that 
+     * position.
+     *  
+     * @param e
+     */
+    public void updateEntityPositionLookup(Entity e, 
+            HashSet<Coords> oldPositions) {
+        
+        // Remove the old cached location(s)
+        if (oldPositions != null) {
+            for (Coords pos : oldPositions) {
+                HashSet<Entity> posEntities = entityPosLookup.get(pos);
+                if (posEntities != null) {
+                    posEntities.remove(e);
+                }
+            }
+        }
+ 
+        // Add Entity for each position 
+        for (Coords pos : e.getOccupiedCoords()) {
+            HashSet<Entity> posEntities = entityPosLookup.get(pos);
+            if (posEntities == null) {
+                posEntities = new HashSet<Entity>();
+                posEntities.add(e);
+                entityPosLookup.put(pos, posEntities);
+            } else {
+                posEntities.add(e);
+            }
+        }
+    }
+    
+    private void removeEntityPositionLookup(Entity e) {
+        // Remove Entity from cache
+        for (Coords pos : e.getOccupiedCoords()) {
+            HashSet<Entity> posEntities = entityPosLookup.get(pos);
+            if (posEntities != null) {
+                posEntities.remove(e);
+            }
+        }
+    }
+    
+    private void resetEntityPositionLookup() {
+        if (entityPosLookup == null) {
+            entityPosLookup = new HashMap<Coords, HashSet<Entity>>();
+        } else {
+            entityPosLookup.clear();
+        }
+        for (Entity e : entities) {
+            updateEntityPositionLookup(e, null);
+        }
     }
 
 }

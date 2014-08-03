@@ -1192,8 +1192,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * not being transported, and not captured.
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && deployed && !isOffBoard() &&
-                (conveyance == Entity.NONE) && !captured && (position != null);
+        return !destroyed && !doomed && deployed && !isOffBoard()
+                && (conveyance == Entity.NONE) && !captured
+                && (getPosition() != null);
     }
 
     public boolean isProne() {
@@ -1334,14 +1335,40 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Coords getPosition() {
         return position;
     }
+    
+    /**
+     * Returns a set of the coords this Entity occupies
+     * @return
+     */
+    public HashSet<Coords> getOccupiedCoords() {
+        HashSet<Coords> positions = new HashSet<Coords>();
+        if (getSecondaryPositions() != null) {
+            for (int key : getSecondaryPositions().keySet()) {
+                positions.add(getSecondaryPositions().get(key));
+            }
+        } else if (getPosition() != null) {
+            positions.add(getPosition());
+        }        
+        return positions;
+    }
 
+    public void setPosition(Coords position) {
+        setPosition(position, true);
+    }
     /**
      * Sets the current position of this entity on the board.
      *
      * @param position the new position.
      */
-    public void setPosition(Coords position) {
+    public void setPosition(Coords position, boolean gameUpdate) {
+        HashSet<Coords> oldPositions = null;
+        if (game != null && gameUpdate) {
+            oldPositions = getOccupiedCoords();
+        }
         this.position = position;
+        if (game != null && gameUpdate) {
+            game.updateEntityPositionLookup(this, oldPositions);
+        }
     }
 
     /**
@@ -9128,7 +9155,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int sideTable(Coords src, boolean usePrior, int face) {
-        return sideTable(src, usePrior, face, position);
+        return sideTable(src, usePrior, face, getPosition());
     }
 
     public int sideTable(Coords src, boolean usePrior, int face,

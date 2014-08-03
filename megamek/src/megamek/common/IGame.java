@@ -1419,5 +1419,14 @@ public interface IGame {
      *      contained the input hex.
      */
     public abstract boolean addIlluminatedPosition(Coords c);
+    
+    /**
+     * Updates the map that maps a position to the list of Entity's in that 
+     * position.
+     *  
+     * @param e
+     */
+    public abstract void updateEntityPositionLookup(Entity e, 
+            HashSet<Coords> oldPositions);
 
 }

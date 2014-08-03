@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -3674,7 +3675,12 @@ public class Aero extends Entity {
             setMovementMode(EntityMovementMode.AERODYNE);
         }
         setAltitude(altitude);
+        
+        HashSet<Coords> positions = getOccupiedCoords();
         secondaryPositions.clear();
+        if (game != null) {
+            game.updateEntityPositionLookup(this, positions);
+        }
     }
 
     public void land() {

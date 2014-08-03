@@ -651,5 +651,9 @@ public class Hex implements IHex, Serializable {
     public Coords getCoords() {
         return coords;
     }
+    
+    public void setCoords(Coords c) {
+    	coords = c;
+    }
 
 }

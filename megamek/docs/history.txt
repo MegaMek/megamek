@@ -94,9 +94,12 @@ v0.39.1-dev (SVN)
     blind drop options are on. However, we also decided to limit it to the units
     owned by the player of the currently displayed units so that you will only
     cycle through the entities of one player at a time
-+ Bug: BattleMaster BLR-1G and "chassis" not working quite right due to misnamed files
++ Bug: BattleMaster BLR-1G and "chassis" not working quite right due to misnamed
+    files
 + Bug: NPE in MtfFile.java when the file that is being parsed is empty
 + Feature [#1158]: Map Editor: Re-size maps
++ Refactored Compute.get*ECMFieldSize() methods to be cleaner and a bit more
+    efficient
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

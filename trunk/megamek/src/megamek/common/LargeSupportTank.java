@@ -185,7 +185,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public int sideTable(Coords src, boolean usePrior, int face) {
-        Coords effectivePos = position;
+        Coords effectivePos = getPosition();
         if (usePrior) {
             effectivePos = getPriorPosition();
         }

@@ -268,7 +268,7 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public int sideTable(Coords src, boolean usePrior, int face) {
-        Coords effectivePos = position;
+        Coords effectivePos = getPosition();
         if (usePrior) {
             effectivePos = getPriorPosition();
         }

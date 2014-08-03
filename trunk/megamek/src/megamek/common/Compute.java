@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
@@ -3946,7 +3947,7 @@ public class Compute {
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
         return Compute.getECCMFieldSize(ae, a, b) > 0;
     }
-
+    
     /**
      * This method returns the highest number of enemy ECM fields of ae between
      * points a and b
@@ -3957,6 +3958,7 @@ public class Compute {
      * @return
      */
     public static double getECMFieldSize(Entity ae, Coords a, Coords b) {
+        
         if (ae.getGame().getBoard().inSpace()) {
             // normal ECM effects don't apply in space
             return 0;
@@ -3965,51 +3967,41 @@ public class Compute {
             return 0;
         }
 
-        // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyECMStrengths = new Vector<Double>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
+        LinkedList<ECMInfo> enemyECMInfo = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
+        
+        for (Entity ent : ae.game.getEntitiesVector()) {
             Coords entPos = ent.getPosition();
-            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
-                vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyECMStrengths.addElement(new Double(ent.getECMStrength()));
+            if (ent.isEnemyOf(ae) && (entPos != null) && ent.hasActiveECM()) {
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                enemyECMInfo.add(newInfo);
             }
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                vFriendlyECCMStrengths.addElement(new Double(ent
-                        .getECCMStrength()));
+            if (!ent.isEnemyOf(ae) && (entPos != null) && ent.hasActiveECCM()) {
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                friendlyECCMInfo.add(newInfo);
             }
 
             // Check the ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveECM()
                         && (entPos != null)) {
-                    vEnemyECMCoords.addElement(entPos);
-                    vEnemyECMRanges
-                            .addElement(new Integer(other.getECMRange()));
-                    vEnemyECMStrengths.addElement(new Double(other
-                            .getECMStrength()));
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    enemyECMInfo.add(newInfo);
                 }
                 if (!other.isEnemyOf(ae) && other.hasActiveECCM()
                         && (entPos != null)) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(other
-                            .getECMRange()));
-                    vFriendlyECCMStrengths.addElement(new Double(other
-                            .getECCMStrength()));
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    friendlyECCMInfo.add(newInfo);
                 }
             }
         }
 
         // none? get out of here
-        if ((vEnemyECMCoords.size() == 0) && !ae.isINarcedWith(INarcPod.ECM)) {
+        if ((enemyECMInfo.size() == 0) && !ae.isINarcedWith(INarcPod.ECM)) {
             return 0;
         }
 
@@ -4028,26 +4020,18 @@ public class Compute {
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
                 ecmStatus++;
             }
-            // first, subtract 1 for each enemy ECM that affects us
-            Enumeration<Integer> ranges = vEnemyECMRanges.elements();
-            Enumeration<Double> strengths = vEnemyECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyECMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    ecmStatus += strength;
+            // First, subtract strength for each enemy ECM that affects us
+            for (ECMInfo ecmInfo : enemyECMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus += ecmInfo.strength;
                 }
             }
-            // now, add one for each friendly ECCM
-            ranges = vFriendlyECCMRanges.elements();
-            strengths = vFriendlyECCMStrengths.elements();
-            for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(friendlyECCMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    ecmStatus -= strength;
+            // now, add strength for each friendly ECCM
+            for (ECMInfo ecmInfo : friendlyECCMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus -= ecmInfo.strength;
                 }
             }
             // if any coords in the line are affected, the whole line is
@@ -4077,51 +4061,41 @@ public class Compute {
         }
 
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyECCMStrengths = new Vector<Double>(16);
-        Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
+        LinkedList<ECMInfo> enemyECMInfo = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                vEnemyECCMCoords.addElement(entPos);
-                vEnemyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyECCMStrengths
-                        .addElement(new Double(ent.getECMStrength()));
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                enemyECMInfo.add(newInfo);
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
-                vFriendlyECMCoords.addElement(entPos);
-                vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
-                vFriendlyECMStrengths.addElement(new Double(ent
-                        .getECCMStrength()));
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                friendlyECCMInfo.add(newInfo);
             }
 
             // Check the ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveECCM()
                         && (entPos != null)) {
-                    vEnemyECCMCoords.addElement(entPos);
-                    vEnemyECCMRanges
-                            .addElement(new Integer(other.getECMRange()));
-                    vEnemyECCMStrengths.addElement(new Double(other
-                            .getECMStrength()));
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    enemyECMInfo.add(newInfo);
                 }
                 if (!other.isEnemyOf(ae) && other.hasActiveECM()
                         && (entPos != null)) {
-                    vFriendlyECMCoords.addElement(entPos);
-                    vFriendlyECMRanges.addElement(new Integer(other
-                            .getECMRange()));
-                    vFriendlyECMStrengths.addElement(new Double(other
-                            .getECCMStrength()));
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    friendlyECCMInfo.add(newInfo);
                 }
             }
         }
 
         // none? get out of here
-        if (vEnemyECCMCoords.size() == 0) {
+        if (enemyECMInfo.size() == 0) {
             return 0;
         }
 
@@ -4140,26 +4114,19 @@ public class Compute {
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
                 eccmStatus--;
             }
-            // first, subtract 1 for each enemy ECCM that affects us
-            Enumeration<Integer> ranges = vEnemyECCMRanges.elements();
-            Enumeration<Double> strengths = vEnemyECCMStrengths.elements();
-            for (Coords enemyECCMCoords : vEnemyECCMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECCMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    eccmStatus += strength;
+            
+            // First, subtract strength for each enemy ECM that affects us
+            for (ECMInfo ecmInfo : enemyECMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    eccmStatus += ecmInfo.strength;
                 }
             }
-            // now, add one for each friendly ECCM
-            ranges = vFriendlyECMRanges.elements();
-            strengths = vFriendlyECMStrengths.elements();
-            for (Coords friendlyECMCoords : vFriendlyECMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(friendlyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    eccmStatus -= strength;
+            // now, add strength for each friendly ECCM
+            for (ECMInfo ecmInfo : friendlyECCMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    eccmStatus -= ecmInfo.strength;
                 }
             }
             // if any coords in the line are affected, the whole line is
@@ -4201,65 +4168,54 @@ public class Compute {
         // before Angel
         // http://bg.battletech.com/forums/index.php/topic,27121.new.html#new
 
-        Vector<Coords> vEnemyOtherECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyOtherECMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyOtherECMStrengths = new Vector<Double>(16);
-        Vector<Coords> vEnemyAngelECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyAngelECMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyAngelECMStrengths = new Vector<Double>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
+        LinkedList<ECMInfo> enemyOtherECMInfo = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> enemyAngelECMInfo = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
+        
+        for (Entity ent : ae.game.getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             // add each angel ECM at its ECM strength
             if (ent.isEnemyOf(ae) && (entPos != null)) {
                 if (ent.hasActiveAngelECM()) {
-                    vEnemyAngelECMCoords.addElement(entPos);
-                    vEnemyAngelECMRanges.addElement(new Integer(ent
-                            .getECMRange()));
-                    vEnemyAngelECMStrengths.add(ent.getECMStrength());
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    enemyAngelECMInfo.add(newInfo);
                 } else if (ent.hasActiveECM()) {
-                    vEnemyOtherECMCoords.addElement(entPos);
-                    vEnemyOtherECMRanges.addElement(new Integer(ent
-                            .getECMRange()));
-                    vEnemyOtherECMStrengths.add(ent.getECMStrength());
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    enemyOtherECMInfo.add(newInfo);
                 }
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                vFriendlyECCMStrengths.add(ent.getECCMStrength());
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                friendlyECCMInfo.add(newInfo);
             }
 
             // Check the angel ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && (entPos != null)) {
                     if (other.hasActiveAngelECM()) {
-                        vEnemyAngelECMCoords.addElement(entPos);
-                        vEnemyAngelECMRanges.addElement(new Integer(other
-                                .getECMRange()));
-                        vEnemyAngelECMStrengths.add(other.getECMStrength());
+                        ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                                ent.getECMStrength());
+                        enemyAngelECMInfo.add(newInfo);
                     } else if (other.hasActiveECM()) {
-                        vEnemyOtherECMCoords.addElement(entPos);
-                        vEnemyOtherECMRanges.addElement(new Integer(other
-                                .getECMRange()));
-                        vEnemyOtherECMStrengths.add(other.getECMStrength());
+                        ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                                ent.getECMStrength());
+                        enemyOtherECMInfo.add(newInfo);
                     }
                 }
                 if (!other.isEnemyOf(ae) && other.hasActiveECCM()
                         && (entPos != null)) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(other
-                            .getECMRange()));
-                    vFriendlyECCMStrengths.add(other.getECMStrength());
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    friendlyECCMInfo.add(newInfo);
                 }
             }
         }
 
         // none? get out of here
-        if (vEnemyAngelECMCoords.size() == 0) {
+        if (enemyAngelECMInfo.size() == 0) {
             return 0;
         }
 
@@ -4277,26 +4233,19 @@ public class Compute {
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
                 ecmStatus++;
             }
-            Enumeration<Integer> ranges = vEnemyOtherECMRanges.elements();
-            Enumeration<Double> strengths = vEnemyOtherECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyOtherECMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    ecmStatus += strength;
+            
+            for (ECMInfo ecmInfo : enemyOtherECMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus += ecmInfo.strength;
                 }
             }
+            
             // now, add friendly ECCM
-            ranges = vFriendlyECCMRanges.elements();
-            strengths = vFriendlyECCMStrengths.elements();
-            for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(friendlyECCMCoords);
-                double strength = strengths.nextElement().doubleValue();
-
-                if (nDist <= range) {
-                    ecmStatus -= strength;
+            for (ECMInfo ecmInfo : friendlyECCMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus -= ecmInfo.strength;
                 }
             }
             // if ecmStatus is greater than zero then we have more other ECM
@@ -4306,14 +4255,10 @@ public class Compute {
                 ecmStatus = 0;
             }
             // now get the angel ECM
-            ranges = vEnemyAngelECMRanges.elements();
-            strengths = vEnemyAngelECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyAngelECMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    ecmStatus += strength;
+            for (ECMInfo ecmInfo : enemyAngelECMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus += ecmInfo.strength;
                 }
             }
 
@@ -4336,48 +4281,41 @@ public class Compute {
         }
 
         // Only grab enemies with active Nova ECM
-        Vector<Coords> vEnemyNovaECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyNovaECMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyNovaECMStrengths = new Vector<Double>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECCMStrengths = new Vector<Double>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
+        LinkedList<ECMInfo> enemyNovaECMInfo = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
+        for (Entity ent : ae.game.getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             // add each Nova ECM at its ECM strength
             if (ent.isEnemyOf(ae) && ent.hasActiveNovaECM() && (entPos != null)) {
-                vEnemyNovaECMCoords.addElement(entPos);
-                vEnemyNovaECMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyNovaECMStrengths.add(ent.getECMStrength());
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                enemyNovaECMInfo.add(newInfo);
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                vFriendlyECCMStrengths.add(ent.getECCMStrength());
+                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                        ent.getECMStrength());
+                friendlyECCMInfo.add(newInfo);
             }
 
             // Check the angel ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECM()
                         && (entPos != null)) {
-                    vEnemyNovaECMCoords.addElement(entPos);
-                    vEnemyNovaECMRanges.addElement(new Integer(other
-                            .getECMRange()));
-                    vEnemyNovaECMStrengths.add(ent.getECMStrength());
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    enemyNovaECMInfo.add(newInfo);
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECCM()
                         && (entPos != null)) {
-                    vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent
-                            .getECMRange()));
-                    vFriendlyECCMStrengths.add(ent.getECMStrength());
+                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
+                            ent.getECMStrength());
+                    friendlyECCMInfo.add(newInfo);
                 }
             }
         }
 
         // none? get out of here
-        if (vEnemyNovaECMCoords.size() == 0) {
+        if (enemyNovaECMInfo.size() == 0) {
             return 0;
         }
 
@@ -4391,27 +4329,19 @@ public class Compute {
             // 0: unaffected by enemy ECM
             // <0: affected by enemy Nova ECM
             double ecmStatus = 0;
-            // first, subtract 2 for each enemy angel ECM that affects us
-            Enumeration<Integer> ranges = vEnemyNovaECMRanges.elements();
-            Enumeration<Double> strengths = vEnemyNovaECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyNovaECMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(enemyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
-                if (nDist <= range) {
-                    ecmStatus += strength;
+            
+            for (ECMInfo ecmInfo : enemyNovaECMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus += ecmInfo.strength;
                 }
             }
-            // now, add one for each friendly ECCM
-            ranges = vFriendlyECCMRanges.elements();
-            strengths = vFriendlyECCMStrengths.elements();
-            for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
-                int nDist = c.distance(friendlyECCMCoords);
-                double strength = strengths.nextElement().doubleValue();
-
-                if (nDist <= range) {
-                    ecmStatus -= strength;
+            
+            // now, add friendly ECCM
+            for (ECMInfo ecmInfo : friendlyECCMInfo) {
+                int nDist = c.distance(ecmInfo.pos);
+                if (nDist <= ecmInfo.range) {
+                    ecmStatus -= ecmInfo.strength;
                 }
             }
             // if any coords in the line are affected, the whole line is

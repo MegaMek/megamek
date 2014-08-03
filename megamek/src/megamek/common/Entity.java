@@ -188,7 +188,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean doomed = false;
     protected boolean destroyed = false;
 
-    protected Coords position = null;
+    private Coords position = null;
 
     /**
      * Used for Entities that are bigger than a single hex. This contains the

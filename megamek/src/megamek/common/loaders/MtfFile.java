@@ -105,6 +105,9 @@ public class MtfFile implements IMechLoader {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
 
             version = r.readLine();
+            if (version == null) {
+            	throw new EntityLoadingException("MTF File empty!");
+            }
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
             // version 1.2: added full head ejection

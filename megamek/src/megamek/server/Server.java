@@ -3331,10 +3331,12 @@ public class Server implements Runnable {
         boolean infMoveMulti = game.getOptions()
                 .booleanOption("inf_move_multi")
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT
+                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean protosMoveEven = (game.getOptions().booleanOption(
                 "protos_move_even") && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                .getPhase() == IGame.Phase.PHASE_MOVEMENT)))
+                .getPhase() == IGame.Phase.PHASE_MOVEMENT
+                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)))
                 || (game.getOptions().booleanOption("protos_deploy_even") && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean protosMoveMulti = game.getOptions().booleanOption(
@@ -3343,11 +3345,13 @@ public class Server implements Runnable {
         boolean tankMoveByLance = game.getOptions().booleanOption(
                 "vehicle_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT
+                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean mekMoveByLance = game.getOptions().booleanOption(
                 "mek_lance_movement")
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT));
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT
+                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
 
         int evenMask = 0;
         if (infMoveEven) {
@@ -3419,23 +3423,29 @@ public class Server implements Runnable {
             if (entity.isSelectableThisTurn()) {
                 final IPlayer player = entity.getOwner();
                 if ((entity instanceof SpaceStation)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementSpaceStationTurns();
                 } else if ((entity instanceof Warship)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementWarshipTurns();
                 } else if ((entity instanceof Jumpship)
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementJumpshipTurns();
                 } else if ((entity instanceof Dropship) && entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementDropshipTurns();
                 } else if ((entity instanceof SmallCraft)
                         && entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementSmallCraftTurns();
                 } else if (entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                     player.incrementAeroTurns();
                 } else if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
@@ -3509,7 +3519,8 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasMoreElements()
-                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getTotalTurns()
@@ -3591,7 +3602,8 @@ public class Server implements Runnable {
                     int newMask = evenMask;
                     // if this is the movement phase, then don't allow Aeros on
                     // normal turns
-                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                            || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
                         newMask += aeroMask;
                     }
                     turn = new GameTurn.EntityClassTurn(player.getId(),
@@ -3602,7 +3614,8 @@ public class Server implements Runnable {
                 else {
                     // well, almost anybody; Aero don't get normal turns during
                     // the movement phase
-                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                            || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
                         turn = new GameTurn.EntityClassTurn(player.getId(),
                                 ~aeroMask);
                     } else {

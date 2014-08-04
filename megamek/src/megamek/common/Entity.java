@@ -7998,6 +7998,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             entitySeenBy.add(p);
         }
     }
+    
+    public Vector<IPlayer> getWhoCanSee() {
+        return entitySeenBy;
+    }
 
     public void clearSeenBy() {
         entitySeenBy.clear();

@@ -267,8 +267,8 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, "protos_move_later", false); //$NON-NLS-1$
         addOption(initiative, "protos_move_multi", false); //$NON-NLS-1$
         addOption(initiative, "inf_proto_move_multi", 3); //$NON-NLS-1$
-        //addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
-        //addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$

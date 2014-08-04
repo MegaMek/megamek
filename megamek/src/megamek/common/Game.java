@@ -620,8 +620,9 @@ public class Game implements Serializable, IGame {
     public boolean isPhaseSimultaneous() {
         switch (phase) {
             case PHASE_DEPLOYMENT:
+            	return getOptions().booleanOption("simultaneous_deployment");
             case PHASE_MOVEMENT:
-                return false;
+            	return getOptions().booleanOption("simultaneous_movement");
             case PHASE_FIRING:
                 return getOptions().booleanOption("simultaneous_firing");
             case PHASE_PHYSICAL:

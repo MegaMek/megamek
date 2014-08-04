@@ -8609,7 +8609,7 @@ public class Server implements Runnable {
         // Update the entitiy's position,
         // unless it is off the game map.
         if (!game.isOutOfGame(entity)) {
-            entityUpdate(entity.getId(), movePath);
+            entityUpdate(entity.getId(), movePath, true);
             if (entity.isDoomed()) {
                 send(createRemoveEntityPacket(entity.getId(),
                         entity.getRemovalCondition()));
@@ -12000,7 +12000,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Called to what players can see what units. this is used to determine who
+     * Called to what players can see what units. This is used to determine who
      * can see what in double blind reports.
      */
     private void resolveWhatPlayersCanSeeWhatUnits() {
@@ -25928,14 +25928,18 @@ public class Server implements Runnable {
      * everyone
      */
     public void entityUpdate(int nEntityID) {
-        entityUpdate(nEntityID, new Vector<UnitLocation>());
+        entityUpdate(nEntityID, new Vector<UnitLocation>(), true);
     }
 
     /**
      * In a double-blind game, update only visible entities. Otherwise, update
      * everyone
+     * @param updateVisibility Flag that determines if whoCanSee needs to be 
+     *                          called to update who can see the entity for 
+     *                          double-blind games.
      */
-    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath) {
+    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, boolean 
+            updateVisibility) {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
@@ -25954,7 +25958,12 @@ public class Server implements Runnable {
         // If we're doing double blind, be careful who can see it...
         if (doBlind()) {
             Vector<IPlayer> playersVector = game.getPlayersVector();
-            Vector<IPlayer> vCanSee = whoCanSee(eTarget);
+            Vector<IPlayer> vCanSee;
+            if (updateVisibility) {
+                vCanSee = whoCanSee(eTarget);
+            } else {
+                vCanSee = eTarget.getWhoCanSee();
+            }
 
             // If this unit has ECM, players with units effected by the ECM will
             //  need to know about this entity, even if they can't see it.
@@ -26444,23 +26453,31 @@ public class Server implements Runnable {
             e.setVisibleToEnemy(false);
             e.setDetectedByEnemy(false);
             Vector<IPlayer> vCanSee = whoCanSee(e, false);
+            e.clearSeenBy();
             for (IPlayer p : vCanSee) {
                 if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                     e.setVisibleToEnemy(true);
                     e.setEverSeenByEnemy(true);
-                }
-            }
-            Vector<IPlayer> vCanDetect = whoCanDetect(e);
-            for (IPlayer p : vCanDetect) {
-                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
+                    // If we can see it, it's detected
                     e.setDetectedByEnemy(true);
+                }
+                e.addBeenSeenBy(p);
+            }
+            // If the unit isn't visible, is it detected by sensors?
+            if (!e.isDetectedByEnemy()) {
+                Vector<IPlayer> vCanDetect = whoCanDetect(e);
+                for (IPlayer p : vCanDetect) {
+                    if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
+                        e.setDetectedByEnemy(true);
+                    }
+                    e.addBeenSeenBy(p);
                 }
             }
             // If this unit wasn't previously visible and is now visible, it's
             // possible that the enemy's client doesn't know about the unit
             if ((!previousVisibleValue && e.isVisibleToEnemy())
                     || (!previousDetectedValue && e.isDetectedByEnemy())) {
-                entityUpdate(e.getId());
+                entityUpdate(e.getId(), new Vector<UnitLocation>(), false);
             } else if ((previousVisibleValue != e.isVisibleToEnemy())
                     || (previousSeenValue != e.isEverSeenByEnemy())
                     || (previousDetectedValue != e.isDetectedByEnemy())) {

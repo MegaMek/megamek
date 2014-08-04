@@ -179,4 +179,10 @@
         </junitreport>
     </target>
 
+    <target name="jar-src" depends="unit.test" description="create source jar">
+        <jar destfile="${builddir}/>mm-src.jar" basedir="${srcdir}" compress="true">
+            <include name="**/*.java"/>
+        </jar>
+    </target>
+
 </project>

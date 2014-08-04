@@ -101,7 +101,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         // add the new current phase tab
         JTextPane ta = new JTextPane();
         setupStylesheet(ta);
-        ta.setText("<pre>" + c.phaseReport + "</pre>");
+        ta.setText("<pre>" + c.roundReport + "</pre>");
         ta.setEditable(false);
         ta.setOpaque(false);
 

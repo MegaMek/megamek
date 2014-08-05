@@ -41,6 +41,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -847,10 +848,23 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 
                 // Remove any currently mounted AP weapon
                 if (m_APmounted.getLinked() != null 
-                        && m_APmounted.getLinked().getType() != apType){
-                    entity.getEquipment().remove(m_APmounted.getLinked());
-                    entity.getWeaponList().remove(m_APmounted.getLinked());
-                    entity.getTotalWeaponList().remove(m_APmounted.getLinked());
+                        && m_APmounted.getLinked().getType() != apType) {
+                    Mounted apWeapon = m_APmounted.getLinked();
+                    entity.getEquipment().remove(apWeapon);
+                    entity.getWeaponList().remove(apWeapon);
+                    entity.getTotalWeaponList().remove(apWeapon);
+                    // We need to make sure that the weapon has been removed
+                    //  from the criticals, otherwise it can cause issues
+                    for (int loc = 0; loc < entity.locations(); loc++) {
+                        for (int c = 0; 
+                                c < entity.getNumberOfCriticals(loc); c++) {
+                            CriticalSlot crit = entity.getCritical(loc, c);
+                            if (crit != null && crit.getMount() != null 
+                                    && crit.getMount().equals(apWeapon)) {
+                                entity.setCritical(loc, c, null);
+                            }
+                        }
+                    }
                 }
                 
                 // Did the selection not change, or no weapon was selected

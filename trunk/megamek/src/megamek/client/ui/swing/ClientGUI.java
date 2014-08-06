@@ -733,7 +733,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             if (!GUIPreferences.getInstance().getFiringSolutions()){
                 bv.clearFiringSolutionData();
             } else {
-                if (curPanel instanceof FiringDisplay){
+                if (curPanel instanceof FiringDisplay) {
                     ((FiringDisplay) curPanel).setFiringSolutions();
                 }
             }

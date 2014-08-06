@@ -66,10 +66,7 @@ public class LoadGameCommand extends ServerCommand {
     private void load(File f, int connId) {
         server.sendServerChat(server.getPlayer(connId).getName()
                 + " loaded a new game.");
-        if(server.loadGame(f)) {
-            //reset the connections or the current clients will not get loaded to their own game
-            server.resetConnections();
-        } else {
+        if(!server.loadGame(f)) {
             server.sendServerChat(f.getName() + " could not be loaded");
         }
     }

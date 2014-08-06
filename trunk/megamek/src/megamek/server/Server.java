@@ -564,7 +564,17 @@ public class Server implements Runnable {
      * initialization before any players have connected.
      */
     public void setGame(IGame g) {
+        // game listeners are transient so we need to save and restore them
+        Vector<GameListener> gameListenersClone = new Vector<GameListener>();
+        for (GameListener listener : getGame().getGameListeners()) {
+            gameListenersClone.add(listener);
+        }
+        
         game = g;
+        
+        for (GameListener listener : gameListenersClone) {
+            getGame().addGameListener(listener);
+        }
 
         // reattach the transient fields and ghost the players
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
@@ -593,18 +603,6 @@ public class Server implements Runnable {
             }
         }
 
-    }
-
-    /**
-     * Resets all the connections. The only use of this right now is when games
-     * are loaded after clients have connected
-     */
-    public void resetConnections() {
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum
-                .hasMoreElements();) {
-            IConnection conn = connEnum.nextElement();
-            send(conn.getId(), new Packet(Packet.COMMAND_RESET_CONNECTION));
-        }
     }
 
     /**
@@ -1275,20 +1273,11 @@ public class Server implements Runnable {
                 sDir.mkdir();
             }
 
-            Vector<GameListener> gameListenersClone = new Vector<GameListener>();
-            for (GameListener listener : getGame().getGameListeners()) {
-                gameListenersClone.add(listener);
-            }
-            getGame().purgeGameListeners();
             sFinalFile = sDir + File.separator + sFinalFile;
-
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
             xstream.toXML(game, gzo);
             gzo.close();
-            for (GameListener listener : gameListenersClone) {
-                getGame().addGameListener(listener);
-            }
         } catch (Exception e) {
             System.err.println("Unable to save file: " + sFinalFile);
             e.printStackTrace();
@@ -1339,19 +1328,22 @@ public class Server implements Runnable {
      */
     public boolean loadGame(File f) {
         System.out.println("s: loading saved game file '" + f + '\'');
-        try {
+        IGame newGame;
+        try {            
             XStream xstream = new XStream();
-            game = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            newGame = (IGame) xstream.fromXML(new GZIPInputStream(
+                    new FileInputStream(f)));            
         } catch (Exception e) {
             System.err.println("Unable to load file: " + f);
             e.printStackTrace();
             return false;
         }
 
-        // a bit redundant, but there's some initialization code there
-        setGame(game);
-
+        setGame(newGame);
+        // update all the clients with the new game info
+        for (IConnection conn : connections) {
+            sendCurrentInfo(conn.getId());
+        }
         return true;
     }
 
@@ -28031,8 +28023,12 @@ public class Server implements Runnable {
             break;
         case Packet.COMMAND_LOAD_GAME:
             try {
+                sendServerChat(getPlayer(connId).getName()
+                        + " loaded a new game.");
                 setGame((IGame) packet.getObject(0));
-                resetConnections();
+                for (IConnection conn : connections) {
+                    sendCurrentInfo(conn.getId());
+                }
             } catch (Exception e) {
                 System.out.println("Error loading savegame sent from client");
             }

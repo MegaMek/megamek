@@ -847,9 +847,12 @@ public class Client implements IClientCommandHandler {
     public void sendLoadGame(File f) {
         try {
             XStream xstream = new XStream();
-            game = (IGame) xstream.fromXML(new GZIPInputStream(
+
+            game.reset();
+            IGame newGame = (IGame) xstream.fromXML(new GZIPInputStream(
                     new FileInputStream(f)));
-            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] {game}));
+           
+            send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] {newGame}));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Can't find local savegame " + f);
@@ -1134,10 +1137,6 @@ public class Client implements IClientCommandHandler {
         switch (c.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION:
                 disconnected();
-                break;
-            case Packet.COMMAND_RESET_CONNECTION:
-                disconnected();
-                connect();
                 break;
             case Packet.COMMAND_SERVER_GREETING:
                 connected = true;

@@ -312,7 +312,6 @@ public class Client implements IClientCommandHandler {
         if (!disconnectFlag) {
             disconnectFlag = true;
             if (connected) {
-                connected = false;
                 die();
             }
             if (!host.equals("localhost")) { //$NON-NLS-1$

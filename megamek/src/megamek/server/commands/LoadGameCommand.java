@@ -49,7 +49,15 @@ public class LoadGameCommand extends ServerCommand {
             return;
         }
         if (args.length > 1) {
-            load(new File("savegames", args[1]), connId);
+            String sFinalFile = args[1];
+            if (!sFinalFile.endsWith(".sav") 
+                    && !sFinalFile.endsWith(".sav.gz")) {
+                sFinalFile = sFinalFile + ".sav";
+            }
+            if (!sFinalFile.endsWith(".gz")) {
+                sFinalFile = sFinalFile + ".gz";
+            }
+            load(new File("savegames", sFinalFile), connId);
         } else {
             server.sendServerChat(connId, "you must provide a file name");
         }

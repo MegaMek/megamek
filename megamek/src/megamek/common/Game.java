@@ -160,6 +160,8 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private ArrayList<SmokeCloud> smokeCloudList = new ArrayList<SmokeCloud>();
+    
+    transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
     /**
      * Constructor
@@ -2960,14 +2962,16 @@ public class Game implements Serializable, IGame {
         return nemesisTargets.elements();
     }
 
-    private Vector<GameListener> gameListeners = new Vector<GameListener>();
-
     /**
      * Adds the specified game listener to receive board events from this board.
      *
      * @param listener the game listener.
      */
     public void addGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<GameListener>();
+        }
         gameListeners.addElement(listener);
     }
 
@@ -2977,6 +2981,10 @@ public class Game implements Serializable, IGame {
      * @param listener the game listener.
      */
     public void removeGameListener(GameListener listener) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<GameListener>();
+        }
         gameListeners.removeElement(listener);
     }
 
@@ -2986,6 +2994,10 @@ public class Game implements Serializable, IGame {
      * @return
      */
     public Vector<GameListener> getGameListeners() {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<GameListener>();
+        }
         return gameListeners;
     }
 
@@ -2993,6 +3005,10 @@ public class Game implements Serializable, IGame {
      * purges all Game Listener objects.
      */
     public void purgeGameListeners() {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<GameListener>();
+        }
         gameListeners.clear();
     }
 
@@ -3003,6 +3019,10 @@ public class Game implements Serializable, IGame {
      * @param event the game event.
      */
     public void processGameEvent(GameEvent event) {
+        // Since gameListeners is transient, it could be null
+        if (gameListeners == null) {
+            gameListeners = new Vector<GameListener>();
+        }
         for (Enumeration<GameListener> e = gameListeners.elements(); e
                 .hasMoreElements(); ) {
             event.fireEvent(e.nextElement());

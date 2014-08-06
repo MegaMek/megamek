@@ -1374,7 +1374,9 @@ public class Game implements Serializable, IGame {
 
         entities.removeAllElements();
         entityIds.clear();
-        entityPosLookup.clear();
+        if (entityPosLookup != null) {
+            entityPosLookup.clear();
+        }
 
         vOutOfGame.removeAllElements();
 

@@ -237,7 +237,7 @@ public class Compute {
                 || (entering instanceof Dropship)
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
-        ;
+        
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;

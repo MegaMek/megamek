@@ -404,14 +404,14 @@ public class Client implements IClientCommandHandler {
      * Returns the number of the first deployable entity
      */
     public int getFirstDeployableEntityNum() {
-        return game.getFirstDeployableEntityNum();
+        return game.getFirstDeployableEntityNum(getMyTurn());
     }
 
     /**
      * Returns the number of the next deployable entity
      */
     public int getNextDeployableEntityNum(int entityId) {
-        return game.getNextDeployableEntityNum(entityId);
+        return game.getNextDeployableEntityNum(getMyTurn(), entityId);
     }
 
     /**

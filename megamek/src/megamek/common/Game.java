@@ -1376,6 +1376,8 @@ public class Game implements Serializable, IGame {
         entityIds.clear();
         if (entityPosLookup != null) {
             entityPosLookup.clear();
+        } else {
+            new HashMap<Coords, HashSet<Entity>>(); 
         }
 
         vOutOfGame.removeAllElements();

@@ -118,6 +118,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         chType.setSelectedIndex(rsg.getType());
         chLevel.setSelectedIndex(rsg.getLevel());
         cForceClose.setSelected(rsg.isClose());
+        pack();
     }
 
     private void saveSettings() {

@@ -529,7 +529,15 @@ public class UnitOverview implements IDisplayable {
 
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
                 Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
-                iconName = v.elementAt(0);
+                iconName = "";
+                for (String tok : v) {                  
+                    String newName = iconName + " " + tok;
+                    if (metrics.stringWidth(newName) <= ICON_NAME_MAX_LENGTH) {
+                        iconName = newName;
+                    } else {
+                        break;
+                    }                    
+                }
             }
             return adjustString(iconName, metrics);
         } else if ((e instanceof Infantry) || (e instanceof Mech)

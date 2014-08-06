@@ -473,7 +473,11 @@ WindowListener, TreeSelectionListener {
             guip.setRATYearMax(m_tMaxYear.getText());
             guip.setRATPadBV(m_chkPad.isSelected());
             guip.setRATTechLevel(m_chType.getSelectedIndex());
-            guip.setRATSelectedRAT(m_treeRAT.getSelectionPath().toString());
+            if (m_treeRAT.getSelectionPath() != null) {
+                guip.setRATSelectedRAT(m_treeRAT.getSelectionPath().toString());
+            } else {
+                guip.setRATSelectedRAT("");
+            }
             
             setVisible(false);
         } else if (ev.getSource().equals(m_bClear)) {

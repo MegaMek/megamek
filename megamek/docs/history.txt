@@ -117,6 +117,7 @@ v0.39.1-dev (SVN)
     Weapon (v39.0)
 + Bug: RandomSkillDialog hides player selection combo box with long player names
 + Bug: Mek/Vee lance rules not working in deployment phase
++ Bug: NPE in RandomArmyDialog if no RAT is selected
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

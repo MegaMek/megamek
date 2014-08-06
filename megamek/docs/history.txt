@@ -151,6 +151,7 @@ v0.39.0 (2014-07-02 21:14 UTC)
 + Bug: Inf and Protos move multi option could cause extra turns to be added
 + Bug [#4178]: Must click in the wrong place to use the Unit Overview on maps
     that are thinner than the MegaMek window
++ Feature: Load command now aware of saved game file extensions, like LocalLoad
     
 v0.38.0-dev (2014-07-02 20:27 UTC)
 + Data: Unit and Image Fixes

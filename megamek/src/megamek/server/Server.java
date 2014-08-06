@@ -11456,12 +11456,26 @@ public class Server implements Runnable {
 
         // can this player/entity act right now?
         final boolean assaultDrop = packet.getBooleanValue(5);
-        if (!game.getTurn().isValid(connId, entity, game)
+        // can this player/entity act right now?
+        GameTurn turn = game.getTurn();
+        if (game.isPhaseSimultaneous()) {
+            turn = game.getTurnForPlayer(connId);
+        }
+        if ((turn == null) || !turn.isValid(connId, entity, game)
                 || !(game.getBoard().isLegalDeployment(coords,
                         entity.getStartingPos()) || (assaultDrop
                         && game.getOptions().booleanOption("assault_drop") && entity
                             .canAssaultDrop()))) {
-            System.err.println("error: server got invalid deployment packet");
+            String msg = "error: server got invalid deployment packet from "
+                    + "connection " + connId;
+            if (entity != null) {
+                msg += ", Entity: " + entity.getShortName();
+            } else {
+                msg += ", Entity was null!";
+            }
+            System.err.println(msg);
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket());
             return;
         }
 

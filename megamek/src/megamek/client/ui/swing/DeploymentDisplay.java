@@ -253,7 +253,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     private void endMyTurn() {
         // end my turn, then.
-        disableButtons();
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
         if ((IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().getGame()
@@ -268,6 +267,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.markDeploymentHexesFor(null);
+        disableButtons();
     }
 
     /**
@@ -361,15 +361,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().isMyTurn()) {
-            beginMyTurn();
-            setStatusBarText(Messages
-                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
-        } else {
-            endMyTurn();
-            setStatusBarText(Messages
-                    .getString(
-                            "DeploymentDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+        
+        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+	        if (clientgui.getClient().isMyTurn()) {
+	        	beginMyTurn();
+	            setStatusBarText(Messages
+	                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
+	        } else {
+	            endMyTurn();
+	            setStatusBarText(Messages
+	                    .getString(
+	                            "DeploymentDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+	        }
         }
     }
 
@@ -738,7 +741,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
-        // ignore
+        // Are we ignoring events?
+        if (isIgnoringEvents()) {
+            return;
+        }
+
+        if (clientgui.getClient().isMyTurn()) {
+            clientgui.setDisplayVisible(true);
+        }
     }
 
     // Selected a unit in the unit overview.

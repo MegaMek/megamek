@@ -1648,14 +1648,12 @@ jumpToPrevTarget();
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
 
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
-
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
@@ -1895,7 +1893,6 @@ jumpToPrevTarget();
     // board view listener
     @Override
     public void finishedMovingUnits(BoardViewEvent b) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -1909,7 +1906,6 @@ jumpToPrevTarget();
 
     @Override
     public void unitSelected(BoardViewEvent b) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

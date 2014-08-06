@@ -195,6 +195,7 @@ import megamek.common.net.DisconnectedEvent;
 import megamek.common.net.IConnection;
 import megamek.common.net.Packet;
 import megamek.common.net.PacketReceivedEvent;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.PreferenceManager;
@@ -1919,26 +1920,28 @@ public class Server implements Runnable {
                 turn = removed;
             }
         }
+        final Phase currPhase = game.getPhase();
+        final GameOptions gameOpts =  game.getOptions();
         final int playerId = null == entityUsed ? IPlayer.PLAYER_NONE
                 : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
-        boolean infMoveMulti = game.getOptions()
-                .booleanOption("inf_move_multi")
-                && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
-                        .getPhase() == IGame.Phase.PHASE_INITIATIVE));
+        boolean infMoveMulti = gameOpts.booleanOption("inf_move_multi")
+                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                        || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                        || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean protosMoved = entityUsed instanceof Protomech;
-        boolean protosMoveMulti = game.getOptions().booleanOption(
-                "protos_move_multi");
+        boolean protosMoveMulti = gameOpts.booleanOption("protos_move_multi");
         boolean tanksMoved = entityUsed instanceof Tank;
-        boolean tanksMoveMulti = game.getOptions().booleanOption(
+        boolean tanksMoveMulti = gameOpts.booleanOption(
                 "vehicle_lance_movement")
-                && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
-                        .getPhase() == IGame.Phase.PHASE_INITIATIVE));
+                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                        || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                        || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean meksMoved = entityUsed instanceof Mech;
-        boolean meksMoveMulti = game.getOptions().booleanOption(
-                "mek_lance_movement")
-                && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
-                        .getPhase() == IGame.Phase.PHASE_INITIATIVE));
+        boolean meksMoveMulti = gameOpts.booleanOption("mek_lance_movement")
+                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                        || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                        || (currPhase == IGame.Phase.PHASE_INITIATIVE));
 
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
@@ -1963,7 +1966,8 @@ public class Server implements Runnable {
         if ((turnIndex + 1) < turnVector.size()) {
             GameTurn nextTurn = turnVector.get(turnIndex + 1);
             if (nextTurn instanceof GameTurn.SpecificEntityTurn) {
-                GameTurn.SpecificEntityTurn seTurn = (GameTurn.SpecificEntityTurn) nextTurn;
+                GameTurn.SpecificEntityTurn seTurn = 
+                        (GameTurn.SpecificEntityTurn) nextTurn;
                 if (seTurn.getEntityNum() == entityUsed.getId()) {
                     turnIndex++;
                     usedEntityNotDone = true;
@@ -2014,8 +2018,8 @@ public class Server implements Runnable {
             }
         }
         // Otherwise, we may need to add turns for the "*_move_multi" options.
-        else if (((infMoved && infMoveMulti) || (protosMoved && protosMoveMulti))
-                && !isMultiTurn) {
+        else if (((infMoved && infMoveMulti) 
+                || (protosMoved && protosMoveMulti)) && !isMultiTurn) {
             int remaining = 0;
 
             // Calculate the number of EntityClassTurns need to be added.
@@ -2029,8 +2033,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreInfAndProtoTurns = Math.min(
-                    game.getOptions().intOption("inf_proto_move_multi") - 1,
-                    remaining);
+                    gameOpts.intOption("inf_proto_move_multi") - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
@@ -2048,8 +2051,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreVeeTurns = Math.min(
-                    game.getOptions()
-                            .intOption("vehicle_lance_movement_number") - 1,
+                    gameOpts.intOption("vehicle_lance_movement_number") - 1,
                     remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -2067,9 +2069,9 @@ public class Server implements Runnable {
             if (usedEntityNotDone) {
                 remaining--;
             }
-            int moreMekTurns = Math
-                    .min(game.getOptions().intOption(
-                            "mek_lance_movement_number") - 1, remaining);
+            int moreMekTurns = Math.min(
+                    gameOpts.intOption("mek_lance_movement_number") - 1,
+                    remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreMekTurns; i++) {

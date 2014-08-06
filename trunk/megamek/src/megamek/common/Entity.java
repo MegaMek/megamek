@@ -1342,7 +1342,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public HashSet<Coords> getOccupiedCoords() {
         HashSet<Coords> positions = new HashSet<Coords>();
-        if (getSecondaryPositions() != null) {
+        if (getSecondaryPositions() != null 
+                && getSecondaryPositions().size() != 0) {
             for (int key : getSecondaryPositions().keySet()) {
                 positions.add(getSecondaryPositions().get(key));
             }

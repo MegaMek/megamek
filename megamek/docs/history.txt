@@ -124,6 +124,7 @@ v0.39.1-dev (SVN)
 + Bug: Simultaneous Deployment not working because of missing code in Client.java
 + Bug [#4219]: Issues with stacking violations and MovePaths (Temporary Hack Fix)
 + Bug [#4220]: Client issues with Load and LocalLoad Commands
++ Bug: SocketException: Broken Pipe when disconnecting from server
 
 
 v0.39.0 (2014-07-02 21:14 UTC)

@@ -19,7 +19,7 @@
 #############################################################################
 Mercenary Periphery General 3028 Medium Vehicles A
 Vedette Medium Tank (AC2),56
-Vedette Medium Tank (AC2),506
+Vedette Medium Tank (Standard),506
 Hetzer Wheeled Assault Gun (Laser),11
 Goblin Medium Tank (Standard),34
 Hetzer Wheeled Assault Gun (Standard),135

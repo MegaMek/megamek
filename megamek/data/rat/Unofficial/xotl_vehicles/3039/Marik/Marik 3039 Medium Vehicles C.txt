@@ -21,7 +21,7 @@ Marik 3039 Medium Vehicles C
 @Liao 3028 Medium Vehicles C,25
 @Steiner 3028 Medium Vehicles C,25
 Vedette Medium Tank (AC2),66
-Vedette Medium Tank (AC2),593
+Vedette Medium Tank (Standard),593
 Hetzer Wheeled Assault Gun (Laser),8
 Hetzer Wheeled Assault Gun (Standard),68
 Hetzer Wheeled Assault Gun (SRM),8

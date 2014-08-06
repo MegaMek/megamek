@@ -19,7 +19,7 @@
 #############################################################################
 Marik 3039 Medium Vehicles A
 Vedette Medium Tank (AC2),16
-Vedette Medium Tank (AC2),593
+Vedette Medium Tank (Standard),593
 Hetzer Wheeled Assault Gun (Laser),8
 Hetzer Wheeled Assault Gun (Standard),68
 Hetzer Wheeled Assault Gun (SRM),8

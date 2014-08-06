@@ -21,7 +21,7 @@ Liao 3039 Medium Vehicles D
 @Davion 3028 Medium Vehicles D,46
 @Marik 3028 Medium Vehicles D,64
 Vedette Medium Tank (AC2),29
-Vedette Medium Tank (AC2),358
+Vedette Medium Tank (Standard),358
 Vedette Medium Tank (Liao),97
 Hetzer Wheeled Assault Gun (Laser),19
 Goblin Medium Tank (MG),6

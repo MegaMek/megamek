@@ -21,7 +21,7 @@ Steiner 3028 Medium Vehicles D
 @Kurita 3028 Medium Vehicles D,50
 @Marik 3028 Medium Vehicles D,50
 Vedette Medium Tank (AC2),51
-Vedette Medium Tank (AC2),455
+Vedette Medium Tank (Standard),455
 Hetzer Wheeled Assault Gun (Laser),6
 Hetzer Wheeled Assault Gun (Standard),53
 Hetzer Wheeled Assault Gun (SRM),6

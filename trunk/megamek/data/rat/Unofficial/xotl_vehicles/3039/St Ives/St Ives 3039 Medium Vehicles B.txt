@@ -19,7 +19,7 @@
 #############################################################################
 St Ives 3039 Medium Vehicles B
 Vedette Medium Tank (AC2),29
-Vedette Medium Tank (AC2),361
+Vedette Medium Tank (Standard),361
 Vedette Medium Tank (Liao),98
 Hetzer Wheeled Assault Gun (Laser),20
 Goblin Medium Tank (MG),6

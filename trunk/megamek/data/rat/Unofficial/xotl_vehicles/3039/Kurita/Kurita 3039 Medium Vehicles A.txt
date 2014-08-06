@@ -19,7 +19,7 @@
 #############################################################################
 Kurita 3039 Medium Vehicles A
 Vedette Medium Tank (AC2),20
-Vedette Medium Tank (AC2),543
+Vedette Medium Tank (Standard),543
 Hetzer Wheeled Assault Gun (Laser),7
 Goblin Medium Tank (Standard),31
 Hetzer Wheeled Assault Gun (Standard),63

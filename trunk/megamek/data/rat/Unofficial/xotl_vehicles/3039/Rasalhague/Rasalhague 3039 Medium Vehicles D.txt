@@ -21,7 +21,7 @@ Rasalhague 3039 Medium Vehicles D
 @Davion 3028 Medium Vehicles D,10
 @Steiner 3028 Medium Vehicles D,90
 Vedette Medium Tank (AC2),59
-Vedette Medium Tank (AC2),527
+Vedette Medium Tank (Standard),527
 Hetzer Wheeled Assault Gun (Laser),7
 Goblin Medium Tank (Standard),30
 Hetzer Wheeled Assault Gun (Standard),96

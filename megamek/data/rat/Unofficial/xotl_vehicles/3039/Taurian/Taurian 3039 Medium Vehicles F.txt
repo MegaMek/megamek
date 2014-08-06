@@ -20,7 +20,7 @@
 Taurian 3039 Medium Vehicles F
 @Davion 3028 Medium Vehicles F,150
 Vedette Medium Tank (AC2),55
-Vedette Medium Tank (AC2),497
+Vedette Medium Tank (Standard),497
 Hetzer Wheeled Assault Gun (Laser),11
 Goblin Medium Tank (Standard),33
 Hetzer Wheeled Assault Gun (Standard),133

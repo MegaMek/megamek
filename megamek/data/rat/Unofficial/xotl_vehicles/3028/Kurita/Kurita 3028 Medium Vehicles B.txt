@@ -19,7 +19,7 @@
 #############################################################################
 Kurita 3028 Medium Vehicles B
 Vedette Medium Tank (AC2),64
-Vedette Medium Tank (AC2),577
+Vedette Medium Tank (Standard),577
 Hetzer Wheeled Assault Gun (Laser),8
 Goblin Medium Tank (Standard),33
 Hetzer Wheeled Assault Gun (Standard),67

@@ -21,7 +21,7 @@ Davion 3039 Medium Vehicles D
 @Kurita 3028 Medium Vehicles D,43
 @Liao 3028 Medium Vehicles D,77
 Vedette Medium Tank (AC2),44
-Vedette Medium Tank (AC2),397
+Vedette Medium Tank (Standard),397
 Hetzer Wheeled Assault Gun (Laser),5
 Goblin Medium Tank (MG),36
 Goblin Medium Tank (Standard),107

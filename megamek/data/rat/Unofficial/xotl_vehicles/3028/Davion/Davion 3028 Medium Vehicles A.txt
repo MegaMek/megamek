@@ -18,7 +18,8 @@
 #   receives a base Weight of 100.                                          #
 #############################################################################
 Davion 3028 Medium Vehicles A
-Vedette Medium Tank (AC2),450
+Vedette Medium Tank (AC2),50
+Vedette Medium Tank (Standard),450
 Hetzer Wheeled Assault Gun (Laser),6
 Goblin Medium Tank (MG),40
 Goblin Medium Tank (Standard),120

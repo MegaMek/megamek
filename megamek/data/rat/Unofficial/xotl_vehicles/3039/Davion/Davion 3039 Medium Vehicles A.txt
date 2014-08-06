@@ -19,7 +19,7 @@
 #############################################################################
 Davion 3039 Medium Vehicles A
 Vedette Medium Tank (AC2),14
-Vedette Medium Tank (AC2),397
+Vedette Medium Tank (Standard),397
 Hetzer Wheeled Assault Gun (Laser),5
 Goblin Medium Tank (MG),36
 Goblin Medium Tank (Standard),107

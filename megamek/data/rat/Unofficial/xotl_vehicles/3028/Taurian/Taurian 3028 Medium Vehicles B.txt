@@ -19,7 +19,7 @@
 #############################################################################
 Taurian 3028 Medium Vehicles B
 Vedette Medium Tank (AC2),59
-Vedette Medium Tank (AC2),532
+Vedette Medium Tank (Standard),532
 Hetzer Wheeled Assault Gun (Laser),12
 Goblin Medium Tank (Standard),36
 Hetzer Wheeled Assault Gun (Standard),143

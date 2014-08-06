@@ -21,7 +21,7 @@ Kurita 3039 Medium Vehicles B
 @Davion 3028 Medium Vehicles B,5
 @Steiner 3028 Medium Vehicles B,5
 Vedette Medium Tank (AC2),60
-Vedette Medium Tank (AC2),543
+Vedette Medium Tank (Standard),543
 Hetzer Wheeled Assault Gun (Laser),7
 Goblin Medium Tank (Standard),31
 Hetzer Wheeled Assault Gun (Standard),63

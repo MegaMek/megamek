@@ -24,7 +24,7 @@ Mercenary Periphery General 3039 Medium Vehicles F
 @Marik 3028 Medium Vehicles F,40
 @Steiner 3028 Medium Vehicles F,40
 Vedette Medium Tank (AC2),52
-Vedette Medium Tank (AC2),473
+Vedette Medium Tank (Standard),473
 Hetzer Wheeled Assault Gun (Laser),10
 Goblin Medium Tank (Standard),31
 Hetzer Wheeled Assault Gun (Standard),126

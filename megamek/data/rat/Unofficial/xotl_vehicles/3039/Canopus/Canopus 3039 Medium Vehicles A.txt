@@ -19,7 +19,7 @@
 #############################################################################
 Canopus 3039 Medium Vehicles A
 Vedette Medium Tank (AC2),15
-Vedette Medium Tank (AC2),490
+Vedette Medium Tank (Standard),490
 Hetzer Wheeled Assault Gun (Laser),11
 Goblin Medium Tank (Standard),33
 Hetzer Wheeled Assault Gun (Standard),131

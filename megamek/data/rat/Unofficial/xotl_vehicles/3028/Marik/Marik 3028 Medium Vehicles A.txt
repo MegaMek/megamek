@@ -19,7 +19,7 @@
 #############################################################################
 Marik 3028 Medium Vehicles A
 Vedette Medium Tank (AC2),20
-Vedette Medium Tank (AC2),629
+Vedette Medium Tank (Standard),629
 Hetzer Wheeled Assault Gun (Laser),8
 Hetzer Wheeled Assault Gun (Standard),73
 Hetzer Wheeled Assault Gun (SRM),8

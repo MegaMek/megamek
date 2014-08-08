@@ -81,7 +81,7 @@ public class AttackOption extends ToHitData {
     // TODO: Add argument for the precise bin of ammo being used for this option
     // so it can be reloaded later
     public AttackOption(CEntity target, Mounted weapon, double value,
-            ToHitData toHit, int sec_mod) {
+            ToHitData toHit, int sec_mod, boolean natApGunnery) {
         this.target = target;
         this.weapon = weapon;
         this.toHit = toHit;
@@ -94,7 +94,7 @@ public class AttackOption extends ToHitData {
             WeaponType w = (WeaponType) weapon.getType();
 
             // As a primary attack. Damage is already odds-adjusted.
-            primary_odds = Compute.oddsAbove(toHit.getValue()) / 100.0;
+            primary_odds = Compute.oddsAbove(toHit.getValue(), natApGunnery) / 100.0;
             primary_expected = this.value;
 
             // As a secondary attack. Raw damage is extracted, then adjusted
@@ -105,7 +105,7 @@ public class AttackOption extends ToHitData {
                 odds = 0.0;
             } else {
                 odds = sec_mod <= 12 ? (Compute.oddsAbove(toHit.getValue()
-                        + sec_mod) / 100.0) : 0.0;
+                        + sec_mod, natApGunnery) / 100.0) : 0.0;
             }
             heat = weapon.getCurrentHeat();
             expected = this.value / primary_odds;

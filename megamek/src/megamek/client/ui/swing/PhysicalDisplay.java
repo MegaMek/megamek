@@ -413,7 +413,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.PunchDialog.message", new Object[] {//$NON-NLS-1$
                         rightArm.getValueAsString(),
-                        new Double(Compute.oddsAbove(rightArm.getValue())),
+                        new Double(Compute.oddsAbove(rightArm.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         rightArm.getDesc(),
                         new Integer(PunchAttackAction.getDamageFor(ce(),
                                 PunchAttackAction.RIGHT,
@@ -421,7 +422,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                         && !(target instanceof BattleArmor))),
                         rightArm.getTableDesc(),
                         leftArm.getValueAsString(),
-                        new Double(Compute.oddsAbove(leftArm.getValue())),
+                        new Double(Compute.oddsAbove(leftArm.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         leftArm.getDesc(),
                         new Integer(PunchAttackAction.getDamageFor(ce(),
                                 PunchAttackAction.LEFT,
@@ -578,7 +580,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.KickDialog.message", new Object[] {//$NON-NLS-1$
                         attackLeg.getValueAsString(),
-                        new Double(Compute.oddsAbove(attackLeg.getValue())),
+                        new Double(Compute.oddsAbove(attackLeg.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         attackLeg.getDesc(),
                         KickAttackAction.getDamageFor(ce(), attackSide,
                                 (target instanceof Infantry)
@@ -614,7 +617,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.PushDialog.message", new Object[] {//$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -642,7 +646,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.TripDialog.message", new Object[] { //$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -677,7 +682,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.GrappleDialog.message", new Object[] { //$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc() });
         if (counter) {
             message = Messages
@@ -685,8 +691,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                             "PhysicalDisplay.CounterGrappleDialog.message", new Object[] { //$NON-NLS-1$
                                     target.getDisplayName(),
                                     toHit.getValueAsString(),
-                                    new Double(Compute.oddsAbove(toHit
-                                            .getValue())), toHit.getDesc() });
+                                    new Double(Compute.oddsAbove(toHit.getValue(),
+                                            ce().getCrew().getOptions().booleanOption("aptitude_piloting"))), toHit.getDesc() });
         }
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -710,7 +716,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.BreakGrappleDialog.message", new Object[] { //$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                        		ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -739,7 +746,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.BAVibroClawDialog.message", new Object[] {//$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc(),
                         ce().getVibroClaws() + toHit.getTableDesc() });
 
@@ -772,8 +780,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     JumpJetAttackAction.LEFT);
             int d_right = JumpJetAttackAction.getDamageFor(ce(),
                     JumpJetAttackAction.RIGHT);
-            if ((d_left * Compute.oddsAbove(left.getValue())) > (d_right
-                    * Compute.oddsAbove(right.getValue()))) {
+            if ((d_left * Compute.oddsAbove(left.getValue(),
+                    ce().getCrew().getOptions().booleanOption("aptitude_piloting"))) > (d_right
+                    * Compute.oddsAbove(right.getValue(),
+                            ce().getCrew().getOptions().booleanOption("aptitude_piloting")))) {
                 toHit = left;
                 leg = JumpJetAttackAction.LEFT;
                 damage = d_left;
@@ -790,7 +800,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.JumpJetDialog.message", new Object[] { //$NON-NLS-1$
                 toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc(), damage });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -866,7 +877,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.ClubDialog.message", new Object[] {//$NON-NLS-1$
                         toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                        		ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc(),
                         ClubAttackAction.getDamageFor(ce(), club,
                                 (target instanceof Infantry)
@@ -907,7 +919,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.ClubDialog.message", new Object[] { //$NON-NLS-1$
                         toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                        		ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc(),
                         ClubAttackAction.getDamageFor(ce(), club,
                                 (target instanceof Infantry)
@@ -939,7 +952,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.ProtoMechAttackDialog.message", new Object[] {//$NON-NLS-1$
                         proto.getValueAsString(),
-                        new Double(Compute.oddsAbove(proto.getValue())),
+                        new Double(Compute.oddsAbove(proto.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         proto.getDesc(),
                         ProtomechPhysicalAttackAction.getDamageFor(ce(), target)
                                 + proto.getTableDesc() });
@@ -1035,8 +1049,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             left = Messages
                     .getString("PhysicalDisplay.LAHit", new Object[] {//$NON-NLS-1$
                                     toHitLeft.getValueAsString(),
-                                    new Double(Compute.oddsAbove(toHitLeft
-                                            .getValue())),
+                                    new Double(Compute.oddsAbove(toHitLeft.getValue(),
+                                            ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                                     new Integer(damageLeft) });
         }
 
@@ -1048,8 +1062,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             right = Messages
                     .getString("PhysicalDisplay.RAHit", new Object[] {//$NON-NLS-1$
                                     toHitRight.getValueAsString(),
-                                    new Double(Compute.oddsAbove(toHitRight
-                                            .getValue())),
+                                    new Double(Compute.oddsAbove(toHitRight.getValue(),
+                                            ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                                     new Integer(damageRight) });
         }
 
@@ -1149,7 +1163,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String message = Messages.getString(
                 "PhysicalDisplay.TrashDialog.message", new Object[] {//$NON-NLS-1$
                         toHit.getValueAsString(),
-                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        new Double(Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                         toHit.getDesc(),
                         ThrashAttackAction.getDamageFor(ce())
                                 + toHit.getTableDesc() });

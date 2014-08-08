@@ -51,6 +51,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "weapon_specialist", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "aptitude_gunnery", false); //$NON-NLS-1$
+        addOption(adv, "aptitude_piloting", false); //$NON-NLS-1$
         addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
         addOption(adv, "gunnery_missile", false); //$NON-NLS-1$

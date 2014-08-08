@@ -2500,7 +2500,8 @@ public class Compute {
             if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                 fChance = 1.0f;
             } else {
-                fChance = (float) Compute.oddsAbove(hitData.getValue()) / 100.0f;
+                fChance = (float) Compute.oddsAbove(hitData.getValue(),
+                        attacker.getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0f;
             }
         }
 

@@ -145,7 +145,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
-    public MechDisplay mechD;
+    public UnitDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
     private MapMenu popup;
@@ -430,7 +430,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
-        mechD = new MechDisplay(this);
+        mechD = new UnitDisplay(this);
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
 

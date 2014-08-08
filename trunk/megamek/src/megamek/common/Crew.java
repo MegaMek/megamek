@@ -775,9 +775,16 @@ public class Crew implements Serializable {
     public int rollGunnerySkill() {
         if(getOptions().booleanOption("aptitude_gunnery")) {
             return Compute.d6(3,2);
-        } else {
-             return Compute.d6(2);
         }
+        
+        return Compute.d6(2);
     }
 
+    public int rollPilotingSkill() {
+        if(getOptions().booleanOption("aptitude_piloting")) {
+            return Compute.d6(3,2);
+        }
+        
+        return Compute.d6(2);
+    }
 }

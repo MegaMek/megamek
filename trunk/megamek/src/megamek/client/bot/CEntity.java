@@ -310,7 +310,8 @@ public class CEntity {
 
         overall_armor_percent = entity.getArmorRemainingPercent();
         base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll()
-                .getValue()) / 100;
+                .getValue(),
+                entity.getCrew().getOptions().booleanOption("aptitude_piloting")) / 100;
 
         // Heat characterisation - how badly will a Mech overheat this round
         int heat_capacity = entity.getHeatCapacity();
@@ -385,7 +386,8 @@ public class CEntity {
                 // Base damage, adjusted for odds of hitting
                 cur_weapon_damage[1] = (tsm_offset ? 1.0 : 0.5)
                         * (entity.getWeight() / 10)
-                        * (Compute.oddsAbove(entity.getCrew().getPiloting()) / 100);
+                        * (Compute.oddsAbove(entity.getCrew().getPiloting(),
+                        		entity.getCrew().getOptions().booleanOption("aptitude_piloting")) / 100);
 
                 // Either a kick or double-punch to the front
                 overall_damage[Compute.ARC_FORWARD][1] = 2.0 * cur_weapon_damage[1];
@@ -402,7 +404,8 @@ public class CEntity {
 
                 overall_damage[Compute.ARC_360][0] = (hits_by_racksize[number_of_shooters]
                         * ((BattleArmor) entity).getVibroClaws()
-                        * Compute.oddsAbove(gunnery)) / 100.0;
+                        * Compute.oddsAbove(gunnery,
+                        		entity.getCrew().getOptions().booleanOption("aptitude_gunnery"))) / 100.0;
             }
 
             // Iterate over each weapon, calculating average damage

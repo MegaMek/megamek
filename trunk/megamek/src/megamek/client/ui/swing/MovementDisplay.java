@@ -1413,7 +1413,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                             toHit.getValueAsString(),
                                                     new Double(
                                                             Compute.oddsAbove(toHit
-                                                                    .getValue())),
+                                                                    .getValue(),
+                                                                    ce().getCrew().getOptions().booleanOption("aptitude_piloting"))),
                                                     toHit.getDesc(),
                                                     new Integer(toDefender),
                                                     toHit.getTableDesc(),

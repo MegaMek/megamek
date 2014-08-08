@@ -297,7 +297,8 @@ public class FireCommand extends ClientCommand {
                 str += " Can't hit: " + toHit.getValueAsString();
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
-                        + Compute.oddsAbove(toHit.getValue()) + "%)";
+                        + Compute.oddsAbove(toHit.getValue(),
+                        		ce().getCrew().getOptions().booleanOption("aptitude_gunnery")) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

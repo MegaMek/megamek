@@ -18,6 +18,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.ConvFighter;
 import megamek.common.Coords;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -28,6 +29,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.options.GameOptions;
+import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -146,6 +148,13 @@ public class BasicPathRankerTest {
 
         Entity mockMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockMech.getMASCTarget()).thenReturn(3);
+
+        Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockMech.getCrew()).thenReturn(mockCrew);
+
+        PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
 
         MovePath mockPath = Mockito.mock(MovePath.class);
         Mockito.when(mockPath.hasActiveMASC()).thenReturn(false);
@@ -1163,11 +1172,19 @@ public class BasicPathRankerTest {
         Entity mockEnemy = Mockito.mock(BipedMech.class);
         int testDistance = 10;
         IGame mockGame = Mockito.mock(IGame.class);
+
         Entity mockMe = Mockito.mock(BipedMech.class);
         Mockito.when(mockMe.getMaxWeaponRange()).thenReturn(21);
         Mockito.when(mockMe.getId()).thenReturn(1);
         MovePath mockPath = Mockito.mock(MovePath.class);
         Mockito.when(mockPath.getEntity()).thenReturn(mockMe);
+
+        Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockMe.getCrew()).thenReturn(mockCrew);
+
+        PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
 
         FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);

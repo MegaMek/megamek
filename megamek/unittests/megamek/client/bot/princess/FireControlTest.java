@@ -48,6 +48,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
@@ -746,6 +747,14 @@ public class FireControlTest {
         Targetable mockTarget = Mockito.mock(BipedMech.class);
         Mockito.when(((Entity) mockTarget).getArmorType(Mockito.anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         FireControl testFireControl = new FireControl(mockPrincess);
+
+        Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockShooter.getCrew()).thenReturn(mockCrew);
+        Mockito.when(((Entity) mockTarget).getCrew()).thenReturn(mockCrew);
+
+        PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
 
         ArrayList<Mounted> testAmmoList = new ArrayList<>(5);
         testAmmoList.add(mockAmmoAtm5He);

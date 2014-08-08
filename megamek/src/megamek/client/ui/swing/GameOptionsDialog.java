@@ -28,12 +28,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,6 +43,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -84,6 +92,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private JTextField texPass = new JTextField(15);
 
     private JPanel panButtons = new JPanel();
+    private JButton butSave = new JButton(Messages
+            .getString("GameOptionsDialog.Save")); //$NON-NLS-1$
+    private JButton butLoad = new JButton(Messages
+            .getString("GameOptionsDialog.Load")); //$NON-NLS-1$
     private JButton butDefaults = new JButton(Messages
             .getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -605,12 +617,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         butDefaults.addActionListener(this);
+        butSave.addActionListener(this);
+        butLoad.addActionListener(this);
 
         panButtons.add(butOkay);
-
         panButtons.add(butCancel);
-
         panButtons.add(butDefaults);
+        panButtons.add(butSave);
+        panButtons.add(butLoad);
     }
 
     private void setupPassword() {
@@ -631,9 +645,75 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         } else if (e.getSource().equals(butDefaults)) {
             resetToDefaults();
             return;
+        } else if (e.getSource().equals(butSave)) {
+            File gameOptsFile = selectGameOptionsFile(true);
+            if (gameOptsFile != null) {
+                GameOptions.saveOptions(getOptions(), 
+                        gameOptsFile.getAbsolutePath());
+            }
+            return;
+        } else if (e.getSource().equals(butLoad)) {
+            File gameOptsFile = selectGameOptionsFile(false);
+            if (gameOptsFile != null) {
+                options.loadOptions(gameOptsFile, false);
+                refreshOptions();
+            }
+            return;
         }
 
         setVisible(false);
+    }
+    
+    private File selectGameOptionsFile(boolean saveDialog) {
+        JFileChooser fc = new JFileChooser("mmconf"); //$NON-NLS-1$
+        fc.setLocation(getLocation().x + 150, getLocation().y + 100);
+        //fc.setDialogTitle(Messages.getString(
+        //        "GameOptionsDialog.FileChooser.title")); //$NON-NLS-1$
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                if (dir.isDirectory()) {
+                    return true;
+                } else if (dir.getName().endsWith(".xml")) {
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    try {
+                        DocumentBuilder builder = dbf.newDocumentBuilder();
+                        Document doc = builder.parse(dir);
+                        NodeList listOfComponents = 
+                                doc.getElementsByTagName("options");
+                        if (listOfComponents.getLength() > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } catch (Exception e) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public String getDescription() {
+                return "GameOptions"; //$NON-NLS-1$
+            }
+        });
+        int returnVal;
+        if (saveDialog) {
+            returnVal = fc.showSaveDialog(this);
+        } else {
+            returnVal = fc.showOpenDialog(this);
+        }
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
+            return null;
+        }
+        File result = fc.getSelectedFile();
+        if (!result.getName().endsWith(".xml")) {
+            result = new File (result + ".xml");
+        }
+        return result;
     }
 
     /**

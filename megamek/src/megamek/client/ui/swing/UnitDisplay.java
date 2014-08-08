@@ -126,7 +126,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * Displays the info for a mech. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class MechDisplay extends JPanel {
+public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
 
     /**
@@ -151,7 +151,7 @@ public class MechDisplay extends JPanel {
     /**
      * Creates and lays out a new mech display.
      */
-    public MechDisplay(ClientGUI clientgui) {
+    public UnitDisplay(ClientGUI clientgui) {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 

@@ -4335,7 +4335,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                         if ((game != null)
                                 && checkECM
-                                && Compute.isAffectedByAngelECM(this,
+                                && ComputeECM.isAffectedByAngelECM(this,
                                                                 getPosition(), getPosition())) {
                             return false;
                         }
@@ -4343,7 +4343,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     }
                     return !checkECM
                             || (game == null)
-                            || !Compute.isAffectedByECM(this, getPosition(),
+                            || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                         getPosition());
                 }
             }
@@ -4356,13 +4356,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 .getOptions().booleanOption("vdni") || crew
                 .getOptions().booleanOption("bvdni")))) {
             return !checkECM
-                    || !Compute.isAffectedByECM(this, getPosition(),
+                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                 getPosition());
         }
         // check for quirk
         if (hasQuirk("imp_sensors")) {
             return !checkECM
-                    || !Compute.isAffectedByECM(this, getPosition(),
+                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                 getPosition());
         }
 
@@ -4877,13 +4877,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while ((master != null)
                 && !master.equals(m)
                 && master.hasC3()
-                && ((m.hasBoostedC3() && !Compute.isAffectedByAngelECM(m,
+                && ((m.hasBoostedC3() && !ComputeECM.isAffectedByAngelECM(m,
                                                                        m.getPosition(),
-                                                                       master.getPosition())) || !(Compute
+                                                                       master.getPosition())) || !(ComputeECM
                 .isAffectedByECM(m, m.getPosition(),
                                  master.getPosition())))
-                && ((master.hasBoostedC3() && !Compute.isAffectedByAngelECM(
-                master, master.getPosition(), master.getPosition())) || !(Compute
+                && ((master.hasBoostedC3() && !ComputeECM.isAffectedByAngelECM(
+                master, master.getPosition(), master.getPosition())) || !(ComputeECM
                 .isAffectedByECM(master, master.getPosition(),
                                  master.getPosition())))) {
             m = master;
@@ -5094,9 +5094,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ignoreECM) {
                 return true;
             }
-            return !(Compute.isAffectedByECM(e, e.getPosition(),
+            return !(ComputeECM.isAffectedByECM(e, e.getPosition(),
                                              e.getPosition()))
-                    && !(Compute.isAffectedByECM(this, getPosition(),
+                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                  getPosition()));
         }
 
@@ -5108,9 +5108,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ignoreECM) {
                 return true;
             }
-            return !(Compute.isAffectedByNovaECM(e, e.getPosition(),
+            return !(ComputeECM.isAffectedByNovaECM(e, e.getPosition(),
                                                  e.getPosition()))
-                    && !(Compute.isAffectedByNovaECM(this, getPosition(),
+                    && !(ComputeECM.isAffectedByNovaECM(this, getPosition(),
                                                      getPosition()));
         }
 

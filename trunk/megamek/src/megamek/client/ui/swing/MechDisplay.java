@@ -85,6 +85,7 @@ import megamek.common.AmmoType;
 import megamek.common.ArmlessMech;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
@@ -3585,10 +3586,10 @@ public class MechDisplay extends JPanel {
 
                 // Show ECM affect.
                 Coords pos = en.getPosition();
-                if (Compute.isAffectedByAngelECM(en, pos, pos)) {
+                if (ComputeECM.isAffectedByAngelECM(en, pos, pos)) {
                     ((DefaultListModel<String>) narcList.getModel()).addElement(Messages
                             .getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
-                } else if (Compute.isAffectedByECM(en, pos, pos)) {
+                } else if (ComputeECM.isAffectedByECM(en, pos, pos)) {
                     ((DefaultListModel<String>) narcList.getModel()).addElement(Messages
                             .getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
                 }

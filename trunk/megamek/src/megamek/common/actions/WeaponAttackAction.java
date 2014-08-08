@@ -25,6 +25,7 @@ import megamek.common.BipedMech;
 import megamek.common.BombType;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
@@ -292,10 +293,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         // for attacks where ECM along flight path makes a difference
-        boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(),
+        boolean isECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(),
                 target.getPosition());
         // for attacks where only ECM on the target hex makes a difference
-        boolean isTargetECMAffected = Compute.isAffectedByECM(ae,
+        boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                 target.getPosition(), target.getPosition());
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
@@ -721,10 +722,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Space ECM
         if (game.getBoard().inSpace()
                 && game.getOptions().booleanOption("stratops_ecm")) {
-            int ecm = Compute.getLargeCraftECM(ae, ae.getPosition(),
+            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(),
                     target.getPosition());
             if (!ae.isLargeCraft()) {
-                ecm += Compute.getSmallCraftECM(ae, ae.getPosition(),
+                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(),
                         target.getPosition());
             }
             ecm = Math.min(4, ecm);
@@ -1032,7 +1033,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (te != null)
                 && ae.hasBAP()
                 && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !Compute.isAffectedByECM(ae, ae.getPosition(),
+                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(),
                         te.getPosition())
                 && (game.getBoard().getHex(te.getPosition())
                         .containsTerrain(Terrains.WOODS)
@@ -2156,10 +2157,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Space ECM
         if (game.getBoard().inSpace()
                 && game.getOptions().booleanOption("stratops_ecm")) {
-            int ecm = Compute.getLargeCraftECM(ae, ae.getPosition(),
+            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(),
                     target.getPosition());
             if (!ae.isLargeCraft()) {
-                ecm += Compute.getSmallCraftECM(ae, ae.getPosition(),
+                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(),
                         target.getPosition());
             }
             ecm = Math.min(4, ecm);
@@ -2324,7 +2325,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (te != null)
                 && ae.hasBAP()
                 && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !Compute.isAffectedByECM(ae, ae.getPosition(),
+                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(),
                         te.getPosition())
                 && (game.getBoard().getHex(te.getPosition())
                         .containsTerrain(Terrains.WOODS)

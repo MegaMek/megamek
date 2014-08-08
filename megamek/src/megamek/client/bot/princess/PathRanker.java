@@ -303,9 +303,13 @@ public class PathRanker {
             if (roll.getDesc().toLowerCase().contains("careful stand")) {
                 continue;
             }
+            boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery");
+            if (naturalAptPilot) {
+                msg.append("\n\t\tPilot has Natural Aptitude Piloting");
+            }
 
             msg.append("\n\t\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
-            double odds = Compute.oddsAbove(roll.getValue()) / 100;
+            double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= odds;
         }
@@ -315,9 +319,10 @@ public class PathRanker {
             msg.append("\n\t\tMASC ");
             int target = pathCopy.getEntity().getMASCTarget();
             msg.append(target);
+            // todo Does Natural Aptitude Piloting apply to this?  I assume not.
             double odds = Compute.oddsAbove(target) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
-            successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
+            successProbability *= odds;
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 

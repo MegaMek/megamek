@@ -874,7 +874,7 @@ public class FireControl {
             }
         }
 
-        // targetting computer
+        // targeting computer
         if (shooter.hasTargComp() && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)) {
             toHit.addModifier(TH_TARGETTING_COMP);
         }

@@ -1185,6 +1185,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getClient().sendUpdateEntity(ce());
         }
         clientgui.getClient().moveEntity(cen, cmd);
+
+        endMyTurn();
     }
 
     /**
@@ -3411,7 +3413,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
-            } else {
+            } else if (cen == Entity.NONE) {
                 beginMyTurn();
             }
         } else {

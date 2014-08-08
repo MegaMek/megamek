@@ -324,7 +324,7 @@ public class ScenarioLoader {
             g.getOptions().loadOptions();
         } else {
             g.getOptions().loadOptions(
-                    new File(m_scenFile.getParentFile(), optionFile));
+                    new File(m_scenFile.getParentFile(), optionFile), true);
         }
 
         // set wind

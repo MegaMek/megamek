@@ -293,10 +293,10 @@ public class GameOptions extends AbstractOptions {
     }
 
     public Vector<IOption> loadOptions() {
-        return loadOptions(new File(GAME_OPTIONS_FILE_NAME));
+        return loadOptions(new File(GAME_OPTIONS_FILE_NAME), true);
     }
 
-    public synchronized Vector<IOption> loadOptions(File file) {
+    public synchronized Vector<IOption> loadOptions(File file, boolean print) {
         ParsedXML root = null;
         InputStream is = null;
         Vector<IOption> changedOptions = new Vector<IOption>(1, 1);
@@ -323,7 +323,7 @@ public class GameOptions extends AbstractOptions {
 
             while (children.hasMoreElements()) {
                 IOption option = parseOptionNode((ParsedXML) children
-                        .nextElement());
+                        .nextElement(), print);
 
                 if (null != option) {
                     changedOptions.addElement(option);
@@ -337,7 +337,7 @@ public class GameOptions extends AbstractOptions {
         return changedOptions;
     }
 
-    private IOption parseOptionNode(ParsedXML node) {
+    private IOption parseOptionNode(ParsedXML node, boolean print) {
         IOption option = null;
 
         if (node.getName().equals("gameoption")) { //$NON-NLS-1$
@@ -384,9 +384,10 @@ public class GameOptions extends AbstractOptions {
                                             .toString()));
                                     break;
                             }
-
-                            System.out
-                                    .println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            if (print) {
+                                System.out.println("Set option '" + name //$NON-NLS-1$
+                                        + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
 
                             option = tempOption;
                         } catch (IllegalArgumentException iaEx) {
@@ -404,16 +405,20 @@ public class GameOptions extends AbstractOptions {
         return option;
     }
 
+    public static void saveOptions(Vector<IBasicOption> options) {
+        saveOptions(options, GAME_OPTIONS_FILE_NAME);
+    }
+    
     /**
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      *
      * @param options
      *            <code>Vector</code> of <code>IBasicOption</code>
      */
-    public static void saveOptions(Vector<IBasicOption> options) {
+    public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
             Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME))));
+                    new FileOutputStream(new File(file))));
 
             // Output the doctype and header stuff.
             output.write("<?xml version=\"1.0\"?>"); //$NON-NLS-1$

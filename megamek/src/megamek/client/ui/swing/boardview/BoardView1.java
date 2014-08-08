@@ -90,6 +90,7 @@ import megamek.common.Aero;
 import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -2797,7 +2798,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 if (e.onSameC3NetworkAs(fe)
                         && !fe.equals(e)
-                        && !Compute.isAffectedByECM(e, e.getPosition(),
+                        && !ComputeECM.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
@@ -2812,7 +2813,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 if (e.onSameC3NetworkAs(fe)
                         && !fe.equals(e)
-                        && !Compute.isAffectedByNovaECM(e, e.getPosition(),
+                        && !ComputeECM.isAffectedByNovaECM(e, e.getPosition(),
                                 fe.getPosition())) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
@@ -2826,14 +2827,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // ECM cuts off the network
             boolean blocked = false;
             if (e.hasBoostedC3() && eMaster.hasBoostedC3()) {
-                blocked = Compute.isAffectedByAngelECM(e, e.getPosition(),
+                blocked = ComputeECM.isAffectedByAngelECM(e, e.getPosition(),
                         eMaster.getPosition())
-                        || Compute.isAffectedByAngelECM(eMaster,
+                        || ComputeECM.isAffectedByAngelECM(eMaster,
                                 eMaster.getPosition(), eMaster.getPosition());
             } else {
-                blocked = Compute.isAffectedByECM(e, e.getPosition(),
+                blocked = ComputeECM.isAffectedByECM(e, e.getPosition(),
                         eMaster.getPosition())
-                        || Compute.isAffectedByECM(eMaster,
+                        || ComputeECM.isAffectedByECM(eMaster,
                                 eMaster.getPosition(), eMaster.getPosition());
             }
 

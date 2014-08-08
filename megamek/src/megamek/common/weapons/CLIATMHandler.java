@@ -22,6 +22,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -58,7 +59,7 @@ public class CLIATMHandler extends ATMHandler {
      */
     public CLIATMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-        isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(),
+        isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(),
                 target.getPosition());
     }
 

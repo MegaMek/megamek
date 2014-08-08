@@ -83,8 +83,8 @@ public class Game implements Serializable, IGame {
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
     
-    private Map<Coords, HashSet<Entity>> entityPosLookup = 
-            new HashMap<Coords, HashSet<Entity>>();
+    private Map<Coords, HashSet<Integer>> entityPosLookup = 
+            new HashMap<Coords, HashSet<Integer>>();
 
     /**
      * have the entities been deployed?
@@ -1501,10 +1501,11 @@ public class Game implements Serializable, IGame {
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
-        HashSet<Entity> posEntities = entityPosLookup.get(c);
+        HashSet<Integer> posEntities = entityPosLookup.get(c);
         Vector<Entity> vector = new Vector<Entity>();
         if (posEntities != null) {
-            for (Entity e : posEntities) {
+            for (Integer eId : posEntities) {
+                Entity e = getEntity(eId);
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
                     
@@ -1532,10 +1533,11 @@ public class Game implements Serializable, IGame {
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
-        HashSet<Entity> posEntities = entityPosLookup.get(c);
+        HashSet<Integer> posEntities = entityPosLookup.get(c);
         Vector<Entity> vector = new Vector<Entity>();
         if (posEntities != null) {
-            for (Entity e : posEntities) {
+            for (Integer eId : posEntities) {
+                Entity e = getEntity(eId);
                 if (e.isTargetable()) {
                     vector.add(e);
                     
@@ -3393,26 +3395,32 @@ public class Game implements Serializable, IGame {
      */
     public void updateEntityPositionLookup(Entity e, 
             HashSet<Coords> oldPositions) {
+
+        HashSet<Coords> newPositions = e.getOccupiedCoords();
+        // Check to see that the position has actually changed
+        if (newPositions.equals(oldPositions)) {
+            return;
+        }
         
         // Remove the old cached location(s)
         if (oldPositions != null) {
             for (Coords pos : oldPositions) {
-                HashSet<Entity> posEntities = entityPosLookup.get(pos);
+                HashSet<Integer> posEntities = entityPosLookup.get(pos);
                 if (posEntities != null) {
-                    posEntities.remove(e);
+                    posEntities.remove(e.getId());
                 }
             }
         }
  
         // Add Entity for each position 
-        for (Coords pos : e.getOccupiedCoords()) {
-            HashSet<Entity> posEntities = entityPosLookup.get(pos);
+        for (Coords pos : newPositions) {
+            HashSet<Integer> posEntities = entityPosLookup.get(pos);
             if (posEntities == null) {
-                posEntities = new HashSet<Entity>();
-                posEntities.add(e);
+                posEntities = new HashSet<Integer>();
+                posEntities.add(e.getId());
                 entityPosLookup.put(pos, posEntities);
             } else {
-                posEntities.add(e);
+                posEntities.add(e.getId());
             }
         }
     }
@@ -3420,16 +3428,16 @@ public class Game implements Serializable, IGame {
     private void removeEntityPositionLookup(Entity e) {
         // Remove Entity from cache
         for (Coords pos : e.getOccupiedCoords()) {
-            HashSet<Entity> posEntities = entityPosLookup.get(pos);
+            HashSet<Integer> posEntities = entityPosLookup.get(pos);
             if (posEntities != null) {
-                posEntities.remove(e);
+                posEntities.remove(e.getId());
             }
         }
     }
     
     private void resetEntityPositionLookup() {
         if (entityPosLookup == null) {
-            entityPosLookup = new HashMap<Coords, HashSet<Entity>>();
+            entityPosLookup = new HashMap<Coords, HashSet<Integer>>();
         } else {
             entityPosLookup.clear();
         }

@@ -125,6 +125,8 @@ v0.39.1-dev (SVN)
 + Bug [#4219]: Issues with stacking violations and MovePaths (Temporary Hack Fix)
 + Bug [#4220]: Client issues with Load and LocalLoad Commands
 + Bug: SocketException: Broken Pipe when disconnecting from server
++ Bug [#4224]: Client still things an Entity is in the dst hex during movement
+    phase
 
 
 v0.39.0 (2014-07-02 21:14 UTC)

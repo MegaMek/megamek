@@ -125,7 +125,7 @@ v0.39.1-dev (SVN)
 + Bug [#4219]: Issues with stacking violations and MovePaths (Temporary Hack Fix)
 + Bug [#4220]: Client issues with Load and LocalLoad Commands
 + Bug: SocketException: Broken Pipe when disconnecting from server
-+ Bug [#4224]: Client still things an Entity is in the dst hex during movement
++ Bug [#4224]: Client still thinks an Entity is in the dest hex during movement
     phase
 + Feature: Natural Aptitude Piloting
 + Feature [#1237]: Save/Load game settings in Megamek

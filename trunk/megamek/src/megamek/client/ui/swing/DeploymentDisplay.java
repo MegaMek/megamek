@@ -327,6 +327,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
+
+        endMyTurn();
     }
 
     /**
@@ -364,7 +366,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
 	        if (clientgui.getClient().isMyTurn()) {
-	        	beginMyTurn();
+                if (cen == Entity.NONE) {
+                    beginMyTurn();
+                }
 	            setStatusBarText(Messages
 	                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
 	        } else {

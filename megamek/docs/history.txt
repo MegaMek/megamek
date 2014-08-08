@@ -127,7 +127,7 @@ v0.39.1-dev (SVN)
 + Bug: SocketException: Broken Pipe when disconnecting from server
 + Bug [#4224]: Client still things an Entity is in the dst hex during movement
     phase
-
++ Feature: Natural Aptitude Piloting
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

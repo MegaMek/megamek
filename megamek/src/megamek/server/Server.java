@@ -10613,7 +10613,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final int diceRoll = entity.getCrew().rollPilotingSkill();
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -12142,7 +12142,7 @@ public class Server implements Runnable {
             if (e.getSelfDestructInitiated()) {
                 r = new Report(6166, Report.PUBLIC);
                 int target = e.getCrew().getPiloting();
-                int roll = Compute.d6(2);
+                int roll = e.getCrew().rollPilotingSkill();
                 r.subject = e.getId();
                 r.addDesc(e);
                 r.indent();
@@ -16863,7 +16863,7 @@ public class Server implements Runnable {
                                     break;
                                 }
                             }
-                            int suroll = Compute.d6(2);
+                            int suroll = entity.getCrew().rollPilotingSkill();
                             r = new Report(5050);
                             r.subject = entity.getId();
                             r.addDesc(entity);
@@ -18546,7 +18546,7 @@ public class Server implements Runnable {
                 entity.doCheckEngineStallRoll(vPhaseReport);
                 return vPhaseReport;
             }
-            int diceRoll = Compute.d6(2);
+            int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.add(roll.getValueAsString());
             r.add(diceRoll);
@@ -29743,8 +29743,10 @@ public class Server implements Runnable {
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.
             if (ae.isProne()) {
-                double oddsLeft = Compute.oddsAbove(toHit.getValue());
-                double oddsRight = Compute.oddsAbove(toHitRight.getValue());
+                double oddsLeft = Compute.oddsAbove(toHit.getValue(),
+                        ae.getCrew().getOptions().booleanOption("aptitude_piloting"));
+                double oddsRight = Compute.oddsAbove(toHitRight.getValue(),
+                        ae.getCrew().getOptions().booleanOption("aptitude_piloting"));
                 // Use the best attack.
                 if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                     paa.setArm(PunchAttackAction.LEFT);
@@ -30149,7 +30151,7 @@ public class Server implements Runnable {
             r.indent();
             vDesc.addElement(r);
             // roll
-            final int diceRoll = Compute.d6(2);
+            final int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
@@ -30608,7 +30610,7 @@ public class Server implements Runnable {
             addReport(r);
 
             // roll
-            final int diceRoll = Compute.d6(2);
+            final int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());

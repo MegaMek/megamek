@@ -6928,7 +6928,7 @@ public abstract class Mech extends Entity {
             r.add(1);
             r.add(base.getPlainDesc());
             vPhaseReport.add(r);
-            int diceRoll = Compute.d6(2);
+            int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
             r.add(base.getValueAsString());
@@ -6989,7 +6989,7 @@ public abstract class Mech extends Entity {
             r.add(1);
             r.add(base.getPlainDesc());
             vPhaseReport.add(r);
-            int diceRoll = Compute.d6(2);
+            int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
             r.add(base.getValueAsString());

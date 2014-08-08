@@ -540,7 +540,8 @@ public class TestBot extends BotClient {
                                                                                                             .getEntity()),
                                                                    ToHitData.SIDE_REAR
                                                                             ) * Compute
-                                                           .oddsAbove(toHit.getValue())) / 100;
+                                                           .oddsAbove(toHit.getValue(),
+                                                        		   option.getEntity().getCrew().getOptions().booleanOption("aptitude_piloting"))) / 100;
                                     self_threat += option.getCEntity()
                                                          .getThreatUtility(
                                                                  .1 * self.getEntity()
@@ -568,16 +569,16 @@ public class TestBot extends BotClient {
                                                                                   target.getEntity()),
                                                                   ToHitData.SIDE_FRONT
                                                                            )
-                                                  * (Compute.oddsAbove(toHit
-                                                                               .getValue()) / 100);
+                                                  * (Compute.oddsAbove(toHit.getValue(),
+                                                		  option.getEntity().getCrew().getOptions().booleanOption("aptitude_piloting")) / 100);
                                     option.setState();
                                 } else {
                                     toHit = new ToHitData(
                                             TargetRoll.IMPOSSIBLE, "");
                                 }
                                 damage = (target.getThreatUtility(damage,
-                                                                  toHit.getSideTable()) * Compute
-                                                  .oddsAbove(toHit.getValue())) / 100;
+                                		toHit.getSideTable()) * Compute.oddsAbove(toHit.getValue(),
+                                				option.getEntity().getCrew().getOptions().booleanOption("aptitude_piloting"))) / 100;
                                 // charging is a good tactic against larger
                                 // mechs
                                 if (!option.isJumping()) {
@@ -1136,7 +1137,7 @@ public class TestBot extends BotClient {
         WeaponAttackAction wep_test;
         WeaponType spinner;
         AttackOption a = null;
-        AttackOption max = new AttackOption(null, null, 0, null, 1);
+        AttackOption max = new AttackOption(null, null, 0, null, 1, en.getCrew().getOptions().booleanOption("aptitude_gunnery"));
         for (Entity e : ents) {
             CEntity enemy = centities.get(e);
             // long entry = System.currentTimeMillis();
@@ -1191,7 +1192,8 @@ public class TestBot extends BotClient {
                     starg_mod = 13;
                 }
 
-                a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod);
+                a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod,
+                		en.getCrew().getOptions().booleanOption("aptitude_gunnery"));
                 if (a.value > max.value) {
                     if (best_only) {
                         max = a;
@@ -1207,7 +1209,7 @@ public class TestBot extends BotClient {
             result.add(max);
         }
         if (result.size() > 0) {
-            result.add(new AttackOption(null, mw, 0, null, 1));
+            result.add(new AttackOption(null, mw, 0, null, 1, en.getCrew().getOptions().booleanOption("aptitude_gunnery")));
         }
         return result;
     }
@@ -2251,7 +2253,8 @@ public class TestBot extends BotClient {
                                                                                         IAimingModes
                                                                                                 .AIM_MODE_TARG_COMP)) {
                                 refactored_damage = base_damage
-                                                    * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
+                                                    * (Compute.oddsAbove(base_to_hit + 4,
+                                                            test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
                                         .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
@@ -2259,12 +2262,13 @@ public class TestBot extends BotClient {
                                 // 20% chance of hitting the same location
                                 // Use the better of the regular shot or aimed
                                 // shot
-                                if ((0.2 * base_damage * (Compute
-                                                                  .oddsAbove(base_to_hit) / 100.0)) >
+                                if ((0.2 * base_damage * (Compute.oddsAbove(base_to_hit,
+                                        test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0)) >
                                     refactored_damage) {
                                     refactored_damage = 0.2
                                                         * base_damage
-                                                        * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit,
+                                                                test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
                                             .setAimingMode(IAimingModes.AIM_MODE_NONE);
@@ -2293,7 +2297,8 @@ public class TestBot extends BotClient {
                                     // increased to-hit number of the tcomp
 
                                     refactored_damage = base_damage
-                                                        * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit + 4,
+                                                                test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                     refactored_head = 0.0;
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
@@ -2304,16 +2309,19 @@ public class TestBot extends BotClient {
 
                                 }
                                 if (((0.50 * base_damage * (Compute
-                                                                    .oddsAbove(base_to_hit) / 100.0)) >
+                                                                    .oddsAbove(base_to_hit,
+                                                                            test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0)) >
                                      refactored_damage) && Compute.allowAimedShotWith(test_weapon,
                                                                                       IAimingModes.AIM_MODE_IMMOBILE)) {
                                     refactored_damage = 0.50
                                                         * base_damage
-                                                        * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit,
+                                                                test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                     refactored_head = 0.50
                                                       * base_damage
                                                       * (Compute
-                                                                 .oddsAbove(base_to_hit + 7) / 100.0);
+                                                                 .oddsAbove(base_to_hit + 7,
+                                                                         test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
                                             .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
@@ -2326,10 +2334,12 @@ public class TestBot extends BotClient {
 
                                 refactored_damage = 0.50
                                                     * base_damage
-                                                    * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                    * (Compute.oddsAbove(base_to_hit,
+                                                            test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                 refactored_head = 0.50
                                                   * base_damage
-                                                  * (Compute.oddsAbove(base_to_hit + 7) / 100.0);
+                                                  * (Compute.oddsAbove(base_to_hit + 7,
+                                                          test_weapon.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery")) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
                                         .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);

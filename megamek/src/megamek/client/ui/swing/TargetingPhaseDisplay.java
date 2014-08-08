@@ -704,7 +704,8 @@ updateFlipArms(false);
                 setFireEnabled(true);
             } else {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString()
-                        + " (" + Compute.oddsAbove(toHit.getValue()) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
+                        + " (" + Compute.oddsAbove(toHit.getValue(),
+                                ce().getCrew().getOptions().booleanOption("aptitude_gunnery")) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }
             clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());

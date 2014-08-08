@@ -372,7 +372,10 @@ public class WeaponFireInfo {
                 return;
             }
 
-            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()) / 100);
+            if (getShooterState().hasNaturalAptGun()) {
+                msg.append("\n\tAttacker has Natural Aptitude Gunnery");
+            }
+            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
             setHeat(((WeaponType) getWeapon().getType()).getHeat());
@@ -449,7 +452,8 @@ public class WeaponFireInfo {
                 setProbabilityToHit(0);
                 return null;
             }
-            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue()) / 100.0);
+            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
+                                                  getShooterState().hasNaturalAptGun()) / 100.0);
             return getAction();
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);

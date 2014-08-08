@@ -41,6 +41,8 @@ public class EntityState {
     private boolean building;
     private boolean aero;
     private boolean airborne;
+    private boolean naturalAptGun;
+    private boolean naturalAptPilot;
 
     /**
      * Initialize an entity state from the state an entity is actually in
@@ -61,6 +63,8 @@ public class EntityState {
             building = false;
             aero = (target instanceof Aero);
             airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
+            naturalAptGun = entity.getCrew().getOptions().booleanOption("aptitude_gunnery");
+            naturalAptPilot = entity.getCrew().getOptions().booleanOption("aptitude_piloting");
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -73,6 +77,8 @@ public class EntityState {
             setSecondaryFacing(0);
             building = (target instanceof BuildingTarget);
             aero = false;
+            naturalAptGun = false;
+            naturalAptPilot = false;
         }
     }
 
@@ -99,6 +105,8 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
+        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery");
+        naturalAptPilot = path.getEntity().getCrew().getOptions().booleanOption("aptitude_piloting");
         setSecondaryFacing(getFacing());
     }
 
@@ -156,5 +164,13 @@ public class EntityState {
 
     public boolean isAirborneAero() {
         return aero && airborne;
+    }
+
+    public boolean hasNaturalAptGun() {
+        return naturalAptGun;
+    }
+
+    public boolean hasNaturalAptPiloting() {
+        return naturalAptPilot;
     }
 }

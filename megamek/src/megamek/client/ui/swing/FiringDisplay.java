@@ -659,9 +659,9 @@ jumpToPrevTarget();
      */
     private void endMyTurn() {
         // end my turn, then.
-        Entity next = clientgui.getClient().getGame().getNextEntity(clientgui
-                .getClient().getGame().getTurnIndex());
-        if ((clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING)
+        IGame game = clientgui.getClient().getGame();
+        Entity next = game.getNextEntity(game.getTurnIndex());
+        if ((game.getPhase() == IGame.Phase.PHASE_FIRING)
                 && (next != null) && (ce() != null)
                 && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setDisplayVisible(false);

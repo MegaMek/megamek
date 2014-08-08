@@ -20,6 +20,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
+import megamek.common.options.OptionsConstants;
 
 /**
  * EntityState describes a hypothetical situation an entity could be in when firing
@@ -63,8 +64,8 @@ public class EntityState {
             building = false;
             aero = (target instanceof Aero);
             airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-            naturalAptGun = entity.getCrew().getOptions().booleanOption("aptitude_gunnery");
-            naturalAptPilot = entity.getCrew().getOptions().booleanOption("aptitude_piloting");
+            naturalAptGun = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            naturalAptPilot = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -95,18 +96,19 @@ public class EntityState {
         } else if (path.getLastStepMovementType() == EntityMovementType.MOVE_RUN) {
             heat = getHeat() + 2;
         } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                && (getHexesMoved() <= 3)) {
+                   && (getHexesMoved() <= 3)) {
             heat = getHeat() + 3;
         } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                && (getHexesMoved() > 3)) {
+                   && (getHexesMoved() > 3)) {
             heat = getHeat() + getHexesMoved();
         }
         prone = path.getFinalProne() || path.getFinalHullDown();
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery");
-        naturalAptPilot = path.getEntity().getCrew().getOptions().booleanOption("aptitude_piloting");
+        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        naturalAptPilot = path.getEntity().getCrew().getOptions()
+                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         setSecondaryFacing(getFacing());
     }
 

@@ -2932,7 +2932,7 @@ public class Tank extends Entity {
 
                 if (mEquip.curMode().equals("On")
                         && hasActiveECM()
-                        && !Compute.isAffectedByECCM(this, getPosition(),
+                        && !ComputeECM.isAffectedByECCM(this, getPosition(),
                                 getPosition())) {
                     // Return true if the mode is "On" and ECM is working
                     // and we're not in ECCM

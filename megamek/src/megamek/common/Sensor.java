@@ -347,11 +347,11 @@ public class Sensor implements Serializable {
         // how many ECM fields are affecting the entity?
         double ecm = Math
                 .max(0,
-                        Compute.getECMFieldSize(en, en.getPosition(),
+                        ComputeECM.getECMFieldSize(en, en.getPosition(),
                                 en.getPosition()));
         double ecmAngel = Math.max(
                 0,
-                Compute.getAngelECMFieldSize(en, en.getPosition(),
+                ComputeECM.getAngelECMFieldSize(en, en.getPosition(),
                         en.getPosition()));
 
         switch (type) {

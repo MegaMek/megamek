@@ -21,6 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
@@ -114,7 +115,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // if the attacker is affected by ECM or the target is protected by ECM
         // then
         // act as if effected.
-        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
 
@@ -190,7 +191,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
-            bTargetECMAffected = Compute.isAffectedByECM(ae,
+            bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM)
                     || (atype.getAmmoType() == AmmoType.T_SRM) || (atype

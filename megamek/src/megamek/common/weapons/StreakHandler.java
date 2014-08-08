@@ -18,6 +18,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -37,7 +38,7 @@ public class StreakHandler extends MissileWeaponHandler {
      *
      */
     private static final long serialVersionUID = 4122111574368642492L;
-    boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae,
+    boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae,
             ae.getPosition(), target.getPosition());
 
     /**

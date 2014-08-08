@@ -34,6 +34,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author dirk
@@ -68,23 +69,23 @@ public class FireCommand extends ClientCommand {
                     cen = Integer.parseInt(args[2]);
 
                     return "Entity " + ce().toString()
-                            + " selected for firing.";
+                           + " selected for firing.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e.toString();
                 }
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                        + "#fire ABORT = aborts planed fireing and deselect unit.\n"
-                        + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite " +
-                        "for all commands listed after this.\n"
-                        + "#fire COMMIT = executs the current fireing plan.\n"
-                        + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
-                        "This is currently the only way to get weapon IDs.\n"
-                        + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, " +
-                        "NE, SE, etc) to try and turn.\n"
-                        + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
-                        " target. Any number of weapons may be specified.\n"
-                        + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
+                       + "#fire ABORT = aborts planed fireing and deselect unit.\n"
+                       + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite " +
+                       "for all commands listed after this.\n"
+                       + "#fire COMMIT = executs the current fireing plan.\n"
+                       + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
+                       "This is currently the only way to get weapon IDs.\n"
+                       + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, " +
+                       "NE, SE, etc) to try and turn.\n"
+                       + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
+                       " target. Any number of weapons may be specified.\n"
+                       + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
@@ -96,7 +97,7 @@ public class FireCommand extends ClientCommand {
                             Targetable target = getClient().getEntity(Integer
                                                                               .parseInt(args[2]));
                             if (args.length == 4
-                                    && args[3].equalsIgnoreCase("ALL")) {
+                                && args[3].equalsIgnoreCase("ALL")) {
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
                                         fire(ce().getEquipmentNum(weapon),
@@ -104,12 +105,12 @@ public class FireCommand extends ClientCommand {
                                     }
                                 }
                                 return "Fireing all remaining weapons at "
-                                        + target.toString() + ".";
+                                       + target.toString() + ".";
                             } else {
                                 for (int i = 3; i < args.length; i++) {
                                     fire(Integer.parseInt(args[i]), target);
                                     str += "Firing weapon " + args[i] + " at "
-                                            + target.toString() + "\n";
+                                           + target.toString() + "\n";
                                 }
                             }
                         } catch (NumberFormatException nfe) {
@@ -122,17 +123,17 @@ public class FireCommand extends ClientCommand {
                                                                               .parseInt(args[2]));
                             if (target != null) {
                                 String str = " Weapons for " + ce() + " at "
-                                        + target.toString() + ":\n";
+                                             + target.toString() + ":\n";
 
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     str += "("
-                                            + ce().getEquipmentNum(weapon)
-                                            + ") "
-                                            + weapon.getName()
-                                            + " = "
-                                            + calculateToHit(ce()
-                                                                     .getEquipmentNum(weapon),
-                                                             target) + "\n";
+                                           + ce().getEquipmentNum(weapon)
+                                           + ") "
+                                           + weapon.getName()
+                                           + " = "
+                                           + calculateToHit(ce()
+                                                                    .getEquipmentNum(weapon),
+                                                            target) + "\n";
                                 }
 
                                 return str;
@@ -142,7 +143,7 @@ public class FireCommand extends ClientCommand {
 
                         return "Invalid Target ID.";
                     } else if (args[1].equalsIgnoreCase("TWIST")
-                            && args.length > 2) {
+                               && args.length > 2) {
                         torsoTwist(getDirection(args[2]));
                         return "Torso-twisted (or rotated turret). All attacks planned until now have been clearned.";
                     }
@@ -213,7 +214,7 @@ public class FireCommand extends ClientCommand {
 
         // validate
         if (ce() == null || target == null || mounted == null
-                || !(mounted.getType() instanceof WeaponType)) {
+            || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException(
                     "current fire parameters are invalid"); //$NON-NLS-1$
         }
@@ -227,13 +228,14 @@ public class FireCommand extends ClientCommand {
                 .getTargetType(), target.getTargetId(), weaponNum);
 
         if (mounted.getLinked() != null
-                && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+            && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && (ammoType
-                    .getAmmoType() == AmmoType.T_LRM || ammoType.getAmmoType() == AmmoType.T_MML))
-                    || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+                                                                                          .getAmmoType() == AmmoType
+                                                                                          .T_LRM || ammoType.getAmmoType() == AmmoType.T_MML))
+                || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
 
                 waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
                 // now.
@@ -282,23 +284,24 @@ public class FireCommand extends ClientCommand {
             // str += "Target: " + target.toString();
 
             str += " Range: "
-                    + ce().getPosition().distance(target.getPosition());
+                   + ce().getPosition().distance(target.getPosition());
 
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
-                        + Messages.getString("FiringDisplay.alreadyFired");
+                       + Messages.getString("FiringDisplay.alreadyFired");
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 str += " Can't shoot: "
-                        + Messages.getString("FiringDisplay.autoFiringWeapon");
+                       + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {
                 str += " Can't hit: " + toHit.getValueAsString();
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
-                        + Compute.oddsAbove(toHit.getValue(),
-                        		ce().getCrew().getOptions().booleanOption("aptitude_gunnery")) + "%)";
+                       + Compute.oddsAbove(toHit.getValue(),
+                                           ce().getCrew().getOptions()
+                                               .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

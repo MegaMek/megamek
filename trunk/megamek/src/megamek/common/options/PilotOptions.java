@@ -18,7 +18,7 @@ import java.util.Vector;
 
 /**
  * Contains the options determining abilities of the pilot
- * 
+ *
  * @author Cord
  */
 public class PilotOptions extends AbstractOptions {
@@ -26,7 +26,7 @@ public class PilotOptions extends AbstractOptions {
     public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
     public static final String EDGE_ADVANTAGES = "edgeAdvantages"; //$NON-NLS-1$
     public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
-    
+
     public PilotOptions() {
         super();
     }
@@ -50,8 +50,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$
         addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "weapon_specialist", new Vector<String>()); //$NON-NLS-1$
-        addOption(adv, "aptitude_gunnery", false); //$NON-NLS-1$
-        addOption(adv, "aptitude_piloting", false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false); //$NON-NLS-1$
         addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
         addOption(adv, "gunnery_missile", false); //$NON-NLS-1$
@@ -64,9 +64,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "allweather", false); //$NON-NLS-1$
         addOption(adv, "blind_fighter", false); //$NON-NLS-1$
         addOption(adv, "sensor_geek", false); //$NON-NLS-1$
-        
 
-        
+
         IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES); //$NON-NLS-1$
         addOption(edge, "edge", 0); //$NON-NLS-1$
         /* different edge triggers */

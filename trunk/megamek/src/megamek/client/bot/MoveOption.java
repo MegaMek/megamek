@@ -37,6 +37,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * TODO: add the notion of a dependent state (at least a first pass estimate of
@@ -451,8 +452,10 @@ public class MoveOption extends MovePath {
         double retVal = temp_threat - temp_damage;
 
         List<TargetRoll> psrList = SharedUtility.getPSRList(this);
+        boolean aptPiloting = getEntity().getCrew().getOptions().booleanOption(OptionsConstants
+                                                                                       .PILOT_APTITUDE_PILOTING);
         for (TargetRoll roll : psrList) {
-            double multiple = Compute.oddsAbove(roll.getValue())/100;
+            double multiple = Compute.oddsAbove(roll.getValue(), aptPiloting) / 100;
             retVal *= (multiple > 0) ? multiple : 0.01;
         }
         utility = retVal;
@@ -480,6 +483,8 @@ public class MoveOption extends MovePath {
                 mod = .9;
             }
         }
+        boolean aptGunnery = enemy.getEntity().getCrew().getOptions()
+                                  .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         int enemy_firing_arcs[] = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
@@ -491,21 +496,21 @@ public class MoveOption extends MovePath {
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                         .getFinalFacing(), MoveStepType.TURN_RIGHT), getFinalCoords());
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
-                : enemy_firing_arcs[0], distance, modifier);
+                                                         : enemy_firing_arcs[0], distance, modifier, aptGunnery);
 
         if (enemy_firing_arcs[1] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                    distance, modifier));
+                                                                distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
-                    enemy_firing_arcs[1], distance, modifier));
+                    enemy_firing_arcs[1], distance, modifier, aptGunnery));
         }
         if (enemy_firing_arcs[2] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                    distance, modifier));
+                                                                distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
-                    enemy_firing_arcs[2], distance, modifier));
+                    enemy_firing_arcs[2], distance, modifier, aptGunnery));
         }
         // TODO this is not quite right, but good enough for now...
         // ideally the pa charaterization should be in centity
@@ -520,7 +525,9 @@ public class MoveOption extends MovePath {
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
                         * centity.entity.getWeight()
-                        * Compute.oddsAbove(3 + modifier))
+                        * Compute.oddsAbove(3 + modifier,
+                                            getEntity().getCrew().getOptions()
+                                                       .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)))
                         / 100)
                         + (((1 - enemy.centity.base_psr_odds)
                             * enemy.getEntity().getWeight()) / 10.0);

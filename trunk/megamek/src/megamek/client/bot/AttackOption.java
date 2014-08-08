@@ -104,8 +104,7 @@ public class AttackOption extends ToHitData {
             if (target.getEntity().isStealthActive() && ((target.getEntity() instanceof Mech) || (target.getEntity() instanceof Tank))) {
                 odds = 0.0;
             } else {
-                odds = sec_mod <= 12 ? (Compute.oddsAbove(toHit.getValue()
-                        + sec_mod, natApGunnery) / 100.0) : 0.0;
+                odds = sec_mod <= 12 ? (Compute.oddsAbove(toHit.getValue() + sec_mod, natApGunnery) / 100.0) : 0.0;
             }
             heat = weapon.getCurrentHeat();
             expected = this.value / primary_odds;

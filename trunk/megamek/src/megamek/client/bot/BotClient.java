@@ -69,6 +69,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.Packet;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -739,7 +740,8 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting()) / 100);
+        boolean aptGunnery = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
         return potentialDmg * oddsTakeDmg;
     }
 
@@ -764,6 +766,8 @@ public abstract class BotClient extends Client {
      */
     private static float getDeployDamage(IGame g, WeaponAttackAction waa) {
         Entity attacker = g.getEntity(waa.getEntityId());
+        boolean naturalAptGunnery = attacker.getCrew().getOptions()
+                                            .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g);
         if (hitData.getValue() > 12) {
@@ -774,7 +778,7 @@ public abstract class BotClient extends Client {
         if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
         } else {
-            fChance = (float) Compute.oddsAbove(hitData.getValue()) / 100.0f;
+            fChance = (float) Compute.oddsAbove(hitData.getValue(), naturalAptGunnery) / 100.0f;
         }
 
         // TODO : update for BattleArmor.

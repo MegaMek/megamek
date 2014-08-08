@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
 public class Crew implements Serializable {
@@ -47,7 +48,9 @@ public class Crew implements Serializable {
     //also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
 
-    /*** Additional RPG Skills ***/
+    /**
+     * Additional RPG Skills **
+     */
     // MW3e uses 3 different gunnery skills
     private int gunneryL;
     private int gunneryM;
@@ -65,7 +68,9 @@ public class Crew implements Serializable {
     // a toughness bonus that is applied to all KO checks
     private int toughness;
 
-    /*** End RPG Skills ***/
+    /**
+     * End RPG Skills **
+     */
 
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
@@ -84,37 +89,41 @@ public class Crew implements Serializable {
     public static final String SPECIAL_MISSILE = "Missile";
 
     private static double[][] bvMod = new double[][]
-        {
-            { 2.8, 2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59 },
-            { 2.56, 2.4, 2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44 },
-            { 2.24, 2.1, 1.96, 1.82, 1.61, 1.4, 1.33, 1.31, 1.25 },
-            { 1.92, 1.8, 1.68, 1.56, 1.38, 1.2, 1.14, 1.08, 1.06 },
-            { 1.6, 1.5, 1.4, 1.3, 1.15, 1.0, 0.95, 0.9, 0.85 },
-            { 1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77 },
-            { 1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72 },
-            { 1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68 },
-            { 1.28, 1.19, 1.1, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 },
-        };
-    private static double[][] alternateBvMod = new double[][] {
-        { 2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59 },
-        { 2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44 },
-        { 2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25 },
-        { 1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06 },
-        { 1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85 },
-        { 1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77 },
-        { 1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72 },
-        { 1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68 },
-        { 1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 },
+            {
+                    {2.8, 2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
+                    {2.56, 2.4, 2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44},
+                    {2.24, 2.1, 1.96, 1.82, 1.61, 1.4, 1.33, 1.31, 1.25},
+                    {1.92, 1.8, 1.68, 1.56, 1.38, 1.2, 1.14, 1.08, 1.06},
+                    {1.6, 1.5, 1.4, 1.3, 1.15, 1.0, 0.95, 0.9, 0.85},
+                    {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
+                    {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
+                    {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
+                    {1.28, 1.19, 1.1, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
+            };
+    private static double[][] alternateBvMod = new double[][]{
+            {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
+            {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
+            {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
+            {1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06},
+            {1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
+            {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
+            {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
+            {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
+            {1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
     };
 
-    /** The number of hits that a pilot can take before he dies. */
+    /**
+     * The number of hits that a pilot can take before he dies.
+     */
     static public final int DEATH = 6;
 
     /**
      * Defines the maximum value a Crew can have in any skill
      */
     static public final int MAX_SKILL = 8;
-    /** Creates a nameless P5/G4 crew of the given size.
+
+    /**
+     * Creates a nameless P5/G4 crew of the given size.
      *
      * @param size the crew size.
      */
@@ -123,10 +132,9 @@ public class Crew implements Serializable {
     }
 
     /**
-     *
-     * @param name the name of the crew or commander.
-     * @param size the crew size.
-     * @param gunnery the crew's Gunnery skill.
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
+     * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
      */
     public Crew(String name, int size, int gunnery, int piloting) {
@@ -134,9 +142,8 @@ public class Crew implements Serializable {
     }
 
     /**
-     *
-     * @param name the name of the crew or commander.
-     * @param size the crew size.
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
      * @param gunneryL the crew's "laser" Gunnery skill.
      * @param gunneryM the crew's "missile" Gunnery skill.
      * @param gunneryB the crew's "ballistic" Gunnery skill.
@@ -171,7 +178,8 @@ public class Crew implements Serializable {
         return nickname;
     }
 
-    /** The size of this crew.
+    /**
+     * The size of this crew.
      *
      * @return the number of crew members.
      */
@@ -223,7 +231,8 @@ public class Crew implements Serializable {
         nickname = nick;
     }
 
-    /** Accessor method to set the crew size.
+    /**
+     * Accessor method to set the crew size.
      *
      * @param newSize The new size of this crew.
      */
@@ -327,10 +336,10 @@ public class Crew implements Serializable {
     }
 
     public void clearOptions() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -340,14 +349,14 @@ public class Crew implements Serializable {
     }
 
     public void clearOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
             }
 
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -359,9 +368,9 @@ public class Crew implements Serializable {
     public int countOptions() {
         int count = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (option.booleanValue()) {
@@ -376,14 +385,14 @@ public class Crew implements Serializable {
     public int countOptions(String grpKey) {
         int count = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
             }
 
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (option != null && option.booleanValue()) {
@@ -399,7 +408,7 @@ public class Crew implements Serializable {
      * Returns the options of the given category that this pilot has
      */
     public Enumeration<IOption> getOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if (group.getKey().equalsIgnoreCase(grpKey)) {
@@ -422,12 +431,12 @@ public class Crew implements Serializable {
             sep = "";
         }
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
             }
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (option.booleanValue()) {
@@ -545,6 +554,7 @@ public class Crew implements Serializable {
 
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
+     *
      * @param game
      */
     public double getBVSkillMultiplier(IGame game) {
@@ -554,9 +564,8 @@ public class Crew implements Serializable {
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
      *
-     * @param usePiloting
-     *            whether or not to use the default value non-anti-mech
-     *            infantry/BA should not use the anti-mech skill
+     * @param usePiloting whether or not to use the default value non-anti-mech
+     *                    infantry/BA should not use the anti-mech skill
      * @param game
      */
     public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
@@ -592,10 +601,8 @@ public class Crew implements Serializable {
      * static to evaluate the BV of a unit, even when they have not yet been
      * assinged a pilot.
      *
-     * @param gunnery
-     *            the gunnery skill of the pilot
-     * @param piloting
-     *            the piloting skill of the pilot
+     * @param gunnery  the gunnery skill of the pilot
+     * @param piloting the piloting skill of the pilot
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
@@ -604,9 +611,9 @@ public class Crew implements Serializable {
 
     public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
         if ((game != null) && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
-            return alternateBvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
+            return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }
-        return bvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
+        return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {
@@ -630,7 +637,7 @@ public class Crew implements Serializable {
      * Determine if this pilot has abandoned her vehicle.
      *
      * @return <code>true</code> if the pilot has abandoned her vehicle,
-     *         <code>false</code> if the pilot is still in the vehicle.
+     * <code>false</code> if the pilot is still in the vehicle.
      */
     public boolean isEjected() {
         return ejected;
@@ -639,8 +646,7 @@ public class Crew implements Serializable {
     /**
      * Specify if this pilot has abandoned her vehicle.
      *
-     * @param abandoned
-     *            the <code>boolean</code> value to set.
+     * @param abandoned the <code>boolean</code> value to set.
      */
     public void setEjected(boolean abandoned) {
         ejected = abandoned;
@@ -773,18 +779,18 @@ public class Crew implements Serializable {
     }
 
     public int rollGunnerySkill() {
-        if(getOptions().booleanOption("aptitude_gunnery")) {
-            return Compute.d6(3,2);
+        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
+            return Compute.d6(3, 2);
         }
-        
+
         return Compute.d6(2);
     }
 
     public int rollPilotingSkill() {
-        if(getOptions().booleanOption("aptitude_piloting")) {
-            return Compute.d6(3,2);
+        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {
+            return Compute.d6(3, 2);
         }
-        
+
         return Compute.d6(2);
     }
 }

@@ -44,4 +44,7 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate";
 
     public static final String QUIRK_WEAP_NEG_INACCURATE = "inaccurate";
+
+    public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
+    public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting";
 }

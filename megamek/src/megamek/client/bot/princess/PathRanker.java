@@ -34,6 +34,7 @@ import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 public class PathRanker {
@@ -303,7 +304,8 @@ public class PathRanker {
             if (roll.getDesc().toLowerCase().contains("careful stand")) {
                 continue;
             }
-            boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions().booleanOption("aptitude_gunnery");
+            boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions()
+                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
             if (naturalAptPilot) {
                 msg.append("\n\t\tPilot has Natural Aptitude Piloting");
             }

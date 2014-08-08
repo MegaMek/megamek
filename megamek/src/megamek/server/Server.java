@@ -198,6 +198,7 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
@@ -29744,9 +29745,10 @@ public class Server implements Runnable {
             // duh), then we can only use one arm.
             if (ae.isProne()) {
                 double oddsLeft = Compute.oddsAbove(toHit.getValue(),
-                        ae.getCrew().getOptions().booleanOption("aptitude_piloting"));
+                                                    ae.getCrew().getOptions().booleanOption(OptionsConstants
+                                                                                                    .PILOT_APTITUDE_PILOTING));
                 double oddsRight = Compute.oddsAbove(toHitRight.getValue(),
-                        ae.getCrew().getOptions().booleanOption("aptitude_piloting"));
+                                                     ae.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING));
                 // Use the best attack.
                 if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                     paa.setArm(PunchAttackAction.LEFT);

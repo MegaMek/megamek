@@ -1691,9 +1691,22 @@ public class MULParser {
         // Remove any currently mounted AP weapon
         if (apMount.getLinked() != null 
                 && apMount.getLinked().getType() != apType){
-            entity.getEquipment().remove(apMount.getLinked());
-            entity.getWeaponList().remove(apMount.getLinked());
-            entity.getTotalWeaponList().remove(apMount.getLinked());
+            Mounted apWeapon = apMount.getLinked();
+            entity.getEquipment().remove(apWeapon);
+            entity.getWeaponList().remove(apWeapon);
+            entity.getTotalWeaponList().remove(apWeapon);
+            // We need to make sure that the weapon has been removed
+            //  from the criticals, otherwise it can cause issues
+            for (int loc = 0; loc < entity.locations(); loc++) {
+                for (int c = 0; 
+                        c < entity.getNumberOfCriticals(loc); c++) {
+                    CriticalSlot crit = entity.getCritical(loc, c);
+                    if (crit != null && crit.getMount() != null 
+                            && crit.getMount().equals(apWeapon)) {
+                        entity.setCritical(loc, c, null);
+                    }
+                }
+            }
         }
         
         // Did the selection not change, or no weapon was selected

@@ -103,7 +103,7 @@ public class InfantryMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
         armorLabel = new PMValueLabel(fm, Color.white);
         armorLabel.setValue(Messages.getString(
-                "InfantryMapSet.Armor" + "XXXXXXXXXXXX")); //$NON-NLS-1$//$NON-NLS-2$
+                "InfantryMapSet.Armor") + "XXXXXXXXXXXX"); //$NON-NLS-1$//$NON-NLS-2$
         Dimension d = armorLabel.getSize();
         content.translate(0, d.height + 5);
         armorLabel.moveTo(0, d.height);

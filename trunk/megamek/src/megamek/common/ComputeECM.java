@@ -422,7 +422,7 @@ public class ComputeECM {
     
             // Check the angel ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECM()
+                if (other.isEnemyOf(ae) && other.hasActiveNovaECM()
                     && (entPos != null)) {
                     ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
                                                   ent.getECMStrength());

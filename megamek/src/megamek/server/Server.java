@@ -26660,7 +26660,9 @@ public class Server implements Runnable {
                             // method,
                             // but it
                             // will work for now.
-                            entityUpdate(e.getId());
+                            if (!entities.contains(e)) {
+                                entityUpdate(e.getId());
+                            }
                         }
                     }
 

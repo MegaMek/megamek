@@ -5253,18 +5253,16 @@ public class Compute {
         if (attacker.game.getBoard().inSpace()) {
             return false;
         }
-
-        return attacker.isAirborne() && !target.isAirborne()
-               && !target.isAirborneVTOLorWIGE();
+        // According to errata, VTOL and WiGes are considered ground targets
+        return attacker.isAirborne() && !target.isAirborne();
     }
 
     public static boolean isAirToAir(Entity attacker, Targetable target) {
         if ((attacker == null) || (target == null)) {
             return false;
         }
-        return (attacker.isAirborne() && target.isAirborne())
-               || (attacker.isAirborne() && target.isAirborneVTOLorWIGE())
-               || (attacker.isAirborneVTOLorWIGE() && target.isAirborne());
+        // According to errata, VTOL and WiGes are considered ground targets 
+        return attacker.isAirborne() && target.isAirborne();
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {

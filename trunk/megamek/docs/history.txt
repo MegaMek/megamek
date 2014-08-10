@@ -147,6 +147,7 @@ v0.39.1-dev (SVN)
 + Bug: NPE when selecting C3 choices for masters in unit customization dialog
 + Bug: Loading a MUL file with specified C3 networks caused doubling or slave
     Entities, and C3 networks were not connected
++ Bug: Compute.inVisualRange wasn't considering SO Advanced AA fire
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

@@ -37,6 +37,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
@@ -3518,6 +3519,7 @@ public class Compute {
         int visualRange = getVisualRange(game, ae, los, teSpotlight);
 
         // check for camo and null sig on the target
+        Coords targetPos = target.getPosition();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
 
@@ -3531,12 +3533,18 @@ public class Compute {
                        && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
+            // We need to consiter the SO Advanced AA fire for Aeros
+            GameOptions opts = ae.getGame().getOptions();
+            if ((te instanceof Aero) && isGroundToAir(ae, target) 
+                    && opts.booleanOption("stratops_aa_fire")) {
+                targetPos = Compute.getClosestFlightPath(ae.getPosition(), te);
+            }
         }
 
         visualRange = Math.max(visualRange, 1);
         int distance;
         // Ground distance
-        distance = ae.getPosition().distance(target.getPosition());
+        distance = ae.getPosition().distance(targetPos);
         distance += 2 * target.getAltitude();
         return distance <= visualRange;
 

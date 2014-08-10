@@ -2813,7 +2813,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 if (e.onSameC3NetworkAs(fe)
                         && !fe.equals(e)
-                        && !ComputeECM.isAffectedByNovaECM(e, e.getPosition(),
+                        && !ComputeECM.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }

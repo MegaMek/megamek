@@ -92,4 +92,10 @@ public class ECMInfo {
         }
         
     }
+    
+    public String toString() {
+        return "pos: " + pos.toString() + ", owner: " + owner.getName()
+                + ", r: " + range + ", s: " + strength + ", aS: "
+                + angelStrength + ", isECCM: " + isECCM;
+    }
 }

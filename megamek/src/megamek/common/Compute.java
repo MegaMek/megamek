@@ -1618,7 +1618,7 @@ public class Compute {
     }
 
     private static boolean canCompleteNodePath(Entity start, Entity end,
-                                               ArrayList<Entity> network, int startPosition) {
+            ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
@@ -1644,17 +1644,17 @@ public class Compute {
     }
 
     private static boolean canCompleteNodePathNova(Entity start, Entity end,
-                                                   ArrayList<Entity> network, int startPosition) {
+            ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
         // Last position cannot get to this one. go to the next person
-        if (ComputeECM.isAffectedByNovaECM(spotter, start.getPosition(),
+        if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
                                         spotter.getPosition())) {
             return false;
         }
 
-        if (!ComputeECM.isAffectedByNovaECM(spotter, spotter.getPosition(),
+        if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
                                          end.getPosition())) {
             return true;
         }

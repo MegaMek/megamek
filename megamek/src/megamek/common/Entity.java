@@ -5108,9 +5108,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ignoreECM) {
                 return true;
             }
-            return !(ComputeECM.isAffectedByNovaECM(e, e.getPosition(),
+            return !(ComputeECM.isAffectedByECM(e, e.getPosition(),
                                                  e.getPosition()))
-                    && !(ComputeECM.isAffectedByNovaECM(this, getPosition(),
+                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                      getPosition()));
         }
 
@@ -10367,6 +10367,145 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return i;
     }
 
+    /**
+     * Returns information (range, location, strength) about ECM if the unit 
+     * has active ECM or null if it doesn't.  In the case of multiple ECCM 
+     * system, the best one takes precendence, as a unit can only have one 
+     * active ECCM at a time.
+     * 
+     * @return
+     */
+    public ECMInfo getECMInfo() {
+        // If we don't have a position, ECM doesn't have an effect
+        if (getPosition() == null || isShutDown() || isStealthOn() 
+                || getTransportId() != Entity.NONE) {
+            return null;
+        }
+        
+        // No ECM in space unless SO rule is on        
+        if (game.getBoard().inSpace()
+                && !game.getOptions().booleanOption("stratops_ecm")) {
+            return null;
+        }
+        
+        ECMInfo bestInfo = null;
+        for (Mounted m : getMisc()) {
+            // Ignore if inoperable
+            if (m.isInoperable()) {
+                continue;
+            }
+            ECMInfo newInfo = null;
+            // Angel ECM
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                if (m.curMode().equals("ECM")) {
+                    newInfo = new ECMInfo(6,0,this);
+                    newInfo.angelStrength = 1;
+                } else if (m.curMode().equals("ECM & ECCM") 
+                        || m.curMode().equals("ECM & Ghost Targets")) {
+                    newInfo = new ECMInfo(6,1,this);
+                    // Doesn't count as Angel ECM
+                }
+                // BA Angel ECM has a shorter range
+                if ((newInfo != null) && (this instanceof BattleArmor)) {
+                    newInfo.range = 2;
+                }
+            // Anything that's not Angel ECM
+            } else if (m.getType().hasFlag(MiscType.F_ECM)
+                    && m.curMode().equals("ECM")) {
+                int range = 6;
+                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                    range = 0;
+                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) 
+                        || m.getType().hasFlag(MiscType.F_NOVA) 
+                        || m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+                    range = 3;
+                }                
+                newInfo = new ECMInfo(range,1, this);
+            }
+            // In some type of ECM mode...
+            if (newInfo != null) {
+                if ((bestInfo == null) 
+                        || (newInfo.angelStrength > bestInfo.angelStrength)
+                        || (newInfo.strength > bestInfo.strength 
+                                && !bestInfo.isAngel())) {
+                    bestInfo = newInfo;
+                }
+            }
+        }
+        return bestInfo;
+    }
+    
+    /**
+     * Returns information (range, location, strength) about ECCM if the unit 
+     * has active ECCM or null if it doesn't.  In the case of multiple ECCM 
+     * system, the best one takes precendence, as a unit can only have one 
+     * active ECCM at a time.
+     * 
+     * @return
+     */
+    public ECMInfo getECCMInfo() {
+        // If we don't have a position, ECM doesn't have an effect
+        if (getPosition() == null || isShutDown() || isStealthOn() 
+                || getTransportId() != Entity.NONE) {
+            return null;
+        }
+        // No ECM in space unless SO rule is on
+        if (game.getBoard().inSpace()
+                && !game.getOptions().booleanOption("stratops_ecm")) {
+            return null;
+        }
+        
+        ECMInfo bestInfo = null;
+        for (Mounted m : getMisc()) {
+            ECMInfo newInfo = null;
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                if ((getTotalCommGearTons() > 3)) {
+                    newInfo = new ECMInfo(6,0.5,this);
+                }
+                if ((getTotalCommGearTons() > 6)) {
+                    newInfo = new ECMInfo(6,1,this);
+                }
+            }
+            // Angel ECM
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                if (m.curMode().equals("ECCM")) {
+                    newInfo = new ECMInfo(6,0,this);
+                    newInfo.angelStrength = 1;
+                } else if (m.curMode().equals("ECM & ECCM") 
+                        || m.curMode().equals("ECCM & Ghost Targets")) {
+                    newInfo = new ECMInfo(6,1,this);
+                    // Doesn't count as Angel
+                }
+                // BA Angel ECM has a shorter range
+                if ((newInfo != null) && (this instanceof BattleArmor)) {
+                    newInfo.range = 2;
+                }
+            // Anything that's not Angel ECM                
+            } else if (m.getType().hasFlag(MiscType.F_ECM)
+                    && m.curMode().equals("ECCM")) {
+                int range = 6;
+                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                    range = 0;
+                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) 
+                        || m.getType().hasFlag(MiscType.F_NOVA) 
+                        || m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+                    range = 3;
+                }                
+                newInfo = new ECMInfo(range,1, this);
+            }
+            // In some type of ECCM mode...
+            if (newInfo != null) {
+                newInfo.isECCM = true;
+                if ((bestInfo == null) 
+                        || (newInfo.angelStrength > bestInfo.angelStrength)
+                        || (newInfo.strength > bestInfo.strength 
+                                && !bestInfo.isAngel())) {
+                    bestInfo = newInfo;
+                }
+            }
+        }
+        return bestInfo;
+    }
     /**
      * @return the strength of the ECM field this unit emits
      */

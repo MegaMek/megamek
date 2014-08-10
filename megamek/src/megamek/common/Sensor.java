@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This class will hold all the information about a particular active sensor,
@@ -342,13 +343,27 @@ public class Sensor implements Serializable {
         return mod;
     }
 
-    public int getModForECM(Entity en) {
+    /**
+     * Computes the sensor check modifier for ECM.
+     * 
+     * @param en
+     * @param allECMInfo  A collection of ECMInfo for all entities, this value
+     *                      can be null and it will be computed when it's
+     *                      needed, however passing in the pre-computed 
+     *                      collection is much faster
+     * @return
+     */
+    public int getModForECM(Entity en, List<ECMInfo> allECMInfo) {
 
         // how many ECM fields are affecting the entity?
         Coords pos = en.getPosition();
-        ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, null);
-        double ecm = Math.max(0, ecmInfo.strength);
-        double ecmAngel = Math.max(0, ecmInfo.angelStrength);
+        ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, allECMInfo);
+        double ecm, ecmAngel;
+        ecm = ecmAngel = 0;
+        if (ecmInfo != null) {
+            ecm = Math.max(0, ecmInfo.strength);
+            ecmAngel = Math.max(0, ecmInfo.angelStrength);
+        }
 
         switch (type) {
             case (TYPE_BAP):

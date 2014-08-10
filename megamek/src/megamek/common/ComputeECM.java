@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -41,19 +42,6 @@ public class ComputeECM {
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         return ComputeECM.getECMFieldSize(ae, a, b) > 0;
-    }
-
-    /**
-     * WOR: Nova CEWS This method checks to see if a line from a to b is
-     * affected by an Nova ECM field of the enemy of ae
-     *
-     * @param ae
-     * @param a
-     * @param b
-     * @return
-     */
-    public static boolean isAffectedByNovaECM(Entity ae, Coords a, Coords b) {
-        return ComputeECM.getNovaECMFieldSize(ae, a, b) > 0;
     }
 
     /**
@@ -393,88 +381,6 @@ public class ComputeECM {
         return worstECM;
     }
 
-    // WOR Nova CEWS. Modified Angel ECM code
-    public static double getNovaECMFieldSize(Entity ae, Coords a, Coords b) {
-        if (ae.getGame().getBoard().inSpace()) {
-            // normal Nova ECM effects don't apply in space
-            return 0;
-        }
-        if ((a == null) || (b == null)) {
-            return 0;
-        }
-    
-        // Only grab enemies with active Nova ECM
-        LinkedList<ECMInfo> enemyNovaECMInfo = new LinkedList<ECMInfo>();
-        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
-        for (Entity ent : ae.game.getEntitiesVector()) {
-            Coords entPos = ent.getPosition();
-            // add each Nova ECM at its ECM strength
-            if (ent.isEnemyOf(ae) && ent.hasActiveNovaECM() && (entPos != null)) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                enemyNovaECMInfo.add(newInfo);
-            }
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                friendlyECCMInfo.add(newInfo);
-            }
-    
-            // Check the angel ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveNovaECM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    enemyNovaECMInfo.add(newInfo);
-                }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECCM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    friendlyECCMInfo.add(newInfo);
-                }
-            }
-        }
-    
-        // none? get out of here
-        if (enemyNovaECMInfo.size() == 0) {
-            return 0;
-        }
-    
-        // get intervening Coords.
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, check each if they are ECM
-        // affected
-        double worstECM = 0;
-        for (Coords c : coords) {
-            // > 0: in friendly ECCM
-            // 0: unaffected by enemy ECM
-            // <0: affected by enemy Nova ECM
-            double ecmStatus = 0;
-    
-            for (ECMInfo ecmInfo : enemyNovaECMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus += ecmInfo.strength;
-                }
-            }
-    
-            // now, add friendly ECCM
-            for (ECMInfo ecmInfo : friendlyECCMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus -= ecmInfo.strength;
-                }
-            }
-            // if any coords in the line are affected, the whole line is
-            if (ecmStatus > worstECM) {
-                worstECM = ecmStatus;
-            }
-        }
-        return worstECM;
-    }
-
     /**
      * Check for the total number of fighter/small craft ECM bubbles in space
      * along the path from a to b
@@ -716,6 +622,73 @@ public class ComputeECM {
         return totalECM;
     }
     
+    /**
+     * Go through each entity in the supplied list and calculate the information
+     * for any ECM and ECCM it has and return the collection of ECMInfos.
+     * 
+     * @param entities  The list of entities to compute information for
+     * @return          An ECMInfo entry for each active ECM and ECCM fielded.
+     */
+    public static List<ECMInfo> computeAllEntitiesECMInfo(
+            Vector<Entity> entities) {
+        
+        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
+        
+        for (Entity e : entities) {
+            ECMInfo ecmInfo = e.getECMInfo();
+            if (ecmInfo != null) {
+                allEcmInfo.add(ecmInfo);
+            }
+            ECMInfo eccmInfo = e.getECCMInfo();
+            if (eccmInfo != null) {
+                allEcmInfo.add(eccmInfo);
+            }
+        }
+        
+        return allEcmInfo;
+    }
+    
+    /**
+     * Returns the total ECM effects on the supplied unit.
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @return
+     */
+    public static ECMInfo getECMEffects(Entity ae, Coords a, Coords b, 
+            List<ECMInfo> allEcmInfo) {
+        ECMInfo affectedInfo = null;
+        
+        if (allEcmInfo == null) {
+            allEcmInfo = computeAllEntitiesECMInfo(ae.game.getEntitiesVector());
+        }
+        
+        // Get intervening Coords
+        ArrayList<Coords> coords = Coords.intervening(a, b);
+        // Loop through intervening coords, add effects of any in-range E(C)CM        
+        for (Coords c : coords) {
+            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
+                if (affectedInfo == null) {
+                    affectedInfo = new ECMInfo(0, 1, ae);
+                } else {
+                    affectedInfo.strength++;
+                }
+            }
+            for (ECMInfo ecmInfo : allEcmInfo) {
+                // Is the ECMInfo in range of this position?
+                int dist = c.distance(ecmInfo.pos);
+                if (dist < ecmInfo.range) {
+                    if (affectedInfo == null) {
+                        affectedInfo = new ECMInfo(0, 0, ae);
+                    }
+                    affectedInfo.addECMEffects(ecmInfo);
+                }
+            }
+                   
+        }       
+        return affectedInfo;
+    }
     
 
 }

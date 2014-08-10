@@ -386,7 +386,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     .size();
             
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
-                    && entity.getC3MasterId() != chosen.getId()) {
+                    && ((chosen == null) 
+                            || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
             } else if (entity.getC3MasterId() != chosen.getId()){
                 String message = Messages

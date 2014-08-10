@@ -144,6 +144,7 @@ v0.39.1-dev (SVN)
 + Bug [#4194]: BA APmounts specified in MULs could cause a crash
 + Bug [#4226]: Long delays between phases for large battles with
     double-blind/sensors
++ Bug: NPE when selecting C3 choices for masters in unit customization dialog
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

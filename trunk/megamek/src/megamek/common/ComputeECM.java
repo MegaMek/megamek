@@ -44,8 +44,9 @@ public class ComputeECM {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
         // ECM present if any positive Angel ECM, or positive ECM without 
         //  Angel ECCM
-        return (ecmInfo.strength > 0 && ecmInfo.angelStrength == 0) 
-                || (ecmInfo.angelStrength > 0);
+        return (ecmInfo != null)
+                && ((ecmInfo.strength > 0 && ecmInfo.angelStrength == 0)
+                        || (ecmInfo.angelStrength > 0));
     }
 
     /**
@@ -61,8 +62,9 @@ public class ComputeECM {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
         // Any negative ECM strength without Angel ECM, or any negative Angel 
         //  ECCM
-        return (ecmInfo.strength < 0 && ecmInfo.angelStrength == 0) 
-                || (ecmInfo.angelStrength < 0);
+        return (ecmInfo != null)
+                && ((ecmInfo.strength < 0 && ecmInfo.angelStrength == 0)
+                        || (ecmInfo.angelStrength < 0));
     }
     
     /**
@@ -79,7 +81,7 @@ public class ComputeECM {
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
-        return ecmInfo.angelStrength > 0;
+        return (ecmInfo != null) && (ecmInfo.angelStrength > 0);
     }    
 
     /**

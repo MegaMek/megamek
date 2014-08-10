@@ -74,12 +74,14 @@ import megamek.common.BuildingTarget;
 import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
+import megamek.common.ECMInfo;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -12026,6 +12028,12 @@ public class Server implements Runnable {
      * can see what in double blind reports.
      */
     private void resolveWhatPlayersCanSeeWhatUnits() {
+        List<ECMInfo> allECMInfo = null;
+        if (game.getOptions().booleanOption("tacops_sensors")) {
+            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                    .getEntitiesVector());
+        }
+                
         for (Entity entity : game.getEntitiesVector()) {
             // We are hidden once again!
             entity.clearSeenBy();
@@ -12034,7 +12042,7 @@ public class Server implements Runnable {
                 entity.addBeenSeenBy(p);
             }
             // Handle detection by sensors
-            for (IPlayer p : whoCanDetect(entity)) {
+            for (IPlayer p : whoCanDetect(entity, allECMInfo)) {
                 if (!entity.hasSeenEntity(p)) {
                     entity.addBeenSeenBy(p);
                 }
@@ -26089,6 +26097,12 @@ public class Server implements Runnable {
             return new Vector<IPlayer>();
         }
 
+        List<ECMInfo> allECMInfo = null;
+        if (game.getOptions().booleanOption("tacops_sensors") && useSensors) {
+            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                    .getEntitiesVector());
+        }
+        
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
         Vector<Entity> vEntities = game.getEntitiesVector();
 
@@ -26119,7 +26133,7 @@ public class Server implements Runnable {
                 if (e.isOffBoard()) {
                     continue;
                 }
-                if (Compute.canSee(game, e, entity, useSensors)) {
+                if (Compute.canSee(game, e, entity, useSensors, allECMInfo)) {
                     if (!vCanSee.contains(e.getOwner())) {
                         vCanSee.addElement(e.getOwner());
                     }
@@ -26134,7 +26148,8 @@ public class Server implements Runnable {
         return vCanSee;
     }
 
-    private Vector<IPlayer> whoCanDetect(Entity entity) {
+    private Vector<IPlayer> whoCanDetect(Entity entity, 
+            List<ECMInfo> allECMInfo) {
 
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
         Vector<Entity> vEntities = game.getEntitiesVector();
@@ -26153,7 +26168,7 @@ public class Server implements Runnable {
                 if (e.isOffBoard()) {
                     continue;
                 }
-                if (Compute.inSensorRange(game, e, entity)) {
+                if (Compute.inSensorRange(game, e, entity, allECMInfo)) {
                     if (!vCanDetect.contains(e.getOwner())) {
                         vCanDetect.addElement(e.getOwner());
                     }
@@ -26227,13 +26242,20 @@ public class Server implements Runnable {
         if (pViewer.canSeeAll()) {
             return vEntities;
         }
+        
+        List<ECMInfo> allECMInfo = null;
+        if (game.getOptions().booleanOption("tacops_sensors")) {
+            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                    .getEntitiesVector());
+        }
 
         // If they're an observer, they can see anything seen by any enemy.
         if (pViewer.isObserver()) {
             vMyEntities.addAll(vEntities);
             for (Entity a : vMyEntities) {
                 for (Entity b : vMyEntities) {
-                    if (a.isEnemyOf(b) && Compute.canSee(game, b, a)) {
+                    if (a.isEnemyOf(b) 
+                            && Compute.canSee(game, b, a, true, allECMInfo)) {
                         addVisibleEntity(vCanSee, a);
                         break;
                     }
@@ -26272,7 +26294,7 @@ public class Server implements Runnable {
                 }
 
                 // Otherwise, if they can see the entity in question
-                if (Compute.canSee(game, spotter, e)) {
+                if (Compute.canSee(game, spotter, e, true, allECMInfo)) {
                     addVisibleEntity(vCanSee, e);
                     break;
                 }
@@ -26466,6 +26488,12 @@ public class Server implements Runnable {
      * double-blind games.
      */
     private void updateVisibilityIndicator() {
+        List<ECMInfo> allECMInfo = null;
+        if (game.getOptions().booleanOption("tacops_sensors")) {
+            allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                    .getEntitiesVector());
+        }
+        
         Vector<Entity> vAllEntities = game.getEntitiesVector();
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = vAllEntities.elementAt(x);
@@ -26487,7 +26515,7 @@ public class Server implements Runnable {
             }
             // If the unit isn't visible, is it detected by sensors?
             if (!e.isDetectedByEnemy()) {
-                Vector<IPlayer> vCanDetect = whoCanDetect(e);
+                Vector<IPlayer> vCanDetect = whoCanDetect(e, allECMInfo);
                 for (IPlayer p : vCanDetect) {
                     if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                         e.setDetectedByEnemy(true);

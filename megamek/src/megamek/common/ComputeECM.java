@@ -363,6 +363,14 @@ public class ComputeECM {
             List<ECMInfo> allEcmInfo) {
         ECMInfo affectedInfo = null;
         
+        if (ae.getGame().getBoard().inSpace()) {
+            // normal ECM effects don't apply in space
+            return null;
+        }
+        if ((a == null) || (b == null)) {
+            return null;
+        }
+        
         if (allEcmInfo == null) {
             allEcmInfo = computeAllEntitiesECMInfo(ae.game.getEntitiesVector());
         }

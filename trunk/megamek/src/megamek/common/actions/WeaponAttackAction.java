@@ -3628,7 +3628,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // direct fire
         if (game.getOptions().booleanOption("double_blind")
                 && !Compute.inVisualRange(game, ae, target)
-                && !Compute.inSensorRange(game, ae, target)
+                && !Compute.inSensorRange(game, ae, target, null)
                 && !isArtilleryIndirect && !isIndirect) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i()) {

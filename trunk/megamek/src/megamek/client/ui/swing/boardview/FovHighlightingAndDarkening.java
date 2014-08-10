@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
+import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IHex;
@@ -146,7 +149,8 @@ class FovHighlightingAndDarkening implements AutoCloseable{
                     visualRange = Compute.getVisualRange(this.boardView1.game,
                             this.boardView1.selectedEntity, los, targetIlluminated);
                     int bracket = Compute.getSensorRangeBracket(
-                            this.boardView1.selectedEntity, null);
+                            this.boardView1.selectedEntity, null,
+                            cachedAllECMInfo);
                     int range = Compute.getSensorRangeByBracket(this.boardView1.game,
                             this.boardView1.selectedEntity, null, los);
 
@@ -190,7 +194,7 @@ class FovHighlightingAndDarkening implements AutoCloseable{
         }
     }
 
-
+    List<ECMInfo> cachedAllECMInfo = null;
     Entity cachedSelectedEntity = null;
     StepSprite cachedStepSprite = null;
     Coords cachedSrc = null;
@@ -221,6 +225,9 @@ class FovHighlightingAndDarkening implements AutoCloseable{
             cachedStepSprite = lastStepSprite;
             cachedSrc = src;
             cacheGameChanged = false;
+            cachedAllECMInfo = ComputeECM
+                    .computeAllEntitiesECMInfo(boardView1.game
+                            .getEntitiesVector());
         }
 
         LosEffects los = losCache.get(dest);

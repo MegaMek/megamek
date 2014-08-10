@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
@@ -3554,8 +3555,13 @@ public class Compute {
     /**
      * Checks to see whether the target is within sensor range (but not
      * necessarily LoS or visual range)
+     * @param allECMInfo  A collection of ECMInfo for all entities, this value
+     *                      can be null and it will be computed when it's
+     *                      needed, however passing in the pre-computed 
+     *                      collection is much faster
      */
-    public static boolean inSensorRange(IGame game, Entity ae, Targetable target) {
+    public static boolean inSensorRange(IGame game, Entity ae,
+            Targetable target, List<ECMInfo> allECMInfo) {
 
         if (!game.getOptions().booleanOption("tacops_sensors")) {
             return false;
@@ -3566,7 +3572,7 @@ public class Compute {
             return false;
         }
 
-        int bracket = Compute.getSensorRangeBracket(ae, target);
+        int bracket = Compute.getSensorRangeBracket(ae, target, allECMInfo);
         int range = Compute.getSensorRangeByBracket(game, ae, target);
 
         int maxSensorRange = bracket * range;
@@ -3585,7 +3591,7 @@ public class Compute {
      * sensors.
      */
     public static boolean canSee(IGame game, Entity ae, Targetable target) {
-        return canSee(game, ae, target, true);
+        return canSee(game, ae, target, true, null);
     }
 
     /**
@@ -3593,7 +3599,7 @@ public class Compute {
      * is true then sensors are checked as well.
      */
     public static boolean canSee(IGame game, Entity ae, Targetable target,
-                                 boolean useSensors) {
+                                 boolean useSensors, List<ECMInfo> allECMInfo) {
 
         if (!ae.getCrew().isActive()) {
             return false;
@@ -3606,7 +3612,8 @@ public class Compute {
         boolean isVisible = los.canSee()
                             && Compute.inVisualRange(game, ae, target);
         if (useSensors) {
-            isVisible = isVisible || Compute.inSensorRange(game, ae, target);
+            isVisible = isVisible 
+                    || Compute.inSensorRange(game, ae, target, allECMInfo);
         }
         return isVisible;
     }
@@ -3615,8 +3622,14 @@ public class Compute {
      * gets the sensor range bracket when detecting a particular type of target.
      * target may be null here, which gives you the bracket without target
      * entity modifiers
+     * 
+     * @param allECMInfo  A collection of ECMInfo for all entities, this value
+     *                      can be null and it will be computed when it's
+     *                      needed, however passing in the pre-computed 
+     *                      collection is much faster
      */
-    public static int getSensorRangeBracket(Entity ae, Targetable target) {
+    public static int getSensorRangeBracket(Entity ae, Targetable target, 
+            List<ECMInfo> allECMInfo) {
 
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {
@@ -3649,7 +3662,7 @@ public class Compute {
             }
         }
         // ECM bubbles
-        check += sensor.getModForECM(ae);
+        check += sensor.getModForECM(ae, allECMInfo);
 
         return Compute.getSensorBracket(check);
     }

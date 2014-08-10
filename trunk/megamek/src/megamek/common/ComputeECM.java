@@ -41,7 +41,11 @@ public class ComputeECM {
      * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
-        return ComputeECM.getECMFieldSize(ae, a, b) > 0;
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        // ECM present if any positive Angel ECM, or positive ECM without 
+        //  Angel ECCM
+        return (ecmInfo.strength > 0 && ecmInfo.angelStrength == 0) 
+                || (ecmInfo.angelStrength > 0);
     }
 
     /**
@@ -54,7 +58,11 @@ public class ComputeECM {
      * @return
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
-        return ComputeECM.getECCMFieldSize(ae, a, b) > 0;
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        // Any negative ECM strength without Angel ECM, or any negative Angel 
+        //  ECCM
+        return (ecmInfo.strength < 0 && ecmInfo.angelStrength == 0) 
+                || (ecmInfo.angelStrength < 0);
     }
     
     /**
@@ -70,316 +78,9 @@ public class ComputeECM {
      * enemy or friendly fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
-        return ComputeECM.getAngelECMFieldSize(ae, a, b) > 0;
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        return ecmInfo.angelStrength > 0;
     }    
-
-    /**
-     * This method returns the highest number of enemy ECM fields of ae between
-     * points a and b
-     *
-     * @param ae
-     * @param a
-     * @param b
-     * @return
-     */
-    public static double getECMFieldSize(Entity ae, Coords a, Coords b) {
-    
-        if (ae.getGame().getBoard().inSpace()) {
-            // normal ECM effects don't apply in space
-            return 0;
-        }
-        if ((a == null) || (b == null)) {
-            return 0;
-        }
-    
-        LinkedList<ECMInfo> enemyECMInfo = new LinkedList<ECMInfo>();
-        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
-    
-        for (Entity ent : ae.game.getEntitiesVector()) {
-            Coords entPos = ent.getPosition();
-            if (ent.isEnemyOf(ae) && (entPos != null) && ent.hasActiveECM()) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                enemyECMInfo.add(newInfo);
-            }
-            if (!ent.isEnemyOf(ae) && (entPos != null) && ent.hasActiveECCM()) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                friendlyECCMInfo.add(newInfo);
-            }
-    
-            // Check the ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveECM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    enemyECMInfo.add(newInfo);
-                }
-                if (!other.isEnemyOf(ae) && other.hasActiveECCM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    friendlyECCMInfo.add(newInfo);
-                }
-            }
-        }
-    
-        // none? get out of here
-        if ((enemyECMInfo.size() == 0) && !ae.isINarcedWith(INarcPod.ECM)) {
-            return 0;
-        }
-    
-        // get intervening Coords.
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, check each if they are ECM
-        // affected
-        double worstECM = 0;
-        for (Coords c : coords) {
-            // > 0: affected by enemy ECM
-            // 0: unaffected by enemy ECM
-            // <0: in friendly ECCM
-            double ecmStatus = 0;
-            // if we're at ae's Position, figure in a possible
-            // iNarc ECM pod
-            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
-                ecmStatus++;
-            }
-            // First, subtract strength for each enemy ECM that affects us
-            for (ECMInfo ecmInfo : enemyECMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus += ecmInfo.strength;
-                }
-            }
-            // now, add strength for each friendly ECCM
-            for (ECMInfo ecmInfo : friendlyECCMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus -= ecmInfo.strength;
-                }
-            }
-            // if any coords in the line are affected, the whole line is
-            if (ecmStatus > worstECM) {
-                worstECM = ecmStatus;
-            }
-        }
-        return worstECM;
-    }
-
-    /**
-     * This method returns the highest number of enemy ECCM fields of ae between
-     * points a and b
-     *
-     * @param ae
-     * @param a
-     * @param b
-     * @return
-     */
-    public static double getECCMFieldSize(Entity ae, Coords a, Coords b) {
-        if (ae.getGame().getBoard().inSpace()) {
-            // normal ECM effects don't apply in space
-            return 0;
-        }
-        if ((a == null) || (b == null)) {
-            return 0;
-        }
-    
-        // Only grab enemies with active ECM
-        LinkedList<ECMInfo> enemyECMInfo = new LinkedList<ECMInfo>();
-        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements(); ) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                enemyECMInfo.add(newInfo);
-            }
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                friendlyECCMInfo.add(newInfo);
-            }
-    
-            // Check the ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveECCM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    enemyECMInfo.add(newInfo);
-                }
-                if (!other.isEnemyOf(ae) && other.hasActiveECM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    friendlyECCMInfo.add(newInfo);
-                }
-            }
-        }
-    
-        // none? get out of here
-        if (enemyECMInfo.size() == 0) {
-            return 0;
-        }
-    
-        // get intervening Coords.
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, check each if they are ECCM
-        // affected
-        double worstECCM = 0;
-        for (Coords c : coords) {
-            // > 0: in friendly ECM
-            // 0: unaffected by enemy ECCM
-            // <0: affected by enemy ECCM
-            double eccmStatus = 0;
-            // if we're at ae's Position, figure in a possible
-            // iNarc ECM pod
-            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
-                eccmStatus--;
-            }
-    
-            // First, subtract strength for each enemy ECM that affects us
-            for (ECMInfo ecmInfo : enemyECMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    eccmStatus += ecmInfo.strength;
-                }
-            }
-            // now, add strength for each friendly ECCM
-            for (ECMInfo ecmInfo : friendlyECCMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    eccmStatus -= ecmInfo.strength;
-                }
-            }
-            // if any coords in the line are affected, the whole line is
-            if (eccmStatus > worstECCM) {
-                worstECCM = eccmStatus;
-            }
-        }
-        return worstECCM;
-    }
-
-
-
-    public static double getAngelECMFieldSize(Entity ae, Coords a, Coords b) {
-        if (ae.getGame().getBoard().inSpace()) {
-            // normal Angel ECM effects don't apply in space
-            return 0;
-        }
-        if ((a == null) || (b == null)) {
-            return 0;
-        }
-    
-        // we have to track regular ECM here as well because some ECCM might
-        // get "soaked up" by the regular ECM. I have a rules query in that
-        // asks for confirmation on whether regular ECM should always be soaked
-        // before Angel
-        // http://bg.battletech.com/forums/index.php/topic,27121.new.html#new
-    
-        LinkedList<ECMInfo> enemyOtherECMInfo = new LinkedList<ECMInfo>();
-        LinkedList<ECMInfo> enemyAngelECMInfo = new LinkedList<ECMInfo>();
-        LinkedList<ECMInfo> friendlyECCMInfo = new LinkedList<ECMInfo>();
-    
-        for (Entity ent : ae.game.getEntitiesVector()) {
-            Coords entPos = ent.getPosition();
-            // add each angel ECM at its ECM strength
-            if (ent.isEnemyOf(ae) && (entPos != null)) {
-                if (ent.hasActiveAngelECM()) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    enemyAngelECMInfo.add(newInfo);
-                } else if (ent.hasActiveECM()) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    enemyOtherECMInfo.add(newInfo);
-                }
-            }
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
-                ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                              ent.getECMStrength());
-                friendlyECCMInfo.add(newInfo);
-            }
-    
-            // Check the angel ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && (entPos != null)) {
-                    if (other.hasActiveAngelECM()) {
-                        ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                      ent.getECMStrength());
-                        enemyAngelECMInfo.add(newInfo);
-                    } else if (other.hasActiveECM()) {
-                        ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                      ent.getECMStrength());
-                        enemyOtherECMInfo.add(newInfo);
-                    }
-                }
-                if (!other.isEnemyOf(ae) && other.hasActiveECCM()
-                    && (entPos != null)) {
-                    ECMInfo newInfo = new ECMInfo(ent.getECMRange(), entPos,
-                                                  ent.getECMStrength());
-                    friendlyECCMInfo.add(newInfo);
-                }
-            }
-        }
-    
-        // none? get out of here
-        if (enemyAngelECMInfo.size() == 0) {
-            return 0;
-        }
-    
-        // get intervening Coords.
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, check each if they are ECM
-        // affected
-        double worstECM = 0;
-        for (Coords c : coords) {
-            // > 0: affected by enemy Angel ECM
-            // 0: unaffected by enemy Angel ECM
-            // <0: in friendly ECCM
-            double ecmStatus = 0;
-            // fist calculate other ECM
-            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
-                ecmStatus++;
-            }
-    
-            for (ECMInfo ecmInfo : enemyOtherECMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus += ecmInfo.strength;
-                }
-            }
-    
-            // now, add friendly ECCM
-            for (ECMInfo ecmInfo : friendlyECCMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus -= ecmInfo.strength;
-                }
-            }
-            // if ecmStatus is greater than zero then we have more other ECM
-            // than ECCM,
-            // but we don't care about that so reset to zero
-            if (ecmStatus > 0) {
-                ecmStatus = 0;
-            }
-            // now get the angel ECM
-            for (ECMInfo ecmInfo : enemyAngelECMInfo) {
-                int nDist = c.distance(ecmInfo.pos);
-                if (nDist <= ecmInfo.range) {
-                    ecmStatus += ecmInfo.strength;
-                }
-            }
-    
-            // if any coords in the line are affected, the whole line is
-            if (ecmStatus > worstECM) {
-                worstECM = ecmStatus;
-            }
-        }
-        return worstECM;
-    }
 
     /**
      * Check for the total number of fighter/small craft ECM bubbles in space
@@ -632,7 +333,7 @@ public class ComputeECM {
     public static List<ECMInfo> computeAllEntitiesECMInfo(
             Vector<Entity> entities) {
         
-        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
+        LinkedList<ECMInfo> allEcmInfo = new LinkedList<ECMInfo>();
         
         for (Entity e : entities) {
             ECMInfo ecmInfo = e.getECMInfo();

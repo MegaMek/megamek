@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -3784,22 +3785,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // This is expensive, so precalculate when entity changes
     public void updateEcmList() {
-        ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
+        LinkedList<EcmBubble> list = new LinkedList<EcmBubble>();
+        // Compute ECM information for all entities
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             int range = ent.getECMRange();
             boolean deployed = ent.isDeployed();
             boolean offboard = ent.isOffBoard();
-            if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
-                Entity carrier = game.getEntity(ent.getTransportId());
-                if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
-                    entPos = carrier.getPosition();
-                    deployed = carrier.isDeployed();
-                    offboard = carrier.isOffBoard();
-                }
-            }
-            if ((entPos == null) || !deployed || offboard) {
+            boolean isTransported = ent.getTransportId() != Entity.NONE;
+            if ((entPos == null) || !deployed || offboard || isTransported) {
                 continue;
             }
             if (range != Entity.NONE) {
@@ -3821,6 +3816,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
+        
+        
         HashMap<Coords, Integer> table = new HashMap<Coords, Integer>();
         for (EcmBubble b : list) {
             Integer col = new Integer(b.tint);

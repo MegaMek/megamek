@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class loads the default quirks list from the mmconf/defaultQuirks.xml
+ * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml
  * file.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -46,60 +47,46 @@ public class DefaultQuirksHandler {
     private static final String WEAPON_NAME = "weaponName";
     private static final String WEAPON_QUIRK_NAME = "weaponQuirkName";
 
-    private static Map<String, List<QuirkEntry>> defaultQuirkMap;
-    private static boolean initialized = false;
+    private static Map<String, List<QuirkEntry>> cannonQuirkMap;
+    private static Map<String, List<QuirkEntry>> customQuirkMap;
+    private static AtomicBoolean initialized = new AtomicBoolean(false);
 
-    /**
-     * Reads in the values from the defaultQuirks.xml file and stores them in
-     * memory.
-     *
-     * @throws IOException
-     */
-    public static void initQuirksList() throws IOException {
+    private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
+        Map<String, List<QuirkEntry>> quirkMap = new HashMap<>();
 
-        // Get the path to the defaultQuirks.xml file.
-        String filePath = System.getProperty("user.dir");
-        if (!filePath.endsWith(File.separator)) {
-            filePath += File.separator;
-        }
-        filePath += "mmconf" + File.separator + "defaultQuirks.xml";
-        File file = new File(filePath);
+        File file = new File(path);
         if (!file.exists() || !file.isFile()) {
-            return;
+            return quirkMap;
         }
 
         // Build the XML document.
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        StringBuilder log = new StringBuilder();
         try {
             DocumentBuilder builder = dbf.newDocumentBuilder();
-            System.out.println("Parsing " + filePath);
+            log.append("Parsing ").append(path);
             Document doc = builder.parse(file);
-            System.out.println("Parsing finished.");
+            log.append("\n...Parsing finished.");
 
             // Get the list of units.
-            NodeList listOfUnits = doc.getElementsByTagName("unit");
-            int totalUnits = listOfUnits.getLength();
-            System.out.println("Total number of units with default quirks: "
-                               + totalUnits);
-            defaultQuirkMap = new HashMap<String, List<QuirkEntry>>(totalUnits);
-            for (int unitCount = 0; unitCount < totalUnits; unitCount++) {
+            NodeList listOfEntries = doc.getElementsByTagName("unit");
+            int totalEntries = listOfEntries.getLength();
+            log.append("\n\tTotal number of quirk entries: ").append(totalEntries);
+            for (int unitCount = 0; unitCount < totalEntries; unitCount++) {
 
                 // Get the first element of this node.
-                Element unitList = (Element) listOfUnits.item(unitCount);
+                Element unitList = (Element) listOfEntries.item(unitCount);
 
                 // Get the chassis
-                Element chassisElement = (Element) unitList
-                        .getElementsByTagName(CHASSIS).item(0);
+                Element chassisElement = (Element) unitList.getElementsByTagName(CHASSIS).item(0);
                 if (chassisElement == null) {
-                    System.err.println("Missing <chassis> element #"
-                                       + unitCount);
+                    log.append("\n\tMissing <chassis> element #").append(unitCount);
                     continue;
                 }
                 String chassis = chassisElement.getTextContent();
 
                 // Get the model.
-                Element modelElement = (Element) unitList.getElementsByTagName(
-                        MODEL).item(0);
+                Element modelElement = (Element) unitList.getElementsByTagName(MODEL).item(0);
                 String model = null;
                 if (modelElement != null) {
                     model = modelElement.getTextContent();
@@ -113,83 +100,96 @@ public class DefaultQuirksHandler {
 
                 // Get the quirks.
                 NodeList quirkNodes = unitList.getElementsByTagName(QUIRK);
-                NodeList weapQuirkNodes = unitList
-                        .getElementsByTagName(WEAPON_QUIRK);
-                List<QuirkEntry> quirkList = new ArrayList<QuirkEntry>(
-                        quirkNodes.getLength() + weapQuirkNodes.getLength());
+                NodeList weapQuirkNodes = unitList.getElementsByTagName(WEAPON_QUIRK);
+                List<QuirkEntry> quirkList = new ArrayList<>(quirkNodes.getLength() + weapQuirkNodes.getLength());
 
                 // Add the quirks.
                 for (int quirkCount = 0; quirkCount < quirkNodes.getLength(); quirkCount++) {
 
                     // Create the quirk entry and add it to the list.
-                    Element quirkElement = (Element) quirkNodes
-                            .item(quirkCount);
-                    if ((quirkElement.getTextContent() == null)
-                        || quirkElement.getTextContent().isEmpty()) {
+                    Element quirkElement = (Element) quirkNodes.item(quirkCount);
+                    if ((quirkElement.getTextContent() == null) || quirkElement.getTextContent().isEmpty()) {
                         continue;
                     }
-                    QuirkEntry quirkEntry = new QuirkEntry(
-                            quirkElement.getTextContent(), unitId);
+                    QuirkEntry quirkEntry = new QuirkEntry(quirkElement.getTextContent(), unitId);
                     quirkList.add(quirkEntry);
                 }
 
                 // Add the weapon quirks.
-                for (int quirkCount = 0; quirkCount < weapQuirkNodes
-                        .getLength(); quirkCount++) {
-                    Element quirkElement = (Element) weapQuirkNodes
-                            .item(quirkCount);
+                for (int quirkCount = 0; quirkCount < weapQuirkNodes.getLength(); quirkCount++) {
+                    Element quirkElement = (Element) weapQuirkNodes.item(quirkCount);
 
                     // Get the name of the quirk.
-                    Element nameElement = (Element) quirkElement
-                            .getElementsByTagName(WEAPON_QUIRK_NAME).item(0);
+                    Element nameElement = (Element) quirkElement.getElementsByTagName(WEAPON_QUIRK_NAME).item(0);
                     if (nameElement == null) {
                         continue;
                     }
                     String weaponQuirkName = nameElement.getTextContent();
 
                     // Get the weapon's location.
-                    Element locElement = (Element) quirkElement
-                            .getElementsByTagName(LOCATION).item(0);
+                    Element locElement = (Element) quirkElement.getElementsByTagName(LOCATION).item(0);
                     if (locElement == null) {
                         continue;
                     }
                     String location = locElement.getTextContent();
 
                     // Get the weapon's critical slot.
-                    Element slotElement = (Element) quirkElement
-                            .getElementsByTagName(SLOT).item(0);
+                    Element slotElement = (Element) quirkElement.getElementsByTagName(SLOT).item(0);
                     if (slotElement == null) {
                         continue;
                     }
                     String slot = slotElement.getTextContent();
 
                     // Get the weapon's name.
-                    Element weapElement = (Element) quirkElement
-                            .getElementsByTagName(WEAPON_NAME).item(0);
+                    Element weapElement = (Element) quirkElement.getElementsByTagName(WEAPON_NAME).item(0);
                     if (weapElement == null) {
                         continue;
                     }
                     String weaponName = weapElement.getTextContent();
 
                     // Add the weapon quirk to the list.
-                    QuirkEntry weaponQuirk = new QuirkEntry(weaponQuirkName,
-                                                            location, Integer.parseInt(slot), weaponName,
-                                                            unitId);
+                    QuirkEntry weaponQuirk = new QuirkEntry(weaponQuirkName, location, Integer.parseInt(slot),
+                                                            weaponName, unitId);
                     quirkList.add(weaponQuirk);
                 }
 
                 // Add the unit to the default quirks list.
                 if (quirkList.isEmpty()) {
-                    System.err.println("No quirks found for " + unitId);
+                    log.append("No quirks found for ").append(unitId);
                 }
-                defaultQuirkMap.put(unitId, quirkList);
+                quirkMap.put(unitId, quirkList);
             }
 
-            initialized = true;
-
+            return quirkMap;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            System.out.println(log);
         }
+    }
+
+    /**
+     * Reads in the values from the cannonUnitQuirks.xml file and stores them in memory.
+     *
+     * @throws IOException
+     */
+    public static void initQuirksList() throws IOException {
+
+        // Get the path to the cannonUnitQuirks.xml file.
+        String userDir = System.getProperty("user.dir");
+        if (!userDir.endsWith(File.separator)) {
+            userDir += File.separator;
+        }
+
+        // Load the cannon quirks list.
+        String filePath = userDir + "data" + File.separator + "cannonUnitQuirks.xml";
+        cannonQuirkMap = loadQuirksFile(filePath);
+
+        // Load the custom quirks list.
+        filePath = userDir + "mmconf" + File.separator + "unitQuirksOverride.xml";
+        customQuirkMap = loadQuirksFile(filePath);
+
+        initialized.set(true);
     }
 
     /**
@@ -200,34 +200,69 @@ public class DefaultQuirksHandler {
      *                is no model number).
      * @return A {@code List} of the quirks ({@code QuirkEntry}) for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
-     * @throws java.io.IOException
      */
     public static List<QuirkEntry> getQuirks(String chassis, String model) {
-        if (!initialized || (null == defaultQuirkMap)) {
+        final String NO_QUIRKS = "none";
+
+        if (!initialized.get() || (null == cannonQuirkMap)) {
             return null;
         }
-        List<QuirkEntry> quirks = null;
+        List<QuirkEntry> quirks = new ArrayList<>();
+
+        // General entry for the chassis.
+        String generalId = chassis + " all";
 
         // Build the unit ID from the chassis and model.
         String unitId = chassis;
         if ((model != null) && !model.isEmpty()) {
             unitId += " " + model;
         }
-        // System.out.println("Getting quirks for " + unitId);
 
-        if (defaultQuirkMap.containsKey(chassis)) {
-            quirks = defaultQuirkMap.get(chassis);
+        // Check for a general entry for this chassis in the custom list.
+        if (customQuirkMap.containsKey(generalId)) {
+            quirks.addAll(customQuirkMap.get(generalId));
         }
 
-        if (defaultQuirkMap.containsKey(unitId)) {
-            if (quirks == null) {
-                quirks = defaultQuirkMap.get(unitId);
-            } else if (defaultQuirkMap.get(unitId).size() > 0) {
-                quirks = new ArrayList<QuirkEntry>(quirks);
-                quirks.addAll(defaultQuirkMap.get(unitId));
+        // Check for a model-specific entry.
+        if (customQuirkMap.containsKey(unitId)) {
+
+            // If this specific model has no quirks, return null.
+            if (NO_QUIRKS.equalsIgnoreCase(customQuirkMap.get(unitId).get(0).getQuirk())) {
+                return null;
             }
+
+            // Add the model-specific quirks.
+            quirks.addAll(customQuirkMap.get(unitId));
         }
 
-        return quirks;
+        // If there is only one quirk on the list and it indicates that the custom list has removed all quirks from
+        // this unit, return null.
+        if ((quirks.size() == 1) && NO_QUIRKS.equalsIgnoreCase(quirks.get(0).getQuirk())) {
+            return null;
+        }
+
+        // If quirk entries were found on the customized list, return those quirks.
+        if (!quirks.isEmpty()) {
+            return quirks;
+        }
+
+        // Check the canonical list for a general entry for this chassis.
+        if (cannonQuirkMap.containsKey(generalId)) {
+            quirks.addAll(cannonQuirkMap.get(chassis));
+        }
+
+        // Check for a model-specific entry.
+        if (cannonQuirkMap.containsKey(unitId)) {
+
+            // If this specific model, has no quirks, return null.
+            if (NO_QUIRKS.equalsIgnoreCase(cannonQuirkMap.get(unitId).get(0).getQuirk())) {
+                return null;
+            }
+
+            // Add the model-specific quirks.
+            quirks.addAll(cannonQuirkMap.get(unitId));
+        }
+
+        return quirks.isEmpty() ? null : quirks;
     }
 }

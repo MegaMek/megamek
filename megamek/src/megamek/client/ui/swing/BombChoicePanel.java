@@ -27,8 +27,6 @@ import megamek.common.Aero;
 import megamek.common.BombType;
 
 /**
- * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.
- *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
  * @since 2012-04-07

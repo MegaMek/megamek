@@ -6,7 +6,7 @@
     <xs:element name="model" type="xs:string"/>
     <xs:element name="quirk" type="xs:string"/>
     <!-- /unit elements -->
-    
+
     <!-- weaponQuirk elements -->
     <xs:element name="weaponQuirkName" type="xs:string"/>
     <xs:element name="location" type="xs:string"/>
@@ -14,7 +14,7 @@
     <xs:element name="weaponName" type="xs:string"/>
     <!-- /weaponQuirk elements -->
 
-    <xs:element name="defaultQuirks">
+    <xs:element name="unitQuirks">
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" ref="unit"/>

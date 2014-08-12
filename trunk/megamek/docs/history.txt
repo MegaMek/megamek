@@ -158,6 +158,7 @@ v0.39.1-dev (SVN)
     Static Ammo Feed.  None of these are coded yet, they are purely display values only.  Also updated the
     cannonUnitQuirks.xml file to include these new quirks.
 + Feature Request [features:#1265] Princess Bot and magma
++ Added code to make Princess fire hole-punchers before crit-seekers.
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

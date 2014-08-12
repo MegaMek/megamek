@@ -909,6 +909,13 @@ public class Princess extends BotClient {
         logger.log(callingClass, methodName, level, msg);
     }
 
+    public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder msg) {
+        if (msg == null) {
+            return;
+        }
+        log(callingClass, methodName, level, msg.toString());
+    }
+
     public void log(Class<?> callingClass, String methodName, String msg) {
         log(callingClass, methodName, LogLevel.DEBUG, msg);
     }

@@ -26,6 +26,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -44,14 +45,14 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ACFlechetteHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+                              Server s) {
         super(t, w, g, s);
         damageType = DamageType.FLECHETTE;
     }
 
     /**
      * Calculate the damage per hit.
-     * 
+     *
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
@@ -64,8 +65,8 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -81,7 +82,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+                                     Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -103,15 +104,15 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                        vPhaseReport)) {
+            && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                                   false,
+                                   new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                                   vPhaseReport)) {
             return;
         }
 
         Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
+                                                         nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }

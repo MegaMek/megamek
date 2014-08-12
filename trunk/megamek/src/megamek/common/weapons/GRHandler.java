@@ -24,6 +24,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -55,16 +56,16 @@ public class GRHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn -= 1;
         }
 
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() / 3 : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

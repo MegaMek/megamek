@@ -12,12 +12,161 @@
         <quirk>command_mech</quirk>
     </unit>
     <unit>
-        <chassis>BattleMaster</chassis>
+        <chassis>Awesome</chassis>
+        <model>all</model>
+        <quirk>battle_fists</quirk>
+    </unit>
+    <unit>
+    <chassis>BattleMaster</chassis>
         <model>all</model>
         <quirk>command_mech</quirk>
     </unit>
     <unit>
-        <chassis>Black Knight</chassis>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1D</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1G (Red Corsair)</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>10</slot>
+            <weaponName>CLERPPC</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>LA</location>
+            <slot>10</slot>
+            <weaponName>CLERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1G</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1Gr</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>7</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>LA</location>
+            <slot>7</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1Gbc</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>LA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1Gc</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1Gd</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1G-DC</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-1GHE 'HellSinger'</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>RPPC</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>LA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-2C</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-3M (Rogers)</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>BattleMaster</chassis>
+        <model>BLR-3M</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+    <chassis>Black Knight</chassis>
         <model>all</model>
         <quirk>command_mech</quirk>
     </unit>
@@ -27,7 +176,39 @@
         <quirk>bad_rep</quirk>
     </unit>
     <unit>
-        <chassis>Bushwacker</chassis>
+        <chassis>Blade</chassis>
+        <model>BLD-7R</model>
+        <weaponQuirk>
+            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <location>RA</location>
+            <slot>2</slot>
+            <weaponName>ISRotaryAC5</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>static_feed</weaponQuirkName>
+            <location>RA</location>
+            <slot>2</slot>
+            <weaponName>ISRotaryAC5</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Blade</chassis>
+        <model>BLD-XL</model>
+        <weaponQuirk>
+            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <location>RA</location>
+            <slot>2</slot>
+            <weaponName>ISRotaryAC5</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>static_feed</weaponQuirkName>
+            <location>RA</location>
+            <slot>2</slot>
+            <weaponName>ISRotaryAC5</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+    <chassis>Bushwacker</chassis>
         <model>all</model>
         <quirk>no_twist</quirk>
     </unit>
@@ -59,14 +240,13 @@
     <unit>
         <chassis>Cyclops</chassis>
         <model>all</model>
-        <quirk>battle_computer</quirk>
         <quirk>cowl</quirk>
     </unit>
     <unit>
         <chassis>Cygnus</chassis>
         <model/>
         <weaponQuirk>
-            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <weaponQuirkName>static_feed</weaponQuirkName>
             <location>LA</location>
             <slot>3</slot>
             <weaponName>CLUltraAC10</weaponName>
@@ -82,7 +262,7 @@
         <chassis>Cygnus</chassis>
         <model>2</model>
         <weaponQuirk>
-            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <weaponQuirkName>static_feed</weaponQuirkName>
             <location>LA</location>
             <slot>2</slot>
             <weaponName>CLHAG40</weaponName>
@@ -98,7 +278,7 @@
         <chassis>Cygnus</chassis>
         <model>3</model>
         <weaponQuirk>
-            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <weaponQuirkName>static_feed</weaponQuirkName>
             <location>LA</location>
             <slot>2</slot>
             <weaponName>CLHAG20</weaponName>
@@ -111,7 +291,17 @@
         </weaponQuirk>
     </unit>
     <unit>
-        <chassis>Dragon</chassis>
+        <chassis>Dark Crow</chassis>
+        <model>all</model>
+        <quirk>low_arms</quirk>
+    </unit>
+    <unit>
+        <chassis>Fire Moth (Dasher)</chassis>
+        <model>all</model>
+        <quirk>overhead_arms</quirk>
+    </unit>
+    <unit>
+    <chassis>Dragon</chassis>
         <model>all</model>
         <quirk>stable</quirk>
     </unit>
@@ -161,7 +351,137 @@
         </weaponQuirk>
     </unit>
     <unit>
-        <chassis>Guillotine</chassis>
+        <chassis>Griffin</chassis>
+        <model>GRF-1E 'Sparky'</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-1E2 'Sparky 2.0'</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-1N</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-2N</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-3M</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>7</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-4R</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>7</slot>
+            <weaponName>ISSNPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-5K</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Light PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-6CS</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-6S (Francine II)</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISSNPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-6S (Francine)</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISSNPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-6S</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-6S2</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Super Griffin</chassis>
+        <model>GRF-2N-X</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>7</slot>
+            <weaponName>PPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+    <chassis>Guillotine</chassis>
         <model>all</model>
         <quirk>searchlight</quirk>
     </unit>
@@ -251,7 +571,12 @@
         <quirk>reinforced_legs</quirk>
     </unit>
     <unit>
-        <chassis>Javelin</chassis>
+        <chassis>Jackalope</chassis>
+        <model>all</model>
+        <quirk>compact_mech</quirk>
+    </unit>
+    <unit>
+    <chassis>Javelin</chassis>
         <model>all</model>
         <quirk>unbalanced</quirk>
     </unit>
@@ -291,7 +616,82 @@
         <quirk>command_mech</quirk>
     </unit>
     <unit>
-        <chassis>Quickdraw</chassis>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Large Laser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1b</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1c</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISSNPPC</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1D</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Large Laser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1K</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Large Laser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-1Kk</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISERLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Phoenix Hawk</chassis>
+        <model>PXH-2</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Large Laser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Pillager</chassis>
+        <model>all</model>
+        <quirk>battle_fists</quirk>
+    </unit>
+    <unit>
+    <chassis>Quickdraw</chassis>
         <model>all</model>
         <quirk>hyper_actuator</quirk>
     </unit>
@@ -306,7 +706,12 @@
         <quirk>searchlight</quirk>
     </unit>
     <unit>
-        <chassis>Shadow Hawk</chassis>
+        <chassis>Scylla</chassis>
+        <model>all</model>
+        <quirk>oversized</quirk>
+    </unit>
+    <unit>
+    <chassis>Shadow Hawk</chassis>
         <model>all</model>
         <quirk>imp_life_support</quirk>
     </unit>
@@ -362,7 +767,22 @@
         <quirk>no_arms</quirk>
     </unit>
     <unit>
-        <chassis>Stinger</chassis>
+        <chassis>Stiletto</chassis>
+        <model>STO-4C</model>
+        <quirk>bad_rep</quirk>
+    </unit>
+    <unit>
+        <chassis>Stiletto</chassis>
+        <model>STO-6S</model>
+        <quirk>bad_rep</quirk>
+    </unit>
+    <unit>
+        <chassis>Stiletto</chassis>
+        <model>STO-6X</model>
+        <quirk>bad_rep</quirk>
+    </unit>
+    <unit>
+    <chassis>Stinger</chassis>
         <model>all</model>
         <quirk>cramped_cockpit</quirk>
     </unit>
@@ -391,6 +811,16 @@
         <model>all</model>
         <quirk>command_mech</quirk>
         <quirk>cramped_cockpit</quirk>
+    </unit>
+    <unit>
+        <chassis>Wolverine</chassis>
+        <model>WVR-6R</model>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>Autocannon/5</weaponName>
+        </weaponQuirk>
     </unit>
     <unit>
         <chassis>Balac Strike VTOL</chassis>

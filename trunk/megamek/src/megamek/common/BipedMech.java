@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 public class BipedMech extends Mech {
     /**
      *
@@ -23,13 +25,13 @@ public class BipedMech extends Mech {
     private static final long serialVersionUID = 4166375446709772785L;
 
     private static final String[] LOCATION_NAMES =
-        { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg" };
+            {"Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
 
     private static final String[] LOCATION_ABBRS =
-        { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
+            {"HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL"};
 
     private static final int[] NUM_OF_SLOTS =
-        { 6, 12, 12, 12, 12, 12, 6, 6 };
+            {6, 12, 12, 12, 12, 12, 6, 6};
 
     public BipedMech(String inGyroType, String inCockpitType) {
         this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
@@ -197,16 +199,11 @@ public class BipedMech extends Mech {
     /**
      * Sets the internal structure for the mech.
      *
-     * @param head
-     *            head
-     * @param ct
-     *            center torso
-     * @param t
-     *            right/left torso
-     * @param arm
-     *            right/left arm
-     * @param leg
-     *            right/left leg
+     * @param head head
+     * @param ct   center torso
+     * @param t    right/left torso
+     * @param arm  right/left arm
+     * @param leg  right/left leg
      */
     @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
@@ -328,7 +325,7 @@ public class BipedMech extends Mech {
      * Checks to see if this bipmech has any vibro blades on them.
      *
      * @return boolean <code>true</code> if the mech has vibroblades
-     *         <code>false</code> if not.
+     * <code>false</code> if not.
      */
     @Override
     public boolean hasVibroblades() {
@@ -349,7 +346,7 @@ public class BipedMech extends Mech {
      *
      * @param location
      * @return boolean <code>true</code> if the mech has vibroblades
-     *         <code>false</code> if not.
+     * <code>false</code> if not.
      */
     public boolean hasVibrobladesInLocation(int location) {
 
@@ -379,12 +376,13 @@ public class BipedMech extends Mech {
 
     /**
      * Does the entity have a retracted blade in the given location
-     *
      */
     @Override
     public boolean hasRetractedBlade(int loc) {
         for (Mounted m : getEquipment()) {
-            if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m.curMode().equals("extended")) {
+            if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m
+                    .curMode().equals("extended")) {
                 return true;
             }
         }
@@ -397,7 +395,7 @@ public class BipedMech extends Mech {
      *
      * @param location
      * @return <code>int</code> amount of heat genereated by an active
-     *         vibroblade.
+     * vibroblade.
      */
     @Override
     public int getActiveVibrobladeHeat(int location) {
@@ -422,7 +420,11 @@ public class BipedMech extends Mech {
             }
             Mounted m = cs.getMount();
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") || ignoreMode) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
+            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") ||
+                                                                                   ignoreMode) && !(m.isDestroyed()
+                                                                                                    || m.isMissing()
+                                                                                                    || m.isBreached()
+            )) {
                 MiscType blade = (MiscType) type;
                 if (blade.hasSubType(MiscType.S_VIBRO_LARGE)) {
                     return 7;
@@ -448,10 +450,12 @@ public class BipedMech extends Mech {
     public boolean hasShield() {
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if (((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
+            if (((m.getLocation() == Mech.LOC_LARM) || (m.getLocation() == Mech.LOC_RARM)) && (type instanceof
+                    MiscType) && ((MiscType) type).isShield() && (this.getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < this.getNumberOfCriticals(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);
-                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) && cs.getMount().equals(m) && !(cs.isDestroyed())) {
+                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) && cs.getMount().equals(m) && !
+                            (cs.isDestroyed())) {
                         // when all crits of a shield are destroyed, it
                         // no longer hinders movement and stuff
                         return true;
@@ -583,7 +587,7 @@ public class BipedMech extends Mech {
                     return false;
                 }
                 return hasPassiveShield(Mech.LOC_LARM);
-                // RA RT
+            // RA RT
             default:
                 if (rear) {
                     // that
@@ -660,15 +664,16 @@ public class BipedMech extends Mech {
             Mounted m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isShield() && (m.curMode().equals(MiscType.S_NO_SHIELD) || isShutDown() || // if
-                    // he
-                    // has
-                    // a
-                    // shield
-                    // and
-                    // the mek is SD or pilot
-                    // KOed then it goes to no
-                    // defense mode
-                    getCrew().isKoThisRound() || getCrew().isUnconscious())) {
+                                                                               // he
+                                                                               // has
+                                                                               // a
+                                                                               // shield
+                                                                               // and
+                                                                               // the mek is SD or pilot
+                                                                               // KOed then it goes to no
+                                                                               // defense mode
+                                                                               getCrew().isKoThisRound() || getCrew()
+                    .isUnconscious())) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -709,7 +714,8 @@ public class BipedMech extends Mech {
 
         for (Mounted mounted : getMisc()) {
             if ((mounted.getLocation() == Mech.LOC_LLEG) || (mounted.getLocation() == Mech.LOC_RLEG)) {
-                if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
+                if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted
+                        .isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mech.LOC_LLEG) {
                         leftLeg = true;
                     } else {
@@ -733,7 +739,8 @@ public class BipedMech extends Mech {
             return false;
         }
         // check the locations
-        retVal = (!isLocationBad(Mech.LOC_LLEG) && !isLocationBad(Mech.LOC_RLEG) && !isLocationDoomed(Mech.LOC_LLEG) && !isLocationDoomed(Mech.LOC_RLEG));
+        retVal = (!isLocationBad(Mech.LOC_LLEG) && !isLocationBad(Mech.LOC_RLEG) && !isLocationDoomed(Mech.LOC_LLEG)
+                  && !isLocationDoomed(Mech.LOC_RLEG));
         if (!retVal) {
             return false;
         }
@@ -759,7 +766,7 @@ public class BipedMech extends Mech {
 
     public void addStandingPenalties(PilotingRollData roll) {
 
-        if (hasQuirk("no_arms")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");
             return;
         }
@@ -809,11 +816,11 @@ public class BipedMech extends Mech {
     @Override
     public boolean hasMPReducingHardenedArmor() {
         return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
-            || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
+               || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
 

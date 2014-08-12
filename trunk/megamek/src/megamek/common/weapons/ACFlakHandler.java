@@ -20,6 +20,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -52,17 +53,17 @@ public class ACFlakHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
 
         if (!(target.isAirborneVTOLorWIGE())
-                && !((target instanceof Aero) && target.isAirborne())
-                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+            && !((target instanceof Aero) && target.isAirborne())
+            && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             toReturn /= 2;
         }
 
         // during a swarm, all damage gets applied as one block to one
         // location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+            && !(weapon.isSquadSupportWeapon())
+            && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
 
@@ -70,8 +71,8 @@ public class ACFlakHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 

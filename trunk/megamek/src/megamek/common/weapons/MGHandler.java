@@ -29,6 +29,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -64,7 +65,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
         if (weapon.isRapidfire()
-                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+            && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             if (bGlancing) {
@@ -72,15 +73,15 @@ public class MGHandler extends AmmoWeaponHandler {
             }
             if (bDirect) {
                 toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
-                        toReturn * 2);
+                                    toReturn * 2);
             }
         } else {
             if ((target instanceof Infantry)
-                    && !(target instanceof BattleArmor)) {
+                && !(target instanceof BattleArmor)) {
                 toReturn = Compute.directBlowInfantryDamage(toReturn,
-                        bDirect ? toHit.getMoS() / 3 : 0,
-                        wtype.getInfantryDamageClass(),
-                        ((Infantry) target).isMechanized());
+                                                            bDirect ? toHit.getMoS() / 3 : 0,
+                                                            wtype.getInfantryDamageClass(),
+                                                            ((Infantry) target).isMechanized());
                 if (bGlancing) {
                     toReturn = (int) Math.floor(toReturn / 2.0);
                 }
@@ -88,15 +89,15 @@ public class MGHandler extends AmmoWeaponHandler {
                 toReturn = wtype.getDamage();
                 if (bDirect) {
                     toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
-                            toReturn * 2);
+                                        toReturn * 2);
                 }
                 if (bGlancing) {
                     toReturn = (int) Math.floor(toReturn / 2.0);
                 }
             }
         }
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
@@ -133,7 +134,7 @@ public class MGHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         vPhaseReport.add(r);
         if (weapon.isRapidfire()
-                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+            && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;

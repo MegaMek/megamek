@@ -822,7 +822,7 @@ public class Compute {
                                       .equals("Indirect"))
                              || (wtype instanceof ArtilleryCannonWeapon);
         boolean useExtremeRange = game.getOptions().booleanOption(
-                "tacops_range");
+                OptionsConstants.AC_TAC_OPS_RANGE);
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
@@ -1620,18 +1620,18 @@ public class Compute {
     }
 
     private static boolean canCompleteNodePath(Entity start, Entity end,
-            ArrayList<Entity> network, int startPosition) {
+                                               ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
         // Last position cannot get to this one. go to the next person
         if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
-                                    spotter.getPosition())) {
+                                       spotter.getPosition())) {
             return false;
         }
 
         if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
-                                     end.getPosition())) {
+                                        end.getPosition())) {
             return true;
         }
 
@@ -1646,18 +1646,18 @@ public class Compute {
     }
 
     private static boolean canCompleteNodePathNova(Entity start, Entity end,
-            ArrayList<Entity> network, int startPosition) {
+                                                   ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
         // Last position cannot get to this one. go to the next person
         if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
-                                        spotter.getPosition())) {
+                                       spotter.getPosition())) {
             return false;
         }
 
         if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
-                                         end.getPosition())) {
+                                        end.getPosition())) {
             return true;
         }
 
@@ -2158,7 +2158,7 @@ public class Compute {
             return new ToHitData();
         }
 
-        if (game.getOptions().booleanOption("tacops_standing_still")
+        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
             && (entity.mpUsed == 0)
             && !entity.isImmobile()
             && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
@@ -3535,8 +3535,8 @@ public class Compute {
             }
             // We need to consiter the SO Advanced AA fire for Aeros
             GameOptions opts = ae.getGame().getOptions();
-            if ((te instanceof Aero) && isGroundToAir(ae, target) 
-                    && opts.booleanOption("stratops_aa_fire")) {
+            if ((te instanceof Aero) && isGroundToAir(ae, target)
+                && opts.booleanOption("stratops_aa_fire")) {
                 targetPos = Compute.getClosestFlightPath(ae.getPosition(), te);
             }
         }
@@ -3563,13 +3563,14 @@ public class Compute {
     /**
      * Checks to see whether the target is within sensor range (but not
      * necessarily LoS or visual range)
-     * @param allECMInfo  A collection of ECMInfo for all entities, this value
-     *                      can be null and it will be computed when it's
-     *                      needed, however passing in the pre-computed 
-     *                      collection is much faster
+     *
+     * @param allECMInfo A collection of ECMInfo for all entities, this value
+     *                   can be null and it will be computed when it's
+     *                   needed, however passing in the pre-computed
+     *                   collection is much faster
      */
     public static boolean inSensorRange(IGame game, Entity ae,
-            Targetable target, List<ECMInfo> allECMInfo) {
+                                        Targetable target, List<ECMInfo> allECMInfo) {
 
         if (!game.getOptions().booleanOption("tacops_sensors")) {
             return false;
@@ -3620,8 +3621,8 @@ public class Compute {
         boolean isVisible = los.canSee()
                             && Compute.inVisualRange(game, ae, target);
         if (useSensors) {
-            isVisible = isVisible 
-                    || Compute.inSensorRange(game, ae, target, allECMInfo);
+            isVisible = isVisible
+                        || Compute.inSensorRange(game, ae, target, allECMInfo);
         }
         return isVisible;
     }
@@ -3630,14 +3631,14 @@ public class Compute {
      * gets the sensor range bracket when detecting a particular type of target.
      * target may be null here, which gives you the bracket without target
      * entity modifiers
-     * 
-     * @param allECMInfo  A collection of ECMInfo for all entities, this value
-     *                      can be null and it will be computed when it's
-     *                      needed, however passing in the pre-computed 
-     *                      collection is much faster
+     *
+     * @param allECMInfo A collection of ECMInfo for all entities, this value
+     *                   can be null and it will be computed when it's
+     *                   needed, however passing in the pre-computed
+     *                   collection is much faster
      */
-    public static int getSensorRangeBracket(Entity ae, Targetable target, 
-            List<ECMInfo> allECMInfo) {
+    public static int getSensorRangeBracket(Entity ae, Targetable target,
+                                            List<ECMInfo> allECMInfo) {
 
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {

@@ -272,15 +272,15 @@ public class Princess extends BotClient {
 
         try {
             Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
-            // entity that can
-            // act this turn
-            // make sure weapons are loaded
+
+            // entity that can act this turn make sure weapons are loaded
             FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
             if (plan != null) {
                 fireControl.loadAmmo(shooter, plan);
+                plan.sortPlan();
 
                 log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " - Best Firing Plan: " +
-                                                            plan.getDebugDescription(true));
+                                                            plan.getDebugDescription(LogLevel.DEBUG == getVerbosity()));
 
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(), plan.getEntityActionVector());

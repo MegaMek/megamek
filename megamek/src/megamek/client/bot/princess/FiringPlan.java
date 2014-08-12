@@ -13,13 +13,18 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
+import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 /**
@@ -117,7 +122,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
      * @return The list of actions as a vector.
      */
     synchronized public Vector<EntityAction> getEntityActionVector() {
-        Vector<EntityAction> actionVector = new Vector<EntityAction>();
+        Vector<EntityAction> actionVector = new Vector<>();
         if (size() == 0) {
             return actionVector;
         }
@@ -198,6 +203,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
         if (getHeat() != that.getHeat()) return false;
         if (Math.abs(getKillProbability() - that.getKillProbability()) > TOLERANCE) return false;
         if (Math.abs(getExpectedCriticals() - that.getExpectedCriticals()) > TOLERANCE) return false;
+        //noinspection RedundantIfStatement
         if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) return false;
 
         return true;
@@ -219,5 +225,79 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
         result = 31 * result + target.hashCode();
         result = 31 * result + twist;
         return result;
+    }
+
+    /**
+     * Hole punchers before crit seekers
+     */
+    public void sortPlan() {
+        Collections.sort(this, new Comparator<WeaponFireInfo>() {
+            @Override
+            public int compare(WeaponFireInfo o1, WeaponFireInfo o2) {
+                Mounted weapon1 = o1.getWeapon();
+                Mounted weapon2 = o2.getWeapon();
+
+                // Both null, both equal.
+                if (weapon1 == null && weapon2 == null) {
+                    return 0;
+                }
+
+                // Not null beats null;
+                if (weapon1 == null) {
+                    return -1;
+                }
+                if (weapon2 == null) {
+                    return 1;
+                }
+
+                double dmg1 = -1;
+                double dmg2 = -1;
+
+                WeaponType weaponType1 = (WeaponType) weapon1.getType();
+                WeaponType weaponType2 = (WeaponType) weapon2.getType();
+
+                Mounted ammo1 = weapon1.getLinked();
+                Mounted ammo2 = weapon2.getLinked();
+
+                if (ammo1 != null) {
+                    AmmoType ammoType = (AmmoType) ammo1.getType();
+                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage() ||
+                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                        dmg1 = ammoType.getDamagePerShot();
+                    }
+                }
+                if (dmg1 == -1) {
+                    dmg1 = weaponType1.getDamage();
+                }
+                if (ammo2 != null) {
+                    AmmoType ammoType = (AmmoType) ammo2.getType();
+                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage() ||
+                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                        dmg2 = ammoType.getDamagePerShot();
+                    }
+                }
+                if (dmg2 == -1) {
+                    dmg2 = weaponType2.getDamage();
+                }
+
+                return -Double.compare(dmg1, dmg2);
+            }
+        });
+    }
+
+    public String getWeaponNames() {
+        StringBuilder out = new StringBuilder("");
+        for (WeaponFireInfo wfi : this) {
+            if (!StringUtil.isNullOrEmpty(out)) {
+                out.append(",");
+            }
+
+            if (wfi.getWeapon() == null) {
+                out.append("null");
+                continue;
+            }
+            out.append(wfi.getWeapon().getName());
+        }
+        return out.toString();
     }
 }

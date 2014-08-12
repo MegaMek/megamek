@@ -29,26 +29,25 @@ import megamek.common.weapons.EnergyWeapon;
 
 /**
  * Contains the options determining quirks of the unit
- * 
+ *
  * @author Taharqa (Jay Lawson)
  */
 public class WeaponQuirks extends AbstractOptions {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks"; //$NON-NLS-1$
-  
+
     public WeaponQuirks() {
         super();
     }
 
     @Override
     public void initialize() {
-        //positive quirks
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
-        addOption(wpnQuirk, "accurate", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "inaccurate", false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false); //$NON-NLS-1$
         addOption(wpnQuirk, "imp_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "poor_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
@@ -57,6 +56,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, "em_interference", false); //$NON-NLS-1$
         addOption(wpnQuirk, "jettison_capable", false); //$NON-NLS-1$
         addOption(wpnQuirk, "fast_reload", false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
     }
     //unimplemented
     //ammo feed problem
@@ -71,49 +71,54 @@ public class WeaponQuirks extends AbstractOptions {
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return WeaponQuirksInfo.getInstance();
     }
-    
+
     public static boolean isQuirkLegalFor(IOption quirk, Entity en, WeaponType wtype) {
-        
-        if (!(wtype instanceof AmmoWeapon) && quirk.getName().equals("ammo_feed")) {
-            return false;
+
+        if (!(wtype instanceof AmmoWeapon)) {
+            if (quirk.getName().equals("ammo_feed")) {
+                return false;
+            }
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+                return false;
+            }
         }
 
         if (!(wtype instanceof EnergyWeapon) && quirk.getName().equals("em_interference")) {
             return false;
         }
-        
-        if(en instanceof Tank || en instanceof BattleArmor) {
-            if(quirk.getName().equals("imp_cooling")
-                    || quirk.getName().equals("poor_cooling")
-                    || quirk.getName().equals("no_cooling")) {
+
+        if (en instanceof Tank || en instanceof BattleArmor) {
+            if (quirk.getName().equals("imp_cooling")
+                || quirk.getName().equals("poor_cooling")
+                || quirk.getName().equals("no_cooling")) {
                 return false;
             }
         }
-        
-        if(en instanceof Infantry && !(en instanceof BattleArmor)) {
+
+        if (en instanceof Infantry && !(en instanceof BattleArmor)) {
             return false;
         }
-        
-        if(wtype.getHeat() == 0) {
-            if(quirk.getName().equals("imp_cooling")
-                    || quirk.getName().equals("poor_cooling")
-                    || quirk.getName().equals("no_cooling")) {
+
+        if (wtype.getHeat() == 0) {
+            if (quirk.getName().equals("imp_cooling")
+                || quirk.getName().equals("poor_cooling")
+                || quirk.getName().equals("no_cooling")) {
                 return false;
             }
         }
 
         if (quirk.getName().equals("jettison_capable")) {
             if (en instanceof Protomech
-                    || en instanceof Aero
-                    || en instanceof Jumpship
-                    || en instanceof Dropship) {
+                || en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
 
                 return false;
             }
         }
 
         return true;
-        
+
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
@@ -127,7 +132,6 @@ public class WeaponQuirks extends AbstractOptions {
             super("WeaponQuirksInfo"); //$NON-NLS-1$
         }
     }
-    
-    
-    
+
+
 }

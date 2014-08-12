@@ -29,6 +29,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -48,7 +49,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     public LBXHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-        sSalvoType =" pellet(s) ";
+        sSalvoType = " pellet(s) ";
     }
 
     /*
@@ -73,7 +74,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -113,14 +114,14 @@ public class LBXHandler extends AmmoWeaponHandler {
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
-            if (game.getOptions().booleanOption("tacops_range")
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
         } else {
 
             shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
-                    game.getPlanetaryConditions().hasEMI());
+                                           game.getPlanetaryConditions().hasEMI());
         }
 
         Report r = new Report(3325);

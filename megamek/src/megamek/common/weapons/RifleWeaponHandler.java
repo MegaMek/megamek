@@ -26,6 +26,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -48,7 +49,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param s
      */
     public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+                              Server s) {
         super(t, w, g, s);
     }
 
@@ -64,9 +65,9 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -74,12 +75,12 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                    waa.getAimedLocation(), waa.getAimingMode(),
-                    toHit.getCover());
+                                     waa.getAimedLocation(), waa.getAimingMode(),
+                                     toHit.getCover());
             if (!(te instanceof BattleArmor)
-                    && !(te instanceof Infantry)
-                    && (!te.hasBARArmor(hit.getLocation()) || (te
-                            .getBARRating(hit.getLocation()) >= 8))) {
+                && !(te instanceof Infantry)
+                && (!te.hasBARArmor(hit.getLocation()) || (te
+                                                                   .getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }
@@ -88,8 +89,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -98,8 +99,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+                                      int bldgAbsorbs) {
         int nDamage;
         missed = false;
 
@@ -111,7 +112,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                    nCluster, bldgAbsorbs);
+                                  nCluster, bldgAbsorbs);
             return;
         }
 
@@ -141,7 +142,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
+                                                                  entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -171,10 +172,10 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             }
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
+                                                false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater, nukeS2S));
+                                             : damageType, false, false, throughFront,
+                                                underWater, nukeS2S));
         }
     }
 }

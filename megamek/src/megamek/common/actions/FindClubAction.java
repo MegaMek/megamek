@@ -28,12 +28,12 @@ import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The entity tries to find a club.
  *
  * @author Ben
- * @version
  */
 public class FindClubAction extends AbstractEntityAction {
 
@@ -42,7 +42,9 @@ public class FindClubAction extends AbstractEntityAction {
      */
     private static final long serialVersionUID = -8948591442556777640L;
 
-    /** Creates new FindClubAction */
+    /**
+     * Creates new FindClubAction
+     */
     public FindClubAction(int entityId) {
         super(entityId);
     }
@@ -69,7 +71,7 @@ public class FindClubAction extends AbstractEntityAction {
 
         // Check game options
         if (game.getOptions().booleanOption("no_clan_physical")
-                && entity.isClan()) {
+            && entity.isClan()) {
             return false;
         }
 
@@ -77,27 +79,27 @@ public class FindClubAction extends AbstractEntityAction {
         // a medium, heavy, or hardened building,
         // or a blown off limb
         if ((hex.terrainLevel(Terrains.WOODS) < 1)
-                && (hex.terrainLevel(Terrains.JUNGLE) < 1)
-                && (hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM)
-                && (hex.terrainLevel(Terrains.ARMS) < 1)
-                && (hex.terrainLevel(Terrains.LEGS) < 1)) {
+            && (hex.terrainLevel(Terrains.JUNGLE) < 1)
+            && (hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM)
+            && (hex.terrainLevel(Terrains.ARMS) < 1)
+            && (hex.terrainLevel(Terrains.LEGS) < 1)) {
             return false;
         }
 
         // also, need shoulders and hands
         // Claws can subtitue as hands --Torren
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-                || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER,
-                        Mech.LOC_LARM)
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity)
-                        .hasClaw(Mech.LOC_RARM))
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((Mech) entity)
-                        .hasClaw(Mech.LOC_LARM))) {
+            || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER,
+                                        Mech.LOC_LARM)
+            || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity)
+                .hasClaw(Mech.LOC_RARM))
+            || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((Mech) entity)
+                .hasClaw(Mech.LOC_LARM))) {
             return false;
         }
 
         //check for no/minimal arms quirk
-        if(entity.hasQuirk("no_arms")) {
+        if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return false;
         }
 

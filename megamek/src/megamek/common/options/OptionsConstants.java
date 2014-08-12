@@ -35,15 +35,21 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer";
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech";
     public static final String QUIRK_POS_IMPROVED_SENSORS = "imp_sensors";
+    public static final String QUIRK_POS_BATTLE_FIST = "battle_fists";
+    public static final String QUIRK_POS_OVERHEAD_ARMS = "overhead_arms";
+    public static final String QUIRK_POS_COMPACT = "compact_mech";
 
     public static final String QUIRK_NEG_NO_ARMS = "no_arms";
     public static final String QUIRK_NEG_POOR_TARG_S = "poor_target_short";
     public static final String QUIRK_NEG_POOR_TARG_M = "poor_target_med";
     public static final String QUIRK_NEG_POOR_TARG_L = "poor_target_long";
+    public static final String QUIRK_NEG_LOW_ARMS = "low_arms";
+    public static final String QUIRK_OVERSIZED = "oversized";
 
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate";
 
     public static final String QUIRK_WEAP_NEG_INACCURATE = "inaccurate";
+    public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed";
 
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting";

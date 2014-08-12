@@ -29,6 +29,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -47,7 +48,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param g
      */
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+                              Server s) {
         super(t, w, g, s);
     }
 
@@ -82,7 +83,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
             ammo.setShotsLeft(ammo.getBaseShotsLeft()
-                    - ((howManyShots == 2) ? 1 : 0));
+                              - ((howManyShots == 2) ? 1 : 0));
         } else {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
         }
@@ -105,9 +106,10 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
 
         if ((howManyShots == 1)
-                || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
+            || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
+                                                                             .getAmmoType() == AmmoType.T_AC_ULTRA)
+                                                                    || (wtype
+                                                                                                                                .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
             return 1;
         }
 
@@ -157,7 +159,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             weapon.setJammed(true);
             isJammed = true;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 r.messageId = 3160;
                 if (!game.getOptions().booleanOption("uac_tworolls")) {
                     weapon.setHit(true);
@@ -183,9 +185,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = 0;
             for (int i = 0; i < howManyShots; i++) {
                 toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(),
-                        bDirect ? toHit.getMoS() / 3 : 0,
-                        wtype.getInfantryDamageClass(),
-                        ((Infantry) target).isMechanized());
+                                                             bDirect ? toHit.getMoS() / 3 : 0,
+                                                             wtype.getInfantryDamageClass(),
+                                                             ((Infantry) target).isMechanized());
             }
             // plus 1 for cluster
             toReturn++;
@@ -197,8 +199,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         return (int) toReturn;
@@ -212,7 +214,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
         if (usesClusterTable() && !ae.isCapitalFighter()
-                && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+            && (entityTarget != null) && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {
             return 1;

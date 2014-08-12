@@ -56,6 +56,7 @@ public class DefaultQuirksHandler {
 
         File file = new File(path);
         if (!file.exists() || !file.isFile()) {
+            System.err.println("WARN: Could not load quirks from " + path);
             return quirkMap;
         }
 
@@ -248,7 +249,7 @@ public class DefaultQuirksHandler {
 
         // Check the canonical list for a general entry for this chassis.
         if (cannonQuirkMap.containsKey(generalId)) {
-            quirks.addAll(cannonQuirkMap.get(chassis));
+            quirks.addAll(cannonQuirkMap.get(generalId));
         }
 
         // Check for a model-specific entry.

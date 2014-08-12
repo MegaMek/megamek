@@ -20,6 +20,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
@@ -34,7 +35,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame g, Server s) {
+                                                WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -49,7 +50,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption("tacops_energy_weapons")
-                && wtype.hasModes()) {
+            && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -66,9 +67,9 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() / 3 : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                 toReturn += 3;
             } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
@@ -80,8 +81,8 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > nRanges[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > nRanges[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
             toReturn -= 1;
         }

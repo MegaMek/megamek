@@ -41,24 +41,24 @@ public class Quirks extends AbstractOptions {
     public synchronized void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
-        addOption(posQuirk, "anti_air", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false); //$NON-NLS-1$
         addOption(posQuirk, "atmo_flyer", false); //$NON-NLS-1$
-        addOption(posQuirk, "battle_computer", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_COMP, false); //$NON-NLS-1$
         addOption(posQuirk, "combat_computer", false); //$NON-NLS-1$
-        addOption(posQuirk, "command_mech", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMMAND_MECH, false); //$NON-NLS-1$
         addOption(posQuirk, "cowl", false); //$NON-NLS-1$
         addOption(posQuirk, "docking_arms", false); //$NON-NLS-1$
         addOption(posQuirk, "easy_maintain", false); //$NON-NLS-1$
-        addOption(posQuirk, "easy_pilot", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false); //$NON-NLS-1$
         addOption(posQuirk, "ext_twist", false); //$NON-NLS-1$
         addOption(posQuirk, "fast_reload", false); //$NON-NLS-1$
-        addOption(posQuirk, "low_profile", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false); //$NON-NLS-1$
         addOption(posQuirk, "hyper_actuator", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_sensors", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMPROVED_SENSORS, false); //$NON-NLS-1$
         addOption(posQuirk, "imp_life_support", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_short", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_med", false); //$NON-NLS-1$
-        addOption(posQuirk, "imp_target_long", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_S, false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_M, false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_L, false); //$NON-NLS-1$
         addOption(posQuirk, "internal_bomb", false); //$NON-NLS-1$
         addOption(posQuirk, "mod_weapons", false); //$NON-NLS-1$
         addOption(posQuirk, "multi_trac", false); //$NON-NLS-1$
@@ -68,12 +68,15 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
         addOption(posQuirk, "trailer_hitch", false); //$NON-NLS-1$
         addOption(posQuirk, "imp_com", false); //$NON-NLS-1$
-        addOption(posQuirk, "variable_range_long", false); //$NON-NLS-1$
-        addOption(posQuirk, "variable_range_short", false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false); //$NON-NLS-1$
         addOption(posQuirk, "vtol_rotor", false); //$NON-NLS-1$
         addOption(posQuirk, "rumble_seat", false);
         addOption(posQuirk, "distracting", false);
         addOption(posQuirk, "head_eject", false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false);
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
@@ -93,15 +96,15 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "exp_actuator", false); //$NON-NLS-1$
         addOption(negQuirk, "fragile_fuel", false); //$NON-NLS-1$
         addOption(negQuirk, "hard_pilot", false); //$NON-NLS-1$
-        addOption(negQuirk, "no_arms", false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_ARMS, false); //$NON-NLS-1$
         addOption(negQuirk, "no_eject", false); //$NON-NLS-1$
         addOption(negQuirk, "no_twist", false); //$NON-NLS-1$
         addOption(negQuirk, "non_standard", false); //$NON-NLS-1$
         addOption(negQuirk, "large_dropper", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_life_support", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_short", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_med", false); //$NON-NLS-1$
-        addOption(negQuirk, "poor_target_long", false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_S, false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_M, false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_L, false); //$NON-NLS-1$
         addOption(negQuirk, "poor_work", false); //$NON-NLS-1$
         addOption(negQuirk, "prototype", false); //$NON-NLS-1$
         addOption(negQuirk, "sensor_ghosts", false); //$NON-NLS-1$
@@ -120,6 +123,8 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "weak_head_5", false); //$NON-NLS-1$
         addOption(negQuirk, "obsolete", false); //$NON-NLS-1$
         addOption(negQuirk, "poor_sealing", false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_LOW_ARMS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_OVERSIZED, false);
         //quirks not implemented yet
         //Cooling System Flaws
         //Exposed Weapon Linkage (weapon-specific, sort of)
@@ -174,10 +179,10 @@ public class Quirks extends AbstractOptions {
         if(en instanceof Tank) {
             if(quirk.getName().equals("atmo_flyer")
                     || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || quirk.getName().equals("cowl")
                     || quirk.getName().equals("docking_arms")
-                    || quirk.getName().equals("easy_pilot")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_EASY_PILOT)
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
                     || quirk.getName().equals("imp_life_support")
@@ -190,7 +195,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("cramped_cockpit")
                     || quirk.getName().equals("difficult_eject")
                     || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("large_dropper")
@@ -222,23 +227,23 @@ public class Quirks extends AbstractOptions {
 
         if(en instanceof BattleArmor) {
             if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
+               || quirk.getName().equals("combat_computer")
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
+               || quirk.getName().equals("cowl")
                     || quirk.getName().equals("docking_arms")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || quirk.getName().equals("imp_life_support")
-                    || quirk.getName().equals("imp_target_short")
-                    || quirk.getName().equals("imp_target_med")
-                    || quirk.getName().equals("imp_target_long")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_S)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_M)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_L)
                     || quirk.getName().equals("internal_bomb")
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("searchlight")
@@ -248,7 +253,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("difficult_eject")
                     || quirk.getName().equals("exp_actuator")
                     || quirk.getName().equals("fragile_fuel")
-                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
@@ -276,22 +281,22 @@ public class Quirks extends AbstractOptions {
 
         if(en instanceof Jumpship) {
             if(quirk.getName().equals("atmo_flyer")
-                    || quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
+               || quirk.getName().equals("combat_computer")
+               || quirk.getName().equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
+               || quirk.getName().equals("cowl")
                     || quirk.getName().equals("docking_arms")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("fast_reload")
                     || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("internal_bomb")
                     || quirk.getName().equals("mod_weapons")
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("trailer_hitch")
@@ -300,7 +305,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("cramped_cockpit")
                     || quirk.getName().equals("difficult_eject")
                     || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
@@ -326,19 +331,19 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         } else if (en instanceof Dropship) {
-            if(quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("combat_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
+            if (quirk.getName().equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+                || quirk.getName().equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
+                || quirk.getName().equals("combat_computer")
+                || quirk.getName().equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
+                || quirk.getName().equals("cowl")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("fast_reload")
                     || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("searchlight")
@@ -346,7 +351,7 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("cramped_cockpit")
                     || quirk.getName().equals("difficult_eject")
                     || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || quirk.getName().equals("no_eject")
                     || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
@@ -367,24 +372,24 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         } else if (en instanceof Aero) {
-            if(quirk.getName().equals("anti_air")
-                    || quirk.getName().equals("battle_computer")
-                    || quirk.getName().equals("command_mech")
-                    || quirk.getName().equals("cowl")
+            if (quirk.getName().equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+                || quirk.getName().equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
+                || quirk.getName().equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
+                || quirk.getName().equals("cowl")
                     || quirk.getName().equals("docking_arms")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("hyper_actuator")
-                    || quirk.getName().equals("imp_sensors")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || quirk.getName().equals("imp_life_support")
                     || quirk.getName().equals("multi_trac")
                     || quirk.getName().equals("pro_actuator")
-                    || quirk.getName().equals("low_profile")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || quirk.getName().equals("stable")
                     || quirk.getName().equals("searchlight")
                     || quirk.getName().equals("trailer_hitch")
                     || quirk.getName().equals("reinforced_legs")
                     || quirk.getName().equals("exp_actuator")
-                    || quirk.getName().equals("no_arms")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("large_dropper")
                     || quirk.getName().equals("unbalanced")
@@ -401,30 +406,30 @@ public class Quirks extends AbstractOptions {
             }
             return true;
         } else if (en instanceof Protomech) {
-            if (quirk.getName().equals("accurate")
-                    || quirk.getName().equals("distracting")
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)
+                || quirk.getName().equals("distracting")
                     || quirk.getName().equals("easy_maintain")
                     || quirk.getName().equals("ext_twist")
                     || quirk.getName().equals("imp_com")
-                    || quirk.getName().equals("imp_sensors")
-                    || quirk.getName().equals("imp_target_short")
-                    || quirk.getName().equals("imp_target_med")
-                    || quirk.getName().equals("imp_target_long")
-                    || quirk.getName().equals("variable_range_long")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_S)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_M)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_IMP_TARG_L)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)
                     || quirk.getName().equals("ammo_feed")
                     || quirk.getName().equals("bad_rep")
                     || quirk.getName().equals("difficult_maintain")
                     || quirk.getName().equals("exposed_linkage")
                     || quirk.getName().equals("hard_pilot")
-                    || quirk.getName().equals("inaccurate")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("obsolete")
                     || quirk.getName().equals("poor_performance")
                     || quirk.getName().equals("poor_sealing")
-                    || quirk.getName().equals("poor_target_short")
-                    || quirk.getName().equals("poor_target_med")
-                    || quirk.getName().equals("poor_target_long")
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_POOR_TARG_S)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_POOR_TARG_M)
+                    || quirk.getName().equals(OptionsConstants.QUIRK_NEG_POOR_TARG_L)
                     || quirk.getName().equals("poor_work")
                     || quirk.getName().equals("prototype")
                     || quirk.getName().equals("sensor_ghosts")) {

@@ -21,6 +21,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class EnergyWeaponHandler extends WeaponHandler {
@@ -35,7 +36,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * @param g
      */
     public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+                               IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -50,14 +51,14 @@ public class EnergyWeaponHandler extends WeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption("tacops_energy_weapons")
-                && wtype.hasModes()) {
+            && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+            && !(weapon.isSquadSupportWeapon())
+            && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
@@ -71,16 +72,16 @@ public class EnergyWeaponHandler extends WeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() / 3 : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

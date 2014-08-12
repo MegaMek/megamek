@@ -568,6 +568,7 @@ public class Princess extends BotClient {
         if (getPathRanker().distanceToHomeEdge(entity.getPosition(), getHomeEdge(), getGame()) > 0) {
             return false;
         }
+        //noinspection RedundantIfStatement
         if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
         	return false;
         }
@@ -660,7 +661,7 @@ public class Princess extends BotClient {
         return getBoard().getHex(coords);
     }
 
-    protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths, int maxRange, double fallTollerance,
+    protected ArrayList<RankedPath> rankPaths(List<MovePath> paths, int maxRange, double fallTollerance,
                                               int startingHomeDistance,
                                               List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
@@ -712,7 +713,7 @@ public class Princess extends BotClient {
                 }
             }
 
-            ArrayList<MovePath> paths = getPrecognition().getPathEnumerator().unit_paths.get(entity.getId());
+            List<MovePath> paths = getPrecognition().getPathEnumerator().getUnitPaths().get(entity.getId());
 
             if (paths == null) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
@@ -755,7 +756,7 @@ public class Princess extends BotClient {
                 return new MovePath(game, entity);
             }
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
-            precognition.unpause();
+            precognition.unPause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
                                                         + bestpath.rank);
@@ -849,8 +850,8 @@ public class Princess extends BotClient {
             pathSearcher.ranker = pathRanker;
             fireControl = new FireControl(this);
             pathRanker.setFireControl(fireControl);
-            precognition = new Precognition(this);
-            precognition.setGame(getGame());
+            precognition = new Precognition(this, game);
+            precognition.updateGame(getGame());
             pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
             precogThread = new Thread(precognition, "Princess-precognition ("

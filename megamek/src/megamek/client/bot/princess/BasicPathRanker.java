@@ -870,7 +870,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Amphibious units are safe (kind of the point).
-        if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+        if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
+            movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
             logMsg.append("Amphibious unit (0).");
             return 0;
         }
@@ -894,7 +895,7 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            if ((hex.depth() >= 2) || step.isProne()) {
+            if ((hex.depth() >= 2) || step.isProne() || !(movingUnit instanceof Mech)) {
                 submergedLocations.add(loc);
                 continue;
             }

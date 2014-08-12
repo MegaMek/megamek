@@ -138,11 +138,20 @@ public class StringUtil {
     /**
      * Returns TRUE if the passed in text is either a NULL value or is an empty string.
      *
-     * @param text  The string to be evalutated.
-     * @return
+     * @param text  The string to be evaluated.
      */
     public static boolean isNullOrEmpty(String text) {
         return (text == null) || (text.trim().isEmpty());
+    }
+
+
+    /**
+     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
+     *
+     * @param text The string to be evaluated.
+     */
+    public static boolean isNullOrEmpty(StringBuilder text) {
+        return (text == null) || isNullOrEmpty(text.toString());
     }
 
     /**

@@ -1,11 +1,11 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
  *  Software Foundation; either version 2 of the License, or (at your option) 
  *  any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful, but 
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
@@ -24,6 +24,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -32,7 +33,7 @@ import megamek.server.Server.DamageType;
  */
 public class ACIncendiaryHandler extends AmmoWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3301631731286472616L;
 
@@ -42,7 +43,7 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ACIncendiaryHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+                               Server s) {
         super(t, w, g, s);
         damageType = DamageType.INCENDIARY;
     }
@@ -58,25 +59,25 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
         // during a swarm, all damage gets applied as one block to one
         // location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+            && !(weapon.isSquadSupportWeapon())
+            && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption("tacops_range")
-                && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 

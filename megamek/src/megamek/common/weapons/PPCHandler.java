@@ -31,6 +31,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -77,7 +78,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         float toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption("tacops_energy_weapons")
-                && wtype.hasModes()) {
+            && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -86,9 +87,9 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+            && !(weapon.isSquadSupportWeapon())
+            && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
 
@@ -103,21 +104,21 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
 
         if ((target instanceof Entity)
-                && ((Entity) target).hasActiveBlueShield()) {
+            && ((Entity) target).hasActiveBlueShield()) {
             toReturn = (int) Math.max(Math.floor(toReturn / 2.0), 1);
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                                                        bDirect ? toHit.getMoS() / 3 : 0,
+                                                        wtype.getInfantryDamageClass(),
+                                                        ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -137,8 +138,8 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption("tacops_ppc_inhibitors")
-                && wtype.hasModes()
-                && weapon.curMode().equals("Field Inhibitor OFF")) {
+            && wtype.hasModes()
+            && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             int dieRoll = Compute.d6(2);
             int distance = Compute.effectiveDistance(game, ae, target);
@@ -168,9 +169,9 @@ public class PPCHandler extends EnergyWeaponHandler {
                 // Destroy the first unmarked critical for the PPC
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                    if ((slot1 == null) || 
-                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM) || 
-                            slot1.isHit()) {
+                    if ((slot1 == null) ||
+                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM) ||
+                        slot1.isHit()) {
                         continue;
                     }
                     Mounted mounted = slot1.getMount();
@@ -186,7 +187,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addElement(r);
                 Vector<Report> newReports = server.damageEntity(ae, new HitData(
                         wlocation), 10, false, DamageType.NONE, true);
-                for (Report rep : newReports){
+                for (Report rep : newReports) {
                     rep.indent(2);
                 }
                 vPhaseReport.addAll(newReports);
@@ -213,7 +214,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot = ae.getCritical(wlocation, i);
                     if ((slot == null)
-                            || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     // Only one Crit needs to be damaged.

@@ -19,9 +19,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.event.GameEntityChangeEvent;
@@ -36,89 +41,84 @@ import megamek.common.event.GamePhaseChangeEvent;
  */
 public class Precognition implements Runnable {
 
-    private Princess owner;
-
-    private PathEnumerator path_enumerator;
-    private final Object PATH_ENUM_LOCK = new Object();
+    private final Princess owner;
 
     private IGame game;
+    private final ReentrantReadWriteLock GAME_LOCK = new ReentrantReadWriteLock();
+
+    private PathEnumerator pathEnumerator;
+    private final ReentrantReadWriteLock PATH_ENUMERATOR_LOCK = new ReentrantReadWriteLock();
+
 
     // units who's path I need to update
-    private final TreeSet<Integer> dirty_units = new TreeSet<Integer>();
+    private final ConcurrentSkipListSet<Integer> dirtyUnits = new ConcurrentSkipListSet<>();
 
     // events that may affect which units are dirty
-    private final LinkedList<GameEvent> events_to_process = new LinkedList<GameEvent>();
+    private final ConcurrentLinkedQueue<GameEvent> eventsToProcess = new ConcurrentLinkedQueue<>();
 
-    private boolean wait_when_done = false; // used for pausing
-    private boolean waiting = false;
-    private boolean done = false;
+    private final AtomicBoolean waitWhenDone = new AtomicBoolean(false); // used for pausing
+    private final AtomicBoolean waiting = new AtomicBoolean(false);
+    private final AtomicBoolean done = new AtomicBoolean(false);
 
-    public Precognition(Princess owner) {
+    public Precognition(Princess owner, IGame game) {
         this.owner = owner;
-        synchronized (PATH_ENUM_LOCK) {
-            path_enumerator = new PathEnumerator(owner);
-        }
+        setGame(game);
+        setPathEnumerator(new PathEnumerator(owner, getGame()));
     }
 
-    void setGame(IGame g) {
+    void updateGame(IGame game) {
         final String METHOD_NAME = "setGame(IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
+        setGame(game);
         try {
-            game = g;
-            synchronized (PATH_ENUM_LOCK) {
-                path_enumerator.game = game;
-            }
-
-            game.addGameListener(new GameListenerAdapter() {
+            getGame().addGameListener(new GameListenerAdapter() {
                 @Override
-                public void gameEntityChange(GameEntityChangeEvent e) {
-                    synchronized (events_to_process) {
-                        events_to_process.addLast(e);
-                    }
-                    wake_up();
+                public void gameEntityChange(GameEntityChangeEvent changeEvent) {
+                    getEventsToProcess().add(changeEvent);
+                    wakeUp();
                 }
 
                 @Override
-                public void gamePhaseChange(GamePhaseChangeEvent e) {
-                    synchronized (events_to_process) {
-                        events_to_process.addLast(e);
-                    }
-                    wake_up();
+                public void gamePhaseChange(GamePhaseChangeEvent changeEvent) {
+                    getEventsToProcess().add(changeEvent);
+                    wakeUp();
                 }
 
             });
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public void pause() {
         final String METHOD_NAME = "pause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            wait_when_done = true;
-            while (!waiting) {
+            getWaitWhenDone().set(true);
+            while (!getWaiting().get()) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
-    public synchronized void unpause() {
+    public void unPause() {
         final String METHOD_NAME = "unpause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            wait_when_done = false;
-            notifyAll();
+            getWaitWhenDone().set(false);
+            synchronized (this) {
+                notifyAll();
+            }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -127,14 +127,16 @@ public class Precognition implements Runnable {
      * notifyAll in the event listener because it doesn't have the thread
      * something something.
      */
-    public synchronized void wake_up() {
+    public void wakeUp() {
         final String METHOD_NAME = "wake_up()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            notifyAll();
+            synchronized (this) {
+                notifyAll();
+            }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -144,109 +146,100 @@ public class Precognition implements Runnable {
      */
     public void insureUpToDate() {
         final String METHOD_NAME = "insureUpToDate()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             pause();
-            for (Enumeration<Entity> ents = game.getEntities(); ents
-                    .hasMoreElements();) {
-                Entity e = ents.nextElement();
-                if (!e.isDeployed() || e.isOffBoard()) {
+            for (Enumeration<Entity> entities = getGame().getEntities(); entities.hasMoreElements(); ) {
+                Entity entity = entities.nextElement();
+                if (!entity.isDeployed() || entity.isOffBoard()) {
                     continue;
                 }
-                if (((!path_enumerator.last_known_location.containsKey(e.getId()))
-                        || (!path_enumerator.last_known_location.get(e.getId()).equals(new CoordFacingCombo(e))))) {
-                    // System.err.println("entity "+e.getDisplayName()+" not where I left it");
-                    // if(pathEnumerator.last_known_location.containsKey(e.getId()))
-                    // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(e.getId()).coords+" but its actually at "+e.getPosition());
+                if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
+                     || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
+                                             .equals(new CoordFacingCombo(entity))))) {
+                    // System.err.println("entity "+entity.getDisplayName()+" not where I left it");
+                    // if(pathEnumerator.last_known_location.containsKey(entity.getId()))
+                    // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(entity
+                    // .getId()).coords+" but its actually at "+entity.getPosition());
                     // else
                     // System.err.println("  I had no idea where it was");
-                    dirtifyUnit(e.getId());
+                    dirtifyUnit(entity.getId());
                 }
             }
-            while (!dirty_units.isEmpty()) {
-                Integer entity_id;
-                synchronized (dirty_units) {
-                    entity_id = dirty_units.pollFirst();
-                }
-                Entity e = game.getEntity(entity_id);
-                if (e != null) {
-                    owner.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
-                    synchronized (PATH_ENUM_LOCK) {
-                        path_enumerator.recalculateMovesFor(game, e);
-                    }
-                    owner.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
+            while (!getDirtyUnits().isEmpty()) {
+                Integer entityId = getDirtyUnits().pollFirst();
+                Entity entity = getGame().getEntity(entityId);
+                if (entity != null) {
+                    getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
+                    getPathEnumerator().recalculateMovesFor(entity);
+                    getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity.getDisplayName());
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public void run() {
         final String METHOD_NAME = "run()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
             //noinspection InfiniteLoopStatement
-            while (!done) {
-                if (!events_to_process.isEmpty()) {
+            while (!getDone().get()) {
+                if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
-                } else if (!dirty_units.isEmpty()) {
-                    Entity e;
-                    synchronized (dirty_units) {
-                        e = game.getEntity(dirty_units.pollFirst());
+                } else if (!getDirtyUnits().isEmpty()) {
+                    Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
+                    if (entity != null) {
+                        getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
+                        getPathEnumerator().recalculateMovesFor(entity);
+                        getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity
+                                .getDisplayName());
                     }
-                    if (e != null) {
-                        owner.log(getClass(), METHOD_NAME, "recalculating paths for " + e.getDisplayName());
-                        synchronized (PATH_ENUM_LOCK) {
-                            path_enumerator.recalculateMovesFor(game, e);
-                        }
-                        owner.log(getClass(), METHOD_NAME, "finished recalculating paths for " + e.getDisplayName());
-                    }
-                } else if (wait_when_done) {
-                    wait_for_unpause(); // paused for a reason
+                } else if (getWaitWhenDone().get()) {
+                    waitForUnpause(); // paused for a reason
                 } else {
-                    wait_for_unpause(); // idling because there's nothing to do
+                    waitForUnpause(); // idling because there's nothing to do
                 }
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
-    public synchronized void signalDone() {
-        done = true;
+
+    public void signalDone() {
+        getDone().set(true);
     }
 
     /**
      * Waits until the thread is not paused, and there's indication that it has
      * something to do
      */
-    public synchronized void wait_for_unpause() {
+    public void waitForUnpause() {
         final String METHOD_NAME = "wait_for_unpause()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            while (!done 
-                    && (wait_when_done
-                            || (events_to_process.isEmpty() 
-                                    && dirty_units.isEmpty()))) {
-                StringBuilder msg = new StringBuilder("wait_when_done = " + wait_when_done);
-                msg.append(" :: events_to_process = ").append(events_to_process.size());
-                msg.append(" :: dirty_units = ").append(dirty_units.size());
-                owner.log(getClass(), METHOD_NAME, msg.toString());
-                waiting = true;
+            while (!getDone().get() &&
+                   (getWaitWhenDone().get() || (getEventsToProcess().isEmpty() && getDirtyUnits().isEmpty()))) {
+                getOwner().log(getClass(), METHOD_NAME, "waitWhenDone = " + getWaitWhenDone() +
+                                                        " :: eventsToProcess = " + getEventsToProcess().size() +
+                                                        " :: dirtyUnits = " + getDirtyUnits().size());
+                getWaiting().set(true);
                 try {
-                    wait();
+                    synchronized (this) {
+                        wait();
+                    }
                 } catch (InterruptedException ignored) {
                 }
                 // System.err.println("checking WAIT conditions");
             }
-            waiting = false;
+            getWaiting().set(false);
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -254,80 +247,74 @@ public class Precognition implements Runnable {
      * Process game events that have happened since the thread last checked i.e.
      * if a unit has moved, my precaculated paths are no longer valid
      */
-    public synchronized void processGameEvents() {
+    public void processGameEvents() {
         final String METHOD_NAME = "processGameEvents()";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            LinkedList<GameEvent> eventsToProcessIterator;
-            synchronized (events_to_process) {
-                eventsToProcessIterator = new LinkedList<GameEvent>(events_to_process);
-            }
+            LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<>(getEventsToProcess());
             int numEvents = eventsToProcessIterator.size();
             for (int count = 0; count < numEvents; count++) {
-                owner.log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
+                getOwner().log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
                 GameEvent event = eventsToProcessIterator.get(count);
                 if (event == null) {
                     continue;
                 }
-                owner.log(getClass(), METHOD_NAME, "Processing " + event.toString());
-                synchronized (events_to_process) {
-                    events_to_process.remove(event);
-                }
+                getOwner().log(getClass(), METHOD_NAME, "Processing " + event.toString());
+                getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // for starters, ignore entity changes that don't happen during
                     // the movement phase
-                    if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+                    if (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
                         continue;
                     }
-                    GameEntityChangeEvent changeevent = (GameEntityChangeEvent) event;
-                    if (changeevent.getEntity() == null) {
+                    GameEntityChangeEvent changeEvent = (GameEntityChangeEvent) event;
+                    if (changeEvent.getEntity() == null) {
                         continue; // just to be safe
                     }
-                    Entity onentity = game.getEntity(changeevent.getEntity().getId());
-                    if (onentity == null) {
+                    Entity entity = getGame().getEntity(changeEvent.getEntity().getId());
+                    if (entity == null) {
                         continue; // not sure how this can happen, but just to be
                                   // safe
                     }
                     // a lot of odd entity changes are send during the firing phase,
                     // none of which are relevant
-                    if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                    if (getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
                         continue;
                     }
-                    if (onentity.getPosition() == null) {
+                    Coords position = entity.getPosition();
+                    if (position == null) {
                         continue;
                     }
-                    if (onentity.getPosition().equals(path_enumerator.getLastKnownCoords(onentity.getId()))) {
+                    if (position.equals(getPathEnumerator().getLastKnownCoords(entity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    owner.log(getClass(), METHOD_NAME, "Received entity change event for "
-                            + changeevent.getEntity().getDisplayName() + " (ID "
-                            + onentity.getId() + ")");
-                    Integer entity = changeevent.getEntity().getId();
-                    dirtifyUnit(entity);
+                    getOwner().log(getClass(), METHOD_NAME, "Received entity change event for "
+                                                            + changeEvent.getEntity().getDisplayName() + " (ID "
+                                                            + entity.getId() + ")");
+                    Integer entityId = changeEvent.getEntity().getId();
+                    dirtifyUnit(entityId);
+
                 } else if (event instanceof GamePhaseChangeEvent) {
-                    GamePhaseChangeEvent phasechange = (GamePhaseChangeEvent) event;
-                    owner.log(getClass(), METHOD_NAME, "Phase change detected: " + phasechange.getNewPhase().name());
+                    GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
+                    getOwner().log(getClass(), METHOD_NAME, "Phase change detected: " + phaseChange.getNewPhase()
+                                                                                                   .name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
-                    if (phasechange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
-                        synchronized (PATH_ENUM_LOCK) {
-                            path_enumerator.clear();
-                        }
-                        for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
-                            Entity e = ents.nextElement();
-                            if (e.isActive() && e.isDeployed() && e.getPosition() != null) {
-                                synchronized (dirty_units) {
-                                    dirty_units.add(e.getId());
-                                }
+                    if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                        getPathEnumerator().clear();
+                        for (Enumeration<Entity> entities = getGame().getEntities(); entities.hasMoreElements(); ) {
+                            Entity entity = entities.nextElement();
+                            if (entity.isActive() && entity.isDeployed() && entity.getPosition() != null) {
+                                getDirtyUnits().add(entity.getId());
                             }
                         }
                     }
                 }
             }
-            owner.log(getClass(), METHOD_NAME, "Events still to process: " + events_to_process.size());
+            getOwner().log(getClass(), METHOD_NAME, "Events still to process: " + getEventsToProcess().size());
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -335,82 +322,134 @@ public class Precognition implements Runnable {
      * Called when a unit has moved and should be put on the dirty list, as well
      * as any units who's moves contain that unit
      */
-    public synchronized void dirtifyUnit(int id) {
+    public void dirtifyUnit(int id) {
         final String METHOD_NAME = "dirtifyUnit(int)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             // first of all, if a unit has been removed, remove it from the list and
             // stop
-            if (game.getEntity(id) == null) {
-                synchronized (PATH_ENUM_LOCK) {
-                    path_enumerator.last_known_location.remove(id);
-                    path_enumerator.unit_movable_areas.remove(id);
-                    path_enumerator.unit_paths.remove(id);
-                    path_enumerator.unit_potential_locations.remove(id);
-                }
+            if (getGame().getEntity(id) == null) {
+                getPathEnumerator().getLastKnownLocations().remove(id);
+                getPathEnumerator().getUnitMovableAreas().remove(id);
+                getPathEnumerator().getUnitPaths().remove(id);
+                getPathEnumerator().getUnitPotentialLocations().remove(id);
                 return;
             }
             // if a unit has moved or deployed, then it becomes dirty, and any units
             // with its initial or final position
             // in their list become dirty
-            if (!(game.getEntity(id) instanceof Aero)) {
-                TreeSet<Integer> to_dirty = path_enumerator.getEntitiesWithLocation(game.getEntity(id).getPosition(),
-                                true);
-                if (path_enumerator.last_known_location.containsKey(id)) {
-                    if ((game.getEntity(id) != null) && game.getEntity(id).isSelectableThisTurn()) {
-                        to_dirty.addAll(path_enumerator.getEntitiesWithLocation(path_enumerator.last_known_location
-                                .get(id).coords, true));
+            if (!(getGame().getEntity(id) instanceof Aero)) {
+                TreeSet<Integer> toDirty = new TreeSet<>(getPathEnumerator().getEntitiesWithLocation(getGame().getEntity
+                                                                                                             (id)
+                                                                                                              .getPosition(),
+                                                                                                     true));
+                if (getPathEnumerator().getLastKnownLocations().containsKey(id)) {
+                    if ((getGame().getEntity(id) != null) && getGame().getEntity(id).isSelectableThisTurn()) {
+                        toDirty.addAll(getPathEnumerator().getEntitiesWithLocation(getPathEnumerator()
+                                                                                           .getLastKnownLocations()
+                                                                                           .get(id)
+                                                                                           .coords, true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
-                List<Integer> toRemove = new ArrayList<Integer>();
-                for (Integer index : to_dirty) {
-                    if ((game.getEntity(index) == null) || (!game.getEntity(index).isSelectableThisTurn())
-                            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                List<Integer> toRemove = new ArrayList<>();
+                for (Integer index : toDirty) {
+                    if ((getGame().getEntity(index) == null) || (!getGame().getEntity(index).isSelectableThisTurn())
+                                                                && (getGame().getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                         toRemove.add(index);
                     }
                 }
                 for (Integer i : toRemove) {
-                    to_dirty.remove(i);
+                    toDirty.remove(i);
                 }
 
-                if (to_dirty.size() != 0) {
+                if (toDirty.size() != 0) {
                     String msg = "The following units have become dirty";
-                    if (game.getEntity(id) != null) {
-                        msg += " as a result of a nearby move of " + game.getEntity(id).getDisplayName();
+                    if (getGame().getEntity(id) != null) {
+                        msg += " as a result of a nearby move of " + getGame().getEntity(id).getDisplayName();
                     }
 
-                    Iterator<Integer> dirtyIterator = to_dirty.descendingIterator();
+                    Iterator<Integer> dirtyIterator = toDirty.descendingIterator();
                     while (dirtyIterator.hasNext()) {
                         Integer i = dirtyIterator.next();
-                        Entity e = game.getEntity(i);
+                        Entity e = getGame().getEntity(i);
                         if (e != null)
                             msg += "\n  " + e.getDisplayName();
                     }
-                    owner.log(getClass(), METHOD_NAME, msg);
+                    getOwner().log(getClass(), METHOD_NAME, msg);
                 }
-                synchronized (dirty_units) {
-                    dirty_units.addAll(to_dirty);
-                }
+                getDirtyUnits().addAll(toDirty);
             }
-            Entity e = game.getEntity(id);
-            if ((e != null) && (e.isSelectableThisTurn())
-                    || (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                synchronized (dirty_units) {
-                    dirty_units.add(id);
-                }
-            } else if (e != null) {
-                synchronized (PATH_ENUM_LOCK) {
-                    path_enumerator.last_known_location.put(id, new CoordFacingCombo(e));
-                }
+            Entity entity = getGame().getEntity(id);
+            if ((entity != null) && (entity.isSelectableThisTurn()) ||
+                (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                getDirtyUnits().add(id);
+            } else if (entity != null) {
+                getPathEnumerator().getLastKnownLocations().put(id, new CoordFacingCombo(entity));
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
     public PathEnumerator getPathEnumerator() {
-        return path_enumerator;
+        PATH_ENUMERATOR_LOCK.readLock().lock();
+        try {
+            return pathEnumerator;
+        } finally {
+            PATH_ENUMERATOR_LOCK.readLock().unlock();
+        }
+    }
+
+    private void setPathEnumerator(PathEnumerator pathEnumerator) {
+        PATH_ENUMERATOR_LOCK.writeLock().lock();
+        try {
+            this.pathEnumerator = pathEnumerator;
+        } finally {
+            PATH_ENUMERATOR_LOCK.writeLock().unlock();
+        }
+    }
+
+    private ConcurrentSkipListSet<Integer> getDirtyUnits() {
+        return dirtyUnits;
+    }
+
+    private ConcurrentLinkedQueue<GameEvent> getEventsToProcess() {
+        return eventsToProcess;
+    }
+
+    private AtomicBoolean getWaitWhenDone() {
+        return waitWhenDone;
+    }
+
+    private AtomicBoolean getWaiting() {
+        return waiting;
+    }
+
+    private AtomicBoolean getDone() {
+        return done;
+    }
+
+    private Princess getOwner() {
+        return owner;
+    }
+
+    private IGame getGame() {
+        GAME_LOCK.readLock().lock();
+        try {
+            return game;
+        } finally {
+            GAME_LOCK.readLock().unlock();
+        }
+    }
+
+    private void setGame(IGame game) {
+        GAME_LOCK.writeLock().lock();
+        try {
+            this.game = game;
+        } finally {
+            GAME_LOCK.writeLock().unlock();
+        }
     }
 }

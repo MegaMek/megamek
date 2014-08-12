@@ -61,7 +61,7 @@ public class BasicPathRanker extends PathRanker {
         bestDamageByEnemies = new TreeMap<>();
         owner = owningPrincess;
         owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
-                " behavior");
+                                                           " behavior");
     }
 
     protected Princess getOwner() {
@@ -85,12 +85,12 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected Coords getClosestCoordsTo(int unitId, Coords location) {
-        return pathEnumerator.unit_movable_areas.get(unitId).getClosestCoordsTo(location);
+        return pathEnumerator.getUnitMovableAreas().get(unitId).getClosestCoordsTo(location);
     }
 
     protected boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
-        return (leftBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) > 0)
-                && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
+        return (leftBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) > 0)
+               && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
     protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange) {
@@ -99,20 +99,20 @@ public class BasicPathRanker extends PathRanker {
 
     protected boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
         final String METHOD_NAME = "canFlankAndKick(Entity, Coords, Coords, Coords, int)";
-        Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.unit_potential_locations.get(enemy.getId());
+        Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
         if (enemyFacingSet == null) {
             getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "no facing set for " + enemy.getDisplayName());
             return false;
         }
         return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -162,7 +162,7 @@ public class BasicPathRanker extends PathRanker {
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange)
-                                                             * damageDiscount);
+                                                     * damageDiscount);
 
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -355,18 +355,18 @@ public class BasicPathRanker extends PathRanker {
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                game.getBoard().getCenter() :
-                closest.getPosition();
+                        game.getBoard().getCenter() :
+                        closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                || (currentFacing == ((desiredFacing + 5) % 6))) {
+                   || (currentFacing == ((desiredFacing + 5) % 6))) {
             facingDiff = 1;
         } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                || (currentFacing == ((desiredFacing + 4) % 6))) {
+                   || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 2;
         } else {
             facingDiff = 3;
@@ -435,7 +435,7 @@ public class BasicPathRanker extends PathRanker {
 
                 // Skip units not actually on the board.
                 if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                        || !game.getBoard().contains(enemy.getPosition())) {
+                    || !game.getBoard().contains(enemy.getPosition())) {
                     continue;
                 }
 
@@ -458,7 +458,7 @@ public class BasicPathRanker extends PathRanker {
             for (int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
                 Targetable target = getOwner().getFireControl().getAdditionalTargets().get(i);
                 if (target.isOffBoard() || (target.getPosition() == null)
-                        || !game.getBoard().contains(target.getPosition())) {
+                    || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
@@ -636,7 +636,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game The {@link IGame} currently in play.
+     * @param game     The {@link IGame} currently in play.
      * @return The distance to the unit's home edge.
      */
     @Override

@@ -68,7 +68,7 @@ public class PathRanker {
         return null;
     }
 
-    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> movePaths, IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                            double fallTollerance, int startingHomeDistance,
                                            List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
@@ -118,8 +118,8 @@ public class PathRanker {
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null ?
-                Integer.MAX_VALUE :
-                closestTarget.getPosition().distance(mover.getPosition()));
+                                      Integer.MAX_VALUE :
+                                      closestTarget.getPosition().distance(mover.getPosition()));
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);

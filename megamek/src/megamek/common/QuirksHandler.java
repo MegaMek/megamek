@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml
+ * This class loads the default quirks list from the mmconf/canonUnitQuirks.xml
  * file.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -170,20 +170,20 @@ public class QuirksHandler {
     }
 
     /**
-     * Reads in the values from the cannonUnitQuirks.xml file and stores them in memory.
+     * Reads in the values from the canonUnitQuirks.xml file and stores them in memory.
      *
      * @throws IOException
      */
     public static void initQuirksList() throws IOException {
 
-        // Get the path to the cannonUnitQuirks.xml file.
+        // Get the path to the canonUnitQuirks.xml file.
         String userDir = System.getProperty("user.dir");
         if (!userDir.endsWith(File.separator)) {
             userDir += File.separator;
         }
 
-        // Load the cannon quirks list.
-        String filePath = userDir + "data" + File.separator + "cannonUnitQuirks.xml";
+        // Load the canon quirks list.
+        String filePath = userDir + "data" + File.separator + "canonUnitQuirks.xml";
         canonQuirkMap = loadQuirksFile(filePath);
 
         // Load the custom quirks list.

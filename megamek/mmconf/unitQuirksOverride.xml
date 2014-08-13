@@ -34,7 +34,7 @@ Multiple weapon quirks should be contained within separate "weaponQuirk" structu
   the same weapon.
 
 The proper names for quirks can be found in the
-  l10n/megamek/common/options/Resource Bundle 'messages'/messages.properties file.  Search for the "QuirksInfo" section.
+  l10n/megamek/common/options/messages.properties file.  Search for the "QuirksInfo" section.
   The name you want will fall between "option" and "displayableName".  For example, if you wish to apply the
   "Anti-Aircraft Targetting" quirk to a unit, you will find the following entry in the messages.properties file:
     QuirksInfo.option.anti_air.displayableName

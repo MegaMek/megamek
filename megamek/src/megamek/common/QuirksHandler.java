@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import megamek.common.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -215,55 +216,60 @@ public class QuirksHandler {
 
         // Build the unit ID from the chassis and model.
         String unitId = chassis;
-        if ((model != null) && !model.isEmpty()) {
+        if (!StringUtil.isNullOrEmpty(model)) {
             unitId += " " + model;
         }
 
-        // Check for a general entry for this chassis in the custom list.
-        if (customQuirkMap.containsKey(generalId)) {
-            quirks.addAll(customQuirkMap.get(generalId));
-        }
+        try {
+            // Check for a general entry for this chassis in the custom list.
+            if (customQuirkMap.containsKey(generalId)) {
+                quirks.addAll(customQuirkMap.get(generalId));
+            }
 
-        // Check for a model-specific entry.
-        if (customQuirkMap.containsKey(unitId)) {
+            // Check for a model-specific entry.
+            if (customQuirkMap.containsKey(unitId)) {
 
-            // If this specific model has no quirks, return null.
-            if (NO_QUIRKS.equalsIgnoreCase(customQuirkMap.get(unitId).get(0).getQuirk())) {
+                // If this specific model has no quirks, return null.
+                if (NO_QUIRKS.equalsIgnoreCase(customQuirkMap.get(unitId).get(0).getQuirk())) {
+                    return null;
+                }
+
+                // Add the model-specific quirks.
+                quirks.addAll(customQuirkMap.get(unitId));
+            }
+
+            // If there is only one quirk on the list and it indicates that the custom list has removed all quirks from
+            // this unit, return null.
+            if ((quirks.size() == 1) && NO_QUIRKS.equalsIgnoreCase(quirks.get(0).getQuirk())) {
                 return null;
             }
 
-            // Add the model-specific quirks.
-            quirks.addAll(customQuirkMap.get(unitId));
-        }
-
-        // If there is only one quirk on the list and it indicates that the custom list has removed all quirks from
-        // this unit, return null.
-        if ((quirks.size() == 1) && NO_QUIRKS.equalsIgnoreCase(quirks.get(0).getQuirk())) {
-            return null;
-        }
-
-        // If quirk entries were found on the customized list, return those quirks.
-        if (!quirks.isEmpty()) {
-            return quirks;
-        }
-
-        // Check the canonical list for a general entry for this chassis.
-        if (canonQuirkMap.containsKey(generalId)) {
-            quirks.addAll(canonQuirkMap.get(generalId));
-        }
-
-        // Check for a model-specific entry.
-        if (canonQuirkMap.containsKey(unitId)) {
-
-            // If this specific model, has no quirks, return null.
-            if (NO_QUIRKS.equalsIgnoreCase(canonQuirkMap.get(unitId).get(0).getQuirk())) {
-                return null;
+            // If quirk entries were found on the customized list, return those quirks.
+            if (!quirks.isEmpty()) {
+                return quirks;
             }
 
-            // Add the model-specific quirks.
-            quirks.addAll(canonQuirkMap.get(unitId));
-        }
+            // Check the canonical list for a general entry for this chassis.
+            if (canonQuirkMap.containsKey(generalId)) {
+                quirks.addAll(canonQuirkMap.get(generalId));
+            }
 
-        return quirks.isEmpty() ? null : quirks;
+            // Check for a model-specific entry.
+            if (canonQuirkMap.containsKey(unitId)) {
+
+                // If this specific model, has no quirks, return null.
+                if (NO_QUIRKS.equalsIgnoreCase(canonQuirkMap.get(unitId).get(0).getQuirk())) {
+                    return null;
+                }
+
+                // Add the model-specific quirks.
+                quirks.addAll(canonQuirkMap.get(unitId));
+            }
+
+            return quirks.isEmpty() ? null : quirks;
+        } catch (Exception e) {
+            String msg = "generalId: '" + generalId + "'\nunitId: '" + unitId + "'\n";
+            throw new RuntimeException(msg, e);
+        }
     }
 }

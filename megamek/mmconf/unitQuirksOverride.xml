@@ -42,7 +42,7 @@ The proper names for quirks can be found in the
 
 If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of "none".
 
-Example:  If you wish to declare tha all Atlas variants do not have the Command Mech quirk:
+Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:
     <unit>
         <chassis>Atlas</chassis>
         <model>all</model>

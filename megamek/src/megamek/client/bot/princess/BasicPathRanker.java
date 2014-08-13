@@ -50,7 +50,6 @@ import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;

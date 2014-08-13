@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  * @version %I% %G%
  * @since 2012-03-05
  */
-public class DefaultQuirksHandler {
+public class QuirksHandler {
     private static final String CHASSIS = "chassis";
     private static final String MODEL = "model";
     private static final String QUIRK = "quirk";
@@ -47,7 +47,7 @@ public class DefaultQuirksHandler {
     private static final String WEAPON_NAME = "weaponName";
     private static final String WEAPON_QUIRK_NAME = "weaponQuirkName";
 
-    private static Map<String, List<QuirkEntry>> cannonQuirkMap;
+    private static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -184,7 +184,7 @@ public class DefaultQuirksHandler {
 
         // Load the cannon quirks list.
         String filePath = userDir + "data" + File.separator + "cannonUnitQuirks.xml";
-        cannonQuirkMap = loadQuirksFile(filePath);
+        canonQuirkMap = loadQuirksFile(filePath);
 
         // Load the custom quirks list.
         filePath = userDir + "mmconf" + File.separator + "unitQuirksOverride.xml";
@@ -205,7 +205,7 @@ public class DefaultQuirksHandler {
     public static List<QuirkEntry> getQuirks(String chassis, String model) {
         final String NO_QUIRKS = "none";
 
-        if (!initialized.get() || (null == cannonQuirkMap)) {
+        if (!initialized.get() || (null == canonQuirkMap)) {
             return null;
         }
         List<QuirkEntry> quirks = new ArrayList<>();
@@ -248,20 +248,20 @@ public class DefaultQuirksHandler {
         }
 
         // Check the canonical list for a general entry for this chassis.
-        if (cannonQuirkMap.containsKey(generalId)) {
-            quirks.addAll(cannonQuirkMap.get(generalId));
+        if (canonQuirkMap.containsKey(generalId)) {
+            quirks.addAll(canonQuirkMap.get(generalId));
         }
 
         // Check for a model-specific entry.
-        if (cannonQuirkMap.containsKey(unitId)) {
+        if (canonQuirkMap.containsKey(unitId)) {
 
             // If this specific model, has no quirks, return null.
-            if (NO_QUIRKS.equalsIgnoreCase(cannonQuirkMap.get(unitId).get(0).getQuirk())) {
+            if (NO_QUIRKS.equalsIgnoreCase(canonQuirkMap.get(unitId).get(0).getQuirk())) {
                 return null;
             }
 
             // Add the model-specific quirks.
-            quirks.addAll(cannonQuirkMap.get(unitId));
+            quirks.addAll(canonQuirkMap.get(unitId));
         }
 
         return quirks.isEmpty() ? null : quirks;

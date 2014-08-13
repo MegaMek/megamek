@@ -55,7 +55,7 @@ import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Building;
 import megamek.common.Coords;
-import megamek.common.DefaultQuirksHandler;
+import megamek.common.QuirksHandler;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.FighterSquadron;
@@ -478,7 +478,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case PHASE_LOUNGE:
                 try {
-                    DefaultQuirksHandler.initQuirksList();
+                    QuirksHandler.initQuirksList();
                 } catch (IOException e) {
                     System.out.println(e);
                 }

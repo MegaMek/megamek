@@ -117,7 +117,7 @@ public class Packet {
     public static final int COMMAND_CFR_DOMINO_EFFECT = 705;
     public static final int COMMAND_CFR_EDGE_PROMPT = 710;
     
-
+    public static final int COMMAND_GAME_VICTORY_EVENT = 800;
 
     private int command;
 

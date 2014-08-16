@@ -92,6 +92,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -1390,6 +1391,10 @@ public class Client implements IClientCommandHandler {
             			break;
             	}
             	game.processGameEvent(cfrEvt);
+                break;
+            case Packet.COMMAND_GAME_VICTORY_EVENT:
+                GameVictoryEvent gve = new GameVictoryEvent(this);
+                game.processGameEvent(gve);
                 break;
         }
     }

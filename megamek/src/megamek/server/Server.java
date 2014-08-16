@@ -2818,7 +2818,9 @@ public class Server implements Runnable {
                 }
                 break;
             case PHASE_VICTORY:
-                game.processGameEvent(new GameVictoryEvent(this));
+                GameVictoryEvent gve = new GameVictoryEvent(this);
+                game.processGameEvent(gve);
+                transmitGameVictoryEventToAll();
                 resetGame();
                 break;
             default:
@@ -27027,6 +27029,15 @@ public class Server implements Runnable {
             }
         }
 
+    }
+    
+    /**
+     * Sends out the game victory event to all connections
+     */
+    private void transmitGameVictoryEventToAll() {
+        for (IConnection conn : connections) {
+            send(conn.getId(), new Packet(Packet.COMMAND_GAME_VICTORY_EVENT));
+        }
     }
 
     /**

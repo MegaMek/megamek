@@ -3943,6 +3943,11 @@ public class Aero extends Entity {
         }
         return false;
     }
+    
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
+        return isCrippled();
+    }
 
     @Override
     public boolean isDmgHeavy() {

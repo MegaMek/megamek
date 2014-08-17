@@ -1235,8 +1235,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return true if unit is permanently immobile
      */
-    public boolean isPermanentlyImmobilized() {
-        if ((getCrew() == null) || getCrew().isDead()) {
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
+        if (checkCrew && (getCrew() == null || getCrew().isDead())) {
             return true;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                 /*
@@ -12464,6 +12464,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract boolean isCrippled();
 
     /**
+     * Returns TRUE if the entity meets the requirements for crippling damage as
+     * detailed in TW pg 258. Excepting dead or non-existing crew issues
+     *
+     * @return boolean
+     */
+    public abstract boolean isCrippled(boolean checkCrew);
+
+    /**
      * Returns TRUE if the entity has been heavily damaged.
      *
      * @return boolean
@@ -12490,7 +12498,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return DMG_CRIPLED, DMG_HEAVY, DMG_MODERATE, DMG_LIGHT or DMG_NONE.
      */
     public int getDamageLevel() {
-        if (isCrippled()) {
+        return getDamageLevel(true);
+    }
+
+    /**
+     * Returns the entity's current damage level.
+     *
+     * @return DMG_CRIPLED, DMG_HEAVY, DMG_MODERATE, DMG_LIGHT or DMG_NONE.
+     */
+    public int getDamageLevel(boolean checkCrew) {
+        if (isCrippled(checkCrew)) {
             return DMG_CRIPPLED;
         }
         if (isDmgHeavy()) {

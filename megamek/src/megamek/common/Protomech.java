@@ -1711,6 +1711,11 @@ public class Protomech extends Entity {
         }
         return true;
     }
+    
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
+        return isCrippled();
+    }
 
     @Override
     public boolean isDmgHeavy() {

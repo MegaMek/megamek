@@ -7742,6 +7742,11 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isCrippled() {
+        return isCrippled(false);
+    }
+
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
         if (countInternalDamagedLimbs() >= 3) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
@@ -7815,7 +7820,7 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        if (isPermanentlyImmobilized()) {
+        if (isPermanentlyImmobilized(checkCrew)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out
                         .println(getDisplayName() + " CRIPPLED: Immobilized.");
@@ -7876,10 +7881,10 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public boolean isPermanentlyImmobilized() {
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
         // First check for conditions that would permanently immobilize *any*
         // entity; if we find any, we're already done.
-        if (super.isPermanentlyImmobilized()) {
+        if (super.isPermanentlyImmobilized(checkCrew)) {
             return true;
         }
         // If we're prone and base walking MP -- adjusted for gravity and

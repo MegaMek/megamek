@@ -160,6 +160,8 @@ v0.39.1-dev (SVN)
 + Feature Request [features:#1265] Princess Bot and magma
 + Added code to make Princess fire hole-punchers before crit-seekers
 + Added new unofficial option to ignore TW pg. 109 rules requiring primary targets being in front arc
++ Bug: ArrayIndexOutOfBoundsException in Princess's PathRanker.validatePaths()
+    if the list of paths to validate is empty to begin with.
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

@@ -109,6 +109,12 @@ public class PathRanker {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
         LogLevel logLevel = LogLevel.DEBUG;
 
+        if (startingPathList.isEmpty()) {
+            // Nothing to validate here, might as well return the empty list
+            // straight away.
+            return startingPathList;
+        }
+        
         Entity mover = startingPathList.get(0).getEntity();
 
         // No support yet for Aero units.

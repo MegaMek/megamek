@@ -36,7 +36,7 @@ Multiple weapon quirks should be contained within separate "weaponQuirk" structu
 The proper names for quirks can be found in the
   l10n/megamek/common/options/messages.properties file.  Search for the "QuirksInfo" section.
   The name you want will fall between "option" and "displayableName".  For example, if you wish to apply the
-  "Anti-Aircraft Targetting" quirk to a unit, you will find the following entry in the messages.properties file:
+  "Anti-Aircraft Targeting" quirk to a unit, you will find the following entry in the messages.properties file:
     QuirksInfo.option.anti_air.displayableName
   The name you want to include in this file for the <quirk> entry is "anti_air".
 
@@ -87,7 +87,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 -->
 
 <unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsl">
-    <unit> <!-- Placeholder that is exactly the same as in cannon file because we need to have at least one entry. -->
+    <unit> <!-- Placeholder that is exactly the same as in canon file because we need to have at least one entry. -->
         <chassis>Atlas</chassis>
         <model>all</model>
         <quirk>command_mech</quirk>

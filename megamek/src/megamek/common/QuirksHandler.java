@@ -25,14 +25,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class loads the default quirks list from the mmconf/canonUnitQuirks.xml
- * file.
+ * This class loads the quirks lists from the data/canonUnitQuirks.xml and /mmconf/unitQuirksOverride.xml files.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %I% %G%
@@ -203,7 +203,8 @@ public class QuirksHandler {
      * @return A {@code List} of the quirks ({@code QuirkEntry}) for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
-    public static List<QuirkEntry> getQuirks(String chassis, String model) {
+    @Nullable
+    public static List<QuirkEntry> getQuirks(String chassis, @Nullable String model) {
         final String NO_QUIRKS = "none";
 
         if (!initialized.get() || (null == canonQuirkMap)) {

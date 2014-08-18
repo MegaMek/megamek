@@ -87,10 +87,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
         @Override
         public int compare(MovePath first, MovePath second) {
             int s = super.compare(first, second);
-            if (s != 0)
+            if (s != 0) {
                 return s;
-            else
+            } else {
                 return second.getHexesMoved() - first.getHexesMoved();
+            }
         }
     }
 
@@ -105,8 +106,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
         public Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
-            if (mpCandidate == null)
+            if (mpCandidate == null) {
                 throw new NullPointerException();
+            }
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
             }
@@ -115,26 +117,32 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
                 //standing up is always reasonable for mechs
                 boolean vprone = topMP.getFinalProne(), eprone = mpCandidate.getFinalProne();
-                if (vprone != eprone)
-                    if (vprone)
+                if (vprone != eprone) {
+                    if (vprone) {
                         break;
-                    else
+                    } else {
                         return null;
+                    }
+                }
                 if (!(topMP.getEntity() instanceof Tank)) {
                     boolean vhdown = topMP.getFinalHullDown(), ehdown = mpCandidate.getFinalHullDown();
-                    if (vhdown != ehdown)
-                        if (vhdown)
+                    if (vhdown != ehdown) {
+                        if (vhdown) {
                             break;
-                        else
+                        } else {
                             return null;
+                        }
+                    }
                 }
 
                 if (topMP.getMpUsed() > mpCandidate.getMpUsed()) {
-                    throw new IllegalStateException();
+                    System.err.println(new IllegalStateException(
+                            "Top Move Path uses more MPs than Move Path Candidate."));
+                    return null;
                     /*
                      * topMP should have less or equal 'movement points used'
                      * since it was taken from candidates priority queue earlier
-                     * 
+                     *
                      * If this assertion stops being true then body of this
                      * method should be modified
                      */
@@ -144,11 +152,12 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                 }
                 if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
                     MoveStep topStep = topMP.getLastStep();
-                    boolean topBackwards = topStep == null ? false : topStep.isThisStepBackwards();
+                    boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
                     MoveStep mpCandStep = mpCandidate.getLastStep();
-                    boolean mpCandBackwars = mpCandStep == null ? false : mpCandStep.isThisStepBackwards();
-                    if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars)
+                    boolean mpCandBackwars = mpCandStep != null && mpCandStep.isThisStepBackwards();
+                    if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars) {
                         break;
+                    }
                     return null; //topMP path is longer and uses less mp.
                 }
 
@@ -156,7 +165,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                     //topMP travels less but also uses less movement points so we should keep it.
                     break;
                 } else {
-                    throw new IllegalStateException();
+                    System.err.println(new IllegalStateException(
+                            "Top Move Path uses as many or more MPs than Move Path Candidate."));
+                    return null;
                     //v.removeLast(); //remove topMp -it is shorter and uses the same amount of mp
                 }
             }
@@ -182,16 +193,19 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
          */
         @Override
         public int compare(MovePath mp1, MovePath mp2) {
-            if (!(mp1.getEntity() instanceof Aero))
+            if (!(mp1.getEntity() instanceof Aero)) {
                 throw new IllegalArgumentException("wanted aero got:" + mp1.getClass().toString());
+            }
             //we want to process shorter paths first
             int dHT = mp1.getHexesMoved() - mp2.getHexesMoved();
-            if (dHT != 0)
+            if (dHT != 0) {
                 return dHT;
+            }
             //then those which used less thrust
             int dMP = mp1.getMpUsed() - mp2.getMpUsed();
-            if (dMP != 0)
+            if (dMP != 0) {
                 return dMP;
+            }
             //lastly those with more hexes flown straight.
             MoveStep lms1 = mp1.getLastStep(), lms2 = mp2.getLastStep();
             int hs1 = lms1 == null ? 0 : lms1.getNStraight();
@@ -232,8 +246,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
              * hexes travelled then totally different paths will emerge
              */
             int dHT = topMP.getHexesMoved() - mpCandidate.getHexesMoved();
-            if (dHT > 0)
-                throw new IllegalStateException();
+            if (dHT > 0) {
+                System.err.println(new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate."));
+            }
             if (dHT < 0) {
                 v.addLast(mpCandidate);
                 return v;
@@ -241,12 +256,14 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
             // assert( topMP.getHexesMoved() == mpCandidate.getHexesMoved() );
             int dMP = topMP.getMpUsed() - mpCandidate.getMpUsed();
-            if (dMP > 0)
-                throw new IllegalStateException();
+            if (dMP > 0) {
+                System.err.println(new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate."));
+            }
 
             //assert( topMP thrust used is less or equal than candidates)
-            if (!inAthmosphere)
+            if (!inAthmosphere) {
                 return null; //there is no point considering hexes flown straight if we are not in athmo
+            }
 
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
@@ -255,8 +272,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             int dHS = hs1 - hs2;
 
             if (-dHS > 0) {
-                if (!(dMP < 0))
-                    throw new IllegalStateException();
+                if (dMP >= 0) {
+                    System.err.println(new IllegalStateException(
+                            "Top Move Path uses more MPs than Move Path Candidate and " +
+                            "Top Move Path moves a shorter straight line distance."));
+                }
                 if (topLastStep != null && !topLastStep.dueFreeTurn()) {
                     v.add(mpCandidate);
                     return v;
@@ -271,8 +291,8 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Returns the longest move path to a hex at given coordinates. If multiple
      * paths reach coords with different final facings, the best one is chosen.
      * If none paths are present then {@code null} is returned.
-     * 
-     * @param coordinates - the coordinates of the hex
+     *
+     * @param coords - the coordinates of the hex
      * @return the shortest move path to hex at given coordinates
      */
     public MovePath getComputedPath(Coords coords) {
@@ -281,24 +301,26 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
                 MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
                 int t = mp2.getHexesMoved() - mp1.getHexesMoved();
-                if (t != 0)
+                if (t != 0) {
                     return t;
-                else
+                } else {
                     return mp1.getMpUsed() - mp2.getMpUsed();
+                }
             }
         });
         if (q != null) {
-            if (!aero)
+            if (!aero) {
                 return q.getLast();
-            else {
+            } else {
                 ArrayDeque<MovePath> tq = new ArrayDeque<>(q);
                 MovePath mp = tq.removeLast();
                 while (!tq.isEmpty()) {
                     MovePath qlast = tq.removeLast();
-                    if (mp.getHexesMoved() == qlast.getHexesMoved() && mp.getMpUsed() > qlast.getMpUsed())
+                    if (mp.getHexesMoved() == qlast.getHexesMoved() && mp.getMpUsed() > qlast.getMpUsed()) {
                         mp = qlast;
-                    else
+                    } else {
                         break;
+                    }
                 }
                 return mp;
             }

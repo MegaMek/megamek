@@ -1351,16 +1351,16 @@ public class AmmoType extends EquipmentType {
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3065, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKEGRENADE, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
 
         // create the munition types for IS vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3052, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKEGRENADE, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
@@ -11409,7 +11409,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
-        ammo.name = "Vehicular Grenade Launcher Ammo";
+        ammo.name = "VGL Ammo";
         ammo.shortName = "VGL";
         ammo.setInternalName("CL Ammo VGL");
         ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
@@ -11433,7 +11433,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        ammo.name = "Vehicular Grenade Launcher Ammo";
+        ammo.name = "VGL Ammo";
         ammo.shortName = "VGL";
         ammo.setInternalName("IS Ammo VGL");
         ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
@@ -11611,6 +11611,7 @@ public class AmmoType extends EquipmentType {
 
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
+            munition.setTonnage(base.getTonnage(null));
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {

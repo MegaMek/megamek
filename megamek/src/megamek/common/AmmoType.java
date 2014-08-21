@@ -11409,8 +11409,10 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
-        ammo.name = "VGL Ammo";
-        ammo.shortName = "VGL";
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("CL Ammo VGL");
         ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
         ammo.damagePerShot = 0;
@@ -11433,8 +11435,10 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        ammo.name = "VGL Ammo";
-        ammo.shortName = "VGL";
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("IS Ammo VGL");
         ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
         ammo.damagePerShot = 0;
@@ -11710,6 +11714,20 @@ public class AmmoType extends EquipmentType {
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_VGL:
+                    // Replace "Fragmentation" with the submunition name
+                    munition.name = base.name.replace("Fragmentation", name);
+                    munition.subMunitionBegin = base.subMunitionBegin;
+                    munition.subMunitionLength = name.length();                    
+
+                    munition.shortName = 
+                            base.shortName.replace("Fragmentation", name);
+                    StringBuffer internalName = new StringBuffer(
+                            base.getInternalName());
+                    munition.setInternalName(internalName.insert(
+                            internalName.lastIndexOf("Ammo"), name + " ")
+                            .toString());
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    break;
                 case AmmoType.T_LONG_TOM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:

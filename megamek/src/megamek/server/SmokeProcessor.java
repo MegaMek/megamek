@@ -75,15 +75,19 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
             if ( smokeHex != null ){
-                if ( smokeHex.containsTerrain(Terrains.SMOKE) ) {
-                    if ( smokeHex.terrainLevel(Terrains.SMOKE) == 1 ) {
+                if (smokeHex.containsTerrain(Terrains.SMOKE)) {
+                    if (smokeHex.terrainLevel(Terrains.SMOKE) 
+                            == SmokeCloud.SMOKE_LIGHT) {
                         smokeHex.removeTerrain(Terrains.SMOKE);
-                        smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
+                        smokeHex.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.SMOKE,
+                                        SmokeCloud.SMOKE_HEAVY));
                         server.getHexUpdateSet().add(coords);
                     }
-                }
-                else if ( cloud.getSmokeLevel() > 0){
-                    smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, cloud.getSmokeLevel()));
+                } else if (cloud.getSmokeLevel() > SmokeCloud.SMOKE_NONE) {
+                    smokeHex.addTerrain(Terrains.getTerrainFactory()
+                            .createTerrain(Terrains.SMOKE,
+                                    cloud.getSmokeLevel()));
                     server.getHexUpdateSet().add(coords);
                 }
             }

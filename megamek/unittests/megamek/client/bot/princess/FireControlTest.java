@@ -53,6 +53,8 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.server.SmokeCloud;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -1178,13 +1180,32 @@ public class FireControlTest {
         Mockito.when(mockShooter.getMaxWeaponRange()).thenReturn(21);
 
         // Target is in smoke.
-        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(1);
+        // Light smoke
+        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(
+                SmokeCloud.SMOKE_LIGHT);
         expected = new ToHitData();
         expected.addModifier(1, FireControl.TH_SMOKE);
-        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(2);
+
+        // Heavy Smoke
+        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(
+                SmokeCloud.SMOKE_HEAVY);
         expected = new ToHitData();
         expected.addModifier(2, FireControl.TH_SMOKE);
-        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(0);
+
+        // Light LI smoke
+        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(
+                SmokeCloud.SMOKE_LI_LIGHT);
+        expected = new ToHitData();
+        expected.addModifier(1, FireControl.TH_SMOKE);
+
+        // Chaff Smoke
+        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(
+                SmokeCloud.SMOKE_CHAFF_LIGHT);
+        expected = new ToHitData();
+        expected.addModifier(1, FireControl.TH_SMOKE);
+
+        Mockito.when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(
+                SmokeCloud.SMOKE_NONE);
     }
 
     private void assertToHitDataEquals(ToHitData expected, Object actual) {

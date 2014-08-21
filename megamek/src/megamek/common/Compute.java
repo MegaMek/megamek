@@ -45,6 +45,7 @@ import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
+import megamek.server.SmokeCloud;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -2351,12 +2352,11 @@ public class Compute {
 
         if (!game.getOptions().booleanOption("tacops_woods_cover")
             && !isAboveWoodsAndSmoke
-            && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                 || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                 || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
-                 || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) || (t
-                                                                                     .getTargetType() == Targetable
-                                                                                     .TYPE_MINEFIELD_DELIVER))) {
+                && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
+                        || (t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) 
+                        || (t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER))) {
             if ((woodsLevel == 1) && (eistatus != 2)) {
                 toHit.addModifier(1, woodsText);
             } else if (woodsLevel > 1) {
@@ -2368,11 +2368,12 @@ public class Compute {
             }
         }
         if (!isAboveWoodsAndSmoke && !isUnderwater && !underwaterWeapon) {
-            if ((hex.terrainLevel(Terrains.SMOKE) == 1)
-                || (hex.terrainLevel(Terrains.SMOKE) == 3)
-                || (hex.terrainLevel(Terrains.SMOKE) == 4)) {
+            if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
+                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
+                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
+                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
                 toHit.addModifier(1, "target in light smoke");
-            } else if (hex.terrainLevel(Terrains.SMOKE) == 2) {
+            } else if (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
                 if (eistatus > 0) {
                     toHit.addModifier(1, "target in heavy smoke");
                 } else {
@@ -4931,7 +4932,7 @@ public class Compute {
                 continue;
             }
             // hex already smoke-filled?
-            if (hextor.terrainLevel(Terrains.SMOKE) == 2) {
+            if (hextor.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
                 continue;
             }
             return tempcoords;

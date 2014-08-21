@@ -2025,6 +2025,12 @@ public class UnitDisplay extends JPanel {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 m_chAmmo.setEnabled(false);
+                Mounted mountedAmmo = mounted.getLinked();
+                if (mountedAmmo != null) {
+                    m_chAmmo.removeActionListener(this);
+                    m_chAmmo.addItem(formatAmmo(mountedAmmo));
+                    m_chAmmo.addActionListener(this);
+                }
             } else {
                 if (!(entity instanceof Infantry)
                     || (entity instanceof BattleArmor)) {

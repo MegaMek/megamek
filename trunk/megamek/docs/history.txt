@@ -183,6 +183,12 @@ v0.39.1-dev (SVN)
 + Updated hex tilesets to include a chaff icon, just used light smoke icon as a
     placeholder
 + Bug: Communications equipment always generating ECCM, regardless of mode
++ More support for Chaff: chaff now considered as ECM that effects all players
++ Server now updates client's list of smoke clouds: added a new packet type,
+    this is required because chaff type SmokeClouds generate ECM, which the
+    client needs to know about
++ ECMInfo now supports having a null owner, which indicates that it should
+    always be considered as coming from an enemy
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

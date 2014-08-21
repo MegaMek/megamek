@@ -2451,11 +2451,15 @@ public class UnitDisplay extends JPanel {
                 if ((clientgui != null) && (clientgui.curPanel instanceof FiringDisplay)) {
                     FiringDisplay firingDisplay = ((FiringDisplay) clientgui.curPanel); 
 
-                    Mounted mounted = entity.getWeaponList().get(
-                            weaponList.getSelectedIndex());
+                    Mounted mounted = null;
+                    if (weaponList.getSelectedIndex() != -1) {
+                        mounted = entity.getWeaponList().get(
+                                weaponList.getSelectedIndex());
+                    }
                     // Some weapons have a specific target, which gets handled
-                    //  in the target method
-                    if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+                    // in the target method
+                    if (mounted != null
+                            && mounted.getType().hasFlag(WeaponType.F_VGL)) {
                         firingDisplay.target(null);
                     } else {
                         firingDisplay.updateTarget();

@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.util.Hashtable;
 
+import megamek.server.SmokeCloud;
+
 public class Terrains implements ITerrainFactory {
 
     //base terrain types
@@ -177,17 +179,20 @@ public class Terrains implements ITerrainFactory {
                 }
                 return "fire (unknown)";
             case(SMOKE):
-                if(level == 1) {
+                if(level == SmokeCloud.SMOKE_LIGHT) {
                     return "light smoke";
                 }
-                if(level == 2) {
+                if(level == SmokeCloud.SMOKE_HEAVY) {
                     return "heavy smoke";
                 }
-                if(level == 3) {
+                if(level == SmokeCloud.SMOKE_LI_LIGHT) {
                     return "LASER inhibiting smoke";
                 }
-                if(level == 4) {
+                if(level == SmokeCloud.SMOKE_LI_HEAVY) {
                     return "LASER inhibiting smoke";
+                }
+                if(level == SmokeCloud.SMOKE_CHAFF_LIGHT) {
+                    return "Chaff (ECM)";
                 }
                 return "smoke (unknown)";
             case(SWAMP):

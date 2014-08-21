@@ -49,6 +49,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+import megamek.server.SmokeCloud;
 
 /**
  * @author Andrew Hunter A basic, simple attack handler. May or may not work for
@@ -1276,7 +1277,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     .getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
                 && wtype.hasFlag(WeaponType.F_ENERGY)
-                && ((smokeHex.getLevel() == 3) || (smokeHex.getLevel() == 4))) {
+                && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT) 
+                    || (smokeHex.getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
 
                 int levit = ((game.getBoard().getHex(curr).getElevation()) + 2);
 

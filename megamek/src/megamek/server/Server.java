@@ -9001,10 +9001,28 @@ public class Server implements Runnable {
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        createSmoke(coords, 2, 3);
+        createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
+        sendChangedHex(coords);
+    }
+    
+    public void deliverSmokeGrenade(Coords coords, Vector<Report> vPhaseReport) {
+        Report r = new Report(5185, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
         sendChangedHex(coords);
     }
 
+    public void deliverChaffGrenade(Coords coords, Vector<Report> vPhaseReport) {
+        Report r = new Report(5186, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
+        sendChangedHex(coords);
+    }    
+    
     /**
      * deliver artillery smoke
      *
@@ -9015,7 +9033,7 @@ public class Server implements Runnable {
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        createSmoke(coords, 2, 3);
+        createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -9044,7 +9062,7 @@ public class Server implements Runnable {
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        createSmoke(coords, 4, 2);
+        createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -9058,7 +9076,7 @@ public class Server implements Runnable {
             r.indent(2);
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(tempcoords, 4, 2);
+            createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
             sendChangedHex(tempcoords);
         }
     }

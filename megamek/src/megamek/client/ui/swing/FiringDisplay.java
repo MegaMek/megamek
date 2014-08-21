@@ -55,7 +55,9 @@ import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
+import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.INarcPod;
@@ -1442,7 +1444,23 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * Targets something
      */
     void target(Targetable t) {
-        target = t;
+        if (ce() == null) {
+            return;
+        }
+        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        Mounted weapon = ce().getEquipment(weaponId); 
+        // Some weapons pick an automatic target
+        if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
+            Coords c = ce().getPosition().translated(weapon.getFacing());
+            IBoard board = clientgui.getClient().getGame().getBoard();
+            Targetable hexTarget = 
+                    new HexTarget(c, board, Targetable.TYPE_HEX_CLEAR);
+            clientgui.getBoardView().select(c);
+            clientgui.getBoardView().cursor(c);
+            target = hexTarget;                         
+        } else {
+            target = t;
+        }
         ash.setAimingMode();
         updateTarget();
         ash.showDialog();

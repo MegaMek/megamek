@@ -168,6 +168,9 @@ v0.39.1-dev (SVN)
 + Bug: Fixed a few things with VGL submunitions, allow them to be selectable,
     however VGLs are still non-functional
 + Bug: Smoke does not dissapate unless TO starting fires is on
++ Feature: Updated UI to handle weapons that have automatic targets (like
+    vehicular grenade launchers)
++ Feature: Vehicular grenade launchers now report as auto-hits
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

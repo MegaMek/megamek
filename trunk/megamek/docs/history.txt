@@ -172,6 +172,13 @@ v0.39.1-dev (SVN)
     vehicular grenade launchers)
 + Feature: Vehicular grenade launchers now report as auto-hits
 + Bug: Fixed stack overflow with UI automatic target code
++ Added support for a new Smoke type: Chaff, to be used for VGL chaff grenades
++ Refactored code relating to SmokeCloud, including replacing magic numbers with
+    static final values in SmokeCloud
++ Bug: Princess FireControl was using the smoke level directly to compute to-hit
+    penalties, since smoke level doesn't directly correspond to light/heavy,
+    this wasn't quite accurate.  Fixed the code and expanded the firecontrol
+    unit tests to incorporate tests for other smoke levels
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

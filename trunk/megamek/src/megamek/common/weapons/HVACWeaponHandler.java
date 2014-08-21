@@ -27,6 +27,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.SmokeCloud;
 
 /**
  * @author Jason Tighe
@@ -80,7 +81,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords, 2, 2);
+            server.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }

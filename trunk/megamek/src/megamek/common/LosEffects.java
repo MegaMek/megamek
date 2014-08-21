@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.server.SmokeCloud;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -1175,11 +1176,12 @@ public class LosEffects {
                 // LOS
                 // so check them both
                 if (hex.containsTerrain(Terrains.SMOKE)) {
-                    if ((hex.terrainLevel(Terrains.SMOKE) == 1)
-                        || (hex.terrainLevel(Terrains.SMOKE) == 3)
-                        ||(hex.terrainLevel(Terrains.SMOKE) == 4)) {
+                    if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
                         los.lightSmoke++;
-                    } else if ((hex.terrainLevel(Terrains.SMOKE) == 2)) {
+                    } else if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY)) {
                         los.heavySmoke++;
                     }
                 }

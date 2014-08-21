@@ -179,6 +179,7 @@ v0.39.1-dev (SVN)
     penalties, since smoke level doesn't directly correspond to light/heavy,
     this wasn't quite accurate.  Fixed the code and expanded the firecontrol
     unit tests to incorporate tests for other smoke levels
++ Bug: data/images/hexs/trasparent/lismoke.png should be lismokes.gif
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

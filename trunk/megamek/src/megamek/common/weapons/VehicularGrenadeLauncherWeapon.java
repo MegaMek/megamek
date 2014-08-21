@@ -63,8 +63,6 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        // FIXME: implement handlers for the 4 ammo types:
-        // standard (fragmentation), chaff, incendiary, smoke
-        return new AmmoWeaponHandler(toHit, waa, game, server);
+        return new VGLWeaponHandler(toHit, waa, game, server);
     }
 }

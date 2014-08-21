@@ -44,6 +44,7 @@ public class Packet {
     public static final int COMMAND_ENTITY_SYSTEMMODECHANGE = 170;
 
     public static final int COMMAND_ENTITY_VISIBILITY_INDICATOR = 180;
+    public static final int COMMAND_ADD_SMOKE_CLOUD = 185;
     public static final int COMMAND_CHANGE_HEX = 190;
     public static final int COMMAND_CHANGE_HEXES= 195;
 

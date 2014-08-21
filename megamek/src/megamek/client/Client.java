@@ -103,6 +103,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import megamek.server.SmokeCloud;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -1213,6 +1214,10 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_REMOVE_MINEFIELD:
                 receiveRemoveMinefield(c);
+                break;
+            case Packet.COMMAND_ADD_SMOKE_CLOUD:
+                SmokeCloud cloud = (SmokeCloud) c.getObject(0);
+                game.addSmokeCloud(cloud);
                 break;
             case Packet.COMMAND_CHANGE_HEX:
                 game.getBoard().setHex((Coords) c.getObject(0),

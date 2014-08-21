@@ -229,16 +229,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                                    Targetable oldTarget) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-
-        if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
-            Coords c = ae.getPosition().translated(weapon.getFacing());
-            if ((target instanceof HexTarget) 
-                    && target.getPosition().equals(c)) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Vehicular " 
-                    + "grenade launchers automatically hit all units in " 
-                    + "the 3 adjacent hexes of their firing arc!");
-            }
-        }
         
         if (!(weapon.getType() instanceof WeaponType)) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Not a weapon");
@@ -2092,6 +2082,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
             toHit.addModifier(+2, "attacker has TSEMP interference");
+        }
+        
+        if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
+            Coords c = ae.getPosition().translated(weapon.getFacing());
+            if ((target instanceof HexTarget) 
+                    && target.getPosition().equals(c)) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Vehicular " 
+                    + "grenade launchers automatically hit all units in " 
+                    + "the 3 adjacent hexes of their firing arc!");
+            }
         }
 
         // okay!

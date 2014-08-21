@@ -10467,7 +10467,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         ECMInfo bestInfo = null;
         for (Mounted m : getMisc()) {
             ECMInfo newInfo = null;
-            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)
+                    && m.curMode().equals("ECCM")) {                
                 if ((getTotalCommGearTons() > 3)) {
                     newInfo = new ECMInfo(6, 0.5, this);
                 }

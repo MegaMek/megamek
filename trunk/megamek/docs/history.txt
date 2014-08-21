@@ -182,6 +182,7 @@ v0.39.1-dev (SVN)
 + Bug: data/images/hexs/trasparent/lismoke.png should be lismokes.gif
 + Updated hex tilesets to include a chaff icon, just used light smoke icon as a
     placeholder
++ Bug: Communications equipment always generating ECCM, regardless of mode
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

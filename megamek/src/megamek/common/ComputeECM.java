@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.server.SmokeCloud;
+
 
 /**
  * Similar to the Compute class, this class contains various static methods for
@@ -337,6 +339,7 @@ public class ComputeECM {
         
         LinkedList<ECMInfo> allEcmInfo = new LinkedList<ECMInfo>();
         
+        IGame game = null;
         for (Entity e : entities) {
             ECMInfo ecmInfo = e.getECMInfo();
             if (ecmInfo != null) {
@@ -345,6 +348,19 @@ public class ComputeECM {
             ECMInfo eccmInfo = e.getECCMInfo();
             if (eccmInfo != null) {
                 allEcmInfo.add(eccmInfo);
+            }
+            if (game == null) {
+                game = e.getGame();
+            }
+        }
+        
+        // Add ECMInfo for chaff 
+        for (SmokeCloud cloud : game.getSmokeCloudList()) {
+            if (cloud.getSmokeLevel() == SmokeCloud.SMOKE_CHAFF_LIGHT) {
+                for (Coords c : cloud.getCoordsList()) {
+                    ECMInfo ecmInfo = new ECMInfo(1, c, null, 1, 0, false);
+                    allEcmInfo.add(ecmInfo);
+                }
             }
         }
         

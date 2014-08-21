@@ -75,12 +75,14 @@ public class ECMInfo {
     }
     
     public void addECMEffects(ECMInfo other) {
-        // Enemy ECM
-        if (owner.isEnemyOf(other.owner) && !other.isECCM) {
+        // Enemy ECM (ECM without an owner is always considered an enemy)
+        if (((other.owner == null) || owner.isEnemyOf(other.owner)) 
+                && !other.isECCM) {
             strength += other.strength;
             angelStrength += other.angelStrength;
         // Allied ECCM
-        } else if (!owner.isEnemyOf(other.owner) && other.isECCM) {
+        } else if ((other.owner != null) && !owner.isEnemyOf(other.owner) 
+                && other.isECCM) {
             strength -= other.strength;
             angelStrength -= other.angelStrength;
         }
@@ -94,8 +96,14 @@ public class ECMInfo {
     }
     
     public String toString() {
-        return "pos: " + pos.toString() + ", owner: " + owner.getName()
-                + ", r: " + range + ", s: " + strength + ", aS: "
-                + angelStrength + ", isECCM: " + isECCM;
+        if (owner != null) {
+            return "pos: " + pos.toString() + ", owner: " + owner.getName()
+                    + ", r: " + range + ", s: " + strength + ", aS: "
+                    + angelStrength + ", isECCM: " + isECCM;
+        } else {
+            return "pos: " + pos.toString() + ", owner: none" 
+                    + ", r: " + range + ", s: " + strength + ", aS: "
+                    + angelStrength + ", isECCM: " + isECCM;
+        }
     }
 }

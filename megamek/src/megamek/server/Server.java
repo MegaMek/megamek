@@ -25548,34 +25548,37 @@ public class Server implements Runnable {
                     .terrainLevel(Terrains.FUEL_TANK))
                 || (Building.MEDIUM < smokeHex
                     .terrainLevel(Terrains.BUILDING))) {
-                if (smokeHex.terrainLevel(Terrains.SMOKE) == 2) {
+                if (smokeHex.terrainLevel(Terrains.SMOKE) 
+                        == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke fills hex
                     r = new Report(5180, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
                     addReport(r);
-                    smokeLevel = 2;
+                    smokeLevel = SmokeCloud.SMOKE_HEAVY;
                 } else {
-                    smokeLevel = Math.max(smokeLevel, 2);
+                    smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_HEAVY);
                     r = new Report(5185, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
                     addReport(r);
-                    smokeLevel = 2;
+                    smokeLevel = SmokeCloud.SMOKE_HEAVY;
                 }
             } else {
-                if (smokeHex.terrainLevel(Terrains.SMOKE) == 2) {
+                if (smokeHex.terrainLevel(Terrains.SMOKE) 
+                        == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke overpowers light
                     r = new Report(5190, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
-                    smokeLevel = Math.max(smokeLevel, 1);
+                    smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_LIGHT);
                     addReport(r);
-                } else if (smokeHex.terrainLevel(Terrains.SMOKE) == 1) {
+                } else if (smokeHex.terrainLevel(Terrains.SMOKE) 
+                        == SmokeCloud.SMOKE_LIGHT) {
                     // light smoke continue to fill hex
                     r = new Report(5195, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
                     addReport(r);
-                    smokeLevel = Math.max(smokeLevel, 1);
+                    smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_LIGHT);
                 } else {
-                    smokeLevel = Math.max(smokeLevel, 1);
+                    smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_LIGHT);
                     // light smoke fills hex
                     r = new Report(5200, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
@@ -27391,6 +27394,11 @@ public class Server implements Runnable {
         return new Packet(Packet.COMMAND_CHANGE_HEX, data);
     }
 
+    public void sendSmokeCloudAdded(SmokeCloud cloud) {
+        final Object[] data = new Object[1];
+        data[0] = cloud;
+        send(new Packet(Packet.COMMAND_ADD_SMOKE_CLOUD, data));
+    }
     /**
      * Sends notification to clients that the specified hex has changed.
      */
@@ -31731,6 +31739,7 @@ public class Server implements Runnable {
     public void createSmoke(Coords coords, int level, int duration) {
         SmokeCloud cloud = new SmokeCloud(coords, level, duration);
         game.addSmokeCloud(cloud);
+        sendSmokeCloudAdded(cloud);
     }
 
     /**
@@ -31743,6 +31752,7 @@ public class Server implements Runnable {
     public void createSmoke(ArrayList<Coords> coords, int level, int duration) {
         SmokeCloud cloud = new SmokeCloud(coords, level, duration);
         game.addSmokeCloud(cloud);
+        sendSmokeCloudAdded(cloud);
     }
 
     /**

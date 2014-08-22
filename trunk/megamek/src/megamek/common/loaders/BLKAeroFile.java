@@ -31,7 +31,9 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
+import megamek.common.Mounted;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKAeroFile extends BLKFile implements IMechLoader {
@@ -225,6 +227,27 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     rearMount = true;
                     equipName = equipName.substring(4);
                 }
+                int facing = -1;
+                if (equipName.toUpperCase().endsWith("(FL)")) {
+                    facing = 5;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(FR)")) {
+                    facing = 1;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RL)")) {
+                    facing = 4;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RR)")) {
+                    facing = 2;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }                 
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -235,7 +258,20 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, rearMount);
+                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        // Need to set facing for VGLs
+                        if (etype.hasFlag(WeaponType.F_VGL)) {
+                            // If no facing specified, assume front
+                            if (facing == -1) {
+                                if (rearMount) {
+                                    mount.setFacing(3);
+                                } else {
+                                    mount.setFacing(0);
+                                }
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

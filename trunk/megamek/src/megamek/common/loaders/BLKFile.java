@@ -149,7 +149,8 @@ public class BLKFile {
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
                         // Need to set facing for VGLs
-                        if (etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) 
+                                && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
                                 mount.setFacing(0);

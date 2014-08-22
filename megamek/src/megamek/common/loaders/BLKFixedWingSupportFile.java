@@ -237,7 +237,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
                         // Need to set facing for VGLs
-                        if (etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) 
+                                && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
                                 if (rearMount) {

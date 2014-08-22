@@ -255,21 +255,21 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     critName = critName.substring(4);
                 }
                 int facing = -1;
-                if (critName.startsWith("(FL) ")) {
+                if (critName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
-                    critName = critName.substring(5);
+                    critName = critName.substring(0, critName.length() - 4).trim();
                 }
-                if (critName.startsWith("(RL) ")) {
-                    facing = 5;
-                    critName = critName.substring(4);
+                if (critName.toUpperCase().endsWith("(FR)")) {
+                    facing = 1;
+                    critName = critName.substring(0, critName.length() - 4).trim();
                 }
-                if (critName.startsWith("(FR) ")) {
-                    facing = 5;
-                    critName = critName.substring(1);
+                if (critName.toUpperCase().endsWith("(RL)")) {
+                    facing = 4;
+                    critName = critName.substring(0, critName.length() - 4).trim();
                 }
-                if (critName.startsWith("(RR) ")) {
-                    facing = 5;
-                    critName = critName.substring(2);
+                if (critName.toUpperCase().endsWith("(RR)")) {
+                    facing = 2;
+                    critName = critName.substring(0, critName.length() - 4).trim();
                 }
                 if (critName.indexOf("Engine") != -1) {
                     mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored));

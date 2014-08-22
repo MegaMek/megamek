@@ -6061,17 +6061,21 @@ public abstract class Mech extends Entity {
                     case 1:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (FR)").append(armoredText);
+                        break;
                     case 2:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (RR)").append(armoredText);
+                        break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (RL)").append(armoredText);
+                        break;
                     case 5:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (FL)").append(armoredText);
+                        break;
                     default:
                         break;
                 }

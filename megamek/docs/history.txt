@@ -196,6 +196,9 @@ v0.39.1-dev (SVN)
 + Bug: Missing break statements in Mech.decodeCritical, causing VGLs to write
     out incorrectly
 + Bug: BLKMechFile VGL parsing out of sync with Mtf.parseCrits
++ Updated Mounted.getDesc() to add in the facing for VGLs
++ Updated BLKFile.loadEquipment to handle parsing facing for VGLs, also updated
+    various overrides for other applicable units
 
 v0.39.0 (2014-07-02 21:14 UTC)
 + Night-time modifiers now effected by hexes being illuminated by a searchlight

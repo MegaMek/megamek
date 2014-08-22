@@ -437,6 +437,29 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
+        // Append the facing for VGLs
+        if (getType().hasFlag(WeaponType.F_VGL)) {
+            switch (facing) {
+            case 0:
+                desc.append(" (F)");
+                break;
+            case 1:
+                desc.append(" (FR)");
+                break;
+            case 2:
+                desc.append(" (RR)");
+                break;
+            case 3:
+                desc.append(" (RL)");
+                break;
+            case 4:
+                desc.append(" (FL)");
+                break;
+            case 5:
+                desc.append(" (R)");
+                break;
+            }
+        }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
 
             desc.append(" (");

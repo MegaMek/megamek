@@ -63,6 +63,7 @@ import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKFile {
@@ -109,6 +110,32 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
                 }
+                int facing = -1;
+                if (equipName.toUpperCase().endsWith("(FL)")) {
+                    facing = 5;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(FR)")) {
+                    facing = 1;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RL)")) {
+                    facing = 4;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RR)")) {
+                    facing = 2;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(R)")) {
+                    facing = 2;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }                
                 EquipmentType etype = EquipmentType.get(equipName);
 
                 if (etype == null) {
@@ -118,9 +145,18 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false,
+                        Mounted mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
+                        // Need to set facing for VGLs
+                        if (etype.hasFlag(WeaponType.F_VGL)) {
+                            // If no facing specified, assume front
+                            if (facing == -1) {
+                                mount.setFacing(0);
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

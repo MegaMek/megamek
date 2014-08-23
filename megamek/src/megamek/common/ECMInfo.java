@@ -5,7 +5,7 @@ package megamek.common;
  * @author arlith
  *
  */
-public class ECMInfo {
+public class ECMInfo implements Comparable {
     
     /**
      * The radius of the ECM field.
@@ -39,6 +39,13 @@ public class ECMInfo {
     public boolean isECCM = false;
     
     public ECMInfo() {
+    }
+    
+    public ECMInfo(int range, double strength, IPlayer o, Coords p) {
+        owner = o;
+        pos = p;        
+        this.range = range;
+        this.strength = strength;
     }
     
     public ECMInfo(int range, double strength, Entity e) {
@@ -96,14 +103,51 @@ public class ECMInfo {
     }
     
     public String toString() {
+        String ownerString;
+        String strengthString;
+        String eccmString;
+        
         if (owner != null) {
-            return "pos: " + pos.toString() + ", owner: " + owner.getName()
-                    + ", r: " + range + ", s: " + strength + ", aS: "
-                    + angelStrength + ", isECCM: " + isECCM;
+            ownerString = owner.getName();
         } else {
-            return "pos: " + pos.toString() + ", owner: none" 
-                    + ", r: " + range + ", s: " + strength + ", aS: "
-                    + angelStrength + ", isECCM: " + isECCM;
+            ownerString = "none";
         }
+        if (angelStrength != 0) {
+            strengthString = "aS: " + angelStrength;
+        } else {
+            strengthString = "s: " + strength;
+        }
+        if (isECCM) {
+            eccmString = ", ECCM";
+        } else {
+            eccmString = "";
+        }
+        return "(" + pos.toString() + ", " + ownerString + ", r:" + range + ", "
+                + strengthString +  eccmString + ")";
+    }
+
+    /**
+     * Compares two ECMInfo objects; ordering is based on strength, with Angel
+     * strength trumping regular strength. 
+     */
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof ECMInfo)) {
+            return 1;
+        }
+        ECMInfo other = (ECMInfo)o;
+        if (other.angelStrength > angelStrength) {
+            return -1;
+        } else if (other.angelStrength < angelStrength) {
+            return 1;
+        } else { // Angel strengths are equal
+            if (other.strength > strength) {
+                return -1;
+            } else if (other.strength < strength) {
+                return 1;
+            }
+        }
+        // Both angel and regular strength are equal
+        return 0;
     }
 }

@@ -377,7 +377,6 @@ public class ComputeECM {
      */
     public static ECMInfo getECMEffects(Entity ae, Coords a, Coords b, 
             List<ECMInfo> allEcmInfo) {
-        ECMInfo affectedInfo = null;
         
         if (ae.getGame().getBoard().inSpace()) {
             // normal ECM effects don't apply in space
@@ -393,28 +392,30 @@ public class ComputeECM {
         
         // Get intervening Coords
         ArrayList<Coords> coords = Coords.intervening(a, b);
-        // Loop through intervening coords, add effects of any in-range E(C)CM        
+        ECMInfo worstECMEffects = null;
+        // Loop through intervening coords, and find the worst effects of any in-range E(C)CM        
         for (Coords c : coords) {
+            ECMInfo affectedInfo = null;
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
-                if (affectedInfo == null) {
-                    affectedInfo = new ECMInfo(0, 1, ae);
-                } else {
-                    affectedInfo.strength++;
-                }
+                affectedInfo = new ECMInfo(0, 1, ae.getOwner(), c);
             }
             for (ECMInfo ecmInfo : allEcmInfo) {
                 // Is the ECMInfo in range of this position?
                 int dist = c.distance(ecmInfo.pos);
-                if (dist < ecmInfo.range) {
+                if (dist <= ecmInfo.range) {
                     if (affectedInfo == null) {
-                        affectedInfo = new ECMInfo(0, 0, ae);
+                        affectedInfo = new ECMInfo(0, 0, ae.getOwner(), c);
                     }
                     affectedInfo.addECMEffects(ecmInfo);
                 }
             }
-                   
+            if ((worstECMEffects == null && affectedInfo != null) ||
+                    (affectedInfo != null 
+                        && affectedInfo.compareTo(worstECMEffects) > 0)) {
+                worstECMEffects = affectedInfo;
+            }
         }       
-        return affectedInfo;
+        return worstECMEffects;
     }
     
 

@@ -108,4 +108,8 @@ public class EquipmentMode {
     public boolean equals(String modeName) {
         return name.equals(modeName);
     }
+    
+    public String toString() {
+        return getName();
+    }
 }

@@ -61,7 +61,7 @@ public class ComputeECMTest {
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         
         ECMInfo ecmInfo, eccmInfo, testInfoECM, testInfoECCM;
-        File f; 
+        File f;
         MechFileParser mfp;
         Entity archer;
         
@@ -205,11 +205,18 @@ public class ComputeECMTest {
         Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.inSpace()).thenReturn(false);
         
+        // Mock Options
+        GameOptions mockOptions = Mockito.mock(GameOptions.class);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString()))
+                .thenReturn(false);
+        Mockito.when(mockOptions.booleanOption("tacops_eccm")).thenReturn(true);
+        
         // Mock the game
         Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
                 new ArrayList<SmokeCloud>());
+        Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);
@@ -407,6 +414,21 @@ public class ComputeECMTest {
         result = ComputeECM.isAffectedByECCM(ae, aePos, aePos);
         TestCase.assertEquals(false, result);
         
+        // Multiple enemy ECM, one player Angel ECCM
+        Mockito.when(ae.getECCMInfo()).thenReturn(aeAngelECCM);
+        enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 1, 0);
+        Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
+        entitiesVector = createECMEnemy(mockEnemy, mockGame);
+        entitiesVector.add(ae);
+        entitiesVector.add(additionalEnemy);
+        Mockito.when(mockGame.getEntitiesVector()).thenReturn(entitiesVector);
+        result = ComputeECM.isAffectedByECM(ae, aePos, aePos);
+        TestCase.assertEquals(false, result);
+        result = ComputeECM.isAffectedByAngelECM(ae, aePos, aePos);
+        TestCase.assertEquals(false, result);
+        result = ComputeECM.isAffectedByECCM(ae, aePos, aePos);
+        TestCase.assertEquals(true, result);        
+        
     }
     
     /**
@@ -432,11 +454,18 @@ public class ComputeECMTest {
         Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.inSpace()).thenReturn(false);
         
+        // Mock Options
+        GameOptions mockOptions = Mockito.mock(GameOptions.class);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString()))
+                .thenReturn(false);
+        Mockito.when(mockOptions.booleanOption("tacops_eccm")).thenReturn(true);
+        
         // Mock the game
         Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
                 new ArrayList<SmokeCloud>());
+        Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);

@@ -156,6 +156,30 @@ public class ECMInfo implements Comparable {
     }
 
     /**
+     * Equality is based on whether position, owner, range and all strengths
+     * match.
+     * 
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o){
+       if (!(o instanceof ECMInfo)) {
+           return false;
+       }
+       ECMInfo other = (ECMInfo)o;
+       boolean ownersMatch = ((owner == null && other.owner == null) 
+               || owner.equals(other.owner));
+       boolean posMatch = pos.equals(other.pos);
+       boolean strMatch = (strength == other.strength) 
+               && (angelStrength == other.angelStrength) 
+               && (eccmStrength == other.eccmStrength) 
+               && (angelECCMStrength == other.angelECCMStrength); 
+       boolean rangeMatch = range == other.range;
+       return ownersMatch && posMatch && strMatch && rangeMatch;
+    }
+    
+    /**
      * Compares two ECMInfo objects; ordering is based on strength, with Angel
      * strength trumping regular strength. 
      */

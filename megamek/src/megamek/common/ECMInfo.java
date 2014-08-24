@@ -99,6 +99,10 @@ public class ECMInfo implements Comparable {
                 || (angelStrength == 0 && eccmStrength > strength);
     }
     
+    public boolean isAngelECCM() {
+        return (angelECCMStrength > angelStrength);
+    }
+    
     /**
      * True if the number of ECM fields is greater than the number of ECCM
      * fields (which default to 0).
@@ -113,6 +117,8 @@ public class ECMInfo implements Comparable {
     public boolean isAngelECM() {
         return (angelStrength > angelECCMStrength);
     }
+    
+    
     
     /**
      * Compute the ECMInfo from another instance into this one.  All enemy ECM
@@ -133,8 +139,8 @@ public class ECMInfo implements Comparable {
     
     public String toString() {
         String ownerString;
-        String strengthString;
-        String eccmString;
+        String strengthString = "";
+        String eccmString = "";
         
         if (owner != null) {
             ownerString = owner.getName();
@@ -142,19 +148,29 @@ public class ECMInfo implements Comparable {
             ownerString = "none";
         }
         if (angelStrength != 0) {
-            strengthString = "aS: " + angelStrength;
-        } else {
-            strengthString = "s: " + strength;
+            strengthString = ", aS: " + angelStrength;
+        } else if (strength != 0){
+            strengthString = ", s: " + strength;
         }
-        if (isECCM()) {
-            eccmString = ", ECCM";
-        } else {
-            eccmString = "";
+        
+        if (angelECCMStrength != 0) {
+            eccmString = ", cAS: " + angelECCMStrength;
+        } else if (eccmStrength != 0){
+            eccmString = ", cS: " + eccmStrength;
         }
-        return "(" + pos.toString() + ", " + ownerString + ", r:" + range + ", "
+        return "(" + pos.toString() + ", " + ownerString + ", r:" + range
                 + strengthString +  eccmString + ")";
     }
 
+    /**
+     * Returns true if the supplied ECMInfo is opposed to this one.
+     * @param other
+     * @return
+     */
+    public boolean isOpposed(ECMInfo other) {
+        return (owner == null) || (other.getOwner() == null) 
+                || owner.isEnemyOf(other.getOwner());
+    }
     /**
      * Equality is based on whether position, owner, range and all strengths
      * match.

@@ -16,7 +16,9 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -329,7 +331,10 @@ public class ComputeECM {
     public static List<ECMInfo> computeAllEntitiesECMInfo(
             Vector<Entity> entities) {
         
-        LinkedList<ECMInfo> allEcmInfo = new LinkedList<ECMInfo>();
+        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
+        ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());
+        // ECCM that counter an ECM need to get removed from allEcmInfo later
+        LinkedList<ECMInfo> eccmToRemove = new LinkedList<ECMInfo>();
         
         IGame game = null;
         for (Entity e : entities) {
@@ -340,6 +345,7 @@ public class ComputeECM {
             ECMInfo eccmInfo = e.getECCMInfo();
             if (eccmInfo != null) {
                 allEcmInfo.add(eccmInfo);
+                allEccmInfo.add(eccmInfo);
             }
             if (game == null) {
                 game = e.getGame();
@@ -354,6 +360,62 @@ public class ComputeECM {
                     allEcmInfo.add(ecmInfo);
                 }
             }
+        }
+        
+        // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
+        // ie; Angel ECCM can counter any number of ECM, however if an angel
+        //  ECM counters it first...
+        Collections.sort(allEcmInfo);
+        Collections.reverse(allEcmInfo);
+        
+        
+        // If ECCM is on, we may have to remove some ECM that is negated
+        if (game.getOptions().booleanOption("tacops_eccm") 
+                && allEccmInfo.size() > 0) {
+            Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
+            Iterator<ECMInfo> eccmIterator;
+            while (ecmIterator.hasNext()){
+                ECMInfo ecmInfo = ecmIterator.next();
+                // Ignore ECCM
+                if (ecmInfo.isECCM()) {
+                    continue;
+                }
+                eccmIterator = allEccmInfo.iterator();
+                // ECCM that covers source of an ECM field, negates the field
+                while (eccmIterator.hasNext()) {
+                    ECMInfo eccmInfo = eccmIterator.next();
+                    // ECCM only effects enemy ECM
+                    if (!eccmInfo.isOpposed(ecmInfo)) {
+                        continue;
+                    }
+                    int dist = eccmInfo.getPos().distance(ecmInfo.getPos());
+                    // Is the origin of the ECM within the ECCM's range?
+                    if (dist <= eccmInfo.getRange()) {
+                        // Angel ECCM vs non-Angel ECM
+                        if (!ecmInfo.isAngelECM() && eccmInfo.isAngelECCM()) {
+                            // Remove ECM, but ECCM is unaffected
+                            ecmIterator.remove();
+                        // Angel vs Angel
+                        } else if (eccmInfo.getAngelECCMStrength() 
+                                        >= ecmInfo.getAngelECMStrength()) {
+                            // Remove the ECM and ECCM
+                            ecmIterator.remove();
+                            eccmIterator.remove();
+                            // Keep track of this eccm to remove it again later
+                            eccmToRemove.add(eccmInfo);
+                        } else if (!ecmInfo.isAngelECM() 
+                                && (eccmInfo.getECCMStrength() 
+                                        >= ecmInfo.getECMStrength())) {
+                            // Remove the ECM and ECCM
+                            ecmIterator.remove();
+                            eccmIterator.remove();
+                            // Keep track of this eccm to remove it again later                            
+                            eccmToRemove.add(eccmInfo);
+                        }
+                    }    
+                }                
+            }
+            allEcmInfo.removeAll(eccmToRemove);
         }
         
         return allEcmInfo;

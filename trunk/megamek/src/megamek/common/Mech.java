@@ -5063,11 +5063,8 @@ public abstract class Mech extends Entity {
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On")
-                        && hasActiveECM()
-                        && !ComputeECM.isAffectedByECCM(this, getPosition(),
-                                getPosition())) {
+                        && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
-                    // and we're not in ECCM
                     return true;
                 }
             }

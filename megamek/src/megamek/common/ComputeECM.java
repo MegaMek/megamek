@@ -34,8 +34,8 @@ import megamek.server.SmokeCloud;
 public class ComputeECM {
 
     /**
-     * This method checks to see if a line from a to b is affected by an ECM
-     * field of the enemy of ae
+     * This method checks to see if a line from a to b is affected by any ECM
+     * field (including Angel) of the enemy of ae
      *
      * @param ae
      * @param a
@@ -44,16 +44,12 @@ public class ComputeECM {
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
-        // ECM present if any positive Angel ECM, or positive ECM without 
-        //  Angel ECCM
-        return (ecmInfo != null)
-                && ((ecmInfo.strength > 0 && ecmInfo.angelStrength == 0)
-                        || (ecmInfo.angelStrength > 0));
+        return (ecmInfo != null) && ecmInfo.isECM();
     }
 
     /**
      * This method checks to see if a line from a to b is affected by an ECCM
-     * field of the enemy of ae
+     * field of the enemy of ae.
      *
      * @param ae
      * @param a
@@ -62,16 +58,12 @@ public class ComputeECM {
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
-        // Any negative ECM strength without Angel ECM, or any negative Angel 
-        //  ECCM
-        return (ecmInfo != null)
-                && ((ecmInfo.strength < 0 && ecmInfo.angelStrength == 0)
-                        || (ecmInfo.angelStrength < 0));
+        return (ecmInfo != null) && ecmInfo.isECCM();
     }
     
     /**
      * This method checks to see if a line from a to b is affected by an Angel
-     * ECM field of the enemy of ae
+     * ECM field of the enemy of ae (ignoring other kinds of ECM).
      *
      * @param ae
      * @param a
@@ -83,7 +75,7 @@ public class ComputeECM {
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
-        return (ecmInfo != null) && (ecmInfo.angelStrength > 0);
+        return (ecmInfo != null) && ecmInfo.isAngelECM();
     }    
 
     /**
@@ -358,7 +350,7 @@ public class ComputeECM {
         for (SmokeCloud cloud : game.getSmokeCloudList()) {
             if (cloud.getSmokeLevel() == SmokeCloud.SMOKE_CHAFF_LIGHT) {
                 for (Coords c : cloud.getCoordsList()) {
-                    ECMInfo ecmInfo = new ECMInfo(1, c, null, 1, 0, false);
+                    ECMInfo ecmInfo = new ECMInfo(1, c, null, 1, 0);
                     allEcmInfo.add(ecmInfo);
                 }
             }
@@ -385,15 +377,16 @@ public class ComputeECM {
         if ((a == null) || (b == null)) {
             return null;
         }
-        
+
         if (allEcmInfo == null) {
-            allEcmInfo = computeAllEntitiesECMInfo(ae.game.getEntitiesVector());
+            allEcmInfo = computeAllEntitiesECMInfo(ae.getGame()
+                    .getEntitiesVector());
         }
         
         // Get intervening Coords
         ArrayList<Coords> coords = Coords.intervening(a, b);
         ECMInfo worstECMEffects = null;
-        // Loop through intervening coords, and find the worst effects of any in-range E(C)CM        
+        // Loop through intervening coords, and find the worst effects        
         for (Coords c : coords) {
             ECMInfo affectedInfo = null;
             if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
@@ -401,8 +394,8 @@ public class ComputeECM {
             }
             for (ECMInfo ecmInfo : allEcmInfo) {
                 // Is the ECMInfo in range of this position?
-                int dist = c.distance(ecmInfo.pos);
-                if (dist <= ecmInfo.range) {
+                int dist = c.distance(ecmInfo.getPos());
+                if (dist <= ecmInfo.getRange()) {
                     if (affectedInfo == null) {
                         affectedInfo = new ECMInfo(0, 0, ae.getOwner(), c);
                     }

@@ -10408,7 +10408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                 if (m.curMode().equals("ECM")) {
                     newInfo = new ECMInfo(6, 0, this);
-                    newInfo.angelStrength = 1;
+                    newInfo.setAngelECMStrength(1);
                 } else if (m.curMode().equals("ECM & ECCM")
                            || m.curMode().equals("ECM & Ghost Targets")) {
                     newInfo = new ECMInfo(6, 1, this);
@@ -10416,7 +10416,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 // BA Angel ECM has a shorter range
                 if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.range = 2;
+                    newInfo.setRange(2);
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM)
@@ -10434,9 +10434,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // In some type of ECM mode...
             if (newInfo != null) {
                 if ((bestInfo == null)
-                    || (newInfo.angelStrength > bestInfo.angelStrength)
-                    || (newInfo.strength > bestInfo.strength
-                        && !bestInfo.isAngel())) {
+                    || newInfo.compareTo(bestInfo) > 0) {
                     bestInfo = newInfo;
                 }
             }
@@ -10480,7 +10478,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                 if (m.curMode().equals("ECCM")) {
                     newInfo = new ECMInfo(6, 0, this);
-                    newInfo.angelStrength = 1;
+                    newInfo.setAngelECCMStrength(1);
                 } else if (m.curMode().equals("ECM & ECCM")
                            || m.curMode().equals("ECCM & Ghost Targets")) {
                     newInfo = new ECMInfo(6, 1, this);
@@ -10488,7 +10486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 // BA Angel ECM has a shorter range
                 if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.range = 2;
+                    newInfo.setRange(2);
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM)
@@ -10501,15 +10499,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                            || m.getType().hasFlag(MiscType.F_WATCHDOG)) {
                     range = 3;
                 }
-                newInfo = new ECMInfo(range, 1, this);
+                newInfo = new ECMInfo(range, 0, this);
+                newInfo.setECCMStrength(1);
             }
             // In some type of ECCM mode...
             if (newInfo != null) {
-                newInfo.isECCM = true;
                 if ((bestInfo == null)
-                    || (newInfo.angelStrength > bestInfo.angelStrength)
-                    || (newInfo.strength > bestInfo.strength
-                        && !bestInfo.isAngel())) {
+                    || newInfo.compareTo(bestInfo) > 0) {
                     bestInfo = newInfo;
                 }
             }

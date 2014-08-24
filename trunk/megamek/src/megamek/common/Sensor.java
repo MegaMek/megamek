@@ -361,8 +361,8 @@ public class Sensor implements Serializable {
         double ecm, ecmAngel;
         ecm = ecmAngel = 0;
         if (ecmInfo != null) {
-            ecm = Math.max(0, ecmInfo.strength);
-            ecmAngel = Math.max(0, ecmInfo.angelStrength);
+            ecm = Math.max(0, ecmInfo.getECMStrength());
+            ecmAngel = Math.max(0, ecmInfo.getAngelECMStrength());
         }
 
         switch (type) {

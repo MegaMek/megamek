@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.39.1-dev (SVN)
+v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options
 + Patch [#462]: Forcing redirected system.out and sys.err to respect flush
 + Data: New Images and some date fixes

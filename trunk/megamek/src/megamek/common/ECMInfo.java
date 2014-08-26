@@ -5,7 +5,7 @@ package megamek.common;
  * @author arlith
  *
  */
-public class ECMInfo implements Comparable {
+public class ECMInfo implements Comparable<Object> {
     
     /**
      * The radius of the field.

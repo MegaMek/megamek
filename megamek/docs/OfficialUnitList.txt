@@ -1673,6 +1673,8 @@ Soyal Heavy Cruiser (Standard)|
 Black Lion I-Battlecruiser|
 League Destroyer (Block II)|
 League Destroyer (Block I)|
+Commonwealth Light Cruiser (Block I)|
+Commonwealth Light Cruiser (Block II)|
 Cruiser (Standard)|
 Narukami Destroyer (Block I)|
 Narukami Destroyer (Block II)|
@@ -1914,7 +1916,7 @@ Fa Shih Battle Armor [MG]|
 Kage Light Battle Armor [MG]|
 Purifier Adaptive Battle Armor [TAG]|
 IS Standard Battle Armor (Level I) [SRM]|
-Infiltrator Mk. I Battle Armor Mk. I 'Waddle'|
+Infiltrator Mk. I Battle Armor 'Waddle'|
 IS Standard Battle Armor [SRM]|
 Kanazuchi Assault Battle Armor [Industrial Drill]|
 Salamander Battle Armor (Anti-Infantry)|
@@ -2186,6 +2188,42 @@ Mechanized Tracked Platoon (LRM)|
 Clan Motorized Point (Flamer)|
 Clan Motorized Point (SRM)|
 Mechanized Wheeled Platoon (Laser)|
+Mechanized Wheeled Squad (Rifle)|
+Mechanized Hover Squad (Flamer)|
+Mechanized Tracked Squad (Rifle)|
+Jump Squad (MG)|
+Mechanized Wheeled Squad (LRM)|
+Mechanized Tracked Squad (Flamer)|
+Mechanized Tracked Squad (Laser)|
+Foot Squad (Flamer)|
+Motorized Squad (MG)|
+Mechanized Tracked Squad (LRM)|
+Mechanized Hover Squad (LRM)|
+Foot Squad (Laser)|
+Jump Squad (LRM)|
+Motorized Squad (LRM)|
+Mechanized Wheeled Squad (SRM)|
+Mechanized Tracked Squad (SRM)|
+Mechanized Wheeled Squad (Flamer)|
+Motorized Squad (Rifle)|
+Mechanized Wheeled Squad (Laser)|
+Motorized Squad (SRM)|
+Foot Squad (SRM)|
+Mechanized Wheeled Squad (MG)|
+Foot Squad (LRM)|
+Foot Squad (Rifle)|
+Mechanized Hover Squad (SRM)|
+Foot Squad (MG)|
+Mechanized Hover Squad (MG)|
+Motorized Squad (Flamer)|
+Motorized Squad (Laser)|
+Mechanized Tracked Squad (MG)|
+Jump Squad (SRM)|
+Jump Squad (Rifle)|
+Mechanized Hover Squad (Rifle)|
+Jump Squad (Laser)|
+Mechanized Hover Squad (Laser)|
+Jump Squad (Flamer)|
 Clan Mechanized Tracked Point (SRM)|
 Clan Mechanized Hover Point (SRM)|
 Motorized Platoon (LRM)|
@@ -3861,7 +3899,6 @@ Barghest BGS-2T|
 Nova Cat G|
 Arctic Wolf Prime|
 Jinggau JN-G8A|
-Matador (Standard)|
 Initiate INI-04|
 Arctic Fox AF1D|
 Yu Huang Y-H11G|
@@ -3870,6 +3907,7 @@ Snow Fox 3|
 Bishamon BSN-3K|
 Men Shen MS1-OC|
 Highlander IIC 2|
+Matador (Standard)|
 Tai-sho TSH-7S|
 Snow Fox (Standard)|
 Predator 2|

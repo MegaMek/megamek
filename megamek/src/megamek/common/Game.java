@@ -3398,7 +3398,7 @@ public class Game implements Serializable, IGame {
 
         HashSet<Coords> newPositions = e.getOccupiedCoords();
         // Check to see that the position has actually changed
-        if (newPositions.equals(oldPositions)) {
+        if (newPositions.equals(oldPositions) || !e.isDeployed()) {
             return;
         }
         

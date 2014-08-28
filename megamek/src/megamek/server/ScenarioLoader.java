@@ -471,6 +471,9 @@ public class ScenarioLoader {
                     System.out.println(e.getDisplayName()
                             + " will be deployed before round " + round);
                     e.setDeployRound(round);
+                    e.setDeployed(false);
+                    e.setNeverDeployed(false);
+                    e.setPosition(null);
                 }
             }
 

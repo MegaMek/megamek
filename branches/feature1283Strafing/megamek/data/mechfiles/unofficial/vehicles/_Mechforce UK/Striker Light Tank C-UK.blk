@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Striker Light Tank
+</Name>
+<Model>
+C-UK
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+24
+20
+20
+18
+22
+</Armor>
+<Turret Equipment>
+ISSRM6
+ISSRM4
+ISSRM4
+</Turret Equipment>
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM6 Ammo
+ISSRM4 Ammo
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<omni>
+</omni>

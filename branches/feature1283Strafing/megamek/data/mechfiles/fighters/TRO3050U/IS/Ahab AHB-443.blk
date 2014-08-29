@@ -1,0 +1,170 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Ahab
+
+</Name>
+
+<Model>
+
+AHB-443
+
+</Model>
+
+<Tonnage>
+
+90
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+84
+
+59
+
+59
+
+46
+
+</Armor>
+
+<Nose Equipment>
+
+ISLargeLaser
+
+ISNarcBeacon
+
+IS Narc Missile Beacon Ammo
+
+IS Narc Missile Beacon Ammo
+
+IS Narc Missile Beacon Ammo
+
+IS Narc Missile Beacon Ammo
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISSRM6
+
+ISSRM6 Ammo
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+ISLRM20
+
+
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISSRM6
+
+ISSRM6 Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+14
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2703
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

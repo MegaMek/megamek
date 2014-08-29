@@ -1,0 +1,12 @@
+Word of Blake Medium Mechs D
+Initiate INI-02,1
+Hermes II HER-5Sr,2
+Buccaneer BCN-3R,3
+Apollo APL-1M,4
+Trebuchet TBT-7M,5
+Bloodhound B1-HND,6
+Blue Flame BLF-21,5
+Raijin RJN101-C,4
+Osprey OSP-26,3
+Scorpion SCP-12C,2
+Lineholder KW2-LHW,1

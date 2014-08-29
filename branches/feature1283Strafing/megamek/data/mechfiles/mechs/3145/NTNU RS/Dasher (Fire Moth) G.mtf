@@ -1,0 +1,152 @@
+Version:1.0
+Dasher (Fire Moth)
+G
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:2
+
+Mass:20
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
+Walk MP:10
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:5
+LL Armor:4
+RL Armor:4
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:4
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CL Super Charger
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer
+Clan Coolant Pod
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

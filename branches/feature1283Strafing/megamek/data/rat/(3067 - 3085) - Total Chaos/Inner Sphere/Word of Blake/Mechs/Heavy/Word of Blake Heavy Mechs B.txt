@@ -1,0 +1,19 @@
+Word of Blake Heavy Mechs B
+Galahad GLH-3D,1
+Exterminator EXT-4D,2
+Orion ON2-M,3
+White Flame WHF-3B,4
+Guillotine GLT-6WB,5
+Black Knight BL-9-KNT,6
+Excalibur EXC-B2,5
+Dragon Fire DGR-6FC,4
+Toyama TYM-1B,3
+Shootist ST-9C,2
+Perseus P1,1
+Perseus P1A,1
+Perseus P1B,1
+Perseus P1C,1
+Perseus P1D,1
+Perseus P1E,1
+Perseus P1P,1
+Perseus P1W,1

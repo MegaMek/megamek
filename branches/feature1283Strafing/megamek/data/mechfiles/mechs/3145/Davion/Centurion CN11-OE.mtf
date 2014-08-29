@@ -1,0 +1,153 @@
+Version:1.1
+Centurion
+CN11-OE
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3111
+Source:TRO 3145 FS
+Rules Level:4
+
+Mass:50
+Engine:250 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:21
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:3
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+Gauss Rifle, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAngelECMSuite
+ISAngelECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo
+IS Gauss Ammo
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

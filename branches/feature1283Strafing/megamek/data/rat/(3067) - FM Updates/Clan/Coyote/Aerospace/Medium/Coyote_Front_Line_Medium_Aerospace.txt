@@ -1,0 +1,12 @@
+Coyote Front-Line Medium ASF (FMU)
+Jagatai C,1
+Turk A,2
+Turk A,3
+Visigoth Prime,4
+Turk Prime,5
+Jagatai Prime,6
+Jagatai Prime,5
+Visigoth B,4
+Tyre (Standard),3
+Jagatai A,2
+Jagatai C,1

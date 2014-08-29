@@ -1,0 +1,12 @@
+Clan Fire Mandrill Second-Line Assault Mechs (FMU)
+Behemoth (Stone Rhino) (Standard),1
+Phoenix Hawk IIC (Standard),2
+Thug THG-11E,3
+Phoenix Hawk IIC 2,4
+Kraken (Bane) (Standard),5
+Phoenix Hawk IIC 3,6
+Thug THG-11E,5
+Phoenix Hawk IIC 4,4
+Highlander HGN-732,3
+King Crab KGC-000,2
+Blood Kite 2,1

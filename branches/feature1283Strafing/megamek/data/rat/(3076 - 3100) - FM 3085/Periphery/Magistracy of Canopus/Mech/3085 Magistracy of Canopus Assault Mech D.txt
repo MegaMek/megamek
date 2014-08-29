@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Assault Mech D
+Longbow LGB-13C,1
+Victor VTR-9B,2
+Stalker STK-3H,3
+Longbow LGB-0W,4
+Cyclops CP-10-Q,5
+Longbow LGB-7Q,6
+Longbow LGB-7V,5
+Stalker STK-3F,4
+Awesome AWS-8Q,3
+Banshee BNC-3Mr,2
+Awesome AWS-9Q,1

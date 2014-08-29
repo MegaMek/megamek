@@ -1,0 +1,151 @@
+Version:1.0
+Victor
+VTR-Cr
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3069
+Source:Jihad
+Rules Level:4
+
+Mass:80
+Engine:320 Fusion Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:14 Single
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:23
+RT Armor:23
+CT Armor:34
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:4
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Hyper Velocity Auto Cannon/10, Right Arm
+Streak SRM 4, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISStreakSRM4
+IS Streak SRM 4 Ammo
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Torso:
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

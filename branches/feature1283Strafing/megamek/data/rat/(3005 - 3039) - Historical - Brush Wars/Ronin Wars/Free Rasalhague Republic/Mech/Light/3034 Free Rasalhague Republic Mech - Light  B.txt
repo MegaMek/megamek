@@ -1,0 +1,12 @@
+3034 Free Rasalhague Republic Mech - Light  B
+Javelin JVN-10N,1
+Jenner JR7-F,2
+Stinger STG-3G,3
+Wasp WSP-1A,4
+Firestarter FS9-H,5
+Jenner JR7-D,6
+Panther PNT-9R,5
+Wasp WSP-1K,4
+Spider SDR-5K,3
+Locust LCT-3V,2
+Locust LCT-1E,1

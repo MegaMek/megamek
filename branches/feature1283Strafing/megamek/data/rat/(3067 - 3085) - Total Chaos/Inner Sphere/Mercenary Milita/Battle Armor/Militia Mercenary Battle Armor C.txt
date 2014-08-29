@@ -1,0 +1,34 @@
+Militia/Mercenary Battle Armor C
+Nighthawk PA(L) Mk. XXI,1
+Gray Death Scout Suit (Standard),2
+Gray Death Standard Suit [Flamer],3
+Gray Death Standard Suit [Laser],3
+Gray Death Standard Suit [LRR],3
+Gray Death Standard Suit [MG],3
+Gray Death Standard Suit [SRM],3
+Tornado PA(L) G13 [David Light Gauss],4
+Tornado PA(L) G13 [Flamer],4
+Tornado PA(L) G13 [Grenade Launcher],4
+Tornado PA(L) G13 [Machine Gun],4
+Tornado PA(L) G13 [Small Laser],4
+IS Standard Battle Armor [Flamer],5
+IS Standard Battle Armor [Laser],5
+IS Standard Battle Armor [LRR],5
+IS Standard Battle Armor [MG],5
+IS Standard Battle Armor [SRM],5
+Purifier Adaptive Battle Armor [Laser],6
+Purifier Adaptive Battle Armor [PPC],10
+Purifier Adaptive Battle Armor [Laser],6
+Purifier Adaptive Battle Armor [Narc],6
+Purifier Adaptive Battle Armor [TAG],6
+Longinus Battle Armor "Hacked" [David],5
+Longinus Battle Armor "Hacked" [MG],5
+Longinus Battle Armor (Magnetic),3
+Achileus Light Battle Armor [David],2
+Achileus Light Battle Armor [Flamer],2
+Achileus Light Battle Armor [Laser],2
+Achileus Light Battle Armor [MG],2
+Achileus Light Battle Armor [TAG],2
+Achileus Light Battle Armor [IS] (WoB),2
+Phalanx Battle Armor (A),1
+Phalanx Battle Armor (B),1

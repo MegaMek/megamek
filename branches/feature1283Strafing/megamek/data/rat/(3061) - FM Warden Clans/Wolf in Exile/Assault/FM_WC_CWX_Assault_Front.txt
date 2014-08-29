@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Wolf In Exile),
+Masakari (Warhawk) Prime,1
+Gladiator (Executioner) A,2
+Man O' War (Gargoyle) C,3
+Gladiator (Executioner) Prime,4
+Daishi (Dire Wolf) A,5
+Man O' War (Gargoyle) Prime,6
+Man O' War (Gargoyle) A,5
+Daishi (Dire Wolf) Prime,4
+Man O' War (Gargoyle) B,3
+Gladiator (Executioner) B,2
+Daishi (Dire Wolf) "Widowmaker",1

@@ -1,0 +1,148 @@
+Version:1.0
+Commando
+COM-5S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:25
+Engine:150 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:5
+RA Armor:5
+LT Armor:6
+RT Armor:6
+CT Armor:8
+HD Armor:5
+LL Armor:6
+RL Armor:6
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:3
+1 ISSRM6, Center Torso, Ammo:30
+1 ISStreakSRM2, Right Arm, Ammo:50
+1 ISMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISStreakSRM2
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+ISSRM6
+ISSRM6
+ISArtemisIV
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Right Torso:
+ISSRM6 Ammo Artemis-capable
+ISSRM6 Ammo Artemis-capable
+ISStreakSRM2 Ammo
+ISCASE
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

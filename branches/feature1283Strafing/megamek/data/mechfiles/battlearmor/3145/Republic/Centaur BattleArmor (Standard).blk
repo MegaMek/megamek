@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Centaur Battle Armor
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBATubeArtillery:DWP
+ISDetachableWeaponPack:Body
+BA-Magnetic Clamp:Body
+ISBASmallLaser:LA
+ISBATubeArtilleryAmmo:DWP:Shots4#
+ISBATubeArtilleryAmmo:DWP:Shots4#
+IS BA Reactive:Body
+IS BA Reactive:Body
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:RA
+IS BA Reactive:LA
+IS BA Reactive:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3145 Repubilc
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

@@ -1,0 +1,151 @@
+Version:1.0
+Shadow Hawk IIC
+9
+
+Config:Biped
+TechBase:Clan
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:2
+
+Mass:45
+Engine:270 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:17
+RT Armor:17
+CT Armor:20
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:4
+ER Medium Laser, Center Torso
+ER Medium Laser, Right Arm
+ER Large Laser, Left Arm
+ATM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+Clan Ammo ATM-6
+Clan Ammo ATM-6
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+CLATM6
+CLATM6
+CLATM6
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

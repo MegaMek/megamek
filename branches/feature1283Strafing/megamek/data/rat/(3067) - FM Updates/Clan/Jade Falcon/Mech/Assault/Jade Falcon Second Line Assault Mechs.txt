@@ -1,0 +1,12 @@
+Clan Jade Falcon Second-Line Assault Mechs (FMU)
+Behemoth (Stone Rhino) (Standard),1
+Masakari (Warhawk) Prime,2
+Thug THG-11E,3
+Phoenix Hawk IIC (Standard),4
+Phoenix Hawk IIC (Standard),5
+Warhammer IIC (Standard),6
+Warhammer IIC (Standard),5
+Kraken (Bane) (Standard),4
+Kraken (Bane) (Standard),3
+Highlander HGN-732,2
+Marauder IIC (Standard),1

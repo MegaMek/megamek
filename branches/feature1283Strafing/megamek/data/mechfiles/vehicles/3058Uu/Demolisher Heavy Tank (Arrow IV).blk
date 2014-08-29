@@ -1,0 +1,68 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Demolisher Heavy Tank
+</Name>
+<Model>
+(Arrow IV)
+</Model>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+38
+28
+28
+20
+38
+</Armor>
+<Turret Equipment>
+ISArrowIVSystem
+ISArrowIVSystem
+</Turret Equipment>
+<Front Equipment>
+ISMediumLaser
+ISMediumLaser
+</Front Equipment>
+<Body Equipment>
+ISArrowIV Ammo
+ISArrowIV Ammo
+ISArrowIV Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISArrowIV Homing Ammo
+ISArrowIV Homing Ammo
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Civil War
+</source>

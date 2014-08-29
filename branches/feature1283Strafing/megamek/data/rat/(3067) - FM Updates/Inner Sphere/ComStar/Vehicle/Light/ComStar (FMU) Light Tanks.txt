@@ -1,0 +1,12 @@
+ComStar Light Vehicles 3067 (FMU)
+Rotunda Scout Vehicle RND-J-1-11,1
+Gabriel Reconnaissance Hovercraft (Standard),2
+Beagle Hover Scout (Standard),3
+Chevalier Light Tank (Standard),4
+Cyrano Gunship (Standard),5
+Nightshade ECM VTOL (Standard),6
+Galleon Light Tank GAL-102,5
+Pinto Attack VTOL (Standard),4
+Ripper Infantry Transport (Standard),3
+Lightning Attack Hovercraft (Standard),2
+Scimitar Medium Hover Tank (Standard),1

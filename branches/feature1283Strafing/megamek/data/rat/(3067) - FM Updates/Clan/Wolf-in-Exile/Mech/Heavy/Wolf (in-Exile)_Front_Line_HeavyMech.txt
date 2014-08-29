@@ -1,0 +1,12 @@
+Wolf (in-Exile) Front-Line Heavy Mechs (FMU)
+Mad Cat (Timber Wolf) D,1
+Linebacker A,2
+Thor (Summoner) D,3
+Mad Cat (Timber Wolf) B,4
+Nova Cat Prime,5
+Mad Cat (Timber Wolf) Prime,6
+Mad Cat (Timber Wolf) A,5
+Linebacker Prime,4
+Nova Cat A,3
+Mad Cat (Timber Wolf) C,2
+Linebacker D,1

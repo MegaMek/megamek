@@ -1,0 +1,12 @@
+FRR Heavy Mechs B 3067
+Gallowglas GAL-1GLS,1
+Marauder MAD-5D,2
+War Dog WR-DG-02FC,3
+Quickdraw QKD-5K,4
+Crusader CRD-4K,5
+Dragon DRG-5N,6
+Archer ARC-5R,5
+Grand Dragon DRG-5K,4
+JagerMech JM6-DD,3
+Axman AXM-1N,2
+Barghest BGS-1T,1

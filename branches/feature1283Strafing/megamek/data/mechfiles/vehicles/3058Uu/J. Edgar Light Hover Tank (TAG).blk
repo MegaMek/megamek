@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+J. Edgar Light Hover Tank
+</Name>
+<Model>
+(TAG)
+</Model>
+<Tonnage>
+25
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+31
+20
+20
+12
+24
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+ISMediumLaser
+ISTAG
+</Turret Equipment>
+<Body Equipment>
+ISBeagleActiveProbe
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3053
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Clan Invasion
+</source>

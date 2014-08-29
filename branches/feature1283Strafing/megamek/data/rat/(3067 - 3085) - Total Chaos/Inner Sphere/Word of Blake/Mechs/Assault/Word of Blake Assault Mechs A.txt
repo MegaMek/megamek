@@ -1,0 +1,18 @@
+Word of Blake Assault Mechs A
+Crockett CRK-5005-1,1
+Legacy LGC-01,2
+Goliath GOL-5W,3
+Zeus ZEU-10WB,4
+Grand Titan T-IT-N11M,5
+Emperor EMP-6M,6
+Sirocco SRC-3C,5
+Vanquisher VQR-2A,4
+King Crab KGC-005r,3
+Atlas II AS7-D-H,2
+Seraph C-SRP-O Invictus,1
+Seraph C-SRP-OA Dominus,1
+Seraph C-SRP-OB Infernus,1
+Seraph C-SRP-OC Comminus,1
+Seraph C-SRP-OD Luminos,1
+Seraph C-SRP-OE Eminus,1
+Seraph C-SRP-OS Caelestis,1

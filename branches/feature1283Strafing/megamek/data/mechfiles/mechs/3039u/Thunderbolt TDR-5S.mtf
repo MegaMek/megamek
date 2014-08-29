@@ -1,0 +1,154 @@
+Version:1.0
+Thunderbolt
+TDR-5S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2505
+Rules Level:1
+
+Mass:65
+Engine:260 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:20
+RA Armor:20
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:29
+RL Armor:29
+RTL Armor:6
+RTR Armor:6
+RTC Armor:11
+
+Weapons:8
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Large Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+LRM 15, Right Torso
+SRM 2, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Machine Gun
+Machine Gun
+IS Ammo MG - Full
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Medium Laser
+Medium Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+LRM 15
+LRM 15
+LRM 15
+SRM 2
+IS Ammo SRM-2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-15
+IS Ammo LRM-15
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

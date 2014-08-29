@@ -1,0 +1,147 @@
+Version:1.0
+Charger
+CGR-KMZ
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Rules Level:2
+
+Mass:80
+Engine:320 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:6
+
+Armor:Light Ferro-Fibrous
+LA Armor:17
+RA Armor:17
+LT Armor:24
+RT Armor:24
+CT Armor:27
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:8
+RTR Armor:8
+RTC Armor:8
+
+Weapons:3
+2 ISLightPPC, Left Arm
+1 ISHeavyPPC, Left Torso
+1 ISMML9, Right Torso, Ammo:22
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLightPPC
+ISLightPPC
+ISLightPPC
+ISLightPPC
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Sword
+Sword
+ISMML9 SRM Ammo
+ISMML9 LRM Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+Light Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISMML9
+ISCASE
+Light Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ImprovedJump Jet
+ImprovedJump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ImprovedJump Jet
+ImprovedJump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ImprovedJump Jet
+ImprovedJump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

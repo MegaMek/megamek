@@ -1,0 +1,159 @@
+Version:1.0
+Deimos
+E
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:85
+Engine:255 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:28
+RT Armor:28
+CT Armor:36
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:11
+AMS, Head
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER PPC, Right Arm
+ER Large Laser, Left Arm
+Streak SRM 4, Right Torso
+Streak SRM 4, Left Torso
+Streak SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLERLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakSRM4
+CLStreakSRM4
+CLERMediumLaser
+IS Streak SRM 4 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM4
+CLStreakSRM4
+CLERMediumLaser
+Radical Heat Sink System
+Radical Heat Sink System
+Radical Heat Sink System
+CLMASC
+CLMASC
+CLMASC
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CL Super Charger
+CLAMS Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

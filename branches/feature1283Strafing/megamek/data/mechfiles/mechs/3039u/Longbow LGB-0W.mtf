@@ -1,0 +1,152 @@
+Version:1.0
+Longbow
+LGB-0W
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2480
+Source:Star League
+Rules Level:1
+
+Mass:85
+Engine:340 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:9
+RA Armor:9
+LT Armor:18
+RT Armor:18
+CT Armor:21
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:5
+Small Laser, Head
+LRM 20, Left Arm
+LRM 20, Right Arm
+LRM 5, Left Torso
+LRM 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+LRM 5
+IS Ammo LRM-20
+IS Ammo LRM-20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+LRM 5
+IS Ammo LRM-20
+IS Ammo LRM-20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-5
+IS Ammo LRM-5
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

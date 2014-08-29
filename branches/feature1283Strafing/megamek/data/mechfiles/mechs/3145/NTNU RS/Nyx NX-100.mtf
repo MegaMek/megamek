@@ -1,0 +1,152 @@
+Version:1.0
+Nyx
+NX-100
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:2
+
+Mass:30
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:10
+Jump MP:0
+
+Armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:9
+LL Armor:10
+RL Armor:10
+RTL Armor:2
+RTR Armor:2
+RTC Armor:5
+
+Weapons:5
+MML 3, Left Torso
+MML 3, Right Torso
+MML 3, Center Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML3
+ISMML3
+IS Ammo MML-3 LRM
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML3
+ISMML3
+IS Ammo MML-3 SRM
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMML3
+ISMML3
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Heavy Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

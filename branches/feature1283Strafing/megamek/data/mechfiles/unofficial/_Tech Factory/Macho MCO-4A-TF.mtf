@@ -1,0 +1,149 @@
+Version:1.0
+Macho
+MCO-4A-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:1
+
+Mass:75
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:24
+RT Armor:24
+CT Armor:35
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:4
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISAC20, Right Torso, Ammo:10
+1 ISLargeLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLargeLaser
+ISLargeLaser
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20 Ammo
+ISAC20 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

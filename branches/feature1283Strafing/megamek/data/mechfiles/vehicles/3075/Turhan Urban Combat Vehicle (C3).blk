@@ -1,0 +1,99 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Turhan Urban Combat Vehicle
+</Name>
+
+<Model>
+(C3)
+</Model>
+
+<year>
+3075
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+TroopSpace: 4
+</transporters>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+30
+29
+29
+26
+20
+</armor>
+
+<Body Equipment>
+IS Ammo MG - Full
+ISC3MasterUnit
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISAntiMissileSystem
+Large Laser
+Large Laser
+</Turret Equipment>
+

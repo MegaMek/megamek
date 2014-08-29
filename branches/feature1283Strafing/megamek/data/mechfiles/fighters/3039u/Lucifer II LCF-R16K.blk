@@ -1,0 +1,198 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Lucifer II
+
+</Name>
+
+
+
+<Model>
+
+LCF-R16K
+
+</Model>
+
+
+
+<Tonnage>
+
+65
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+
+
+<Armor>
+
+30
+
+24
+
+24
+
+26
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+LRM 20
+
+Large Laser
+
+Large Laser
+
+SRM 6
+
+IS Ammo LRM-20
+
+IS Ammo SRM-6
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Small Laser
+
+Small Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Small Laser
+
+Small Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+Medium Laser
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+20
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+320
+
+</fuel>
+
+
+
+<type>
+
+IS Level 2
+
+</type>
+
+
+
+<year>
+
+2993
+
+</year>
+
+
+
+<source>
+
+Succession Wars
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

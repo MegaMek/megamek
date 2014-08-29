@@ -1,0 +1,154 @@
+Version:1.0
+Warhammer IIC
+12
+
+Config:Biped
+TechBase:Clan
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:4
+
+Mass:80
+Engine:400 XXL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:20 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Heat-Dissipating(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:7
+ER PPC, Left Arm
+ER PPC, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERSmallLaser
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERSmallLaser
+CLSRM6
+Clan Ammo SRM-6
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Heat-Dissipating
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

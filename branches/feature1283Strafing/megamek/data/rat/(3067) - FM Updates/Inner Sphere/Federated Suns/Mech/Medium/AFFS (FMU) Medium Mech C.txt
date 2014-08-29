@@ -1,0 +1,12 @@
+AFFS Medium Mechs C 3067 (FMU)
+Hellspawn HSN-8E,1
+Sentinel STN-4D,2
+Phoenix Hawk PXH-6D,3
+Wolverine WVR-8D,4
+Hellspawn HSN-7D,5
+Enforcer ENF-5D,6
+Trebuchet TBT-7M,5
+Blackjack BJ-3,4
+Hunchback HBK-5P,3
+Shadow Hawk SHD-5D,2
+Trebuchet TBT-7K,1

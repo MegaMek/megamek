@@ -1,0 +1,12 @@
+Mercenary Assault Mechs B
+Longbow LGB-12R,1
+Trebaruna TR-XJ,2
+Atlas AS8-D,3
+Neanderthal NTL-UG,4
+Atlas AS7-S2,5
+Stalker II STK-9A,6
+Neanderthal NTL-AG,5
+Devastator DVS-2,4
+Malice MAL-XT,3
+Warhammer IIC 8,2
+Mad Cat Mk II (Standard),1

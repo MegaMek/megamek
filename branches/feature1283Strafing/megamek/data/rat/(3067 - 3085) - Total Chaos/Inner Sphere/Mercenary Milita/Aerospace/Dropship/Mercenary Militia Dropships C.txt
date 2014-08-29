@@ -1,0 +1,12 @@
+Mercenary/Militia Dropships C
+Hannibal (Standard),1
+Leopard (3056),2
+Seeker (2815),3
+Overlord (3056),4
+Leopard CV (3054),5
+Hamilcar (Standard),6
+Vengeance (2682),5
+Kuan Ti (Standard),4
+Merlin (3063),3
+Assault Triumph (3062),2
+Kuan Ti (Standard),1

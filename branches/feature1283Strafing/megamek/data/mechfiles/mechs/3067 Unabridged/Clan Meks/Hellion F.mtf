@@ -1,0 +1,133 @@
+Version:1.1
+Hellion
+F
+
+Config:Biped
+TechBase:Clan
+Era:3077
+Rules Level:3
+
+Mass:30
+Engine:210 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:CLMASC
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:7
+1 CLActiveProbe, Head
+1 CLSRM6, Center Torso, Ammo:15
+1 CLAPGaussRifle, Right Arm, Ammo:40
+1 CLAPGaussRifle, Right Arm
+1 CLERLargeLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLERFlamer, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERFlamer
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+CLAPGaussRifle
+CLAPGaussRifle
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLSRM6 Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Clan AP Gauss Rifle Ammo
+CLMASC
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLSRM6
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

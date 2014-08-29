@@ -1,0 +1,152 @@
+Version:1.1
+Cronus
+CNS-TD9
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Source:TRO3067U
+Rules Level:3
+
+Mass:55
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Stealth(Inner Sphere)
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:20
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:3
+Small VSP Laser, Left Arm
+Small VSP Laser, Right Arm
+Small VSP Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISSmallVariableSpeedLaser
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSmallVariableSpeedLaser
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallVariableSpeedLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMASC
+ISMASC
+ISMASC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISTargeting Computer
+ISTargeting Computer
+ISC3iUnit
+ISC3iUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

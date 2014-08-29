@@ -1,0 +1,12 @@
+Circinus Federation Light Mechs 3067 FM-U
+Jackal JA-KL-1532,1
+Mongoose MON-67,2
+Spider SDR-5V,3
+Firestarter FS9-H,4
+Panther PNT-9R,5
+Javelin JVN-10F "Fire Javelin",6
+Commando COM-2D,5
+Wolfhound WLF-1,4
+Firestarter FS9-S,3
+Dart DRT-4S,2
+Spector SPR-5F,1

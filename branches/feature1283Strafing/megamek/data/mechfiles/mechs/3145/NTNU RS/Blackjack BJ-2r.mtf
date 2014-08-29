@@ -1,0 +1,150 @@
+Version:1.0
+Blackjack
+BJ-2r
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Source:RS 3145 NT NU
+Rules Level:3
+
+Mass:45
+Engine:180 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:12
+RA Armor:12
+LT Armor:15
+RT Armor:15
+CT Armor:18
+HD Armor:9
+LL Armor:17
+RL Armor:17
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:3
+Large Re-engineered Laser, Right Arm
+Large Re-engineered Laser, Left Arm
+Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

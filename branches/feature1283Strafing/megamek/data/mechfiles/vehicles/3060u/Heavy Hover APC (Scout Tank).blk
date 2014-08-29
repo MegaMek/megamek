@@ -1,0 +1,115 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Heavy Hover APC
+</Name>
+
+<Model>
+(Scout Tank)
+</Model>
+
+<Tonnage>
+20
+</Tonnage>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+22
+15
+15
+10
+</Armor>
+
+<Front Equipment>
+Light Auto Cannon/5
+</Front Equipment>
+
+<Left Equipment>
+
+</Left Equipment>
+
+<Right Equipment>
+
+</Right Equipment>
+
+<Rear Equipment>
+
+</Rear Equipment>
+
+<Turret Equipment>
+
+</Turret Equipment>
+
+<Rotor Equipment>
+
+</Rotor Equipment>
+
+<Front Left Equipment>
+
+</Front Left Equipment>
+
+<Front Right Equipment>
+
+</Front Right Equipment>
+
+<Rear Left Equipment>
+
+</Rear Left Equipment>
+
+<Rear Right Equipment>
+
+</Rear Right Equipment>
+
+<Body Equipment>
+IS Ammo LAC/5
+IS Ammo LAC/5
+ISCASE
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3070
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+1
+</engine_type>
+
+<barrating>
+
+</barrating>
+
+<motion_type>
+Hover
+</motion_type>
+
+<source>
+Jihad
+</source>

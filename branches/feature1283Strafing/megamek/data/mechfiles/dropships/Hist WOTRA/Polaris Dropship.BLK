@@ -1,0 +1,214 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Polaris
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<type>
+Mixed (Clan Chassis) Experimental 
+</type>
+
+<year>
+3099
+</year>
+
+<Tonnage>
+6000
+</Tonnage>
+
+<BV>
+</BV>
+
+<fuel>
+4800
+</fuel>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+175
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<Armor>
+222
+195
+195
+168
+</Armor>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<internal_type>
+0
+</internal_type>
+
+<engine_type>
+0
+</engine_type>
+
+<transporters>
+heavyvehiclebay:20:4
+battlearmorbay:10:2
+cargobay:217:1
+</transporters>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+35
+</life_boat>
+
+<crew>
+228
+</crew>
+
+<battlearmor>
+</battlearmor>
+
+<marines>
+</marines>
+
+<passengers>
+</passengers>
+
+<otherpassenger>
+</otherpassenger>
+
+<Nose Equipment>
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20 Ammo:60
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLAMS
+CLAMS
+CLAMS
+CLAMS
+CLAMS
+CLAMS Ammo:72
+(B) ISCruiseMissile50
+ISCruiseMissile50Ammo:10
+(B) ISCruiseMissile50
+ISCruiseMissile50Ammo:10
+(B) ISCruiseMissile50
+ISCruiseMissile50Ammo:10
+(B) ISCruiseMissile50
+ISCruiseMissile50Ammo:10
+</Nose Equipment>
+
+<Left Side Equipment>
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+ClGaussRifle
+ClGaussRifle
+ClGaussRifle
+CLGauss Ammo:32
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) ClGaussRifle
+(R) ClGaussRifle
+(R) ClGaussRifle
+(R) CLGauss Ammo:32
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+ClGaussRifle
+ClGaussRifle
+ClGaussRifle
+CLGauss Ammo:32
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) ClGaussRifle
+(R) ClGaussRifle
+(R) ClGaussRifle
+(R) CLGauss Ammo:32
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS
+(R) CLAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+ClGaussRifle
+ClGaussRifle
+CLGauss Ammo:24
+CLAMS
+CLAMS
+CLAMS
+CLAMS
+CLAMS
+CLAMS Ammo:72
+</Aft Equipment>
+
+
+

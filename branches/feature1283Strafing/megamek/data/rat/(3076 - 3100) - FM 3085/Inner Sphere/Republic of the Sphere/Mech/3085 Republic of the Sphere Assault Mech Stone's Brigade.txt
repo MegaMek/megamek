@@ -1,0 +1,12 @@
+3085 Republic of the Sphere Assault Mech Stone's Brigade
+Sunder SD1-O,1
+Atlas II AS7-D-H,2
+Kraken (Bane) 4,3
+Highlander IIC 3,4
+Kodiak 2,5
+Kingfisher Prime,6
+Trebaruna TR-XB,5
+Supernova 3,4
+Mad Cat Mk II (Standard),3
+Gladiator (Executioner) Prime,2
+Daishi (Dire Wolf) Prime,1

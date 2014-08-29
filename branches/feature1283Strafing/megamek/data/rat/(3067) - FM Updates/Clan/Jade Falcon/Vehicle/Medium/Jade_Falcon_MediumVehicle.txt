@@ -1,0 +1,12 @@
+Clan Jade Falcon Medium Vehicles (FMU)
+Hachiman Fire Support Tank (Standard),1
+Ku Wheeled Assault Tank (IFV) "Turhan II",2
+Ku Wheeled Assault Tank (Standard),3
+Hachiman Fire Support Tank (Standard),4
+Ares Medium Tank (Standard),5
+Ares Medium Tank (Standard),6
+Ares Medium Tank (Standard),5
+Hachiman Fire Support Tank (Standard),4
+Ku Wheeled Assault Tank (Standard),3
+Hachiman Fire Support Tank (Standard),2
+Enyo Strike Tank (Standard),1

@@ -1,0 +1,12 @@
+clan Fire Mandrill Front-Line Heavy Aerospace (FMU)
+Xerxes 1,1
+Jengiz A,2
+Scytha C,3
+Kirghiz A,4
+Jengiz B,5
+Scytha B,6
+Kirghiz B,5
+Scytha A,4
+Scytha Prime,3
+Hydaspes (Standard),2
+Kirghiz Prime,1

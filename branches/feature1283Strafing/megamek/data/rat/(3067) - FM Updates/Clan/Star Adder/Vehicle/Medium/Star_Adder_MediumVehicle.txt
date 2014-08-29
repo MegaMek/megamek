@@ -1,0 +1,12 @@
+Clan Star Adder Medium Vehicles (FMU)
+Epona Pursuit Tank C,1
+Epona Pursuit Tank Prime,2
+Hachiman Fire Support Tank (Standard),3
+Chaparral Missile Artillery Tank (Standard),4
+Ku Wheeled Assault Tank (Standard),5
+Ares Medium Tank (Standard),6
+Hachiman Fire Support Tank (Standard),5
+Bandit (C) Hovercraft Prime,4
+Maxim Heavy Hover Transport (Clan),3
+Ares Medium Tank (Standard),2
+Enyo Strike Tank (Standard),1

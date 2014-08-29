@@ -1,0 +1,12 @@
+3085 Taurian Concordant Light Mech F
+Spider SDR-5V,1
+Stinger STG-3R,2
+Stinger STG-3R,3
+Locust LCT-5V,4
+Wasp WSP-1A,5
+Stinger STG-5R,6
+Wasp WSP-1A,5
+Locust LCT-1V,4
+Commando COM-2D,3
+Toro TR-A-1,2
+Commando COM-2D,1

@@ -1,0 +1,12 @@
+3034 Ronin Mech - Light (Upgraded)
+Mongoose MON-67,1
+Thorn THE-N,2
+Mongoose MON-67,3
+Hermes HER-1S,4
+Hermes HER-1S,5
+Thorn THE-N,6
+Hermes HER-1S,5
+Hussar HSR-300-D,4
+Thorn THE-N,3
+Hussar HSR-200-D,2
+Mongoose MON-66,1

@@ -1,0 +1,12 @@
+Late 3062 AFFS Heavy Mechs, Tech Level C
+War Dog WR-DG-02FC,1
+Falconer FLC-8R,2
+Quickdraw QKD-5K,3
+Penetrator PTR-4D,4
+Caesar CES-3R,5
+JagerMech JM6-DD,6
+Axman AXM-1N,5
+Cataphract CTF-3D,4
+Penetrator PTR-4D,3
+JagerMech III JM6-D3,2
+Cestus CTS-6Y,1

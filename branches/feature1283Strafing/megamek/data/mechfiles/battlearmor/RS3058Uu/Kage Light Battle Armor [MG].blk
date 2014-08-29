@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kage Light Battle Armor
+</Name>
+
+<Model>
+[MG]
+</Model>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BAPartialWing:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle:APM:RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+ISBAMG:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3058 Upgrade
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+

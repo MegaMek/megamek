@@ -2,45 +2,60 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Frogmen
 </Name>
+
 <Model>
 Blue Water Marine Response Teams (Frogmen)
 </Model>
-<squad_size>
-6
-</squad_size>
-<squadn>
-2
-</squadn>
-<Primary>
-InfantryFederatedBarrettM61A
-</Primary>
-<Secondary>
-InfantryMediumLaser
-</Secondary>
-<secondn>
-2
-</secondn>
-<type>
-IS Level 2
-</type>
+
 <year>
 2500
 </year>
-<era>
-Age of War
-</era>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Motorized
 </motion_type>
-<antimek>
-</antimek>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO 3085
+</source>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Federated Barrett M61A
+</Primary>
+
+<Secondary>
+Infantry Support Laser
+</Secondary>
+

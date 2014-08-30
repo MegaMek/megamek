@@ -13,65 +13,85 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
+import megamek.common.logging.LogLevel;
 
 /**
  * This contains useful classes and functions for geometric questions
  * the bot algorithm might have
  */
 public class BotGeometry {
-    
-    private static Princess owner;
 
     /**
      * The combination of a coordinate and a facing
      */
     public static class CoordFacingCombo {
 
-        Coords coords;
-        int facing;
+        private Coords coords;
+        private int facing;
 
-        CoordFacingCombo(MovePath p) {
-            coords=p.getFinalCoords();
-            facing=p.getFinalFacing();
+        private CoordFacingCombo(Coords c, int f) {
+            setCoords(c);
+            setFacing(f);
         }
-        CoordFacingCombo(Coords c,int f) {
-            coords=c;
-            facing=f;
+
+        static CoordFacingCombo createCoordFacingCombo(Coords c, int f) {
+            return new CoordFacingCombo(c, f);
         }
-        CoordFacingCombo(Entity e) {
-            if (e == null)
-                return;
-            coords=e.getPosition();
-            facing=e.getFacing();
+
+        static CoordFacingCombo createCoordFacingCombo(Entity e) {
+            if (e == null) {
+                return null;
+            }
+            return createCoordFacingCombo(e.getPosition(), e.getFacing());
+        }
+
+        static CoordFacingCombo createCoordFacingCombo(MovePath p) {
+            if (p == null) {
+                return null;
+            }
+            return createCoordFacingCombo(p.getFinalCoords(), p.getFinalFacing());
         }
 
         @Override
         public boolean equals(Object o) {
-            final String METHOD_NAME = "equals(Object)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                if (!(o instanceof CoordFacingCombo)) {
-                    return false;
-                }
-                CoordFacingCombo c=(CoordFacingCombo)o;
-                if(coords == null || !coords.equals(c.coords)) {
-                    return false;
-                }
-                return facing == c.facing;
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+            if (!(o instanceof CoordFacingCombo)) {
+                return false;
             }
+            CoordFacingCombo c = (CoordFacingCombo) o;
+            return !(getCoords() == null || !getCoords().equals(c.getCoords())) && getFacing() == c.getFacing();
         }
 
         @Override
         public int hashCode() {
-            return (coords.hashCode()*6)+facing;
+            return (getCoords().hashCode() * 6) + getFacing();
+        }
+
+        Coords getCoords() {
+            return coords;
+        }
+
+        void setCoords(Coords coords) {
+            this.coords = coords;
+        }
+
+        int getFacing() {
+            return facing;
+        }
+
+        void setFacing(int facing) {
+            this.facing = facing;
+        }
+
+        @Override
+        public String toString() {
+            return "Facing " + getFacing() + "; " + (getCoords() == null ? "null" : getCoords().toString());
         }
     }
 
@@ -81,38 +101,42 @@ public class BotGeometry {
      * Coords stores x and y values. Since these are hexes, coordinates with odd x
      * values are a half-hex down. Directions work clockwise around the hex,
      * starting with zero at the top.
-     *      -y
-     *       0
-     *     _____
-     *  5 /     \ 1
+     * -y
+     * 0
+     * _____
+     * 5 /     \ 1
      * -x /       \ +x
-     *   \       /
-     *  4 \_____/ 2
-     *       3
-     *      +y
-     *    ------------------------------
-     *    Direction is stored as above, but the meaning of 'intercept' depends
-     *    on the direction.  For directions 0,3, intercept means the y=0 intercept
-     *    for directions 1,2,4,5 intercept is the x=0 intercept
+     * \       /
+     * 4 \_____/ 2
+     * 3
+     * +y
+     * ------------------------------
+     * Direction is stored as above, but the meaning of 'intercept' depends
+     * on the direction.  For directions 0,3, intercept means the y=0 intercept
+     * for directions 1,2,4,5 intercept is the x=0 intercept
      */
     public static class HexLine {
-        int intercept;
-        int direction;
+        private final Princess owner;
+
+        private int intercept;
+        private int direction;
 
         /**
          * Create a hexline from a point and direction
          */
-        public HexLine(Coords c,int dir) {
+        public HexLine(Coords c, int dir, Princess owner) {
             @SuppressWarnings("unused")
             final String METHOD_NAME = "HexLine(Coords, int)";
 
-            direction=dir;
-            if((direction==0)||(direction==3)) {
-                intercept=c.x;
-            } else if((direction==1)||(direction==4)) {
-                intercept=c.y+((c.x+1)/2);
+            this.owner = owner;
+
+            setDirection(dir);
+            if ((getDirection() == 0) || (getDirection() == 3)) {
+                setIntercept(c.x);
+            } else if ((getDirection() == 1) || (getDirection() == 4)) {
+                setIntercept(c.y + ((c.x + 1) / 2));
             } else {//direction==2||direction==5
-                intercept=c.y-((c.x)/2);
+                setIntercept(c.y - ((c.x) / 2));
             }
         }
 
@@ -126,11 +150,11 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                HexLine comparor=new HexLine(c,direction);
-                if(comparor.intercept<intercept) {
-                    return (direction<3)?-1:1;
-                } else if(comparor.intercept>intercept) {
-                    return (direction<3)?1:-1;
+                HexLine comparor = new HexLine(c, getDirection(), owner);
+                if (comparor.getIntercept() < getIntercept()) {
+                    return (getDirection() < 3) ? -1 : 1;
+                } else if (comparor.getIntercept() > getIntercept()) {
+                    return (getDirection() < 3) ? 1 : -1;
                 }
                 return 0;
             } finally {
@@ -148,23 +172,29 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                boolean flip=direction>2;
-                if(a.edges[direction].intercept==intercept) {
+                boolean flip = getDirection() > 2;
+                HexLine[] edges = a.getEdges();
+                if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
+                    System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
+                                                                 a.toString()));
                     return 0;
                 }
-                if(a.edges[(direction+3)%6].intercept==intercept) {
+                if (edges[getDirection()].getIntercept() == getIntercept()) {
                     return 0;
                 }
-                boolean edgeone=(a.edges[direction].intercept<intercept)^flip;
-                boolean edgetwo=(a.edges[(direction+3)%6].intercept<intercept)^flip;
-                if(edgeone&&edgetwo) {
+                if (edges[(getDirection() + 3) % 6].getIntercept() == getIntercept()) {
+                    return 0;
+                }
+                boolean edgeone = (edges[getDirection()].getIntercept() < getIntercept()) ^ flip;
+                boolean edgetwo = (edges[(getDirection() + 3) % 6].getIntercept() < getIntercept()) ^ flip;
+                if (edgeone && edgetwo) {
                     return 1;
                 }
-                if((!edgeone)&&(!edgetwo)) {
+                if ((!edgeone) && (!edgetwo)) {
                     return -1;
                 }
                 return 0;
-            }finally {
+            } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
         }
@@ -178,14 +208,14 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                if((direction==0)||(direction==3)) {
+                if ((getDirection() == 0) || (getDirection() == 3)) {
                     return 0;
                 }
-                if((direction==1)||(direction==4)) {
-                    return intercept-((x+1)/2); //halfs round down
+                if ((getDirection() == 1) || (getDirection() == 4)) {
+                    return getIntercept() - ((x + 1) / 2); //halfs round down
                 }
                 // direction==5||direction==2
-                return intercept+((x)/2);     //halfs round down
+                return getIntercept() + ((x) / 2);     //halfs round down
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
@@ -200,20 +230,20 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                if((h.direction%3)==(direction%3)) {
+                if ((h.getDirection() % 3) == (getDirection() % 3)) {
                     return null;
                 }
-                if(h.direction==0) {
+                if (h.getDirection() == 0) {
                     return h.getIntersection(this);
                 }
-                if(direction==2) {
+                if (getDirection() == 2) {
                     return h.getIntersection(this);
                 }
-                if(direction==0) {
-                    return new Coords(intercept,h.getYfromX(intercept));
+                if (getDirection() == 0) {
+                    return new Coords(getIntercept(), h.getYfromX(getIntercept()));
                 }
                 //direction must be 1 here, and h.direction=2
-                return new Coords(intercept-h.intercept,getYfromX(intercept-h.intercept));
+                return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
@@ -228,17 +258,68 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                if((direction==0)||(direction==3)) { //technically two points are equidistant, but who's counting
-                    return new Coords(intercept,c.y);
-                } else if((direction==1)||(direction==4)) {
-                    double myx=(-2.0/3.0)*(intercept-0.5-c.y-(2.0*c.x));
-                    return new Coords((int)myx,getYfromX((int)myx));
+                if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
+                    // but who's counting
+                    return new Coords(getIntercept(), c.y);
+                } else if ((getDirection() == 1) || (getDirection() == 4)) {
+                    double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.y - (2.0 * c.x));
+                    return new Coords((int) myx, getYfromX((int) myx));
                 }
-                double myx=(-5.0/3.0)*(intercept-(double)c.y-(2.0*c.x));
-                return new Coords((int)myx,getYfromX((int)myx));
+                double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.y - (2.0 * c.x));
+                return new Coords((int) myx, getYfromX((int) myx));
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof HexLine)) {
+                return false;
+            }
+
+            HexLine hexLine = (HexLine) o;
+
+            if (getDirection() != hexLine.getDirection()) {
+                return false;
+            }
+            //noinspection RedundantIfStatement
+            if (getIntercept() != hexLine.getIntercept()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = getIntercept();
+            result = 31 * result + getDirection();
+            return result;
+        }
+
+        int getIntercept() {
+            return intercept;
+        }
+
+        void setIntercept(int intercept) {
+            this.intercept = intercept;
+        }
+
+        int getDirection() {
+            return direction;
+        }
+
+        void setDirection(int direction) {
+            this.direction = direction;
+        }
+
+        @Override
+        public String toString() {
+            return "Intercept " + getIntercept() + ", Direction " + getDirection();
         }
     }
 
@@ -248,34 +329,60 @@ public class BotGeometry {
      */
     public static class ConvexBoardArea {
 
-        ConvexBoardArea() {
-            final String METHOD_NAME = "ConvexBoardArea()";
-            owner.methodBegin(getClass(), METHOD_NAME);
+        private final Princess owner;
 
-            try {
-                for(int i=0;i<6;i++) {
-                    edges[i]=null;
-                }
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
-            }
+        //left/right indicates whether its the small x
+        //or large x line
+        //        HexLine[] left=new HexLine[3];
+        //        HexLine[] right=new HexLine[3];
+        //edge points to the previous lines in the right order
+        private HexLine[] edges = new HexLine[6];
+        private final ReentrantReadWriteLock EDGES_LOCK = new ReentrantReadWriteLock();
+
+        ConvexBoardArea(Princess owner) {
+            this.owner = owner;
+            clearEdges();
         }
 
-        ConvexBoardArea(Iterator<Coords> coord_it) {
-            final String METHOD_NAME = "ConvexBoardArea(Iterator<Coords>)";
-            owner.methodBegin(getClass(), METHOD_NAME);
-
-            try {
-                for(int i=0;i<6;i++) {
-                    edges[i]=null;
-                }
-                while(coord_it.hasNext()) {
-                    Coords onc=coord_it.next();
-                    expandToInclude(onc);
-                }
-            } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
             }
+            if (!(o instanceof ConvexBoardArea)) {
+                return false;
+            }
+
+            ConvexBoardArea that = (ConvexBoardArea) o;
+
+            //noinspection RedundantIfStatement
+            if (!Arrays.equals(edges, that.edges)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(edges);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder msg = new StringBuilder("Edges:");
+            HexLine[] edges = getEdges();
+            for (int i = 0; i < edges.length; i++) {
+                if (i != 0) {
+                    msg.append("; ");
+                }
+                if (edges[i] == null) {
+                    msg.append("null");
+                } else {
+                    msg.append(edges[i].toString());
+                }
+            }
+            return msg.toString();
         }
 
         void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit) {
@@ -283,9 +390,9 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                while(cfit.hasNext()) {
-                    CoordFacingCombo cf=cfit.next();
-                    expandToInclude(cf.coords);
+                while (cfit.hasNext()) {
+                    CoordFacingCombo cf = cfit.next();
+                    expandToInclude(cf.getCoords());
                 }
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
@@ -301,11 +408,12 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                if(edges[0]==null) {
+                HexLine[] edges = getEdges();
+                if (edges[0] == null) {
                     return false;
                 }
-                for(int i=0;i<6;i++) {
-                    if(edges[i].judgePoint(c)>0) {
+                for (int i = 0; i < 6; i++) {
+                    if (edges[i].judgePoint(c) > 0) {
                         return false;
                     }
                 }
@@ -323,11 +431,13 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                for(int i=0;i<6;i++) {
-                    if((edges[i]==null)||(edges[i].judgePoint(onc)>0)) {
-                        edges[i]=new HexLine(onc,i);
+                HexLine[] edges = getEdges();
+                for (int i = 0; i < 6; i++) {
+                    if ((edges[i] == null) || (edges[i].judgePoint(onc) > 0)) {
+                        edges[i] = new HexLine(onc, i, owner);
                     }
                 }
+                setEdges(edges);
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
@@ -341,11 +451,17 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                return edges[i].getIntersection(edges[(i+1)%6]);
+                HexLine[] edges = getEdges();
+                if (edges[i] == null || edges[(i + 1) % 6] == null) {
+                    System.err.println(new IllegalStateException("Edge[" + i + "] is NULL."));
+                    return null;
+                }
+                return edges[i].getIntersection(edges[(i + 1) % 6]);
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
             }
         }
+
         /**
          * returns the closest coord in the area to the given coord
          */
@@ -354,28 +470,32 @@ public class BotGeometry {
             owner.methodBegin(getClass(), METHOD_NAME);
 
             try {
-                Coords closest=null;
-                int closest_dist=0;
-                for(int i=0;i<6;i++) {
-                    if(edges[i].judgePoint(c)>0) {
-                        Coords vert=getVertexNum(i);
-                        int vdist=vert.distance(c);
-                        if((closest==null)||(vdist<closest_dist)) {
-                            closest=vert;
-                            closest_dist=vdist;
+                Coords closest = null;
+                int closest_dist = 0;
+                HexLine[] edges = getEdges();
+                for (int i = 0; i < 6; i++) {
+                    if (edges[i] == null) {
+                        continue;
+                    }
+                    if (edges[i].judgePoint(c) > 0) {
+                        Coords vert = getVertexNum(i);
+                        int vdist = vert.distance(c);
+                        if ((closest == null) || (vdist < closest_dist)) {
+                            closest = vert;
+                            closest_dist = vdist;
                         }
-                        Coords online=edges[i].getClosestPoint(c);
-                        if(contains(online)) {
-                            int ldist=online.distance(c);
-                            if(ldist<closest_dist) {
-                                closest=online;
-                                closest_dist=ldist;
+                        Coords online = edges[i].getClosestPoint(c);
+                        if (contains(online)) {
+                            int ldist = online.distance(c);
+                            if (ldist < closest_dist) {
+                                closest = online;
+                                closest_dist = ldist;
                             }
                         }
                     }
                 }
-                if(closest==null) {
-                    return new Coords(c.x,c.y);
+                if (closest == null) {
+                    return new Coords(c.x, c.y);
                 }
                 return closest;
             } finally {
@@ -383,166 +503,184 @@ public class BotGeometry {
             }
         }
 
-        //left/right indicates whether its the small x
-        //or large x line
-        //        HexLine[] left=new HexLine[3];
-        //        HexLine[] right=new HexLine[3];
-        //edge points to the previous lines in the right order
-        HexLine[] edges=new HexLine[6];
+        HexLine[] getEdges() {
+            EDGES_LOCK.readLock().lock();
+            try {
+                return Arrays.copyOf(edges, edges.length);
+            } finally {
+                EDGES_LOCK.readLock().unlock();
+            }
+        }
+
+        void setEdges(HexLine[] edges) {
+            if (edges == null) {
+                throw new IllegalArgumentException("Edges cannot be NULL, but it's members can.");
+            }
+            if (edges.length != 6) {
+                throw new IllegalArgumentException("Edges must have exactly 6 members.");
+            }
+
+            EDGES_LOCK.writeLock().lock();
+            try {
+                this.edges = edges;
+            } finally {
+                EDGES_LOCK.writeLock().unlock();
+            }
+        }
+
+        void clearEdges() {
+            EDGES_LOCK.writeLock().lock();
+            try {
+                for (int i = 0; i < edges.length; i++) {
+                    edges[i] = null;
+                }
+            } finally {
+                EDGES_LOCK.writeLock().unlock();
+            }
+        }
     }
 
     /**
      * runs a series of self tests to make sure geometry is done correctly
      */
-    static void debugSelfTest(Princess owningPrincess) {
-        owner = owningPrincess;
+    static void debugSelfTest(Princess owner) {
         final String METHOD_NAME = "debugSelfTest()";
-        owner.methodBegin(BotGeometry.class, METHOD_NAME);
+        final String PASSED = "passed";
+        final String FAILED = "failed";
+
+        StringBuilder msg = new StringBuilder("Performing self test of geometry");
 
         try {
-            owner.log(BotGeometry.class, METHOD_NAME, "Performing self test of geometry");
-            Coords center=new Coords(4,6);
-            HexLine []lines=new HexLine[6];
-            for(int i=0;i<6;i++) {
-                lines[i]=new HexLine(center,i);
+            Coords center = new Coords(4, 6);
+            HexLine[] lines = new HexLine[6];
+            for (int i = 0; i < 6; i++) {
+                lines[i] = new HexLine(center, i, owner);
             }
-            owner.log(BotGeometry.class, METHOD_NAME, "Testing that center lies in lines... ");
-            boolean passed=true;
-            for(int i=0;i<6;i++) {
+
+            msg.append("\n\tTesting that center lies in lines... ");
+            boolean passed = true;
+            for (int i = 0; i < 6; i++) {
                 //System.err.println("direction="+i);
                 //System.err.println("0="+lines[i].judgePoint(center));
-                if(lines[i].judgePoint(center)!=0) {
-                    passed=false;
+                if (lines[i].judgePoint(center) != 0) {
+                    passed = false;
                 }
             }
-            if(passed) {
-                owner.log(BotGeometry.class, METHOD_NAME, "Passed");
-            } else {
-                owner.log(BotGeometry.class, METHOD_NAME, "Failed");
-            }
-            owner.log(BotGeometry.class, METHOD_NAME, "Testing more points that should lie on lines... ");
-            passed=true;
-            for(int i=0;i<6;i++) {
-                if((lines[i].judgePoint(center.translated(i))!=0)||(lines[i].judgePoint(center.translated((i+3)%6))!=0))
-                 {
-                    passed=false;
-                //System.err.println("direction="+i);
-                //System.err.println("0="+lines[i].judgePoint(center.translated(i)));
-                //System.err.println("0="+lines[i].judgePoint(center.translated((i+3)%6)));
+            msg.append(passed ? PASSED : FAILED);
+
+            msg.append("\n\tTesting more points that should lie on lines... ");
+            passed = true;
+            for (int i = 0; i < 6; i++) {
+                if ((lines[i].judgePoint(center.translated(i)) != 0) || (lines[i].judgePoint(center.translated((i +
+                                                                                                                3) %
+                                                                                                               6)) !=
+                                                                         0)) {
+                    passed = false;
+                    //System.err.println("direction="+i);
+                    //System.err.println("0="+lines[i].judgePoint(center.translated(i)));
+                    //System.err.println("0="+lines[i].judgePoint(center.translated((i+3)%6)));
                 }
             }
-            if(passed) {
-                owner.log(BotGeometry.class, METHOD_NAME, "Passed");
-            } else {
-                owner.log(BotGeometry.class, METHOD_NAME, "Failed");
-            }
-            passed=true;
-            owner.log(BotGeometry.class, METHOD_NAME, "Testing points to left and right of lines... ");
-            for(int i=0;i<6;i++) {
+            msg.append(passed ? PASSED : FAILED);
+
+            passed = true;
+            msg.append("\n\tTesting points to left and right of lines... ");
+            for (int i = 0; i < 6; i++) {
                 //            System.err.println("direction="+i);
                 //          System.err.println("-1="+lines[i].judgePoint(center.translated((i+5)%6)));
-                if(-1!=lines[i].judgePoint(center.translated((i+5)%6))) {
-                    passed=false;
+                if (-1 != lines[i].judgePoint(center.translated((i + 5) % 6))) {
+                    passed = false;
                 }
                 //        System.err.println("-1="+lines[i].judgePoint(center.translated((i+4)%6)));
-                if(-1!=lines[i].judgePoint(center.translated((i+4)%6))) {
-                    passed=false;
+                if (-1 != lines[i].judgePoint(center.translated((i + 4) % 6))) {
+                    passed = false;
                 }
                 //      System.err.println("1="+lines[i].judgePoint(center.translated((i+1)%6)));
-                if(1!=lines[i].judgePoint(center.translated((i+1)%6))) {
-                    passed=false;
+                if (1 != lines[i].judgePoint(center.translated((i + 1) % 6))) {
+                    passed = false;
                 }
                 //    System.err.println("1="+lines[i].judgePoint(center.translated((i+2)%6)));
-                if(1!=lines[i].judgePoint(center.translated((i+2)%6))) {
-                    passed=false;
+                if (1 != lines[i].judgePoint(center.translated((i + 2) % 6))) {
+                    passed = false;
                 }
             }
-            if(passed) {
-                owner.log(BotGeometry.class, METHOD_NAME, "Passed");
-            } else {
-                owner.log(BotGeometry.class, METHOD_NAME, "Failed");
-            }
-            passed=true;
-            Coords areapt1=new Coords(1,1);
-            Coords areapt2=new Coords(3,1);
-            Coords areapt3=new Coords(2,3);
-            ConvexBoardArea area=new ConvexBoardArea();
+            msg.append(passed ? PASSED : FAILED);
+
+            passed = true;
+            Coords areapt1 = new Coords(1, 1);
+            Coords areapt2 = new Coords(3, 1);
+            Coords areapt3 = new Coords(2, 3);
+            ConvexBoardArea area = new ConvexBoardArea(owner);
             area.expandToInclude(areapt1);
             area.expandToInclude(areapt2);
             area.expandToInclude(areapt3);
             owner.log(BotGeometry.class, METHOD_NAME, "Checking area contains proper points... ");
-            if(!area.contains(new Coords(1,1))) {
-                passed=false;
+            msg.append("\n\tChecking area contains proper points... ");
+            if (!area.contains(new Coords(1, 1))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(2,1))) {
-                passed=false;
+            if (!area.contains(new Coords(2, 1))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(3,1))) {
-                passed=false;
+            if (!area.contains(new Coords(3, 1))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(1,2))) {
-                passed=false;
+            if (!area.contains(new Coords(1, 2))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(2,2))) {
-                passed=false;
+            if (!area.contains(new Coords(2, 2))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(3,2))) {
-                passed=false;
+            if (!area.contains(new Coords(3, 2))) {
+                passed = false;
             }
-            if(!area.contains(new Coords(2,3))) {
-                passed=false;
+            if (!area.contains(new Coords(2, 3))) {
+                passed = false;
             }
-            if(passed) {
-                owner.log(BotGeometry.class, METHOD_NAME, "Passed");
-            } else {
-                owner.log(BotGeometry.class, METHOD_NAME, "Failed");
+            msg.append(passed ? PASSED : FAILED);
+
+            passed = true;
+            msg.append("\n\tChecking area doesn't contain extra points... ");
+            if (area.contains(new Coords(0, 1))) {
+                passed = false;
             }
-            passed=true;
-            owner.log(BotGeometry.class, METHOD_NAME, "Checking area doesn't contain extra points... ");
-            if(area.contains(new Coords(0,1))) {
-                passed=false;
+            if (area.contains(new Coords(1, 0))) {
+                passed = false;
             }
-            if(area.contains(new Coords(1,0))) {
-                passed=false;
+            if (area.contains(new Coords(2, 0))) {
+                passed = false;
             }
-            if(area.contains(new Coords(2,0))) {
-                passed=false;
+            if (area.contains(new Coords(3, 0))) {
+                passed = false;
             }
-            if(area.contains(new Coords(3,0))) {
-                passed=false;
+            if (area.contains(new Coords(4, 1))) {
+                passed = false;
             }
-            if(area.contains(new Coords(4,1))) {
-                passed=false;
+            if (area.contains(new Coords(4, 2))) {
+                passed = false;
             }
-            if(area.contains(new Coords(4,2))) {
-                passed=false;
+            if (area.contains(new Coords(4, 3))) {
+                passed = false;
             }
-            if(area.contains(new Coords(4,3))) {
-                passed=false;
+            if (area.contains(new Coords(3, 3))) {
+                passed = false;
             }
-            if(area.contains(new Coords(3,3))) {
-                passed=false;
+            if (area.contains(new Coords(2, 4))) {
+                passed = false;
             }
-            if(area.contains(new Coords(2,4))) {
-                passed=false;
+            if (area.contains(new Coords(1, 3))) {
+                passed = false;
             }
-            if(area.contains(new Coords(1,3))) {
-                passed=false;
+            if (area.contains(new Coords(0, 3))) {
+                passed = false;
             }
-            if(area.contains(new Coords(0,3))) {
-                passed=false;
+            if (area.contains(new Coords(0, 2))) {
+                passed = false;
             }
-            if(area.contains(new Coords(0,2))) {
-                passed=false;
-            }
-            if(passed) {
-                owner.log(BotGeometry.class, METHOD_NAME, "Passed");
-            } else {
-                owner.log(BotGeometry.class, METHOD_NAME, "Failed");
-            }
-            passed=true;
+            msg.append(passed ? PASSED : FAILED);
+
         } finally {
-            owner.methodEnd(BotGeometry.class, METHOD_NAME);
+            owner.log(BotGeometry.class, METHOD_NAME, LogLevel.DEBUG, msg);
         }
     }
 }

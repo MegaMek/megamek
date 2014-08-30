@@ -598,8 +598,9 @@ WindowListener, TreeSelectionListener {
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        m_chType.setSelectedIndex(GUIPreferences.getInstance()
-                .getRATTechLevel());
+        int savedSelection = GUIPreferences.getInstance().getRATTechLevel();
+        savedSelection = Math.min(savedSelection, maxTech - 1);
+        m_chType.setSelectedIndex(savedSelection);
     }
 
     private void updateRATs() {

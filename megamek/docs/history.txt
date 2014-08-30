@@ -4,7 +4,9 @@ v0.39.2-dev (SVN)
 + Bug [#4238]: Delayed deployment not working in scenario
 + Undeployed units won't get added to Game's entity location cache
 + Data: Unit Fixes and New Images.
-+ Refactored BotGeometry for better thread safety and protection against some potential NPEs.
++ Refactored BotGeometry for better thread safety and protection against some
+    potential NPEs.
++ Bug [#4245]: RandomArmyDialog Tech Level IllegalArgumentException
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

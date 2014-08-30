@@ -157,7 +157,7 @@ public class Precognition implements Runnable {
                 }
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
                      || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
-                                             .equals(new CoordFacingCombo(entity))))) {
+                                             .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
                     // System.err.println("entity "+entity.getDisplayName()+" not where I left it");
                     // if(pathEnumerator.last_known_location.containsKey(entity.getId()))
                     // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(entity
@@ -173,7 +173,8 @@ public class Precognition implements Runnable {
                 if (entity != null) {
                     getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
                     getPathEnumerator().recalculateMovesFor(entity);
-                    getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity.getDisplayName());
+                    getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity
+                            .getDisplayName());
                 }
             }
         } finally {
@@ -275,7 +276,7 @@ public class Precognition implements Runnable {
                     Entity entity = getGame().getEntity(changeEvent.getEntity().getId());
                     if (entity == null) {
                         continue; // not sure how this can happen, but just to be
-                                  // safe
+                        // safe
                     }
                     // a lot of odd entity changes are send during the firing phase,
                     // none of which are relevant
@@ -348,15 +349,15 @@ public class Precognition implements Runnable {
                     if ((getGame().getEntity(id) != null) && getGame().getEntity(id).isSelectableThisTurn()) {
                         toDirty.addAll(getPathEnumerator().getEntitiesWithLocation(getPathEnumerator()
                                                                                            .getLastKnownLocations()
-                                                                                           .get(id)
-                                                                                           .coords, true));
+                                                                                           .get(id).getCoords(), true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<>();
                 for (Integer index : toDirty) {
                     if ((getGame().getEntity(index) == null) || (!getGame().getEntity(index).isSelectableThisTurn())
-                                                                && (getGame().getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                                                                && (getGame().getPhase() == IGame.Phase
+                            .PHASE_MOVEMENT)) {
                         toRemove.add(index);
                     }
                 }
@@ -386,7 +387,8 @@ public class Precognition implements Runnable {
                 (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
-                getPathEnumerator().getLastKnownLocations().put(id, new CoordFacingCombo(entity));
+                getPathEnumerator().getLastKnownLocations().put(id, CoordFacingCombo.createCoordFacingCombo(entity
+                                                                                                           ));
             }
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);

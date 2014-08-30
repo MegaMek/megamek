@@ -99,7 +99,7 @@ public class PathEnumerator {
             if (ccr == null) {
                 return null;
             }
-            return ccr.coords;
+            return ccr.getCoords();
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -126,7 +126,8 @@ public class PathEnumerator {
                 }
 
                 for (int facing = 0; facing < 5; facing++) {
-                    if (getUnitPotentialLocations().get(id).contains(new CoordFacingCombo(location, facing))) {
+                    if (getUnitPotentialLocations().get(id).contains(CoordFacingCombo.createCoordFacingCombo
+                            (location, facing))) {
                         returnSet.add(id);
                         break;
                     }
@@ -150,7 +151,7 @@ public class PathEnumerator {
             //
             Set<CoordFacingCombo> toAdd = new HashSet<>();
             for (MovePath path : paths) {
-                toAdd.add(new CoordFacingCombo(path));
+                toAdd.add(CoordFacingCombo.createCoordFacingCombo(path));
             }
             getUnitPotentialLocations().put(entity.getId(), toAdd);
         } finally {
@@ -167,7 +168,8 @@ public class PathEnumerator {
         try {
 
             // Record it's current position.
-            getLastKnownLocations().put(mover.getId(), new CoordFacingCombo(mover.getPosition(), mover.getFacing()));
+            getLastKnownLocations().put(mover.getId(), CoordFacingCombo.createCoordFacingCombo(mover.getPosition(),
+                                                                                               mover.getFacing()));
 
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
@@ -244,7 +246,7 @@ public class PathEnumerator {
             getUnitPaths().put(mover.getId(), paths);
 
             // calculate bounding area for move
-            ConvexBoardArea myArea = new ConvexBoardArea();
+            ConvexBoardArea myArea = new ConvexBoardArea(owner);
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(mover.getId()).iterator());
             getUnitMovableAreas().put(mover.getId(), myArea);
         } finally {

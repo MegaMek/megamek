@@ -121,15 +121,15 @@ public class BasicPathRanker extends PathRanker {
             getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "no facing set for " + enemy.getDisplayName());
             return false;
         }
-        return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-               || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+        return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -157,6 +157,9 @@ public class BasicPathRanker extends PathRanker {
             Coords leftFlank = finalCoords.translated((myFacing + 2) % 6);
             Coords rightFlank = finalCoords.translated((myFacing + 4) % 6);
             Coords closest = getClosestCoordsTo(enemy.getId(), finalCoords);
+            if (closest == null) {
+                return returnResponse;
+            }
             int range = closest.distance(finalCoords);
 
             // I would prefer if the enemy must end its move in my line of fire if so, I can guess that I may do some
@@ -165,11 +168,11 @@ public class BasicPathRanker extends PathRanker {
             HexLine leftBounds;
             HexLine rightBounds;
             if (path.getEntity().canChangeSecondaryFacing()) {
-                leftBounds = new HexLine(behind, (myFacing + 2) % 6);
-                rightBounds = new HexLine(behind, (myFacing + 4) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 2) % 6, owner);
+                rightBounds = new HexLine(behind, (myFacing + 4) % 6, owner);
             } else {
-                leftBounds = new HexLine(behind, (myFacing + 1) % 6);
-                rightBounds = new HexLine(behind, (myFacing + 5) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 1) % 6, owner);
+                rightBounds = new HexLine(behind, (myFacing + 5) % 6, owner);
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {

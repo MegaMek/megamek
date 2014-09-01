@@ -61,6 +61,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.INarcPod;
+import megamek.common.IdealHex;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -2560,22 +2561,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         boolean isInaLine = true;
         // If there is only one other coord, then they're linear
         if (strafingCoords.size() > 1) {
-            // We need to determine if all of the coordinates are co-linear
-            //  Going to do this by forming a vector between the new coords 
-            //  and the first one in the list, then checking to see if the angle
-            //  between vectors formed with the new coords and other coords is
-            //  0.
-            Coords start = strafingCoords.get(0);
+            IdealHex newHex = new IdealHex(newCoord);
+            IdealHex start = new IdealHex(strafingCoords.get(0));
             // Define the vector formed by the new coords and the first coords
-            int v1X = newCoord.x - start.x;
-            int v1Y = newCoord.y - start.y;
-            double v1Mag = Math.sqrt(v1X * v1X + v1Y * v1Y);
             for (int i = 1; i < strafingCoords.size(); i++) {
-                int v2X = newCoord.x - strafingCoords.get(i).x;
-                int v2Y = newCoord.y - strafingCoords.get(i).y;
-                double v2Mag = Math.sqrt(v2X * v2X + v2Y * v2Y);
-                double dotProd = (v1X * v2X + v1Y * v2Y) / (v1Mag * v2Mag);
-                isInaLine &= (dotProd == 1);
+                IdealHex iHex = new IdealHex(strafingCoords.get(i));
+                isInaLine &= iHex.isIntersectedBy(start.cx, start.cy, newHex.cx,
+                        newHex.cy);
             }
         }
         return isConsecutive && isInaLine;

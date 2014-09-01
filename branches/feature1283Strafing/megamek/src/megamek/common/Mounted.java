@@ -497,8 +497,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !missing && !jammed && !useless
-                && !fired
+        return isReady(false);
+    }
+    
+    public boolean isReady(boolean isStrafing) {
+        return (!usedThisRound || isStrafing) && !destroyed && !missing
+                && !jammed && !useless && !fired
                 && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
@@ -1038,9 +1042,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *         <code>false</code> otherwise.
      */
     public boolean canFire() {
+        return canFire(false);
+    }
+    
+    public boolean canFire(boolean isStrafing) {
 
         // Equipment operational?
-        if (!isReady() || isBreached() || isMissing() || isFired()) {
+        if (!isReady(isStrafing) || isBreached() || isMissing() || isFired()) {
             return false;
         }
 

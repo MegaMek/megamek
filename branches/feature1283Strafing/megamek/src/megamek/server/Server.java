@@ -12224,8 +12224,8 @@ public class Server implements Runnable {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(waa, game, this);
-                ah.setStrafing(waa.isStrafing());
                 if (ah != null) {
+                    ah.setStrafing(waa.isStrafing());
                     game.addAttack(ah);
                     // check for aero elevation loss
                     if ((ae instanceof Aero)

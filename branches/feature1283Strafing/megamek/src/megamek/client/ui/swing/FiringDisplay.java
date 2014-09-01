@@ -1118,17 +1118,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
     
     private void doStrafe() {
+        clearAttacks();
         isStrafing = true;
         setStatusBarText(Messages
                 .getString("FiringDisplay.Strafing.StatusLabel"));
-        updateTarget(); 
+        refreshAll();
     }
     
     private void updateStrafingTargets() {
         final IGame game = clientgui.getClient().getGame();
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        final Mounted m = ce().getEquipment(weaponId);
         ToHitData toHit;
         StringBuffer toHitBuff = new StringBuffer();
+        setFireEnabled(true);
         for (Coords c : strafingCoords) {
             for (Entity t : game.getEntitiesVector(c)) {
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
@@ -1136,6 +1139,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 toHitBuff.append(t.getShortName() + ": ");
                 toHitBuff.append(toHit.getDesc());
                 toHitBuff.append("\n");
+                if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                        || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+                    setFireEnabled(false);
+                }
             }
         }
         clientgui.mechD.wPan.toHitText.setText(toHitBuff.toString());
@@ -1551,7 +1558,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (isStrafing && weaponId != -1) {
             clientgui.mechD.wPan.wTargetR.setText(Messages
                     .getString("FiringDisplay.Strafing.TargetLabel"));
-            setFireEnabled(true);
             updateStrafingTargets();
         } else if ((target != null) && (target.getPosition() != null)
             && (weaponId != -1) && (ce() != null)) {
@@ -1869,7 +1875,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
-            clearAttacks();
             doStrafe();
         }
     }

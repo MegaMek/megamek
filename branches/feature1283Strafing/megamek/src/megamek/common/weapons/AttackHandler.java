@@ -24,8 +24,10 @@ import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 
 /**
- * @author Andrew Hunter Describes a set of methods a class can use to represent
+ * Describes a set of methods a class can use to represent
  *         an attack from some weapon.
+ *         
+ * @author Andrew Hunter
  */
 public interface AttackHandler {
 
@@ -45,5 +47,14 @@ public interface AttackHandler {
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring);
 
     public WeaponAttackAction getWaa();
+    
+    /**
+     * Used to determine if the AttackHandler is handling a strafing run.
+     * 
+     * @return
+     */
+    public boolean isStrafing();
+    
+    public void setStrafing(boolean isStrafing);
 
 }

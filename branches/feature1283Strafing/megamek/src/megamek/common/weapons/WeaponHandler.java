@@ -93,6 +93,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int numRapidFireHits;
     protected String sSalvoType = " shots(s) ";
     int nSalvoBonus = 0;
+    
+    /**
+     * Boolean flag that determines whether or not this attack is part of a
+     * strafing run.
+     */
+    protected boolean isStrafing = false;
 
 
     /**
@@ -1401,5 +1407,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
         return nMissilesModifier;
+    }
+
+    public boolean isStrafing() {
+        return isStrafing;
+    }
+
+    public void setStrafing(boolean isStrafing) {
+        this.isStrafing = isStrafing;
     }
 }

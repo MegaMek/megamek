@@ -12224,6 +12224,7 @@ public class Server implements Runnable {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(waa, game, this);
+                ah.setStrafing(waa.isStrafing());
                 if (ah != null) {
                     game.addAttack(ah);
                     // check for aero elevation loss
@@ -31671,7 +31672,11 @@ public class Server implements Runnable {
                     // from previous
                     handleAttackReports.addAll(checkFatalThresholds(aId));
                     // report who is firing
-                    r = new Report(3100);
+                    if (ah.isStrafing()) {
+                        r = new Report(3101);
+                    } else {
+                        r = new Report(3100);
+                    }
                     r.subject = aId;
                     Entity ae = game.getEntity(aId);
                     // for arty, attacker may be dead, or fled, so check out-of-

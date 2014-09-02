@@ -132,7 +132,7 @@ public class BLKFile {
                             .trim();
                 }
                 if (equipName.toUpperCase().endsWith("(R)")) {
-                    facing = 2;
+                    facing = 3;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
                 }                

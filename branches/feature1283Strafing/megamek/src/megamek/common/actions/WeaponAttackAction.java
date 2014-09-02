@@ -72,7 +72,10 @@ import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.LRTWeapon;
+import megamek.common.weapons.LaserBayWeapon;
 import megamek.common.weapons.MekMortarWeapon;
+import megamek.common.weapons.PPCBayWeapon;
+import megamek.common.weapons.PulseLaserBayWeapon;
 import megamek.common.weapons.SRTWeapon;
 import megamek.common.weapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.TSEMPWeapon;
@@ -3707,12 +3710,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // Only direct-fire energy weapons can strafe
             EquipmentType wt = weapon.getType();
-            if (isStrafing && !(wt.hasFlag(WeaponType.F_DIRECT_FIRE) 
+            boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE) 
                     && (wt.hasFlag(WeaponType.F_LASER)
                             || wt.hasFlag(WeaponType.F_PPC)
                             || wt.hasFlag(WeaponType.F_PLASMA)
                             || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                            || wt.hasFlag(WeaponType.F_FLAMER)))) {
+                            || wt.hasFlag(WeaponType.F_FLAMER));
+            boolean isEnergyBay = (wt instanceof LaserBayWeapon)
+                    || (wt instanceof PPCBayWeapon)
+                    || (wt instanceof PulseLaserBayWeapon); 
+            if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
                 return "only direct-fire energy weapons can strafe!";
             }
             

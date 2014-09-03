@@ -10,6 +10,9 @@ v0.39.2-dev (SVN)
 + Bug: BLKFile was setting rear facing as 2 instead of 3, only affects VGLs
 + Bug: Mounted.getDesc returns wrong facing abbreviation for VGLs
 + Bug [#4244]: Windows Map Editor Apply and Save Button Launches "Open" Dialogue
++ Added code to the bots' deployment logic so that they will now check for a valid path to the center of the board
+    before deploying a unit.  This does make deployment take a little longer (depending on unit and how complicated the
+    board is) but will reduce the incidences of the bot deploying in a dead-end location.
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

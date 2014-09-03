@@ -222,8 +222,7 @@ public class Princess extends BotClient {
             LinkedList<Coords> startingCoords = getStartingCoordsArray();
             if (startingCoords.size() == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                    "No valid locations to deploy "
-                    + getEntity(entityNum).getDisplayName());
+                    "No valid locations to deploy " + getEntity(entityNum).getDisplayName());
             }
 
             // get the coordinates I can deploy on
@@ -253,10 +252,13 @@ public class Princess extends BotClient {
                                                                                    .getBoard().getHeight() / 2);
                 decentFacing = deployCoords.direction(center);
             }
+
             Entity deployEntity = game.getEntity(entityNum);
             IHex deployHex = game.getBoard().getHex(deployCoords);
+
             // Entity.elevatoinOccupied performs a null check on IHex
             int deployElevation = deployEntity.elevationOccupied(deployHex);
+
             // Compensate for hex elevation where != 0...
             deployElevation -= deployHex.getElevation();
             deploy(entityNum, deployCoords, decentFacing, deployElevation);

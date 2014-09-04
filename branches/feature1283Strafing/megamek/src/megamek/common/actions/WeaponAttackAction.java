@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -3708,6 +3709,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if ((ae.getAltitude() > 3) && isStrafing) {
                 return "attacker is too high";
             }
+            // Additional Nape-of-Earth restrictions for strafing
+            if (ae.getAltitude() == 1 && isStrafing) {
+                Vector<Coords> passedThrough = ae.getPassedThrough();
+                if ((passedThrough.size() == 0) 
+                        || passedThrough.get(0).equals(target.getPosition())) {
+                    // TW pg 243 says units flying at NOE have a harder time 
+                    // establishing LoS while strafing and hence have to
+                    // consider the adjacent hex along the flight place in the
+                    // direction of the attack.  What if there is no adjacent
+                    // hex?  The rules don't address this.  We could 
+                    // theoretically consider last turns movement, but that's
+                    // cumbersome, so we'll just assume it's impossible - Arlith
+                    return "target is too close to strafe";
+                }
+                // Otherwise, check for a dead-zone, TW pg 243
+                Coords prevCoords = ae.passedThroughPrevious(target
+                        .getPosition());
+                IHex prevHex = game.getBoard().getHex(prevCoords);
+                IHex currHex = game.getBoard().getHex(target.getPosition());
+                int prevElev = prevHex.getElevation();
+                int currElev = currHex.getElevation();
+                if ((prevElev - currElev - target.absHeight()) > 2) {
+                    return "target is in dead-zone";
+                }
+            }
+            
             // Only direct-fire energy weapons can strafe
             EquipmentType wt = weapon.getType();
             boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE) 

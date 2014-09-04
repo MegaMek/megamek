@@ -1433,6 +1433,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (ae.getAltitude() == 1) {
                     toHit.addModifier(+2, "strafing at NOE");
                 }
+                // Additional Nape-of-Earth restrictions for strafing
+                if (ae.getAltitude() == 1) {
+                    Coords prevCoords = ae.passedThroughPrevious(target
+                            .getPosition());
+                    IHex prevHex = game.getBoard().getHex(prevCoords);
+                    toHit.append(Compute.getStrafingTerrainModifier(game,
+                            eistatus, prevHex));
+                }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
             }

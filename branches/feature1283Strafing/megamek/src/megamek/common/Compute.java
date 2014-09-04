@@ -2418,6 +2418,60 @@ public class Compute {
         }
         return toHit;
     }
+    
+    public static ToHitData getStrafingTerrainModifier(IGame game,
+            int eistatus, IHex hex) {
+        ToHitData toHit = new ToHitData();
+        // Smoke and woods. With L3, the effects STACK.
+        int woodsLevel = hex.terrainLevel(Terrains.WOODS);
+        int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
+        String woodsText = "woods";
+        if (woodsLevel < jungleLevel) {
+            woodsLevel = jungleLevel;
+            woodsText = "jungle";
+        }
+        if (woodsLevel == 1) {
+            woodsText = "light " + woodsText;
+        } else if (woodsLevel == 2) {
+            woodsText = "heavy " + woodsText;
+        } else if (woodsLevel == 3) {
+            woodsText = "heavy " + woodsText;
+        }
+
+        if (!game.getOptions().booleanOption("tacops_woods_cover")) {
+            if ((woodsLevel == 1) && (eistatus != 2)) {
+                toHit.addModifier(1, woodsText);
+            } else if (woodsLevel > 1) {
+                if (eistatus > 0) {
+                    toHit.addModifier(woodsLevel - 1, woodsText);
+                } else {
+                    toHit.addModifier(woodsLevel, woodsText);
+                }
+            }
+        }
+
+        if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
+            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
+            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
+            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
+            toHit.addModifier(1, "light smoke");
+        } else if (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
+            if (eistatus > 0) {
+                toHit.addModifier(1, "heavy smoke");
+            } else {
+                toHit.addModifier(2, "heavy smoke");
+            }
+        }
+
+        if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+            if (eistatus > 0) {
+                toHit.addModifier(1, "erupting geyser");
+            } else {
+                toHit.addModifier(2, "erupting geyser");
+            }
+        }
+        return toHit;
+    }
 
     /**
      * Returns the weapon attack out of a list that has the highest expected

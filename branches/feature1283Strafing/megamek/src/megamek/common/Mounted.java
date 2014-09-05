@@ -450,13 +450,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 desc.append(" (RR)");
                 break;
             case 3:
-                desc.append(" (RL)");
+                desc.append(" (R)");
                 break;
             case 4:
-                desc.append(" (FL)");
+                desc.append(" (RL)");
                 break;
             case 5:
-                desc.append(" (R)");
+                desc.append(" (FL)");
                 break;
             }
         }

@@ -37,6 +37,7 @@ import javax.swing.ScrollPaneConstants;
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -60,6 +61,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -70,6 +72,8 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -381,6 +385,7 @@ public abstract class BotClient extends Client {
         int mech_count;
         int conv_fcount; // Friendly conventional units
         int conv_ecount; // Enemy conventional units
+
         // Check all of the hexes in order.
         for (Coords element : c) {
             // Verify stacking limits. Gotta do this the long way, as
@@ -390,8 +395,7 @@ public abstract class BotClient extends Client {
             mech_count = 0;
             conv_fcount = 0;
             conv_ecount = 0;
-            for (Enumeration<Entity> stacked_ents = game.getEntities(element); stacked_ents
-                    .hasMoreElements(); ) {
+            for (Enumeration<Entity> stacked_ents = game.getEntities(element); stacked_ents.hasMoreElements(); ) {
                 Entity test_ent = stacked_ents.nextElement();
                 if (test_ent instanceof Mech) {
                     mech_count++;
@@ -480,7 +484,7 @@ public abstract class BotClient extends Client {
 
         // Now get minimum and maximum elevation levels for these hexes
         highest_elev = Integer.MIN_VALUE;
-        ;
+
         lowest_elev = Integer.MAX_VALUE;
         for (Coords c : validCoords) {
             int elev = board.getHex(c.x, c.y).getElevation();
@@ -548,21 +552,20 @@ public abstract class BotClient extends Client {
         }
 
         for (Coords coord : validCoords) {
-            // Calculate the fitness factor for each hex and save it to the
-            // array
-            // -> Absolute difference between hex elevation and ideal elevation
-            // decreases fitness
-            coord.fitness = -1
-                            * (Math.abs(ideal_elev
-                                        - board.getHex(coord.x, coord.y).getElevation()));
+
+            // Calculate the fitness factor for each hex and save it to the array
+            // -> Absolute difference between hex elevation and ideal elevation decreases fitness
+            coord.fitness = -1 * (Math.abs(ideal_elev - board.getHex(coord.x, coord.y).getElevation()));
 
             total_damage = 0.0;
             deployed_ent.setPosition(coord);
+
             // Create a list of potential attackers/targets for this location
             Vector<Entity> potentialAttackers =
                     game.getValidTargets(deployed_ent);
             valid_attackers = new Vector<Entity>(potentialAttackers.size());
             for (Entity e : potentialAttackers) {
+
                 // Unit must be deployed and not off board, with valid position
                 if ((e.isDeployed()) && !e.isOffBoard()
                     && e.getPosition() != null) {
@@ -576,6 +579,7 @@ public abstract class BotClient extends Client {
                     }
                 }
             }
+
             // -> Approximate total damage taken in the current position; this
             // keeps units from deploying into x-fires
             for (Entity test_ent : valid_attackers) {
@@ -726,11 +730,49 @@ public abstract class BotClient extends Client {
                     coord.fitness += 2;
                 }
             }
+
+            // Make sure I'm not stuck in a dead-end.
+            if (!hasPathToCenter(deployed_ent, board)) {
+                coord.fitness -= 100;
+            }
         }
+
         // Now sort the valid array.
         Collections.sort(validCoords, new FitnessComparator());
 
         return validCoords;
+    }
+
+    // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
+    // ToDo: This will require a new PathFinder.
+    private boolean hasPathToCenter(Entity entity, IBoard board) {
+        // Flying units can always reach the center of the board.
+        if (entity instanceof Aero || entity instanceof VTOL) {
+            return true;
+        }
+
+        // Don't take too long.
+        final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+
+        // Find the center of the board.
+        Coords center = board.getCenter();
+
+        // Start the path assuming forward movement, but if the unit is jump-capable, use jump movement.
+        MovePath pathToCenter = new MovePath(game, entity);
+        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
+        if (entity.getOriginalJumpMP() > 0) {
+            type = MovePath.MoveStepType.START_JUMP;
+        }
+
+        // Find the shortest path.
+        ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfAStar(center, type, game);
+        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition =
+                new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
+        shortestPathFinder.addStopCondition(timeoutCondition);
+        shortestPathFinder.run(pathToCenter.clone());
+
+        // Base return on if a path was found or not.
+        return shortestPathFinder.getComputedPath(center) != null;
     }
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {

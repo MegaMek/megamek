@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -355,7 +356,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", true);
 
         // If no file was selected, we're done.
         if (selectedFile == null) {
@@ -364,7 +365,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Load the changed settings into the existing map settings object.
         try {
-            mapSettings.load(new FileInputStream(selectedFile));
+            mapSettings.save(new FileOutputStream(selectedFile));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

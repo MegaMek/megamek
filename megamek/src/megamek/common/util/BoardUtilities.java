@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import megamek.common.Board;
 import megamek.common.Compute;
@@ -96,9 +98,7 @@ public class BoardUtilities {
     /**
      * Generates a Random Board
      *
-     * @param width The width of the generated Board.
-     * @param height The height of the gernerated Board.
-     * @param steps how often the iterative method should be repeated
+     * @param mapSettings The parameters for random board creation.
      */
     public static IBoard generateRandom(MapSettings mapSettings) {
         int elevationMap[][] = new int[mapSettings.getBoardWidth()][mapSettings
@@ -286,8 +286,7 @@ public class BoardUtilities {
 
         /* Add the craters */
         if (Compute.randomInt(100) < mapSettings.getProbCrater()) {
-            addCraters(result, mapSettings.getMinRadius(), mapSettings
-                    .getMaxRadius(),
+            addCraters(result, mapSettings.getMinRadius(), mapSettings.getMaxRadius(),
                     (int) (mapSettings.getMinCraters() * sizeScale),
                     (int) (mapSettings.getMaxCraters() * sizeScale));
         }
@@ -368,11 +367,14 @@ public class BoardUtilities {
     /**
      * Places randomly some connected Woods.
      *
-     * @param probHeavy The probability that a wood is a heavy wood (in %).
-     * @param maxWoods Maximum Number of Woods placed.
+     * @param board The board the terrain goes on.
+     * @param terrainType The type of terrain to place {@link Terrains}.
+     * @param probMore
+     * @param maxHexes Maximum number of hexes this terrain can cover.
+     * @param reverseHex
+     * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeSomeTerrain(IBoard board, int terrainType,
-            int probMore, int minHexes, int maxHexes,
+    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore, int minHexes, int maxHexes,
             HashMap<IHex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute
                 .randomInt(board.getHeight()));
@@ -480,35 +482,43 @@ public class BoardUtilities {
      */
     public static void addCraters(IBoard board, int minRadius, int maxRadius,
             int minCraters, int maxCraters) {
+
+        // Calculate number of craters to generate.
         int numberCraters = minCraters;
         if (maxCraters > minCraters) {
             numberCraters += Compute.randomInt(maxCraters - minCraters);
         }
-        for (int i = 0; i < numberCraters; i++) {
-            int width = board.getWidth();
-            int height = board.getHeight();
-            Point center = new Point(Compute.randomInt(width), Compute
-                    .randomInt(height));
 
-            int radius = Compute.randomInt(maxRadius - minRadius + 1)
-                    + minRadius;
-            int maxLevel = 3;
-            if (radius < 3) {
-                maxLevel = 1;
-            }
-            if ((radius >= 3) && (radius <= 8)) {
-                maxLevel = 2;
-            }
-            if (radius > 14) {
-                maxLevel = 4;
-            }
-            int maxHeight = Compute.randomInt(maxLevel) + 1;
+        // Stay within the board boundaries.
+        int width = board.getWidth();
+        int height = board.getHeight();
+
+        Map<Coords, Integer> usedHexes = new HashMap<>();
+
+        // Generate each crater.
+        for (int i = 0; i < numberCraters; i++) {
+
+            // Locate the center of the crater.
+            Point center = new Point(Compute.randomInt(width), Compute.randomInt(height));
+
+            // What is the diameter of this crater?
+            int radius = Compute.randomInt(maxRadius - minRadius) + minRadius;
+
+            // Terrestrial crater depth to radius ratio is typically 1:5 to 1:7.
+            // Hexes are 30m across and levels are 6m high.
+            // This ends up with rather deep craters (a 6-diameter crater can have a depth of 4-6).  For gamability
+            // and verisimilitude, we're making crater's more shallow than is typical (1:8 to 1:10 ratio).
+            int divisor = Compute.randomInt(2) + 8;
+            int radiusM = radius * 30;
+            int maxDepthM = Math.max(6, radiusM / divisor);
+            int maxDepth = maxDepthM / 6;
+
             /* generate CraterProfile */
-            int cratHeight[] = new int[radius];
+            int cratDepth[] = new int[radius];
             for (int x = 0; x < radius; x++) {
-                cratHeight[x] = craterProfile((double) x / (double) radius,
-                        maxHeight);
+                cratDepth[x] = craterProfile(x, radius, maxDepth);
             }
+
             /*
              * btw, I am interested if someone actually reads this comments, so
              * send me and email to f.stock@tu-bs.de, if you do ;-)
@@ -519,12 +529,48 @@ public class BoardUtilities {
                     int distance = (int) distance(center, new Point(w, h));
                     if (distance < radius) {
                         IHex field = board.getHex(w, h);
-                        field.setElevation(// field.getElevation() +
-                                cratHeight[distance]);
+                        int baseElevation;
+
+                        // If we've already placed a crater here, find it's original elevation.
+                        if (usedHexes.containsKey(field.getCoords())) {
+                            baseElevation = usedHexes.get(field.getCoords());
+                        } else {
+                            // If no crater has been placed here, add this hex's original elevation to our list.
+                            baseElevation = field.getElevation();
+                            usedHexes.put(field.getCoords(), baseElevation);
+                        }
+
+                        // Calculate the crater depth based on the original hex elevation.
+                        int newElevation = baseElevation + cratDepth[distance];
+
+                        // If the new elevation is deeper, use it, otherwise keep what we've already calculated.
+                        field.setElevation(Math.min(newElevation, field.getElevation()));
                     }
                 }
             }
         }
+    }
+
+    public static int craterProfile(int distanceFromCenter, int fullRadius, int maxDepth) {
+        double depth;
+
+        // If we're at the center, we should use the max depth.
+        if (distanceFromCenter == 0) {
+            return -maxDepth;
+        } else if (distanceFromCenter == fullRadius) { // The edge should have no depth.
+            return 0;
+        }
+
+        // The crater's floor should be a relatively shallow parabola.
+        double radiusPercent = (double) distanceFromCenter / fullRadius;
+        if (radiusPercent < 0.75) {
+            depth = 0.02 * Math.pow(distanceFromCenter, 2) - maxDepth;
+
+        } else { // The parabola should get steeper the closer to the crater wall you are.
+            depth = 0.04 * Math.pow(distanceFromCenter, 2) - maxDepth;
+        }
+
+        return (int) Math.round(depth);
     }
 
     /**
@@ -539,14 +585,14 @@ public class BoardUtilities {
      *         the results are between -0.5 and 1 (that means, if no scale is
      *         applied -1, 0 or 1).
      */
-    public static int craterProfile(double x, int scale) {
-        double result = 0;
-
-        result = (x < 0.75) ? ((Math.exp(x * 5.0 / 0.75 - 3) - 0.04979) * 1.5 / 7.33926) - 0.5
-                : ((Math.cos((x - 0.75) * 4.0) + 1.0) / 2.0);
-
-        return (int) (result * scale);
-    }
+//    public static int craterProfile(double x, int scale) {
+//        double result = 0;
+//
+//        result = (x < 0.75) ? ((Math.exp(x * 5.0 / 0.75 - 3) - 0.04979) * 1.5 / 7.33926) - 0.5
+//                : ((Math.cos((x - 0.75) * 4.0) + 1.0) / 2.0);
+//
+//        return (int) (result * scale);
+//    }
 
     /**
      * calculate the distance between two points
@@ -976,7 +1022,7 @@ public class BoardUtilities {
      * @param height The Height of the map.
      * @param range Max difference betweenn highest and lowest level.
      * @param invertProb Probability for the invertion of the map (0..100)
-     * @param invertNegate If 1, invert negative hexes, else do nothing
+     * @param invertNegative If 1, invert negative hexes, else do nothing
      * @param elevationMap here is the result stored
      */
     public static void generateElevation(int hilliness, int width, int height,

@@ -12226,6 +12226,7 @@ public class Server implements Runnable {
                 AttackHandler ah = w.fire(waa, game, this);
                 if (ah != null) {
                     ah.setStrafing(waa.isStrafing());
+                    ah.setStrafingFirstShot(waa.isStrafingFirstShot());
                     game.addAttack(ah);
                     // check for aero elevation loss
                     if ((ae instanceof Aero)

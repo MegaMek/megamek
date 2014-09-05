@@ -56,5 +56,16 @@ public interface AttackHandler {
     public boolean isStrafing();
     
     public void setStrafing(boolean isStrafing);
+    
+    /**
+     * Used to determine if this is the firt time a weapon is firing as part of
+     * a strafing run.  This is used for handling heat, to prevent shots after
+     * the first one from generating heat.
+     * 
+     * @return
+     */
+    public boolean isStrafingFirstShot();
+    
+    public void setStrafingFirstShot(boolean isFirstShotStrafing);
 
 }

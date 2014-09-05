@@ -114,6 +114,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
      * strafing run.
      */
     private boolean isStrafing = false;
+    
+    /**
+     * Boolean flag that determiens if this shot was the first one by a 
+     * particular weapon in a strafing run.  Used to ensure that heat is only
+     * added once.
+     */
+    protected boolean isStrafingFirstShot = false;
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -4203,4 +4210,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
+    
+    public boolean isStrafingFirstShot() {
+        return isStrafingFirstShot;
+    }
+    
+    public void setStrafingFirstShot(boolean isStrafingFirstShot) {
+        this.isStrafingFirstShot = isStrafingFirstShot;
+    }    
 }

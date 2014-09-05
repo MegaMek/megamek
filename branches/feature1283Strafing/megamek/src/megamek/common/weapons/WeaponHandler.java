@@ -99,6 +99,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * strafing run.
      */
     protected boolean isStrafing = false;
+    
+    /**
+     * Boolean flag that determiens if this shot was the first one by a 
+     * particular weapon in a strafing run.  Used to ensure that heat is only
+     * added once.
+     */
+    protected boolean isStrafingFirstShot = false;
 
 
     /**
@@ -1169,7 +1176,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     ae.setArcFired(loc, rearMount);
                 }
             } else {
-                ae.heatBuildup += (weapon.getCurrentHeat());
+                if (!isStrafing() || isStrafingFirstShot()) {
+                    ae.heatBuildup += (weapon.getCurrentHeat());
+                }
             }
         }
     }
@@ -1416,4 +1425,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
+    
+    public boolean isStrafingFirstShot() {
+        return isStrafingFirstShot;
+    }
+    
+    public void setStrafingFirstShot(boolean isStrafingFirstShot) {
+        this.isStrafingFirstShot = isStrafingFirstShot;
+    }
+    
 }

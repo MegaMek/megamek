@@ -994,6 +994,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
+                    waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     newAttacks.addElement(waa2);
                 }
             } else {
@@ -1022,6 +1023,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
+                    waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     newAttacks.addElement(waa2);
                 }
             }
@@ -1262,6 +1264,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             targets.add(target);
         }
         
+        boolean firstShot = true;
         for (Targetable t : targets) {
         
             WeaponAttackAction waa;
@@ -1311,6 +1314,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
             }
             waa.setStrafing(isStrafing);
+            waa.setStrafingFirstShot(firstShot);
+            firstShot = false;
 
             // add the attack to our temporary queue
             attacks.addElement(waa);

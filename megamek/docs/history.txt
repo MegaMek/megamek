@@ -13,6 +13,8 @@ v0.39.2-dev (SVN)
 + Added code to the bots' deployment logic so that they will now check for a valid path to the center of the board
     before deploying a unit.  This does make deployment take a little longer (depending on unit and how complicated the
     board is) but will reduce the incidences of the bot deploying in a dead-end location.
++ Modified the random crater generation routine as the existing routine was not honoring min/max crater radius and was
+    sometimes creating hills rather than craters.
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

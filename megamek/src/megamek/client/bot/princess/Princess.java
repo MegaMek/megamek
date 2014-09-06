@@ -17,15 +17,18 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -38,17 +41,20 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
+import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.AmmoWeapon;
 
 public class Princess extends BotClient {
 
@@ -273,10 +279,13 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-            Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
+            // get the first entity that can act this turn make sure weapons are loaded
+            Entity shooter = game.getFirstEntity(getMyTurn());
 
-            // entity that can act this turn make sure weapons are loaded
-            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
+            // Set up ammo conservation.
+            Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
+
+            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game, ammoConservation);
             if (plan != null) {
                 fireControl.loadAmmo(shooter, plan);
                 plan.sortPlan();
@@ -293,6 +302,57 @@ public class Princess extends BotClient {
             }
         } finally {
             methodEnd(getClass(), METHOD_NAME);
+        }
+    }
+
+    Map<Mounted, Double> calcAmmoConservation(Entity shooter) {
+        final String METHOD_NAME = "calcAmmoConservation(Entity)";
+        final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
+        StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ").append(shooter.getDisplayName());
+        msg.append("\nAggression Factor = ").append(aggroFactor);
+
+        try {
+            Map<AmmoType, Integer> ammoCounts = new HashMap<>();
+            msg.append("\nPooling Ammo:");
+            for (Mounted ammo : shooter.getAmmo()) {
+                AmmoType ammoType = (AmmoType) ammo.getType();
+                msg.append("\n\t").append(ammoType.toString());
+                if (ammoCounts.containsKey(ammoType)) {
+                    ammoCounts.put(ammoType, ammoCounts.get(ammoType) + ammo.getUsableShotsLeft());
+                    msg.append(" + ").append(ammo.getUsableShotsLeft()).append(" = ").append(ammoCounts.get(ammoType));
+                    continue;
+                }
+                ammoCounts.put(ammoType, ammo.getUsableShotsLeft());
+                msg.append(" + ").append(ammo.getUsableShotsLeft()).append(" = ").append(ammoCounts.get(ammoType));
+            }
+
+            Map<Mounted, Double> ammoConservation = new HashMap<>();
+            msg.append("\nCalculating conservation for each weapon");
+            for (Mounted weapon : shooter.getWeaponList()) {
+                WeaponType weaponType = (WeaponType) weapon.getType();
+                msg.append("\n\t").append(weaponType.toString());
+                if (!(weaponType instanceof AmmoWeapon)) {
+                    ammoConservation.put(weapon, 0.0);
+                    msg.append(" doesn't use ammo.");
+                    continue;
+                }
+
+                int ammoCount = 0;
+                for (AmmoType ammoType : ammoCounts.keySet()) {
+                    if (!AmmoType.isAmmoValid(ammoType, weaponType)) {
+                        continue;
+                    }
+                    ammoCount += ammoCounts.get(ammoType);
+                }
+                msg.append(" has ").append(ammoCount).append(" shots left");
+                double toHitThreshold = Math.max(0.0, 1 - (ammoCount / aggroFactor));
+                msg.append("; To Hit Threshold = ").append(new DecimalFormat("0.000").format(toHitThreshold));
+                ammoConservation.put(weapon, toHitThreshold);
+            }
+
+            return ammoConservation;
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
         }
     }
 

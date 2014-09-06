@@ -10,10 +10,10 @@ Factions=1stSomersetStrikers,BlackVision
 Location_1stSomersetStrikers=any
 Location_BlackVision=any
 # Strikers Lance: 
-Unit_1stSomersetStrikers_1=Awesome AWS-9MA-UK,Major Adam Steiner,1,1,N,17,08
+Unit_1stSomersetStrikers_1=Awesome AWS-9Ma,Major Adam Steiner,1,1,N,17,08
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,2,3,N,08,12
 Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,3,2,N,17,09
-Unit_1stSomersetStrikers_4=Infiltrator Mk. I Battle Armor "Waddle",Cadet Katiara Kylie,4,4,N,17,10
+Unit_1stSomersetStrikers_4=Infiltrator Mk. I Battle Armor 'Waddle',Cadet Katiara Kylie,4,4,N,17,10
 # Somerset Cadet Corps:
 Unit_1stSomersetStrikers_5=Axman AXM-2N,Commander Andrew Steiner,2,3,N,07,06
 Unit_1stSomersetStrikers_6=Foot Platoon (Laser),A1,4,4,N,07,12
@@ -26,7 +26,7 @@ Unit_1stSomersetStrikers_11=Foot Platoon (Laser),B3,4,4,N,09,13
 # Unit_1stSomersetStrikers_12=Banshee BSE-X2,Franklin Sakamoto,3,4
 # Black Vision, Redmond's Star: 
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2,S,08,01
-Unit_BlackVision_2=Hunchback IIC,Mechwarrior Pytor,2,2,S,09,01
+Unit_BlackVision_2=Hunchback IIC (Standard),Mechwarrior Pytor,2,2,S,09,01
 Unit_BlackVision_3=Mad Cat (Timber Wolf) Prime,Mechwarrior Jentry,3,4,S,10,01
 Unit_BlackVision_4=Mad Cat (Timber Wolf) Prime,Mechwarrior Elston,3,4,S,06,01
 Unit_BlackVision_5=Mad Cat (Timber Wolf) Prime,Mechwarrior Althea,3,4,S,07,01

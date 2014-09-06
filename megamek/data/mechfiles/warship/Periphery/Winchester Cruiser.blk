@@ -139,11 +139,11 @@ IS Level 3
 </engine_type>
 <motion_type>
 aerodyne
-</motion_type>
+</motion_type>
 <transporters>
 ASFBay:12:3
 SmallCraftBay:6:2
-CargoBay:155353:1
+CargoBay:154681:1
 </transporters>
 <docking_collar>
 3

@@ -12,7 +12,7 @@ Location_1stSomersetStrikers=any
 # Command Star:
 Unit_FalconsClaws_1=Thor (Summoner) M,Star Colonel Nicolai Malthus,1,2,N,08,33
 Unit_FalconsClaws_2=Mad Cat (Timber Wolf) Prime,Mechwarrior Ciro,4,5,N,07,34
-Unit_FalconsClaws_3=Hunchback IIC,Mechwarrior Ross,3,4,N,09,34
+Unit_FalconsClaws_3=Hunchback IIC (Standard),Mechwarrior Ross,3,4,N,09,34
 Unit_FalconsClaws_4=Vulture (Mad Dog) Prime,Mechwarrior Uri,3,4,N,06,34
 Unit_FalconsClaws_5=Vulture (Mad Dog) Prime,Mechwarrior Elaine,3,4,N,10,34
 # Elemental Star:
@@ -22,7 +22,7 @@ Unit_FalconsClaws_8=Elemental Battle Armor [Flamer],Point 3,4,4,N,07,33
 Unit_FalconsClaws_9=Elemental Battle Armor [MG],Point 4,4,4,N,09,33
 Unit_FalconsClaws_10=Elemental Battle Armor [MG],Point 5,4,4,N,10,33
 # Strikers Lance: 
-Unit_1stSomersetStrikers_1=Awesome AWS-9MA-UK,Major Adam Steiner,1,1,N,17,08
+Unit_1stSomersetStrikers_1=Awesome AWS-9Ma,Major Adam Steiner,1,1,N,17,08
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4,N,08,12
 Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,4,3,N,17,09
 Unit_1stSomersetStrikers_4=Sloth Battle Armor, Franklin Sakamoto,5,5,N,17,10

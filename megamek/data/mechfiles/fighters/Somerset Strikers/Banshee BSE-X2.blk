@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Banshee
+</Name>
+
+<Model>
+BSE-X2
+</Model>
+
+<year>
+3050
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+None
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+16
+12
+12
+10
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+Somerset Stikers
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<history>
+This unit is a complete Hack and only barely represents the actual unit. Which is a crazy hybrid Fighter/Conv. Fighter.  This is built as ASF and kinda matches the original.
+<\history>
+

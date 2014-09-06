@@ -18,6 +18,9 @@ v0.39.2-dev (SVN)
 + Princess will now be pickier about firing ammo-using weapons has their bins run dry.  The less ammo she has, the
     better she'll want her to-hit odds to be before firing.  Ammo conservation depends on a combination of total
     shots remaining and aggressiveness (higher aggression means less conservation).
++ Data: Unit Fixes and New Images.
++ Data: Fixed Scenario files to be inline with new naming system.
+    
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

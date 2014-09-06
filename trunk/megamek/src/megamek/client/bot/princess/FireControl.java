@@ -14,9 +14,11 @@
 package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -1418,8 +1420,9 @@ public class FireControl {
      * @param game    The game being played.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
-    FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game, Map<Mounted, Double> ammoConservation) {
         final String METHOD_NAME = "getFullFiringPlan(Entity, Targetable, IGame)";
+        final NumberFormat DECF = new DecimalFormat("0.000");
 
         FiringPlan myPlan = new FiringPlan(target);
 
@@ -1436,10 +1439,15 @@ public class FireControl {
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
+            double toHitThreshold = ammoConservation.get(weapon);
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
-            if ((shoot.getProbabilityToHit() > 0)) {
+            if ((shoot.getProbabilityToHit() > toHitThreshold)) {
                 myPlan.add(shoot);
+                continue;
             }
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG,
+                      "\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) + ") for " + weapon.getName() +
+                      " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
 
         // Rank how useful this plan is.
@@ -1543,10 +1551,10 @@ public class FireControl {
      * @param game The game currently being played.
      * @return the 'best' firing plan, using heat as a disutility.
      */
-    FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game, Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
-        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, game);
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, game, ammoConservation);
         if (shooter.getHeatCapacity() == 999) {
             return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
@@ -1638,13 +1646,14 @@ public class FireControl {
      * @param game    The game currently being played.
      * @return the 'best' firing plan using heat as disutiltiy includes the option of twisting
      */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game,
+                                           Map<Mounted, Double> ammoConservation) {
 
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1653,12 +1662,12 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
         shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
         leftTwistPlan.setTwist(-1);
 
         // todo extended torso twist.
@@ -1817,7 +1826,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return
      */
-    FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
+    FiringPlan getBestFiringPlan(Entity shooter, IGame game, Map<Mounted, Double> ammoConservation) {
         final String METHOD_NAME = "getBestFiringPlan(Entity, IGame)";
 
         FiringPlan bestPlan = null;
@@ -1827,7 +1836,7 @@ public class FireControl {
 
         // Loop through each enemy and find the best plan for attacking them.
         for (Targetable enemy : enemies) {
-            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy, game);
+            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy, game, ammoConservation);
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {

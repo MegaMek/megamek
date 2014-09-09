@@ -1451,7 +1451,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         Mounted weapon = ce().getEquipment(weaponId); 
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
-            Coords c = ce().getPosition().translated(weapon.getFacing());
+            int facing;
+            if (ce().isSecondaryArcWeapon(weaponId)) {
+                facing = ce().getSecondaryFacing();
+            } else {
+                facing = ce().getFacing();
+            }
+            facing = (facing + weapon.getFacing()) % 6;
+            Coords c = ce().getPosition().translated(facing);
             IBoard board = clientgui.getClient().getGame().getBoard();
             Targetable hexTarget = 
                     new HexTarget(c, board, Targetable.TYPE_HEX_CLEAR);

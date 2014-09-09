@@ -3291,8 +3291,7 @@ public class Compute {
             facing = ae.getSecondaryFacing()
                      + (ae.getEquipment(weaponId).getFacing() % 6);
         }
-        if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_VGL)
-            && (ae instanceof Mech)) {
+        if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_VGL)) {
             facing = ae.getSecondaryFacing()
                      + (ae.getEquipment(weaponId).getFacing() % 6);
         }

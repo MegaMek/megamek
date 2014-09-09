@@ -13,6 +13,19 @@ v0.39.2-dev (SVN)
 + Added code to the bots' deployment logic so that they will now check for a valid path to the center of the board
     before deploying a unit.  This does make deployment take a little longer (depending on unit and how complicated the
     board is) but will reduce the incidences of the bot deploying in a dead-end location.
++ Modified the random crater generation routine as the existing routine was not honoring min/max crater radius and was
+    sometimes creating hills rather than craters.
++ Princess will now be pickier about firing ammo-using weapons has their bins run dry.  The less ammo she has, the
+    better she'll want her to-hit odds to be before firing.  Ammo conservation depends on a combination of total
+    shots remaining and aggressiveness (higher aggression means less conservation).
++ Data: Unit Fixes and New Images.
++ Data: Fixed Scenario files to be inline with new naming system.
++ Bug: VGLs mounted in the front right and front left on vehicles would receive
+    a 'not in arc' message without TO vehicle arc rules on
++ Bug: Show Game Options menu item would display dialog twice in firing and
+    targeting phases
++ Bug: Unit facing not considered when selecting target for VGLs
+    
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

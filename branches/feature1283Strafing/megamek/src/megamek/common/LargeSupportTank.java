@@ -275,6 +275,10 @@ public class LargeSupportTank extends SupportTank {
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
+        // VGLs always be considered forward, since arc is set by VGL facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.ARC_FORWARD;
+        }
         switch (mounted.getLocation()) {
             case LOC_BODY:
                 // Body mounted C3Ms fire into the front arc,

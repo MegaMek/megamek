@@ -222,7 +222,7 @@ public class MechView {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
-                if (cpSlot.isArmored()){
+                if ((cpSlot != null) && cpSlot.isArmored()){
                     sBasic.append(" (armored)");
                 }
             }

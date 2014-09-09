@@ -22,11 +22,10 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 
-public class BALBXHandler extends WeaponHandler implements AttackHandler {
+public class BALBXHandler extends WeaponHandler {
 
     /**
      *

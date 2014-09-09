@@ -1144,7 +1144,7 @@ public class TestBot extends BotClient {
         for (Entity e : ents) {
             CEntity enemy = centities.get(e);
             // long entry = System.currentTimeMillis();
-            ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID);
+            ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID, false);
             // long exit = System.currentTimeMillis();
             // if (exit != entry)
             // System.out.println("Weapon attack toHit took "+(exit-entry));

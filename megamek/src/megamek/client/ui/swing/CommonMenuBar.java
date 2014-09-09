@@ -167,6 +167,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fireSearchlight;
     private JMenuItem fireClearTurret;
     private JMenuItem fireClearWeaponJam;
+    private JMenuItem fireStrafe;
     private JMenuItem fireCancel;
     private JMenuItem physicalNext;
     private JMenuItem physicalPunch;
@@ -652,6 +653,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fireClearWeaponJam = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.fireClearWeaponJam"), FiringDisplay.FiringCommand.FIRE_CLEAR_WEAPON.getCmd()); //$NON-NLS-1$
+        menu.addSeparator();
+        fireStrafe = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.fireStrafe"), FiringDisplay.FiringCommand.FIRE_CLEAR_WEAPON.getCmd()); //$NON-NLS-1$
         menu.addSeparator();
         fireCancel = createMenuItem(
                 menu,
@@ -1332,4 +1337,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setFireClearWeaponJamEnabled(boolean enabled) {
         fireClearWeaponJam.setEnabled(enabled);
     }
+    
+    public synchronized void setStrafeEnabled(boolean enabled) {
+        fireStrafe.setEnabled(enabled);
+    }    
 }

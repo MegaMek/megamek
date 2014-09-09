@@ -236,6 +236,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // sprite for current movement
     ArrayList<StepSprite> pathSprites = new ArrayList<StepSprite>();
 
+    private ArrayList<Coords> strafingCoords = new ArrayList<Coords>(5);
+    
     private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<FiringSolutionSprite>();
 
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
@@ -987,6 +989,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if ((game.getPhase() == Phase.PHASE_FIRING) ||
                 (game.getPhase() == Phase.PHASE_OFFBOARD)) {
             drawSprites(g, firingSprites);
+        }
+        
+        if (game.getPhase() == Phase.PHASE_FIRING) {
+            for (Coords c : strafingCoords) {
+                drawHexBorder(getHexLocation(c), g, Color.yellow, 0, 3);
+            }
         }
 
         // draw the ruler line
@@ -2694,6 +2702,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firingSprites.clear();
         repaint();
     }
+    
+    public void addStrafingCoords(Coords c) {
+        strafingCoords.add(c);
+    }
+    
+    public void clearStrafingCoords() {
+        strafingCoords.clear();
+    }
 
     public void setMovementEnvelope(Hashtable<Coords, Integer> mvEnvData,
             int walk, int run, int jump, int gear) {
@@ -3731,7 +3747,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         c3Sprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
-
     }
 
     public synchronized void updateBoard() {

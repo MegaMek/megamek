@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -33,6 +34,7 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
@@ -106,6 +108,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
     private transient ArrayList<Mounted> vCounterEquipment;
+    
+    /**
+     * Boolean flag that determines whether or not this attack is part of a
+     * strafing run.
+     */
+    private boolean isStrafing = false;
+    
+    /**
+     * Boolean flag that determiens if this shot was the first one by a 
+     * particular weapon in a strafing run.  Used to ensure that heat is only
+     * added once.
+     */
+    protected boolean isStrafingFirstShot = false;
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -184,52 +199,58 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     public boolean isDiveBomb(IGame game) {
         return ((WeaponType) getEntity(game).getEquipment(getWeaponId())
-                                            .getType()).hasFlag(WeaponType.F_DIVE_BOMB);
+                .getType()).hasFlag(WeaponType.F_DIVE_BOMB);
     }
 
     public int getAltitudeLoss(IGame game) {
         if (isAirToGround(game)) {
             if (((WeaponType) getEntity(game).getEquipment(getWeaponId())
-                                             .getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
+                    .getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
                 return 2;
             }
             if (((WeaponType) getEntity(game).getEquipment(getWeaponId())
-                                             .getType()).hasFlag(WeaponType.F_ALT_BOMB)) {
+                    .getType()).hasFlag(WeaponType.F_ALT_BOMB)) {
                 return 0;
             }
-            return 1;
+            if (isStrafing) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
         return 0;
     }
 
     public ToHitData toHit(IGame game) {
         return WeaponAttackAction.toHit(game, getEntityId(),
-                                        game.getTarget(getTargetType(), getTargetId()), getWeaponId(),
-                                        getAimedLocation(), getAimingMode(), nemesisConfused,
-                                        swarmingMissiles,
-                                        game.getTarget(getOldTargetType(), getOldTargetId()));
+                game.getTarget(getTargetType(), getTargetId()), getWeaponId(),
+                getAimedLocation(), getAimingMode(), nemesisConfused,
+                swarmingMissiles,
+                game.getTarget(getOldTargetType(), getOldTargetId()),
+                isStrafing());
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
-                                  Targetable target, int weaponId) {
-        return WeaponAttackAction
-                .toHit(game, attackerId, target, weaponId, Entity.LOC_NONE,
-                       IAimingModes.AIM_MODE_NONE, false, false, null);
-    }
-
-    public static ToHitData toHit(IGame game, int attackerId,
-                                  Targetable target, int weaponId, int aimingAt, int aimingMode) {
+            Targetable target, int weaponId, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
-                                        aimingAt, aimingMode, false, false, null);
+                Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false,
+                null, isStrafing);
+    }
+
+    public static ToHitData toHit(IGame game, int attackerId,
+            Targetable target, int weaponId, int aimingAt, int aimingMode,
+            boolean isStrafing) {
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
+                aimingAt, aimingMode, false, false, null, isStrafing);
     }
 
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
     private static ToHitData toHit(IGame game, int attackerId,
-                                   Targetable target, int weaponId, int aimingAt, int aimingMode,
-                                   boolean isNemesisConfused, boolean exchangeSwarmTarget,
-                                   Targetable oldTarget) {
+            Targetable target, int weaponId, int aimingAt, int aimingMode,
+            boolean isNemesisConfused, boolean exchangeSwarmTarget,
+            Targetable oldTarget, boolean isStrafing) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
         
@@ -359,12 +380,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         ToHitData toHit;
         String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target,
-                                                             weapon, atype, wtype, ttype, exchangeSwarmTarget,
-                                                             usesAmmo, te,
-                                                             isTAG, isInferno, isAttackerInfantry, isIndirect,
-                                                             attackerId,
-                                                             weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK,
-                                                             targetInBuilding, isArtilleryDirect, isTargetECMAffected);
+                weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te,
+                isTAG, isInferno, isAttackerInfantry, isIndirect, attackerId,
+                weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK,
+                targetInBuilding, isArtilleryDirect, isTargetECMAffected,
+                isStrafing);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
@@ -1415,6 +1435,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToGround(ae, target)) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
+            } else if (isStrafing) {
+                toHit.addModifier(+4, "strafing");
+                if (ae.getAltitude() == 1) {
+                    toHit.addModifier(+2, "strafing at NOE");
+                }
+                // Additional Nape-of-Earth restrictions for strafing
+                if (ae.getAltitude() == 1) {
+                    Coords prevCoords = ae.passedThroughPrevious(target
+                            .getPosition());
+                    IHex prevHex = game.getBoard().getHex(prevCoords);
+                    toHit.append(Compute.getStrafingTerrainModifier(game,
+                            eistatus, prevHex));
+                }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
             }
@@ -1623,7 +1656,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
-        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB) 
+                && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target,
                                                        exchangeSwarmTarget));
         }
@@ -2724,7 +2758,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                                             boolean isAttackerInfantry, boolean isIndirect, int attackerId,
                                             int weaponId, boolean isArtilleryIndirect, Mounted ammo,
                                             boolean isArtilleryFLAK, boolean targetInBuilding,
-                                            boolean isArtilleryDirect, boolean isTargetECMAffected) {
+                                            boolean isArtilleryDirect, boolean isTargetECMAffected, boolean isStrafing) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -3002,7 +3036,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Attacker sensors destroyed.";
             }
             // weapon operational?
-            if (!weapon.canFire()) {
+            if (!weapon.canFire(isStrafing)) {
                 return "Weapon is not in a state where it can be fired";
             }
 
@@ -3687,8 +3721,56 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if ((ae.getAltitude() > 5) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 return "attacker is too high";
             }
+            if ((ae.getAltitude() > 3) && isStrafing) {
+                return "attacker is too high";
+            }
+            // Additional Nape-of-Earth restrictions for strafing
+            if (ae.getAltitude() == 1 && isStrafing) {
+                Vector<Coords> passedThrough = ae.getPassedThrough();
+                if ((passedThrough.size() == 0) 
+                        || passedThrough.get(0).equals(target.getPosition())) {
+                    // TW pg 243 says units flying at NOE have a harder time 
+                    // establishing LoS while strafing and hence have to
+                    // consider the adjacent hex along the flight place in the
+                    // direction of the attack.  What if there is no adjacent
+                    // hex?  The rules don't address this.  We could 
+                    // theoretically consider last turns movement, but that's
+                    // cumbersome, so we'll just assume it's impossible - Arlith
+                    return "target is too close to strafe";
+                }
+                // Otherwise, check for a dead-zone, TW pg 243
+                Coords prevCoords = ae.passedThroughPrevious(target
+                        .getPosition());
+                IHex prevHex = game.getBoard().getHex(prevCoords);
+                IHex currHex = game.getBoard().getHex(target.getPosition());
+                int prevElev = prevHex.getElevation();
+                int currElev = currHex.getElevation();
+                if ((prevElev - currElev - target.absHeight()) > 2) {
+                    return "target is in dead-zone";
+                }
+            }
+            
+            // Only direct-fire energy weapons can strafe
+            EquipmentType wt = weapon.getType();
+            boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE) 
+                    && (wt.hasFlag(WeaponType.F_LASER)
+                            || wt.hasFlag(WeaponType.F_PPC)
+                            || wt.hasFlag(WeaponType.F_PLASMA)
+                            || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                            || wt.hasFlag(WeaponType.F_FLAMER));
+            boolean isEnergyBay = (wt instanceof LaserBayWeapon)
+                    || (wt instanceof PPCBayWeapon)
+                    || (wt instanceof PulseLaserBayWeapon); 
+            if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
+                return "only direct-fire energy weapons can strafe!";
+            }
+            
             // only certain weapons can be used for air to ground attacks
             if (ae instanceof Aero) {
+                // Spheroids can't strafe
+                if (isStrafing && ((Aero) ae).isSpheroid()) {
+                    return "spheroid craft are not allowed to strafe!";
+                }
                 if (((Aero) ae).isSpheroid()) {
                     if ((weapon.getLocation() != Aero.LOC_AFT)
                         && !weapon.isRearMounted()) {
@@ -3717,7 +3799,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
                 altitudeLoss = 2;
             }
-            if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+            if (wtype.hasFlag(WeaponType.F_ALT_BOMB) || isStrafing) {
                 altitudeLoss = 0;
             }
             //you cant make attacks that would lower you to zero altitude
@@ -3726,16 +3808,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             // can only make a strike attack against a single target
-            for (Enumeration<EntityAction> i = game.getActions(); i
-                    .hasMoreElements(); ) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if ((prevAttack.getEntityId() == ae.getId()) && (null != te)
-                    && (prevAttack.getTargetId() != te.getId())) {
-                    return "attack already declared against another target";
+            if (!isStrafing) {
+                for (Enumeration<EntityAction> i = game.getActions(); i
+                        .hasMoreElements(); ) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if ((prevAttack.getEntityId() == ae.getId()) && (null != te)
+                        && (prevAttack.getTargetId() != te.getId())) {
+                        return "attack already declared against another target";
+                    }
                 }
             }
         }
@@ -4118,4 +4202,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public void setBombPayload(int[] load) {
         bombPayload = load;
     }
+
+    public boolean isStrafing() {
+        return isStrafing;
+    }
+
+    public void setStrafing(boolean isStrafing) {
+        this.isStrafing = isStrafing;
+    }
+    
+    public boolean isStrafingFirstShot() {
+        return isStrafingFirstShot;
+    }
+    
+    public void setStrafingFirstShot(boolean isStrafingFirstShot) {
+        this.isStrafingFirstShot = isStrafingFirstShot;
+    }    
 }

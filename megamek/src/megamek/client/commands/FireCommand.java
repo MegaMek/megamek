@@ -280,7 +280,7 @@ public class FireCommand extends ClientCommand {
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target,
-                                             weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                                             weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
             // str += "Target: " + target.toString();
 
             str += " Range: "

@@ -24,6 +24,7 @@ v0.39.2-dev (SVN)
     a 'not in arc' message without TO vehicle arc rules on
 + Bug: Show Game Options menu item would display dialog twice in firing and
     targeting phases
++ Bug: Unit facing not considered when selecting target for VGLs
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

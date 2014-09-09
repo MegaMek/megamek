@@ -1752,16 +1752,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if ("viewGameOptions".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
-            // Make sure the game options dialog is not editable.
-            if (clientgui.getGameOptionsDialog().isEditable()) {
-                clientgui.getGameOptionsDialog().setEditable(false);
-            }
-            // Display the game options dialog.
-            clientgui.getGameOptionsDialog().update(
-                    clientgui.getClient().getGame().getOptions());
-            clientgui.getGameOptionsDialog().setVisible(true);
-        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FIRE.getCmd())) {
+        if (ev.getActionCommand().equals(FiringCommand.FIRE_FIRE.getCmd())) {
             fire();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();

@@ -20,6 +20,8 @@ v0.39.2-dev (SVN)
     shots remaining and aggressiveness (higher aggression means less conservation).
 + Data: Unit Fixes and New Images.
 + Data: Fixed Scenario files to be inline with new naming system.
++ Bug: VGLs mounted in the front right and front left on vehicles would receive
+    a 'not in arc' message without TO vehicle arc rules on
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

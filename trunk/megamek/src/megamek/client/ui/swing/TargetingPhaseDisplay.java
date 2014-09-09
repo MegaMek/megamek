@@ -690,7 +690,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             ToHitData toHit;
 
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(), cen, target,
-                                             weaponId, Entity.LOC_NONE, 0);
+                                             weaponId, Entity.LOC_NONE, 0, false);
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR

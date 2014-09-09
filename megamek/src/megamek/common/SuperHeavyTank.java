@@ -358,8 +358,13 @@ public class SuperHeavyTank extends Tank {
         final Mounted mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if ((mounted.getType() instanceof WeaponType) && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+        if ((mounted.getType() instanceof WeaponType) 
+                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
+        }
+        // VGLs always be considered forward, since arc is set by VGL facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.ARC_FORWARD;
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:

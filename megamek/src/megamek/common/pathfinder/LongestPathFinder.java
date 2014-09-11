@@ -134,41 +134,48 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         }
                     }
                 }
+                /*
+                 * We require that the priority queue v of MovePath is sorted
+                 * lexicographically using product MPUsed x (-HexesMoved).
+                 */
+                int topMpUsed = topMP.getMpUsed(), mpCMpUsed = mpCandidate.getMpUsed();
 
-                if (topMP.getMpUsed() > mpCandidate.getMpUsed()) {
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses more MPs than Move Path Candidate."));
-                    return null;
+                if (topMpUsed > mpCMpUsed) {
                     /*
                      * topMP should have less or equal 'movement points used'
                      * since it was taken from candidates priority queue earlier
-                     *
-                     * If this assertion stops being true then body of this
-                     * method should be modified
+                     * 
+                     * Current implementation of doRelax() assumes that v is
+                     * sorted in such way that this situation is impossible.
                      */
-                }
-                if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
-                    return null; //topMP path is longer and uses less mp.
-                }
-                if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                    MoveStep topStep = topMP.getLastStep();
-                    boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
-                    MoveStep mpCandStep = mpCandidate.getLastStep();
-                    boolean mpCandBackwars = mpCandStep != null && mpCandStep.isThisStepBackwards();
-                    if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars) {
+                    System.err.println(new IllegalStateException(
+                            "Top Move Path uses more MPs than Move Path Candidate."));
+                    return null;
+                } else {
+                    if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
+                        return null; //topMP path is longer and uses less or same mp.
+                    }
+                    if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
+                        //we want to preserve both forward and backward movements 
+                        //that end in the same spot with the same cost.
+                        MoveStep topStep = topMP.getLastStep();
+                        boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
+                        MoveStep mpCandStep = mpCandidate.getLastStep();
+                        boolean mpCandBackwars = mpCandStep != null && mpCandStep.isThisStepBackwards();
+                        if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars) {
+                            break;
+                        }
+                        return null;
+                    }
+
+                    if (topMpUsed == mpCMpUsed) {
+                        //mpCandidate is not strictly better than topMp so we won't use it.
+                        return null;
+                    } else if (topMpUsed < mpCMpUsed) {
+                        //topMP travels less but also uses less movement points so we should keep it
+                        //and add mpCandidate to the list of optimal longest paths.
                         break;
                     }
-                    return null; //topMP path is longer and uses less mp.
-                }
-
-                if (topMP.getMpUsed() < mpCandidate.getMpUsed()) {
-                    //topMP travels less but also uses less movement points so we should keep it.
-                    break;
-                } else {
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses as many or more MPs than Move Path Candidate."));
-                    return null;
-                    //v.removeLast(); //remove topMp -it is shorter and uses the same amount of mp
                 }
             }
             v.addLast(mpCandidate);
@@ -247,7 +254,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
              */
             int dHT = topMP.getHexesMoved() - mpCandidate.getHexesMoved();
             if (dHT > 0) {
-                System.err.println(new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate."));
+                /*
+                 * Current implementation of doRelax() assumes that v is sorted
+                 * in such way that this situation is impossible.
+                 */
+                System.err.println(new IllegalStateException("Top Move Path moved more than Move Path Candidate."));
             }
             if (dHT < 0) {
                 v.addLast(mpCandidate);
@@ -257,14 +268,21 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             // assert( topMP.getHexesMoved() == mpCandidate.getHexesMoved() );
             int dMP = topMP.getMpUsed() - mpCandidate.getMpUsed();
             if (dMP > 0) {
-                System.err.println(new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate."));
+                /*
+                 * Current implementation of doRelax() assumes that v is sorted
+                 * in such way that this situation is impossible.
+                 */
+                System.err.println(new IllegalStateException(
+                        "Top Move Path uses more MPs than Move Path Candidate."
+                        + "while traveling the same distance"));
             }
 
-            //assert( topMP thrust used is less or equal than candidates)
+            //assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
             if (!inAthmosphere) {
                 return null; //there is no point considering hexes flown straight if we are not in athmo
             }
 
+            //while in athmosphere we should consider paths that have higher thrust used but flew more hexes straight
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
             int hs1 = topLastStep == null ? 0 : topLastStep.getNStraight();

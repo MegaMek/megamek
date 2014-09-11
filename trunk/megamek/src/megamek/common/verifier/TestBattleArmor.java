@@ -613,6 +613,7 @@ public class TestBattleArmor extends TestEntity {
         int numAMWeapons[][] = new int[ba.getTroopers() + 1]
                 [BattleArmor.MOUNT_NUM_LOCS];
         int numSSWMs = 0;
+        int numGloveMountedAPWeapons = 0;
         Mounted squadSupportWeapon = null;
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted m : ba.getEquipment()) {
@@ -671,12 +672,49 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
 
-            // Check for BA Use of Support Weapons
-            if ((m.getType() instanceof WeaponType)
-                    && m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
-                buff.append(m.getName() + " is a support weapon and " +
-                		"BattleArmor cannot mount support weapons!\n");
-                correct = false;
+            // Special considerations for AP weapons
+            if ((m.getType() instanceof WeaponType) 
+                    && m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                Mounted link = m.getLinkedBy();
+                if (link == null) {
+                    correct = false;
+                    buff.append(m.getName() + " is an infantry weapon but " +
+                    		"has no mount point!\n");
+                    continue;
+                }
+                // No AP melee weapons
+                if (m.getType().hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+                    buff.append(m.getName() + " is a melee AP weapon and " +
+                            "BattleArmor cannot mount melee AP weapons!\n");
+                    correct = false;   
+                }
+                // Special considerations for AP mounts
+                if (link.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
+                        buff.append(m.getName() + " is a support weapon and " +
+                            "BattleArmor AP mounts cannot mount " +
+                            "support weapons!\n");
+                        correct = false; 
+                    }
+                // Special considerations for armored gloves
+                } else if (link.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)){
+                        if ((m.getType() instanceof InfantryWeapon)) {
+                            int crew = ((InfantryWeapon)m.getType()).getCrew();
+                            if (crew > 1) {
+                                buff.append(m.getName()
+                                        + " has a crew size of " + crew
+                                        + " but size can be no greater "
+                                        + "than 1E!\n");
+                                correct = false;
+                            }
+                        } else if (!(m.getType() instanceof InfantryWeapon)) {
+                            buff.append(m.getName() + " has the INF_SUPPORT " +
+                            		"flag but is not an InfantryWeapon!\n");
+                            correct = false;   
+                        }
+                    }
+                }
             }
 
             // Check for valid BA equipment
@@ -690,20 +728,20 @@ public class TestBattleArmor extends TestEntity {
                     && (m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT)) {
                 buff.append(m.getName() + "has " + m.getBaseShotsLeft()
                         + " shots, but BattleArmor may only have at most "
-                        + NUM_SHOTS_PER_CRIT + " shots per slot.");
+                        + NUM_SHOTS_PER_CRIT + " shots per slot.\n");
                 correct = false;
             }
 
             // Ensure that jump boosters are mounted in the body
             if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
-                buff.append("Jump Boosters must be mounted in the body!");
+                buff.append("Jump Boosters must be mounted in the body!\n");
             }
 
             // Ensure partial wing are mounted in the body
             if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
-                buff.append("Partial wing must be mounted in the body!");
+                buff.append("Partial wing must be mounted in the body!\n");
             }
 
             if (m.getLocation() != BattleArmor.LOC_SQUAD) {
@@ -726,18 +764,32 @@ public class TestBattleArmor extends TestEntity {
                     }
                 }
             }
+            
+            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+                if ((m.getLinked() != null) 
+                        && (m.getLinked().getType() instanceof InfantryWeapon)) {
+                    numGloveMountedAPWeapons++;
+                }
+            }
         }
         
         if (numSSWMs > 1){
             buff.append("Squad has " + numSSWMs + " squad support " +
-            		"weapon mounts, but only 1 is allowed!");
+            		"weapon mounts, but only 1 is allowed!\n");
             correct = false;
         }
         
         if (numSSWMs > 0 
                 && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
             buff.append("Quad BattleArmor cannot use squad support " +
-            		"weapon mounts!");
+            		"weapon mounts!\n");
+            correct = false;
+        }
+        
+        if (numGloveMountedAPWeapons > 1) {
+            buff.append("Batle Armor with armored gloves may only mount 1 " +
+            		"additional AP weapon, but " + numGloveMountedAPWeapons 
+            		+ " are mounted!\n");
             correct = false;
         }
         
@@ -748,7 +800,7 @@ public class TestBattleArmor extends TestEntity {
                         !AmmoType.isAmmoValid(ammo, sswType)){
                     buff.append(ammo.getName() + " is squad support weapon " +
                     		"mounted, but it is not a legal ammo type for " +
-                    		"the squad support weapon!");
+                    		"the squad support weapon!\n");
                     correct = false;
                 }
             }

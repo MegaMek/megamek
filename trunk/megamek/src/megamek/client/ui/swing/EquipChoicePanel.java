@@ -524,7 +524,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         GridBagLayout gbl = new GridBagLayout();
         panAPMounts.setLayout(gbl);
         
+        // Weapons that can be used in an AP Mount
         ArrayList<WeaponType> apWeapTypes = new ArrayList<WeaponType>(100);
+        // Weapons that can be used in an Armored Glove
+        ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
         while (allTypes.hasMoreElements()){
             EquipmentType eq = allTypes.nextElement();
@@ -546,19 +549,51 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if (infWeap.hasFlag(WeaponType.F_INFANTRY)
                     && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
                     && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
-                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)
-                    && (infWeap.getCrew() < 2)){
+                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)){
                 apWeapTypes.add(infWeap);
             }
+            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
+                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
+                    && (infWeap.getCrew() < 2)){
+                agWeapTypes.add(infWeap);
+            }
         }
-        
+
+        ArrayList<Mounted> armoredGloves = new ArrayList<Mounted>(2);
         for (Mounted m : entity.getMisc()){
             if (!m.getType().hasFlag(MiscType.F_AP_MOUNT)){
                 continue;
             }
-            APWeaponChoicePanel apcp;
-            apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
-            
+            APWeaponChoicePanel apcp = null;
+            // Armored gloves need to be treated slightly differently, since
+            // 1 or 2 armored gloves allow 1 additional AP weapon
+            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+                armoredGloves.add(m);                
+            } else{
+                apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
+            }
+            if (apcp != null) {
+                panAPMounts.add(apcp, GBC.eol());
+                m_vAPMounts.add(apcp);
+            }
+        }
+        
+        // If there is an armored glove with a weapon already mounted, we need
+        //  to ensure that that glove is displayed, and not the empty glove
+        Mounted aGlove = null;
+        for (Mounted ag : armoredGloves) {
+            if (aGlove == null) {
+                aGlove = ag;
+            } else if ((aGlove.getLinked() == null) 
+                    && (ag.getLinked() != null)) {
+                aGlove = ag;
+            } 
+            // If both are linked, TestBattleArmor will mark unit as invalid
+        }
+        if (aGlove != null) {
+            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove,
+                    agWeapTypes);
             panAPMounts.add(apcp, GBC.eol());
             m_vAPMounts.add(apcp);
         }

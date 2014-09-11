@@ -32,6 +32,7 @@ v0.39.2-dev (SVN)
     gloves can carry infantry support weapons with crew < 2
 + Bug [#4249]: 1 or 2 armored gloves only allow carrying 1 additional AP weapon
 + Bug: EquipmentChoiceDialog allowed selecting # of shots for One-Shot weapons
++ Bug [#4101]: BA able to make Multi AP weapon attacks when they shouldn't
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

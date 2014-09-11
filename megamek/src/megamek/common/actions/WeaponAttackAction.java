@@ -2799,6 +2799,30 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        
+        // BA can only make one AP attack
+        if ((ae instanceof BattleArmor)
+                && weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                // See if this unit has made a previous AP attack
+                for (Enumeration<EntityAction> i = game.getActions(); i
+                        .hasMoreElements(); ) {
+                    Object o = i.nextElement();
+                    if (!(o instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                    // Is this an attack from this entity
+                    if (prevAttack.getEntityId() == ae.getId()) {
+                        Mounted prevWeapon =
+                                ae.getEquipment(prevAttack.getWeaponId());
+                        WeaponType prevWtype = (WeaponType) prevWeapon.getType();
+                        if (prevWtype.hasFlag(WeaponType.F_INFANTRY)) {
+                            return "BA can only make one " +
+                            		"anti-personnel attack!";
+                        }
+                    }
+                }
+            }
 
         if (game.getOptions().booleanOption("tacops_tank_crews")
             && (ae instanceof Tank) && ae.isUnjammingRAC()

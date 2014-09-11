@@ -28,6 +28,9 @@ v0.39.2-dev (SVN)
 + Feature [#1283]: Add Strafing, per TW rules
 + Bug [#4246]: Units with torso-mounted cockpit not showing details properly
 + Data: New Images
++ Bug [#4249]: AP mounts cannot carry infantry support weapons, but armored 
+    gloves can carry infantry support weapons with crew < 2
++ Bug [#4249]: 1 or 2 armored gloves only allow carrying 1 additional AP weapon
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

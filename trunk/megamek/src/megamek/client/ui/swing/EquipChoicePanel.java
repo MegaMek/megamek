@@ -1069,7 +1069,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
 
             JCheckBox chHotLoad = new JCheckBox();
-
+            
             @SuppressWarnings("unchecked")
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 m_vTypes = vTypes;
@@ -1120,13 +1120,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
 
                 int loc;
+                boolean isOneShot = false;
                 if (m.getLocation() == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
                     Mounted linkedBy = m.getLinkedBy();
                     loc = linkedBy.getLocation();
+                    isOneShot = linkedBy.isOneShot();
                 } else {
                     loc = m.getLocation();
                 }
+                m_num_shots.setVisible(!isOneShot);
                 String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
                 JLabel lLoc = new JLabel(sDesc);
                 GridBagLayout g = new GridBagLayout();

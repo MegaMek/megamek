@@ -1190,7 +1190,8 @@ public class TestBattleArmor extends TestEntity {
         weight += getWeightWeapon(trooper);
         weight += getWeightAmmo(trooper);
 
-        return weight;
+        // Round weight to prevent odd behavior
+        return Math.round(weight*1000) / 1000.0f;
     }
 
     @Override

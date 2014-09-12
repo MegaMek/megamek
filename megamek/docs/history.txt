@@ -35,6 +35,7 @@ v0.39.2-dev (SVN)
 + Bug [#4101]: BA able to make Multi AP weapon attacks when they shouldn't
 + Bug: Rounded TestBattleArmor.calculateWeight(1) to 3 decimal places,
     preventing rare validation failures due to weight 
++ Data: BA Unit fixes and new images.
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

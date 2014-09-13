@@ -44,6 +44,7 @@ import megamek.common.EntitySelector;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.OffBoardDirection;
+import megamek.common.options.GameOptions;
 
 /**
  * The starting position dialog allows the player to select a starting position.
@@ -181,15 +182,15 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ev) {
+        final GameOptions gOpts = client.getGame().getOptions();
         for (int i = 0; i < 11; i++) {
             if (ev.getSource().equals(butStartPos[i])) {
-                if (client.getGame().getOptions().booleanOption("double_blind")
-                        && client.getGame().getOptions().booleanOption(
-                                "exclusive_db_deployment")) {
+                if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
+                        && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
                     if (i == 0) {
-                        clientgui
-                                .doAlertDialog("Starting Position not allowed",
-                                        "In Double Blind play, you cannot choose 'Any' as starting position.");
+                        clientgui.doAlertDialog(
+                                Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
+                                Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                         return;
                     }
                     for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e
@@ -210,15 +211,14 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                 .getStartingPos() - 1) == i))
                                 && (player.getId() != client.getLocalPlayer()
                                         .getId())) {
-                            clientgui
-                                    .doAlertDialog(
-                                            "Must choose exclusive deployment zone",
-                                            "When using double blind, each player needs to have an exclusive deployment zone.");
+                            clientgui.doAlertDialog(
+                                    Messages.getString("ChatLounge.OverlapDeploy.title"), //$NON-NLS-1$
+                                    Messages.getString("ChatLounge.OverlapDeploy.msg")); //$NON-NLS-1$
                             return;
                         }
                     }
                 }
-                if (client.getGame().getOptions().booleanOption("deep_deployment")
+                if (gOpts.booleanOption("deep_deployment")
                         && (i > 0) && (i <= 9)) {
                     i += 10;
                 }
@@ -228,8 +228,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 // set all the player's offboard arty units to be behind the
                 // newly
                 // selected home edge.
-                if (client.getGame().getOptions().booleanOption(
-                        "set_arty_player_homeedge")) { //$NON-NLS-1$
+                if (gOpts.booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
                     OffBoardDirection direction = OffBoardDirection.NONE;
                     switch (i) {
                         case 0:

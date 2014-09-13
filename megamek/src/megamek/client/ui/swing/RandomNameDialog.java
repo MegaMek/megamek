@@ -91,6 +91,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         if(null == factions) {
             return;
         }
+        comboFaction.removeAllItems();
         while(factions.hasNext()) {
             String faction = factions.next();
             comboFaction.addItem(faction);

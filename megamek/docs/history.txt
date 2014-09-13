@@ -34,7 +34,8 @@ v0.39.2-dev (SVN)
 + Bug: EquipmentChoiceDialog allowed selecting # of shots for One-Shot weapons
 + Bug [#4101]: BA able to make Multi AP weapon attacks when they shouldn't
 + Bug: Rounded TestBattleArmor.calculateWeight(1) to 3 decimal places,
-    preventing rare validation failures due to weight 
+    preventing rare validation failures due to weight
++ Bug [#4250]: Random Names Menu Duplicating
 + Data: BA Unit fixes and new images.
     
 

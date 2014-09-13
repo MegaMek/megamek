@@ -2347,24 +2347,35 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // anyone who can and does lay mines is legal
+        // TO p.325 - Mine dispensers
         if ((type == MoveStepType.LAY_MINE) && entity.canLayMine()) {
-            if (entity instanceof BattleArmor) {
-                if (isEndPos
-                        && ((prev.movementType == EntityMovementType.MOVE_JUMP)
-                        || (prev.movementType == EntityMovementType.MOVE_VTOL_RUN) || (prev.movementType == EntityMovementType.MOVE_VTOL_WALK))) {
-                    movementType = prev.movementType;
-                } else if (isFirstStep()) {
-                    movementType = EntityMovementType.MOVE_LEGAL;
-                }
-            } else {
+            //All vechs may only lay mines on its first or last step.
+            //BA additionaly have to use Jump or VTOL movement.
+            if (isFirstStep())
                 movementType = prev.movementType;
+            else {
+                //check if there were no mines dispensed in the first steps.
+                boolean mineDispensed = false;
+                for (MoveStep step : parent.getStepVector()) {
+                    if (!step.isFirstStep())
+                        break;
+                    if (step.getType() == MoveStepType.LAY_MINE)
+                        mineDispensed = true;
+                }
+                if (!mineDispensed)
+                    movementType = prev.movementType;
             }
-        } else if (parent.contains(MoveStepType.LAY_MINE)
-                && (entity instanceof BattleArmor)
-                && (parent.getStep(0).getType() != MoveStepType.LAY_MINE)) {
-            movementType = EntityMovementType.MOVE_ILLEGAL;
 
+            if (entity instanceof BattleArmor &&
+                    !((prev.movementType == EntityMovementType.MOVE_JUMP)
+                            || (prev.movementType == EntityMovementType.MOVE_VTOL_RUN)
+                            || (prev.movementType == EntityMovementType.MOVE_VTOL_WALK))) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+        }
+        if (prev.type == MoveStepType.LAY_MINE && !prev.isFirstStep()) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
         }
 
         if (stepType == MoveStepType.MOUNT) {

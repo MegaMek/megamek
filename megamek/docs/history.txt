@@ -37,6 +37,7 @@ v0.39.2-dev (SVN)
     preventing rare validation failures due to weight
 + Bug [#4250]: Random Names Menu Duplicating
 + Data: BA Unit fixes and new images.
++ Bug: ChatLounge and MechView now indicate if a unit has an invalid design
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

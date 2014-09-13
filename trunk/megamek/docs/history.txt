@@ -38,6 +38,8 @@ v0.39.2-dev (SVN)
 + Bug [#4250]: Random Names Menu Duplicating
 + Data: BA Unit fixes and new images.
 + Bug: ChatLounge and MechView now indicate if a unit has an invalid design
++ Feature [#1289]: Require Commander to be chosen prior to starting a battle
+    that has the "Kill Commander" option selected. 
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

@@ -117,6 +117,7 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
@@ -2609,55 +2610,54 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void refreshMapSummaryLabel() {
-        String txt = Messages.getString("ChatLounge.MapSummary");
-        txt = txt + " "
+        String txt = Messages.getString("ChatLounge.MapSummary"); //$NON-NLS-1$
+        txt = txt + " " //$NON-NLS-1$
                 + (mapSettings.getBoardWidth() * mapSettings.getMapWidth())
-                + " x "
+                + " x " //$NON-NLS-1$
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (chkIncludeGround.isSelected()) {
             txt = txt + " " + (String) comboMapType.getSelectedItem();
         } else {
-            txt = txt + " " + "Space Map";
+            txt = txt + " " + "Space Map"; //$NON-NLS-1$
         }
         lblMapSummary.setText(txt);
 
         StringBuilder selectedMaps = new StringBuilder();
-        selectedMaps.append("<html>");
+        selectedMaps.append("<html>"); //$NON-NLS-1$
         selectedMaps.append(Messages
                 .getString("ChatLounge.MapSummarySelectedMaps"));
-        selectedMaps.append("<br>");
+        selectedMaps.append("<br>"); //$NON-NLS-1$
         ListModel<String> model = lisBoardsSelected.getModel();
         for (int i = 0; i < model.getSize(); i++) {
             String map = model.getElementAt(i);
             selectedMaps.append(map);
             if ((i + 1) < model.getSize()) {
-                selectedMaps.append("<br>");
+                selectedMaps.append("<br>"); //$NON-NLS-1$
             }
         }
         lblMapSummary.setToolTipText(selectedMaps.toString());
     }
 
     public void refreshGameYearLabel() {
-        String txt = Messages.getString("ChatLounge.GameYear");
+        String txt = Messages.getString("ChatLounge.GameYear"); //$NON-NLS-1$
         txt = txt
-                + " "
+                + " " //$NON-NLS-1$
                 + clientgui.getClient().getGame().getOptions()
-                        .intOption("year");
+                        .intOption("year"); //$NON-NLS-1$
         lblGameYear.setText(txt);
     }
 
     @Override
     public void ready() {
+        final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
         // enforce exclusive deployment zones in double blind
-        if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("double_blind")
-                && clientgui.getClient().getGame().getOptions()
-                        .booleanOption("exclusive_db_deployment")) {
+        if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
+                && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
             int i = clientgui.getClient().getLocalPlayer().getStartingPos();
             if (i == 0) {
-                clientgui
-                        .doAlertDialog("Starting Position not allowed",
-                                "In Double Blind play, you cannot choose 'Any' as starting position.");
+                clientgui.doAlertDialog(
+                        Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
+                        Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                 return;
             }
             for (Enumeration<IPlayer> e = clientgui.getClient().getGame()
@@ -2678,10 +2678,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         .getStartingPos() - 1) == i))
                         && (player.getId() != clientgui.getClient()
                                 .getLocalPlayer().getId())) {
-                    clientgui
-                            .doAlertDialog(
-                                    "Must choose exclusive deployment zone",
-                                    "When using double blind, each player needs to have an exclusive deployment zone.");
+                    clientgui.doAlertDialog(
+                            Messages.getString("ChatLounge.OverlapDeploy.title"), //$NON-NLS-1$
+                            Messages.getString("ChatLounge.OverlapDeploy.msg")); //$NON-NLS-1$
                     return;
                 }
             }

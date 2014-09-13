@@ -1688,6 +1688,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value += Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound(); //$NON-NLS-1$
             //$NON-NLS-2$
         }
+        if (!entity.isDesignValid()) {
+            value += Messages.getString("ChatLounge.invalidDesign");
+        }
         return value;
     }
 

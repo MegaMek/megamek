@@ -80,6 +80,10 @@ public class MechView {
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");
         sHead.append("<br>"); //$NON-NLS-1$
+        if (!entity.isDesignValid()) {
+            sHead.append(Messages.getString("MechView.DesignInvalid"));
+            sHead.append("<br>"); //$NON-NLS-1$
+        }
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
                 sHead.append(Messages.getString("MechView.MixedClan"));

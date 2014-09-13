@@ -2649,18 +2649,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     @Override
     public void ready() {
-        final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
+        final Client client = clientgui.getClient();
+        final IGame game = client.getGame();
+        final GameOptions gOpts = game.getOptions();
         // enforce exclusive deployment zones in double blind
         if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
                 && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
-            int i = clientgui.getClient().getLocalPlayer().getStartingPos();
+            int i = client.getLocalPlayer().getStartingPos();
             if (i == 0) {
                 clientgui.doAlertDialog(
                         Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
                         Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                 return;
             }
-            for (Enumeration<IPlayer> e = clientgui.getClient().getGame()
+            for (Enumeration<IPlayer> e = client.getGame()
                     .getPlayers(); e.hasMoreElements();) {
                 IPlayer player = e.nextElement();
                 if (player.getStartingPos() == 0) {
@@ -2676,8 +2678,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (((player.getStartingPos() == i)
                         || ((player.getStartingPos() + 1) == i) || ((player
                         .getStartingPos() - 1) == i))
-                        && (player.getId() != clientgui.getClient()
-                                .getLocalPlayer().getId())) {
+                        && (player.getId() != client.getLocalPlayer().getId())) {
                     clientgui.doAlertDialog(
                             Messages.getString("ChatLounge.OverlapDeploy.title"), //$NON-NLS-1$
                             Messages.getString("ChatLounge.OverlapDeploy.msg")); //$NON-NLS-1$
@@ -2685,9 +2686,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             }
         }
+        
+        // Make sure player has a commander if Commander killed victory is on
+        if (gOpts.booleanOption("commander_killed")) {
+            ArrayList<String> players = new ArrayList<String>();
+            if (game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1) {
+                players.add(client.getLocalPlayer().getName());
+            }
+            for (Client client2 : clientgui.getBots().values()) {
+                if (game.getLiveCommandersOwnedBy(client2.getLocalPlayer()) < 1) {
+                    players.add(client2.getLocalPlayer().getName());
+                } 
+            }
+            if (players.size() > 0) {
+                String title = Messages.getString("ChatLounge.noCmdr.title"); //$NON-NLS-1$
+                String msg = Messages.getString("ChatLounge.noCmdr.msg"); //$NON-NLS-1$
+                for (String player : players) {
+                    msg += player + "\n";
+                }
+                clientgui.doAlertDialog(title, msg);
+            }
+            
+        }
 
-        boolean done = !clientgui.getClient().getLocalPlayer().isDone();
-        clientgui.getClient().sendDone(done);
+        boolean done = !client.getLocalPlayer().isDone();
+        client.sendDone(done);
         refreshDoneButton(done);
         for (Client client2 : clientgui.getBots().values()) {
             client2.sendDone(done);

@@ -9768,7 +9768,12 @@ public class Server implements Runnable {
      */
     public boolean clearMinefield(Minefield mf, Entity en, int target,
                                   Vector<Report> vClearReport) {
-        return clearMinefield(mf, en, target, -1, vClearReport);
+        return clearMinefield(mf, en, target, -1, vClearReport, 2);
+    }
+    
+    public boolean clearMinefield(Minefield mf, Entity en, int target,
+            int botch, Vector<Report> vClearReport) {
+        return clearMinefield(mf, en, target, botch, vClearReport, 1);
     }
 
     /**
@@ -9779,27 +9784,31 @@ public class Server implements Runnable {
      * @param en     - <code>entity</code> doing the clearing
      * @param target - <code>int</code> needed to roll for a successful clearance
      * @param botch  - <code>int</code> that indicates an accidental detonation
+     * @param vClearReport - The report collection to report to
+     * @param indent - The nubmer of indents for the report
      * @return <code>true</code> if clearance successful
      */
     public boolean clearMinefield(Minefield mf, Entity en, int target,
-                                  int botch, Vector<Report> vClearReport) {
+            int botch, Vector<Report> vClearReport, int indent) {
         Report r;
         int roll = Compute.d6(2);
         if (roll >= target) {
             r = new Report(2250);
             r.subject = en.getId();
             r.add(Minefield.getDisplayableName(mf.getType()));
+            r.add(target);
             r.add(roll);
-            r.indent(1);
+            r.indent(indent);
             vClearReport.add(r);
             return true;
         } else if (roll <= botch) {
             // TODO: detonate the minefield
             r = new Report(2255);
             r.subject = en.getId();
-            r.add(roll);
-            r.indent(1);
+            r.indent(indent);
             r.add(Minefield.getDisplayableName(mf.getType()));
+            r.add(target);
+            r.add(roll);
             vClearReport.add(r);
             // The detonation damages any units that were also attempting to
             // clear mines in the same hex
@@ -9811,7 +9820,7 @@ public class Server implements Runnable {
                     rVictim = new Report(2265);
                     rVictim.subject = victim.getId();
                     rVictim.add(victim.getShortName(), true);
-                    rVictim.indent(2);
+                    rVictim.indent(indent + 1);
                     vClearReport.add(rVictim);
                     int damage = mf.getDensity();
                     while (damage > 0) {
@@ -9835,9 +9844,10 @@ public class Server implements Runnable {
             // failure
             r = new Report(2260);
             r.subject = en.getId();
-            r.add(roll);
-            r.indent(1);
+            r.indent(indent);
             r.add(Minefield.getDisplayableName(mf.getType()));
+            r.add(target);
+            r.add(roll);
             vClearReport.add(r);
         }
         return false;

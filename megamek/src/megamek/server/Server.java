@@ -22044,6 +22044,9 @@ public class Server implements Runnable {
                             r.subject = t.getId();
                             vDesc.add(r);
                             t.getCrew().setDoomed(true);
+                            if (en.isAirborneVTOLorWIGE()) {
+                                vDesc.addAll(crashVTOLorWiGE((Tank)en));
+                            }
                         }
                     }
                     break;
@@ -23244,7 +23247,11 @@ public class Server implements Runnable {
 
         if (!sideSlipCrash) {
             // report lost movement and crashing
-            r = new Report(6260);
+            if (en.getCrew().isDoomed()) {
+                r = new Report(6260);
+            } else {
+                r = new Report(6260);
+            }
             r.subject = en.getId();
             r.newlines = 0;
             r.addDesc(en);
@@ -23344,7 +23351,7 @@ public class Server implements Runnable {
             r.addDesc(en);
             r.add(side);
             r.add(damage);
-            r.newlines = 0;
+            //r.newlines = 0;
             vDesc.addElement(r);
 
             en.setFacing((en.getFacing() + (facing)) % 6);
@@ -30699,6 +30706,7 @@ public class Server implements Runnable {
                     te.setMotiveDamage(te.getMotiveDamage() + 1);
                     if (te.getOriginalWalkMP() > te.getMotiveDamage()) {
                         r = new Report(6660);
+                        r.indent(3);
                         r.subject = te.getId();
                         vDesc.add(r);
                     } else {

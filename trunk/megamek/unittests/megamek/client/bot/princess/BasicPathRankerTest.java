@@ -83,10 +83,15 @@ public class BasicPathRankerTest {
         mockFireControl = Mockito.mock(FireControl.class);
         Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
+        IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
+        Mockito.when(mockHonorUtil.isEnemyBroken(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
+               .thenReturn(false);
+
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
+        Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
     }
 
     private void assertRankedPathEquals(RankedPath expected, RankedPath actual) {
@@ -331,8 +336,8 @@ public class BasicPathRankerTest {
                                              Mockito.any(IGame.class));
         Mockito.doReturn(14.5)
                .when(testRanker)
-               .calculateMyDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
-                                           Mockito.any(IGame.class));
+               .calculateMyDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech),
+                                           Mockito.anyInt(), Mockito.any(IGame.class));
         Mockito.doReturn(8.0)
                .when(testRanker)
                .calculateMyKickDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech),
@@ -436,7 +441,8 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
         testEnemies.add(mockEnemyMech1);
         Mockito.doReturn(mockEnemyMech1)
                .when(testRanker)
@@ -491,7 +497,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                      "braveryMod [" + LOG_DECIMAL.format(-3.12) + " = " + LOG_PERCENT
                 .format(0.5) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                     + LOG_DECIMAL.format(40) + "] - " +
                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -543,14 +550,16 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -572,14 +581,16 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
         expected = new RankedPath(-61.0, mockPath, "Calculation: {" +
                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
                                                    "braveryMod [" + LOG_DECIMAL.format(-16) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(16) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(16) + " * " + LOG_DECIMAL.format(1.5) + ") - " +
+                                                   LOG_DECIMAL.format(40) + "] - " +
                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -601,7 +612,8 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
 
         // Change the damage done by enemy mech 1.
         evalForMockEnemyMech = new EntityEvaluationResponse();
@@ -610,14 +622,16 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(35.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
         expected = new RankedPath(-61.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-16.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(50) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(50) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -639,14 +653,16 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(15.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
         expected = new RankedPath(-41.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(3.75) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(30) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(30) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -668,7 +684,8 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class), Mockito.any(IGame.class));
+               .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
+                                   Mockito.any(IGame.class));
 
         // Change the distance to the enemy.
         Mockito.doReturn(2.0)
@@ -680,7 +697,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(5) + " = " + LOG_DECIMAL
                 .format(2) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -705,7 +723,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(55) + " = " + LOG_DECIMAL
                 .format(22) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -733,7 +752,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -756,7 +776,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -778,7 +799,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -793,7 +815,7 @@ public class BasicPathRankerTest {
 
         // Set myself up to run away.
         double baseFleeingRank = -351.25;
-        Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(true);
+        Mockito.when(mockMover.isCrippled()).thenReturn(true);
         expected = new RankedPath(baseFleeingRank, mockPath, "Calculation: " +
                                                              "{fall mod [" + LOG_DECIMAL.format(0) + " = " +
                                                              LOG_DECIMAL.format(0) + " * " + LOG_DECIMAL.format
@@ -825,7 +847,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                      "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                     + LOG_DECIMAL.format(40) + "] - " +
                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -853,7 +876,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                      "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                     + LOG_DECIMAL.format(40) + "] - " +
                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -876,6 +900,7 @@ public class BasicPathRankerTest {
                .when(testRanker)
                .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
         Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
+        Mockito.when(mockMover.isCrippled()).thenReturn(false);
 
         // Change my facing.
         Mockito.when(mockPath.getFinalFacing()).thenReturn(1);
@@ -908,7 +933,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                      "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                     + LOG_DECIMAL.format(40) + "] - " +
                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -931,7 +957,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                      "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                     + LOG_DECIMAL.format(40) + "] - " +
                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +
@@ -959,7 +986,8 @@ public class BasicPathRankerTest {
                 (100) + "] + " +
                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
                 .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
+                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                                                    + LOG_DECIMAL.format(40) + "] - " +
                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
                 .format(12) + " * " + LOG_DECIMAL
                 .format(2.5) + "] - " +

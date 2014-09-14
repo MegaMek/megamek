@@ -15,7 +15,7 @@ v0.39.2-dev (SVN)
     board is) but will reduce the incidences of the bot deploying in a dead-end location.
 + Modified the random crater generation routine as the existing routine was not honoring min/max crater radius and was
     sometimes creating hills rather than craters.
-+ Princess will now be pickier about firing ammo-using weapons has their bins run dry.  The less ammo she has, the
++ Princess will now be pickier about firing ammo-using weapons as their bins run dry.  The less ammo she has, the
     better she'll want her to-hit odds to be before firing.  Ammo conservation depends on a combination of total
     shots remaining and aggressiveness (higher aggression means less conservation).
 + Data: Unit Fixes and New Images.
@@ -43,7 +43,13 @@ v0.39.2-dev (SVN)
 + Bug: Fixed mine dispensers to work according with rules in TO p.325 
 + Bug [#4234]: Missiles/Artillery couldn't be directed to make a mine clearance
     attacks
-    
++ Princess will no longer attack Crippled units when the Forced Withdrawal rule is turned on.  However, if a fleeing
+    unit fires on one of her units, the controlling player is flagged as 'dishonored' and his units will become
+    regular targets again.  Likewise, the Priority Targets list overrides this new behavior.
++ If Forced Withdrawal is turned on Princess's Crippled units will no longer fire as they attempt to retreat unless
+    they are fired on first.  Also, firing on such a unit, will get the attacking player flagged as 'dishonored'.
++ Princess now de-prioritizes civilian units until they fire on one of her units or unless they are on the Priority
+    Targets list.
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

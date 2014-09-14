@@ -253,9 +253,13 @@ public class PathRanker {
             ArrayList<Entity> enemies = new ArrayList<>();
             for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
                 Entity entity = i.nextElement();
-                if (entity.getOwner().isEnemyOf(myunit.getOwner())
-                    && (entity.getPosition() != null) && !entity.isOffBoard()
-                    && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+                if (entity.getOwner().isEnemyOf(myunit.getOwner()) &&
+                    (entity.getPosition() != null) &&
+                    !entity.isOffBoard() &&
+                    (entity.getCrew() != null) &&
+                    !entity.getCrew().isDead() &&
+                    !owner.getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(),
+                                                        owner.getForcedWithdrawal())) {
                     enemies.add(entity);
                     int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
                     if (initBonus > highestEnemyInitiativeBonus) {

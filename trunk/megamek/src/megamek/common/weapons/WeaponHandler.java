@@ -93,15 +93,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int numRapidFireHits;
     protected String sSalvoType = " shots(s) ";
     int nSalvoBonus = 0;
-    
+
     /**
      * Boolean flag that determines whether or not this attack is part of a
      * strafing run.
      */
     protected boolean isStrafing = false;
-    
+
     /**
-     * Boolean flag that determiens if this shot was the first one by a 
+     * Boolean flag that determiens if this shot was the first one by a
      * particular weapon in a strafing run.  Used to ensure that heat is only
      * added once.
      */
@@ -139,7 +139,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     private void readObject(ObjectInputStream in) throws IOException,
-                                                         ClassNotFoundException {
+    ClassNotFoundException {
         in.defaultReadObject();
 
         server = Server.getServerInstance();
@@ -1153,6 +1153,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         for (int i = 0; i < nweapons; i++) {
             useAmmo();
         }
+
+        if (target instanceof Entity) {
+            ((Entity) target).addAttackedByThisTurn(w.getEntityId());
+        }
     }
 
     protected void useAmmo() {
@@ -1292,7 +1296,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     .getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
                 && wtype.hasFlag(WeaponType.F_ENERGY)
-                && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT) 
+                && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT)
                     || (smokeHex.getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
 
                 int levit = ((game.getBoard().getHex(curr).getElevation()) + 2);
@@ -1425,13 +1429,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
-    
+
     public boolean isStrafingFirstShot() {
         return isStrafingFirstShot;
     }
-    
+
     public void setStrafingFirstShot(boolean isStrafingFirstShot) {
         this.isStrafingFirstShot = isStrafingFirstShot;
     }
-    
+
 }

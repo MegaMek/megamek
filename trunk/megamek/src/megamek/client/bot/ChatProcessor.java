@@ -161,7 +161,7 @@ public class ChatProcessor {
                                     CEntity cen = tb.centities.get(en);
                                     cen.strategy.target += 3;
                                     System.out.println(cen.entity
-                                                          .getShortName()
+                                                               .getShortName()
                                                        + " " + cen.strategy.target); //$NON-NLS-1$
                                     understood = true;
                                 }
@@ -203,7 +203,7 @@ public class ChatProcessor {
         }
 
         String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
-        princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
+        princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
 
         String from = tokenizer.nextToken().trim(); // First token should be who sent the message.
         String sentTo = tokenizer.nextToken().trim(); // Second token should be the player name the message is directed

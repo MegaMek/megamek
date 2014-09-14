@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,9 +28,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
@@ -672,6 +676,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean useGeometricBV = false;
 
     protected boolean useReducedOverheatModifierBV = false;
+
+    private final Set<Integer> attackedByThisTurn =
+            Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
 
     /**
      * Generates a new, blank, entity.
@@ -5336,6 +5343,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // Reset used RHS flag
         deactivateRadicalHS();
+
+        clearAttackedByThisTurn();
     }
 
     /**
@@ -10466,7 +10475,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getMisc()) {
             ECMInfo newInfo = null;
             if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)
-                    && m.curMode().equals("ECCM")) {                
+                && m.curMode().equals("ECCM")) {
                 if ((getTotalCommGearTons() > 3)) {
                     newInfo = new ECMInfo(6, 0.5, this);
                 }
@@ -12717,7 +12726,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // Get a list of quirks for this entity.
         List<QuirkEntry> quirks = QuirksHandler.getQuirks(getChassis(),
-                                                                 getModel());
+                                                          getModel());
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {
@@ -13103,5 +13112,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setUseReducedOverheatModifierBV(boolean useReducedOverheatModifierBV) {
         this.useReducedOverheatModifierBV = useReducedOverheatModifierBV;
+    }
+
+    public void addAttackedByThisTurn(int entityId) {
+        attackedByThisTurn.add(entityId);
+    }
+
+    public void clearAttackedByThisTurn() {
+        attackedByThisTurn.clear();
+    }
+
+    public Collection<Integer> getAttackedByThisTurn() {
+        return new HashSet<>(attackedByThisTurn);
     }
 }

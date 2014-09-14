@@ -16,6 +16,8 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
@@ -71,6 +74,8 @@ public class Princess extends BotClient {
 
     private static final Logger logger = new Logger();
 
+    private final IHonorUtil honorUtil = new HonorUtil();
+
     private boolean initialized = false;
 
     //private PathSearcher pathSearcher;
@@ -81,12 +86,13 @@ public class Princess extends BotClient {
     private Precognition precognition;
     private Thread precogThread;
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
-    private final Set<Integer> priorityUnitTargets = new HashSet<>();
     private boolean fallBack = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private boolean forcedWithdrawal = false;
     private IMoralUtil moralUtil = new MoralUtil(logger);
+    private final Set<Integer> attackedWhileFleeing =
+            Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> myFleeingEntities = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
 
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
@@ -113,15 +119,15 @@ public class Princess extends BotClient {
     public boolean getFleeBoard() {
         return fleeBoard;
     }
-    
+
     public boolean getForcedWithdrawal() {
-    	return forcedWithdrawal;
+        return getBehaviorSettings().isForcedWithdrawal();
     }
 
     public void setFleeBoard(boolean fleeBoard, String reason) {
         log(getClass(), "setFleeBoard(boolean, String)", LogLevel.INFO, "Setting Flee Board " + fleeBoard +
-                														" because: " + reason);
-    	
+                                                                        " because: " + reason);
+
         this.fleeBoard = fleeBoard;
     }
 
@@ -131,15 +137,8 @@ public class Princess extends BotClient {
 
     public void setFallBack(boolean fallBack, String reason) {
         log(getClass(), "setFallBack(boolean, String)", LogLevel.INFO, "Setting Fall Back " + fallBack +
-                                                                         " because: " + reason);
+                                                                       " because: " + reason);
         this.fallBack = fallBack;
-    }
-    
-    public void setForcedWithdrawal(boolean forcedWithdrawal, String reason) {
-    	log(getClass(), "setForcedWithdrawal(boolean, String)", LogLevel.INFO, "Setting Forced Withdrawal " +
-    																		   forcedWithdrawal + " because: " +
-    																		   reason);
-    	this.forcedWithdrawal = forcedWithdrawal;															  
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
@@ -155,7 +154,6 @@ public class Princess extends BotClient {
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
         setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
-        setForcedWithdrawal(behaviorSettings.isForcedWithdrawal(), "Forced Withdrawal Configuration.");
         if (getFallBack()) {
             return;
         }
@@ -168,13 +166,6 @@ public class Princess extends BotClient {
             String y = targetCoords.replaceFirst(x, "");
             Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
             getStrategicBuildingTargets().add(coords);
-        }
-
-        for (int priorityUnit : behaviorSettings.getPriorityUnitTargets()) {
-            if (priorityUnit <= 0) {
-                continue;
-            }
-            getPriorityUnitTargets().add(priorityUnit);
         }
     }
 
@@ -191,7 +182,7 @@ public class Princess extends BotClient {
     }
 
     public Set<Integer> getPriorityUnitTargets() {
-        return priorityUnitTargets;
+        return getBehaviorSettings().getPriorityUnitTargets();
     }
 
     @Override
@@ -282,10 +273,23 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn make sure weapons are loaded
             Entity shooter = game.getFirstEntity(getMyTurn());
 
+            // If my unit is forced to withdraw, don't fire unless I've been fired on.
+            if (getForcedWithdrawal() && shooter.isCrippled()) {
+                StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(" is crippled and withdrawing.");
+                if (attackedWhileFleeing.contains(shooter.getId())) {
+                    msg.append("\n\tBut I was fired on, so I will return fire.");
+                } else {
+                    msg.append("\n\tI will not fire so long as I'm not fired on.");
+                    return;
+                }
+                log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            }
+
             // Set up ammo conservation.
             Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
 
-            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game, ammoConservation);
+            // entity that can act this turn make sure weapons are loaded
+            FiringPlan plan = fireControl.getBestFiringPlan(shooter, getHonorUtil(), game, ammoConservation);
             if (plan != null) {
                 fireControl.loadAmmo(shooter, plan);
                 plan.sortPlan();
@@ -529,9 +533,22 @@ public class Princess extends BotClient {
 
         try {
             // get the first entity that can act this turn
-            Entity first_entity = game.getFirstEntity(getMyTurn());
+            Entity attacker = game.getFirstEntity(getMyTurn());
+
+            // If my unit is forced to withdraw, don't attack unless I've been attacked.
+            if (getForcedWithdrawal() && attacker.isCrippled()) {
+                StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(" is crippled and withdrawing.");
+                if (attackedWhileFleeing.contains(attacker.getId())) {
+                    msg.append("\n\tBut I was fired on, so I will hit back.");
+                } else {
+                    msg.append("\n\tI will not attack so long as I'm not fired on.");
+                    return null;
+                }
+                log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            }
+
             PhysicalInfo best_attack = null;
-            int firstEntityId = first_entity.getId();
+            int firstEntityId = attacker.getId();
             int nextEntityId = firstEntityId;
 
             // this is an array of all my enemies
@@ -554,6 +571,9 @@ public class Princess extends BotClient {
                         continue; // Skip enemies not on the board.
                     }
                     if (hitter.getPosition().distance(e.getPosition()) > 1) {
+                        continue;
+                    }
+                    if (getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getForcedWithdrawal())) {
                         continue;
                     }
 
@@ -601,6 +621,7 @@ public class Princess extends BotClient {
                     return best_attack.getAsPhysicalOption();
                 }
             } while (nextEntityId != firstEntityId);
+
             // no one can hit anything anymore, so give up
             return null;
         } finally {
@@ -609,7 +630,7 @@ public class Princess extends BotClient {
     }
 
     protected boolean wantsToFallBack(Entity entity) {
-        return getFallBack() || (entity.isCrippled() && getForcedWithdrawal());
+        return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
 
     protected IMoralUtil getMoralUtil() {
@@ -617,7 +638,7 @@ public class Princess extends BotClient {
     }
 
     protected boolean isFallingBack(Entity entity) {
-        return !entity.isImmobile() && wantsToFallBack(entity);
+        return getMyFleeingEntities().contains(entity.getId());
     }
 
     protected boolean mustFleeBoard(Entity entity) {
@@ -632,7 +653,7 @@ public class Princess extends BotClient {
         }
         //noinspection RedundantIfStatement
         if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
-        	return false;
+            return false;
         }
         return true;
     }
@@ -747,7 +768,7 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().insureUpToDate();
 
-            if (wantsToFallBack(entity)) {
+            if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg += " is falling back.";
@@ -851,6 +872,79 @@ public class Princess extends BotClient {
         }
     }
 
+    private void checkForDishonoredEnemies() {
+        final String METHOD_NAME = "checkForDishonoredEnemies()";
+
+        StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
+
+        try {
+            // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+            if (!getForcedWithdrawal()) {
+                msg.append("\n\tForced withdrawal turned off.");
+                return;
+            }
+
+            for (Entity mine : getEntitiesOwned()) {
+
+                // Who just attacked me?
+                Collection<Integer> attackedBy = mine.getAttackedByThisTurn();
+                if (attackedBy.isEmpty()) {
+                    continue;
+                }
+
+                // Is my unit trying to withdraw?
+                boolean fleeing = getMyFleeingEntities().contains(mine.getId());
+
+                for (int id : attackedBy) {
+                    Entity entity = getGame().getEntity(id);
+                    if (entity == null) {
+                        continue;
+                    }
+
+                    if (getHonorUtil().isEnemyBroken(entity.getTargetId(), entity.getOwnerId(),
+                                                     getForcedWithdrawal()) || !entity.isMilitary()) {
+                        // If he'd just continued running, I would have let him go, but the bastard shot at me!
+                        msg.append("\n\t")
+                           .append(entity.getDisplayName())
+                           .append("dishonored himself by attacking me even though he is ");
+                        if (!entity.isMilitary()) {
+                            msg.append("a civilian.");
+                        } else {
+                            msg.append("fleeing.");
+                        }
+                        getHonorUtil().setEnemyDishonored(entity.getOwnerId());
+                        continue;
+                    }
+
+                    // He shot me while I was running away!
+                    if (fleeing) {
+                        msg.append("\n\t")
+                           .append(entity.getDisplayName())
+                           .append("dishonored himself by attacking a fleeing unit (")
+                           .append(mine.getDisplayName())
+                           .append(").");
+                        getHonorUtil().setEnemyDishonored(entity.getOwnerId());
+                        attackedWhileFleeing.add(mine.getId());
+                    }
+                }
+            }
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        }
+    }
+
+    private void checkForBrokenEnemies() {
+
+        // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+        if (!getForcedWithdrawal()) {
+            return;
+        }
+
+        for (Entity entity : getEnemyEntities()) {
+            getHonorUtil().checkEnemyBroken(entity, getForcedWithdrawal());
+        }
+    }
+
     @Override
     protected void initMovement() {
         final String METHOD_NAME = "initMovement()";
@@ -917,7 +1011,7 @@ public class Princess extends BotClient {
             pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
             precogThread = new Thread(precognition, "Princess-precognition ("
-                    + getName() + ")");
+                                                    + getName() + ")");
             precogThread.start();
 
             // Pick up any turrets and add their buildings to the strategic targets list.
@@ -951,7 +1045,7 @@ public class Princess extends BotClient {
                && !getStrategicBuildingTargets().contains(coords)
                && (entity.getCrew() != null) && !entity.getCrew().isDead();
     }
-    
+
     @Override
     public void die() {
         super.die();
@@ -1024,5 +1118,47 @@ public class Princess extends BotClient {
     protected void checkMoral() {
         moralUtil.checkMoral(behaviorSettings.isForcedWithdrawal(), behaviorSettings.getBraveryIndex(),
                              behaviorSettings.getSelfPreservationIndex(), getLocalPlayer(), game);
+    }
+
+    public IHonorUtil getHonorUtil() {
+        return honorUtil;
+    }
+
+    @Override
+    public void endOfTurnProcessing() {
+        logger.methodBegin(getClass(), "endOfTurnProcessing()");
+        checkForDishonoredEnemies();
+        updateMyFleeingEntities();
+        checkForBrokenEnemies();
+        logger.methodEnd(getClass(), "endOfTurnProcessing()");
+    }
+
+    Set<Integer> getMyFleeingEntities() {
+        return myFleeingEntities;
+    }
+
+    private void updateMyFleeingEntities() {
+        final String METHOD_NAME = "updateMyFleeingEntities()";
+
+        StringBuilder msg = new StringBuilder("Updating my list of falling back units.");
+
+        try {
+            // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+            if (!getForcedWithdrawal()) {
+                msg.append("\n\tForced withdrawal turned off.");
+                return;
+            }
+
+            for (Entity mine : getEntitiesOwned()) {
+                if (myFleeingEntities.contains(mine.getId())) {
+                    continue;
+                }
+                if (wantsToFallBack(mine)) {
+                    myFleeingEntities.add(mine.getId());
+                }
+            }
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        }
     }
 }

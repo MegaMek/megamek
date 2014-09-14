@@ -400,7 +400,7 @@ public class BasicPathRanker extends PathRanker {
 
     // If I need to flee the board, I want to get closer to my home edge.
     private double calculateSelfPreservationMod(Entity movingUnit, MovePath path, IGame game, StringBuilder formula) {
-        if (getOwner().wantsToFallBack(movingUnit)) {
+        if (getOwner().getFallBack() || movingUnit.isCrippled()) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(), game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod = newDistanceToHome * selfPreservation;

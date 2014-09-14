@@ -3311,7 +3311,8 @@ public class Server implements Runnable {
                                                                                              .getPhase() == IGame
                                                                                              .Phase.PHASE_INITIATIVE)
                                                                                     || (game
-                                                                                                                                                      .getPhase() == IGame.Phase.PHASE_MOVEMENT)))
+                                                                                                .getPhase() == IGame
+                                                                                                .Phase.PHASE_MOVEMENT)))
                               || (game.getOptions().booleanOption("inf_deploy_even") && (game
                                                                                                  .getPhase() == IGame
                                                                                                  .Phase
@@ -9004,7 +9005,7 @@ public class Server implements Runnable {
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         sendChangedHex(coords);
     }
-    
+
     public void deliverSmokeGrenade(Coords coords, Vector<Report> vPhaseReport) {
         Report r = new Report(5185, Report.PUBLIC);
         r.indent(2);
@@ -9021,8 +9022,8 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
         sendChangedHex(coords);
-    }    
-    
+    }
+
     /**
      * deliver artillery smoke
      *
@@ -9255,7 +9256,7 @@ public class Server implements Runnable {
                 // used for BA inferno explosion
                 for (Enumeration<Entity> entities = game.getEntities(t
                                                                              .getPosition()); entities
-                        .hasMoreElements(); ) {
+                             .hasMoreElements(); ) {
                     Entity e = entities.nextElement();
                     if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         r = new Report(6685);
@@ -9307,7 +9308,7 @@ public class Server implements Runnable {
                 // For each missile, check to see if it hits a unit in this hex
                 for (Enumeration<Entity> entities = game.getEntities(t
                                                                              .getPosition()); entities
-                        .hasMoreElements(); ) {
+                             .hasMoreElements(); ) {
                     Entity e = entities.nextElement();
                     if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         continue;
@@ -9770,9 +9771,9 @@ public class Server implements Runnable {
                                   Vector<Report> vClearReport) {
         return clearMinefield(mf, en, target, -1, vClearReport, 2);
     }
-    
+
     public boolean clearMinefield(Minefield mf, Entity en, int target,
-            int botch, Vector<Report> vClearReport) {
+                                  int botch, Vector<Report> vClearReport) {
         return clearMinefield(mf, en, target, botch, vClearReport, 1);
     }
 
@@ -9780,16 +9781,16 @@ public class Server implements Runnable {
      * attempt to clear a minefield We don't actually remove the minefield here,
      * because if this is called up from within a loop, that will cause problems
      *
-     * @param mf     - a <code>Minefield</code> to clear
-     * @param en     - <code>entity</code> doing the clearing
-     * @param target - <code>int</code> needed to roll for a successful clearance
-     * @param botch  - <code>int</code> that indicates an accidental detonation
+     * @param mf           - a <code>Minefield</code> to clear
+     * @param en           - <code>entity</code> doing the clearing
+     * @param target       - <code>int</code> needed to roll for a successful clearance
+     * @param botch        - <code>int</code> that indicates an accidental detonation
      * @param vClearReport - The report collection to report to
-     * @param indent - The nubmer of indents for the report
+     * @param indent       - The nubmer of indents for the report
      * @return <code>true</code> if clearance successful
      */
     public boolean clearMinefield(Minefield mf, Entity en, int target,
-            int botch, Vector<Report> vClearReport, int indent) {
+                                  int botch, Vector<Report> vClearReport, int indent) {
         Report r;
         int roll = Compute.d6(2);
         if (roll >= target) {
@@ -11394,7 +11395,7 @@ public class Server implements Runnable {
                                                    entity.getStartingPos()) || (assaultDrop
                                                                                 && game.getOptions().booleanOption
                 ("assault_drop") && entity
-                .canAssaultDrop()))) {
+                                                                                        .canAssaultDrop()))) {
             String msg = "error: server got invalid deployment packet from "
                          + "connection " + connId;
             if (entity != null) {
@@ -15374,7 +15375,7 @@ public class Server implements Runnable {
             || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
-                                                                                                                    .isDead()))) {
+                                                                               .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
             r.indent();
@@ -15558,7 +15559,7 @@ public class Server implements Runnable {
             || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
-                                                                                                                    .isDead()))) {
+                                                                               .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
             r.indent();
@@ -15684,7 +15685,7 @@ public class Server implements Runnable {
             || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
-                                                                                                                    .isDead()))) {
+                                                                               .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
             r.indent();
@@ -16152,7 +16153,7 @@ public class Server implements Runnable {
             || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
-                                                                                                                    .isDead()))) {
+                                                                               .isDead()))) {
             r = new Report(4245);
             r.subject = ae.getId();
             r.indent();
@@ -20452,8 +20453,9 @@ public class Server implements Runnable {
                             && (((hit.getLocation() == Mech.LOC_RT) && (te
                                                                                 .getInternal(Mech.LOC_RARM) > 0)) ||
                                 ((hit
-                                                                                                                               .getLocation() == Mech.LOC_LT) && (te
-                                                                                                                                                                          .getInternal(Mech.LOC_LARM) > 0)))) {
+                                          .getLocation() == Mech.LOC_LT) && (te
+                                                                                     .getInternal(Mech.LOC_LARM) > 0)
+                                ))) {
                             int blownOffLocation = -1; // good initial value?
                             if (hit.getLocation() == Mech.LOC_RT) {
                                 blownOffLocation = Mech.LOC_RARM;
@@ -20621,7 +20623,7 @@ public class Server implements Runnable {
                                     !ammoExplosion,
                                     !((ammoExplosion || areaSatArty) && ((te instanceof Tank) || ((te instanceof
                                             Mech) && (hit
-                                                                                                                                   .getLocation() == Mech.LOC_CT))))));
+                                                              .getLocation() == Mech.LOC_CT))))));
                             // If the head is destroyed, kill the crew.
 
                             if ((te instanceof Mech)
@@ -24798,7 +24800,7 @@ public class Server implements Runnable {
                     || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) || (atype
                                                                                         .getAmmoType() == AmmoType
                                                                                         .T_HEAVY_FLAMER)) && (atype
-                                                                                                                                                .getMunitionType() == AmmoType.M_COOLANT))) {
+                                                                                                                      .getMunitionType() == AmmoType.M_COOLANT))) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -24847,7 +24849,7 @@ public class Server implements Runnable {
     /**
      * Makes a mech fall.
      *
-     * @param Entity       The Entity that is falling.  It is expected that the Entity's
+     * @param entity       The Entity that is falling.  It is expected that the Entity's
      *                     position and elevation reflect the state prior to the  fall
      * @param fallPos      The location that the Entity is falling into.
      * @param fallHeight   The height that Entity is falling.
@@ -25560,8 +25562,8 @@ public class Server implements Runnable {
                     .terrainLevel(Terrains.FUEL_TANK))
                 || (Building.MEDIUM < smokeHex
                     .terrainLevel(Terrains.BUILDING))) {
-                if (smokeHex.terrainLevel(Terrains.SMOKE) 
-                        == SmokeCloud.SMOKE_HEAVY) {
+                if (smokeHex.terrainLevel(Terrains.SMOKE)
+                    == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke fills hex
                     r = new Report(5180, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
@@ -25575,15 +25577,15 @@ public class Server implements Runnable {
                     smokeLevel = SmokeCloud.SMOKE_HEAVY;
                 }
             } else {
-                if (smokeHex.terrainLevel(Terrains.SMOKE) 
-                        == SmokeCloud.SMOKE_HEAVY) {
+                if (smokeHex.terrainLevel(Terrains.SMOKE)
+                    == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke overpowers light
                     r = new Report(5190, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
                     smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_LIGHT);
                     addReport(r);
-                } else if (smokeHex.terrainLevel(Terrains.SMOKE) 
-                        == SmokeCloud.SMOKE_LIGHT) {
+                } else if (smokeHex.terrainLevel(Terrains.SMOKE)
+                           == SmokeCloud.SMOKE_LIGHT) {
                     // light smoke continue to fill hex
                     r = new Report(5195, Report.PUBLIC);
                     r.add(smokeCoords.getBoardNum());
@@ -27063,7 +27065,7 @@ public class Server implements Runnable {
         }
 
     }
-    
+
     /**
      * Sends out the game victory event to all connections
      */
@@ -27411,6 +27413,7 @@ public class Server implements Runnable {
         data[0] = cloud;
         send(new Packet(Packet.COMMAND_ADD_SMOKE_CLOUD, data));
     }
+
     /**
      * Sends notification to clients that the specified hex has changed.
      */
@@ -29705,8 +29708,10 @@ public class Server implements Runnable {
         Targetable target = game.getTarget(aaa.getTargetType(),
                                            aaa.getTargetId());
         if (target instanceof Entity) {
-            ((Entity) target).setStruck(true);
-            creditKill((Entity) target, game.getEntity(cen));
+            Entity targetEntity = (Entity) target;
+            targetEntity.setStruck(true);
+            targetEntity.addAttackedByThisTurn(target.getTargetId());
+            creditKill(targetEntity, game.getEntity(cen));
         }
     }
 
@@ -30787,7 +30792,7 @@ public class Server implements Runnable {
         if (((te.getMovementMode() == EntityMovementMode.HOVER) || ((te
                                                                              .getMovementMode() == EntityMovementMode
                                                                              .WIGE) && (te
-                                                                                                                                        .getElevation() == 0)))
+                                                                                                .getElevation() == 0)))
             && (te.isMovementHitPending() || (te.getWalkMP() <= 0)) // HACK:
             // Have
             // to
@@ -30983,7 +30988,8 @@ public class Server implements Runnable {
                     violated = entity;
                 }
                 Coords targetDest = Compute.getValidDisplacement(game,
-                                                                 violated.getId(), violated.getPosition(), Compute.d6() - 1);
+                                                                 violated.getId(), violated.getPosition(),
+                                                                 Compute.d6() - 1);
                 if (null != targetDest) {
                     doEntityDisplacement(violated, violated.getPosition(),
                                          targetDest, null);
@@ -31024,7 +31030,8 @@ public class Server implements Runnable {
         if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en
                                                                             .getElevation() > 0))
              || (en.getMovementMode() == EntityMovementMode.HOVER) || ((en
-                                                                                .getMovementMode() == EntityMovementMode.WIGE)
+                                                                                .getMovementMode() ==
+                                                                        EntityMovementMode.WIGE)
                                                                        && (en.getOriginalWalkMP() > 0) && !eruption))
             && !en.isImmobile()) {
             return;
@@ -31244,7 +31251,9 @@ public class Server implements Runnable {
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
                         && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity
-                                                                                                 .getMovementMode() == EntityMovementMode.HOVER))) {
+                                                                                                 .getMovementMode()
+                                                                                         == EntityMovementMode.HOVER)
+                    )) {
                         r = new Report(6480);
                         r.subject = entity.getId();
                         r.addDesc(entity);

@@ -51,6 +51,7 @@ v0.39.2-dev (SVN)
 + Princess now de-prioritizes civilian units until they fire on one of her units or unless they are on the Priority
     Targets list.
 + Bug [#4234]: Implemented Mine clearance manipulators for BA
++ Bug [#4177]: VTOLs not crashing with killed crew critical
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

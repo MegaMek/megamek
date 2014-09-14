@@ -180,6 +180,9 @@ public class FireControlTest {
         BasicPathRanker mockPathRanker = Mockito.mock(BasicPathRanker.class);
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
 
+        IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
+        Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
+
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getId()).thenReturn(1);
         Mockito.when(mockShooter.getMaxWeaponRange()).thenReturn(21);
@@ -218,6 +221,7 @@ public class FireControlTest {
         mockTarget = Mockito.mock(BipedMech.class);
         Mockito.when(mockTarget.getDisplayName()).thenReturn("mock target");
         Mockito.when(mockTarget.getId()).thenReturn(MOCK_TARGET_ID);
+        Mockito.when(mockTarget.isMilitary()).thenReturn(true);
 
         testFireControl = Mockito.spy(new FireControl(mockPrincess));
         Mockito.doReturn(mockShooterMoveMod)
@@ -2037,6 +2041,7 @@ public class FireControlTest {
         double baseUtility = 20.6154;
         MechWarrior mockPilot = Mockito.mock(MechWarrior.class);
         Mockito.when(mockPilot.getId()).thenReturn(20);
+        Mockito.when(mockPilot.isMilitary()).thenReturn(true);
 
         // Basic firing plan test.
         FiringPlan testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
@@ -2066,7 +2071,8 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility * (1 + FireControl.SUB_COMMANDER_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.SUB_COMMANDER_UTILITY), testFiringPlan.getUtility(),
+                            TOLERANCE);
         Mockito.when(mockTarget.hasC3()).thenReturn(false);
 
         // Make the target a Strategic Building Target.
@@ -2083,7 +2089,8 @@ public class FireControlTest {
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility * (1 + FireControl.STRATEGIC_TARGET_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.STRATEGIC_TARGET_UTILITY), testFiringPlan.getUtility(),
+                            TOLERANCE);
         Mockito.when(mockBuilding.getPosition()).thenReturn(new Coords(10, 10)); // A building not on the list.
         testFiringPlan = Mockito.spy(new FiringPlan(mockBuilding));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
@@ -2096,15 +2103,17 @@ public class FireControlTest {
         // Make the target a priority unit target
         Set<Integer> testPriorityUnits = new HashSet<>(1);
         testPriorityUnits.add(MOCK_TARGET_ID);
-        Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(testPriorityUnits);
+        Mockito.when(mockPrincess.getPriorityUnitTargets()).thenReturn(testPriorityUnits);
         testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
-        Assert.assertEquals(baseUtility * (1 + FireControl.PRIORITY_TARGET_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
+        Assert.assertEquals(baseUtility * (1 + FireControl.PRIORITY_TARGET_UTILITY), testFiringPlan.getUtility(),
+                            TOLERANCE);
         Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
+        Mockito.when(mockPrincess.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
 
         // Attack an ejected pilot.
         testFiringPlan = Mockito.spy(new FiringPlan(mockPilot));
@@ -2386,29 +2395,30 @@ public class FireControlTest {
         expected = new FiringPlan(mockTarget);
         expected.add(mockPPCFireInfo);
         expected.add(mockLRMFireInfo);
-        FiringPlan actual = testFireControl.getFullFiringPlan(mockShooter, mockTarget, mockGame, testToHitThreshold);
+        FiringPlan actual = testFireControl.getFullFiringPlan(mockShooter, mockTarget, testToHitThreshold,
+                                                              mockGame);
         Assert.assertEquals(new HashSet<>(expected), new HashSet<>(actual));
 
         // test the target not being on the board.
         Mockito.when(mockTarget.getPosition()).thenReturn(null);
         expected = new FiringPlan(mockTarget);
-        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget, mockGame,
-                                                                        testToHitThreshold));
+        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget,
+                                                                        testToHitThreshold, mockGame));
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
 
         // Test the shooter not being on the board.
         Mockito.when(mockShooter.getPosition()).thenReturn(null);
         expected = new FiringPlan(mockTarget);
-        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget, mockGame,
-                                                                        testToHitThreshold));
+        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget,
+                                                                        testToHitThreshold, mockGame));
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
 
         // Test the LRMs not having a good enough chance to hit.
         testToHitThreshold.put(mockLRM5, 1.0);
         expected = new FiringPlan(mockTarget);
         expected.add(mockPPCFireInfo);
-        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget, mockGame,
-                                                                        testToHitThreshold));
+        Assert.assertEquals(expected, testFireControl.getFullFiringPlan(mockShooter, mockTarget,
+                                                                        testToHitThreshold, mockGame));
         testToHitThreshold.put(mockLRM5, 0.0);
     }
 
@@ -2588,7 +2598,8 @@ public class FireControlTest {
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
-        FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame, testToHitThreshold);
+        FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame,
+                                                            testToHitThreshold);
         Assert.assertNotEquals(0, plan.getUtility(), 0.00001);
     }
 }

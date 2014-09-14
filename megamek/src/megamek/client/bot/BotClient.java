@@ -65,6 +65,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
@@ -162,6 +163,7 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment();
 
+    @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
 
     protected abstract MovePath continueMovementFor(Entity entity);
@@ -255,6 +257,7 @@ public abstract class BotClient extends Client {
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
+                    endOfTurnProcessing();
                 case PHASE_INITIATIVE_REPORT:
                 case PHASE_TARGETING_REPORT:
                 case PHASE_MOVEMENT_REPORT:
@@ -1022,4 +1025,7 @@ public abstract class BotClient extends Client {
         this.clientgui = clientgui;
     }
 
+    public void endOfTurnProcessing() {
+        // Do nothing;
+    }
 }

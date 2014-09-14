@@ -41,6 +41,8 @@ v0.39.2-dev (SVN)
 + Feature [#1289]: Require Commander to be chosen prior to starting a battle
     that has the "Kill Commander" option selected. 
 + Bug: Fixed mine dispensers to work according with rules in TO p.325 
++ Bug [#4234]: Missiles/Artillery couldn't be directed to make a mine clearance
+    attacks
     
 
 v0.39.1 (2014-08-26 14:56 UTC)

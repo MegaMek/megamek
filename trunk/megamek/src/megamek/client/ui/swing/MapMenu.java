@@ -1170,6 +1170,13 @@ public class MapMenu extends JPopupMenu {
                 }
             }
         }
+        // Check for Mine Clearance
+        if (isFiringDisplay || isTargetingDisplay) {
+            if (client.getGame().containsMinefield(coords)) {
+                menu.add(TargetMenuItem(new MinefieldTarget(coords, board)));
+            }
+        }
+        
         if (isTargetingDisplay
                 && !board.inSpace()
                 && !board.inAtmosphere()

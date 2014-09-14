@@ -2264,7 +2264,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
                 || (gear == MovementDisplay.GEAR_TURN) 
-                || (gear == MovementDisplay.GEAR_BACKUP));
+                || (gear == MovementDisplay.GEAR_BACKUP)
+                || (gear == MovementDisplay.GEAR_JUMP));
         int unloadEl = cmd.getFinalElevation();
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         boolean canUnloadHere = false;

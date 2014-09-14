@@ -52,6 +52,7 @@ v0.39.2-dev (SVN)
     Targets list.
 + Bug [#4234]: Implemented Mine clearance manipulators for BA
 + Bug [#4177]: VTOLs not crashing with killed crew critical
++ Bug [#4253]: Jumping 'mechs should be unable to unload mechanized BA
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

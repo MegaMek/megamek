@@ -2705,6 +2705,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     msg += player + "\n";
                 }
                 clientgui.doAlertDialog(title, msg);
+                return;
             }
             
         }

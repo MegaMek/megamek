@@ -63,7 +63,7 @@ public class MinefieldTarget implements Targetable {
     }
 
     public String getDisplayName() {
-        return "Minefield: " + m_coords.getBoardNum() + " (Clear)";
+        return "Clear Minefield: " + m_coords.getBoardNum();
     }
 
     /**

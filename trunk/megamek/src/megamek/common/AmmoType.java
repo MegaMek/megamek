@@ -11487,14 +11487,19 @@ public class AmmoType extends EquipmentType {
     public static boolean canClearMinefield(AmmoType at) {
         // first the normal munition types
         if (at != null) {
-            if (((((at.getAmmoType() == T_LRM)
+            // LRM-20's, RL-20's, and MRM 20, 30, and 40 can clear minefields
+            if (((at.getAmmoType() == T_LRM)
                     || (at.getAmmoType() == T_LRM_STREAK)
                     || (at.getAmmoType() == T_EXLRM)
                     || (at.getAmmoType() == T_PXLRM)
                     || (at.getAmmoType() == T_MRM)
-                    || (at.getAmmoType() == T_MRM_STREAK) || (at.getAmmoType() == T_ROCKET_LAUNCHER)) && (at
-                    .getRackSize() >= 20)) || (at.getAmmoType() == T_TBOLT_20))
-                    && (at.getMunitionType() == M_STANDARD)) {
+                    || (at.getAmmoType() == T_MRM_STREAK) 
+                    || (at.getAmmoType() == T_ROCKET_LAUNCHER))
+                    && (at.getRackSize() >= 20)
+                    && ((at.getMunitionType() == M_STANDARD)
+                            || (at.getMunitionType() == M_ARTEMIS_CAPABLE)
+                            || (at.getMunitionType() == M_ARTEMIS_V_CAPABLE)
+                            || (at.getMunitionType() == M_NARC_CAPABLE))) {
                 return true;
             }
             // ATMs

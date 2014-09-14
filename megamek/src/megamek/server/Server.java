@@ -12195,19 +12195,21 @@ public class Server implements Runnable {
         int clear = Minefield.CLEAR_NUMBER_INFANTRY;
         int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
 
+        Report r; 
         // Does the entity has a minesweeper?
-        /*
-         * this is no longer the way this is handled in TacOps for infantry, we
-         * need to check for specialized minesweeping for vees, this is totally
-         * different for (Mounted mounted : ent.getMisc()) { if
-         * (mounted.getType().hasFlag(MiscType.F_TOOLS) &&
-         * mounted.getType().hasSubType(MiscType.S_MINESWEEPER)) { int
-         * sweeperType = mounted.getType().getToHitModifier(); clear =
-         * Minefield.CLEAR_NUMBER_SWEEPER[sweeperType]; boom =
-         * Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT[sweeperType]; break; } }
-         */
+        if ((ent instanceof BattleArmor)) {
+            BattleArmor ba = (BattleArmor)ent;
+            String mcmName = BattleArmor.MANIPULATOR_TYPE_STRINGS
+                    [BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE];
+            if (ba.getLeftManipulatorName().equals(mcmName)) {
+                clear = Minefield.CLEAR_NUMBER_BA_SWEEPER;
+                boom = Minefield.CLEAR_NUMBER_BA_SWEEPER_ACCIDENT;
+            }
+            r = new Report(2246);
+        } else {
+            r = new Report(2245);
+        }
         // mine clearing roll
-        Report r = new Report(2245);
         r.subject = ent.getId();
         r.add(ent.getShortName(), true);
         r.add(Minefield.getDisplayableName(mf.getType()));

@@ -3676,14 +3676,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Does the entity has a minesweeper?
             int clear = Minefield.CLEAR_NUMBER_INFANTRY;
             int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
-            /*
-             * for (Mounted mounted : ce.getMisc()) { if
-             * (mounted.getType().hasFlag(MiscType.F_TOOLS) &&
-             * mounted.getType().hasSubType(MiscType.S_MINESWEEPER)) { int
-             * sweeperType = mounted.getType().getToHitModifier(); clear =
-             * Minefield.CLEAR_NUMBER_SWEEPER[sweeperType]; boom =
-             * Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT[sweeperType]; break; } }
-             */
+            // Check for Mine clearance manipulators on BA
+            if ((ce() instanceof BattleArmor)) {
+                BattleArmor ba = (BattleArmor)ce();
+                String mcmName = BattleArmor.MANIPULATOR_TYPE_STRINGS
+                        [BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE];
+                if (ba.getLeftManipulatorName().equals(mcmName)) {
+                    clear = Minefield.CLEAR_NUMBER_BA_SWEEPER;
+                    boom = Minefield.CLEAR_NUMBER_BA_SWEEPER_ACCIDENT;
+                }
+            }
 
             // need to choose a mine
             List<Minefield> mfs = clientgui.getClient().getGame()

@@ -50,6 +50,7 @@ v0.39.2-dev (SVN)
     they are fired on first.  Also, firing on such a unit, will get the attacking player flagged as 'dishonored'.
 + Princess now de-prioritizes civilian units until they fire on one of her units or unless they are on the Priority
     Targets list.
++ Bug [#4234]: Implemented Mine clearance manipulators for BA
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

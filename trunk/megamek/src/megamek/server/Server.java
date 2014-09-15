@@ -151,7 +151,7 @@ import megamek.common.TurnVectors;
 import megamek.common.UnitLocation;
 import megamek.common.VTOL;
 import megamek.common.Warship;
-import megamek.common.WeaponComparator;
+import megamek.common.WeaponComparatorBV;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -22124,7 +22124,7 @@ public class Server implements Runnable {
                         }
                     }
                     // sort weapons by BV
-                    Collections.sort(weapons, new WeaponComparator());
+                    Collections.sort(weapons, new WeaponComparatorBV());
                     int roll = Compute.d6();
                     Mounted weapon;
                     if (roll < 4) {

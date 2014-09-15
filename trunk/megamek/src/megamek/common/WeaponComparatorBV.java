@@ -22,9 +22,9 @@ import java.util.Comparator;
  * 
  * @author beerockxs
  */
-public class WeaponComparator implements Comparator<Mounted> {
+public class WeaponComparatorBV implements Comparator<Mounted> {
 
-    public WeaponComparator() {
+    public WeaponComparatorBV() {
     }
 
     public int compare(Mounted obj1, Mounted obj2) {

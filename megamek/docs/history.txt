@@ -55,6 +55,7 @@ v0.39.2-dev (SVN)
 + Bug [#4253]: Jumping 'mechs should be unable to unload mechanized BA
 + Feature [#1291]: Renamed WeaponComparator to WeaponComparatorBV and added
     range and damage
++ Feature [#1291] Phase 1: Added ability to sort weapons list in UnitDisplay
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

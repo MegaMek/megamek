@@ -436,7 +436,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-
         // Dropship Artillery cannot be switched to "Direct" Fire
         final WeaponType wtype = (WeaponType) m.getType();
         if ((ce() instanceof Dropship) && (wtype instanceof ArtilleryWeapon)) {
@@ -449,21 +448,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // notify the player
         if (m.canInstantSwitch(nMode)) {
-            clientgui
-                    .systemMessage(Messages
-                                           .getString(
-                                                   "FiringDisplay.switched", new Object[]{m.getName(),
-                                                                                          m.curMode()
-                                                                                           .getDisplayableName()}));
+            clientgui.systemMessage(Messages.getString(
+                    "FiringDisplay.switched", new Object[] { m.getName(),
+                            m.curMode().getDisplayableName() }));
             //$NON-NLS-1$
         } else {
-            clientgui
-                    .systemMessage(Messages
-                                           .getString(
-                                                   "FiringDisplay.willSwitch", new Object[]{m.getName(),
-                                                                                            m.pendingMode()
-                                                                                             .getDisplayableName()}))
-            ; //$NON-NLS-1$
+            clientgui.systemMessage(Messages.getString(
+                    "FiringDisplay.willSwitch", new Object[] { m.getName(),
+                            m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
         }
 
         updateTarget();
@@ -586,7 +578,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = ce().getNextWeapon(weaponNum);
+        int nextWeapon = clientgui.mechD.wPan.selectNextWeapon();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1) && GUIPreferences.getInstance().getAutoEndFiring()) {
@@ -605,14 +597,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Skips to the next weapon
      */
     private void nextWeapon() {
-        int nextWeapon = ce().getNextWeapon(
-                clientgui.mechD.wPan.getSelectedWeaponNum());
-        // if there's no next weapon, forget about it
-        if (nextWeapon == -1) {
+        if (ce() == null) {
             return;
         }
-        clientgui.mechD.wPan.displayMech(ce());
-        clientgui.mechD.wPan.selectWeapon(nextWeapon);
+        clientgui.mechD.wPan.selectNextWeapon();
+
+        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
+            clientgui.mechD.wPan.displayMech(ce());
+        }        
         updateTarget();
     }
 
@@ -665,7 +657,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.redrawEntity(ce());
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
-        clientgui.mechD.wPan.selectWeapon(ce().getFirstWeapon());
+        clientgui.mechD.wPan.selectFirstWeapon();
         updateTarget();
     }
 

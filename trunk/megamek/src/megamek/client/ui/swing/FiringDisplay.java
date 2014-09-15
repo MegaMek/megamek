@@ -743,21 +743,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // notify the player
         if (m.canInstantSwitch(nMode)) {
-            clientgui
-                    .systemMessage(Messages
-                                           .getString(
-                                                   "FiringDisplay.switched", new Object[]{m.getName(),
-                                                                                          m.curMode()
-                                                                                           .getDisplayableName(true)
-                                                   })); //$NON-NLS-1$
+            clientgui.systemMessage(Messages.getString(
+                    "FiringDisplay.switched", new Object[] { m.getName(),
+                            m.curMode().getDisplayableName(true) })); //$NON-NLS-1$
         } else {
-            clientgui
-                    .systemMessage(Messages
-                                           .getString(
-                                                   "FiringDisplay.willSwitch", new Object[]{m.getName(),
-                                                                                            m.pendingMode()
-                                                                                             .getDisplayableName
-                                                                                                     (true)}));
+            clientgui.systemMessage(Messages.getString(
+                    "FiringDisplay.willSwitch", new Object[] { m.getName(),
+                            m.pendingMode().getDisplayableName(true) }));
             //$NON-NLS-1$
         }
 
@@ -1210,9 +1202,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
         if (!game.getOptions().booleanOption("no_forced_primary_targets")
-            && (ce() instanceof Mech)
-            || (ce() instanceof Tank)
-            || (ce() instanceof Protomech)) {
+                && (ce() instanceof Mech) || (ce() instanceof Tank)
+                || (ce() instanceof Protomech)) {
             EntityAction lastAction = null;
             try {
                 lastAction = attacks.lastElement();
@@ -1220,15 +1211,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 // ignore
             }
             if ((lastAction != null)
-                && (lastAction instanceof WeaponAttackAction)) {
+                    && (lastAction instanceof WeaponAttackAction)) {
                 WeaponAttackAction oldWaa = (WeaponAttackAction) lastAction;
                 Targetable oldTarget = oldWaa.getTarget(game);
                 if (!oldTarget.equals(target)) {
                     boolean oldInFront = Compute.isInArc(ce().getPosition(),
-                                                         ce().getSecondaryFacing(), oldTarget, ce()
+                            ce().getSecondaryFacing(), oldTarget, ce()
                                     .getForwardArc());
                     boolean curInFront = Compute.isInArc(ce().getPosition(),
-                                                         ce().getSecondaryFacing(), target, ce()
+                            ce().getSecondaryFacing(), target, ce()
                                     .getForwardArc());
                     if (!oldInFront && curInFront) {
                         String title = Messages
@@ -1330,7 +1321,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = ce().getNextWeapon(weaponNum);
+        int nextWeapon = clientgui.mechD.wPan.selectNextWeapon();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
         updateClearTurret();
@@ -1512,7 +1503,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.redrawEntity(ce());
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
-        clientgui.mechD.wPan.selectWeapon(ce().getFirstWeapon());
+        clientgui.mechD.wPan.selectFirstWeapon();
         updateTarget();
     }
 

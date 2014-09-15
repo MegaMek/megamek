@@ -32,9 +32,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.AbstractListModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -116,6 +119,9 @@ import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import megamek.common.WeaponComparatorDamage;
+import megamek.common.WeaponComparatorNum;
+import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.BayWeapon;
@@ -631,7 +637,122 @@ public class UnitDisplay extends JPanel {
             update();
         }
     }
+    
+    class WeaponListModel extends AbstractListModel<String> {
+                
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6312003196674512339L;
 
+        private ArrayList<Mounted> weapons;
+        
+        private Entity en;
+        
+        WeaponListModel(Entity e) {
+            en = e;
+            weapons = new ArrayList<Mounted>();
+        }
+        
+        public void addWeapon(Mounted w) {
+            weapons.add(w);
+            fireIntervalAdded(this,weapons.size()-1, weapons.size()-1);
+        }
+        
+        public int getIndex(int weaponId) {
+            Mounted mount = en.getEquipment(weaponId);
+            for (int i = 0; i < weapons.size(); i++) {
+                if (weapons.get(i).equals(mount)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        public void removeAllElements() {
+            int numWeapons = weapons.size() - 1;
+            weapons.clear();
+            fireIntervalRemoved(this, 0, numWeapons);
+        }
+
+        public Mounted getWeaponAt(int index) {
+            return weapons.get(index);
+        }
+        
+        @Override
+        public String getElementAt(int index) {
+            final Mounted mounted = weapons.get(index);
+            final WeaponType wtype = (WeaponType) mounted.getType();
+            final IGame game = clientgui.getClient().getGame();
+            
+            StringBuffer wn = new StringBuffer(mounted.getDesc());
+            wn.append(" ["); //$NON-NLS-1$
+            wn.append(en.getLocationAbbr(mounted.getLocation()));
+            if (mounted.isSplit()) {
+                wn.append('/');
+                wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
+            }
+            wn.append(']');
+            // determine shots left & total shots left
+            if ((wtype.getAmmoType() != AmmoType.T_NA)
+                && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                int shotsLeft = 0;
+                if ((mounted.getLinked() != null)
+                    && !mounted.getLinked().isDumping()) {
+                    shotsLeft = mounted.getLinked().getUsableShotsLeft();
+                }
+
+                EquipmentType typeUsed = null;
+                if (mounted.getLinked() != null) {
+                    typeUsed = mounted.getLinked().getType();
+                }
+
+                int totalShotsLeft = en.getTotalMunitionsOfType(typeUsed);
+
+                wn.append(" ("); //$NON-NLS-1$
+                wn.append(shotsLeft);
+                wn.append('/'); //$NON-NLS-1$
+                wn.append(totalShotsLeft);
+                wn.append(')'); //$NON-NLS-1$
+            }
+
+            // MG rapidfire
+            if (mounted.isRapidfire()) {
+                wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
+            }
+
+            // Hotloaded Missile Launchers
+            if (mounted.isHotLoaded()) {
+                wn.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+            }
+
+            // Fire Mode - lots of things have variable modes
+            if (wtype.hasModes()) {
+                wn.append(' ');
+                wn.append(mounted.curMode().getDisplayableName());
+            }
+            if ((game != null) 
+                    && game.getOptions().booleanOption("tacops_called_shots")) { //$NON-NLS-1$
+                wn.append(' ');
+                wn.append(mounted.getCalledShot().getDisplayableName());
+            }
+            return wn.toString();
+        }
+
+        @Override
+        public int getSize() {
+            return weapons.size();
+        }
+        
+        public void sort(Comparator<Mounted> comparator) {
+            Collections.sort(weapons, comparator);
+            fireContentsChanged(this, 0, weapons.size() - 1);
+            //repaint();
+        }
+        
+    }
+    
+    
     /**
      * This class contains the all the gizmos for firing the mech's weapons.
      */
@@ -641,11 +762,12 @@ public class UnitDisplay extends JPanel {
          *
          */
         private static final long serialVersionUID = -5728839963281503332L;
-
+        private JComboBox<String> weapSortOrder;
         public JList<String> weaponList;
         private JComboBox<String> m_chAmmo;
         public JComboBox<String> m_chBayWeapon;
 
+        private JLabel wSortOrder;
         private JLabel wAmmo;
         private JLabel wBayWeapon;
         private JLabel wNameL;
@@ -709,7 +831,28 @@ public class UnitDisplay extends JPanel {
         WeaponPanel() {
 
             setLayout(new GridBagLayout());
-
+            
+            int gridy = 0;
+            wSortOrder = new JLabel(
+                    Messages.getString("MechDisplay.WeaponSortOrder.label"),
+                    SwingConstants.LEFT);
+            wSortOrder.setOpaque(false);
+            wSortOrder.setForeground(Color.WHITE);
+            add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                   .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
+            weapSortOrder = new JComboBox<String>();
+            for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
+                String entry = "MechDisplay.WeaponSortOrder." + s.l10nEntry;
+                weapSortOrder.addItem(Messages.getString(entry));
+            }
+            weapSortOrder.addActionListener(this);
+            add(weapSortOrder,
+                    GBC.eol().insets(15, 9, 15, 1)
+                       .fill(GridBagConstraints.HORIZONTAL)
+                       .anchor(GridBagConstraints.CENTER).gridy(gridy)
+                       .gridx(1));
+            gridy++;
+            
             // weapon list
             weaponList = new JList<String>(new DefaultListModel<String>());
             weaponList.addListSelectionListener(this);
@@ -719,8 +862,9 @@ public class UnitDisplay extends JPanel {
             add(tWeaponScroll,
                 GBC.eol().insets(15, 9, 15, 9)
                    .fill(GridBagConstraints.HORIZONTAL)
-                   .anchor(GridBagConstraints.CENTER).gridy(0)
+                   .anchor(GridBagConstraints.CENTER).gridy(gridy)
                    .gridx(0));
+            gridy++;
             weaponList.resetKeyboardActions();
             for (KeyListener key : weaponList.getKeyListeners()) {
                 weaponList.removeKeyListener(key);
@@ -742,17 +886,17 @@ public class UnitDisplay extends JPanel {
             m_chBayWeapon = new JComboBox<String>();
             m_chBayWeapon.addActionListener(this);
 
-            add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(1).gridx(0));
+            add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
 
             add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                  .insets(1, 1, 15, 1).gridy(1).gridx(1));
-
-            add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(2).gridx(0));
+                                  .insets(1, 1, 15, 1).gridy(gridy).gridx(1));
+            gridy++;
+            add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(m_chAmmo,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 15, 1).gridy(2).gridx(1));
-
+                   .insets(1, 9, 15, 1).gridy(gridy).gridx(1));
+            gridy++;
             // Adding Heat Buildup
 
             currentHeatBuildupL = new JLabel(
@@ -766,11 +910,12 @@ public class UnitDisplay extends JPanel {
             add(currentHeatBuildupL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
                    .anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9)
-                   .gridy(3).gridx(0));
+                   .gridy(gridy).gridx(0));
 
             add(currentHeatBuildupR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 1, 9, 9).gridy(3).gridx(1));
+                   .insets(1, 1, 9, 9).gridy(gridy).gridx(1));
+            gridy++;
 
             // Adding weapon display labels
             wNameL = new JLabel(
@@ -812,40 +957,40 @@ public class UnitDisplay extends JPanel {
 
             add(wNameL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(4).gridx(0));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(wHeatL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(4).gridx(1));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
 
             add(wDamL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(4).gridx(2));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
 
             add(wArcHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                              .insets(1, 9, 1, 1).gridy(4).gridx(3));
+                              .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
 
             add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                    .insets(1, 9, 1, 1).gridy(4).gridx(3));
-
+                                    .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
+            gridy++;
             add(wNameR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(5).gridx(0));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(wHeatR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(5).gridx(1));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
 
             add(wDamR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(5).gridx(2));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
 
             add(wArcHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                              .insets(1, 9, 1, 1).gridy(5).gridx(3));
+                              .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
 
             add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                    .insets(1, 9, 1, 1).gridy(5).gridx(3));
-
+                                    .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
+            gridy++;
             // Adding range labels
             wMinL = new JLabel(
                     Messages.getString("MechDisplay.Min"), SwingConstants.CENTER); //$NON-NLS-1$
@@ -938,100 +1083,107 @@ public class UnitDisplay extends JPanel {
 
             add(wMinL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(6).gridx(0));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
             add(wShortL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(6).gridx(1));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
             add(wMedL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(6).gridx(2));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
             add(wLongL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(6).gridx(3));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
             add(wExtL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(6).gridx(4));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                    .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
+
+            add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+            
+            add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+            
+            add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+            
+            add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            gridy++;
             // ----------------
 
             add(wMinR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(7).gridx(0));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
             add(wShortR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(7).gridx(1));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
             add(wMedR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(7).gridx(2));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
             add(wLongR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(7).gridx(3));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
             add(wExtR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(7).gridx(4));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                    .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
+            add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
+            
+            add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
+            
+            add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
+            
+            add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+                                .insets(1, 9, 9, 1).gridy(gridy).gridx(5));
+            
+            gridy++;
             // ----------------
             add(wAVL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(8).gridx(0));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
             add(wShortAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                              .insets(1, 9, 9, 1).gridy(8).gridx(1));
+                              .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
             add(wMedAVR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(8).gridx(2));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
             add(wLongAVR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(8).gridx(3));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
             add(wExtAVR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 9, 1).gridy(8).gridx(4));
+                   .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
+            
+            gridy++;
 
-            add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(0));
 
-            add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(1));
-
-            add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(2));
-
-            add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(3));
-
-            add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(4));
-
-            add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(6).gridx(4));
-
-            add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(0));
-
-            add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(1));
-
-            add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(2));
-
-            add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(3));
-
-            add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(4));
-
-            add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                                     .insets(1, 9, 9, 1).gridy(7).gridx(5));
 
             // target panel
             wTargetL = new JLabel(
@@ -1059,27 +1211,30 @@ public class UnitDisplay extends JPanel {
 
             add(wTargetL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(9).gridx(0));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(wTargetR,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(9).gridx(1));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
+            gridy++;
 
             add(wRangeL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(10).gridx(0));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(wRangeR,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(10).gridx(1));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
+            gridy++;
 
             add(wToHitL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(11).gridx(0));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
             add(wToHitR,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                   .insets(1, 9, 1, 1).gridy(11).gridx(1));
+                   .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
+            gridy++;
 
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
@@ -1088,8 +1243,9 @@ public class UnitDisplay extends JPanel {
             toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
             add(toHitText,
                 GBC.eol().fill(GridBagConstraints.BOTH)
-                   .insets(15, 9, 15, 9).gridy(12).gridx(0)
+                   .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
                    .gridheight(2));
+            gridy++;
 
             setBackGround();
             onResize();
@@ -1256,7 +1412,7 @@ public class UnitDisplay extends JPanel {
             }
 
             // update weapon list
-            ((DefaultListModel<String>) weaponList.getModel()).removeAllElements();
+            weaponList.setModel(new WeaponListModel(en));
             ((DefaultComboBoxModel<String>) m_chAmmo.getModel()).removeAllElements();
 
             m_chAmmo.setEnabled(false);
@@ -1274,60 +1430,8 @@ public class UnitDisplay extends JPanel {
             boolean hasFiredWeapons = false;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted mounted = entity.getWeaponList().get(i);
-                WeaponType wtype = (WeaponType) mounted.getType();
-                StringBuffer wn = new StringBuffer(mounted.getDesc());
-                wn.append(" ["); //$NON-NLS-1$
-                wn.append(en.getLocationAbbr(mounted.getLocation()));
-                if (mounted.isSplit()) {
-                    wn.append('/');
-                    wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
-                }
-                wn.append(']');
-                // determine shots left & total shots left
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
-                    && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                    int shotsLeft = 0;
-                    if ((mounted.getLinked() != null)
-                        && !mounted.getLinked().isDumping()) {
-                        shotsLeft = mounted.getLinked().getUsableShotsLeft();
-                    }
 
-                    EquipmentType typeUsed = null;
-                    if (mounted.getLinked() != null) {
-                        typeUsed = mounted.getLinked().getType();
-                    }
-
-                    int totalShotsLeft = entity
-                            .getTotalMunitionsOfType(typeUsed);
-
-                    wn.append(" ("); //$NON-NLS-1$
-                    wn.append(shotsLeft);
-                    wn.append('/');
-                    wn.append(totalShotsLeft);
-                    wn.append(')');
-                }
-
-                // MG rapidfire
-                if (mounted.isRapidfire()) {
-                    wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
-                }
-
-                // Hotloaded Missile Launchers
-                if (mounted.isHotLoaded()) {
-                    wn.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
-                }
-
-                // Fire Mode - lots of things have variable modes
-                if (wtype.hasModes()) {
-                    wn.append(' ');
-                    wn.append(mounted.curMode().getDisplayableName());
-                }
-                if ((game != null) && game.getOptions().booleanOption("tacops_called_shots")) {
-                    wn.append(' ');
-                    wn.append(mounted.getCalledShot().getDisplayableName());
-                }
-                ((DefaultListModel<String>) weaponList.getModel()).addElement(wn
-                                                                                      .toString());
+                ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
                 if (mounted.isUsedThisRound()
                     && (game.getPhase() == mounted.usedInPhase())
                     && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
@@ -1365,6 +1469,9 @@ public class UnitDisplay extends JPanel {
                     }
                 }
             }
+            weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder()
+                    .ordinal());
+            
             if (en.hasDamagedRHS() && hasFiredWeapons) {
                 currentHeatBuildup++;
             }
@@ -1474,37 +1581,56 @@ public class UnitDisplay extends JPanel {
         }
 
         /**
-         * Selects the weapon at the specified index in the list
+         * Selects the weapon with the specified weapon ID.
          */
         public void selectWeapon(int wn) {
             if (wn == -1) {
                 weaponList.setSelectedIndex(-1);
                 return;
             }
-            int index = entity.getWeaponList().indexOf(entity.getEquipment(wn));
+            int index = ((WeaponListModel)weaponList.getModel()).getIndex(wn);
+            if (index == -1) {
+                weaponList.setSelectedIndex(-1);
+                return;
+            }
             weaponList.setSelectedIndex(index);
             weaponList.ensureIndexIsVisible(index);
             displaySelected();
+            weaponList.repaint();
         }
 
         /**
-         * Selects the weapon at the specified index in the list
+         * Returns the Mounted for the selected weapon in the weapon list.
+         * @return
+         */
+        public Mounted getSelectedWeapon() {
+            int selected = weaponList.getSelectedIndex();
+            if (selected == -1) {
+                return null;
+            }
+            return ((WeaponListModel) weaponList.getModel())
+                    .getWeaponAt(selected);
+        }
+        
+        /**
+         * Returns the equipment ID number for the weapon currently selected
          */
         public int getSelectedWeaponNum() {
             int selected = weaponList.getSelectedIndex();
             if (selected == -1) {
                 return -1;
             }
-            return entity.getEquipmentNum(entity.getWeaponList().get(selected));
+            return entity.getEquipmentNum(((WeaponListModel) weaponList
+                    .getModel()).getWeaponAt(selected));
         }
-
+        
         /**
-         * Selects the next valid weapon in the weapon list.
-         *
-         * @return The weaponId for the selected weapon
+         * Selects the first valid weapon in the weapon list.
+         * @return The weapon id of the weapon selected
          */
-        public int selectNextWeapon() {
-            int selected = weaponList.getSelectedIndex();
+        public int selectFirstWeapon() { 
+            int selected = -1;
+            Mounted selectedWeap;
             int initialSelection = selected;
             boolean hasLooped = false;
             do {
@@ -1515,21 +1641,63 @@ public class UnitDisplay extends JPanel {
                 if (selected == initialSelection) {
                     hasLooped = true;
                 }
-            } while (!hasLooped && !entity.isWeaponValidForPhase(
-                    entity.getWeaponList().get(selected)));
+                selectedWeap = ((WeaponListModel) weaponList.getModel())
+                        .getWeaponAt(selected);
+            } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
+
+            if ((selected >= 0) && (selected < entity.getWeaponList().size())
+                    && !hasLooped) {
+                weaponList.setSelectedIndex(selected);
+                weaponList.ensureIndexIsVisible(selected);
+                return entity.getEquipmentNum(selectedWeap);
+            } else {
+                weaponList.setSelectedIndex(-1);
+                return -1;
+            }
+        }
+
+        /**
+         * Selects the next valid weapon in the weapon list.
+         *
+         * @return The weaponId for the selected weapon
+         */
+        public int selectNextWeapon() {
+            int selected = weaponList.getSelectedIndex();
+            Mounted selectedWeap = ((WeaponListModel) weaponList.getModel())
+                    .getWeaponAt(selected);
+            int initialSelection = selected;
+            boolean hasLooped = false;
+            do {
+                selected++;
+                if (selected >= weaponList.getModel().getSize()) {
+                    selected = 0;
+                }
+                if (selected == initialSelection) {
+                    hasLooped = true;
+                }
+                selectedWeap = ((WeaponListModel) weaponList.getModel())
+                        .getWeaponAt(selected);
+            } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
 
             weaponList.setSelectedIndex(selected);
             weaponList.ensureIndexIsVisible(selected);
-            if (selected >= 0 && selected < entity.getWeaponList().size()) {
-                return entity.getEquipmentNum(
-                        entity.getWeaponList().get(selected));
+            if ((selected >= 0) && (selected < entity.getWeaponList().size())
+                    && !hasLooped) {
+                return entity.getEquipmentNum(selectedWeap);
             } else {
                 return -1;
             }
         }
 
+        /**
+         * Selects the prevous valid weapon in the weapon list.
+         *
+         * @return The weaponId for the selected weapon
+         */
         public int selectPrevWeapon() {
             int selected = weaponList.getSelectedIndex();
+            Mounted selectedWeap = ((WeaponListModel) weaponList.getModel())
+                    .getWeaponAt(selected);
             int initialSelection = selected;
             boolean hasLooped = false;
             do {
@@ -1540,14 +1708,15 @@ public class UnitDisplay extends JPanel {
                 if (selected == initialSelection) {
                     hasLooped = true;
                 }
-            } while (!hasLooped && !entity.isWeaponValidForPhase(
-                    entity.getWeaponList().get(selected)));
+                selectedWeap = ((WeaponListModel) weaponList.getModel())
+                        .getWeaponAt(selected);
+            } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
 
             weaponList.setSelectedIndex(selected);
             weaponList.ensureIndexIsVisible(selected);
-            if (selected >= 0 && selected < entity.getWeaponList().size()) {
-                return entity.getEquipmentNum(
-                        entity.getWeaponList().get(selected));
+            if ((selected >= 0) && (selected < entity.getWeaponList().size())
+                    && !hasLooped) {
+                return entity.getEquipmentNum(selectedWeap);
             } else {
                 return -1;
             }
@@ -1592,8 +1761,9 @@ public class UnitDisplay extends JPanel {
 
                 return;
             }
-            Mounted mounted = entity.getWeaponList().get(
-                    weaponList.getSelectedIndex());
+            
+            Mounted mounted = ((WeaponListModel) weaponList.getModel())
+                    .getWeaponAt(weaponList.getSelectedIndex());
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
@@ -2459,8 +2629,8 @@ public class UnitDisplay extends JPanel {
 
                     Mounted mounted = null;
                     if (weaponList.getSelectedIndex() != -1) {
-                        mounted = entity.getWeaponList().get(
-                                weaponList.getSelectedIndex());
+                        mounted = ((WeaponListModel) weaponList.getModel())
+                                .getWeaponAt(weaponList.getSelectedIndex());
                     }
                     // Some weapons have a specific target, which gets handled
                     // in the target method
@@ -2479,17 +2649,19 @@ public class UnitDisplay extends JPanel {
 
         public void actionPerformed(ActionEvent ev) {
             if (ev.getSource().equals(m_chAmmo)
-                && (m_chAmmo.getSelectedIndex() != -1) && (clientgui != null)) {
+                    && (m_chAmmo.getSelectedIndex() != -1)
+                    && (clientgui != null)) {
                 // only change our own units
                 if (!clientgui.getClient().getLocalPlayer()
                               .equals(entity.getOwner())) {
                     return;
                 }
                 int n = weaponList.getSelectedIndex();
-                if (n == -1) {
+                if (weaponList.getSelectedIndex() == -1) {
                     return;
                 }
-                Mounted mWeap = entity.getWeaponList().get(n);
+                Mounted mWeap = ((WeaponListModel) weaponList.getModel())
+                        .getWeaponAt(n);
                 Mounted oldWeap = mWeap;
                 Mounted oldAmmo = mWeap.getLinked();
                 Mounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
@@ -2503,7 +2675,7 @@ public class UnitDisplay extends JPanel {
                     }
                     //
                     Mounted sWeap = entity.getEquipment(mWeap.getBayWeapons()
-                                                             .elementAt(n));
+                            .elementAt(n));
                     // cycle through all weapons of the same type and load with
                     // this ammo
                     for (int wid : mWeap.getBayWeapons()) {
@@ -2521,15 +2693,15 @@ public class UnitDisplay extends JPanel {
                     entity.loadWeapon(mWeap, mAmmo);
                     // Alert the server of the update.
                     clientgui.getClient().sendAmmoChange(entity.getId(),
-                                                         entity.getEquipmentNum(mWeap),
-                                                         entity.getEquipmentNum(mAmmo));
+                            entity.getEquipmentNum(mWeap),
+                            entity.getEquipmentNum(mAmmo));
                 }
 
                 // Refresh for hot load change
                 if ((((oldAmmo == null) || !oldAmmo.isHotLoaded()) && mAmmo
                         .isHotLoaded())
-                    || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
-                        .isHotLoaded())) {
+                        || ((oldAmmo != null) && oldAmmo.isHotLoaded() && !mAmmo
+                                .isHotLoaded())) {
                     displayMech(entity);
                     weaponList.setSelectedIndex(n);
                     weaponList.ensureIndexIsVisible(n);
@@ -2566,8 +2738,35 @@ public class UnitDisplay extends JPanel {
                     return;
                 }
                 displaySelected();
+            } else if (ev.getSource().equals(weapSortOrder)) {
+                setWeaponComparator(weapSortOrder.getSelectedIndex());
             }
             onResize();
+        }
+        
+        void setWeaponComparator(int sortIdx) {
+            Comparator<Mounted> weapComparator;
+            if (sortIdx == Entity.WeaponSortOrder.RANGE_LH.ordinal()) {
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_LH);
+                weapComparator = new WeaponComparatorRange(true);
+            } else if (sortIdx == Entity.WeaponSortOrder.RANGE_HL.ordinal()) {
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_HL);
+                weapComparator = new WeaponComparatorRange(false);
+            } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_LH.ordinal()) {
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_LH);
+                weapComparator = new WeaponComparatorDamage(true);
+            } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_HL.ordinal()) {
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_HL);
+                weapComparator = new WeaponComparatorDamage(false);
+            } else if (sortIdx == Entity.WeaponSortOrder.CUSTOM.ordinal()) {
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
+                //  TODO
+                weapComparator = new WeaponComparatorNum(entity);
+            } else { // Default
+                entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
+                weapComparator = new WeaponComparatorNum(entity);
+            }
+            ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
         }
     }
 

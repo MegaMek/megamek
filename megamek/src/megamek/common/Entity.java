@@ -141,6 +141,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int DMG_MODERATE = 2;
     public static final int DMG_HEAVY = 3;
     public static final int DMG_CRIPPLED = 4;
+    
+    // Weapon sort order defines
+    public static enum WeaponSortOrder {
+        DEFAULT("DEFAULT"),
+        RANGE_LH("RANGE_LH"),
+        RANGE_HL("RANGE_HL"),
+        DAMAGE_LH("DAMAGE_LH"),
+        DAMAGE_HL("DAMAGE_HL"),
+        CUSTOM("CUSTOM");
+        
+        public final String l10nEntry;
+        
+        WeaponSortOrder(String s) {
+            l10nEntry = s;
+        }
+    }
 
     protected transient IGame game;
 
@@ -679,6 +695,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     private final Set<Integer> attackedByThisTurn =
             Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    
+    /**
+     * Determines the sort order for weapons in the UnitDisplay weapon list.
+     */
+    private WeaponSortOrder weaponSortOrder = WeaponSortOrder.DEFAULT;
 
     /**
      * Generates a new, blank, entity.
@@ -3053,16 +3074,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : getWeaponList()) {
             // TAG only in the correct phase...
             if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                         .getPhase() != IGame.Phase.PHASE_OFFBOARD))
-                || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                             .getPhase() == IGame.Phase.PHASE_OFFBOARD))
-                || mounted.getType().hasFlag(WeaponType.F_AMS)) {
+                    .getPhase() != IGame.Phase.PHASE_OFFBOARD))
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
+                            .getPhase() == IGame.Phase.PHASE_OFFBOARD))
+                    || mounted.getType().hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
 
             // Artillery only in the correct phase...
             if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
 
@@ -3079,34 +3100,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         return -1;
-    }
-
-    /**
-     * Returns the next ready weapon, starting at the specified index
-     */
-    public int getNextWeapon(int start) {
-        boolean looped = false;
-        for (Mounted mounted : getWeaponList()) {
-            // Make sure we actually reach the start...
-            if (looped == false) {
-                if (getEquipmentNum(mounted) == start) {
-                    looped = true;
-                }
-                continue;
-            }
-
-            // Start reached, now we can attempt to pick a weapon.
-            if (isWeaponValidForPhase(mounted)) {
-                return getEquipmentNum(mounted);
-            }
-
-            // Whups! We've reached the weapon we started with. Lets find the
-            // first "free" weapon.
-            if (getEquipmentNum(mounted) == start) {
-                return getFirstWeapon();
-            }
-        }
-        return getFirstWeapon();
     }
 
     /**
@@ -3130,23 +3123,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isWeaponValidForPhase(Mounted mounted) {
         // Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
-            && (mounted.isReady())
-            && (!mounted.getType().hasFlag(WeaponType.F_AMS))
-            && ((mounted.getLinked() == null) || (mounted.getLinked()
-                                                         .getUsableShotsLeft() > 0))) {
+                && (mounted.isReady())
+                && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+                && ((mounted.getLinked() == null) || (mounted.getLinked()
+                        .getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
             if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                         .getPhase() != IGame.Phase.PHASE_OFFBOARD))
-                || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                             .getPhase() == IGame.Phase
-                                                                             .PHASE_OFFBOARD))) {
+                    .getPhase() != IGame.Phase.PHASE_OFFBOARD))
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
+                            .getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
                 return false;
             }
 
             // Artillery only in the correct phase...
             if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }
 
@@ -13124,5 +13116,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public Collection<Integer> getAttackedByThisTurn() {
         return new HashSet<>(attackedByThisTurn);
+    }
+
+    public WeaponSortOrder getWeaponSortOrder() {
+        if (weaponSortOrder == null) {
+            return WeaponSortOrder.DEFAULT;
+        }
+        return weaponSortOrder;
+    }
+
+    public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
+        this.weaponSortOrder = weaponSortOrder;
     }
 }

@@ -276,13 +276,17 @@ public class Princess extends BotClient {
             // If my unit is forced to withdraw, don't fire unless I've been fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {
                 StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(" is crippled and withdrawing.");
-                if (attackedWhileFleeing.contains(shooter.getId())) {
-                    msg.append("\n\tBut I was fired on, so I will return fire.");
-                } else {
-                    msg.append("\n\tI will not fire so long as I'm not fired on.");
-                    return;
+                try {
+                    if (attackedWhileFleeing.contains(shooter.getId())) {
+                        msg.append("\n\tBut I was fired on, so I will return fire.");
+                    } else {
+                        msg.append("\n\tI will not fire so long as I'm not fired on.");
+                        sendAttackData(shooter.getId(), new Vector<EntityAction>(0));
+                        return;
+                    }
+                } finally {
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
                 }
-                log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
             }
 
             // Set up ammo conservation.
@@ -839,12 +843,12 @@ public class Princess extends BotClient {
                 return new MovePath(game, entity);
             }
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
-            precognition.unPause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
                                                         + bestpath.rank);
             return bestpath.path;
         } finally {
+            precognition.unPause();
             methodEnd(getClass(), METHOD_NAME);
         }
     }

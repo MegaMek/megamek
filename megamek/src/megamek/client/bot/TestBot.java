@@ -213,6 +213,8 @@ public class TestBot extends BotClient {
                 if (game.getOptions().booleanOption("skip_ineligable_movement")
                     && cen.getEntity().isImmobile()) {
                     cen.moved = true;
+                } else if (result == null) {
+                    short_circuit = true;
                 } else if (!cen.moved) {
                     if (result.length < 6) {
                         min = result.length > 0 ? (MoveOption) result[0] : null;

@@ -34,6 +34,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -635,6 +637,30 @@ public class ChatProcessorTest {
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         Mockito.doNothing().when(mockPrincess).log(Matchers.any(Class.class), Matchers.anyString(),
                                                    Matchers.any(LogLevel.class), Matchers.anyString());
+        Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
+        Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
+        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
+        expected = new HashSet<>(0);
+        Assert.assertEquals(expected, mockPrincess.getBehaviorSettings().getStrategicBuildingTargets());
+
+        // Test a chat message not directed at Princess.
+        mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
+        chatMessage = "MovementDisplay: tried to select non-existant entity: -1";
+        Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
+        Mockito.when(mockChatEvent.getPlayer()).thenReturn(null);
+        mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
+        mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                String msg = (String) invocationOnMock.getArguments()[3];
+                if ("speakerPlayer is NULL.".equalsIgnoreCase(msg)) {
+                    Assert.fail("Should not reach this point.");
+                }
+                return null;
+            }
+        }).when(mockPrincess).log(Matchers.any(Class.class), Matchers.anyString(), Matchers.any(LogLevel.class),
+                                  Matchers.anyString());
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);

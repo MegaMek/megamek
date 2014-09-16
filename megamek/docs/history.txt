@@ -56,6 +56,7 @@ v0.39.2-dev (SVN)
 + Feature [#1291]: Renamed WeaponComparator to WeaponComparatorBV and added
     range and damage
 + Feature [#1291] Phase 1: Added ability to sort weapons list in UnitDisplay
++ Feature [#1291] Phase 2: Can drag weapons into custom ordering in UnitDisplay
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

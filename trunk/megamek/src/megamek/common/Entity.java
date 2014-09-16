@@ -700,6 +700,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Determines the sort order for weapons in the UnitDisplay weapon list.
      */
     private WeaponSortOrder weaponSortOrder = WeaponSortOrder.DEFAULT;
+    
+    /**
+     * Maps a weapon id to a user-specified index, used to get a custom ordering
+     * for weapons. 
+     */
+    private Map<Integer, Integer> customWeapOrder = null;
 
     /**
      * Generates a new, blank, entity.
@@ -13126,6 +13132,45 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
+        // If sort mode is custom, and the custom order is null, create it
+        // and make the order the same as default (based on eqId)
+        if ((weaponSortOrder == WeaponSortOrder.CUSTOM) 
+                && (customWeapOrder == null)) {
+            customWeapOrder = new HashMap<Integer, Integer>();
+            for (Mounted weap : weaponList) {
+                int eqId = getEquipmentNum(weap);
+                customWeapOrder.put(eqId, eqId);
+            }
+        }
         this.weaponSortOrder = weaponSortOrder;
+    }
+    
+    public Map<Integer, Integer> getCustomWeaponOrder() {
+        return customWeapOrder;
+    }
+    
+    public void setCustomWeaponOrder(Map<Integer, Integer> customWeapOrder) {
+        this.customWeapOrder = customWeapOrder;
+    }
+    
+    public int getCustomWeaponOrder(Mounted weapon) {
+        int eqId = getEquipmentNum(weapon);
+        if (customWeapOrder == null) {
+            return eqId;
+        }
+        Integer order = customWeapOrder.get(eqId);
+        if (order == null) {
+            return -1;
+        } else {
+            return order;
+        }
+    }
+    
+    public void setCustomWeaponOrder(Mounted weapon, int order) {
+        int eqId = getEquipmentNum(weapon);
+        if (eqId == -1) {
+            return;
+        }
+        customWeapOrder.put(eqId, order);
     }
 }

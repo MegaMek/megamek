@@ -30,6 +30,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,8 +52,10 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
@@ -119,6 +122,7 @@ import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import megamek.common.WeaponComparatorCustom;
 import megamek.common.WeaponComparatorDamage;
 import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
@@ -638,6 +642,14 @@ public class UnitDisplay extends JPanel {
         }
     }
     
+    /**
+     * ListModel implementation that supports keeping track of a list of Mounted
+     * instantiations, how to display them in the JList, and an ability to sort
+     * the Mounteds given WeaponComparators.
+     * 
+     * @author arlith
+     *
+     */
     class WeaponListModel extends AbstractListModel<String> {
                 
         /**
@@ -645,8 +657,14 @@ public class UnitDisplay extends JPanel {
          */
         private static final long serialVersionUID = 6312003196674512339L;
 
+        /**
+         * A collection of Mounted instantiations.
+         */
         private ArrayList<Mounted> weapons;
         
+        /**
+         * The Entity that owns the collection of Mounteds.
+         */
         private Entity en;
         
         WeaponListModel(Entity e) {
@@ -654,11 +672,23 @@ public class UnitDisplay extends JPanel {
             weapons = new ArrayList<Mounted>();
         }
         
+        /**
+         * Add a new weapon to the list.
+         * 
+         * @param w
+         */
         public void addWeapon(Mounted w) {
             weapons.add(w);
             fireIntervalAdded(this,weapons.size()-1, weapons.size()-1);
         }
         
+        /**
+         * Given the equipment (weapon) id, return the index in the (possibly
+         * sorted) list of Mounteds.
+         * 
+         * @param weaponId
+         * @return
+         */
         public int getIndex(int weaponId) {
             Mounted mount = en.getEquipment(weaponId);
             for (int i = 0; i < weapons.size(); i++) {
@@ -674,11 +704,36 @@ public class UnitDisplay extends JPanel {
             weapons.clear();
             fireIntervalRemoved(this, 0, numWeapons);
         }
+        
+        /**
+         * Swap the Mounteds at the two specified index values.
+         * 
+         * @param idx1 
+         * @param idx2
+         */
+        public void swapIdx(int idx1, int idx2) {
+            // Bounds checking
+            if ((idx1 >= weapons.size()) || (idx2 >= weapons.size()) 
+                    || (idx1 < 0) || (idx2 < 0)) {
+                return;
+            }
+            Mounted m1 = weapons.get(idx1);
+            weapons.set(idx1, weapons.get(idx2));
+            weapons.set(idx2, m1);
+            fireContentsChanged(this, idx1, idx1);
+            fireContentsChanged(this, idx2, idx2);
+        }
 
         public Mounted getWeaponAt(int index) {
             return weapons.get(index);
         }
         
+        /**
+         * Given an index into the (possibly sorted) list of Mounted, return a
+         * text description.  This consists of the Mounted's description, as
+         * well as additional information like location, whether the Mounted is
+         * shot/jammed/destroyed, etc.  This is what the JList will display.
+         */
         @Override
         public String getElementAt(int index) {
             final Mounted mounted = weapons.get(index);
@@ -739,19 +794,25 @@ public class UnitDisplay extends JPanel {
             return wn.toString();
         }
 
+        /**
+         * Returns the number of Mounteds in the list.
+         */
         @Override
         public int getSize() {
             return weapons.size();
         }
         
+        /**
+         * Sort the Mounteds, generally using a WeaponComparator.
+         * 
+         * @param comparator
+         */
         public void sort(Comparator<Mounted> comparator) {
             Collections.sort(weapons, comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
-            //repaint();
         }
         
-    }
-    
+    }   
     
     /**
      * This class contains the all the gizmos for firing the mech's weapons.
@@ -827,6 +888,74 @@ public class UnitDisplay extends JPanel {
 
         private int minTopMargin = 8;
         private int minLeftMargin = 8;
+        
+        /**
+         * Mouse adaptor for the weapon list.  Supports rearranging the weapons
+         * to define a custom ordering.
+         * 
+         * @author arlith
+         *
+         */
+        private class WeaponListMouseAdapter extends MouseInputAdapter {
+            
+            private boolean mouseDragging = false;
+            private int dragSourceIndex;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    Object src = e.getSource();
+                    if (src instanceof JList) {
+                        dragSourceIndex = ((JList<?>) src).getSelectedIndex();
+                        mouseDragging = true;
+                    }                
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                mouseDragging = false;
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Object src = e.getSource();
+                // Check to see if we are in a state we care about
+                if (!mouseDragging || !(src instanceof JList)) {
+                    return;
+                }
+                JList<?> srcList = (JList<?>) src;
+                WeaponListModel srcModel = (WeaponListModel) srcList.getModel();
+                int currentIndex = srcList.locationToIndex(e.getPoint());
+                if (currentIndex != dragSourceIndex) {
+                    int dragTargetIndex = srcList.getSelectedIndex();
+                    Mounted weap1 = srcModel.getWeaponAt(dragSourceIndex);
+                    Mounted weap2 = srcModel.getWeaponAt(dragTargetIndex);                
+                    srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
+                    dragSourceIndex = currentIndex;
+                    Entity ent = weap1.getEntity();
+                    // Is the sort order custom?
+                    int customId = Entity.WeaponSortOrder.CUSTOM.ordinal();
+                    if (weapSortOrder.getSelectedIndex() 
+                            == customId) {
+                        // Update custom order
+                        ent.setCustomWeaponOrder(weap1, dragTargetIndex);
+                        ent.setCustomWeaponOrder(weap2, dragSourceIndex);
+                    } else {
+                        // Set the order to but custom, and set the order based
+                        // on current order
+                        ent.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
+                        for (int i = 0; i < srcModel.getSize(); i++) {
+                            Mounted m = srcModel.getWeaponAt(i);
+                            ent.setCustomWeaponOrder(m, i);
+                        }
+                        weapSortOrder.removeActionListener(WeaponPanel.this);
+                        weapSortOrder.setSelectedIndex(customId);
+                        weapSortOrder.addActionListener(WeaponPanel.this);
+                    }
+                }
+            }
+        }
 
         WeaponPanel() {
 
@@ -856,6 +985,9 @@ public class UnitDisplay extends JPanel {
             // weapon list
             weaponList = new JList<String>(new DefaultListModel<String>());
             weaponList.addListSelectionListener(this);
+            WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter(); 
+            weaponList.addMouseListener(mouseAdapter);
+            weaponList.addMouseMotionListener(mouseAdapter);
             JScrollPane tWeaponScroll = new JScrollPane(weaponList);
             tWeaponScroll.setMinimumSize(new Dimension(200, 100));
             tWeaponScroll.setPreferredSize(new Dimension(200, 100));
@@ -1663,8 +1795,7 @@ public class UnitDisplay extends JPanel {
          */
         public int selectNextWeapon() {
             int selected = weaponList.getSelectedIndex();
-            Mounted selectedWeap = ((WeaponListModel) weaponList.getModel())
-                    .getWeaponAt(selected);
+            Mounted selectedWeap;
             int initialSelection = selected;
             boolean hasLooped = false;
             do {
@@ -1696,8 +1827,7 @@ public class UnitDisplay extends JPanel {
          */
         public int selectPrevWeapon() {
             int selected = weaponList.getSelectedIndex();
-            Mounted selectedWeap = ((WeaponListModel) weaponList.getModel())
-                    .getWeaponAt(selected);
+            Mounted selectedWeap;
             int initialSelection = selected;
             boolean hasLooped = false;
             do {
@@ -2760,8 +2890,7 @@ public class UnitDisplay extends JPanel {
                 weapComparator = new WeaponComparatorDamage(false);
             } else if (sortIdx == Entity.WeaponSortOrder.CUSTOM.ordinal()) {
                 entity.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-                //  TODO
-                weapComparator = new WeaponComparatorNum(entity);
+                weapComparator = new WeaponComparatorCustom(entity);
             } else { // Default
                 entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
                 weapComparator = new WeaponComparatorNum(entity);

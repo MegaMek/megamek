@@ -125,7 +125,7 @@ public class Princess extends BotClient {
     }
 
     public void setFleeBoard(boolean fleeBoard, String reason) {
-        log(getClass(), "setFleeBoard(boolean, String)", LogLevel.INFO, "Setting Flee Board " + fleeBoard +
+        log(getClass(), "setFleeBoard(boolean, String)", LogLevel.DEBUG, "Setting Flee Board " + fleeBoard +
                                                                         " because: " + reason);
 
         this.fleeBoard = fleeBoard;
@@ -136,7 +136,7 @@ public class Princess extends BotClient {
     }
 
     public void setFallBack(boolean fallBack, String reason) {
-        log(getClass(), "setFallBack(boolean, String)", LogLevel.INFO, "Setting Fall Back " + fallBack +
+        log(getClass(), "setFallBack(boolean, String)", LogLevel.DEBUG, "Setting Fall Back " + fallBack +
                                                                        " because: " + reason);
         this.fallBack = fallBack;
     }
@@ -566,7 +566,7 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                log(getClass(), METHOD_NAME, LogLevel.INFO,
+                log(getClass(), METHOD_NAME, LogLevel.DEBUG,
                     "Calculating physical attacks for " + hitter.getDisplayName());
 
                 // cycle through potential enemies
@@ -617,9 +617,10 @@ public class Princess extends BotClient {
 
                 }
                 if (best_attack != null) {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO, "Attack is " + best_attack.getDebugDescription());
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Physical Attack is " +
+                                                                best_attack.getDebugDescription());
                 } else {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO, "No useful attack to be made");
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "No useful physical attack to be made");
                 }
                 if (best_attack != null) {
                     return best_attack.getAsPhysicalOption();
@@ -1158,6 +1159,7 @@ public class Princess extends BotClient {
                     continue;
                 }
                 if (wantsToFallBack(mine)) {
+                    msg.append("\n\tAdding ").append(mine.getDisplayName());
                     myFleeingEntities.add(mine.getId());
                 }
             }

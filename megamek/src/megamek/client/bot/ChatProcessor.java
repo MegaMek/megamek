@@ -205,19 +205,34 @@ public class ChatProcessor {
         String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
         princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
 
-        String from = tokenizer.nextToken().trim(); // First token should be who sent the message.
-        String sentTo = tokenizer.nextToken().trim(); // Second token should be the player name the message is directed
-        // to.
-        String command = tokenizer.nextToken().trim(); // The third token should be the actual command.
+        // First token should be who sent the message.
+        String from = tokenizer.nextToken().trim();
+
+        // Second token should be the player name the message is directed to.
+        String sentTo = tokenizer.nextToken().trim();
+        IPlayer princessPlayer = princess.getLocalPlayer();
+        if (princessPlayer == null) {
+            princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Princess Player is NULL.");
+            return;
+        }
+        String princessName = princessPlayer.getName(); // Make sure the command is directed at the Princess player.
+        if (!princessName.equalsIgnoreCase(sentTo)) {
+            return;
+        }
+
+        // The third token should be the actual command.
+        String command = tokenizer.nextToken().trim();
         if (command.length() < 2) {
             princess.sendChat("I do not recognize that command.");
         }
-        String[] arguments = null; // Any remaining tokens should be the command arguments.
+
+        // Any remaining tokens should be the command arguments.
+        String[] arguments = null;
         if (tokenizer.hasMoreElements()) {
             arguments = tokenizer.nextToken().trim().split(" ");
         }
 
-        // Make sure the command is directed at the Princess player.
+        // Make sure the speaker is a real player.
         IPlayer speakerPlayer = chatEvent.getPlayer();
         if (speakerPlayer == null) {
             speakerPlayer = getPlayer(princess.getGame(), from);
@@ -225,31 +240,6 @@ public class ChatProcessor {
                 princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "speakerPlayer is NULL.");
                 return;
             }
-        }
-        IPlayer princessPlayer = princess.getLocalPlayer();
-        if (princessPlayer == null) {
-            princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Princess Player is NULL.");
-            return;
-        }
-        String princessName = princessPlayer.getName();
-        if (!princessName.equalsIgnoreCase(sentTo)) {
-            return;
-        }
-
-        // Make sure the command came from my team.
-        int speakerTeam = speakerPlayer.getTeam();
-        int princessTeam = princessPlayer.getTeam();
-        if (princessTeam != speakerTeam) {
-            return;
-        }
-
-        // If instructed to, flee.
-        if (command.toLowerCase().startsWith(Princess.CMD_FLEE)) {
-            msg = "Received flee order!";
-            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
-            princess.sendChat("Run Away!");
-            princess.setFallBack(true, msg);
-            return;
         }
 
         // Change verbosity level.
@@ -271,6 +261,22 @@ public class ChatProcessor {
             msg = "Verbosity set to " + princess.getVerbosity().toString();
             princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
             princess.sendChat(msg);
+            return;
+        }
+
+        // Make sure the command came from my team.
+        int speakerTeam = speakerPlayer.getTeam();
+        int princessTeam = princessPlayer.getTeam();
+        if (princessTeam != speakerTeam) {
+            return;
+        }
+
+        // If instructed to, flee.
+        if (command.toLowerCase().startsWith(Princess.CMD_FLEE)) {
+            msg = "Received flee order!";
+            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
+            princess.sendChat("Run Away!");
+            princess.setFallBack(true, msg);
             return;
         }
 

@@ -77,7 +77,7 @@ public class PathRanker {
         try {
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
-            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, "Validated " + validPaths.size() + " out of " +
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
                     movePaths.size() + " possible paths.");
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);

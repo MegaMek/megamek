@@ -33,6 +33,7 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.logging.LogLevel;
 
 /**
  * unit_potential_locations keeps track of all the potential coordinates and
@@ -108,15 +109,13 @@ public class Precognition implements Runnable {
         }
     }
 
-    public void unPause() {
+    public synchronized void unPause() {
         final String METHOD_NAME = "unpause()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             getWaitWhenDone().set(false);
-            synchronized (this) {
-                notifyAll();
-            }
+            notifyAll();
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -127,14 +126,12 @@ public class Precognition implements Runnable {
      * notifyAll in the event listener because it doesn't have the thread
      * something something.
      */
-    public void wakeUp() {
+    public synchronized void wakeUp() {
         final String METHOD_NAME = "wake_up()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
-            synchronized (this) {
-                notifyAll();
-            }
+            notifyAll();
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -219,7 +216,7 @@ public class Precognition implements Runnable {
      * Waits until the thread is not paused, and there's indication that it has
      * something to do
      */
-    public void waitForUnpause() {
+    public synchronized void waitForUnpause() {
         final String METHOD_NAME = "wait_for_unpause()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -231,9 +228,7 @@ public class Precognition implements Runnable {
                                                         " :: dirtyUnits = " + getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
-                    synchronized (this) {
-                        wait();
-                    }
+                    wait();
                 } catch (InterruptedException ignored) {
                 }
                 // System.err.println("checking WAIT conditions");
@@ -398,17 +393,23 @@ public class Precognition implements Runnable {
     public PathEnumerator getPathEnumerator() {
         PATH_ENUMERATOR_LOCK.readLock().lock();
         try {
+            getOwner().log(getClass(), "getPathEnumerator()()", LogLevel.DEBUG, "PATH_ENUMERATOR_LOCK read locked.");
             return pathEnumerator;
         } finally {
             PATH_ENUMERATOR_LOCK.readLock().unlock();
+            getOwner().log(getClass(), "getPathEnumerator()()", LogLevel.DEBUG, "PATH_ENUMERATOR_LOCK read unlocked.");
         }
     }
 
     private void setPathEnumerator(PathEnumerator pathEnumerator) {
         PATH_ENUMERATOR_LOCK.writeLock().lock();
         try {
+            getOwner().log(getClass(), "setPathEnumerator(PathEnumerator)", LogLevel.DEBUG,
+                           "PATH_ENUMERATOR_LOCK write locked.");
             this.pathEnumerator = pathEnumerator;
         } finally {
+            getOwner().log(getClass(), "setPathEnumerator(PathEnumerator)", LogLevel.DEBUG,
+                           "PATH_ENUMERATOR_LOCK write unlocked.");
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
     }
@@ -440,18 +441,22 @@ public class Precognition implements Runnable {
     private IGame getGame() {
         GAME_LOCK.readLock().lock();
         try {
+            getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read locked.");
             return game;
         } finally {
             GAME_LOCK.readLock().unlock();
+            getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read unlocked.");
         }
     }
 
     private void setGame(IGame game) {
         GAME_LOCK.writeLock().lock();
         try {
+            getOwner().log(getClass(), "setGame(IGame)()", LogLevel.DEBUG, "GAME_LOCK write locked.");
             this.game = game;
         } finally {
             GAME_LOCK.writeLock().unlock();
+            getOwner().log(getClass(), "setGame(IGame)()", LogLevel.DEBUG, "GAME_LOCK write unlocked.");
         }
     }
 }

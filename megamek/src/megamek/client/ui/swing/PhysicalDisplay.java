@@ -230,6 +230,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     .println("PhysicalDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
+        
+        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
 
         cen = en;
         clientgui.setSelectedEntityNum(en);
@@ -379,6 +383,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         attacks.removeAllElements();
         // close aimed shot display, if any
         ash.closeDialog();
+        if (ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
         endMyTurn();
     }
 

@@ -27794,6 +27794,16 @@ public class Server implements Runnable {
                 receiveEntityDelete(packet, connId);
                 resetPlayersDone();
                 break;
+            case Packet.COMMAND_ENTITY_WORDER_UPDATE:
+                Object data[] = packet.getData();
+                Entity ent = game.getEntity((Integer)data[0]);
+                Entity.WeaponSortOrder order = 
+                    (Entity.WeaponSortOrder)data[1];
+                ent.setWeaponSortOrder(order);
+                if (order == Entity.WeaponSortOrder.CUSTOM) {
+                    ent.setCustomWeaponOrder((Map<Integer, Integer>)data[2]);
+                }                
+                break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS:
                 if (receiveGameOptions(packet, connId)) {
                     resetPlayersDone();

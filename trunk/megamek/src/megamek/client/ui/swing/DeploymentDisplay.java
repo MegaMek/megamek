@@ -159,6 +159,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     .println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
+        
+        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
 
         // FIXME: Hack alert: remove C3 sprites from earlier here, or we might
         // crash when
@@ -328,6 +332,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
 
+        if (ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
         endMyTurn();
     }
 

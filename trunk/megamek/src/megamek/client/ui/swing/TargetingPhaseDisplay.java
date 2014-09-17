@@ -280,6 +280,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clearAttacks();
             refreshAll();
         }
+        
+        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
 
         if (clientgui.getClient().getGame().getEntity(en) != null) {
 
@@ -499,7 +503,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Clear the menu bar.
         clientgui.getMenuBar().setEntity(null);
-
+        if (ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
         endMyTurn();
     }
 

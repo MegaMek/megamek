@@ -59,7 +59,9 @@ v0.39.2-dev (SVN)
 + Feature [#1291] Phase 2: Can drag weapons into custom ordering in UnitDisplay
 + Bug: Princess adds junk messages to the log and chat for chat messages not directed at her.
 + Bug: Lockup in firing phase do to waiting for Princess to signal done.
-+ Feature [#1291] Phase 2: Fixed bug with sort orders not saving between pahses
++ Feature [#1291] Phase 2: Fixed bug with sort orders not saving between phases
++ Data: New Images
++ Bug: Fixed name error Static Weapon Feeds.
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

@@ -592,6 +592,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     + "select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
+        
+        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
+        
         cen = en;
         clientgui.setSelectedEntityNum(en);
         clear();
@@ -1199,7 +1204,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getClient().sendUpdateEntity(ce());
         }
         clientgui.getClient().moveEntity(cen, cmd);
-
+        if (ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
         endMyTurn();
     }
 

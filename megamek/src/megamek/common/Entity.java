@@ -706,6 +706,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * for weapons. 
      */
     private Map<Integer, Integer> customWeapOrder = null;
+    
+    /**
+     * Flag that indicates weapon sort order has changed (included ordering for
+     * custom sort order).
+     */
+    private boolean weapOrderChanged = false;
 
     /**
      * Generates a new, blank, entity.
@@ -13132,6 +13138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
+        setWeapOrderChanged(true);
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
         if ((weaponSortOrder == WeaponSortOrder.CUSTOM) 
@@ -13167,10 +13174,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     public void setCustomWeaponOrder(Mounted weapon, int order) {
+        setWeapOrderChanged(true);
         int eqId = getEquipmentNum(weapon);
         if (eqId == -1) {
             return;
         }
         customWeapOrder.put(eqId, order);
+    }
+
+    public boolean isWeapOrderChanged() {
+        return weapOrderChanged;
+    }
+
+    public void setWeapOrderChanged(boolean weapOrderChanged) {
+        this.weapOrderChanged = weapOrderChanged;
     }
 }

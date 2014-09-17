@@ -745,6 +745,20 @@ public class Client implements IClientCommandHandler {
     public void sendResetRoundDeployment() {
         send(new Packet(Packet.COMMAND_RESET_ROUND_DEPLOYMENT));
     }
+    
+    public void sendEntityWeaponOrderUpdate(Entity entity) {
+        Object data[];
+        if (entity.getWeaponSortOrder() == Entity.WeaponSortOrder.CUSTOM) {
+            data = new Object[3];
+            data[2] = entity.getCustomWeaponOrder();
+        } else {
+            data = new Object[2];
+        }
+        data[0] = entity.getId();
+        data[1] = entity.getWeaponSortOrder();
+        send(new Packet(Packet.COMMAND_ENTITY_WORDER_UPDATE, data));
+        entity.setWeapOrderChanged(false);
+    }
 
     /**
      * Sends an "add entity" packet with only one Entity.

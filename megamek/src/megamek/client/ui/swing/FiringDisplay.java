@@ -510,6 +510,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
         }
         
+        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
+        
         if (clientgui.getClient().isMyTurn()) {
             setStatusBarText(Messages
                     .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
@@ -1039,6 +1043,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // close aimed shot display, if any
         ash.closeDialog();
 
+        if (ce().isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        }
         endMyTurn();
     }
 

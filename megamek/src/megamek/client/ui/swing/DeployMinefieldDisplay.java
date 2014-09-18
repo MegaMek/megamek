@@ -42,7 +42,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      * carried out during the deploy minefield phase.  Each command has a string 
      * for the command plus a flag that determines what unit type it is 
      * appropriate for.
-     * @author walczak
+     * @author arlith
      *
      */
     public static enum Command {

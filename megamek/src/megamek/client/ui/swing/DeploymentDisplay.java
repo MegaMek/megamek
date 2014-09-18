@@ -57,7 +57,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * This enumeration lists all of the possible ActionCommands that can be
      * carried out during the deployment phase.  Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
-     * @author walczak
+     * @author arlith
      *
      */
     public static enum DeployCommand implements PhaseCommand {

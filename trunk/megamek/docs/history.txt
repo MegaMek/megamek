@@ -62,6 +62,7 @@ v0.39.2-dev (SVN)
 + Feature [#1291] Phase 2: Fixed bug with sort orders not saving between phases
 + Data: New Images
 + Bug: Fixed name error Static Weapon Feeds.
++ Feature [#1296]: Give % remaining in /checkbv command
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

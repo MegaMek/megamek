@@ -29,11 +29,15 @@ public class CheckBVCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Remaining BV:");
-        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i.hasMoreElements();) {
+        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i
+                .hasMoreElements();) {
             IPlayer player = i.nextElement();
             StringBuffer cb = new StringBuffer();
+            double percentage = 
+                    ((player.getBV() + 0.0) / player.getInitialBV()) * 100;
             cb.append(player.getName()).append(": ");
             cb.append(player.getBV()).append("/").append(player.getInitialBV());
+            cb.append(String.format(" (%1$3.2f%%)",percentage));
             server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");

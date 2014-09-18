@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
  * This class reads in an XML file that specifies different aspects of the 
  * visual skin for Megamek.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class SkinXMLHandler {

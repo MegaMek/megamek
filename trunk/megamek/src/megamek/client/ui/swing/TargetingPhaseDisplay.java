@@ -87,7 +87,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
      *
-     * @author walczak
+     * @author arlith
      */
     public static enum TargetingCommand implements PhaseCommand {
         FIRE_NEXT("fireNext"),

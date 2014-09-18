@@ -117,7 +117,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * carried out during the movement phase. Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
      * 
-     * @author walczak
+     * @author arlith
      */
     public static enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$

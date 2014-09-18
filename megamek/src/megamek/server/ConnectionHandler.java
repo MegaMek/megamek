@@ -20,7 +20,7 @@ import megamek.common.net.IConnection;
  * Thread that runs and checks to see if there's any incoming packets from a 
  * connection.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class ConnectionHandler implements Runnable {

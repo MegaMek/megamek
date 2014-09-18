@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * A class that contains state information that specifies a skin.
  * 
- * @author walczak
+ * @author arlith
  *
  */
 public class SkinSpecification {

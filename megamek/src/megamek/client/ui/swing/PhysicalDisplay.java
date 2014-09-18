@@ -85,7 +85,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * carried out during the physical phase.  Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
      *
-     * @author walczak
+     * @author arlith
      */
     public static enum PhysicalCommand implements PhaseCommand {
         PHYSICAL_NEXT("next"),

@@ -252,6 +252,7 @@ import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
 import com.thoughtworks.xstream.XStream;
+
 import megamek.common.EjectedCrew;
 
 /**
@@ -3955,22 +3956,22 @@ public class Server implements Runnable {
                 /*
                  * IHex hex = game.getBoard().getHex(pos); if (null == hex) {
                  * continue; }
-                 * 
+                 *
                  * // code borrowed heavily from artilleryDamageHex bldg =
                  * game.getBoard().getBuildingAt(pos); int bldgAbsorbs = 0; if
                  * ((bldg != null)) { bldgAbsorbs = bldg.getAbsorbtion(pos);
                  * addReport(damageBuilding(bldg, Compute.d6(damageDice), pos));
                  * addAffectedBldg(bldg,false); }
-                 * 
+                 *
                  * // get units in hex for (Enumeration<Entity> victims =
                  * game.getEntities(pos); victims .hasMoreElements();) { Entity
                  * entity = victims.nextElement(); int hits =
                  * Compute.d6(damageDice); ToHitData toHit = new ToHitData();
                  * int cluster = 5;
-                 * 
+                 *
                  * // Check: is entity excluded? if (entity.isAirborne()) {
                  * continue; }
-                 * 
+                 *
                  * // Check: is entity inside building? if ((bldg != null) &&
                  * (bldgAbsorbs > 0) && (entity.getElevation() < hex
                  * .terrainLevel(Terrains.BLDG_ELEV))) { cluster -= bldgAbsorbs;
@@ -3983,10 +3984,10 @@ public class Server implements Runnable {
                  * r.subject = entity.getId(); r.addDesc(entity); addReport(r);
                  * continue; } else { r = new Report(6428); r.subject =
                  * entity.getId(); r.add(bldgAbsorbs); addReport(r); } }
-                 * 
+                 *
                  * // Work out hit table to use
                  * toHit.setSideTable(entity.sideTable(centralPos));
-                 * 
+                 *
                  * // Do the damage r = new Report(6480); r.subject =
                  * entity.getId(); r.addDesc(entity);
                  * r.add(toHit.getTableDesc()); r.add(hits);
@@ -9976,7 +9977,7 @@ public class Server implements Runnable {
      * public void removeMinefieldsFrom(Coords coords) { Vector<Minefield> v =
      * game.getMinefields(coords); while (v.elements().hasMoreElements()) {
      * Minefield mf = v.elements().nextElement(); removeMinefield(mf); }
-     * 
+     *
      * }
      */
 
@@ -11879,8 +11880,8 @@ public class Server implements Runnable {
             if (ea instanceof SearchlightAttackAction) {
                 boolean hexesAdded =
                         ((SearchlightAttackAction) ea).setHexesIlluminated(game);
-                // If we added new hexes, send them to all players.  
-                // These are spotlights at night, you know they're there. 
+                // If we added new hexes, send them to all players.
+                // These are spotlights at night, you know they're there.
                 if (hexesAdded) {
                     send(createIlluminatedHexesPacket());
                 }
@@ -12195,7 +12196,7 @@ public class Server implements Runnable {
         int clear = Minefield.CLEAR_NUMBER_INFANTRY;
         int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
 
-        Report r; 
+        Report r;
         // Does the entity has a minesweeper?
         if ((ent instanceof BattleArmor)) {
             BattleArmor ba = (BattleArmor)ent;
@@ -24949,7 +24950,7 @@ public class Server implements Runnable {
             checkCollapse = true;
         } else if (fallOntoBridge && (entity.absHeight() >= bridgeHeight)
                    && (bridgeHeight >= 0)) {
-            // fallHeight should already reflect this 
+            // fallHeight should already reflect this
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
             checkCollapse = true;
@@ -27797,12 +27798,14 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_WORDER_UPDATE:
                 Object data[] = packet.getData();
                 Entity ent = game.getEntity((Integer)data[0]);
-                Entity.WeaponSortOrder order = 
+                Entity.WeaponSortOrder order =
                     (Entity.WeaponSortOrder)data[1];
                 ent.setWeaponSortOrder(order);
                 if (order == Entity.WeaponSortOrder.CUSTOM) {
-                    ent.setCustomWeaponOrder((Map<Integer, Integer>)data[2]);
-                }                
+                    @SuppressWarnings("unchecked") // Unchecked cause of limitations in Java when casting to a collection
+                    Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>)data[2];
+                    ent.setCustomWeaponOrder(customWeapOrder);
+                }
                 break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS:
                 if (receiveGameOptions(packet, connId)) {
@@ -30969,7 +30972,7 @@ public class Server implements Runnable {
             entity.setPosition(c);
 
             // do fall damage from accidental fall
-            //set elevation to fall height above ground or building roof 
+            //set elevation to fall height above ground or building roof
             IHex hex = game.getBoard().getHex(entity.getPosition());
             int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV) ? hex
                     .terrainLevel(Terrains.BLDG_ELEV) : 0;

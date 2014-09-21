@@ -15,7 +15,6 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Entity;
 import megamek.common.Targetable;
 
 /**

@@ -745,7 +745,7 @@ public class Client implements IClientCommandHandler {
     public void sendResetRoundDeployment() {
         send(new Packet(Packet.COMMAND_RESET_ROUND_DEPLOYMENT));
     }
-    
+
     public void sendEntityWeaponOrderUpdate(Entity entity) {
         Object data[];
         if (entity.getWeaponSortOrder() == Entity.WeaponSortOrder.CUSTOM) {
@@ -1400,7 +1400,7 @@ public class Client implements IClientCommandHandler {
                 game.processGameEvent(cfrEvt);
                 break;
             case Packet.COMMAND_GAME_VICTORY_EVENT:
-                GameVictoryEvent gve = new GameVictoryEvent(this);
+                GameVictoryEvent gve = new GameVictoryEvent(this, game);
                 game.processGameEvent(gve);
                 break;
         }

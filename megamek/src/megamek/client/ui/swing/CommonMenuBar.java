@@ -1004,19 +1004,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setPhase(IGame.Phase current) {
         entity = null;
         phase = current;
+        // There are certain phases where we shouldn't allow the board to be
+        //  saved, however the vast majority of phases should allow it
         switch (current) {
-            case PHASE_DEPLOY_MINEFIELDS:
-            case PHASE_DEPLOYMENT:
-            case PHASE_FIRING:
-            case PHASE_MOVEMENT:
-            case PHASE_OFFBOARD:
-            case PHASE_PHYSICAL:
-            case PHASE_SET_ARTYAUTOHITHEXES:
-            case PHASE_TARGETING:
-                setBoard(true);
+            case PHASE_STARTING_SCENARIO:
+            case PHASE_UNKNOWN:
+            case PHASE_LOUNGE:
+            case PHASE_SELECTION:
+            case PHASE_EXCHANGE:
+                setBoard(false);
                 break;
             default:
-                setBoard(false);
+                setBoard(true);
                 break;
         }
         manageMenu();

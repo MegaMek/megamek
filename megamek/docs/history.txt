@@ -63,6 +63,8 @@ v0.39.2-dev (SVN)
 + Data: New Images
 + Bug: Fixed name error Static Weapon Feeds.
 + Feature [#1296]: Give % remaining in /checkbv command
++ Bug: The phases that allow board saving were unnecessarily restrictive.  Now
+    File>Board>Save is enabled in most phases besides the lounge/lobby
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

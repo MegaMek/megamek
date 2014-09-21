@@ -82,8 +82,8 @@ public class Game implements Serializable, IGame {
     private Vector<Team> teams = new Vector<Team>(); // DES
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
-    
-    private Map<Coords, HashSet<Integer>> entityPosLookup = 
+
+    private Map<Coords, HashSet<Integer>> entityPosLookup =
             new HashMap<Coords, HashSet<Integer>>();
 
     /**
@@ -160,7 +160,7 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private ArrayList<SmokeCloud> smokeCloudList = new ArrayList<SmokeCloud>();
-    
+
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
     /**
@@ -1111,6 +1111,7 @@ public class Game implements Serializable, IGame {
     /**
      * Returns an enumeration of entities that have retreated
      */
+ // TODO: Correctly implement "Captured" Entities
     public Enumeration<Entity> getRetreatedEntities() {
         Vector<Entity> sanctuary = new Vector<Entity>();
 
@@ -1207,7 +1208,7 @@ public class Game implements Serializable, IGame {
         //  Entity instance.
         addEntity(entity);
     }
-    
+
     public void addEntity(Entity entity) {
         addEntity(entity, true);
     }
@@ -1379,7 +1380,7 @@ public class Game implements Serializable, IGame {
         if (entityPosLookup != null) {
             entityPosLookup.clear();
         } else {
-            new HashMap<Coords, HashSet<Entity>>(); 
+            new HashMap<Coords, HashSet<Entity>>();
         }
 
         vOutOfGame.removeAllElements();
@@ -1497,7 +1498,7 @@ public class Game implements Serializable, IGame {
      */
     public Enumeration<Entity> getEntities(Coords c, boolean ignore) {
         // Make sure the look-up is initialized
-        if (entityPosLookup == null 
+        if (entityPosLookup == null
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
@@ -1508,13 +1509,13 @@ public class Game implements Serializable, IGame {
                 Entity e = getEntity(eId);
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
-                    
+
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
                         System.out.println("Game.getEntities(2)Error! "
                                 + e.getDisplayName() + " is not in " + c + "!");
-                    }                    
+                    }
                 }
             }
         }
@@ -1529,7 +1530,7 @@ public class Game implements Serializable, IGame {
      */
     public Vector<Entity> getEntitiesVector(Coords c) {
         // Make sure the look-up is initialized
-        if (entityPosLookup == null 
+        if (entityPosLookup == null
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
@@ -1540,13 +1541,13 @@ public class Game implements Serializable, IGame {
                 Entity e = getEntity(eId);
                 if (e.isTargetable()) {
                     vector.add(e);
-                    
+
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
                         System.out.println("Game.getEntitiesVector(1) Error! "
                                 + e.getDisplayName() + " is not in " + c + "!");
-                    }                    
+                    }
                 }
             }
         }
@@ -3386,14 +3387,14 @@ public class Game implements Serializable, IGame {
     public List<SmokeCloud> getSmokeCloudList() {
         return smokeCloudList;
     }
-    
+
     /**
-     * Updates the map that maps a position to the list of Entity's in that 
+     * Updates the map that maps a position to the list of Entity's in that
      * position.
-     *  
+     *
      * @param e
      */
-    public void updateEntityPositionLookup(Entity e, 
+    public void updateEntityPositionLookup(Entity e,
             HashSet<Coords> oldPositions) {
 
         HashSet<Coords> newPositions = e.getOccupiedCoords();
@@ -3401,7 +3402,7 @@ public class Game implements Serializable, IGame {
         if (newPositions.equals(oldPositions) || !e.isDeployed()) {
             return;
         }
-        
+
         // Remove the old cached location(s)
         if (oldPositions != null) {
             for (Coords pos : oldPositions) {
@@ -3411,8 +3412,8 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
- 
-        // Add Entity for each position 
+
+        // Add Entity for each position
         for (Coords pos : newPositions) {
             HashSet<Integer> posEntities = entityPosLookup.get(pos);
             if (posEntities == null) {
@@ -3424,7 +3425,7 @@ public class Game implements Serializable, IGame {
             }
         }
     }
-    
+
     private void removeEntityPositionLookup(Entity e) {
         // Remove Entity from cache
         for (Coords pos : e.getOccupiedCoords()) {
@@ -3434,7 +3435,7 @@ public class Game implements Serializable, IGame {
             }
         }
     }
-    
+
     private void resetEntityPositionLookup() {
         if (entityPosLookup == null) {
             entityPosLookup = new HashMap<Coords, HashSet<Integer>>();

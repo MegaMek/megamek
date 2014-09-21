@@ -2819,7 +2819,7 @@ public class Server implements Runnable {
                 }
                 break;
             case PHASE_VICTORY:
-                GameVictoryEvent gve = new GameVictoryEvent(this);
+                GameVictoryEvent gve = new GameVictoryEvent(this, game);
                 game.processGameEvent(gve);
                 transmitGameVictoryEventToAll();
                 resetGame();

@@ -27798,13 +27798,15 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_WORDER_UPDATE:
                 Object data[] = packet.getData();
                 Entity ent = game.getEntity((Integer)data[0]);
-                Entity.WeaponSortOrder order =
-                    (Entity.WeaponSortOrder)data[1];
-                ent.setWeaponSortOrder(order);
-                if (order == Entity.WeaponSortOrder.CUSTOM) {
-                    @SuppressWarnings("unchecked") // Unchecked cause of limitations in Java when casting to a collection
-                    Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>)data[2];
-                    ent.setCustomWeaponOrder(customWeapOrder);
+                if (ent != null) {
+                    Entity.WeaponSortOrder order =
+                        (Entity.WeaponSortOrder)data[1];
+                    ent.setWeaponSortOrder(order);
+                    if (order == Entity.WeaponSortOrder.CUSTOM) {
+                        @SuppressWarnings("unchecked") // Unchecked cause of limitations in Java when casting to a collection
+                        Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>)data[2];
+                        ent.setCustomWeaponOrder(customWeapOrder);
+                    }
                 }
                 break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS:

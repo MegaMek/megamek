@@ -641,19 +641,19 @@ public class UnitDisplay extends JPanel {
             update();
         }
     }
-    
+
     /**
      * ListModel implementation that supports keeping track of a list of Mounted
      * instantiations, how to display them in the JList, and an ability to sort
      * the Mounteds given WeaponComparators.
-     * 
+     *
      * @author arlith
      *
      */
     class WeaponListModel extends AbstractListModel<String> {
-                
+
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 6312003196674512339L;
 
@@ -661,31 +661,31 @@ public class UnitDisplay extends JPanel {
          * A collection of Mounted instantiations.
          */
         private ArrayList<Mounted> weapons;
-        
+
         /**
          * The Entity that owns the collection of Mounteds.
          */
         private Entity en;
-        
+
         WeaponListModel(Entity e) {
             en = e;
             weapons = new ArrayList<Mounted>();
         }
-        
+
         /**
          * Add a new weapon to the list.
-         * 
+         *
          * @param w
          */
         public void addWeapon(Mounted w) {
             weapons.add(w);
             fireIntervalAdded(this,weapons.size()-1, weapons.size()-1);
         }
-        
+
         /**
          * Given the equipment (weapon) id, return the index in the (possibly
          * sorted) list of Mounteds.
-         * 
+         *
          * @param weaponId
          * @return
          */
@@ -698,22 +698,22 @@ public class UnitDisplay extends JPanel {
             }
             return -1;
         }
-        
+
         public void removeAllElements() {
             int numWeapons = weapons.size() - 1;
             weapons.clear();
             fireIntervalRemoved(this, 0, numWeapons);
         }
-        
+
         /**
          * Swap the Mounteds at the two specified index values.
-         * 
-         * @param idx1 
+         *
+         * @param idx1
          * @param idx2
          */
         public void swapIdx(int idx1, int idx2) {
             // Bounds checking
-            if ((idx1 >= weapons.size()) || (idx2 >= weapons.size()) 
+            if ((idx1 >= weapons.size()) || (idx2 >= weapons.size())
                     || (idx1 < 0) || (idx2 < 0)) {
                 return;
             }
@@ -727,7 +727,7 @@ public class UnitDisplay extends JPanel {
         public Mounted getWeaponAt(int index) {
             return weapons.get(index);
         }
-        
+
         /**
          * Given an index into the (possibly sorted) list of Mounted, return a
          * text description.  This consists of the Mounted's description, as
@@ -739,7 +739,7 @@ public class UnitDisplay extends JPanel {
             final Mounted mounted = weapons.get(index);
             final WeaponType wtype = (WeaponType) mounted.getType();
             final IGame game = clientgui.getClient().getGame();
-            
+
             StringBuffer wn = new StringBuffer(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
             wn.append(en.getLocationAbbr(mounted.getLocation()));
@@ -786,7 +786,7 @@ public class UnitDisplay extends JPanel {
                 wn.append(' ');
                 wn.append(mounted.curMode().getDisplayableName());
             }
-            if ((game != null) 
+            if ((game != null)
                     && game.getOptions().booleanOption("tacops_called_shots")) { //$NON-NLS-1$
                 wn.append(' ');
                 wn.append(mounted.getCalledShot().getDisplayableName());
@@ -801,19 +801,19 @@ public class UnitDisplay extends JPanel {
         public int getSize() {
             return weapons.size();
         }
-        
+
         /**
          * Sort the Mounteds, generally using a WeaponComparator.
-         * 
+         *
          * @param comparator
          */
         public void sort(Comparator<Mounted> comparator) {
             Collections.sort(weapons, comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
         }
-        
-    }   
-    
+
+    }
+
     /**
      * This class contains the all the gizmos for firing the mech's weapons.
      */
@@ -888,16 +888,16 @@ public class UnitDisplay extends JPanel {
 
         private int minTopMargin = 8;
         private int minLeftMargin = 8;
-        
+
         /**
          * Mouse adaptor for the weapon list.  Supports rearranging the weapons
          * to define a custom ordering.
-         * 
+         *
          * @author arlith
          *
          */
         private class WeaponListMouseAdapter extends MouseInputAdapter {
-            
+
             private boolean mouseDragging = false;
             private int dragSourceIndex;
 
@@ -908,7 +908,7 @@ public class UnitDisplay extends JPanel {
                     if (src instanceof JList) {
                         dragSourceIndex = ((JList<?>) src).getSelectedIndex();
                         mouseDragging = true;
-                    }                
+                    }
                 }
             }
 
@@ -930,13 +930,13 @@ public class UnitDisplay extends JPanel {
                 if (currentIndex != dragSourceIndex) {
                     int dragTargetIndex = srcList.getSelectedIndex();
                     Mounted weap1 = srcModel.getWeaponAt(dragSourceIndex);
-                    Mounted weap2 = srcModel.getWeaponAt(dragTargetIndex);                
+                    Mounted weap2 = srcModel.getWeaponAt(dragTargetIndex);
                     srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
                     dragSourceIndex = currentIndex;
                     Entity ent = weap1.getEntity();
                     // Is the sort order custom?
                     int customId = Entity.WeaponSortOrder.CUSTOM.ordinal();
-                    if (weapSortOrder.getSelectedIndex() 
+                    if (weapSortOrder.getSelectedIndex()
                             == customId) {
                         // Update custom order
                         ent.setCustomWeaponOrder(weap1, dragTargetIndex);
@@ -960,7 +960,7 @@ public class UnitDisplay extends JPanel {
         WeaponPanel() {
 
             setLayout(new GridBagLayout());
-            
+
             int gridy = 0;
             wSortOrder = new JLabel(
                     Messages.getString("MechDisplay.WeaponSortOrder.label"),
@@ -981,11 +981,11 @@ public class UnitDisplay extends JPanel {
                        .anchor(GridBagConstraints.CENTER).gridy(gridy)
                        .gridx(1));
             gridy++;
-            
+
             // weapon list
             weaponList = new JList<String>(new DefaultListModel<String>());
             weaponList.addListSelectionListener(this);
-            WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter(); 
+            WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
             weaponList.addMouseListener(mouseAdapter);
             weaponList.addMouseMotionListener(mouseAdapter);
             JScrollPane tWeaponScroll = new JScrollPane(weaponList);
@@ -1232,25 +1232,25 @@ public class UnitDisplay extends JPanel {
             add(wExtL,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
                    .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                     .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
             add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
-            
+
             add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
-            
+
             add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
-            
+
             add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             gridy++;
             // ----------------
 
@@ -1273,25 +1273,25 @@ public class UnitDisplay extends JPanel {
             add(wExtR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
                    .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                     .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
             add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
-            
+
             add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
-            
+
             add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
-            
+
             add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 9, 1).gridy(gridy).gridx(5));
-            
+
             gridy++;
             // ----------------
             add(wAVL,
@@ -1312,7 +1312,7 @@ public class UnitDisplay extends JPanel {
             add(wExtAVR,
                 GBC.std().fill(GridBagConstraints.HORIZONTAL)
                    .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
-            
+
             gridy++;
 
 
@@ -1603,7 +1603,7 @@ public class UnitDisplay extends JPanel {
             }
             weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder()
                     .ordinal());
-            
+
             if (en.hasDamagedRHS() && hasFiredWeapons) {
                 currentHeatBuildup++;
             }
@@ -1743,7 +1743,7 @@ public class UnitDisplay extends JPanel {
             return ((WeaponListModel) weaponList.getModel())
                     .getWeaponAt(selected);
         }
-        
+
         /**
          * Returns the equipment ID number for the weapon currently selected
          */
@@ -1755,16 +1755,21 @@ public class UnitDisplay extends JPanel {
             return entity.getEquipmentNum(((WeaponListModel) weaponList
                     .getModel()).getWeaponAt(selected));
         }
-        
+
         /**
          * Selects the first valid weapon in the weapon list.
          * @return The weapon id of the weapon selected
          */
-        public int selectFirstWeapon() { 
+        public int selectFirstWeapon() {
             int selected = -1;
             Mounted selectedWeap;
             int initialSelection = selected;
             boolean hasLooped = false;
+            // Entity has no weapons, return -1;
+            if (entity.getWeaponList().size() == 0
+                    || (entity.usesWeaponBays() && entity.getWeaponBayList().size() == 0)) {
+                return -1;
+            }
             do {
                 selected++;
                 if (selected >= weaponList.getModel().getSize()) {
@@ -1891,7 +1896,7 @@ public class UnitDisplay extends JPanel {
 
                 return;
             }
-            
+
             Mounted mounted = ((WeaponListModel) weaponList.getModel())
                     .getWeaponAt(weaponList.getSelectedIndex());
             WeaponType wtype = (WeaponType) mounted.getType();
@@ -2215,8 +2220,8 @@ public class UnitDisplay extends JPanel {
                 longR = wtype.getWLongRange();
                 extremeR = wtype.getWExtremeRange();
             }
-            // We need to adjust the ranges for Centurion Weapon Systems: it's 
-            //  default range is 6/12/18 but that's only for units that are 
+            // We need to adjust the ranges for Centurion Weapon Systems: it's
+            //  default range is 6/12/18 but that's only for units that are
             //  susceptible to CWS, for those that aren't the ranges are 1/2/3
             if (wtype.hasFlag(WeaponType.F_CWS)) {
                 Entity target = null;
@@ -2755,7 +2760,7 @@ public class UnitDisplay extends JPanel {
                 // TODO: make this an accessor function instead of a member
                 // access.
                 if ((clientgui != null) && (clientgui.curPanel instanceof FiringDisplay)) {
-                    FiringDisplay firingDisplay = ((FiringDisplay) clientgui.curPanel); 
+                    FiringDisplay firingDisplay = ((FiringDisplay) clientgui.curPanel);
 
                     Mounted mounted = null;
                     if (weaponList.getSelectedIndex() != -1) {
@@ -2873,7 +2878,7 @@ public class UnitDisplay extends JPanel {
             }
             onResize();
         }
-        
+
         void setWeaponComparator(int sortIdx) {
             Comparator<Mounted> weapComparator;
             if (sortIdx == Entity.WeaponSortOrder.RANGE_LH.ordinal()) {

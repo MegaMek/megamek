@@ -30,11 +30,11 @@ Sprite
 </jumpingMP>
 
 <Armor>
-4
+9
 30
 6
 6
-14
+15
 </Armor>
 
 <Right Arm Equipment>
@@ -72,3 +72,7 @@ Biped
 <source>
 WoR
 </source>
+
+<history>
+The unit is overweight and will likely need the TAG removed.  Once we get an official ruling I'll change the unit.
+</history> 

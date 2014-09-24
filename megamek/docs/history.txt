@@ -68,6 +68,7 @@ v0.39.2-dev (SVN)
 + Data: New Images/Few new Maps/fixed units
 + Data: Unit fixes
 + Bug: 2 NPEs related to weapon sort orders
++ Data: ProtoMek Fixes (Thanks GreekFire) and new Images.
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

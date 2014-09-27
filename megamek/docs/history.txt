@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.39.2-dev (SVN)
+v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario
 + Undeployed units won't get added to Game's entity location cache
 + Data: Unit Fixes and New Images.

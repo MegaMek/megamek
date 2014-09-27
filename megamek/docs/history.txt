@@ -70,6 +70,8 @@ v0.39.2-dev (SVN)
 + Bug: 2 NPEs related to weapon sort orders
 + Data: ProtoMek Fixes (Thanks GreekFire) and new Images.
 + Data: New Images
++ Data: Updated Camo Pack from SeaVea
+	 (Includes New Camos/Refactored some folders Sorry MekHQ peeps)
 
 v0.39.1 (2014-08-26 14:56 UTC)
 + Patch [#458]: Highlighting FOV options

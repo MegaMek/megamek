@@ -586,6 +586,7 @@ Barouche Military Transport (Standard)|
 Demon Tank CX-2|
 Lightning Attack Hovercraft CX-3|
 Fury Command Tank CX-17|
+Packrat LRPV PKR-T5 (TOC)|
 Weapon Carrier (Tracked) (AC/20)|
 Vali Artillery Vehicle (Standard)|
 Vector (Scout)|
@@ -1497,6 +1498,7 @@ Starfire SF-1X (Prototype)|
 Zero ZRO-CX-3|
 Tomahawk CX-11|
 Ironsides CX-19|
+Banshee BSE-X2|
 Star Dagger S-2B|
 Transit TR-9|
 Thrush TR-5|

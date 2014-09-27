@@ -57,7 +57,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.39.2-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.39.2"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -101,7 +101,7 @@ public class MegaMek {
             } else {
                 // Load button ordering
                 ButtonOrderPreferences.getInstance().setButtonPriorities();
-                
+
                 String interfaceName = cp.getGuiName();
                 if (interfaceName == null) {
                     interfaceName = PreferenceManager.getClientPreferences()
@@ -533,7 +533,7 @@ public class MegaMek {
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                                || (entity instanceof Tank) 
+                                || (entity instanceof Tank)
                                 || (entity instanceof Aero)
                                 || (entity instanceof BattleArmor)) {
                             TestEntity testEntity = null;
@@ -559,10 +559,10 @@ public class MegaMek {
                                             Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero)entity,
                                         entityVerifier.aeroOption, null);
-                            } 
+                            }
                             if (entity instanceof BattleArmor){
                                 testEntity = new TestBattleArmor(
-                                        (BattleArmor) entity, 
+                                        (BattleArmor) entity,
                                         entityVerifier.baOption, null);
                             }
 

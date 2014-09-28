@@ -27802,6 +27802,8 @@ public class Server implements Runnable {
                     Entity.WeaponSortOrder order =
                         (Entity.WeaponSortOrder)data[1];
                     ent.setWeaponSortOrder(order);
+                    // Used by the client but is set in setWeaponSortOrder
+                    ent.setWeapOrderChanged(false);
                     if (order == Entity.WeaponSortOrder.CUSTOM) {
                         @SuppressWarnings("unchecked") // Unchecked cause of limitations in Java when casting to a collection
                         Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>)data[2];

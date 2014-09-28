@@ -13138,7 +13138,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
-        setWeapOrderChanged(true);
+        if (weaponSortOrder != this.weaponSortOrder) {
+            setWeapOrderChanged(true);
+        }
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
         if ((weaponSortOrder == WeaponSortOrder.CUSTOM) 

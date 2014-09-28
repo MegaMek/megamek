@@ -2556,6 +2556,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return false;
         }
         
+        // Can't strafe the same hex twice
+        if (strafingCoords.contains(newCoord)) {
+            return false;
+        }
+        
         boolean isConsecutive = false;
         for (Coords c : strafingCoords) {
             isConsecutive |= (c.distance(newCoord) == 1);

@@ -1453,8 +1453,6 @@ public class Game implements Serializable, IGame {
                 entity.setGame(this);
             }
         }
-        // Need to update the position lookup; Entities may have been removed
-        resetEntityPositionLookup();
     }
 
     /**

@@ -1380,7 +1380,7 @@ public class Game implements Serializable, IGame {
         if (entityPosLookup != null) {
             entityPosLookup.clear();
         } else {
-            new HashMap<Coords, HashSet<Entity>>();
+            entityPosLookup = new HashMap<Coords, HashSet<Integer>>();
         }
 
         vOutOfGame.removeAllElements();
@@ -1435,6 +1435,7 @@ public class Game implements Serializable, IGame {
     private void reindexEntities() {
         entityIds.clear();
         lastEntityId = 0;
+        
         if (entities != null) {
             // Add these entities to the game.
             for (Entity entity : entities) {
@@ -1452,6 +1453,8 @@ public class Game implements Serializable, IGame {
                 entity.setGame(this);
             }
         }
+        // Need to update the position lookup; Entities may have been removed
+        resetEntityPositionLookup();
     }
 
     /**

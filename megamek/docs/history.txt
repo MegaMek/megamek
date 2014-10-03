@@ -5,6 +5,9 @@ v0.39.3-dev (SVN)
 + Bug: weapon sort order updates being sent to server too frequently
 + Data: New Images
 + Bug [#4266]: Bug in Random Map Settings
++ Bug: Fixed two rare NPEs: one is issuing a skip command with a null entity
+    while simultaneous phases are active and the other is related to
+    disconnecting a client
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -3556,13 +3556,18 @@ public class Compute {
      * but not necessarily LoS
      */
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
-        boolean teSpotlight = false;
+        boolean teIlluminated = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
-            teSpotlight = te.usedSearchlight();
+            teIlluminated = te.isIlluminated();
             if (te.isOffBoard()) {
                 return false;
             }
+        }
+        // Target may be in an illuminated hex
+        if (!teIlluminated) {
+            teIlluminated = game.getIlluminatedPositions().contains(
+                    target.getPosition());
         }
 
         // if either does not have a position then return false
@@ -3572,7 +3577,7 @@ public class Compute {
 
         // check visual range based on planetary conditions
         LosEffects los = LosEffects.calculateLos(game, ae.getId(), target);
-        int visualRange = getVisualRange(game, ae, los, teSpotlight);
+        int visualRange = getVisualRange(game, ae, los, teIlluminated);
 
         // check for camo and null sig on the target
         Coords targetPos = target.getPosition();
@@ -3607,9 +3612,9 @@ public class Compute {
     }
 
     public static int getVisualRange(IGame game, Entity ae, LosEffects los,
-                                     boolean teSpotlight) {
+                                     boolean teIlluminated) {
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
-                                                                       teSpotlight);
+                teIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);

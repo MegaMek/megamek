@@ -210,4 +210,24 @@ public class StringUtil {
             return false;
         }
     }
+    
+    /**
+     * Returns TRUE if the passed string is an integer value.
+     *
+     * @param number The {@link String} to be evaluated.
+     * @return TRUE if the value can be parsed to an {@link Integer} without throwing a {@link NumberFormatException}
+     *         and the parsed value is greater than or equal to zero.
+     */
+    public static boolean isInteger(String number) {
+        if (isNullOrEmpty(number)) {
+            return false;
+        }
+        try {
+            Integer.parseInt(number);
+            // If we parsed without exception, we are an int
+            return  true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }    
 }

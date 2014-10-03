@@ -1210,8 +1210,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
 
-        toHit.append(AbstractAttackAction.nightModifiers(game, target, atype,
-                                                         ae, true));
+        if (!isArtilleryIndirect) {
+            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype,
+                    ae, true));
+        }
 
         TargetRoll weatherToHitMods = new TargetRoll();
 

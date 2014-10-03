@@ -4,11 +4,13 @@ v0.39.3-dev (SVN)
 + Bug [#4260]: Strafing: can designate the same hex twice
 + Bug: weapon sort order updates being sent to server too frequently
 + Data: New Images
++ Bug [#4266]: Bug in Random Map Settings
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario
 + Undeployed units won't get added to Game's entity location cache
-+ Data: Unit Fixes and New Images.
++ Data: Unit Fixes and
+ New Images.
 + Refactored BotGeometry for better thread safety and protection against some
     potential NPEs.
 + Bug [#4245]: RandomArmyDialog Tech Level IllegalArgumentException

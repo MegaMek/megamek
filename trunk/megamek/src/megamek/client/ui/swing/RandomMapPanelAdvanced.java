@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
+import megamek.client.ui.swing.util.VerifyIsInteger;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
@@ -1098,7 +1099,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         constraints.weighty = 1;
         specialFxField.setRequired(true);
         specialFxField.setSelectAllTextOnGotFocus(true);
-        specialFxField.addVerifier(new VerifyIsPositiveInteger());
+        specialFxField.addVerifier(new VerifyIsInteger());
         specialFxField.setToolTipText(Messages.getString("RandomMapDialog.specialFxField.toolTip"));
         specialFxField.setName(fxLabel.getText());
         panel.add(specialFxField, constraints);

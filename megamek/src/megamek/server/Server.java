@@ -1891,7 +1891,7 @@ public class Server implements Runnable {
         boolean turnsChanged = false;
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
-        if (game.isPhaseSimultaneous()
+        if (game.isPhaseSimultaneous() && (entityUsed != null)
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
             outOfOrder = true;

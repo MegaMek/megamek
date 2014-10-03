@@ -4652,7 +4652,11 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity, game)) {
+        GameTurn turn = game.getTurn();
+        if (game.isPhaseSimultaneous()) {
+            turn = game.getTurnForPlayer(connId);
+        }
+        if ((turn == null) || !turn.isValid(connId, entity, game)) {
             System.err.println("error: server got invalid movement packet");
             return;
         }

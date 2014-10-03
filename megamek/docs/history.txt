@@ -9,6 +9,7 @@ v0.39.3-dev (SVN)
     while simultaneous phases are active and the other is related to
     disconnecting a client
 + Bug: Indirect artillery fire shouldn't be effected by light modifiers
++ Bug [#4147]: Fixed issues with searchlights, night, and one-sided LoS
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

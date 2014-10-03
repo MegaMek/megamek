@@ -613,7 +613,7 @@ public class PlanetaryConditions implements Serializable {
      * visual range based on conditions
      *
      */
-    public int getVisualRange(Entity en, boolean targetSpotlight) {
+    public int getVisualRange(Entity en, boolean targetIlluminated) {
 
         boolean Spotlight = false;
 
@@ -624,7 +624,7 @@ public class PlanetaryConditions implements Serializable {
         //Needed for MekWars for Maximum Visual Range.
         if ( en == null ) {
             isMechVee = true;
-            Spotlight = targetSpotlight;
+            Spotlight = targetIlluminated;
         }else {
             Spotlight = en.isUsingSpotlight();
             isMechVee = (en instanceof Mech) || (en instanceof Tank);
@@ -633,7 +633,8 @@ public class PlanetaryConditions implements Serializable {
         }
         //anything else is infantry
 
-        if((lightConditions == L_PITCH_BLACK) && !Spotlight && !targetSpotlight) {
+        if ((lightConditions == L_PITCH_BLACK) && !Spotlight
+                && !targetIlluminated) {
             if(isMechVee) {
                 return 3;
             }
@@ -644,8 +645,8 @@ public class PlanetaryConditions implements Serializable {
                 return 4;
             }
             return 1;
-        } else if (((lightConditions == L_MOONLESS) && !Spotlight && !targetSpotlight)
-                || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetSpotlight)
+        } else if (((lightConditions == L_MOONLESS) && !Spotlight && !targetIlluminated)
+                || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetIlluminated)
                 || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))) {
             if(isMechVee) {
                 return 5;
@@ -675,7 +676,7 @@ public class PlanetaryConditions implements Serializable {
                 return 15;
             }
             return 5;
-        } else if ((lightConditions == L_PITCH_BLACK) && !targetSpotlight) {
+        } else if ((lightConditions == L_PITCH_BLACK) && !targetIlluminated) {
             if(isMechVee) {
                 return 13;
             }
@@ -686,8 +687,10 @@ public class PlanetaryConditions implements Serializable {
                 return 14;
             }
             return 6;
-        } else if(((lightConditions > L_DAY) && !Spotlight && !targetSpotlight)
-                || (((weatherConditions == WE_HEAVY_SNOW) || (weatherConditions == WE_MOD_SNOW)) && (windStrength >= WI_MOD_GALE)) ) {
+        } else if (((lightConditions > L_DAY) && !Spotlight && !targetIlluminated)
+                || (((weatherConditions == WE_HEAVY_SNOW) 
+                        || (weatherConditions == WE_MOD_SNOW)) 
+                            && (windStrength >= WI_MOD_GALE)) ) {
             if(isMechVee) {
                 return 15;
             }
@@ -698,7 +701,7 @@ public class PlanetaryConditions implements Serializable {
                 return 20;
             }
             return 8;
-        } else if((lightConditions > L_DAY) && !targetSpotlight) {
+        } else if((lightConditions > L_DAY) && !targetIlluminated) {
             if(isMechVee) {
                 return 25;
             }
@@ -709,7 +712,8 @@ public class PlanetaryConditions implements Serializable {
                 return 30;
             }
             return 13;
-        } else if((weatherConditions == WE_MOD_SNOW) || (weatherConditions == WE_MOD_RAIN)) {
+        } else if ((weatherConditions == WE_MOD_SNOW)
+                || (weatherConditions == WE_MOD_RAIN)) {
             if(isMechVee) {
                 return 20;
             }
@@ -720,8 +724,9 @@ public class PlanetaryConditions implements Serializable {
                 return 25;
             }
             return 10;
-        } else if((lightConditions > L_DAY)
-                || (weatherConditions == WE_LIGHT_SNOW) || (weatherConditions == WE_LIGHT_RAIN)
+        } else if ((lightConditions > L_DAY)
+                || (weatherConditions == WE_LIGHT_SNOW)
+                || (weatherConditions == WE_LIGHT_RAIN)
                 || (weatherConditions == WE_LIGHT_HAIL) || (fog == FOG_LIGHT)) {
             if(isMechVee) {
                 return 30;

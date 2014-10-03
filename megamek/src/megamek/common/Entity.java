@@ -8653,11 +8653,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isIlluminated() {
-        return illuminated;
+        // Regardless of illuminated state, if we have a spotlight active we
+        //  are illuminated
+        return illuminated || spotlightIsActive;
     }
 
     public void setIlluminated(boolean arg) {
-        illuminated = arg;
+        illuminated = spotlightIsActive || arg;
     }
 
     public boolean isUsingSpotlight() {

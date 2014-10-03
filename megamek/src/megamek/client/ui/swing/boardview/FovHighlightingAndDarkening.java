@@ -116,6 +116,11 @@ class FovHighlightingAndDarkening implements AutoCloseable{
             for (Entity target : this.boardView1.game.getEntitiesVector(c)){
                 targetIlluminated |= target.isIlluminated();
             }
+            // Target may be in an illuminated hex
+            if (!targetIlluminated) {
+                targetIlluminated = this.boardView1.game
+                        .getIlluminatedPositions().contains(c);
+            }
 
             final int max_dist;
             // We don't want to have to compute a LoSEffects yet, as that

@@ -13,6 +13,7 @@ v0.39.3-dev (SVN)
 + Bug: UnitOverview legal unit highlighting issues with simultaneous phases
 + Bug [#4251]: Movement illegal with simultaneous movement
 + Data: New Images
++ Bug [#4269]: MoveStep.getParent() not returning the correct MovePath
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

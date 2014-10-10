@@ -1761,36 +1761,24 @@ public class UnitDisplay extends JPanel {
          * @return The weapon id of the weapon selected
          */
         public int selectFirstWeapon() {
-            int selected = -1;
-            Mounted selectedWeap;
-            int initialSelection = selected;
-            boolean hasLooped = false;
             // Entity has no weapons, return -1;
             if (entity.getWeaponList().size() == 0
-                    || (entity.usesWeaponBays() && entity.getWeaponBayList().size() == 0)) {
+                    || (entity.usesWeaponBays() 
+                            && entity.getWeaponBayList().size() == 0)) {
                 return -1;
             }
-            do {
-                selected++;
-                if (selected >= weaponList.getModel().getSize()) {
-                    selected = 0;
+            WeaponListModel weapList = (WeaponListModel)weaponList.getModel();
+            for (int i = 0; i < weaponList.getModel().getSize(); i++) {
+                Mounted selectedWeap = weapList.getWeaponAt(i);
+                if (entity.isWeaponValidForPhase(selectedWeap)) {
+                    weaponList.setSelectedIndex(i);
+                    weaponList.ensureIndexIsVisible(i);
+                    return entity.getEquipmentNum(selectedWeap);
                 }
-                if (selected == initialSelection) {
-                    hasLooped = true;
-                }
-                selectedWeap = ((WeaponListModel) weaponList.getModel())
-                        .getWeaponAt(selected);
-            } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
-
-            if ((selected >= 0) && (selected < entity.getWeaponList().size())
-                    && !hasLooped) {
-                weaponList.setSelectedIndex(selected);
-                weaponList.ensureIndexIsVisible(selected);
-                return entity.getEquipmentNum(selectedWeap);
-            } else {
-                weaponList.setSelectedIndex(-1);
-                return -1;
             }
+            // Found no valid weapon
+            weaponList.setSelectedIndex(-1);
+            return -1;
         }
 
         /**

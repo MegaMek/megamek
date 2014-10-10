@@ -168,7 +168,7 @@ public class GameTurn implements Serializable {
         }
 
         public String toString() {
-            return super.toString() + "eid: " + entityId;
+            return super.toString() + " eid: " + entityId;
         }
     }
 

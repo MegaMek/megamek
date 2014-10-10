@@ -8543,8 +8543,14 @@ public class Server implements Runnable {
             && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
+            GameTurn currentTurn  = game.getTurn();
+            if (game.isPhaseSimultaneous()) {
+                currentTurn = game.getTurnForPlayer(entity.getOwnerId());
+            }
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity
-                                                                       .getOwner().getId(), entity.getId());
+                    .getOwner().getId(), entity.getId());
+            // Need to set the new turn's multiTurn state
+            newTurn.setMultiTurn(currentTurn.isMultiTurn());
             game.insertNextTurn(newTurn);
             // brief everybody on the turn update
             send(createTurnVectorPacket());

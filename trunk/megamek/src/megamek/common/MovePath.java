@@ -525,16 +525,20 @@ public class MovePath implements Cloneable, Serializable {
         final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
         Enumeration<MoveStep> i = steps.elements();
         MoveStep step = i.nextElement();
-
+        // Make sure the parent path of the step is correct
+        step.setParent(this);
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload, or go prone.
-        if (Compute.isEnemyIn(getGame(), getEntity(), getEntity().getPosition(), false, getEntity() instanceof Mech,
-                              getEntity().getElevation())) {
+        if (Compute.isEnemyIn(getGame(), getEntity(),
+                getEntity().getPosition(), false, getEntity() instanceof Mech,
+                getEntity().getElevation())) {
             // This is an enemy, we can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
             while (i.hasMoreElements()) {
                 step = i.nextElement();
+                // Make sure the parent path of the step is correct                
+                step.setParent(this);
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition())
                         || !(step.getElevation() == getEntity().getElevation())) {

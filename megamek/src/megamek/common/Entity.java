@@ -1784,8 +1784,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns the height of the unit, that is, how many levels above it's
-     * elevation is it for LOS purposes. Default is 0.
+     * Returns the height of the unit, that is, how many levels above its
+     * elevation it is for LOS purposes. Default is 0.
      */
     public int height() {
         return 0;

@@ -18,6 +18,7 @@ v0.39.3-dev (SVN)
 + Bug [#4271]: No unit to move with mek lance movement
 + Bug [#4151]: some height/elevation method conventions are counterintuitive
 + Bug [#4150]: HexTarget violates interface contract
++ Bug [#4268]: Incorrect Fall Damage from falling while on Building
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

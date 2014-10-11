@@ -1223,7 +1223,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public int checkTerrain(int nDamage, Entity entityTarget,
                             Vector<Report> vPhaseReport) {
         boolean isAboveWoods = ((entityTarget != null) && ((entityTarget
-                                                                    .absHeight() >= 2) || (entityTarget.isAirborne())));
+                                                                    .relHeight() >= 2) || (entityTarget.isAirborne())));
         if (game.getOptions().booleanOption("tacops_woods_cover")
             && !isAboveWoods
             && (game.getBoard().getHex(entityTarget.getPosition())
@@ -1279,8 +1279,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int refrac = 0;
         double travel = 0;
         double range = ae.getPosition().distance(target.getPosition());
-        double atkLev = ae.absHeight();
-        double tarLev = entityTarget.absHeight();
+        double atkLev = ae.relHeight();
+        double tarLev = entityTarget.relHeight();
         double levDif = Math.abs(atkLev - tarLev);
         String hexType = "LASER inhibiting smoke";
 

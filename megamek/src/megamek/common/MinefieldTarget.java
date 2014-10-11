@@ -23,11 +23,9 @@ public class MinefieldTarget implements Targetable {
      */
     private static final long serialVersionUID = 420672189241204590L;
     private Coords m_coords;
-    private int m_elev;
 
     public MinefieldTarget(Coords c, IBoard board) {
         m_coords = c;
-        m_elev = board.getHex(m_coords).getLevel();
     }
 
     public int getTargetType() {
@@ -46,7 +44,7 @@ public class MinefieldTarget implements Targetable {
         return new HashMap<Integer, Coords>();
     }
 
-    public int absHeight() {
+    public int relHeight() {
         return getHeight() + getElevation();
     }
 
@@ -55,7 +53,7 @@ public class MinefieldTarget implements Targetable {
     }
 
     public int getElevation() {
-        return m_elev;
+        return 0;
     }
 
     public boolean isImmobile() {

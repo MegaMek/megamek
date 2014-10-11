@@ -24,12 +24,10 @@ public class HexTarget implements Targetable {
     private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
     private boolean m_bIgnite;
-    private int m_elev;
     private int m_type;
 
     public HexTarget(Coords c, IBoard board, int nType) {
         m_coords = c;
-        m_elev = board.getHex(m_coords).getLevel();
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
@@ -50,7 +48,7 @@ public class HexTarget implements Targetable {
         return new HashMap<Integer, Coords>();
     }
 
-    public int absHeight() {
+    public int relHeight() {
         return getHeight() + getElevation();
     }
 
@@ -59,7 +57,7 @@ public class HexTarget implements Targetable {
     }
 
     public int getElevation() {
-        return m_elev;
+        return 0;
     }
 
     public boolean isImmobile() {

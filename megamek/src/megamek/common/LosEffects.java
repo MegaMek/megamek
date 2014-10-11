@@ -431,7 +431,7 @@ public class LosEffects {
         ai.attackHeight = ae.getHeight();
         ai.targetHeight = target.getHeight();
 
-        int attEl = ae.absHeight() + attHex.getLevel();
+        int attEl = ae.relHeight() + attHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
         if (spotting && ae.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
             attEl += 1;
@@ -442,7 +442,7 @@ public class LosEffects {
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
                 || (target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-            targEl = target.absHeight() + targetHex.getLevel();
+            targEl = target.relHeight() + targetHex.getLevel();
         } else {
             targEl = game.getBoard().getHex(targetPos).surface();
         }

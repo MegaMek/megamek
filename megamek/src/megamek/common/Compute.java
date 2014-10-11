@@ -869,7 +869,7 @@ public class Compute {
 
         // is water involved?
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int targTop = target.absHeight();
+        int targTop = target.relHeight();
         int targBottom = target.getElevation();
 
         boolean targetInPartialWater = false;
@@ -2317,7 +2317,7 @@ public class Compute {
 
 
         boolean isAboveWoodsAndSmoke = ((entityTarget != null) && (hex != null))
-                                       && ((entityTarget.absHeight() >= 2) || (entityTarget
+                                       && ((entityTarget.relHeight() >= 2) || (entityTarget
                 .isAirborne()));
         boolean isUnderwater = ((entityTarget != null) && (hex != null))
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)

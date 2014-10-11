@@ -342,7 +342,7 @@ class FovHighlightingAndDarkening implements AutoCloseable{
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
-            int trAbsheight = dstHex.surface() + ent.absHeight();
+            int trAbsheight = dstHex.surface() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
                 ai.targetAbsHeight = trAbsheight;

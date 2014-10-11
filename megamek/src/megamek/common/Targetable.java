@@ -51,12 +51,18 @@ public interface Targetable extends Serializable {
      * @return elevation of the top (e.g. torso) of the target relative to
      *         surface
      */
-    public int absHeight();
+    public int relHeight();
 
-    /** @return height of the target in elevation levels */
+    /**
+     * Returns the height of the target, that is, how many levels above its
+     * elevation it is for LOS purposes.
+     * 
+     * @return height of the target in elevation levels */
     public int getHeight();
 
     /**
+     * Returns the elevation of this target, relative to the position Hex's
+     * surface
      * @return elevation of the bottom (e.g. legs) of the target relative to
      *         surface
      */

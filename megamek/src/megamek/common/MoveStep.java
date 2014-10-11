@@ -2001,7 +2001,7 @@ public class MoveStep implements Serializable {
         if ((parent.getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
                 && (currHex.containsTerrain(Terrains.WATER)
                 && lastHex.containsTerrain(Terrains.WATER) && (entity
-                .absHeight() < currHex.surface()))) {
+                .relHeight() < currHex.surface()))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 

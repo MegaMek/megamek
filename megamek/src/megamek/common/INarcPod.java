@@ -144,7 +144,7 @@ public class INarcPod implements Serializable, Targetable {
     }
     
 
-    public int absHeight() {
+    public int relHeight() {
         return 0;
     }
 

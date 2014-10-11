@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * This class represents a single, targetable hex of a building. The building
- * itself may occupy multiple hexex.
+ * itself may occupy multiple hexes.
  *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
@@ -42,12 +42,15 @@ public class BuildingTarget implements Targetable {
     private int id = Building.UNKNOWN;
 
     /**
-     * The height of the building at the targeted position.
+     * The height of the building at the targeted position, used to indicate
+     * the number of levels of the building.  A height 0 building is a 1-story
+     * (level 1) building.  Bridges will always have a height of 0.
      */
     private int height = Building.UNKNOWN;
 
     /**
-     * The elevation of the building at the targeted position.
+     * The elevation of the building at the targeted position, generally only
+     * used by bridges but also for buildings on hexes with depth.
      */
     private int elevation = Building.UNKNOWN;
 
@@ -167,7 +170,7 @@ public class BuildingTarget implements Targetable {
         return new HashMap<Integer, Coords>();
     }
 
-    public int absHeight() {
+    public int relHeight() {
         return getHeight() + getElevation();
     }
 

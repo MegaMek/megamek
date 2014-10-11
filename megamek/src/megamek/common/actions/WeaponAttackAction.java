@@ -417,7 +417,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (te == null) {
             targEl = game.getBoard().getHex(target.getPosition()).floor();
         } else {
-            targEl = te.absHeight();
+            targEl = te.relHeight();
         }
 
         // TODO: mech making DFA could be higher if DFA target hex is higher
@@ -2080,7 +2080,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             // target in water?
             targHex = game.getBoard().getHex(oldTarget.getPosition());
-            targEl = oldTarget.absHeight();
+            targEl = oldTarget.relHeight();
 
             if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
                 Entity oldEnt = game.getEntity(oldTarget.getTargetId());
@@ -2157,7 +2157,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (te == null) {
             targEl = game.getBoard().getHex(target.getPosition()).floor();
         } else {
-            targEl = te.absHeight();
+            targEl = te.relHeight();
         }
 
         // EI system
@@ -3771,7 +3771,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 IHex currHex = game.getBoard().getHex(target.getPosition());
                 int prevElev = prevHex.getLevel();
                 int currElev = currHex.getLevel();
-                if ((prevElev - currElev - target.absHeight()) > 2) {
+                if ((prevElev - currElev - target.relHeight()) > 2) {
                     return "target is in dead-zone";
                 }
             }

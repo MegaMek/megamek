@@ -1257,7 +1257,7 @@ public class FireControlTest {
         Mockito.when(mockShooterHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockShooterState.getPosition()))).thenReturn(mockShooterHex);
         Mockito.when(mockShooter.getElevation()).thenReturn(0);
-        Mockito.when(mockShooter.absHeight()).thenReturn(2);
+        Mockito.when(mockShooter.relHeight()).thenReturn(2);
         Mockito.when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
         Mockito.when(mockShooter.isLocationBad(Mech.LOC_LARM)).thenReturn(false);
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)).thenReturn(true);

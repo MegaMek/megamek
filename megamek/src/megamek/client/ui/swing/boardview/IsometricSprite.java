@@ -129,7 +129,7 @@ class IsometricSprite extends Sprite {
                 int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.boardView1.scale);
 
                 if (makeTranslucent) {
-                    if (entity.absHeight() < 0) {
+                    if (entity.relHeight() < 0) {
                         g2.setComposite(AlphaComposite.getInstance(
                                 AlphaComposite.SRC_OVER, 0.35f));
                         g2.drawImage(image, p.x, p.y - altAdjust, observer);

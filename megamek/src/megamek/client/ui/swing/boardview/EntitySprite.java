@@ -129,7 +129,7 @@ class EntitySprite extends Sprite {
                 && !entity.isVisibleToEnemy() && GUIPreferences
                 .getInstance().getBoolean(
                         GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS))
-                || (entity.absHeight() < 0)) {
+                || (entity.relHeight() < 0)) {
             // create final image with translucency
             drawOnto(g, x, y, observer, true);
         } else {

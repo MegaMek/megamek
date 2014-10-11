@@ -483,7 +483,7 @@ public class FireControl {
         IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
         IHex targetHex = game.getBoard().getHex(targetState.getPosition());
         final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
-        final int attackerHeight = shooter.absHeight() + attackerHex.getLevel();
+        final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
         final int targetElevation = target.getElevation() + targetHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         if (attackType.isPunch()) {

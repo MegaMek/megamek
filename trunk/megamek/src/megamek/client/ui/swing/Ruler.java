@@ -336,7 +336,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         boolean entFound = false;
         while (destEntities.hasMoreElements()) {
             Entity ent = destEntities.nextElement();
-            int trAbsheight = ent.absHeight();
+            int trAbsheight = ent.relHeight();
             if (trAbsheight > absHeight) {
                 absHeight = trAbsheight;
                 isMech = ent instanceof Mech;

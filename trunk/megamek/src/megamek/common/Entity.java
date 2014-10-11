@@ -1430,9 +1430,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Sets the current elevation of this entity above the ground.
+     * Sets the current elevation of this entity above the ground.  This is the
+     * number of levels the unit is above the level of the hex.
      *
-     * @param elevation an <code>int</code> representing the new position.
+     * @param elevation an <code>int</code> representing the new elevation.
      */
     public void setElevation(int elevation) {
         this.elevation = elevation;
@@ -1793,9 +1794,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns the elevation of the entity's highest point relative to
      * the surface of the hex the entity is in , i.e.
-     * absHeight() == getElevation() + getHeight()
+     * relHeight() == getElevation() + getHeight()
      */
-    public int absHeight() {
+    public int relHeight() {
         return getElevation() + height();
     }
 
@@ -12848,7 +12849,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isUnderwater() {
         IHex occupiedHex = game.getBoard().getHex(getPosition());
         if (occupiedHex.containsTerrain(Terrains.WATER)
-            && (absHeight() < occupiedHex.surface())) {
+            && (relHeight() < occupiedHex.surface())) {
             return true;
         }
         return false;

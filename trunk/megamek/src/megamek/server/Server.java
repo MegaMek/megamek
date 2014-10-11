@@ -4867,7 +4867,7 @@ public class Server implements Runnable {
                     .hasMoreElements(); ) {
                 Entity en = e.nextElement();
                 if ((en instanceof Dropship) && !en.isAirborne()
-                    && (nextAltitude <= (en.absHeight()))) {
+                    && (nextAltitude <= (en.relHeight()))) {
                     crashDropship = en;
                 }
             }
@@ -5067,7 +5067,7 @@ public class Server implements Runnable {
 
                     if ((target.getElevation() > (nextElevation + entity
                             .getHeight()))
-                        || (target.absHeight() < nextElevation)) {
+                        || (target.relHeight() < nextElevation)) {
                         // target is not in the way
                         continue;
                     }
@@ -10225,7 +10225,7 @@ public class Server implements Runnable {
             return;
         }
         // Check if entering depth 2 water or prone in depth 1.
-        if ((waterLevel > 0) && (entity.absHeight() < 0)) {
+        if ((waterLevel > 0) && (entity.relHeight() < 0)) {
             washInferno(entity, coords);
         }
     }
@@ -16126,7 +16126,7 @@ public class Server implements Runnable {
             te = (Entity) target;
             IHex hex = game.getBoard().getHex(te.getPosition());
             if (hex.containsTerrain(Terrains.WATER)) {
-                if (te.absHeight() < 0) {
+                if (te.relHeight() < 0) {
                     damage = (int) Math.ceil(damage * 0.5f);
                 }
             }
@@ -21235,7 +21235,7 @@ public class Server implements Runnable {
             int damage = damages[range];
 
             if (allowShelter
-                && canShelter(entityPos, position, entity.absHeight())) {
+                && canShelter(entityPos, position, entity.relHeight())) {
                 if (isSheltered()) {
                     r = new Report(6545);
                     r.addDesc(entity);
@@ -21293,8 +21293,8 @@ public class Server implements Runnable {
 
                 int damage = damages[range];
                 if (allowShelter) {
-                    final int absHeight = (transporter == null ? e.absHeight()
-                                                               : transporter.absHeight());
+                    final int absHeight = (transporter == null ? e.relHeight()
+                                                               : transporter.relHeight());
                     if ((entityPos != null)
                         && canShelter(entityPos, position, absHeight)) {
                         if (isSheltered()) {
@@ -24953,12 +24953,12 @@ public class Server implements Runnable {
         // collapses
         boolean checkCollapse = false;
 
-        if ((entity.absHeight() >= buildingHeight)
+        if ((entity.relHeight() >= buildingHeight)
             && (buildingHeight >= 0)) {
             // fallHeight should already reflect this
             newElevation = buildingHeight;
             checkCollapse = true;
-        } else if (fallOntoBridge && (entity.absHeight() >= bridgeHeight)
+        } else if (fallOntoBridge && (entity.relHeight() >= bridgeHeight)
                    && (bridgeHeight >= 0)) {
             // fallHeight should already reflect this
             waterDepth = 0;

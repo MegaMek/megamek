@@ -468,7 +468,7 @@ public class PrincessTest {
         Mockito.when(mockPrincess.getBooleanOption(Mockito.eq("tacops_careful_stand"))).thenReturn(false);
 
         IHex mockHex = Mockito.mock(IHex.class);
-        Mockito.when(mockHex.getElevation()).thenReturn(0);
+        Mockito.when(mockHex.getLevel()).thenReturn(0);
         Mockito.when(mockPrincess.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
 
         IGame mockGame = Mockito.mock(IGame.class);

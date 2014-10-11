@@ -768,9 +768,9 @@ public class TestBot extends BotClient {
             // add them in now, then re-add them later
             if (self.range > CEntity.RANGE_SHORT) {
                 int ele_dif = game.getBoard().getHex(option.getFinalCoords())
-                                  .getElevation()
+                                  .getLevel()
                               - game.getBoard().getHex(self.current.getFinalCoords())
-                                    .getElevation();
+                                    .getLevel();
                 adjustment -= (Math.max(ele_dif, 0) + 1)
                               * ((double) Compute.getTargetTerrainModifier(game,
                                                                            option.getEntity()).getValue() + 1);

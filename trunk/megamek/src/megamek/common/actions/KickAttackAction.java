@@ -146,9 +146,9 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+                + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
         int mule = 0;

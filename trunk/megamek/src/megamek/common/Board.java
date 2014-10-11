@@ -551,13 +551,13 @@ public class Board implements Serializable, IBoard {
      */
     public void setHex(Coords c, IHex hex) {
         setHex(c.x, c.y, hex);
-        if (hex.getElevation() < minElevation && 
+        if (hex.getLevel() < minElevation && 
                 minElevation != UNDEFINED_MIN_ELEV){
-            minElevation = hex.getElevation();
+            minElevation = hex.getLevel();
         }
-        if (hex.getElevation() > maxElevation && 
+        if (hex.getLevel() > maxElevation && 
                 maxElevation != UNDEFINED_MAX_ELEV){
-            maxElevation = hex.getElevation();
+            maxElevation = hex.getLevel();
         }
     }
 
@@ -854,7 +854,7 @@ public class Board implements Serializable, IBoard {
                 StringBuffer hexBuff = new StringBuffer("hex ");
                 hexBuff.append(new Coords(i % width, i / width).getBoardNum());
                 hexBuff.append(" ");
-                hexBuff.append(hex.getElevation());
+                hexBuff.append(hex.getLevel());
                 hexBuff.append(" \"");
                 int terrainTypes[] = hex.getTerrainTypes();
                 for (int j = 0; j < terrainTypes.length; j++) {   
@@ -1489,7 +1489,7 @@ public class Board implements Serializable, IBoard {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int elevation = data[(y * width) + x].getElevation();
+                int elevation = data[(y * width) + x].getLevel();
                 if(maxElevation < elevation) {
                     maxElevation = elevation;
                 }
@@ -1505,7 +1505,7 @@ public class Board implements Serializable, IBoard {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int elevation = data[(y * width) + x].getElevation();
+                int elevation = data[(y * width) + x].getLevel();
                 if(minElevation > elevation) {
                     minElevation = elevation;
                 }

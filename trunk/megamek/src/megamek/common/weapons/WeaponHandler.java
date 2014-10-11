@@ -1299,7 +1299,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT)
                     || (smokeHex.getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
 
-                int levit = ((game.getBoard().getHex(curr).getElevation()) + 2);
+                int levit = ((game.getBoard().getHex(curr).getLevel()) + 2);
 
                 // does the hex contain LASER inhibiting smoke?
                 if ((tarLev > atkLev)

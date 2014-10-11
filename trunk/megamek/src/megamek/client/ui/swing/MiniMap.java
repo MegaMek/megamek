@@ -1156,7 +1156,7 @@ public class MiniMap extends JPanel {
 
     private Color terrainColor(IHex x, int boardX, int boardY) {
         Color terrColor = m_terrainColors[0];
-        if (x.getElevation() < 0) {
+        if (x.getLevel() < 0) {
             // sinkholes have their own colour
             terrColor = SINKHOLE;
         }

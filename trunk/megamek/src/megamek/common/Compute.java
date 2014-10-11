@@ -393,8 +393,8 @@ public class Compute {
         final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = Compute.canMoveOnPavement(game, src,
                                                                  dest, path);
-        int delta_alt = (destElevation + destHex.getElevation())
-                        - (srcElevation + srcHex.getElevation());
+        int delta_alt = (destElevation + destHex.getLevel())
+                        - (srcElevation + srcHex.getLevel());
 
         // arguments valid?
         if (entity == null) {
@@ -419,7 +419,7 @@ public class Compute {
 
         // check for swamp
         if (destHex.containsTerrain(Terrains.SWAMP)
-            && !(entity.getElevation() > destHex.getElevation())
+            && !(entity.getElevation() > destHex.getLevel())
             && (entity.getMovementMode() != EntityMovementMode.HOVER)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
             && (movementType != EntityMovementType.MOVE_JUMP)
@@ -430,7 +430,7 @@ public class Compute {
         // check for thin ice
         if (destHex.containsTerrain(Terrains.ICE)
             && destHex.containsTerrain(Terrains.WATER)
-            && !(entity.getElevation() > destHex.getElevation())
+            && !(entity.getElevation() > destHex.getLevel())
             && !isPavementStep
             && (movementType != EntityMovementType.MOVE_JUMP)) {
             return true;
@@ -5409,7 +5409,7 @@ public class Compute {
 
             if (!unit.isLocationProhibited(pos)
                 && (null == stackingViolation(game, unit.getId(), pos))
-                && (Math.abs(hex.getElevation() - elev) < 3)) {
+                && (Math.abs(hex.getLevel() - elev) < 3)) {
                 acceptable.add(pos);
             }
         }

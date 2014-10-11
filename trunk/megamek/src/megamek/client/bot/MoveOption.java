@@ -519,8 +519,8 @@ public class MoveOption extends MovePath {
                 && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
             IHex h = getGame().getBoard().getHex(getFinalCoords());
             IHex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
-            if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-                max += ((((((h1.getElevation() - h.getElevation()) == 1) || getFinalProne()) ? 5
+            if (Math.abs(h.getLevel() - h1.getLevel()) < 2) {
+                max += ((((((h1.getLevel() - h.getLevel()) == 1) || getFinalProne()) ? 5
                         : 1)
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)

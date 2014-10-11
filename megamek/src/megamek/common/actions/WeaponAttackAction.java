@@ -3769,8 +3769,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         .getPosition());
                 IHex prevHex = game.getBoard().getHex(prevCoords);
                 IHex currHex = game.getBoard().getHex(target.getPosition());
-                int prevElev = prevHex.getElevation();
-                int currElev = currHex.getElevation();
+                int prevElev = prevHex.getLevel();
+                int currElev = currHex.getLevel();
                 if ((prevElev - currElev - target.absHeight()) > 2) {
                     return "target is in dead-zone";
                 }

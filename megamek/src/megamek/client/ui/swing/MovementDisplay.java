@@ -2333,7 +2333,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         IHex hex = clientgui.getClient().getGame().getBoard().getHex(pos);
         if (null != hex) {
-            elev += hex.getElevation();
+            elev += hex.getLevel();
         }
 
         ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos,
@@ -2532,7 +2532,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             pos = cmd.getFinalCoords();
         }
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos)
-                .getElevation()
+                .getLevel()
                 + ce.getElevation();
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
         if (ce instanceof Dropship) {

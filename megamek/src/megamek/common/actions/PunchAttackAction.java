@@ -99,13 +99,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int attackerElevation = attHex.getElevation();
+        int attackerElevation = attHex.getLevel();
         int attackerHeight = ae.absHeight() + attackerElevation;
         if (ae.isHullDown()) {
             attackerHeight--;
         }
         final int targetElevation = target.getElevation()
-                                    + targHex.getElevation();
+                                    + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                                                             : Mech.LOC_LARM;
@@ -185,9 +185,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerHeight = ae.absHeight() + attHex.getElevation();
+        final int attackerHeight = ae.absHeight() + attHex.getLevel();
         final int targetElevation = target.getElevation()
-                                    + targHex.getElevation();
+                                    + targHex.getLevel();
         final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
                                                             : Compute.ARC_LEFTARM;
 

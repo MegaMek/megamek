@@ -78,12 +78,6 @@ public class BoardDimensionsTests {
 
     @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
-    public final void testCopyConstructorNullArgument() {
-        BoardDimensions b = new BoardDimensions(null);
-    }
-
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
     public final void testIllegalWidth() {
         BoardDimensions b = new BoardDimensions(0, 1);
     }

@@ -490,12 +490,12 @@ public abstract class BotClient extends Client {
 
         lowest_elev = Integer.MAX_VALUE;
         for (Coords c : validCoords) {
-            int elev = board.getHex(c.x, c.y).getElevation();
+            int elev = board.getHex(c.x, c.y).getLevel();
             if (elev > highest_elev) {
-                highest_elev = board.getHex(c.x, c.y).getElevation();
+                highest_elev = board.getHex(c.x, c.y).getLevel();
             }
             if (elev < lowest_elev) {
-                lowest_elev = board.getHex(c.x, c.y).getElevation();
+                lowest_elev = board.getHex(c.x, c.y).getLevel();
             }
         }
 
@@ -558,7 +558,7 @@ public abstract class BotClient extends Client {
 
             // Calculate the fitness factor for each hex and save it to the array
             // -> Absolute difference between hex elevation and ideal elevation decreases fitness
-            coord.fitness = -1 * (Math.abs(ideal_elev - board.getHex(coord.x, coord.y).getElevation()));
+            coord.fitness = -1 * (Math.abs(ideal_elev - board.getHex(coord.x, coord.y).getLevel()));
 
             total_damage = 0.0;
             deployed_ent.setPosition(coord);

@@ -132,10 +132,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex
-        final int attackerElevation = elevation + targHex.getElevation();
+        final int attackerElevation = elevation + targHex.getLevel();
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation()
-                                    + targHex.getElevation();
+                                    + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit = null;

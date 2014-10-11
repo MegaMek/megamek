@@ -393,7 +393,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     public void resurfaceHex(Coords c) {
         if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
-            newHex.setElevation(board.getHex(c).getElevation());
+            newHex.setLevel(board.getHex(c).getLevel());
             board.resetStoredElevation();
             board.setHex(c, newHex);
         }
@@ -406,7 +406,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
             IHex oldHex = board.getHex(c);
-            newHex.setElevation(oldHex.getElevation());
+            newHex.setLevel(oldHex.getLevel());
             int terrainTypes[] = oldHex.getTerrainTypes();
             for (int i = 0; i < terrainTypes.length; i++) {
                 int terrainID = terrainTypes[i];
@@ -427,7 +427,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     void setCurrentHex(IHex hex) {
         curHex = hex.duplicate();
-        texElev.setText(Integer.toString(curHex.getElevation()));
+        texElev.setText(Integer.toString(curHex.getLevel()));
         refreshTerrainList();
         if (lisTerrain.getModel().getSize() > 0) {
             lisTerrain.setSelectedIndex(0);
@@ -760,8 +760,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             } catch (NumberFormatException ex) {
                 return;
             }
-            if (value != curHex.getElevation()) {
-                curHex.setElevation(value);
+            if (value != curHex.getLevel()) {
+                curHex.setLevel(value);
                 repaintWorkingHex();
             }
         } else if (te.getDocument().equals(texTheme.getDocument())) {
@@ -836,14 +836,14 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(butAddTerrain)) {
             addSetTerrain();
         } else if (ae.getSource().equals(butElevUp)
-                   && (curHex.getElevation() < 9)) {
-            curHex.setElevation(curHex.getElevation() + 1);
-            texElev.setText(Integer.toString(curHex.getElevation()));
+                   && (curHex.getLevel() < 9)) {
+            curHex.setLevel(curHex.getLevel() + 1);
+            texElev.setText(Integer.toString(curHex.getLevel()));
             repaintWorkingHex();
         } else if (ae.getSource().equals(butElevDown)
-                   && (curHex.getElevation() > -5)) {
-            curHex.setElevation(curHex.getElevation() - 1);
-            texElev.setText(Integer.toString(curHex.getElevation()));
+                   && (curHex.getLevel() > -5)) {
+            curHex.setLevel(curHex.getLevel() - 1);
+            texElev.setText(Integer.toString(curHex.getLevel()));
             repaintWorkingHex();
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
@@ -916,7 +916,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g
                         .drawString(
-                                Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
+                                Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

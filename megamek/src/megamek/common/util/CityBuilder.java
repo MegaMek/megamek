@@ -343,7 +343,7 @@ public class CityBuilder {
                 || hex.containsTerrain(Terrains.SWAMP)) {
             return false; // uneconomic to build here
         }
-        if (hex.getElevation() >= 4) {
+        if (hex.getLevel() >= 4) {
             return false; // don't build on mountaintops (aesthetics)
         }
         return true;
@@ -374,7 +374,7 @@ public class CityBuilder {
 
     private void addBridge(IHex hex, int exits, int altitude, int cf) {
         ITerrainFactory tf = Terrains.getTerrainFactory();
-        int bridgeElevation = altitude - hex.getElevation();
+        int bridgeElevation = altitude - hex.getLevel();
 
         hex.addTerrain(tf.createTerrain(Terrains.BRIDGE,
                 getBuildingTypeByCF(cf), true, (exits & 63)));
@@ -428,8 +428,8 @@ public class CityBuilder {
             // got start and end, can we make a bridge?
             if (hexes.size() == 0)
                 return null;
-            int elev1 = board.getHex(start).getElevation();
-            int elev2 = board.getHex(end).getElevation();
+            int elev1 = board.getHex(start).getLevel();
+            int elev2 = board.getHex(end).getLevel();
             int elevBridge = board.getHex(end).terrainLevel(Terrains.BRIDGE);
             if (elevBridge >= 0) {
                 if (Math.abs(elev2 + elevBridge - elev1) > 2)

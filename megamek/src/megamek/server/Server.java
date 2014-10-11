@@ -3854,7 +3854,7 @@ public class Server implements Runnable {
             // shouldnt happen
             return;
         }
-        int finalElev = centralHex.getElevation();
+        int finalElev = centralHex.getLevel();
         if (!centralHex.containsTerrain(Terrains.PAVEMENT)
             && !centralHex.containsTerrain(Terrains.ROAD)) {
             finalElev--;
@@ -3867,15 +3867,15 @@ public class Server implements Runnable {
             if (null == hex) {
                 continue;
             }
-            if (hex.getElevation() < finalElev) {
-                finalElev = hex.getElevation();
+            if (hex.getLevel() < finalElev) {
+                finalElev = hex.getLevel();
             }
             positions.add(pos);
         }
         // ok now cycle through hexes and make all changes
         for (Coords pos : positions) {
             IHex hex = game.getBoard().getHex(pos);
-            hex.setElevation(finalElev);
+            hex.setLevel(finalElev);
             // get rid of woods and replace with rough
             if (hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -4762,7 +4762,7 @@ public class Server implements Runnable {
             distance -= nextHex.movementCost(entity) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
-            int curAltitude = elevation + curHex.getElevation();
+            int curAltitude = elevation + curHex.getLevel();
             int nextAltitude = nextHex.floor();
 
             // but VTOL keep altitude
@@ -4781,7 +4781,7 @@ public class Server implements Runnable {
                     if (curAltitude >= nextHex.floor()) {
                         nextAltitude = Math
                                 .min(curAltitude,
-                                     nextHex.getElevation()
+                                     nextHex.getLevel()
                                      + nextHex
                                              .terrainLevel(Terrains.BLDG_ELEV));
                     }
@@ -4798,7 +4798,7 @@ public class Server implements Runnable {
                                 .min(curAltitude,
                                      Math.max(
                                              nextAltitude,
-                                             nextHex.getElevation()
+                                             nextHex.getLevel()
                                              + nextHex
                                                      .terrainLevel(Terrains.BRIDGE_ELEV)));
                     }
@@ -5732,7 +5732,7 @@ public class Server implements Runnable {
             crateredElevation = Math.min(2, h.depth() + 1);
             containsWater = true;
         } else {
-            crateredElevation = h.getElevation() - 2;
+            crateredElevation = h.getLevel() - 2;
         }
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {
@@ -5753,8 +5753,8 @@ public class Server implements Runnable {
                         containsWater = true;
                     }
                 } else if (!containsWater
-                           && (adjHex.getElevation() < crateredElevation)) {
-                    crateredElevation = adjHex.getElevation();
+                           && (adjHex.getLevel() < crateredElevation)) {
+                    crateredElevation = adjHex.getLevel();
                 }
             }
         }
@@ -5935,7 +5935,7 @@ public class Server implements Runnable {
             }
             if (entity instanceof Dropship) {
                 if (!containsWater) {
-                    h.setElevation(crateredElevation);
+                    h.setLevel(crateredElevation);
                 } else {
                     if (!h.containsTerrain(Terrains.WATER)) {
                         h.removeAllTerrains();
@@ -7117,8 +7117,8 @@ public class Server implements Runnable {
                 && (entity instanceof Mech)
                 && game.getOptions().booleanOption("tacops_leaping")) {
                 int leapDistance = (lastElevation + game.getBoard()
-                                                        .getHex(lastPos).getElevation())
-                                   - (curElevation + curHex.getElevation());
+                                                        .getHex(lastPos).getLevel())
+                                   - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     // skill check for leg damage
                     PilotingRollData roll = entity.getBasePilotingRoll(step
@@ -7815,22 +7815,22 @@ public class Server implements Runnable {
                                                                                         .getType() == MoveStepType
                                                                                         .LATERAL_RIGHT_BACKWARDS))
                 && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
-                && ((lastHex.getElevation() + entity.calcElevation(curHex,
+                && ((lastHex.getLevel() + entity.calcElevation(curHex,
                                                                    lastHex, step.getElevation(),
                                                                    md.getFinalClimbMode(), false)) != (curHex
-                                                                                                               .getElevation() + entity.getElevation()))
+                                                                                                               .getLevel() + entity.getElevation()))
                 && !(entity instanceof VTOL)
                 && !(md.getFinalClimbMode()
                      && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
                                                                              .terrainLevel(Terrains.BRIDGE_ELEV) +
                                                                      curHex
-                                                                             .getElevation()) == (prevHex.getElevation() + (prevHex
+                                                                             .getLevel()) == (prevHex.getLevel() + (prevHex
                                                                                                                                     .containsTerrain(Terrains.BRIDGE) ? prevHex
                                                                                                                                     .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
 
                 if ((entity instanceof Mech)
-                    && (curHex.getElevation() < game.getBoard()
-                                                    .getHex(lastPos).getElevation())) {
+                    && (curHex.getLevel() < game.getBoard()
+                                                    .getHex(lastPos).getLevel())) {
                     PilotingRollData psr = entity
                             .getBasePilotingRoll(overallMoveType);
                     psr.addModifier(0,
@@ -10828,7 +10828,7 @@ public class Server implements Runnable {
         IHex destHex = game.getBoard().getHex(origDest);
         Coords src, dest;
         // We need to fall into the lower of the two hexes, TW pg 68
-        if (srcHex.getElevation() < destHex.getElevation()) {
+        if (srcHex.getLevel() < destHex.getLevel()) {
             IHex swapHex = destHex;
             destHex = srcHex;
             srcHex = swapHex;
@@ -21490,13 +21490,13 @@ public class Server implements Runnable {
                 Coords myHexCoords = hexSet.nextElement();
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
-                myHex.setElevation((myHex.getElevation() - curDepth));
+                myHex.setLevel((myHex.getLevel() - curDepth));
 
                 // Then, remove ANY terrains here.
                 // I mean ALL of them; they're all just gone.
                 // No ruins, no water, no rough, no nothing.
                 if (myHex.containsTerrain(Terrains.WATER)) {
-                    myHex.setElevation(myHex.floor());
+                    myHex.setLevel(myHex.floor());
                 }
                 myHex.removeAllTerrains();
                 myHex.clearExits();
@@ -21600,7 +21600,7 @@ public class Server implements Runnable {
         }
         IHex gzHex = game.getBoard().getHex(position);
         if (gzHex.containsTerrain(Terrains.WATER)) {
-            gzHex.setElevation(gzHex.floor());
+            gzHex.setLevel(gzHex.floor());
         }
         gzHex.removeAllTerrains();
 
@@ -21627,12 +21627,12 @@ public class Server implements Runnable {
                         int oldLevel = myHex.terrainLevel(Terrains.WATER);
                         myHex.removeTerrain(Terrains.WATER);
                         if (oldLevel > numCleared) {
-                            myHex.setElevation(myHex.getElevation()
+                            myHex.setLevel(myHex.getLevel()
                                                - numCleared);
                             myHex.addTerrain(new Terrain(Terrains.WATER,
                                                          oldLevel - numCleared));
                         } else {
-                            myHex.setElevation(myHex.getElevation() - oldLevel);
+                            myHex.setLevel(myHex.getLevel() - oldLevel);
                         }
                     }
 

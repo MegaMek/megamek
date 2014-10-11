@@ -6047,8 +6047,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         else if ((isFoggy || isDark)
                  && !lastPos.equals(curPos)
                  && ((curHex.movementCost(this) > 0) || ((null != prevHex) && (prevHex
-                                                                                       .getElevation() != curHex
-                                                                                       .getElevation())))) {
+                                                                                       .getLevel() != curHex
+                                                                                       .getLevel())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {

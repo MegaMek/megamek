@@ -123,9 +123,9 @@ public class RamAttackAction extends AbstractAttackAction {
         }
         IHex attHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerElevation = elevation + attHex.getElevation();
+        final int attackerElevation = elevation + attHex.getLevel();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+                + targHex.getLevel();
         ToHitData toHit = null;
  
         // can't target yourself

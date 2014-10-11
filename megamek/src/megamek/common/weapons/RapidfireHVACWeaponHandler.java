@@ -68,14 +68,14 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getElevation() > currentHex
-                    .getElevation() + 4) {
+            } else if (board.getHex(rearCoords).getLevel() > currentHex
+                    .getLevel() + 4) {
                 rearCoords = src;
             } else if ((board.getBuildingAt(rearCoords) != null)
                     && (board.getHex(rearCoords).terrainLevel(
                             Terrains.BLDG_ELEV)
-                            + board.getHex(rearCoords).getElevation() > currentHex
-                            .getElevation() + 4)) {
+                            + board.getHex(rearCoords).getLevel() > currentHex
+                            .getLevel() + 4)) {
                 rearCoords = src;
             }
 

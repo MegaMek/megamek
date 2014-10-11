@@ -67,7 +67,7 @@ public class Dropship extends SmallCraft {
                 || (hex.terrainLevel(Terrains.GEYSER) == 2);
         
         HashMap<Integer,Integer> elevations = new HashMap<Integer,Integer>();
-        elevations.put(hex.getElevation(), 1);
+        elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++){
             Coords secondaryCoord = c.translated(dir);
             IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
@@ -82,7 +82,7 @@ public class Dropship extends SmallCraft {
                         || (secondaryHex.terrainLevel(Terrains.SNOW) > 1)
                         || (secondaryHex.terrainLevel(Terrains.GEYSER) == 2);
                 
-                int elev = secondaryHex.getElevation();
+                int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)){
                     elevations.put(elev, elevations.get(elev)+1);
                 }else{
@@ -126,16 +126,16 @@ public class Dropship extends SmallCraft {
         //  to see if they share an elevation. We need to have a number of these
         //  adjacencies equal to the number of secondary elevation hexes - 1.
         int numAdjacencies = 0;
-        int centralElev = hex.getElevation();       
+        int centralElev = hex.getLevel();       
         int secondElev = centralElev;
         IHex currHex = game.getBoard().getHex(c.translated(5));
         for (int dir = 0; dir < 6; dir++){
-            if (currHex.getElevation() != centralElev){
-                secondElev = currHex.getElevation();
+            if (currHex.getLevel() != centralElev){
+                secondElev = currHex.getLevel();
             }
             IHex nextHex = game.getBoard().getHex(c.translated(dir));
-            if (currHex.getElevation() != centralElev &&
-                    currHex.getElevation() == nextHex.getElevation()){
+            if (currHex.getLevel() != centralElev &&
+                    currHex.getLevel() == nextHex.getLevel()){
                 numAdjacencies++;
             }   
             currHex = nextHex;

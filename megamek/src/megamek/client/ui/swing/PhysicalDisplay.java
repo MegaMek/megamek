@@ -1873,10 +1873,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
                 final int attackerElevation = ce().getElevation()
                         + ce().getGame().getBoard().getHex(ce().getPosition())
-                                .getElevation();
+                                .getLevel();
                 final int targetElevation = target.getElevation()
                         + ce().getGame().getBoard()
-                                .getHex(target.getPosition()).getElevation();
+                                .getHex(target.getPosition()).getLevel();
 
                 if ((target instanceof Mech) && (ce() instanceof Mech)
                         && (attackerElevation == targetElevation)) {

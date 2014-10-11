@@ -2487,8 +2487,8 @@ public class MoveStep implements Serializable {
                 && ((Infantry) parent.getEntity()).isMechanized();
         final boolean isProto = parent.getEntity() instanceof Protomech;
         final boolean isMech = parent.getEntity() instanceof Mech;
-        int nSrcEl = srcHex.getElevation() + prevEl;
-        int nDestEl = destHex.getElevation() + elevation;
+        int nSrcEl = srcHex.getLevel() + prevEl;
+        int nDestEl = destHex.getLevel() + elevation;
 
         mp = 1;
 
@@ -2711,8 +2711,8 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        final int srcAlt = srcEl + srcHex.getElevation();
-        final int destAlt = elevation + destHex.getElevation();
+        final int srcAlt = srcEl + srcHex.getLevel();
+        final int destAlt = elevation + destHex.getLevel();
 
         Building bld = game.getBoard().getBuildingAt(dest);
 
@@ -2951,7 +2951,7 @@ public class MoveStep implements Serializable {
         if ((movementType == EntityMovementType.MOVE_JUMP)
                 && (destAlt > (entity.getElevation()
                 + entity.game.getBoard().getHex(entity.getPosition())
-                .getElevation() + entity.getJumpMPWithTerrain() + (type == MoveStepType.DFA ? 1
+                .getLevel() + entity.getJumpMPWithTerrain() + (type == MoveStepType.DFA ? 1
                 : 0)))) {
             // System.err.println("can't jump over too-high terrain");
             return false;

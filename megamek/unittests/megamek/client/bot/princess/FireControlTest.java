@@ -1254,7 +1254,7 @@ public class FireControlTest {
         Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
                                                              Mockito.any(Coords.class), Mockito.anyInt());
         IHex mockShooterHex = Mockito.mock(IHex.class);
-        Mockito.when(mockShooterHex.getElevation()).thenReturn(0);
+        Mockito.when(mockShooterHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockShooterState.getPosition()))).thenReturn(mockShooterHex);
         Mockito.when(mockShooter.getElevation()).thenReturn(0);
         Mockito.when(mockShooter.absHeight()).thenReturn(2);
@@ -1269,7 +1269,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)).thenReturn(true);
 
         IHex mockTargetHex = Mockito.mock(IHex.class);
-        Mockito.when(mockTargetHex.getElevation()).thenReturn(0);
+        Mockito.when(mockTargetHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetState.getPosition()))).thenReturn(mockTargetHex);
         Mockito.when(mockTarget.getElevation()).thenReturn(0);
         Mockito.when(mockTarget.getHeight()).thenReturn(2);
@@ -1485,7 +1485,7 @@ public class FireControlTest {
                                                                                    mockGame));
 
         // Test the target being at the wrong elevation for a punch.
-        Mockito.when(mockShooterHex.getElevation()).thenReturn(1);
+        Mockito.when(mockShooterHex.getLevel()).thenReturn(1);
         expected = new ToHitData(FireControl.TH_PHY_TOO_MUCH_ELEVATION);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierPhysical(mockShooter, mockShooterState,
                                                                                    mockTarget, mockTargetState,

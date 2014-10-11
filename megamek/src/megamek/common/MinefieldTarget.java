@@ -27,7 +27,7 @@ public class MinefieldTarget implements Targetable {
 
     public MinefieldTarget(Coords c, IBoard board) {
         m_coords = c;
-        m_elev = board.getHex(m_coords).getElevation();
+        m_elev = board.getHex(m_coords).getLevel();
     }
 
     public int getTargetType() {

@@ -145,7 +145,7 @@ public class SharedUtility {
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
-                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getElevation()) - (curElevation + curHex.getElevation());
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel()) - (curElevation + curHex.getLevel());
                 if(leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(step.getMovementType());
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
@@ -284,18 +284,18 @@ public class SharedUtility {
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
                     .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)) 
-                    && ((game.getBoard().getHex(lastPos).getElevation() + entity
+                    && ((game.getBoard().getHex(lastPos).getLevel() + entity
                             .calcElevation(curHex,
                                     game.getBoard().getHex(lastPos))) != (curHex
-                            .getElevation() + entity.getElevation()))
-                    && ((game.getBoard().getHex(lastPos).getElevation() - game
+                            .getLevel() + entity.getElevation()))
+                    && ((game.getBoard().getHex(lastPos).getLevel() - game
                             .getBoard().getHex(lastPos).depth()) != (curHex
-                            .getElevation() - curHex.depth()))
+                            .getLevel() - curHex.depth()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
                             .terrainLevel(Terrains.BRIDGE_ELEV) + curHex
-                            .getElevation()) == (prevHex.getElevation() + (prevHex
+                            .getLevel()) == (prevHex.getLevel() + (prevHex
                             .containsTerrain(Terrains.BRIDGE) ? prevHex
                             .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
                 nagReport.append(Messages

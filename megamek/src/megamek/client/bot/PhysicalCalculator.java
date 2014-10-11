@@ -481,8 +481,8 @@ public final class PhysicalCalculator {
                 if (game.getBoard().contains(disp_c)) {
                     // Find the elevation difference
                     elev_diff = game.getBoard().getHex(to.getPosition())
-                                    .getElevation();
-                    elev_diff -= game.getBoard().getHex(disp_c).getElevation();
+                                    .getLevel();
+                    elev_diff -= game.getBoard().getHex(disp_c).getLevel();
                     if (elev_diff < 0) {
                         elev_diff = 0;
                     }

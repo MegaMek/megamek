@@ -49,24 +49,28 @@ public class LosEffects {
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
+        
         /**
          * The absolute elevation of the attacker, i.e. the number of levels
          * attacker is placed above a level 0 hex.
          */
         public int attackAbsHeight;
+        
         /**
          * The absolute elevation of the target, i.e. the number of levels
          * target is placed above a level 0 hex.
          */
         public int targetAbsHeight;
+        
         /**
-         * The height of the attacker, that is, how many levels above it's
-         * elevation is it for LOS purposes.
+         * The height of the attacker, that is, how many levels above its
+         * elevation it is for LOS purposes.
          */
         public int attackHeight;
+        
         /**
-         * The height of the target, that is, how many levels above it's
-         * elevation is it for LOS purposes.
+         * The height of the target, that is, how many levels above its
+         * elevation it is for LOS purposes.
          */
         public int targetHeight;
         public int attackerId;
@@ -436,17 +440,7 @@ public class LosEffects {
         if (spotting && ae.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
             attEl += 1;
         }
-        int targEl;
-        if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-            targEl = target.relHeight() + targetHex.getLevel();
-        } else {
-            targEl = game.getBoard().getHex(targetPos).surface();
-        }
-
+        int targEl = target.relHeight() + targetHex.getLevel();
 
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;

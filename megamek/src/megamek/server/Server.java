@@ -10834,15 +10834,17 @@ public class Server implements Runnable {
             srcHex = swapHex;
             src = origDest;
             dest = origSrc;
+            // Adjust elevation, since it's relative to the surface of srcHex
+            entitySrcElevation -= (destHex.getLevel() - srcHex.getLevel());
         } else {
             src = origSrc;
             dest = origDest;
         }
         final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(true);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
-                                     - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()
-                                                                              : destHex.floor()))
-                            - fallReduction;
+                - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface()
+                        : destHex.floor()))
+                - fallReduction;
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
         }
@@ -24868,21 +24870,27 @@ public class Server implements Runnable {
 
     /**
      * Makes a mech fall.
-     *
-     * @param entity       The Entity that is falling.  It is expected that the Entity's
-     *                     position and elevation reflect the state prior to the  fall
-     * @param fallPos      The location that the Entity is falling into.
-     * @param fallHeight   The height that Entity is falling.
-     * @param facing       The facing of the fall.  Used to determine the the hit location
-     *                     and also determines facing after the fall (used as an offset of
-     *                     the Entity's current facing).
-     * @param roll         The PSR required to avoid damage to the pilot/crew.
-     * @param intoBasement Flag that determines whether this is a fall into a basement or
-     *                     not.
+     * 
+     * @param entity
+     *            The Entity that is falling. It is expected that the Entity's
+     *            position and elevation reflect the state prior to the fall
+     * @param fallPos
+     *            The location that the Entity is falling into.
+     * @param fallHeight
+     *            The height that Entity is falling.
+     * @param facing
+     *            The facing of the fall. Used to determine the the hit location
+     *            and also determines facing after the fall (used as an offset
+     *            of the Entity's current facing).
+     * @param roll
+     *            The PSR required to avoid damage to the pilot/crew.
+     * @param intoBasement
+     *            Flag that determines whether this is a fall into a basement or
+     *            not.
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
-                                        int fallHeight, int facing, PilotingRollData roll,
-                                        boolean intoBasement) {
+            int fallHeight, int facing, PilotingRollData roll,
+            boolean intoBasement) {
         entity.setFallen(true);
 
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -25297,7 +25305,7 @@ public class Server implements Runnable {
         if (currHex.containsTerrain(Terrains.ICE)
             && (entity.getElevation() != -currHex.depth())) {
             fallToSurface = true;
-            toSubtract = currHex.surface();
+            toSubtract = 0;
         }
         // on a bridge
         if (currHex.containsTerrain(Terrains.BRIDGE_ELEV)
@@ -25314,9 +25322,7 @@ public class Server implements Runnable {
             toSubtract = currHex.terrainLevel(Terrains.BLDG_ELEV);
         }
         return doEntityFall(entity, entity.getPosition(), entity.getElevation()
-                                                          + (!fallToSurface ? currHex.depth(true) : entity.getElevation()
-                                                                                                    - toSubtract),
-                            roll);
+                + (!fallToSurface ? currHex.depth(true) : -toSubtract), roll);
     }
 
     /**

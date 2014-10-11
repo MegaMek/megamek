@@ -128,9 +128,9 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + te.getId() + " does not know its position.");
         }
 
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
-                                    + targHex.getElevation();
+                                    + targHex.getLevel();
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         final boolean targetInBuilding = Compute.isInBuilding(game, te);

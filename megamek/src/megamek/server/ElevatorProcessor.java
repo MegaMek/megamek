@@ -68,8 +68,8 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             // everything except possibly
             // VTOLs - lets assume they take an updraft and remain at the same
             // height relative to the hex
-            int elevation = hex.getElevation();
-            hex.setElevation(terr.getLevel());
+            int elevation = hex.getLevel();
+            hex.setLevel(terr.getLevel());
             hex.removeTerrain(Terrains.ELEVATOR);
             hex.addTerrain(tf.createTerrain(Terrains.ELEVATOR, elevation, true,
                     terr.getExits()));

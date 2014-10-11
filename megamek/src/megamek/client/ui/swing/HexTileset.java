@@ -346,8 +346,8 @@ public class HexTileset {
      */
     private double orthoMatch(IHex org, IHex com) {
         // check elevation
-        if ((com.getElevation() != ITerrain.WILDCARD)
-                && (org.getElevation() != com.getElevation())) {
+        if ((com.getLevel() != ITerrain.WILDCARD)
+                && (org.getLevel() != com.getLevel())) {
             return 0;
         }
         
@@ -390,8 +390,8 @@ public class HexTileset {
      */
     private double superMatch(IHex org, IHex com) {
         // check elevation
-        if ((com.getElevation() != ITerrain.WILDCARD)
-                && (org.getElevation() != com.getElevation())) {
+        if ((com.getLevel() != ITerrain.WILDCARD)
+                && (org.getLevel() != com.getLevel())) {
             return 0;
         }
         
@@ -438,11 +438,11 @@ public class HexTileset {
         double theme;
 
         // check elevation
-        if (com.getElevation() == ITerrain.WILDCARD) {
+        if (com.getLevel() == ITerrain.WILDCARD) {
             elevation = 1.0;
         } else {
-            elevation = 1.01 / (Math.abs(org.getElevation()
-                    - com.getElevation()) + 1.01);
+            elevation = 1.01 / (Math.abs(org.getLevel()
+                    - com.getLevel()) + 1.01);
         }
 
         // Determine maximum number of terrain matches.

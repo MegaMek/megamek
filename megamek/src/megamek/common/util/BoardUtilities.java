@@ -355,11 +355,11 @@ public class BoardUtilities {
             // hex.addTerrain(tf.createTerrain(Terrains.BLDG_BASEMENT,
             // building.getBasement()));
             hexes.add(hex);
-            level += hex.getElevation();
+            level += hex.getLevel();
         }
         // set everything to the same level
         for (int j = 0; j < hexes.size(); j++) {
-            hexes.get(j).setElevation(level / hexes.size());
+            hexes.get(j).setLevel(level / hexes.size());
         }
     }
 
@@ -423,14 +423,14 @@ public class BoardUtilities {
             Iterator<IHex> iter = unUsed.iterator();
             while (iter.hasNext()) {
                 field = iter.next();
-                if (field.getElevation() < min) {
-                    min = field.getElevation();
+                if (field.getLevel() < min) {
+                    min = field.getLevel();
                 }
             }
             iter = alreadyUsed.iterator();
             while (iter.hasNext()) {
                 field = iter.next();
-                field.setElevation(min);
+                field.setLevel(min);
             }
 
         }
@@ -535,7 +535,7 @@ public class BoardUtilities {
                             baseElevation = usedHexes.get(field.getCoords());
                         } else {
                             // If no crater has been placed here, add this hex's original elevation to our list.
-                            baseElevation = field.getElevation();
+                            baseElevation = field.getLevel();
                             usedHexes.put(field.getCoords(), baseElevation);
                         }
 
@@ -543,7 +543,7 @@ public class BoardUtilities {
                         int newElevation = baseElevation + cratDepth[distance];
 
                         // If the new elevation is deeper, use it, otherwise keep what we've already calculated.
-                        field.setElevation(Math.min(newElevation, field.getElevation()));
+                        field.setLevel(Math.min(newElevation, field.getLevel()));
                     }
                 }
             }
@@ -678,16 +678,16 @@ public class BoardUtilities {
         while (!tmpRiverHexes.isEmpty()) {
             Iterator<IHex> iter = tmpRiverHexes.iterator();
             field = iter.next();
-            if (field.getElevation() < minElevation) {
-                minElevation = field.getElevation();
+            if (field.getLevel() < minElevation) {
+                minElevation = field.getLevel();
             }
             tmpRiverHexes.remove(field);
             Point thisHex = reverseHex.get(field);
             /* and now the six neighbours */
             for (int i = 0; i < 6; i++) {
                 field = board.getHexInDir(thisHex.x, thisHex.y, i);
-                if ((field != null) && (field.getElevation() < minElevation)) {
-                    minElevation = field.getElevation();
+                if ((field != null) && (field.getLevel() < minElevation)) {
+                    minElevation = field.getLevel();
                 }
                 tmpRiverHexes.remove(field);
             }
@@ -697,7 +697,7 @@ public class BoardUtilities {
         Iterator<IHex> iter = riverHexes.iterator();
         while (iter.hasNext()) {
             field = iter.next();
-            field.setElevation(minElevation);
+            field.setLevel(minElevation);
         }
 
         return;
@@ -741,7 +741,7 @@ public class BoardUtilities {
         ITerrainFactory f = Terrains.getTerrainFactory();
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
-            int elev = field.getElevation() - modifier;
+            int elev = field.getLevel() - modifier;
             if ((elev == 0) && !(field.containsTerrain(Terrains.WATER))
                     && !(field.containsTerrain(Terrains.PAVEMENT))) {
                 field.addTerrain(f.createTerrain(Terrains.SWAMP, 1));
@@ -751,7 +751,7 @@ public class BoardUtilities {
                 }
                 field.removeAllTerrains();
                 field.addTerrain(f.createTerrain(Terrains.WATER, -elev));
-                field.setElevation(modifier);
+                field.setLevel(modifier);
             }
         }
     }
@@ -862,13 +862,13 @@ public class BoardUtilities {
                     newlevel = level;
                 }
 
-                field.setElevation(field.getElevation() - newlevel);
+                field.setLevel(field.getLevel() - newlevel);
             }
         }
     }
 
     private static boolean hexCouldBeCliff(IBoard board, Coords c) {
-        int elevation = board.getHex(c).getElevation();
+        int elevation = board.getHex(c).getLevel();
         boolean higher = false;
         boolean lower = false;
         int count = 0;
@@ -876,7 +876,7 @@ public class BoardUtilities {
             Coords t = c.translated(dir);
             if (board.contains(t)) {
                 IHex hex = board.getHex(t);
-                int el = hex.getElevation();
+                int el = hex.getLevel();
                 if (el > elevation) {
                     lower = true;
                 } else if (el < elevation) {
@@ -893,13 +893,13 @@ public class BoardUtilities {
             ArrayList<Coords> candidate, HashSet<Coords> ignore) {
         candidate.add(c);
         ignore.add(c);
-        int elevation = board.getHex(c).getElevation();
+        int elevation = board.getHex(c).getLevel();
         for (int dir = 0; dir < 6; dir++) {
             Coords t = c.translated(dir);
             if (board.contains(t) && !ignore.contains(t)) {
                 if (hexCouldBeCliff(board, t)) {
                     IHex hex = board.getHex(t);
-                    int el = hex.getElevation();
+                    int el = hex.getLevel();
                     if (el == elevation) {
                         findCliffNeighbours(board, t, candidate, ignore);
                     }
@@ -917,7 +917,7 @@ public class BoardUtilities {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
-                int elevation = board.getHex(c).getElevation();
+                int elevation = board.getHex(c).getLevel();
                 if (ignore.contains(c)) {
                     continue;
                 }
@@ -937,7 +937,7 @@ public class BoardUtilities {
                     for (Iterator<Coords> e = candidate.iterator(); e.hasNext();) {
                         c = e.next();
                         IHex hex = board.getHex(c);
-                        hex.setElevation(elevation);
+                        hex.setLevel(elevation);
                     }
                 }
                 candidate.clear();
@@ -1159,8 +1159,8 @@ public class BoardUtilities {
                     }
                 }
 
-                if (hex.getElevation() < elev) {
-                    hex.setElevation(elev);
+                if (hex.getLevel() < elev) {
+                    hex.setLevel(elev);
                 }
             }
         }

@@ -433,7 +433,7 @@ public class MovePath implements Cloneable, Serializable {
         int maxElev = 0;
         for (MoveStep step : steps) {
             maxElev = Math.max(maxElev,
-                               getGame().getBoard().getHex(step.getPosition()).getElevation());
+                               getGame().getBoard().getHex(step.getPosition()).getLevel());
         }
         return maxElev;
     }
@@ -1131,7 +1131,7 @@ public class MovePath implements Cloneable, Serializable {
         Coords highestCoords = null;
         int highestElevation = 0;
         for (MoveStep step : steps) {
-            if (getGame().getBoard().getHex(step.getPosition()).getElevation() > highestElevation) {
+            if (getGame().getBoard().getHex(step.getPosition()).getLevel() > highestElevation) {
                 highestElevation = step.getElevation();
                 highestCoords = step.getPosition();
             }
@@ -1146,7 +1146,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public int getJumpMaxElevationChange() {
         return getMaxElevation() -
-               getGame().getBoard().getHex(getFinalCoords()).getElevation();
+               getGame().getBoard().getHex(getFinalCoords()).getLevel();
     }
 
     /**

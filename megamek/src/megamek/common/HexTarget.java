@@ -29,7 +29,7 @@ public class HexTarget implements Targetable {
 
     public HexTarget(Coords c, IBoard board, int nType) {
         m_coords = c;
-        m_elev = board.getHex(m_coords).getElevation();
+        m_elev = board.getHex(m_coords).getLevel();
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }

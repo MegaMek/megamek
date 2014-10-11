@@ -1653,7 +1653,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     for (int j = 0; j < drawWidth; j++) {
                         Coords c = new Coords(j + drawX, i + drawY);
                         IHex hex = game.getBoard().getHex(c);
-                        if ((hex != null) && (hex.getElevation() == x)) {
+                        if ((hex != null) && (hex.getLevel() == x)) {
                             drawHex(c, g, saveBoardImage);
                             drawHexSpritesForHex(c, g,
                                     moveEnvSprites);
@@ -1712,7 +1712,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
-        int level = hex.getElevation();
+        int level = hex.getLevel();
 
         int depth = hex.depth(false);
 
@@ -1971,7 +1971,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // We need to adjust the height based on several cases
         int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
         // Negative elevation drops the hex down, so we need to compensate
-        int level = oHex.getElevation();
+        int level = oHex.getLevel();
         if (level < 0) {
             elevOffset += -1 * level;
         }
@@ -2040,7 +2040,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             fudge = 1;
         }
 
-        final int elev = src.getElevation();
+        final int elev = src.getLevel();
         // If the Destination is null, draw the complete elevation side.
         if ((dest == null) && (elev > 0)
                 && ((dir == 2) || (dir == 3) || (dir == 4))) {
@@ -2049,8 +2049,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             int height = elev;
             IHex southHex = game.getBoard().getHexInDir(c, 3);
             if ((dir != 3) && (southHex != null)
-                    && (elev > southHex.getElevation())) {
-                height = elev - southHex.getElevation();
+                    && (elev > southHex.getLevel())) {
+                height = elev - southHex.getLevel();
             }
 
             Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x },
@@ -2071,7 +2071,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
-        int delta = elev - dest.getElevation();
+        int delta = elev - dest.getLevel();
         // Don't draw the elevation if there is no exposed edge for the player
         // to see.
         if ((delta == 0)
@@ -2120,11 +2120,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        if ((destHex == null) && (srcHex.getElevation() != 0)) {
+        if ((destHex == null) && (srcHex.getLevel() != 0)) {
             return true;
         } else if (destHex == null) {
             return false;
-        } else if (srcHex.getElevation() != destHex.getElevation()) {
+        } else if (srcHex.getLevel() != destHex.getLevel()) {
             return true;
         } else {
             return (srcHex.floor() != destHex.floor());
@@ -2140,7 +2140,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         IHex hex = game.getBoard().getHex(x, y);
         if ((hex != null) && useIsometric()) {
-            int level = hex.getElevation();
+            int level = hex.getLevel();
             if (level != 0) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
             }
@@ -2209,7 +2209,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     IHex hexAlt = game.getBoard().getHex(c1);
                     if ((p.y > pAlt.y) && (p.y < (pAlt.y + HEX_H))
                             && (hexAlt != null)
-                            && (hexAlt.getElevation() == elev)) {
+                            && (hexAlt.getLevel() == elev)) {
                         // This hex's location falls under the point the user
                         // selected.
                         return c1;
@@ -3986,7 +3986,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             txt.append(Messages.getString("BoardView1.Hex") + //$NON-NLS-1$
                     mcoords.getBoardNum());
             txt.append(Messages.getString("BoardView1.level") + //$NON-NLS-1$
-                    mhex.getElevation());
+                    mhex.getLevel());
             txt.append("<br>"); //$NON-NLS-1$
 
             // cycle through the terrains and report types found

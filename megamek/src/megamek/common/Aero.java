@@ -3720,7 +3720,7 @@ public class Aero extends Entity {
     public String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
         IHex hex = game.getBoard().getHex(getPosition());
-        int elev = hex.getElevation();
+        int elev = hex.getLevel();
         int facing = getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
         // dropships need a strip three hexes wide
@@ -3757,7 +3757,7 @@ public class Aero extends Entity {
                 if (!hex.isClearForTakeoff()) {
                     return "Unacceptable terrain for landing" + lenString;
                 }
-                if (hex.getElevation() != elev) {
+                if (hex.getLevel() != elev) {
                     return "Runway must contain no elevation change" + lenString;
                 }
             }
@@ -3769,7 +3769,7 @@ public class Aero extends Entity {
     public String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
         IHex hex = game.getBoard().getHex(getPosition());
-        int elev = hex.getElevation();
+        int elev = hex.getLevel();
         int facing = getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
@@ -3805,7 +3805,7 @@ public class Aero extends Entity {
                     return "Unacceptable terrain for landing" + lenString;
                 }
 
-                if (hex.getElevation() != elev) {
+                if (hex.getLevel() != elev) {
                     return "Landing strip must contain no elevation change" + lenString;
                 }
             }

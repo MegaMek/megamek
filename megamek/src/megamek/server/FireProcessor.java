@@ -405,8 +405,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
             return src;
         }
 
-        int hexElevation = board.getHex(src).getElevation();
-        int nextElevation = board.getHex(nextCoords).getElevation();
+        int hexElevation = board.getHex(src).getLevel();
+        int nextElevation = board.getHex(nextCoords).getLevel();
 
         if ( board.getHex(nextCoords).containsTerrain(Terrains.BUILDING) ) {
             nextElevation += board.getHex(nextCoords).terrainLevel(Terrains.BLDG_ELEV);

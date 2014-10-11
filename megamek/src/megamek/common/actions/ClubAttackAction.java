@@ -236,10 +236,10 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation()
-                                    + targHex.getElevation();
+                                    + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                                   && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB));

@@ -257,7 +257,7 @@ public class Princess extends BotClient {
             int deployElevation = deployEntity.elevationOccupied(deployHex);
 
             // Compensate for hex elevation where != 0...
-            deployElevation -= deployHex.getElevation();
+            deployElevation -= deployHex.getLevel();
             deploy(entityNum, deployCoords, decentFacing, deployElevation);
         } finally {
             methodEnd(getClass(), METHOD_NAME);
@@ -735,7 +735,7 @@ public class Princess extends BotClient {
         MoveStep walk = new MoveStep(movePath, type);
         IHex hex = getHex(mech.getPosition());
         PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
-                                                    hex.getElevation(), false);
+                                                    hex.getLevel(), false);
         log(getClass(), METHOD_NAME, LogLevel.INFO,
             "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);

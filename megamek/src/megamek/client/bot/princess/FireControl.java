@@ -482,9 +482,9 @@ public class FireControl {
         // Check elevation difference.
         IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
         IHex targetHex = game.getBoard().getHex(targetState.getPosition());
-        final int attackerElevation = shooter.getElevation() + attackerHex.getElevation();
-        final int attackerHeight = shooter.absHeight() + attackerHex.getElevation();
-        final int targetElevation = target.getElevation() + targetHex.getElevation();
+        final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
+        final int attackerHeight = shooter.absHeight() + attackerHex.getLevel();
+        final int targetElevation = target.getElevation() + targetHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {

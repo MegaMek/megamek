@@ -164,7 +164,8 @@ public class Princess extends BotClient {
             }
             String x = targetCoords.substring(0, 2);
             String y = targetCoords.replaceFirst(x, "");
-            Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
+            // Need to subtract 1, since we are given a Hex number string, which is Coords X+1Y+1 
+            Coords coords = new Coords(Integer.parseInt(x) - 1, Integer.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
     }

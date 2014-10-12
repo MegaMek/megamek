@@ -20,6 +20,7 @@ v0.39.3-dev (SVN)
 + Bug [#4150]: HexTarget violates interface contract
 + Bug [#4268]: Incorrect Fall Damage from falling while on Building
 + Bug [#4272]: Added checkbvTeam to display BV scores and percents for each team
++ Bug [#4258]: Princess bot target wrong hex for strategic target
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

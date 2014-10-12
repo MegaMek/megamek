@@ -22,6 +22,7 @@ v0.39.3-dev (SVN)
 + Bug [#4272]: Added checkbvTeam to display BV scores and percents for each team
 + Bug [#4258]: Princess bot target wrong hex for strategic target
 + Bug [#4257]: Added detailed BV calculation report for Protomechs
++ Bug [#4263]: Thunderbolt Missiles do half damage during strike run
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

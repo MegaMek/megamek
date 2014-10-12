@@ -17,28 +17,37 @@ package megamek.server.commands;
 import java.util.Enumeration;
 
 import megamek.common.IPlayer;
+import megamek.common.Team;
 import megamek.server.Server;
 
-public class CheckBVCommand extends ServerCommand {
+public class CheckBVTeamCommand extends ServerCommand {
 
-    public CheckBVCommand(Server server) {
-        super(server, "checkbv",
-                "Shows the remaining BV of each player in the game.");
+    public CheckBVTeamCommand(Server server) {
+        super(server, "checkbvTeam",
+                "Shows the remaining BV of each team in the game.");
     }
 
     @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Remaining BV:");
-        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i
-                .hasMoreElements();) {
-            IPlayer player = i.nextElement();
-            StringBuffer cb = new StringBuffer();
-            double percentage = 0;
-            if (player.getInitialBV() != 0) {
-                percentage = ((player.getBV() + 0.0) / player.getInitialBV()) * 100;
+        Enumeration<Team> teamEnum = server.getGame().getTeams();
+        while (teamEnum.hasMoreElements()) {
+            Team team = teamEnum.nextElement();
+            int initialTeamBV = 0;
+            int currentTeamBV = 0;
+            Enumeration<IPlayer> playersEnum = team.getPlayers();
+            while (playersEnum.hasMoreElements()) {
+                IPlayer player = playersEnum.nextElement();
+                initialTeamBV += player.getInitialBV();
+                currentTeamBV += player.getBV();
             }
-            cb.append(player.getName()).append(": ");
-            cb.append(player.getBV()).append("/").append(player.getInitialBV());
+            double percentage = 0;
+            if (initialTeamBV != 0) {
+                percentage = ((currentTeamBV + 0.0) / initialTeamBV) * 100;
+            }
+            StringBuffer cb = new StringBuffer();
+            cb.append(team.toString()).append(": ");
+            cb.append(currentTeamBV).append("/").append(initialTeamBV);
             cb.append(String.format(" (%1$3.2f%%)",percentage));
             server.sendServerChat(connId, cb.toString());
         }

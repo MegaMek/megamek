@@ -223,6 +223,7 @@ import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
 import megamek.server.commands.CheckBVCommand;
+import megamek.server.commands.CheckBVTeamCommand;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
@@ -524,6 +525,7 @@ public class Server implements Runnable {
         registerCommand(new ShowValidTargetsCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new CheckBVCommand(this));
+        registerCommand(new CheckBVTeamCommand(this));
         registerCommand(new NukeCommand(this));
         registerCommand(new TraitorCommand(this));
         registerCommand(new ListEntitiesCommand(this));

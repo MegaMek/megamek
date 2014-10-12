@@ -1102,14 +1102,46 @@ public class Protomech extends Entity {
         if (useManualBV) {
             return manualBV;
         }
+        
+        bvText = new StringBuffer(
+                "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+        bvText.append(startTable);
+        
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         // total armor points
         dbv += getTotalArmor() * 2.5;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Armor (" + getTotalArmor() +") x 2.5");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getTotalArmor() * 2.5);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // total internal structure
         dbv += getTotalInternal() * 1.5;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total I.S. Points (" + getTotalInternal() +") x 1.5");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getTotalInternal() * 1.5);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -1160,13 +1192,115 @@ public class Protomech extends Entity {
             dEquipmentBV += Math.min(amsBV, amsAmmoBV);
         }
         dbv += dEquipmentBV;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Equipment BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
 
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game).getValue();
         double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false, game).getValue();
         double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10) + 0.1;
+        // Round to 4 decimal places, just to cut off some numeric error
+        tmmFactor = Math.round(tmmFactor * 1000) / 1000.0;
         dbv *= tmmFactor;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Target Movement Modifer For Run");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(tmmRan);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Target Movement Modifer For Jumping");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(tmmJumped);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Defensive Movement Factor of ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(tmmFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" x ");
+        bvText.append(tmmFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Defensive Battle Value");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         double weaponBV = 0;
 
         // figure out base weapon bv
@@ -1176,6 +1310,8 @@ public class Protomech extends Entity {
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
+            
+            String name = wtype.getName();
 
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
@@ -1193,10 +1329,12 @@ public class Protomech extends Entity {
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
+                    name = name.concat(" with Artemis IV");
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
+                    name = name.concat(" with Artemis V");
                 }
             }
 
@@ -1205,14 +1343,28 @@ public class Protomech extends Entity {
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
+                    name = name.concat(" with Apollo");
                 }
             }
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
+                name = name.concat(" with Targeting Computer");
             }
             weaponBV += dBV;
+            
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(name);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(dBV);
+            bvText.append(endColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endRow);
+            
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
@@ -1228,6 +1380,27 @@ public class Protomech extends Entity {
                 }
             }
         }
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Weapons BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add ammo bv
         double ammoBV = 0;
@@ -1302,10 +1475,22 @@ public class Protomech extends Entity {
             }
         }
         weaponBV += ammoBV;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Ammo BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(ammoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
         double oEquipmentBV = 0;
+        boolean hasMiscEq = false;
         for (Mounted mounted : getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
 
@@ -1322,40 +1507,281 @@ public class Protomech extends Entity {
                 continue;
             }
             oEquipmentBV += mtype.getBV(this);
+            
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(mtype.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(mtype.getBV(this));
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            hasMiscEq = true;
         }
 
         weaponBV += oEquipmentBV;
+        
+        if (hasMiscEq) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("-------------");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Equipment BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(oEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // adjust further for speed factor
         double speedFactor = Math
                 .pow(1 + ((((double) getRunMP(false, true, true) + (Math
                         .round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
+        speedFactor = Math.round(speedFactor * 1000) / 1000.0;
 
         obv = weaponBV * speedFactor;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Speed Factor of ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" x ");
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append("Offensive Battle Value");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("<b>Extra Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Tag BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(tagBV);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append("Extra Battle Value");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(xbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
+        bvText.append(startRow);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("<b>Final BV Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Deffensive BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Offensive BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Extra BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(xbv);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         int finalBV;
         if (useGeometricMeanBV()) {
             finalBV = (int)Math.round(2 * Math.sqrt(obv * dbv) + xbv);
             if (finalBV == 0) {
                 finalBV = (int)Math.round(dbv + obv);
             }
+            
+            bvText.append("Geometric Mean (2Sqrt(O*D) + X");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("= ");
+            bvText.append(finalBV);
         } else {
             finalBV = (int) Math.round(dbv + obv + xbv);
+            bvText.append("Sum");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("= ");
+            bvText.append(finalBV);
         }
+        
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
             pilotFactor = getCrew().getBVSkillMultiplier(game);
         }
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Pilot Factor of ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(pilotFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" x ");
+        bvText.append(pilotFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
+        
+        bvText.append("<b>Final Battle Value</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(retVal);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(endTable);
         return retVal;
     }
 

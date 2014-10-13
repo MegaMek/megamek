@@ -6918,12 +6918,22 @@ public class Server implements Runnable {
                     checkExtremeGravityMovement(entity, step, curPos,
                                                 cachedGravityLimit);
                     Targetable target = step.getTarget(game);
-                    ChargeAttackAction caa = new ChargeAttackAction(
-                            entity.getId(), target.getTargetType(),
-                            target.getTargetId(), target.getPosition());
-                    entity.setDisplacementAttack(caa);
-                    game.addCharge(caa);
-                    charge = caa;
+                    if (target != null) {
+                        ChargeAttackAction caa = new ChargeAttackAction(
+                                entity.getId(), target.getTargetType(),
+                                target.getTargetId(), target.getPosition());
+                        entity.setDisplacementAttack(caa);
+                        game.addCharge(caa);
+                        charge = caa;
+                    } else {
+                        System.out.println("Illegal charge!! "
+                                + entity.getDisplayName() + " is attempting to "
+                                + "charge a null target!");
+                        sendServerChat("Illegal charge!! "
+                                + entity.getDisplayName() + " is attempting to "
+                                + "charge a null target!");
+                        return;
+                    }
                 } else {
                     sendServerChat("Illegal charge!! I don't think "
                                    + entity.getDisplayName()

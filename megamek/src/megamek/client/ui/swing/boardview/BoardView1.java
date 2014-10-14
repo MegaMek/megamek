@@ -3714,6 +3714,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     refreshMoveVectors();
                 case PHASE_FIRING:
                     clearAllMoveVectors();
+                    clearFiringSolutionData();
+                    clearMovementEnvelope();
                 case PHASE_PHYSICAL:
                     refreshAttacks();
                     break;

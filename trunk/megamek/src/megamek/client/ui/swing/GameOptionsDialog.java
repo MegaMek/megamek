@@ -656,7 +656,21 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             File gameOptsFile = selectGameOptionsFile(false);
             if (gameOptsFile != null) {
                 options.loadOptions(gameOptsFile, false);
+                Vector<DialogOptionComponent> changed = 
+                        new Vector<DialogOptionComponent>();
+                for (Enumeration<DialogOptionComponent> i = optionComps
+                        .elements(); i.hasMoreElements();) {
+                    DialogOptionComponent comp = i.nextElement();
+                    if (comp.hasChanged()) {
+                        changed.addElement(comp);
+                    }
+                }
                 refreshOptions();
+                // We need to ensure that the IOption for the component doesn't
+                // match, otherwise send() won't send updates to the server
+                for (DialogOptionComponent comp : changed) {
+                    comp.getOption().clearValue();
+                }
             }
             return;
         }

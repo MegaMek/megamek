@@ -391,7 +391,9 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 NoteDialog nd = new NoteDialog(gui.frame, finalNote);
+                gui.bv.setShouldIgnoreKeys(true);
                 nd.setVisible(true);
+                gui.bv.setShouldIgnoreKeys(false);
                 if (nd.isAccepted()){
                     client.sendSpecialHexDisplayAppend(coords, finalNote);
                 }

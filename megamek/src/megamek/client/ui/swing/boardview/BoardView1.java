@@ -561,16 +561,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive()
-                                || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE
-                                || game.getPhase() == Phase.PHASE_END_REPORT
-                                || game.getPhase() == Phase.PHASE_MOVEMENT_REPORT
-                                || game.getPhase() == Phase.PHASE_TARGETING_REPORT
-                                || game.getPhase() == Phase.PHASE_FIRING_REPORT
-                                || game.getPhase() == Phase.PHASE_PHYSICAL_REPORT
-                                || game.getPhase() == Phase.PHASE_OFFBOARD_REPORT
-                                || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT) {
+                        if (shouldIgnoreKeyCommands()) {
                             return false;
                         } else {
                             return true;
@@ -598,8 +589,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                        if (shouldIgnoreKeyCommands()){
                             return false;
                         } else {
                             return true;
@@ -628,8 +618,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE
+                        if (shouldIgnoreKeyCommands()
                                 || selectedEntity == null){
                             return false;
                         } else {
@@ -652,8 +641,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                        if (shouldIgnoreKeyCommands()){
                             return false;
                         } else {
                             return true;
@@ -675,8 +663,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                        if (shouldIgnoreKeyCommands()){
                             return false;
                         } else {
                             return true;
@@ -698,8 +685,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                        if (shouldIgnoreKeyCommands()){
                             return false;
                         } else {
                             return true;
@@ -721,8 +707,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction(){
-                        if (getChatterBoxActive() || !bv.isVisible()
-                                || game.getPhase() == Phase.PHASE_LOUNGE){
+                        if (shouldIgnoreKeyCommands()){
                             return false;
                         } else {
                             return true;
@@ -737,6 +722,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
         });
+    }
+    
+    private boolean shouldIgnoreKeyCommands() {
+        return getChatterBoxActive() || !isVisible()
+                || game.getPhase() == Phase.PHASE_LOUNGE
+                || game.getPhase() == Phase.PHASE_END_REPORT
+                || game.getPhase() == Phase.PHASE_MOVEMENT_REPORT
+                || game.getPhase() == Phase.PHASE_TARGETING_REPORT
+                || game.getPhase() == Phase.PHASE_FIRING_REPORT
+                || game.getPhase() == Phase.PHASE_PHYSICAL_REPORT
+                || game.getPhase() == Phase.PHASE_OFFBOARD_REPORT
+                || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT;
     }
 
     @Override

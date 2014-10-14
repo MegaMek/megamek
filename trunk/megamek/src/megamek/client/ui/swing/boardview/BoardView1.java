@@ -335,6 +335,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private boolean chatterBoxActive = false;
 
+    /**
+     * Keeps track of whether an outside source tells the BoardView that it
+     * should ignore keyboard commands.
+     */
+    private boolean shouldIgnoreKeys = false;
 
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
     
@@ -733,7 +738,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 || game.getPhase() == Phase.PHASE_FIRING_REPORT
                 || game.getPhase() == Phase.PHASE_PHYSICAL_REPORT
                 || game.getPhase() == Phase.PHASE_OFFBOARD_REPORT
-                || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT;
+                || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT
+                || shouldIgnoreKeys;
     }
 
     @Override
@@ -4556,5 +4562,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void setChatterBoxActive(boolean cba){
         chatterBoxActive = cba;
+    }
+
+    public void setShouldIgnoreKeys(boolean shouldIgnoreKeys) {
+        this.shouldIgnoreKeys = shouldIgnoreKeys;
     }
 }

@@ -26,6 +26,7 @@ v0.39.3-dev (SVN)
 + Bug: Potential NPE with charge attacks
 + Bug [#4274]: Game Options Load doesn't update Sever's options
 + Bug [#4275]: Movement envelope not getting cleared at end of turn
++ Bug: Report phase chat boxes occassionally needed to hit enter twice to send
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

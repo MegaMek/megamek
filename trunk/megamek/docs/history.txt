@@ -28,6 +28,7 @@ v0.39.3-dev (SVN)
 + Bug [#4275]: Movement envelope not getting cleared at end of turn
 + Bug: Report phase chat boxes occassionally needed to hit enter twice to send
 + Bug: SHD Create/Edit Note dialog wouldn't disable key commands (ie. scrolling)
++ Data: New Images, Some unit name changes to eliminate quotation issues with Image Pack.
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -763,8 +763,7 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         if (entity == null) {
-            log(getClass(), METHOD_NAME, LogLevel.WARNING, "Entity is NULL.");
-            return new MovePath(getGame(), null);
+            throw new NullPointerException("Entity is null.");
         }
 
         try {

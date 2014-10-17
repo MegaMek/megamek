@@ -1854,6 +1854,11 @@ public class TestBot extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
+
+        if (entity == null) {
+            throw new NullPointerException("Entity is null.");
+        }
+
         System.out.println("Contemplating movement of " + entity.getShortName()
                            + " " + entity.getId());
         CEntity cen = centities.get(entity);

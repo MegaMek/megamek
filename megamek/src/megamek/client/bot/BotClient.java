@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.NullPointerException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -157,6 +158,13 @@ public abstract class BotClient extends Client {
 
     protected abstract void initFiring();
 
+    /**
+     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)} with
+     * that entity.
+     *
+     * @return The calculated move path.
+     * @throws NullPointerException if no entity can be found to move.
+     */
     protected abstract MovePath calculateMoveTurn();
 
     protected abstract void calculateFiringTurn();
@@ -166,6 +174,13 @@ public abstract class BotClient extends Client {
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
 
+    /**
+     * Calculates the full {@link MovePath} for the given {@link Entity}.
+     *
+     * @param entity The entity who is to move.
+     * @return The calculated move path.
+     * @throws NullPointerException if entity is NULL.
+     */
     protected abstract MovePath continueMovementFor(Entity entity);
 
     protected abstract Vector<Minefield> calculateMinefieldDeployment();

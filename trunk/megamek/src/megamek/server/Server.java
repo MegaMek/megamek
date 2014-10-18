@@ -19520,7 +19520,8 @@ public class Server implements Runnable {
 
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
-            && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)) {
+            && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)
+            && !game.getOptions().booleanOption("full_rotor_hits")) {
             damage = (damage + 9) / 10;
         }
 

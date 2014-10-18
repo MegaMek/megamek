@@ -75,6 +75,8 @@ public class MegamekButton extends JButton {
              iconsLoaded = false;
              return;
          }
+         // Setting this to false helps with transparent images
+         setContentAreaFilled(false);
          // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
@@ -112,9 +114,10 @@ public class MegamekButton extends JButton {
      }
      
     protected void paintComponent(Graphics g) {
+        // Call super, so this components plays well with Swing
+        super.paintComponent(g);        
         // If none of the icons are loaded, treat this is a regular JButton
         if (!iconsLoaded) {
-            super.paintComponent(g);
             return;
         }
         

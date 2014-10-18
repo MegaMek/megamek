@@ -32,6 +32,7 @@ v0.39.3-dev (SVN)
 + Bug: [#4267] Princess thread NPE - calculateMyTurn.
        Added code to fail faster in the case of either being passed a null Entity or not being able to find an Entity
        to move.  This doesn't resolve the issue, but should make it easier to trace down exactly which is happening.
++ Bug: Graphical glitches with transparent images on MegamekButtons in windows
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

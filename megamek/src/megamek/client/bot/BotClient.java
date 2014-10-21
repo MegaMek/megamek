@@ -81,6 +81,9 @@ import megamek.common.util.StringUtil;
 
 public abstract class BotClient extends Client {
 
+    private static final HexHasPathToCenterCache hexHasPathToCenterCache = new HexHasPathToCenterCache();
+    private static Coords boardCenter = null;
+
     // a frame, to show stuff in
     public JFrame frame;
 
@@ -295,6 +298,8 @@ public abstract class BotClient extends Client {
     }
 
     private void runEndGame() {
+        hexHasPathToCenterCache.clearCache();
+
         // Make a list of the player's living units.
         ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
 
@@ -773,7 +778,11 @@ public abstract class BotClient extends Client {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
         // Find the center of the board.
-        Coords center = board.getCenter();
+        synchronized (this) {
+            if (boardCenter == null) {
+                boardCenter = board.getCenter();
+            }
+        }
 
         // Start the path assuming forward movement, but if the unit is jump-capable, use jump movement.
         MovePath pathToCenter = new MovePath(game, entity);
@@ -782,15 +791,25 @@ public abstract class BotClient extends Client {
             type = MovePath.MoveStepType.START_JUMP;
         }
 
+        // Check the cache to see if we've already tested this hex for this movement mode.
+        HexHasPathToCenterCache.Key key =
+                new HexHasPathToCenterCache.Key(entity.getPosition().toFriendlyString(), entity.getMovementMode());
+        Boolean hasPath = hexHasPathToCenterCache.hasPathToCenter(key);
+        if (hasPath != null) {
+            return hasPath;
+        }
+
         // Find the shortest path.
-        ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfAStar(center, type, game);
+        ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfAStar(boardCenter, type, game);
         AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition =
                 new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
         shortestPathFinder.addStopCondition(timeoutCondition);
         shortestPathFinder.run(pathToCenter.clone());
 
-        // Base return on if a path was found or not.
-        return shortestPathFinder.getComputedPath(center) != null;
+        // Base return on if a path was found or not and cache the result.
+        hasPath = shortestPathFinder.getComputedPath(boardCenter) != null;
+        hexHasPathToCenterCache.addMember(key, hasPath);
+        return hasPath;
     }
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {

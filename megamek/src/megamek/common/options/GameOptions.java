@@ -153,7 +153,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_called_shots", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_prone_fire", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_start_fire", false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.AC_TAC_OPS_RANGE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.AC_TAC_OPS_RANGE, false);
+        addOption(advancedCombat, OptionsConstants.AC_TAC_OPS_LOS_RANGE, false);
         addOption(advancedCombat, "tacops_dead_zones", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_LOS1", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_altdmg", false); //$NON-NLS-1$

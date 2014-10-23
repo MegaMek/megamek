@@ -110,8 +110,8 @@ public class BasicPathRanker extends PathRanker {
                && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
-    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange) {
-        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange);
+    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
+        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
     }
 
     protected boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
@@ -136,7 +136,7 @@ public class BasicPathRanker extends PathRanker {
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy.  Improve for missile attacks, gun skill, and range
      */
-    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange, boolean useLOSRange) {
         final String METHOD_NAME = "EntityEvaluationResponse evaluateUnmovedEnemy(Entity,MovePath,IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -177,11 +177,11 @@ public class BasicPathRanker extends PathRanker {
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range,
-                                                                          useExtremeRange) * damageDiscount);
+                                                                          useExtremeRange, useLOSRange) * damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
-            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange)
+            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange, useLOSRange)
                                                      * damageDiscount);
 
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
@@ -446,6 +446,7 @@ public class BasicPathRanker extends PathRanker {
             double maximumPhysicalDamage = 0;
             double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
             boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE);
+            boolean losRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE);
             for (Entity enemy : enemies) {
 
                 // Skip ejected pilots.
@@ -463,7 +464,7 @@ public class BasicPathRanker extends PathRanker {
                 if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
-                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange);
+                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
                 }
                 if (maximumDamageDone < eval.getMyEstimatedDamage()) {
                     maximumDamageDone = eval.getMyEstimatedDamage();

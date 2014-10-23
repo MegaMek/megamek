@@ -59,6 +59,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -326,6 +327,11 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals(OptionsConstants.AC_TAC_OPS_RANGE)) { //$NON-NLS-1$
+            if (!options.getOption(OptionsConstants.AC_TAC_OPS_RANGE).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
         } else if (option.getName().equals("tacops_dead_zones")) { //$NON-NLS-1$
             if ((options.getOption("tacops_LOS1")).booleanValue() //$NON-NLS-1$
                     || !editable) {
@@ -535,6 +541,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 }
             }
         }
+        if (OptionsConstants.AC_TAC_OPS_RANGE.equals(option.getName())) { //$NON-NLS-1$
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
+                    .hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if (OptionsConstants.AC_TAC_OPS_LOS_RANGE.equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
+                    comp_i.setSelected(false);
+                }
+            }
+        }        
         if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
             for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
                     .hasMoreElements();) {

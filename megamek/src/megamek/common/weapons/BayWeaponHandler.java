@@ -63,7 +63,7 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         double av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
@@ -284,7 +284,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         Report.addNewline(vPhaseReport);
         // loop through weapons in bay and do damage
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         int hits = 1;
         int nCluster = 1;
         for (int wId : weapon.getBayWeapons()) {

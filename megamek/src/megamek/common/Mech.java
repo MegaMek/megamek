@@ -5292,21 +5292,8 @@ public abstract class Mech extends Entity {
                     }
                     break;
                 case RangeType.RANGE_LONG:
-                    if (isStealthActive() && !isInfantry) {
-                        result = new TargetRoll(2, "stealth");
-                    } else if (isChameleonShieldActive()) {
-                        result = new TargetRoll(2, "chameleon");
-                        if (isNullSigActive() && !isInfantry) {
-                            result.addModifier(2, "null-sig");
-                        }
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(2, "null-sig");
-                    } else {
-                        // must be infantry
-                        result = new TargetRoll(0, "infantry ignore stealth");
-                    }
-                    break;
                 case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
                     } else if (isChameleonShieldActive()) {

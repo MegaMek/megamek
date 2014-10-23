@@ -23,6 +23,7 @@ public class OptionsConstants {
     public static final String AGM_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr";
 
     public static final String AC_TAC_OPS_RANGE = "tacops_range";
+    public static final String AC_TAC_OPS_LOS_RANGE = "tacops_los_range";
 
     public static final String QUIRK_POS_ANTI_AIR = "anti_air";
     public static final String QUIRK_POS_EASY_PILOT = "easy_pilot";

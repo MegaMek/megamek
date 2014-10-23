@@ -23,6 +23,7 @@ public class RangeType {
     public static final int RANGE_MEDIUM = 2;
     public static final int RANGE_LONG = 3;
     public static final int RANGE_EXTREME = 4;
+    public static final int RANGE_LOS = 5;
     public static final int RANGE_OUT = Integer.MAX_VALUE;
 
     public int r_min;
@@ -80,14 +81,19 @@ public class RangeType {
      *                        rules are in effect.
      * @return the <code>int</code> constant for the range bracket.
      */
-    public static int rangeBracket(int distance, int[] ranges, boolean useExtremeRange) {
+    public static int rangeBracket(int distance, int[] ranges,
+            boolean useExtremeRange, boolean useLOSRange) {
         int range;
 
         // Determine the range bracket of the distance.
         if (null == ranges) {
             range = RANGE_OUT;
         } else if (distance > ranges[RANGE_EXTREME]) {
-            range = RANGE_OUT;
+            if (useLOSRange) {
+                range = RANGE_LOS;
+            } else {
+                range = RANGE_OUT;
+            }
         } else if (distance > ranges[RANGE_LONG]) {
             if (useExtremeRange) {
                 range = RANGE_EXTREME;

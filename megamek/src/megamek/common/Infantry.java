@@ -1135,8 +1135,8 @@ public class Infantry extends Entity {
                     result = new TargetRoll(+1, "Sneak, IR/DEST suit");
                     break;
                 case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     result = new TargetRoll(+2, "Sneak, IR/DEST suit");
                     break;
                 case RangeType.RANGE_OUT:

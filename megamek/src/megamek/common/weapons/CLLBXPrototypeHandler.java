@@ -74,6 +74,10 @@ public class CLLBXPrototypeHandler extends LBXHandler {
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
+            if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                shotsHit = (int) Math.ceil(shotsHit * .5);
+            }            
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;

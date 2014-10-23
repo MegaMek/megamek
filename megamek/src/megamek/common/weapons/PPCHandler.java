@@ -108,6 +108,10 @@ public class PPCHandler extends EnergyWeaponHandler {
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+            toReturn = (int) Math.floor(toReturn * .75);
+        }        
 
         if ((target instanceof Entity)
             && ((Entity) target).hasActiveBlueShield()) {

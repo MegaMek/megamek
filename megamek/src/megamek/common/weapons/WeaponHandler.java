@@ -655,6 +655,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+            toReturn = (int) Math.floor(toReturn * .5);
+        }        
         return (int) toReturn;
     }
 
@@ -1388,6 +1392,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
             && (nRange > ranges[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > ranges[RangeType.RANGE_EXTREME])) {
+            nMissilesModifier -= 3;
         }
 
         if (bGlancing) {

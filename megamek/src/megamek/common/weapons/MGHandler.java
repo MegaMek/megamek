@@ -101,6 +101,10 @@ public class MGHandler extends AmmoWeaponHandler {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+            toReturn = (int) Math.floor(toReturn * .5);
+        }
         nDamPerHit = (int) toReturn;
 
         return nDamPerHit;

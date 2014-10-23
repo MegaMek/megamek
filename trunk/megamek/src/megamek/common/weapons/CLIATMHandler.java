@@ -223,6 +223,11 @@ public class CLIATMHandler extends ATMHandler {
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > ranges[RangeType.RANGE_EXTREME])) {
+            nMissilesModifier -= 3;
+        }
+        
 
         // Don't need to check for ECM here since we can't have artemis boni.
         // And Streak bonus is allready handled.

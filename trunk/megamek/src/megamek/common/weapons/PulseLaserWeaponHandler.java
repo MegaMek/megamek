@@ -75,6 +75,10 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+            toReturn = (int) Math.floor(toReturn / 3.0);
+        }        
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,

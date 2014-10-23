@@ -1055,6 +1055,8 @@ public class Compute {
 
         // add range modifier, C3 can't be used with LOS Range
         if ((usingRange == range) || (range == RangeType.RANGE_LOS)) {
+            // Ensure usingRange is set to range, ie with C3
+            usingRange = range;
             // no c3 adjustment
             if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
                 && (ae.getShortRangeModifier() != 0)) {

@@ -299,7 +299,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
         } else if (range == WeaponType.RANGE_MED) {

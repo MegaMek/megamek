@@ -36,6 +36,7 @@ v0.39.3-dev (SVN)
 + Patch [#328]: VTOL rotor damage reduction toggle
 + Added a utility to the BotClient base class for caching which hexes have a path to the center of the board.  This
     should speed up the deployment of units after the first, so long as they have the same movement type.
++ Feature [#1132]: TacOps LOS Range
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

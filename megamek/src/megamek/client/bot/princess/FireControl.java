@@ -194,6 +194,7 @@ public class FireControl {
     protected static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     protected static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
     protected static final TargetRollModifier TH_EXTREME_RANGE = new TargetRollModifier(6, "Extreme Range");
+    protected static final TargetRollModifier TH_LOS_RANGE = new TargetRollModifier(8, "LOS Range");
     protected static final TargetRollModifier TH_TARGETTING_COMP = new TargetRollModifier(-1, "targeting computer");
     protected static final TargetRollModifier TH_IMP_TARG_SHORT =
             new TargetRollModifier(-1, "improved targetting (short) quirk");
@@ -757,7 +758,8 @@ public class FireControl {
             }
         }
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE));
+                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
+                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((range == RangeType.RANGE_MINIMUM) && targetState.isAirborneAero()) {
@@ -1893,13 +1895,13 @@ public class FireControl {
      * @return The most damage done at that range.
      */
     // todo cluster and other variable damage.
-    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange) {
+    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
         double maxDamage = 0;
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
             WeaponType weaponType = (WeaponType) weapon.getType();
-            int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange);
+            int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange, useLOSRange);
             if ((bracket != RangeType.RANGE_OUT) && (weaponType.getDamage() > 0)) {
                 maxDamage += weaponType.getDamage();
             }

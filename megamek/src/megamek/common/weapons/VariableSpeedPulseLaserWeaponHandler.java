@@ -86,6 +86,11 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
             toReturn -= 1;
         }
+        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
+            toReturn = (int) Math.floor(toReturn / 3.0);
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
 
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);

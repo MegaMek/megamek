@@ -58,7 +58,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     protected int calcAttackValue() {
 
         double av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);

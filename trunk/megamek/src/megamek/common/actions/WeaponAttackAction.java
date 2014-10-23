@@ -261,10 +261,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         final WeaponType wtype = (WeaponType) weapon.getType();
         if (exchangeSwarmTarget) {
             // Quick check, is the new target out of range for the weapon?
-            if (RangeType.rangeBracket(
+            int range = RangeType.rangeBracket(
                     ae.getPosition().distance(target.getPosition()),
                     wtype.getRanges(weapon),
-                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) == RangeType.RANGE_OUT) {
+                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
+                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)); 
+            if (range == RangeType.RANGE_OUT) {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                                      "swarm target out of range");
             }
@@ -3181,8 +3183,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             && !te.isLargeCraft()
             && (RangeType.rangeBracket(
                 ae.getPosition().distance(target.getPosition()), wtype
-                        .getRanges(weapon), game.getOptions()
-                                                .booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) == RangeType
+                        .getRanges(weapon), true, false) == RangeType
                         .RANGE_SHORT)) {
             return "small craft cannot be bracketed at short range";
         }

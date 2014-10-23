@@ -3200,14 +3200,8 @@ public class Tank extends Entity {
                     }
                     break;
                 case RangeType.RANGE_LONG:
-                    if (isStealthActive() && !isInfantry) {
-                        result = new TargetRoll(2, "stealth");
-                    } else {
-                        // must be infantry
-                        result = new TargetRoll(0, "infantry ignore stealth");
-                    }
-                    break;
                 case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
                     } else {

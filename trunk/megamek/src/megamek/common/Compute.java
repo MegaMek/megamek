@@ -824,9 +824,13 @@ public class Compute {
                              || (wtype instanceof ArtilleryCannonWeapon);
         boolean useExtremeRange = game.getOptions().booleanOption(
                 OptionsConstants.AC_TAC_OPS_RANGE);
+        boolean useLOSRange = game.getOptions().booleanOption(
+                OptionsConstants.AC_TAC_OPS_LOS_RANGE);
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
+            // This is a separate SO rule, and isn't implemented yet
+            useLOSRange = false;
         }
 
         ToHitData mods = new ToHitData();
@@ -960,13 +964,33 @@ public class Compute {
         // determine base distance & range bracket
         int distance = Compute.effectiveDistance(game, ae, target, false);
         int range = RangeType.rangeBracket(distance, weaponRanges,
-                                           useExtremeRange);
+                                           useExtremeRange, useLOSRange);
 
+        // Additional checks for LOS range and some weapon types, TO 85
+        if (useLOSRange) {
+            int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
+            // No Missiles or Direct Fire Ballistics with range < 13 
+            if (wtype.hasFlag(WeaponType.F_MISSILE) 
+                    || (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                            && wtype.hasFlag(WeaponType.F_BALLISTIC))) {
+                if (longRange < 13) {
+                    range = RangeType.RANGE_OUT;
+                }
+            }
+            // No Direct Fire Energy or Pulse with range < 13            
+            if (wtype.hasFlag(WeaponType.F_PULSE)
+                    && (wtype.hasFlag(WeaponType.F_ENERGY) 
+                            || wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {
+                if (longRange < 7) {
+                    range = RangeType.RANGE_OUT;
+                }
+            }            
+        }
         int maxRange = wtype.getMaxRange(weapon);
 
         // if aero and greater than max range then swith to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()
-                                                            .onGround())) && (range > maxRange)) {
+                .onGround())) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
@@ -1013,8 +1037,9 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
+        // C3 can't benefit from LOS range
         int c3range = RangeType.rangeBracket(c3dist, weaponRanges,
-                                             useExtremeRange);
+                                             useExtremeRange, false);
 
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is
@@ -1028,8 +1053,8 @@ public class Compute {
         // determine which range we're using
         int usingRange = Math.min(range, c3range);
 
-        // add range modifier
-        if (usingRange == range) {
+        // add range modifier, C3 can't be used with LOS Range
+        if ((usingRange == range) || (range == RangeType.RANGE_LOS)) {
             // no c3 adjustment
             if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
                 && (ae.getShortRangeModifier() != 0)) {
@@ -1058,6 +1083,17 @@ public class Compute {
                 } else {
                     mods.addModifier(ae.getExtremeRangeModifier(),
                                      "extreme range");
+                }
+            }  else if (range == RangeType.RANGE_LOS) {
+                // Protos that loose head sensors can't shoot LOS range.
+                if ((ae instanceof Protomech)
+                    && (2 == ((Protomech) ae)
+                        .getCritsHit(Protomech.LOC_HEAD))) {
+                    mods.addModifier(TargetRoll.IMPOSSIBLE,
+                                     "No LOS range attacks with destroyed head sensors.");
+                } else {
+                    mods.addModifier(ae.getLOSRangeModifier(),
+                                     "LOS range");
                 }
             }
         } else {

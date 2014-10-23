@@ -134,10 +134,10 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
     
     // add maximum range for AT2
-    public static final int RANGE_SHORT = 1;
-    public static final int RANGE_MED = 2;
-    public static final int RANGE_LONG = 3;
-    public static final int RANGE_EXT = 4;
+    public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
+    public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
+    public static final int RANGE_LONG = RangeType.RANGE_LONG;
+    public static final int RANGE_EXT = RangeType.RANGE_EXTREME;
 
     // add weapon classes for AT2
     public static final int CLASS_NONE = 0;

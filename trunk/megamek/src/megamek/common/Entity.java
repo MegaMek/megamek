@@ -7604,6 +7604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case RangeType.RANGE_MEDIUM:
             case RangeType.RANGE_LONG:
             case RangeType.RANGE_EXTREME:
+            case RangeType.RANGE_LOS:
             case RangeType.RANGE_OUT:
                 result = new TargetRoll(0, "stealth not installed");
                 break;
@@ -8827,6 +8828,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
+        if (getCrew().getOptions().booleanOption("sniper")) {
+            mod = mod / 2;
+        }
+        return mod;
+    }
+    
+    public int getLOSRangeModifier() {
+        int mod = 8;
         if (getCrew().getOptions().booleanOption("sniper")) {
             mod = mod / 2;
         }

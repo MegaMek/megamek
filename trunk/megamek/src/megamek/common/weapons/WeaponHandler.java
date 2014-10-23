@@ -679,7 +679,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // we have an airborne attacker, so we need to use aero range
             // brackets
             int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
-                                               true);
+                                               true, false);
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
             } else if (range == WeaponType.RANGE_MED) {

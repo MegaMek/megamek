@@ -133,7 +133,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             if (range == WeaponType.RANGE_SHORT) {

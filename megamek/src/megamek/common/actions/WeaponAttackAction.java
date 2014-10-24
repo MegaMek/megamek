@@ -1289,8 +1289,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // gravity mods (not in space)
         if (!game.getBoard().inSpace()) {
-            int mod = (int) Math.ceil(Math.abs((game.getPlanetaryConditions()
-                                                    .getGravity() - 1.0f) / 0.2f));
+            int mod = (int) Math.floor(Math.abs((game.getPlanetaryConditions()
+                    .getGravity() - 1.0f) / 0.2f));
             if ((mod != 0)
                 && (wtype.hasFlag(WeaponType.F_BALLISTIC) || wtype
                     .hasFlag(WeaponType.F_MISSILE))) {

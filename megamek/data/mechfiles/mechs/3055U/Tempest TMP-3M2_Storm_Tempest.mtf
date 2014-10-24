@@ -1,11 +1,11 @@
 Version:1.0
 Tempest
-TMP-3M2 "Storm Tempest"
+TMP-3M2 'Storm Tempest'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3067
-Source:Jihad
+Source:TRO 3055U
 Rules Level:2
 
 Mass:65

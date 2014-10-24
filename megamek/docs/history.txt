@@ -39,6 +39,7 @@ v0.39.3-dev (SVN)
 + Feature [#1132]: TacOps LOS Range
 + Data: New Images
 + Data: Some Unit fixes (unit name changes to eliminate quotation issues with Forth coming Image Pack)
++ Bug [#4277]: Gravity to-hit clarification
 
 
 v0.39.2 (2014-09-27 23:51 UTC)

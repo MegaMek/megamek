@@ -941,6 +941,7 @@ public class UnitDisplay extends JPanel {
                         // Update custom order
                         ent.setCustomWeaponOrder(weap1, dragTargetIndex);
                         ent.setCustomWeaponOrder(weap2, dragSourceIndex);
+                        clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
                     } else {
                         // Set the order to but custom, and set the order based
                         // on current order
@@ -948,6 +949,8 @@ public class UnitDisplay extends JPanel {
                         for (int i = 0; i < srcModel.getSize(); i++) {
                             Mounted m = srcModel.getWeaponAt(i);
                             ent.setCustomWeaponOrder(m, i);
+                            clientgui.getMenuBar()
+                                    .updateSaveWeaponOrderMenuItem();
                         }
                         weapSortOrder.removeActionListener(WeaponPanel.this);
                         weapSortOrder.setSelectedIndex(customId);

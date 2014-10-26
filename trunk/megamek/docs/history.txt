@@ -40,6 +40,7 @@ v0.39.3-dev (SVN)
 + Data: New Images
 + Data: Some Unit fixes (unit name changes to eliminate quotation issues with Forth coming Image Pack)
 + Bug [#4277]: Gravity to-hit clarification
++ Feature [#1291]: Custom Weapon Orders can now be saved/loaded from a file
 
 
 v0.39.2 (2014-09-27 23:51 UTC)

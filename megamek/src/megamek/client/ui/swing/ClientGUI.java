@@ -86,6 +86,7 @@ import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
 import megamek.common.MovePath;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
@@ -126,6 +127,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
+    
+    public static final String SAVE_WEAP_ORDER = "saveWeapOrder";
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -745,6 +748,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_MOVE_MOD_ENV)) {
             if (curPanel instanceof MovementDisplay) {
                 ((MovementDisplay) curPanel).computeModifierEnvelope();
+            }
+        } else if (event.getActionCommand().equals(SAVE_WEAP_ORDER)) {
+            Entity ent = mechD.getCurrentEntity();
+            if (ent != null) {
+                WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
+                        ent.getModel(), ent.getCustomWeaponOrder());
+                getMenuBar().updateSaveWeaponOrderMenuItem();
             }
         }
 

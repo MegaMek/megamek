@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -28,6 +29,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.WeaponOrderHandler;
 
 /**
  * Every menu bar in MegaMek should have an identical look-and-feel, with
@@ -168,6 +170,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fireClearTurret;
     private JMenuItem fireClearWeaponJam;
     private JMenuItem fireStrafe;
+    private JMenuItem fireSaveWeapOrder;
     private JMenuItem fireCancel;
     private JMenuItem physicalNext;
     private JMenuItem physicalPunch;
@@ -661,6 +664,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fireCancel = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.FiringCommand.FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); //$NON-NLS-1$
+        menu.addSeparator();
+        fireSaveWeapOrder = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.fireSaveWeapOrder"), ClientGUI.SAVE_WEAP_ORDER); //$NON-NLS-1$        
 
         // *** Create the physical menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.PhysicalMenu")); //$NON-NLS-1$
@@ -942,6 +949,25 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fireCancel.setEnabled(false);
         } else {
             fireCancel.setEnabled(true);
+        }
+        
+        updateSaveWeaponOrderMenuItem();
+    }
+    
+    public synchronized void updateSaveWeaponOrderMenuItem() {
+        if ((entity != null)) {
+            Map<Integer, Integer> storedWeapOrder = WeaponOrderHandler
+                    .getWeaponOrder(entity.getChassis(), entity.getModel());
+            Map<Integer, Integer> currWeapOrder = entity.getCustomWeaponOrder();
+            if ((storedWeapOrder == null && currWeapOrder != null)
+                    || (storedWeapOrder != null && !storedWeapOrder
+                            .equals(currWeapOrder))) {
+                fireSaveWeapOrder.setEnabled(true);    
+            } else {
+                fireSaveWeapOrder.setEnabled(false);
+            }
+        } else {
+            fireSaveWeapOrder.setEnabled(false);
         }
     }
 

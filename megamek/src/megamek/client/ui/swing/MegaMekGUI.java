@@ -67,6 +67,7 @@ import megamek.common.KeyBindParser;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
@@ -895,6 +896,12 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     static void quit() {
         PreferenceManager.getInstance().save();
+        try {
+            WeaponOrderHandler.saveWeaponOrderFile();
+        } catch (IOException e) {
+            System.out.println("Error saving custom weapon orders!");
+            e.printStackTrace();
+        }
         System.exit(0);
     }
 

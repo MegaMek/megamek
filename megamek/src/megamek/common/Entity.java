@@ -12738,6 +12738,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return (int) Math.floor(armorPerTon * armorTonnage);
     }
 
+    public void loadDefaultCustomWeaponOrder() {
+        Map<Integer, Integer> weapOrder = WeaponOrderHandler.getWeaponOrder(
+                getChassis(), getModel());
+        
+        if (weapOrder != null && weapOrder.size() > 0) {
+            setCustomWeaponOrder(weapOrder);
+            setWeaponSortOrder(WeaponSortOrder.CUSTOM);
+        }
+    }
+    
     public void loadDefaultQuirks() {
 
         // Get a list of quirks for this entity.

@@ -23,7 +23,7 @@ Liao 3050 Medium Mechs D
 Vulcan VL-2T,11
 Cicada CDA-2A,11
 Blackjack BJ-1,32
-Vindicator VND-1AA "Avenging Angel",21
+Vindicator VND-1AA 'Avenging Angel',21
 Whitworth WTH-1,11
 Trebuchet TBT-5S,11
 Scorpion SCP-1N,11

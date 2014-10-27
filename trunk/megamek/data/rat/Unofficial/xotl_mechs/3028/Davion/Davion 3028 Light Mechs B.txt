@@ -41,4 +41,4 @@ Firestarter FS9-H,60
 Valkyrie VLK-QA,171
 Mongoose MON-67,12
 Firestarter FS9-K,4
-Javelin JVN-10F "Fire Javelin",28
+Javelin JVN-10F 'Fire Javelin',28

@@ -1,7 +1,7 @@
 Snow Raven Medium Vehicle (FMU)
 Ares Medium Tank (Standard),1
 Enyo Strike Tank (Standard),2
-Ku Wheeled Assault Tank (IFV) "Turhan II",3
+Ku Wheeled Assault Tank (IFV) 'Turhan II',3
 Hachiman Fire Support Tank (Standard),4
 Ares Medium Tank (Standard),5
 Ku Wheeled Assault Tank (Standard),6

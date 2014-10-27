@@ -1,5 +1,5 @@
 Hastati Sentinels Heavy Mechs
-Tempest TMP-3M2 "Storm Tempest",1
+Tempest TMP-3M2 'Storm Tempest',1
 Marauder MAD-9M2,2
 Excalibur EXC-B2b,3
 Warhammer WHD-10CT,4

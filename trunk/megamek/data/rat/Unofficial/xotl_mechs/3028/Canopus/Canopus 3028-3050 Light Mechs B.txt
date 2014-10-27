@@ -34,4 +34,4 @@ Hermes HER-1B,6
 Firestarter FS9-H,136
 Mongoose MON-67,6
 Firestarter FS9-K,6
-Javelin JVN-10F "Fire Javelin",6
+Javelin JVN-10F 'Fire Javelin',6

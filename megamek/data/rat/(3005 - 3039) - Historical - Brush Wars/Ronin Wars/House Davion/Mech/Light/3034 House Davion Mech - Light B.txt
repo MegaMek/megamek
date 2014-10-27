@@ -7,6 +7,6 @@ Wasp WSP-1D,5
 Javelin JVN-10N,6
 Stinger STG-3G,5
 Commando COM-2D,4
-Javelin JVN-10F "Fire Javelin",3
+Javelin JVN-10F 'Fire Javelin',3
 Locust LCT-1M,2
 Jenner JR7-D,1

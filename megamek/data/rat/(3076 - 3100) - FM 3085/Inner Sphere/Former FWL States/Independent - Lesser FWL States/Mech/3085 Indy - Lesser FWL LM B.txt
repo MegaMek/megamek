@@ -5,7 +5,7 @@ Hammer HMR-3M,3
 Spider SDR-8M,4
 Hermes HER-3S1,5
 Locust LCT-6M,6
-Hammer HMR-3C "Claw-Hammer",5
+Hammer HMR-3C 'Claw-Hammer',5
 Hermes HER-4S,4
 Falcon Hawk FNHK-9K,3
 Owens OW-1,2

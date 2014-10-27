@@ -41,4 +41,4 @@ Firestarter FS9-H,72
 Mongoose MON-67,10
 Firestarter FS9-K,5
 Raven RVN-4X,10
-Javelin JVN-10F "Fire Javelin",5
+Javelin JVN-10F 'Fire Javelin',5

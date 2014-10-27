@@ -52,7 +52,7 @@ Firestarter FS9-S,3
 Firestarter FS9-K,3
 Valkyrie VLK-QD,10
 Firestarter FS9-S1,3
-Javelin JVN-10F "Fire Javelin",23
+Javelin JVN-10F 'Fire Javelin',23
 Raven RVN-2X,3
 Wolfhound WLF-1,23
 Wolfhound WLF-1A,3

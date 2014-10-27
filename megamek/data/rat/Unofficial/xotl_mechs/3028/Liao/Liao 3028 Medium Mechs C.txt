@@ -30,7 +30,7 @@ Cicada CDA-3C,5
 Vulcan VL-5T,5
 Centurion CN9-A,10
 Blackjack BJ-1,71
-Vindicator VND-1AA "Avenging Angel",10
+Vindicator VND-1AA 'Avenging Angel',10
 Whitworth WTH-1,14
 Trebuchet TBT-5S,5
 Wyvern WVE-6N,10

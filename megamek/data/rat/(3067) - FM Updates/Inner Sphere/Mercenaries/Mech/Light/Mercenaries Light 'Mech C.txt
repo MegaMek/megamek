@@ -4,7 +4,7 @@ Battle Hawk BH-K305,2
 Spider SDR-7M,3
 Panther PNT-10K,4
 Firestarter FS9-S,5
-Javelin JVN-10F "Fire Javelin",6
+Javelin JVN-10F 'Fire Javelin',6
 Commando COM-5S,5
 Wolfhound WLF-2,4
 UrbanMech UM-R63,3

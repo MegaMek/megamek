@@ -9,4 +9,4 @@ Hachiman Fire Support Tank (Standard),5
 Chaparral Missile Artillery Tank (Standard),4
 Hachiman Fire Support Tank (Standard),3
 Maxim Heavy Hover Transport (Clan),2
-Ku Wheeled Assault Tank (IFV) "Turhan II",1
+Ku Wheeled Assault Tank (IFV) 'Turhan II',1

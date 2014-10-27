@@ -9,4 +9,4 @@ Blackjack BJ-1,5
 Phoenix Hawk PXH-1,4
 Vindicator VND-3L,3
 Hunchback HBK-4G,2
-Vindicator VND-1AA "Avenging Angel",1
+Vindicator VND-1AA 'Avenging Angel',1

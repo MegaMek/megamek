@@ -3,8 +3,14 @@
   Original author:
      Ben Mazur <bmazur@sev.org>
      
-  Current maintainer:
+  Current maintainers:
      Sebastian Brocks <beerockxs@users.sourceforge.net>
+	 Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Nicholas Walczak <arlith@users.sourceforge.net>
+	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
+     Dylan Myers <ralgith-erian@users.sourceforge.net>
+	 
+	 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -199,6 +205,7 @@
      Magnus Kerensky <mkerensky@users.sourceforge.net>
      Netzilla and Xotl (Classic Battletech Forums)
      Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Greekfire.
 
   Translations
      Jörg Harder <joergharder@t-online.de>
@@ -213,7 +220,6 @@
       Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
         data/images/widgets/hyades.jpg
       UI Materials licensed from EVILSYSTEM (http://www.evilsystem.eu/terms/).
-      Kiroshimatsu, various UI art
 
 
   And Of Course...

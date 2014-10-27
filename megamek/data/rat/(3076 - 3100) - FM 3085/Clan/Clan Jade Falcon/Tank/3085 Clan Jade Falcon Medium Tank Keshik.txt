@@ -8,5 +8,5 @@ Chalchiuhtotolin Support Tank (Standard),6
 Sokar Urban Combat Unit (Standard),5
 Ares Medium Tank (Standard),4
 Hachiman Fire Support Tank (Standard),3
-Ku Wheeled Assault Tank (IFV) "Turhan II",2
+Ku Wheeled Assault Tank (IFV) 'Turhan II',2
 Enyo Strike Tank (Standard),1

@@ -1,6 +1,6 @@
 Steel Viper Medium Vehicle (FMU)
-Ku Wheeled Assault Tank (IFV) "Turhan II",1
-Ku Wheeled Assault Tank (IFV) "Turhan II",2
+Ku Wheeled Assault Tank (IFV) 'Turhan II',1
+Ku Wheeled Assault Tank (IFV) 'Turhan II',2
 Enyo Strike Tank (Standard),3
 Enyo Strike Tank (Standard),4
 Ku Wheeled Assault Tank (Standard),5

@@ -44,6 +44,7 @@ v0.39.3-dev (SVN)
 + Data: New RATs (3145 Vees)
 + Data: New Images
 + Data: Some Unit fixes (unit name changes to eliminate quotation issues with Forth coming Image Pack)
++ Bug [#4278]: Zero MP Infantry Movement
 
 
 v0.39.2 (2014-09-27 23:51 UTC)

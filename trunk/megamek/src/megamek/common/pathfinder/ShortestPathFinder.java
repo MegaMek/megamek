@@ -154,12 +154,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         public int compare(MovePath first, MovePath second) {
 
             int h1 = 0, h2 = 0;
-            if (!(first.getEntity() instanceof Aero)) {
+            if ((first.getEntity() instanceof Aero)) {
+                //we cannot estimate the needed cost for aeros - maybe a facing change cost would be apropiate
+            }else if(first.getEntity().getWalkMP()==0) {
+                //current implementation of movement cost allows a 0mp moves for units with 0 mp.
+            }else{
                 h1 = first.getFinalCoords().distance(destination);
                 h2 = second.getFinalCoords().distance(destination);
-            } else {
-                //we cannot estimate the needed cost for aeros - maybe a facing change cost would be apropiate
             }
+
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
             if (dd != 0)
                 return dd;

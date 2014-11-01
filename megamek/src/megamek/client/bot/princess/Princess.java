@@ -61,17 +61,6 @@ import megamek.common.weapons.AmmoWeapon;
 
 public class Princess extends BotClient {
 
-    public static final String CMD_FLEE = "fl";
-    public static final String CMD_VERBOSE = "ve";
-    public static final String CMD_BEHAVIOR = "be";
-    public static final String CMD_CAUTION = "ca";
-    public static final String CMD_AVOID = "av";
-    public static final String CMD_AGGRESSION = "ag";
-    public static final String CMD_HERDING = "he";
-    public static final String CMD_BRAVERY = "br";
-    public static final String CMD_TARGET = "ta";
-    public static final String CMD_PRIORITY = "pr";
-
     private static final Logger logger = new Logger();
 
     private final IHonorUtil honorUtil = new HonorUtil();
@@ -126,7 +115,7 @@ public class Princess extends BotClient {
 
     public void setFleeBoard(boolean fleeBoard, String reason) {
         log(getClass(), "setFleeBoard(boolean, String)", LogLevel.DEBUG, "Setting Flee Board " + fleeBoard +
-                                                                        " because: " + reason);
+                                                                         " because: " + reason);
 
         this.fleeBoard = fleeBoard;
     }
@@ -137,7 +126,7 @@ public class Princess extends BotClient {
 
     public void setFallBack(boolean fallBack, String reason) {
         log(getClass(), "setFallBack(boolean, String)", LogLevel.DEBUG, "Setting Fall Back " + fallBack +
-                                                                       " because: " + reason);
+                                                                        " because: " + reason);
         this.fallBack = fallBack;
     }
 

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -191,7 +192,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent by a teammate.
         GamePlayerChatEvent mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         String chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                             Princess.CMD_FLEE;
+                             ChatCommands.FLEE.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         Princess mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -205,7 +206,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent by the enemy.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_KIRK.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_FLEE;
+                      ChatCommands.FLEE.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_KIRK);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -220,7 +221,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent to a different bot player.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_HAL.getName() + ": " +
-                      Princess.CMD_FLEE;
+                      ChatCommands.FLEE.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -234,7 +235,7 @@ public class ChatProcessorTest {
         // Test the 'verbose' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_VERBOSE + " : " + LogLevel.INFO.toString();
+                      ChatCommands.VERBOSE.getAbbreviation() + " : " + LogLevel.INFO.toString();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -248,7 +249,7 @@ public class ChatProcessorTest {
         // Test the 'verbose' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_VERBOSE;
+                      ChatCommands.VERBOSE.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -262,7 +263,7 @@ public class ChatProcessorTest {
         // Test the 'verbose' command with an invalid log level.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_VERBOSE + " : blah";
+                      ChatCommands.VERBOSE.getAbbreviation() + " : blah";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -276,7 +277,7 @@ public class ChatProcessorTest {
         // Test a good 'verbose' command with extra data after log level argument.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_VERBOSE + " : " + LogLevel.INFO.toString()
+                      ChatCommands.VERBOSE.getAbbreviation() + " : " + LogLevel.INFO.toString()
                       + " blah";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
@@ -291,7 +292,8 @@ public class ChatProcessorTest {
         // Test the 'behavior' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BEHAVIOR + " : " + BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
+                      ChatCommands.BEHAVIOR.getAbbreviation() + " : " +
+                      BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -307,7 +309,7 @@ public class ChatProcessorTest {
         // Test the 'behavior' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BEHAVIOR;
+                      ChatCommands.BEHAVIOR.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -323,7 +325,7 @@ public class ChatProcessorTest {
         // Test the 'behavior' command with an invalid behavior name
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BEHAVIOR + " : blah";
+                      ChatCommands.BEHAVIOR.getAbbreviation() + " : blah";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -339,7 +341,7 @@ public class ChatProcessorTest {
         // Test the 'caution' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_CAUTION + " : +++";
+                      ChatCommands.CAUTION.getAbbreviation() + " : +++";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -354,7 +356,7 @@ public class ChatProcessorTest {
         // Test the 'caution' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_CAUTION;
+                      ChatCommands.CAUTION.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -369,7 +371,7 @@ public class ChatProcessorTest {
         // Test the 'caution' command with invalid arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_CAUTION + " : +4";
+                      ChatCommands.CAUTION.getAbbreviation() + " : +4";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -384,7 +386,7 @@ public class ChatProcessorTest {
         // Test the 'avoid' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AVOID + " : --";
+                      ChatCommands.AVOID.getAbbreviation() + " : --";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -399,7 +401,7 @@ public class ChatProcessorTest {
         // Test the 'avoid' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AVOID;
+                      ChatCommands.AVOID.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -414,7 +416,7 @@ public class ChatProcessorTest {
         // Test the 'avoid' command with invalid arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AVOID + " : +5";
+                      ChatCommands.AVOID.getAbbreviation() + " : +5";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -429,7 +431,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AGGRESSION + " : ++";
+                      ChatCommands.AGGRESSION.getAbbreviation() + " : ++";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -444,7 +446,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AGGRESSION;
+                      ChatCommands.AGGRESSION.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -459,7 +461,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command with invalid arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_AGGRESSION + " : blah";
+                      ChatCommands.AGGRESSION.getAbbreviation() + " : blah";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -474,7 +476,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_HERDING + " : -";
+                      ChatCommands.HERDING.getAbbreviation() + " : -";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -489,7 +491,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_HERDING;
+                      ChatCommands.HERDING.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -504,7 +506,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command with invalid arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_HERDING + " : -4";
+                      ChatCommands.HERDING.getAbbreviation() + " : -4";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -519,7 +521,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BRAVERY + " : +++";
+                      ChatCommands.BRAVERY.getAbbreviation() + " : +++";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -534,7 +536,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BRAVERY;
+                      ChatCommands.BRAVERY.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -549,7 +551,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command with invalid arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_BRAVERY + " : -2";
+                      ChatCommands.BRAVERY.getAbbreviation() + " : -2";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -564,7 +566,7 @@ public class ChatProcessorTest {
         // Test the 'target' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_TARGET + " : 1234";
+                      ChatCommands.TARGET.getAbbreviation() + " : 1234";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -581,7 +583,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with no arguments.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_TARGET;
+                      ChatCommands.TARGET.getAbbreviation();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -597,7 +599,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with an invalid hex number.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_TARGET + " : blah";
+                      ChatCommands.TARGET.getAbbreviation() + " : blah";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -613,7 +615,7 @@ public class ChatProcessorTest {
         // Test the 'priority' command.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_PRIORITY + " : 12";
+                      ChatCommands.PRIORITIZE.getAbbreviation() + " : 12";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));
@@ -630,7 +632,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with a too large hex number.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         chatMessage = MOCK_HUMAN_PLAYER_DAVE.getName() + ": " + MOCK_BOT_PLAYER_V_GER.getName() + ": " +
-                      Princess.CMD_TARGET + " : 12345";
+                      ChatCommands.TARGET.getAbbreviation() + " : 12345";
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(MOCK_HUMAN_PLAYER_DAVE);
         mockPrincess = Mockito.spy(new Princess(MOCK_BOT_PLAYER_V_GER.getName(), "test", 1, logLevel));

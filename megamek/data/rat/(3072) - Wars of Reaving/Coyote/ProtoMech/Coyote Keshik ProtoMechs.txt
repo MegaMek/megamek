@@ -1,0 +1,12 @@
+Clan Coyote Keshik ProtoMechs (WoRS)
+#Basilisk (Quad), 1
+Procyon 2, 2
+Roc (Standard), 3
+Procyon (Standard), 4
+Roc 2, 5
+Procyon (Standard), 6
+Procyon 3, 5
+Delphyne 3, 4
+Boggart (Quad) 2, 3
+Delphyne (Standard), 2
+#Hobgoblin 2, 1

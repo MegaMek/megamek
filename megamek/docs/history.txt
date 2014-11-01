@@ -48,6 +48,8 @@ v0.39.3-dev (SVN)
 + Added 2 new chat commands for Princess:
     SHOW_BEHAVIOR - princessName: showBehavior :: Princess will state the name of her current behavior.
     LIST_COMMANDS - princessName: listCommands :: Displays a list of available chat commands for Princess.
++ Data: New RATs (War of Reavings - Thanks Greekfire)
++ Data: New Images
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -45,7 +45,9 @@ v0.39.3-dev (SVN)
 + Data: New Images
 + Data: Some Unit fixes (unit name changes to eliminate quotation issues with Forth coming Image Pack)
 + Bug [#4278]: Zero MP Infantry Movement
-
++ Added 2 new chat commands for Princess:
+    SHOW_BEHAVIOR - princessName: showBehavior :: Princess will state the name of her current behavior.
+    LIST_COMMANDS - princessName: listCommands :: Displays a list of available chat commands for Princess.
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

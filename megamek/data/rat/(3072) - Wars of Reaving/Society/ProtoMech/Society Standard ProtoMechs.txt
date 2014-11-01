@@ -1,0 +1,12 @@
+Society Standard ProtoMechs (WoRS)
+#Sprite 3,3 1
+Erinyes (Standard), 2
+#Procyon Z, 3
+Erinyes 2, 4
+#Hobgoblin (Standard), 5
+#Basilisk (Quad), 6
+Centaur (Standard), 5
+Boggart (Quad) 1, 4
+Gorgon (Standard), 3
+#Centaur Z, 2
+Procyon 3, 1

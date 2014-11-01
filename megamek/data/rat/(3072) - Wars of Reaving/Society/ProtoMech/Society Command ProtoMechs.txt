@@ -1,0 +1,12 @@
+Society Command ProtoMechs (WoRS)
+Procyon 3, 1
+#Hobgoblin (Standard), 2
+Boggart (Quad) 2, 3
+#Basilisk (Quad) B, 4
+#Minotaur Z, 5
+Sprite (Standard), 6
+#Hobgoblin 2, 5
+Basilisk (Standard), 4
+Roc (Standard), 3
+#Roc Z, 2
+Sprite 2, 1

@@ -52,6 +52,9 @@ v0.39.3-dev (SVN)
 + Data: New Images
 + Bug: Plasma Rifles were receiving pulse and DE damage reductions at extreme
     and LOS range
++ Bug: Extreme/LOS range damage reduction for VSPs was wrong: now the pulse
+    penalties normally apply, unless the target is conventional infantry, where
+    the direct fire energy penalties apply
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

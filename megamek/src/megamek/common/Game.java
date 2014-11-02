@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -70,7 +72,7 @@ public class Game implements Serializable, IGame {
 
     public IBoard board = new Board();
 
-    private Vector<Entity> entities = new Vector<Entity>();
+    private final List<Entity> entities = new CopyOnWriteArrayList<>();
     private Hashtable<Integer, Entity> entityIds = new Hashtable<Integer, Entity>();
 
     /**
@@ -83,8 +85,7 @@ public class Game implements Serializable, IGame {
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
 
-    private Map<Coords, HashSet<Integer>> entityPosLookup =
-            new HashMap<Coords, HashSet<Integer>>();
+    private final Map<Coords, HashSet<Integer>> entityPosLookup = new ConcurrentHashMap<>();
 
     /**
      * have the entities been deployed?
@@ -796,8 +797,7 @@ public class Game implements Serializable, IGame {
     public void setupRoundDeployment() {
         deploymentTable = new Hashtable<Integer, Vector<Entity>>();
 
-        for (int i = 0; i < entities.size(); i++) {
-            Entity ent = entities.elementAt(i);
+        for (Entity ent : entities) {
             if (ent.isDeployed()) {
                 continue;
             }
@@ -806,7 +806,7 @@ public class Game implements Serializable, IGame {
 
             if (null == roundVec) {
                 roundVec = new Vector<Entity>();
-                deploymentTable.put(new Integer(ent.getDeployRound()), roundVec);
+                deploymentTable.put(ent.getDeployRound(), roundVec);
             }
 
             roundVec.addElement(ent);
@@ -868,29 +868,27 @@ public class Game implements Serializable, IGame {
      * Returns an enumeration of all the entites in the game.
      */
     public Enumeration<Entity> getEntities() {
-        return entities.elements();
+        return getEntitiesVector().elements();
     }
 
     public Entity getPreviousEntityFromList(Entity current) {
-        if ((current != null) && (entities != null)
-            && entities.contains(current)) {
+        if ((current != null) && entities.contains(current)) {
             int prev = entities.indexOf(current) - 1;
             if (prev < 0) {
                 prev = entities.size() - 1; // wrap around to end
             }
-            return entities.elementAt(prev);
+            return entities.get(prev);
         }
         return null;
     }
 
     public Entity getNextEntityFromList(Entity current) {
-        if ((current != null) && (entities != null)
-            && entities.contains(current)) {
+        if ((current != null) && entities.contains(current)) {
             int next = entities.indexOf(current) + 1;
             if (next >= entities.size()) {
                 next = 0; // wrap-around to begining
             }
-            return entities.elementAt(next);
+            return entities.get(next);
         }
         return null;
     }
@@ -899,11 +897,12 @@ public class Game implements Serializable, IGame {
      * Returns the actual vector for the entities
      */
     public Vector<Entity> getEntitiesVector() {
-        return entities;
+        return new Vector<>(entities);
     }
 
     public void setEntitiesVector(Vector<Entity> entities) {
-        this.entities = entities;
+        this.entities.clear();
+        this.entities.addAll(entities);
         reindexEntities();
         resetEntityPositionLookup();
         processGameEvent(new GameEntityNewEvent(this, entities));
@@ -981,9 +980,7 @@ public class Game implements Serializable, IGame {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
-            Enumeration<Entity> units = entities.elements();
-            while (units.hasMoreElements()) {
-                Entity unit = units.nextElement();
+            for (Entity unit : entities) {
                 if (entity.equals(unit) || entity.onSameC3NetworkAs(unit)) {
                     members.addElement(unit);
                 }
@@ -1025,9 +1022,7 @@ public class Game implements Serializable, IGame {
 
             // Walk throught the entities in the game, and add all
             // sub-members of the C3 network to the output Vector.
-            Enumeration<Entity> units = entities.elements();
-            while (units.hasMoreElements()) {
-                Entity unit = units.nextElement();
+            for (Entity unit : entities) {
                 if (entity.equals(unit) || unit.C3MasterIs(entity)) {
                     members.addElement(unit);
                 }
@@ -1245,7 +1240,7 @@ public class Game implements Serializable, IGame {
             entity.setId(id);
             entityIds.put(id, entity);
         }
-        entities.addElement(entity);
+        entities.add(entity);
         updateEntityPositionLookup(entity, null);
 
         if (id > lastEntityId) {
@@ -1283,7 +1278,7 @@ public class Game implements Serializable, IGame {
             addEntity(entity);
         } else {
             entity.setGame(this);
-            entities.setElementAt(entity, entities.indexOf(oldEntity));
+            entities.set(entities.indexOf(oldEntity), entity);
             entityIds.put(id, entity);
             // Get the collection of positions
             HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
@@ -1331,7 +1326,7 @@ public class Game implements Serializable, IGame {
             return;
         }
 
-        entities.removeElement(toRemove);
+        entities.remove(toRemove);
         entityIds.remove(new Integer(id));
         removeEntityPositionLookup(toRemove);
 
@@ -1375,13 +1370,9 @@ public class Game implements Serializable, IGame {
     public void reset() {
         roundCount = 0;
 
-        entities.removeAllElements();
+        entities.clear();
         entityIds.clear();
-        if (entityPosLookup != null) {
-            entityPosLookup.clear();
-        } else {
-            entityPosLookup = new HashMap<Coords, HashSet<Integer>>();
-        }
+        entityPosLookup.clear();
 
         vOutOfGame.removeAllElements();
 
@@ -1499,8 +1490,7 @@ public class Game implements Serializable, IGame {
      */
     public Enumeration<Entity> getEntities(Coords c, boolean ignore) {
         // Make sure the look-up is initialized
-        if (entityPosLookup == null
-                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+        if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();
         }
         HashSet<Integer> posEntities = entityPosLookup.get(c);
@@ -2328,12 +2318,12 @@ public class Game implements Serializable, IGame {
         if (getOptions().booleanOption("individual_initiative")) {
             Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for (int i = 0; i < entities.size(); i++) {
-                Entity e = entities.elementAt(i);
+                Entity e = entities.get(i);
                 if (initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
                     vRerolls.add(e);
                 }
             }
-            TurnOrdered.rollInitAndResolveTies(entities, vRerolls, false);
+            TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false);
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
                                                getOptions()
@@ -3438,11 +3428,7 @@ public class Game implements Serializable, IGame {
     }
 
     private void resetEntityPositionLookup() {
-        if (entityPosLookup == null) {
-            entityPosLookup = new HashMap<Coords, HashSet<Integer>>();
-        } else {
-            entityPosLookup.clear();
-        }
+        entityPosLookup.clear();
         for (Entity e : entities) {
             updateEntityPositionLookup(e, null);
         }

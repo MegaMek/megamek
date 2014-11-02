@@ -1070,8 +1070,7 @@ public class LosEffects {
         Entity coveringDropship = null;
         //check for grounded dropships - treat like a building 10 elevations tall
         if(bldgEl < 10) {
-            for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
-                final Entity inHex = i.nextElement();
+            for (Entity inHex : game.getEntitiesVector()) {
                 if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
                     continue;
                 }
@@ -1379,8 +1378,7 @@ public class LosEffects {
                }
                //check for grounded dropships - treat like a building 10 elevations tall
                if(bldgEl < 10) {
-                   for (Enumeration<Entity> i = game.getEntities(c); i.hasMoreElements();) {
-                       final Entity inHex = i.nextElement();
+                   for (Entity inHex : game.getEntitiesVector()) {
                        if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
                            continue;
                        }

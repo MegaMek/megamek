@@ -83,13 +83,24 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
             && (nRange > nRanges[RangeType.RANGE_LONG])) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-            toReturn -= 1;
+            // Against conventional infantry, treat as direct fire energy
+            if ((target instanceof Infantry) 
+                    && !(target instanceof BattleArmor) ) {
+                toReturn -= 1;
+            } else { // Else, treat as pulse weapon
+                toReturn = (int) Math.floor(toReturn / 2.0);
+            }
         }
         if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
-            toReturn = (int) Math.floor(toReturn / 3.0);
-            toReturn = (int) Math.floor(toReturn / 2.0);
+         // Against conventional infantry, treat as direct fire energy
+            if ((target instanceof Infantry) 
+                    && !(target instanceof BattleArmor) ) {
+                toReturn = (int) Math.floor(toReturn / 2.0);
+            } else { // Else, treat as pulse weapon
+                toReturn = (int) Math.floor(toReturn / 3.0);
+            }
+
         }
 
         if (bGlancing) {

@@ -120,12 +120,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             }
             if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
                 toReturn -= 1;
             }
             if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
-                toReturn = (int) Math.floor(toReturn / 3.0);
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
             return toReturn;

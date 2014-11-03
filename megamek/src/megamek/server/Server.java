@@ -27508,7 +27508,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet for an attack
      */
-    private Packet createAttackPacket(Vector<?> vector, int charges) {
+    private Packet createAttackPacket(List<?> vector, int charges) {
         final Object[] data = new Object[2];
         data[0] = vector;
         data[1] = new Integer(charges);

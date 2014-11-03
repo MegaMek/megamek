@@ -3738,9 +3738,7 @@ public class Aero extends Entity {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                Enumeration<Entity> entities = game.getEntities(pos);
-                while (entities.hasMoreElements()) {
-                    Entity en = entities.nextElement();
+                for (Entity en : game.getEntitiesVector(pos)) {
                     if (en.equals(this)) {
                         continue;
                     }
@@ -3787,9 +3785,7 @@ public class Aero extends Entity {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                Enumeration<Entity> entities = game.getEntities(pos);
-                while (entities.hasMoreElements()) {
-                    Entity en = entities.nextElement();
+                for (Entity en : game.getEntitiesVector(pos)) {
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
@@ -3828,9 +3824,7 @@ public class Aero extends Entity {
             return "Buildings in the way";
         }
         // no units in the way
-        Enumeration<Entity> entities = game.getEntities(pos);
-        while (entities.hasMoreElements()) {
-            Entity en = entities.nextElement();
+        for (Entity en : game.getEntitiesVector(pos)) {
             if (!en.isAirborne()) {
                 return "Ground units in the way";
             }

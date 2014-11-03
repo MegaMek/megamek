@@ -607,9 +607,7 @@ public class MiniMap extends JPanel {
                     }
                 }
 
-                for (Enumeration<Entity> iter = m_game.getEntities(); iter
-                        .hasMoreElements();) {
-                    Entity e = iter.nextElement();
+                for (Entity e : m_game.getEntitiesVector()) {
                     if (e.getPosition() == null) {
                         continue;
                     }

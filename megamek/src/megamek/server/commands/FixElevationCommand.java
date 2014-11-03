@@ -20,8 +20,6 @@
 
 package megamek.server.commands;
 
-import java.util.Enumeration;
-
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.server.Server;
@@ -44,9 +42,7 @@ public class FixElevationCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         int countbad = 0;
-        for (Enumeration<Entity> e = server.getGame().getEntities(); e
-                .hasMoreElements();) {
-            Entity entity = e.nextElement();
+        for (Entity entity : server.getGame().getEntitiesVector()) {
             if (entity.fixElevation()) {
                 Building bldg = server.getGame().getBoard().getBuildingAt(entity.getPosition());
                 if (bldg != null) {

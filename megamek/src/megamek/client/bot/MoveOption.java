@@ -17,7 +17,6 @@ package megamek.client.bot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -277,10 +276,8 @@ public class MoveOption extends MovePath {
                         .getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }
-        Enumeration<Entity> e = getGame().getEntities(last.getPosition());
         // TODO: this just takes the first target
-        while (e.hasMoreElements()) {
-            Entity en = e.nextElement();
+        for (Entity en : getGame().getEntitiesVector(last.getPosition())) {
             if (!en.isSelectableThisTurn() && en.isEnemyOf(getEntity())) {
                 isPhysical = true;
                 removeLastStep();

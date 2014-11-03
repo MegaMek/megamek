@@ -690,16 +690,14 @@ public class SharedUtility {
                 Coords right = in.get(i + 1);
 
                 // get the total tonnage in each hex
-                Enumeration<Entity> leftTargets = game.getEntities(left);
                 double leftTonnage = 0;
-                while (leftTargets.hasMoreElements()) {
-                    leftTonnage += leftTargets.nextElement().getWeight();
+                for (Entity ent : game.getEntitiesVector(left)) {
+                    leftTonnage += ent.getWeight();
                 }
-                Enumeration<Entity> rightTargets = game
-                        .getEntities(right);
+                
                 double rightTonnage = 0;
-                while (rightTargets.hasMoreElements()) {
-                    rightTonnage += rightTargets.nextElement().getWeight();
+                for (Entity ent : game.getEntitiesVector(right)) {
+                    rightTonnage += ent.getWeight();
                 }
 
                 // TODO: I will need to update this to account for asteroids

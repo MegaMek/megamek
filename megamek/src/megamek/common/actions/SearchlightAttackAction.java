@@ -116,9 +116,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                                                                 // attacker &
                                                                 // target
         for (Coords c : in) {
-            for (Enumeration<Entity> e = game.getEntities(c); e
-                    .hasMoreElements();) {
-                Entity en = e.nextElement();
+            for (Entity en : game.getEntitiesVector(c)) {
                 LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
                 if (los.canSee()) {
@@ -171,9 +169,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                                                                 // attacker &
                                                                 // target
         for (Coords c : in) {
-            for (Enumeration<Entity> e = game.getEntities(c); e
-                    .hasMoreElements();) {
-                Entity en = e.nextElement();
+            for (Entity en : game.getEntitiesVector(c)) {
                 LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
                 if (los.canSee() && en.equals(who)) {

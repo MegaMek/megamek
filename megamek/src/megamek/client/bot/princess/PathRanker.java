@@ -75,6 +75,11 @@ public class PathRanker {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
+            // No point in ranking an empty list.
+            if (movePaths.isEmpty()) {
+                return new ArrayList<>();
+            }
+
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
             owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
